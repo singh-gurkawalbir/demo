@@ -10,6 +10,7 @@ import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from 
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
+import messageStore from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -36,7 +37,7 @@ export default function UninstallSection({ childId, integrationId }) {
   const handleUninstall = () => {
     confirmDialog({
       title: 'Confirm uninstall',
-      message: 'Are you sure you want to uninstall?',
+      message: messageStore('SURE_UNINSTALL'),
       buttons: [
         {
           label: 'Uninstall',

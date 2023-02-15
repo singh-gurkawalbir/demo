@@ -82,18 +82,28 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
     expression.push({ 'rdbms.type': connection.rdbms.type });
-  } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
+  } else if ((type === 'rest' && connection?.isHTTP !== true) || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
-  } else if (type === 'http') {
+  } else if (type === 'http' || (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId)) {
     if (getHttpConnector(connection?.http?._httpConnectorId)) {
       if (connection.http?._httpConnectorId) {
         expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
       }
     }
-    expression.push({ 'http.formType': { $ne: 'rest' } });
-    expression.push({ type });
+    if (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId) {
+      expression.push({ 'http.formType': 'assistant' });
+      expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+      expression.push({ isHTTP: { $ne: false } });
+    } else if (type === 'http' && connection?.http?._httpConnectorId) {
+      expression.push({ 'http.formType': 'assistant' });
+      expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+      expression.push({ isHTTP: { $ne: false } });
+    } else {
+      expression.push({ 'http.formType': { $ne: 'rest' } });
+      expression.push({ type });
+    }
   } else {
     expression.push({ type });
   }
@@ -174,6 +184,8 @@ const getAcumaticaEndpointName = connection => {
   switch (acumaticaEndpointName) {
     case 'ecommerce':
       return 'acumaticaecommerce';
+    case 'manufacturing':
+      return 'acumaticamanufacturing';
     default:
   }
 
@@ -208,6 +220,7 @@ export const KBDocumentation = {
   rest: 'https://docs.celigo.com/hc/en-us/sections/360007479711-REST',
   ftp: 'https://docs.celigo.com/hc/en-us/articles/360045263152-Set-up-an-FTP-connection-',
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
+  van: 'https://docs.celigo.com/hc/en-us/articles/12532496305819-Set-up-a-value-added-network-VAN-connection',
   mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
   mssql: 'https://docs.celigo.com/hc/en-us/articles/360039003951-Set-up-a-connection-to-Microsoft-SQL',
@@ -290,8 +303,9 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
 };
 
 export const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
-export const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
+export const CONN_DRAWER_PATH = '/:operation(add|edit|configure)/connections/:connId';
 export const ICLIENT_DRAWER_PATH = '/:operation(add|edit)/iClients/:iClientId';
+export const INTEGRATION_DRAWER_PATH = '/integrations/:integrationId/';
 
 // given a url, this util returns the path params
 // to identify the parent export/import type and id
@@ -306,6 +320,14 @@ export const getParentResourceContext = (url, resourceType) => {
         `/**${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
       ],
       exact: true})?.params || {};
+  }
+  if (resourceType === 'integrations') {
+    return matchPath(url, {
+      path: [
+        `${INTEGRATION_DRAWER_PATH}**`,
+      ],
+      exact: true,
+    })?.params || {};
   }
 
   return matchPath(url, {

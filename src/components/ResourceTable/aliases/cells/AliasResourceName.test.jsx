@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -24,7 +24,7 @@ initialStore.getState().data.resources.imports = [{
   createdAt: '2021-01-10T10:15:45.184Z',
 }];
 
-describe('UI test cases for aliasresourcename', () => {
+describe('uI test cases for aliasresourcename', () => {
   test('should display import name when the component is rendered', () => {
     const alias = {
       _importId: '5ffad3d1f08d35214ed200g7',

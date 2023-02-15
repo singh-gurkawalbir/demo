@@ -96,6 +96,8 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
     'FTPExport',
     'AS2Import',
     'AS2Export',
+    'VANImport',
+    'VANExport',
     'S3Import',
     'S3Export',
     'RDBMSImport',

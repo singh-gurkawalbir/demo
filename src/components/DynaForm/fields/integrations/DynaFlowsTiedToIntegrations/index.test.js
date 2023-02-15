@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-conditional-expect */
+
 import React from 'react';
 import {
   screen,
@@ -90,7 +91,7 @@ function initDynaFlowsTiedToIntegration(props = {}) {
   return renderWithProviders(<DynaFlowsTiedToIntegration {...props} />, {initialStore});
 }
 
-describe('DynaFlowsTiedToIntegration UI tests', () => {
+describe('dynaFlowsTiedToIntegration UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     formKey: 'formKey',
@@ -109,7 +110,6 @@ describe('DynaFlowsTiedToIntegration UI tests', () => {
     initDynaFlowsTiedToIntegration(props);
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('Select...')).toBeInTheDocument();
-    screen.debug();
   });
   test('should diplay the attached flows when clicked on the dropdown', () => {
     initDynaFlowsTiedToIntegration(props);
@@ -121,7 +121,6 @@ describe('DynaFlowsTiedToIntegration UI tests', () => {
     expect(screen.getByText('flow3')).toBeInTheDocument();
     expect(screen.getByText('flow4')).toBeInTheDocument();
     expect(screen.getByText('Done')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render disabled dropdown when integrationId is not passed', async () => {
     initDynaFlowsTiedToIntegration({...props, formKey: 'newFormKey'});
@@ -131,7 +130,7 @@ describe('DynaFlowsTiedToIntegration UI tests', () => {
     try {
       await userEvent.click(dropdownField);
     } catch (e) {
-      expect(e.message).toEqual('unable to click element as it has or inherits pointer-events set to "none".');
+      expect(e.message).toBe('unable to click element as it has or inherits pointer-events set to "none".');
     }
   });
 });

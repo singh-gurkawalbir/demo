@@ -1,4 +1,4 @@
-/* global describe, test */
+/* eslint-disable jest/no-conditional-in-test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -65,7 +65,7 @@ describe('flowMetrics saga', () => {
           query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, selectedResources: flowIds, timeZone }),
         };
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,
@@ -84,7 +84,7 @@ describe('flowMetrics saga', () => {
         const resourceId2 = 'none';
         const flowIds = [];
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId: resourceId2,
           filters,
@@ -107,7 +107,7 @@ describe('flowMetrics saga', () => {
         };
         const e = new Error();
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,
@@ -165,7 +165,7 @@ describe('flowMetrics saga', () => {
           query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, range: { startDate, endDate, preset: 'lastrun' }, timeZone }),
         };
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,
@@ -200,7 +200,7 @@ describe('flowMetrics saga', () => {
           query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, range: { startDate, endDate, preset: 'lastrun' }, timeZone }),
         };
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,
@@ -224,7 +224,7 @@ describe('flowMetrics saga', () => {
         const flowJobResponse = undefined;
         const data = [{ dummy: 'dummy' }];
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,
@@ -247,7 +247,7 @@ describe('flowMetrics saga', () => {
         };
         const data = [{ dummy: 'dummy' }];
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,
@@ -271,7 +271,7 @@ describe('flowMetrics saga', () => {
           query: getFlowMetricsQuery(resourceType, resourceId, userId, filters),
         };
 
-        return expectSaga(requestFlowMetrics, {
+        expectSaga(requestFlowMetrics, {
           resourceType,
           resourceId,
           filters,

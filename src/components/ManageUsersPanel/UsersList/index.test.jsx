@@ -1,6 +1,4 @@
-/* global describe, test, expect, afterEach */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import UsersList from '.';
@@ -8,10 +6,10 @@ import { runServer } from '../../../test/api/server';
 import { mockGetRequestOnce, renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
 
-describe('Users List Test Cases', () => {
+describe('users List Test Cases', () => {
   runServer();
   afterEach(() => { cleanup; });
-  test('Test cases for the UsersList', async () => {
+  test('cases for the UsersList', async () => {
     mockGetRequestOnce('/api/integrations/5ffad3d1f08d35214ed200f7', {_id: '5ffad3d1f08d35214ed200f7'});
     mockGetRequestOnce('/api/notifications', []);
     mockGetRequestOnce('/api/integrations/5ffad3d1f08d35214ed200f7/ashares', []);

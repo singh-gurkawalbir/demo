@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -60,7 +59,7 @@ describe('suitescript jobs testcases', () => {
     test('should handle properly if api call is not successful', () => {
       const error = { code: 422, message: 'error occured' };
 
-      return expectSaga(getJob, { ssLinkedConnectionId, integrationId, jobId, jobType })
+      expectSaga(getJob, { ssLinkedConnectionId, integrationId, jobId, jobType })
         .provide([
           [call(apiCallWithRetry, requestOptions), throwError(error)],
         ])
@@ -112,7 +111,7 @@ describe('suitescript jobs testcases', () => {
           status: 'completed',
         }];
 
-      return expectSaga(requestJobCollection, { ssLinkedConnectionId, integrationId })
+      expectSaga(requestJobCollection, { ssLinkedConnectionId, integrationId })
         .provide([
           [call(apiCallWithRetry, {
             path,
@@ -148,7 +147,7 @@ describe('suitescript jobs testcases', () => {
           numSuccess: 2,
         }];
 
-      return expectSaga(requestJobCollection, { ssLinkedConnectionId, integrationId, flowId })
+      expectSaga(requestJobCollection, { ssLinkedConnectionId, integrationId, flowId })
         .provide([
           [call(apiCallWithRetry, {
             path,
@@ -184,7 +183,7 @@ describe('suitescript jobs testcases', () => {
           numSuccess: 0,
         }];
 
-      return expectSaga(requestJobCollection, { ssLinkedConnectionId,
+      expectSaga(requestJobCollection, { ssLinkedConnectionId,
         integrationId,
         flowId,
         filters: {
@@ -213,7 +212,7 @@ describe('suitescript jobs testcases', () => {
       const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs?flowId=f1`;
       const error = { code: 422, message: 'error occured' };
 
-      return expectSaga(requestJobCollection, { ssLinkedConnectionId,
+      expectSaga(requestJobCollection, { ssLinkedConnectionId,
         integrationId,
         flowId,
       })
@@ -252,7 +251,7 @@ describe('suitescript jobs testcases', () => {
 
       expect(saga.next(watcherTask).value).toEqual(take(actionTypes.SUITESCRIPT.JOB.CLEAR));
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -272,7 +271,7 @@ describe('suitescript jobs testcases', () => {
         },
       ];
 
-      return expectSaga(requestJobErrorCollection, {ssLinkedConnectionId, integrationId, jobId, jobType})
+      expectSaga(requestJobErrorCollection, {ssLinkedConnectionId, integrationId, jobId, jobType})
         .provide([
           [call(apiCallWithRetry, {
             path,
@@ -296,7 +295,7 @@ describe('suitescript jobs testcases', () => {
     test('should handle incase api call fails', () => {
       const error = { code: 422, message: 'error occured' };
 
-      return expectSaga(requestJobErrorCollection, {ssLinkedConnectionId, integrationId, jobId, jobType})
+      expectSaga(requestJobErrorCollection, {ssLinkedConnectionId, integrationId, jobId, jobType})
         .provide([
           [call(apiCallWithRetry, {
             path,
@@ -336,7 +335,7 @@ describe('suitescript jobs testcases', () => {
 
       expect(saga.next(watcherTask).value).toEqual(take(actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR));
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -349,7 +348,7 @@ describe('suitescript jobs testcases', () => {
         },
       ];
 
-      return expectSaga(getInProgressJobsStatus, {
+      expectSaga(getInProgressJobsStatus, {
         ssLinkedConnectionId,
         integrationId,
       })
@@ -383,7 +382,7 @@ describe('suitescript jobs testcases', () => {
         },
       ];
 
-      return expectSaga(getInProgressJobsStatus, {
+      expectSaga(getInProgressJobsStatus, {
         ssLinkedConnectionId,
         integrationId,
       })
@@ -422,7 +421,7 @@ describe('suitescript jobs testcases', () => {
         pollSagaArgs: { ssLinkedConnectionId,
           integrationId },
         duration: 5000}));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -448,7 +447,7 @@ describe('suitescript jobs testcases', () => {
         ])
       );
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -511,7 +510,7 @@ describe('suitescript jobs testcases', () => {
         message: 'error occured',
       };
 
-      return expectSaga(resolveSelectedErrors, {
+      expectSaga(resolveSelectedErrors, {
         ssLinkedConnectionId,
         integrationId,
         jobId,
@@ -616,7 +615,7 @@ describe('suitescript jobs testcases', () => {
         errorMessage: 'error occured',
       };
 
-      return expectSaga(resolveJobExports, {
+      expectSaga(resolveJobExports, {
         ssLinkedConnectionId,
         integrationId,
         flowId,
@@ -704,7 +703,7 @@ describe('suitescript jobs testcases', () => {
         errorMessage: 'error occured',
       };
 
-      return expectSaga(resolveJobImports, {
+      expectSaga(resolveJobImports, {
         ssLinkedConnectionId,
         integrationId,
         flowId,
@@ -755,7 +754,7 @@ describe('suitescript jobs testcases', () => {
         errorMessage: 'error occurred',
       };
 
-      return expectSaga(resolveLogs, {
+      expectSaga(resolveLogs, {
         ssLinkedConnectionId,
         integrationId,
         flowId,
@@ -786,7 +785,7 @@ describe('suitescript jobs testcases', () => {
         },
       ];
 
-      return expectSaga(resolveCommit, {
+      expectSaga(resolveCommit, {
         ssLinkedConnectionId,
         integrationId,
         flowId,
@@ -824,7 +823,7 @@ describe('suitescript jobs testcases', () => {
         },
       ];
 
-      return expectSaga(resolveCommit, {
+      expectSaga(resolveCommit, {
         ssLinkedConnectionId,
         integrationId,
         flowId,
@@ -890,7 +889,7 @@ describe('suitescript jobs testcases', () => {
           jobs,
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should resolve all pending and init resolve for passed in jobs, wait for resolve commit and then commit resolve', () => {
@@ -923,7 +922,7 @@ describe('suitescript jobs testcases', () => {
           jobs,
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should resolve all pending and init resolve for passed in jobs, wait for resolve undo and then return', () => {
@@ -948,7 +947,7 @@ describe('suitescript jobs testcases', () => {
         ])
       );
 
-      expect(saga.next(actions.suiteScript.job.resolveUndo()).done).toEqual(
+      expect(saga.next(actions.suiteScript.job.resolveUndo()).done).toBe(
         true
       );
     });
@@ -1007,7 +1006,7 @@ describe('suitescript jobs testcases', () => {
           flowId,
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should resolve all pending and resolve all init, wait for resolve all commit and then commit resolve', () => {
@@ -1036,7 +1035,7 @@ describe('suitescript jobs testcases', () => {
           flowId,
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should resolve all pending and resolve all init, wait for resolve all undo and then return', () => {
@@ -1062,7 +1061,7 @@ describe('suitescript jobs testcases', () => {
         flowId,
         integrationId,
         ssLinkedConnectionId,
-      })).done).toEqual(true);
+      })).done).toBe(true);
     });
   });
 });

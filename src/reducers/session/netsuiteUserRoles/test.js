@@ -1,11 +1,10 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
 const { netsuiteUserRoles } = selectors;
 
-describe('netsuiteUser roles reducer ', () => {
+describe('netsuiteUser roles reducer', () => {
   const connectionId = '123';
 
   test('should create a new connection on request if there isn`t an existing one', () => {
@@ -177,7 +176,7 @@ describe('netsuiteUser roles reducer ', () => {
   });
 });
 
-describe('netsuiteUserRoles selector ', () => {
+describe('netsuiteUserRoles selector', () => {
   const connectionId = '123';
   const sampleResp = {
     production: {
@@ -350,7 +349,7 @@ describe('netsuiteUserRoles selector ', () => {
       acc
     );
 
-    expect(optionsArr).toEqual(null);
+    expect(optionsArr).toBeNull();
   });
 
   test('should return all unique accounts when a netsuiteUserRoles response has multiple roles of the same account', () => {
@@ -396,7 +395,7 @@ describe('netsuiteUserRoles selector ', () => {
       acc
     );
 
-    expect(optionsArr).toEqual(undefined);
+    expect(optionsArr).toBeUndefined();
   });
 
   test('should return an empty array for netsuiteResourceType of role when there isn`t any matching roles for the selected account', () => {
@@ -439,6 +438,6 @@ describe('netsuiteUserRoles selector ', () => {
       acc
     );
 
-    expect(optionsArr).toEqual(undefined);
+    expect(optionsArr).toBeUndefined();
   });
 });

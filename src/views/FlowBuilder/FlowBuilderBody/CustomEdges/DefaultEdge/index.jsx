@@ -163,6 +163,7 @@ function DefaultEdge({
     !isViewMode &&
     !isFlowSaveInProgress &&
     !isDataLoaderFlow &&
+    (targetIndex <= 1) &&
     !isSourceEmptyNode;
   const isMergableEdge =
     mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
@@ -252,8 +253,14 @@ function DefaultEdge({
         // the x line first, as we don't want overlapping lines when multiple edges share the
         // same final y position.
 
-        drawLine(p, 'y');
-        drawLine(p, 'x');
+        // For pg edges (i.e. targetIndex > 1), the vertical line of the edge will be drawn upto the previous step,
+        // and the horizontal line of the edge will be skipped, so that the line will not overlap the pg-dropbox
+        if (targetIndex > 1) {
+          drawLine({x: p.x, y: p.y + (346 * (targetIndex - 1))}, 'y');
+        } else {
+          drawLine(p, 'y');
+          drawLine(p, 'x');
+        }
       } else {
         drawLine(p, 'x');
         drawLine(p, 'y');
@@ -261,7 +268,7 @@ function DefaultEdge({
     });
 
     return path;
-  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge]);
+  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge, targetIndex]);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));

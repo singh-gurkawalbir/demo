@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach, jest */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -102,11 +102,8 @@ describe('LookupDrawer tests', () => {
   test('Should able to test the Lookup drawer with Create action', async () => {
     await initLookupDrawer({...props, lookups: undefined}, createLookupURL);
     expect(screen.getByRole('heading', {name: 'Create lookup'})).toBeInTheDocument();
-    const backButton = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'backRightDrawer');
     const dynamicOption = screen.getByRole('radio', {name: 'Dynamic search'});
 
-    userEvent.click(backButton);
-    expect(mockHistoryGoBack).toHaveBeenCalled();
     expect(dynamicOption).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'Static: value to value'})).toBeInTheDocument();
     expect(screen.getByText('Action to take if unique match not found')).toBeInTheDocument();

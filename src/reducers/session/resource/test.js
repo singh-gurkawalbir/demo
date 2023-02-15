@@ -1,8 +1,8 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE} from '../../../constants';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -107,7 +107,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.license.licenseUpgradeRequestSubmitted(undefined, feature)
       );
-      const expected = {platformLicenseActionMessage: messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')};
+      const expected = { platformLicenseActionMessage: message.SUBSCRIPTION.FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE };
 
       expect(state).toEqual(expected);
     });
@@ -196,11 +196,10 @@ describe('session.resource reducers', () => {
   describe('session.resource selectors', () => {
     describe('createdResourceId', () => {
       test('should return undefined when no match found.', () => {
-        expect(selectors.createdResourceId(undefined, 'tempId')).toEqual(
-          undefined
+        expect(selectors.createdResourceId(undefined, 'tempId')).toBeUndefined(
         );
-        expect(selectors.createdResourceId({}, 'tempId')).toEqual(undefined);
-        expect(selectors.createdResourceId({tempId: '123'}, null)).toEqual(undefined);
+        expect(selectors.createdResourceId({}, 'tempId')).toBeUndefined();
+        expect(selectors.createdResourceId({tempId: '123'}, null)).toBeUndefined();
       });
 
       test('should return correct newly created ID when match against tempId found.', () => {
@@ -216,7 +215,7 @@ describe('session.resource reducers', () => {
     });
     describe('resourceReferences', () => {
       test('should return empty object when state is undefined', () => {
-        expect(selectors.resourceReferences(undefined)).toEqual(null);
+        expect(selectors.resourceReferences(undefined)).toBeNull();
       });
       test('should return references for valid state', () => {
         const testReferences = {
@@ -246,10 +245,9 @@ describe('session.resource reducers', () => {
   });
   describe('platformLicenseActionMessage', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors.platformLicenseActionMessage(undefined)).toEqual(
-        undefined
+      expect(selectors.platformLicenseActionMessage(undefined)).toBeUndefined(
       );
-      expect(selectors.platformLicenseActionMessage({})).toEqual(undefined);
+      expect(selectors.platformLicenseActionMessage({})).toBeUndefined();
     });
     test('should return correct license upgrade action message', () => {
       const state = reducer(
@@ -263,10 +261,9 @@ describe('session.resource reducers', () => {
   });
   describe('ssoLicenseUpgradeRequested', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors.ssoLicenseUpgradeRequested(undefined)).toEqual(
-        undefined
+      expect(selectors.ssoLicenseUpgradeRequested(undefined)).toBeUndefined(
       );
-      expect(selectors.ssoLicenseUpgradeRequested({})).toEqual(undefined);
+      expect(selectors.ssoLicenseUpgradeRequested({})).toBeUndefined();
     });
     test('should return true when sso license is upgrade requested', () => {
       const state = reducer(
@@ -280,10 +277,9 @@ describe('session.resource reducers', () => {
   });
   describe('getChildIntegrationId', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors.getChildIntegrationId(undefined)).toEqual(
-        undefined
+      expect(selectors.getChildIntegrationId(undefined)).toBeUndefined(
       );
-      expect(selectors.getChildIntegrationId({})).toEqual(undefined);
+      expect(selectors.getChildIntegrationId({})).toBeUndefined();
     });
 
     test('should return correct child integration id', () => {
@@ -306,7 +302,7 @@ describe('session.resource reducers', () => {
         actions.resource.updateChildIntegration(parentId, childId)
       );
 
-      expect(selectors.getChildIntegrationId(state, 'dummy')).toEqual(undefined);
+      expect(selectors.getChildIntegrationId(state, 'dummy')).toBeUndefined();
     });
   });
   describe('getNumEnabledFlows', () => {
@@ -336,10 +332,9 @@ describe('session.resource reducers', () => {
   });
   describe('getLicenseEntitlementUsage', () => {
     test('should return null when no match found.', () => {
-      expect(selectors.getLicenseEntitlementUsage(undefined)).toEqual(
-        null
+      expect(selectors.getLicenseEntitlementUsage(undefined)).toBeNull(
       );
-      expect(selectors.getLicenseEntitlementUsage({})).toEqual(null);
+      expect(selectors.getLicenseEntitlementUsage({})).toBeNull();
     });
 
     test('should return correct license entitlement usage info', () => {

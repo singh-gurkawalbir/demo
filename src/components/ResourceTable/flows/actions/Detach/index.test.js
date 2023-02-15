@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter} from 'react-router-dom';
@@ -57,7 +57,7 @@ async function initflowTable(actionProps = {}, res = resource, initialStore = nu
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Detach flow action UI test cases', () => {
+describe('detach flow action UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

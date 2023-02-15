@@ -85,7 +85,7 @@ export default function CeligoPageBar(props) {
             {title}
           </Typography>
           {titleTag && <span>{titleTag}</span>}
-          {infoText && <InfoIconButton info={infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} />}
+          {infoText && <InfoIconButton info={infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} title={title} />}
           <div className={classes.emptySpace} />
           {children}
         </Grid>

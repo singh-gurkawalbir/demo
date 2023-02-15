@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { render, screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -17,7 +17,7 @@ jest.mock('@material-ui/core/Slider', () => props => {
   );
 });
 
-describe('CronBuilder UI tests', () => {
+describe('cronBuilder UI tests', () => {
   test('rendering', () => {
     const onchange = jest.fn();
 

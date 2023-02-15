@@ -7,22 +7,20 @@ import LoadResources from '../../../../components/LoadResources';
 import getRoutePath from '../../../../utils/routePaths';
 
 export default function CloneCrumb({ resourceId, resourceType }) {
+  const history = useHistory();
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
-
-  const history = useHistory();
-
-  let path;
+  let path = 'goBack';
 
   switch (resourceType) {
     case 'integrations':
       path = getRoutePath(`/integrations/${resourceId}`);
       break;
     case 'flows':
-      if (resource._integrationId) {
-        path = resource ? getRoutePath(`/integrations/${resource._integrationId}/flowBuilder/${resourceId}`) : 'goBack';
-      } else { path = resource ? getRoutePath(`/integrations/none/flowBuilder/${resourceId}`) : 'goBack'; }
+      if (resource) {
+        path = resource._integrationId ? getRoutePath(`/integrations/${resource._integrationId}/flowBuilder/${resourceId}`) : getRoutePath(`/integrations/none/flowBuilder/${resourceId}`);
+      }
       break;
     case 'exports':
       path = getRoutePath(`/exports/edit/exports/${resourceId}`);
@@ -30,7 +28,7 @@ export default function CloneCrumb({ resourceId, resourceType }) {
     case 'imports':
       path = getRoutePath(`/imports/edit/imports/${resourceId}`);
       break;
-    default: path = 'goBack';
+    default: break;
   }
 
   const handleClick = useCallback(e => {
@@ -46,9 +44,11 @@ export default function CloneCrumb({ resourceId, resourceType }) {
 
   return (
     <LoadResources resources={resourceType}>
-      <span onClick={handleClick}>
-        {resource ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType]}
-      </span>
+      <a color="inherit" href={path}>
+        <span onClick={handleClick}>
+          {resource?.name ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType]}
+        </span>
+      </a>
     </LoadResources>
   );
 }

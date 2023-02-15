@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,7 +27,7 @@ async function initMultiSelectFilter({ props } = {}) {
   return renderWithProviders(ui);
 }
 
-describe('MultiSelectFilter component Test cases', () => {
+describe('multiSelectFilter component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     await initMultiSelectFilter();
@@ -219,7 +219,7 @@ describe('MultiSelectFilter component Test cases', () => {
 
     userEvent.click(applyButton);
     expect(onSave).toHaveBeenCalledTimes(1);
-    expect(onSave).toBeCalledWith(['id_1', 'id_0', 'id_4', 'child_id_1', 'child_id_9', 'child_id_4']);
+    expect(onSave).toHaveBeenCalledWith(['id_1', 'id_0', 'id_4', 'child_id_1', 'child_id_9', 'child_id_4']);
     expect(screen.queryByText(/apply/i)).not.toBeInTheDocument();
   });
 
@@ -257,6 +257,6 @@ describe('MultiSelectFilter component Test cases', () => {
     userEvent.click(parent0Checkbox);
 
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toBeCalledWith([], 'id_0');
+    expect(onSelect).toHaveBeenCalledWith([], 'id_0');
   });
 });

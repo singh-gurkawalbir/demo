@@ -1,11 +1,11 @@
-/* global describe, test, expect, */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import InfoIconButton from '.';
 
-describe('InfoIconButton UI tests', () => {
+describe('infoIconButton UI tests', () => {
   test('should render the infoIcon Button', () => {
     const props = {info: 'sample info icon content'};
 

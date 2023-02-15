@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { fireEvent, screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -43,7 +44,7 @@ jest.mock('@material-ui/icons/AccessTime', () => ({
   ,
 }));
 
-describe('DynaDateTime UI tests', () => {
+describe('dynaDateTime UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -92,11 +93,11 @@ describe('DynaDateTime UI tests', () => {
   });
   test('should make a dispatch call on initial render when valid date and time are passed in the props', async () => {
     initDynaDateTime(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('imports-5bf18b09294767270c62fad9')('dateTime', {isValid: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('imports-5bf18b09294767270c62fad9')('dateTime', {isValid: true})));
   });
   test('should make a dispatch call with error message on initial render when invalid date and time are passed in the props', async () => {
     initDynaDateTime({...props, value: '2018-06-06T00:00000Z'});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('imports-5bf18b09294767270c62fad9')('dateTime', {isValid: false, errorMessages: 'Invalid date time value'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('imports-5bf18b09294767270c62fad9')('dateTime', {isValid: false, errorMessages: 'Invalid date time value'})));
   });
   test('should not render the icons in the fields when "removePickerDialog" prop is sent as true', async () => {
     initDynaDateTime({...props, value: '', removePickerDialog: true});
@@ -112,7 +113,6 @@ describe('DynaDateTime UI tests', () => {
   });
   test('should be able to edit both date and time', () => {
     initDynaDateTime(props);
-    screen.debug(null, Infinity);
     const dateField = screen.getByPlaceholderText('MM/DD/YYYY');
 
     fireEvent.keyPress(dateField, {key: 'Enter', code: 'Enter', charCode: 13});
@@ -124,7 +124,6 @@ describe('DynaDateTime UI tests', () => {
     });
     fireEvent.change(dateField, {target: {value: '24/05/2020'}});
     expect(dateField).toHaveValue('24/05/2020');
-    screen.debug(undefined, Infinity);
     const timeField = document.querySelector('[value="12:00 AM"]');
 
     fireEvent.keyPress(timeField, {key: 'Enter', code: 'Enter', charCode: 13});

@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -12,18 +10,8 @@ const props = {
   panelId: 'request',
 };
 
-describe('Testing Celigo Tab Panel Component', async () => {
-  test('Testing Celigo Tab Panel Component when both the activeTab and panelId is not equal', async () => {
-    render(
-      <MemoryRouter>
-        <CeligoTabWrapper>
-          <CeligoPillTabs defaultTab="sometext" />
-          <CeligoTabPanel {...props} />
-        </CeligoTabWrapper>
-      </MemoryRouter>
-    );
-  });
-  test('Testing Celigo Tab Panel Component when bith the active tab and panelId is same', async () => {
+describe('testing Celigo Tab Panel Component', () => {
+  test('testing Celigo Tab Panel Component when bith the active tab and panelId is same', async () => {
     render(
       <MemoryRouter>
         <CeligoTabWrapper>

@@ -24,6 +24,7 @@ import {
 } from './util';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -156,11 +157,11 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
     const r = rule.data;
 
     if (!r.lhs.field) {
-      return { isValid: false, error: 'Please select left operand.' };
+      return { isValid: false, error: message.FILTER_PANEL.SELECT_LEFT_OPERAND };
     }
 
     if (!r.rhs.value) {
-      return { isValid: false, error: 'Please select right operand.' };
+      return { isValid: false, error: message.FILTER_PANEL.SELECT_RIGHT_OPERAND };
     }
 
     return {

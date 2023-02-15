@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +43,7 @@ describe('test suite for saved search internal id field', () => {
     expect(inputEle).toHaveAttribute('placeholder', props.placeholder);
     expect(inputEle).toBeEnabled();
     userEvent.type(inputEle, value);
-    Array.from(value).forEach(key => expect(onFieldChange).toBeCalledWith(props.id, key));
+    Array.from(value).forEach(key => expect(onFieldChange).toHaveBeenCalledWith(props.id, key));
   });
 
   test('should show the error message in case of invalid data', () => {
@@ -84,7 +84,7 @@ describe('test suite for saved search internal id field', () => {
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
     userEvent.click(openSavedSearchBtn);
-    expect(mockOpenExternalUrl).toBeCalledWith({url});
+    expect(mockOpenExternalUrl).toHaveBeenCalledWith({url});
   });
 
   test('should not be able to open saved search if netsuite domain does not exist', () => {
@@ -99,6 +99,6 @@ describe('test suite for saved search internal id field', () => {
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
     userEvent.click(openSavedSearchBtn);
-    expect(mockOpenExternalUrl).not.toBeCalled();
+    expect(mockOpenExternalUrl).not.toHaveBeenCalled();
   });
 });

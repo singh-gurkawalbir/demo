@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -19,7 +19,7 @@ function initDynaCSVColumnMapper(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DynaCSVColumnMapper UI test cases', () => {
+describe('dynaCSVColumnMapper UI test cases', () => {
   test('should verify content and create a new row', () => {
     const genralProps = {
       maxNumberOfColumns: 3,
@@ -55,7 +55,7 @@ describe('DynaCSVColumnMapper UI test cases', () => {
     expect(screen.getByText('CHECK AMOUNT')).toBeInTheDocument();
     expect(screen.getByText('/checkamount/i')).toBeInTheDocument();
   });
-  test('Should verify table content when maxNumberOfColumns is not provided', () => {
+  test('should verify table content when maxNumberOfColumns is not provided', () => {
     const genralProps = {
       value: [
         {

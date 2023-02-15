@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaTrialLicense from './DynaTrialLicense';
@@ -30,9 +30,9 @@ describe('test suite for DynaTrialLicense field', () => {
     initialStore.getState().user.profile.email = email;
     const { utils: { unmount } } = renderWithProviders(<DynaTrialLicense {...props} />, {initialStore});
 
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection(`connectors/${props.connectorId}/licenses`));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection(`connectors/${props.connectorId}/licenses`));
 
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.clearCollection('connectorLicenses'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.clearCollection('connectorLicenses'));
   });
 });

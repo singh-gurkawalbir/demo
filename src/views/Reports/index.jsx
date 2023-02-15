@@ -24,6 +24,7 @@ import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import NoResultTypography from '../../components/NoResultTypography';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -76,7 +77,7 @@ export const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TY
 // poll for 5 seconds
 const REPORTS_REFRESH_TIMER = 5000;
 
-const usePollLatestResourceCollection = resourceType => {
+const PollLatestResourceCollection = ({resourceType}) => {
   const dispatch = useDispatch();
   const isReportTypeRunningOrQueued = useSelector(state => selectors.isAnyReportRunningOrQueued(state, resourceType));
 
@@ -89,6 +90,8 @@ const usePollLatestResourceCollection = resourceType => {
       dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.requestCollection(resourceType, null, true)));
     };
   }, [dispatch, isReportTypeRunningOrQueued, resourceType]);
+
+  return null;
 };
 
 const Pagination = ({ filterKey}) => {
@@ -129,10 +132,15 @@ const Pagination = ({ filterKey}) => {
   );
 };
 
-const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
+const RefreshPaginationComponent = ({resourceType}) => {
   const [isRefreshedByUser, setIsRefreshedByUser] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const resourceStatus = useSelectorMemo(
+    selectors.makeAllResourceStatusSelector,
+    resourceType || ''
+  );
+  const {isLoading: isLoadingResource} = resourceStatus?.[0] || {};
 
   useEffect(() => {
     if (!isLoadingResource) {
@@ -148,7 +156,7 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
         disabled={isRefreshedByUser}
         onClick={() => {
           setIsRefreshedByUser(true);
-          dispatch(actions.resource.requestCollection(resourceType, null));
+          dispatch(actions.resource.requestCollection(resourceType, null, true));
         }}
     >
         Refresh
@@ -160,6 +168,17 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
 
   );
 };
+const Loading = ({resourceType}) => {
+  const classes = useStyles();
+  const resourceStatus = useSelectorMemo(
+    selectors.makeAllResourceStatusSelector,
+    resourceType || ''
+  );
+  const {isReady: isDataReadyAfterUserRefresh} = resourceStatus?.[0] || {};
+
+  return !isDataReadyAfterUserRefresh ? <Spinner loading size="large" className={classes.reportsRefreshSpinner} /> : null;
+};
+
 export default function Reports() {
   const match = useRouteMatch();
   const history = useHistory();
@@ -185,19 +204,12 @@ export default function Reports() {
     }
   }, [history, isValidReportType, match.params, match.path, resourceType]);
 
-  const resourceStatus = useSelectorMemo(
-    selectors.makeAllResourceStatusSelector,
-    resourceType || ''
-  );
-  const {isReady: isDataReadyAfterUserRefresh, isLoading: isLoadingResource} = resourceStatus?.[0] || {};
-
   useEffect(() => {
     dispatch(actions.patchFilter(resourceType, {...defaultFilter, type: resourceType }));
 
     return () => dispatch(actions.clearFilter(resourceType));
   }, [dispatch, resourceType]);
-  const filter =
-    useSelector(state => selectors.filter(state, resourceType));
+  const filter = useSelector(state => selectors.filter(state, resourceType));
 
   const selectNewReportType = e => {
     const reportType = e.target.value;
@@ -214,7 +226,6 @@ export default function Reports() {
     filter
   );
 
-  usePollLatestResourceCollection(resourceType);
   const selectedReportTypeLabel = () => VALID_REPORT_TYPES.find(({value}) => value === resourceType)?.label;
   const info = infoText[resourceType];
 
@@ -226,6 +237,7 @@ export default function Reports() {
     <>
       <ResourceDrawer />
       <ViewReportDetails />
+      <PollLatestResourceCollection resourceType={resourceType} />
       <CeligoPageBar
         title="Reports" infoText={infoText.reports}>
         <div>
@@ -257,7 +269,7 @@ export default function Reports() {
               component="div"
               className={classes.reportsHeading}
               >
-              {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
+              {reportTypeLabel} report results  {info && <InfoIconButton info={info} title={`${reportTypeLabel} report results`} />}
             </Typography>
             <ActionGroup position="right">
               <TextButton
@@ -272,22 +284,21 @@ export default function Reports() {
                 Run report
               </TextButton>
               <RefreshPaginationComponent
-                isLoadingResource={isLoadingResource}
                 resourceType={resourceType} />
             </ActionGroup>
           </div>
-          {!isDataReadyAfterUserRefresh && <Spinner loading size="large" className={classes.reportsRefreshSpinner} />}
+          <Loading resourceType={resourceType} />
           <div className={classes.reportsTable}>
             <LoadResources required resources={`${resourceType},integrations,flows`}>
               {list.total === 0 ? (
                 <NoResultTypography>
-                  {'You don\'t have any report results'}
+                  {messageStore('NO_RESULT', {message: 'report results'})}
                 </NoResultTypography>
               ) : (
                 <ResourceTable
                   resourceType={resourceType}
                   resources={list.resources}
-            />
+                />
               )}
             </LoadResources>
           </div>

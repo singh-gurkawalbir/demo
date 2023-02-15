@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -44,11 +44,10 @@ const integrations = [
   },
 ];
 
-describe('DynaAllIntegrations UI tests', () => {
+describe('dynaAllIntegrations UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<DynaAllIntegrations />);
     expect(screen.getByText('Please select')).toBeInTheDocument();
-    screen.debug();
   });
   test('should display integrations in the dropdown when clicked on please select option', () => {
     initialStore.getState().data.resources = {

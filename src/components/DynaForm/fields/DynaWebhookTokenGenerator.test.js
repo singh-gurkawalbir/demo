@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,7 +15,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-jest.mock('uuid', () => ({ v4: () => '123456789' }));
+jest.mock('../../../utils/string', () => ({ generateUUID: () => '123456789' }));
 
 const enqueueSnackbar = jest.fn();
 
@@ -56,7 +56,7 @@ function initDynaWebhookTokenGenerator(props = {}, initialStore = null) {
 
 const mockOnFieldChange = jest.fn();
 
-describe('DynaWebhookTokenGenerator UI test cases', () => {
+describe('dynaWebhookTokenGenerator UI test cases', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
@@ -136,7 +136,7 @@ describe('DynaWebhookTokenGenerator UI test cases', () => {
       }, initialStore
     );
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.resource.patchStaged('finalResId', patchSet, 'value')
+      actions.resource.patchStaged('finalResId', patchSet)
     );
   });
 });

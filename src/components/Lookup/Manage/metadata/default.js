@@ -155,6 +155,7 @@ const getLookupMetadata = ({
         type: 'radiogroup',
         label: 'Action to take if unique match not found',
         showOptionsVertically: true,
+        helpKey: 'mapping.lookupAction',
         defaultValue: getFailedRecordDefault(lookup) || 'disallowFailure',
         options: [
           {

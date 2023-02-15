@@ -1,6 +1,4 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable react/jsx-handler-names */
-/* global describe, test, jest, beforeEach, afterEach, expect */
+
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -14,8 +12,7 @@ import actionTypes from '../../../actions/types';
 import { MOCK_INPUT_STATUS } from '../../../constants';
 import { DrawerProvider } from '../../drawer/Right/DrawerContext';
 import actions from '../../../actions';
-import errorMessageStore from '../../../utils/errorStore';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 let initialStore;
 
@@ -78,6 +75,7 @@ jest.mock('../../drawer/Right', () => ({
   default: newProps => (
     <>
       <div>{newProps.children}</div>
+      {/* eslint-disable-next-line react/button-has-type, react/button-has-type, react/jsx-handler-names */}
       <div><button onClick={newProps.onClose}>On Close</button></div>
     </>
   ),
@@ -106,7 +104,7 @@ jest.mock('../../AFE/Editor/panels/Code', () => ({
   },
 }
 ));
-describe('Mock input drawer test cases', () => {
+describe('mock input drawer test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -173,7 +171,7 @@ describe('Mock input drawer test cases', () => {
     userEvent.clear(inputNode);
     userEvent.type(inputNode, 'userinput');
     expect(screen.getByText(/userinput/i)).toBeInTheDocument();
-    expect(screen.getByText(errorMessageStore('MOCK_INPUT_INVALID_JSON'))).toBeInTheDocument();
+    expect(screen.getByText(message.MOCK_INPUT_REFRESH.INVALID_JSON)).toBeInTheDocument();
   });
   test('should wrap array data type correctly', async () => {
     initMockInput({ status: 'received', data: [{id: '123'}] });
@@ -247,7 +245,7 @@ describe('Mock input drawer test cases', () => {
         type: actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT,
         resourceId,
       });
-      expect(screen.getByText(messageStore('MOCK_INPUT_REFRESH_SUCCESS'))).toBeInTheDocument();
+      expect(screen.getByText(message.MOCK_INPUT_REFRESH.SUCCESS)).toBeInTheDocument();
     });
   });
   test('should dispatch correct action on click of "Fetch latest input data" button and show error snackbar', async () => {
@@ -270,7 +268,7 @@ describe('Mock input drawer test cases', () => {
     await initialStore.dispatch(actions.mockInput.receivedError(resourceId, 'Not found'));
 
     await waitFor(() => {
-      expect(screen.getByText(errorMessageStore('MOCK_INPUT_REFRESH_FAILED'))).toBeInTheDocument();
+      expect(screen.getByText(message.MOCK_INPUT_REFRESH.FAILED)).toBeInTheDocument();
     });
   });
 });

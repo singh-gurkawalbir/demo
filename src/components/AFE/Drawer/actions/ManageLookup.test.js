@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import {
   screen,
@@ -86,7 +85,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('ManageLookup UI tests', () => {
+describe('manageLookup UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -130,7 +129,7 @@ describe('ManageLookup UI tests', () => {
 
     expect(createButtons[0]).toBeInTheDocument();
     userEvent.click(createButtons[0]);
-    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/imports/edit/imports/63877bbd52bb056425fe6255/editor/httprelativeURI/lookup/add'));
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/imports/edit/imports/63877bbd52bb056425fe6255/editor/httprelativeURI/lookup/add'));
   });
   test('should render empty DOM when showlookup and lookupFieldId are absent', () => {
     const {utils} = initManageLookup({editorId: 'filecsv2', formId: '/http/lookups'});

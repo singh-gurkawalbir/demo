@@ -9,12 +9,11 @@ import InstallationStep from '../../../../InstallStep';
 import ResourceSetupDrawer from '../../../../ResourceSetup/Drawer';
 import { generateNewId } from '../../../../../utils/resource';
 import jsonUtil from '../../../../../utils/json';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../constants';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -81,7 +80,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   useEffect(() => {
     if (areAllRevisionInstallStepsCompleted) {
-      enqueueSnackbar({ message: messageStore(revisionType === REVISION_TYPES.PULL ? 'PULL_MERGE_SUCCESS' : 'REVERT_SUCCESS') });
+      enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_SUCCESS : message.LCM.REVERT_SUCCESS });
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,6 +88,13 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   const handleStepClick = step => {
     const { type, completed, isTriggered, _connectionId, sourceConnection, url } = step;
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (completed) {
       return false;
@@ -112,7 +118,6 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
               newIA: true, // this prop is used to stop from saving the connection in resourceForm saga
               // TODO @Raghu: refactor this and rename this prop to make it more generic
             }),
-            SCOPES.VALUE
           )
         );
       }
@@ -139,6 +144,8 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
             integrationId,
             connectionId: step.connectionId,
             revisionId,
+            variant: netsuitePackageType,
+            isManualVerification: true,                     // true here sets the isManualVerification flag to true which means the user has triggered the verification
           }));
         }
       }

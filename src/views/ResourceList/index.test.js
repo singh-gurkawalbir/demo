@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -88,7 +88,7 @@ async function initResourceList({
   };
 }
 
-describe('ResourceList test cases', () => {
+describe('resourceList test cases', () => {
   runServer();
 
   beforeEach(() => {

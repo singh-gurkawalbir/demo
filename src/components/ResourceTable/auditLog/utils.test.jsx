@@ -1,7 +1,7 @@
-/* global describe, test, expect */
+
 import {hasLongLength} from './utils';
 
-describe('UI test cases for utils', () => {
+describe('uI test cases for utils', () => {
   let oldValue;
   let newValue;
   const dataobj = {

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen,
@@ -15,7 +15,7 @@ jest.mock('../../../icons/RefreshIcon', () => ({
   default: () => <div>Refresh button</div>,
 }));
 
-describe('DynaNSSearchCriteria UI tests', () => {
+describe('dynaNSSearchCriteria UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -74,7 +74,7 @@ describe('DynaNSSearchCriteria UI tests', () => {
 
     expect(refreshButton).toBeInTheDocument();
     userEvent.click(refreshButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalled());
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
   });
   test('should close the form when clocked on Close button', () => {
     renderWithProviders(<DynaNSSearchCriteria {...props} />);

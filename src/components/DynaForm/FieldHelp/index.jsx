@@ -25,6 +25,7 @@ export default function FieldHelp({
   resourceContext,
   escapeUnsecuredDomains,
   noApi = false,
+  disablePortal,
 }) {
   const classes = useStyles();
   const { developer } = useSelector(state => selectors.userProfile(state));
@@ -41,6 +42,7 @@ export default function FieldHelp({
       fieldId={id}
       resourceType={resourceContext && resourceContext.resourceType}
       escapeUnsecuredDomains={escapeUnsecuredDomains}
+      disablePortal={disablePortal}
     />
   );
 }

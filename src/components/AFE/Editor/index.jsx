@@ -318,7 +318,9 @@ export default function Editor({ editorId }) {
               key={p.area}
               dragBar={p.dragBar}
               title={resolveValue(p.title, editorContext)}
-              helpKey={resolveValue(p.helpKey, editorContext)}>
+              helpKey={resolveValue(p.helpKey, editorContext)}
+              isLoggable={p?.isLoggable}
+            >
               <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
             </SinglePanelGridItem>
           )

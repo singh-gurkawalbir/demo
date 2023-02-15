@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import * as React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -63,7 +62,7 @@ function initFunction() {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('Application type Http matadata text cases', () => {
+describe('application type Http matadata text cases', () => {
   window.HTMLElement.prototype.scrollIntoView = jest.fn();
   afterEach(() => {
     jest.clearAllMocks();

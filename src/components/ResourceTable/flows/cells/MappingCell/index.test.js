@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -68,7 +68,7 @@ async function initMappingPage(props) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Mapping cell  ui test cases', () => {
+describe('mapping cell  ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -90,10 +90,10 @@ describe('Mapping cell  ui test cases', () => {
   });
   test('should show icon indicator if flow has mappings', () => {
     initMappingPage({ flowId: '5ea16c600e2fab71928a6152' });
-    expect(document.querySelector('div div div').className).toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).toBeInTheDocument();
   });
   test('should not show icon indicator for flows without mappings', () => {
     initMappingPage({ flowId: '600ec2928a6152fab5ea1671' });
-    expect(document.querySelector('div div div').className).not.toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).not.toBeInTheDocument();
   });
 });

@@ -17,7 +17,6 @@ import DynaRelativeUri_afe from './DynaRelativeUri_afe';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
-import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody_afe from './DynaHttpRequestBody_afe';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse_afe from './DynaCsvParse_afe';
@@ -149,6 +148,7 @@ import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
+import DynaHFAssistantPathParams from './httpFramework/DynaHFAssistantPathParams';
 import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
@@ -242,7 +242,6 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   semiassistantoperationselect: DynaSemiAssistantOperationSelect,
-  keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
@@ -332,6 +331,7 @@ export default {
   integrationcloneselect: DynaIntegrationCloneSelect,
   hfoptions: DynaHFAssistantOptions,
   hfsearchparams: DynaHFAssistantSearchParams,
+  hfpathparams: DynaHFAssistantPathParams,
   semihfoperationselect: DynaSemiHFAssistantOperationSelect,
   amazonmwstype: DynaAmazonmwsType,
   mfamobilecode: DynaMFAMobileCode,

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -360,7 +359,7 @@ describe('SettingsDrawer test cases', () => {
     userEvent.click(saveButton);
   });
 
-  test('should pass the initial render with integration app flow', () => {
+  test('should pass the initial render with integration app flow duplicate', () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_0',

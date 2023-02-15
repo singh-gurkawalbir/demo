@@ -1,4 +1,4 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -38,7 +38,7 @@ function initScheduleCell(actionProps = {}, initialStore = null, schedule = '') 
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Shecdule cell UI test cases', () => {
+describe('shecdule cell UI test cases', () => {
   test('should show the type provided', () => {
     initScheduleCell({flowAttributes: {someflowId: {type: 'SomeType'}}});
 
@@ -69,11 +69,11 @@ describe('Shecdule cell UI test cases', () => {
   test('should show icon indicator for scheduled flows', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null, 'some schedule');
 
-    expect(document.querySelector('div div div').className).toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).toBeInTheDocument();
   });
   test('should not show icon indicator for unscheduled flows', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null);
 
-    expect(document.querySelector('div div div').className).not.toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).not.toBeInTheDocument();
   });
 });

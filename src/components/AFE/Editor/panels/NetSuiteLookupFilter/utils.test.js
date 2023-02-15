@@ -1,4 +1,3 @@
-/* global , test, describe, expect */
 import {
   getFilterRuleId,
   getFilterList,
@@ -7,10 +6,10 @@ import {
   convertNetSuiteLookupFilterExpression,
 } from './util';
 
-describe('NetSuiteLooupFilter testcases ', () => {
+describe('netSuiteLooupFilter testcases', () => {
   describe('getFilterRuleId function test case', () => {
     test('getFilterRuleId function test case', () => {
-      expect(getFilterRuleId({ id: 'firstText_rule_expectedText' })).toEqual(
+      expect(getFilterRuleId({ id: 'firstText_rule_expectedText' })).toBe(
         'expectedText'
       );
     });
@@ -138,7 +137,7 @@ describe('NetSuiteLooupFilter testcases ', () => {
     });
   });
   describe('generateRulesState function test', () => {
-    test('should call the function with condition as or ', () => {
+    test('should call the function with condition as or', () => {
       const rule = {
         condition: 'OR',
         rules: [
@@ -560,7 +559,7 @@ describe('NetSuiteLooupFilter testcases ', () => {
     });
   });
   describe('convertNetSuiteLookupFilterExpression function test cases', () => {
-    test('should return rules for a is condition ', () => {
+    test('should return rules for a is condition', () => {
       expect(convertNetSuiteLookupFilterExpression(['sampleField', 'is', 'WQEF'])).toEqual(
         {
           condition: 'AND',
@@ -721,7 +720,7 @@ describe('NetSuiteLooupFilter testcases ', () => {
         }
       );
     });
-    test('should formuladate return rules for a is condition ', () => {
+    test('should formuladate return rules for a is condition', () => {
       expect(convertNetSuiteLookupFilterExpression(['formuladate:', 'is', 'WQEF'])).toEqual(
         {
           condition: 'AND',
@@ -745,7 +744,7 @@ describe('NetSuiteLooupFilter testcases ', () => {
         }
       );
     });
-    test('should formuladate  and expression 2 not a string return rules for a is condition ', () => {
+    test('should formuladate  and expression 2 not a string return rules for a is condition', () => {
       expect(convertNetSuiteLookupFilterExpression(['formuladate:', 'is', 3])).toEqual(
         {
           condition: 'AND',
@@ -769,7 +768,7 @@ describe('NetSuiteLooupFilter testcases ', () => {
         }
       );
     });
-    test('should have formuladate as part of initial expression ', () => {
+    test('should have formuladate as part of initial expression', () => {
       expect(convertNetSuiteLookupFilterExpression(['formuladate:', 'is', '{{{someText}}}'], [{id: 'someText'}])).toEqual(
         {
           condition: 'AND',
@@ -793,7 +792,7 @@ describe('NetSuiteLooupFilter testcases ', () => {
         }
       );
     });
-    test('should formula date as part of expression and no data array for field is provided ', () => {
+    test('should formula date as part of expression and no data array for field is provided', () => {
       expect(convertNetSuiteLookupFilterExpression(['formuladate:', 'is', '{{{someText}}}'])).toEqual(
         {
           condition: 'AND',

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -19,7 +19,7 @@ async function initSelectDependentResource({
   return renderWithProviders(ui);
 }
 
-describe('SelectDependentResource test cases', () => {
+describe('selectDependentResource test cases', () => {
   runServer();
   test('should pass the initial render with default values', async () => {
     await initSelectDependentResource();
@@ -31,7 +31,7 @@ describe('SelectDependentResource test cases', () => {
     expect(screen.getByRole('button', {name: /apply/i})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: /Cancel/i})).toBeInTheDocument();
     userEvent.click(buttonRef);
-    expect(await screen.queryByText('Apply')).toBeInTheDocument();
+    await expect(screen.findByText('Apply')).resolves.toBeInTheDocument();
   });
 
   test('should pass the initial render with custom values', async () => {
@@ -61,9 +61,9 @@ describe('SelectDependentResource test cases', () => {
 
     expect(applyButton).toBeInTheDocument();
     userEvent.click(applyButton);
-    expect(await screen.queryByText('Apply')).not.toBeInTheDocument();
-    expect(onSave).toBeCalledTimes(1);
-    expect(onSave).toBeCalledWith([{
+    expect(screen.queryByText('Apply')).not.toBeInTheDocument();
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onSave).toHaveBeenCalledWith([{
       _id: 'id_1',
       name: 'name_1',
     }]);
@@ -73,7 +73,7 @@ describe('SelectDependentResource test cases', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(cancelButton);
-    expect(await screen.queryByText('Apply')).not.toBeInTheDocument();
+    expect(screen.queryByText('Apply')).not.toBeInTheDocument();
   });
 
   test('should pass the initial render with multiple selected values', async () => {

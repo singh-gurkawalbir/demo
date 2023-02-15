@@ -17,7 +17,7 @@ import BranchFilter from '../BranchFilter';
 import { selectors } from '../../../../../../reducers';
 import InfoIconButton from '../../../../../InfoIconButton';
 import InfoIcon from '../../../../../icons/InfoIcon';
-import messageStore from '../../../../../../utils/messageStore';
+import { message } from '../../../../../../utils/messageStore';
 import actions from '../../../../../../actions';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 
@@ -165,9 +165,9 @@ export default function BranchItem({
       branchType === 'all_matching_branches' ||
       (branchType === 'first_matching_branch' && position === 0)
     ) {
-      infoMessage = messageStore('BRANCH_EMPTY_FILTER_RECORD_PASS');
+      infoMessage = message.AFE_EDITOR_PANELS_INFO.BRANCH_EMPTY_FILTER_RECORD_PASS;
     } else {
-      infoMessage = messageStore('BRANCH_EMPTY_FILTER');
+      infoMessage = message.AFE_EDITOR_PANELS_INFO.BRANCH_EMPTY_FILTER;
     }
   }
 
@@ -226,7 +226,7 @@ export default function BranchItem({
               </div>
 
               <div className={classes.description}>
-                {description && <InfoIconButton size="xs" info={description} />}
+                {description && <InfoIconButton size="xs" info={description} title={branchName} />}
               </div>
 
               {!isViewMode && (

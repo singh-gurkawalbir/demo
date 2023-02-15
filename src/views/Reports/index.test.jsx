@@ -1,9 +1,6 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
@@ -113,7 +110,7 @@ jest.mock('react-router-dom', () => ({
     replace: mockHistoryReplace,
   }),
 }));
-describe('Reports', () => {
+describe('reports', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -134,7 +131,7 @@ describe('Reports', () => {
     mockDispatchFn.mockClear();
     cleanup();
   });
-  test('Should able to test the Reports page heading', async () => {
+  test('should able to test the Reports page heading', async () => {
     const params = {
       eventreports: 'eventreports',
       path: '/reports/eventreports',
@@ -145,7 +142,7 @@ describe('Reports', () => {
 
     expect(reportsHeadingNode).toBeInTheDocument();
   });
-  test('Should able to test the Reports page flow events drop-down button', async () => {
+  test('should able to test the Reports page flow events drop-down button', async () => {
     const params = {
       eventreports: 'eventreports',
       path: '/reports/eventreports',
@@ -166,7 +163,7 @@ describe('Reports', () => {
     await waitForElementToBeRemoved(optionsNode);
     expect(optionsNode).not.toBeInTheDocument();
   });
-  test('Should able to test the flow event report results heading', async () => {
+  test('should able to test the flow event report results heading', async () => {
     const params = {
       eventreports: 'eventreports',
       path: '/reports/eventreports',
@@ -177,7 +174,7 @@ describe('Reports', () => {
 
     expect(headingNode).toBeInTheDocument();
   });
-  test('Should able to test the run report button and verify the link which got generated', async () => {
+  test('should able to test the run report button and verify the link which got generated', async () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     const params = {
       eventreports: 'eventreports',
@@ -191,7 +188,7 @@ describe('Reports', () => {
     expect(runReportButtonNode).toBeInTheDocument();
     expect(runReportButtonNode).toHaveAttribute('href', '/reports/eventreports/add/eventreports/somegeneratedID');
   });
-  test('Should able to test the refresh button on the reports page', async () => {
+  test('should able to test the refresh button on the reports page', async () => {
     const params = {
       eventreports: 'eventreports',
       path: '/reports/eventreports',
@@ -203,9 +200,9 @@ describe('Reports', () => {
 
     expect(refreshButtonNode).toBeInTheDocument();
     userEvent.click(refreshButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('eventreports', null));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('eventreports', null, true));
   });
-  test('Should able to test report page with the reports which has status loading', async () => {
+  test('should able to test report page with the reports which has status loading', async () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',
@@ -244,7 +241,7 @@ describe('Reports', () => {
       refresh: true,
     }, 5000));
   });
-  test('Should able to test report page with resource type as undefined', async () => {
+  test('should able to test report page with resource type as undefined', async () => {
     const params = {
       eventreports: 'undefined',
       path: '/reports/undefined',
@@ -255,7 +252,7 @@ describe('Reports', () => {
     await initReports(params);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/reports/eventreports');
   });
-  test('Should able to test report page pagination', async () => {
+  test('should able to test report page pagination', async () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -12,6 +12,7 @@ const dummyFlow = {
 };
 
 const dummyFlowId = 'flow-1234';
+const branchedFlowId = 'flow-5678';
 
 const dummyFlowStateWithStages = {
   'flow-1234': {
@@ -76,7 +77,134 @@ const dummyFlowStateWithStages = {
   },
 };
 
-describe('Flow sample data reducer ', () => {
+const nestedRouterFlow = {
+  'flow-5678': {
+    pageGeneratorsMap: {
+      e1: {
+        raw: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+      },
+    },
+    pageProcessorsMap: {
+      e2: {
+        processedFlowInput: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+        flowInput: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+      },
+      e3: {
+        processedFlowInput: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+        flowInput: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+      },
+      i1: {
+        processedFlowInput: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+        flowInput: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+      },
+      i2: {
+        processedFlowInput: {
+          status: 'error',
+          error: 'error',
+        },
+        flowInput: {
+          status: 'error',
+          error: 'error',
+        },
+      },
+    },
+    routersMap: {
+      r1: {
+        router: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+      },
+      r2: {
+        router: {
+          status: 'received',
+          data: { id: '123456' },
+        },
+      },
+    },
+    pageGenerators: [
+      {
+        _exportId: 'e1',
+        skipRetries: false,
+      },
+    ],
+    routers: [
+      {
+        id: 'r1',
+        branches: [
+          {
+            name: 'Branch 2.0',
+            pageProcessors: [
+              {
+                type: 'export',
+                _exportId: 'e2',
+              },
+              {
+                type: 'export',
+                _exportId: 'e3',
+              },
+            ],
+            nextRouterId: 'r2',
+          },
+          {
+            name: 'Branch 2.1',
+            pageProcessors: [
+              {
+                setupInProgress: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'r2',
+        branches: [
+          {
+            name: 'Branch 2.0',
+            pageProcessors: [
+              {
+                type: 'import',
+                _importId: 'i1',
+              },
+            ],
+          },
+          {
+            name: 'Branch 2.1',
+            pageProcessors: [
+              {
+                type: 'import',
+                _importId: 'i2',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+describe('Flow sample data reducer', () => {
   test('should retain previous state if the action is invalid', () => {
     const prevState = {};
     const currState = reducer(prevState, { type: 'INVALID_ACTION'});
@@ -188,7 +316,7 @@ describe('Flow sample data reducer ', () => {
 
       expect(currState).toEqual(prevState);
     });
-    test('should update stage as requested inside pageGeneratorsMap incase of the resource being PG ', () => {
+    test('should update stage as requested inside pageGeneratorsMap incase of the resource being PG', () => {
       const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
       const currState = reducer(prevState, actions.flowData.requestStage(dummyFlowId, '123', 'raw'));
 
@@ -210,7 +338,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should update stage as request inside pageProcessorsMap incase of the resource being PP ', () => {
+    test('should update stage as request inside pageProcessorsMap incase of the resource being PP', () => {
       const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
       const currState = reducer(prevState, actions.flowData.requestStage(dummyFlowId, '222', 'raw'));
 
@@ -274,7 +402,7 @@ describe('Flow sample data reducer ', () => {
 
       expect(currState).toEqual(prevState);
     });
-    test('should update raw stage as received with preview data when passed as previewType ', () => {
+    test('should update raw stage as received with preview data when passed as previewType', () => {
       const prevState = {
         [dummyFlowId]: {
           pageGenerators: [{ _exportId: '123' }],
@@ -312,7 +440,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should update raw stage as received for pp with preview data when passed as previewType ', () => {
+    test('should update raw stage as received for pp with preview data when passed as previewType', () => {
       const prevState = {
         [dummyFlowId]: {
           pageGenerators: [{ _exportId: '123' }],
@@ -358,7 +486,7 @@ describe('Flow sample data reducer ', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should update processor stage as received with processor data inside pageProcessorsMap incase of the resource being PP ', () => {
+    test('should update processor stage as received with processor data inside pageProcessorsMap incase of the resource being PP', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = { data: [{ test: 5 }]};
@@ -383,7 +511,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should update stage as received with processor data inside pageGeneratorsMap incase of the resource being PG ', () => {
+    test('should update stage as received with processor data inside pageGeneratorsMap incase of the resource being PG', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = { data: [{ test: 5 }]};
@@ -408,7 +536,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should update processor stage as received with processor data in nested data incase of hooks  ', () => {
+    test('should update processor stage as received with processor data in nested data incase of hooks', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = { data: { data: [{ nestedTest: 5 }] }};
@@ -433,7 +561,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should update processor stage as received with processor data empty incase of undefined data  ', () => {
+    test('should update processor stage as received with processor data empty incase of undefined data', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = undefined;
@@ -458,7 +586,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should update processor stage as received with processor data even if the request processor data action is not triggered ', () => {
+    test('should update processor stage as received with processor data even if the request processor data action is not triggered', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = {data: [{ userId: '123'}]};
@@ -630,12 +758,12 @@ describe('Flow sample data reducer ', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should retain previous state if the passed resourceId is not part of flow state ', () => {
+    test('should retain previous state if the passed resourceId is not part of flow state', () => {
       const currState = reducer(dummyFlowStateWithStages, actions.flowData.resetStages(dummyFlowId, '1234'));
 
       expect(currState).toEqual(dummyFlowStateWithStages);
     });
-    test('should clear all stages for all resources from the passed resourceId if no stages are passed ', () => {
+    test('should clear all stages for all resources from the passed resourceId if no stages are passed', () => {
       const currState = reducer(dummyFlowStateWithStages, actions.flowData.resetStages(dummyFlowId, '456'));
 
       expect(currState).toEqual({
@@ -746,6 +874,32 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
+    test('should clear all pps and associated routers for a branched flow when the resource is a pp', () => {
+      const currState = reducer(nestedRouterFlow, actions.flowData.resetStages(branchedFlowId, 'e2'));
+      const expectedState = {
+        [branchedFlowId]: {
+          ...nestedRouterFlow[branchedFlowId],
+          pageProcessorsMap: {
+            e2: {},
+            e3: {},
+            i1: {},
+            i2: {},
+          },
+          routersMap: {
+            r1: {
+              router: {
+                status: 'received',
+                data: { id: '123456' },
+              },
+            },
+            r2: {},
+          },
+        },
+
+      };
+
+      expect(currState).toEqual(expectedState);
+    });
     test('should clear all resources followed by the passed resourceId and clear only passed stages for the passed resourceId', () => {
       const currState = reducer(dummyFlowStateWithStages, actions.flowData.resetStages(dummyFlowId, '456', ['transform', 'preSavePage']));
 
@@ -826,6 +980,63 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
+    test('should clear all pps and associated routers for a branched flow when the resource is a pp and clear only passed stages for the passed resourceId', () => {
+      const currState = reducer(nestedRouterFlow, actions.flowData.resetStages(branchedFlowId, 'e2', ['flowInput']));
+      const expectedState = {
+        [branchedFlowId]: {
+          ...nestedRouterFlow[branchedFlowId],
+          pageProcessorsMap: {
+            e2: {
+              processedFlowInput: {
+                status: 'received',
+                data: { id: '123456' },
+              },
+              flowInput: {},
+            },
+            e3: {},
+            i1: {},
+            i2: {},
+          },
+          routersMap: {
+            r1: {
+              router: {
+                status: 'received',
+                data: { id: '123456' },
+              },
+            },
+            r2: {},
+          },
+        },
+
+      };
+
+      expect(currState).toEqual(expectedState);
+    });
+    test('should clear all associated pps and dependent routers when the router is updated and passed resource is a router', () => {
+      const currState = reducer(nestedRouterFlow, actions.flowData.resetStages(branchedFlowId, 'r1'));
+      const expectedState = {
+        [branchedFlowId]: {
+          ...nestedRouterFlow[branchedFlowId],
+          pageProcessorsMap: {
+            e2: {},
+            e3: {},
+            i1: {},
+            i2: {},
+          },
+          routersMap: {
+            r1: {
+              router: {
+                status: 'received',
+                data: { id: '123456' },
+              },
+            },
+            r2: {},
+          },
+        },
+      };
+
+      expect(currState).toEqual(expectedState);
+    });
   });
   describe('FLOW_DATA.FLOW_SEQUENCE_RESET action', () => {
     test('should retain previous state in case of no flowId passed', () => {
@@ -840,7 +1051,7 @@ describe('Flow sample data reducer ', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should clear all pps followed by first pp out of order in the passed updatedFlow ( when user drags/deletes one of the pps and changes order in the flow builder ) ', () => {
+    test('should clear all pps followed by first pp out of order in the passed updatedFlow ( when user drags/deletes one of the pps and changes order in the flow builder )', () => {
       const updatedFlow = {
         pageGenerators: [{ _exportId: '123'}, { _exportId: '456'}],
         pageProcessors: [{ _importId: '111' }, { _exportId: '789'}],
@@ -888,7 +1099,7 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
-    test('should clear all pgs followed by first pg out of order in the passed updatedFlow and also all pps are clear ( when user drags/deletes one of the pgs and changes order in the flow builder) ', () => {
+    test('should clear all pgs followed by first pg out of order in the passed updatedFlow and also all pps are clear ( when user drags/deletes one of the pgs and changes order in the flow builder)', () => {
       const updatedFlow = {
         pageGenerators: [{ _exportId: '456'}, { _exportId: '123'}],
         pageProcessors: [{ _exportId: '789'}, { _importId: '111' }],
@@ -909,10 +1120,32 @@ describe('Flow sample data reducer ', () => {
       });
     });
   });
+  describe('FLOW_DATA.CLEAR action', () => {
+    test('should do nothing if no flowId is passed', () => {
+      const prevState = reducer(DEFAULT_STATE, actions.flowData.init(dummyFlow));
+      const currState = reducer(prevState, actions.flowData.clear());
+
+      expect(currState).toBe(prevState);
+    });
+    test('should do nothing if passed flowId does not exist in the state', () => {
+      const prevState = reducer(DEFAULT_STATE, actions.flowData.init(dummyFlow));
+      const currState = reducer(prevState, actions.flowData.clear('flow-5678'));
+
+      expect(currState).toBe(prevState);
+    });
+    test('should clear all flow data for the passed flowId', () => {
+      const prevState = reducer(DEFAULT_STATE, actions.flowData.init(dummyFlow));
+      const newFlow = {...dummyFlow, _id: 'flow-5678'};
+      const newFlowState = reducer(prevState, actions.flowData.init(newFlow));
+      const currState = reducer(newFlowState, actions.flowData.clear('flow-5678'));
+
+      expect(currState).toEqual(prevState);
+    });
+  });
 });
 
 describe('getFlowDataState selector', () => {
-  test('should return undefined when the state/flowId is invalid ', () => {
+  test('should return undefined when the state/flowId is invalid', () => {
     expect(selectors.getFlowDataState()).toBeUndefined();
   });
   test('should return entire flow state if there is no resourceId passed', () => {
@@ -960,7 +1193,7 @@ describe('getSampleDataContext selector', () => {
 
     expect(selectors.getSampleDataContext(dummyFlowStateWithStages, options)).toEqual({});
   });
-  test('should return default value if the passed resourceId does not exist ', () => {
+  test('should return default value if the passed resourceId does not exist', () => {
     const options = {
       flowId: dummyFlowId,
       resourceId: '111',

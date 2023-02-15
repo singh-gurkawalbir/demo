@@ -1,13 +1,13 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
 describe('integrationApps utility reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
     expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
-    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
-    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
-    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toBe('string');
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toBeNull();
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toBe(123);
     expect(reducer(undefined, { type: null })).toEqual({});
     expect(reducer(undefined, { type: undefined })).toEqual({});
   });
@@ -107,9 +107,9 @@ describe('integrationApps utility selectors', () => {
 
   describe('currentChildUpgrade', () => {
     test('should return empty string when no match found.', () => {
-      expect(selectors.currentChildUpgrade(undefined)).toEqual('');
-      expect(selectors.currentChildUpgrade({})).toEqual('');
-      expect(selectors.currentChildUpgrade()).toEqual('');
+      expect(selectors.currentChildUpgrade(undefined)).toBe('');
+      expect(selectors.currentChildUpgrade({})).toBe('');
+      expect(selectors.currentChildUpgrade()).toBe('');
     });
 
     test('should return correct id when a match is found.', () => {
@@ -119,7 +119,7 @@ describe('integrationApps utility selectors', () => {
         213: { status: 'done', inQueue: true },
       };
 
-      expect(selectors.currentChildUpgrade(newState)).toEqual('213');
+      expect(selectors.currentChildUpgrade(newState)).toBe('213');
     });
     test('should return none when no id is inQueue true.', () => {
       const newState = {
@@ -128,7 +128,7 @@ describe('integrationApps utility selectors', () => {
         213: { status: 'done', inQueue: false },
       };
 
-      expect(selectors.currentChildUpgrade(newState)).toEqual('none');
+      expect(selectors.currentChildUpgrade(newState)).toBe('none');
     });
   });
   describe('changeEditionSteps', () => {

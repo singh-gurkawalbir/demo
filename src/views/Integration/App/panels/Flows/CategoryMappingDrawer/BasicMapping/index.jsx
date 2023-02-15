@@ -5,6 +5,7 @@ import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 import ImportMapping from './Mappings';
+import { message } from '../../../../../../../utils/messageStore';
 
 export default function MappingWrapper(props) {
   const {
@@ -30,7 +31,7 @@ export default function MappingWrapper(props) {
   }, [depth, dispatch, flowId, id, integrationId, sectionId]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<Typography>{message.MAPPER2.FAILED_TO_LOAD_MAPPING}</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (

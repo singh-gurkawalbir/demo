@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import Subscription from '.';
@@ -37,7 +36,7 @@ async function initSubscription({ type }) {
   };
 }
 
-describe('Subscription test cases', () => {
+describe('subscription test cases', () => {
   runServer();
 
   test('should pass the initial render with dummy type', async () => {

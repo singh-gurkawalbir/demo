@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -85,7 +85,7 @@ describe('test suite for SaveAndClose', () => {
 
     expect(saveButton).toBeEnabled();
     userEvent.click(saveButton);
-    expect(mockHandleSubmit).toBeCalled();
+    expect(mockHandleSubmit).toHaveBeenCalled();
   });
 
   test('should display a dialog box on replacing connection for existing imports / exports', async () => {
@@ -123,7 +123,7 @@ describe('test suite for SaveAndClose', () => {
     userEvent.click(saveButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Confirm replace')).toBeInTheDocument();
-    expect(screen.getByText('Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to replace the connection for this flow? Replacing a connection will cancel all jobs currently running.')).toBeInTheDocument();
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     userEvent.click(cancelButton);
@@ -133,9 +133,9 @@ describe('test suite for SaveAndClose', () => {
     const confirmButton = screen.getByRole('button', {name: 'Replace'});
 
     userEvent.click(confirmButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.connection.completeRegister(
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.completeRegister(
       [connectionId], integrationId
     ));
-    expect(mockHandleSubmit).toBeCalled();
+    expect(mockHandleSubmit).toHaveBeenCalled();
   });
 });

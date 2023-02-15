@@ -1,4 +1,4 @@
-/* global describe expect test jest afterEach */
+/* global */
 
 // import sizeof from 'object-sizeof';
 import * as sizeof from 'object-sizeof';
@@ -11,7 +11,7 @@ jest.mock('object-sizeof', () => ({
   default: () => 1024,
 }));
 
-describe('flowdebugger - ', () => {
+describe('flowdebugger -', () => {
   describe('validateMockOutput util test cases', () => {
     afterEach(() => {
       sizeof.default = () => 1024;

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -163,7 +162,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeDisabled();
   });
-  test('should disable populate with preview data button if resource sample data is requested for exports', () => {
+  test('should disable populate with preview data button if resource sample data is requested for exports dupliccate', () => {
     initialStore.getState().session = {
       resourceFormSampleData: {
         export1: {
@@ -234,7 +233,7 @@ describe('PopulateWithPreviewData UI tests', () => {
       actions.form.fieldChange(formKey)('mockResponse', previewData)
     ));
 
-    expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName: 'Mock response', dataType: 'sample data'}))).toBeInTheDocument();
+    expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock response', dataType: 'sample data'}))).toBeInTheDocument();
   });
   test('should dispatch correct action and render correct snackbar on success on click for exports', async () => {
     const resourceType = 'exports';
@@ -276,7 +275,7 @@ describe('PopulateWithPreviewData UI tests', () => {
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
       actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
     ));
-    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
   });
   test('should dispatch correct action and render correct snackbar on error on click for exports', async () => {
     const resourceType = 'exports';
@@ -300,6 +299,6 @@ describe('PopulateWithPreviewData UI tests', () => {
       actions.resourceFormSampleData.receivedPreviewError(resourceId, 'someError')
     );
     await waitFor(() => expect(buttonRef).toBeEnabled());
-    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_FAILED', {fieldName: 'mock output'}))).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.FAILED', {fieldName: 'mock output'}))).toBeInTheDocument());
   });
 });

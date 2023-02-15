@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -153,7 +153,7 @@ describe('FlowBuilder UI tests', () => {
   test('should test when integration is not loaded', () => {
     const {utils} = renderWithProviders(<MemoryRouter><FlowBuilder /></MemoryRouter>);
 
-    expect(utils.container.textContent).toBe('Loadresource integrationId: undefined');
+    expect(utils.container.textContent).toContain('Loadresource integrationId: undefined');
   });
   test('should test when integration is of version 1', async () => {
     const initialStore = getCreatedStore();

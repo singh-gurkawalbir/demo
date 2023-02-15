@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -42,7 +41,7 @@ async function initSSOUserSettings() {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for SSOUserSettings', () => {
+describe('testsuite for SSOUserSettings', () => {
   runServer();
 
   let mockDispatchFn;
@@ -84,7 +83,6 @@ describe('Testsuite for SSOUserSettings', () => {
 
     expect(helpTextNoButtonNode).toBeInTheDocument();
     await userEvent.click(helpTextNoButtonNode);
-    screen.debug(null, Infinity);
   }, 30000);
 });
 

@@ -825,6 +825,12 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  van: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
   s3: [
     {
       label: 'Transfer files out of source application',
@@ -1013,6 +1019,12 @@ export const destinationOptions = {
   ],
 
   as2: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+  ],
+  van: [
     {
       label: 'Import records into destination application',
       value: 'importRecords',

@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -6,7 +5,6 @@ import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { fetchMetadata, publishStatus, updateInstallBase } from '.';
-import { SCOPES } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
 
 describe('evaluate fetchMetadata saga', () => {
@@ -18,7 +16,7 @@ describe('evaluate fetchMetadata saga', () => {
     const options = {};
     const metadata = { a: 1 };
 
-    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+    expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
       .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
       .call.fn(apiCallWithRetry)
       .put(
@@ -50,13 +48,13 @@ describe('evaluate fetchMetadata saga', () => {
       )
     );
 
-    return saga.run();
+    saga.run();
   });
   test('If api successful, should dispatch receivedMetadata while metadata is not an array and options.autoPostBack is true', () => {
     const options = { autoPostBack: true };
     const metadata = { name: 'dummy' };
 
-    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+    expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
       .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
       .call.fn(apiCallWithRetry)
       .put(
@@ -73,7 +71,7 @@ describe('evaluate fetchMetadata saga', () => {
     const options = {};
     const error = new Error('error');
 
-    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+    expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .put(actions.connectors.failedMetadata(fieldName, _integrationId))
@@ -113,7 +111,7 @@ describe('publishStatus saga', () => {
       .provide([
         [matchers.call.fn(commitStagedChanges), successResponse],
       ])
-      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged('1', patchSet))
       .call.fn(commitStagedChanges)
       .put(actions.connectors.publish.success('1'))
       .run();
@@ -123,7 +121,7 @@ describe('publishStatus saga', () => {
       .provide([
         [matchers.call.fn(commitStagedChanges), errorResponse],
       ])
-      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged('1', patchSet))
       .call.fn(commitStagedChanges)
       .put(actions.connectors.publish.error('1'))
       .run();

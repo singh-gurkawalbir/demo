@@ -1,9 +1,6 @@
-/* global describe, test, beforeEach,jest, expect  */
 
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import SelectSource from './SelectDate';
 import actions from '../../../../actions';
@@ -22,7 +19,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('UI test cases for select date', () => {
+describe('uI test cases for select date', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -85,7 +82,7 @@ describe('UI test cases for select date', () => {
       isResolved: false,
     }));
   });
-  test('should test cancel button is working fine when date filter is applied and filter key is set to resolved', () => {
+  test('should test cancel button is working fine when date filter is applied and filter key is set to resolved.', () => {
     renderWithProviders(<SelectSource
       flowId={flowId} resourceId={resourceId} isResolved={false} title={title}
       filterBy={filterBy} />);

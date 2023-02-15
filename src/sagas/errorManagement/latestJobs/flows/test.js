@@ -1,4 +1,5 @@
-/* global describe, expect, test */
+/* eslint-disable jest/expect-expect */
+
 import { call, cancel, fork, select, take } from 'redux-saga/effects';
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -135,7 +136,7 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs})
+    expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs})
       .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });
@@ -179,7 +180,7 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs})
+    expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs})
       .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });
@@ -223,7 +224,7 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs})
+    expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs})
       .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });
@@ -267,7 +268,7 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs})
+    expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs})
       .put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });
@@ -302,7 +303,7 @@ describe('refreshForMultipleFlowJobs saga', () => {
       ],
     };
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job, latestJobs })
+    expectSaga(refreshForMultipleFlowJobs, { flowId, job, latestJobs })
       .put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });
@@ -324,7 +325,7 @@ describe('refreshForMultipleFlowJobs saga', () => {
       ],
     };
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job, latestJobs})
+    expectSaga(refreshForMultipleFlowJobs, { flowId, job, latestJobs})
       .put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });
@@ -348,7 +349,7 @@ describe('getJobFamily saga', () => {
 
     const { path, opts } = getRequestOptions(actionTypes.JOB.REQUEST_FAMILY, { resourceId: jobId });
 
-    return expectSaga(getJobFamily, { flowId, jobId })
+    expectSaga(getJobFamily, { flowId, jobId })
       .provide([
         [select(selectors.latestFlowJobsList, flowId)],
         [call(apiCallWithRetry, {
@@ -391,7 +392,7 @@ describe('getJobFamily saga', () => {
     };
     const { path, opts } = getRequestOptions(actionTypes.JOB.REQUEST_FAMILY, { resourceId: jobId });
 
-    return expectSaga(getJobFamily, { flowId, jobId })
+    expectSaga(getJobFamily, { flowId, jobId })
       .provide([
         [select(selectors.latestFlowJobsList, flowId), latestJobsState],
         [call(apiCallWithRetry, {
@@ -410,7 +411,7 @@ describe('getJobFamily saga', () => {
     const error = { message: 'something' };
     const { path, opts } = getRequestOptions(actionTypes.JOB.REQUEST_FAMILY, { resourceId: jobId });
 
-    return expectSaga(getJobFamily, { flowId, jobId })
+    expectSaga(getJobFamily, { flowId, jobId })
       .provide([
         [call(apiCallWithRetry, {
           path, opts, hidden: true,
@@ -438,12 +439,12 @@ describe('getInProgressJobsStatus saga', () => {
 
     inProgressJobs.map(jobId => saga.call(getJobFamily, { flowId, jobId}));
 
-    return saga.not.put(actions.errorManager.latestFlowJobs.noInProgressJobs()).run();
+    saga.not.put(actions.errorManager.latestFlowJobs.noInProgressJobs()).run();
   });
   test('dispatch noInprogressjobs action of errorManager if there are no noInprogressJobs', () => {
     const inProgressJobs = [];
 
-    return expectSaga(getInProgressJobsStatus, {flowId})
+    expectSaga(getInProgressJobsStatus, {flowId})
       .provide([[select(selectors.getInProgressLatestJobs, flowId), inProgressJobs]])
       .put(actions.errorManager.latestFlowJobs.noInProgressJobs())
       .not.call(getJobFamily)
@@ -477,7 +478,7 @@ describe('startPollingForInProgressJobs saga', () => {
       actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS,
     ]));
     expect(saga.next().value).toEqual(cancel(watcherTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -531,7 +532,7 @@ describe('requestLatestJobs saga', () => {
   test('should not dispatch any actions or call getJobFamily if apiCallWithRetry api fails', () => {
     const error = { message: 'something' };
 
-    return expectSaga(requestLatestJobs, {flowId})
+    expectSaga(requestLatestJobs, {flowId})
       .provide([
         [call(apiCallWithRetry, { path, opts: {method}, hidden: true}), throwError(error)],
         [call(getJobFamily)],
@@ -568,7 +569,7 @@ describe('requestLatestJobs saga', () => {
       return latestJob._id === 'j2';
     });
 
-    return saga.not.put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId })).run();
+    saga.not.put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId })).run();
   });
 });
 
@@ -578,7 +579,7 @@ describe('cancelJob saga', () => {
   test('should call the api', () => {
     const { path, opts } = getRequestOptions(actionTypes.JOB.CANCEL, { resourceId: jobId });
 
-    return expectSaga(cancelJob, { jobId })
+    expectSaga(cancelJob, { jobId })
       .provide([
         [call(apiCallWithRetry, {path, opts})],
       ])
@@ -589,7 +590,7 @@ describe('cancelJob saga', () => {
     const { path, opts } = getRequestOptions(actionTypes.JOB.CANCEL, { resourceId: jobId });
     const error = { message: 'something' };
 
-    return expectSaga(cancelJob, { jobId })
+    expectSaga(cancelJob, { jobId })
       .provide([
         [call(apiCallWithRetry, {path, opts}), throwError(error)],
       ])

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -133,7 +132,7 @@ function initPanelWrapper(props = {}) {
   return renderWithProviders(<PreviewPanelWrapper {...props} />, {initialStore});
 }
 
-describe('PreviewPanelWrapper UI tests', () => {
+describe('previewPanelWrapper UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -167,12 +166,12 @@ describe('PreviewPanelWrapper UI tests', () => {
   test('should make the respective dispatch call when a salesforceMappingAssistant field is clicked', () => {
     initPanelWrapper({editorId: 'filecsv', disabled: false, status: 'received'});
     userEvent.click(screen.getByText('Salesforce Assistant'));
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('demoId'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchGenerateThroughAssistant('demoId'));
   });
   test('should make the respective dispatch call when a NetsuiteMappingAssistant field is clicked', () => {
     initPanelWrapper({editorId: 'filescsv', disabled: false, status: 'received'});
     userEvent.click(screen.getByText('Netsuite Assistant'));
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('demoName[*].demoId'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchGenerateThroughAssistant('demoName[*].demoId'));
   });
   test('should display the error message when mappingStatus is error', () => {
     initPanelWrapper({editorId: 'filescsv', disabled: false, status: 'error'});

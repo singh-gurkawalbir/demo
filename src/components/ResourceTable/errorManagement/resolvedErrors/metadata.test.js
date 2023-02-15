@@ -1,4 +1,5 @@
-/* global test, expect, describe, jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -6,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../../CeligoTable';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 jest.mock('../cells/SelectAllErrors', () => ({
   __esModule: true,
@@ -71,12 +72,12 @@ const props = {
   occurredAt: '2022-05-18T18:16:31.989Z',
 };
 
-describe("ResolvedErros table's metadata UI tests", () => {
+describe("resolvedErros table's metadata UI tests", () => {
   test('should verify the Select All column', () => {
     initFunction(props);
     headerIndex = indexOfCell('MockedSelectAll', 'columnheader');
     expect(headerIndex).toBeGreaterThan(-1);
-    expect(screen.getByTitle(messageStore('SELECT_ERROR_HOVER_MESSAGE'))).toBeInTheDocument();
+    expect(screen.getByTitle(message.ERROR_MANAGEMENT_2.SELECT_ERROR_HOVER_MESSAGE)).toBeInTheDocument();
   });
   test('should verify Message cloumn', () => {
     initFunction(props);

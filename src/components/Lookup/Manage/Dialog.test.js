@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -16,7 +16,7 @@ async function initManageLookupDialog({ props } = {}) {
   return renderWithProviders(ui);
 }
 
-describe('ManageLookupDialog component Test cases', () => {
+describe('manageLookupDialog component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     await initManageLookupDialog();

@@ -53,10 +53,9 @@ export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)
 );
 
-export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
+export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants', 'tree/metadata']);
 
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'licenses',
   'preferences',
   'profile',
   'published',

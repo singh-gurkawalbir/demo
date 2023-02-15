@@ -1,9 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* eslint-disable jest/max-expects */
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitFor } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -73,7 +71,7 @@ jest.mock('react-router-dom', () => ({
     replace: mockReplace,
   }),
 }));
-describe('Licenses', () => {
+describe('licenses', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -96,7 +94,7 @@ describe('Licenses', () => {
     cleanup();
   });
 
-  test('Should able to test the license page with status as installed and environment as production', async () => {
+  test('should able to test the license page with status as installed and environment as production', async () => {
     const props = {
       match: {
         path: '/connectors/:connectorId/connectorLicenses',
@@ -187,7 +185,7 @@ describe('Licenses', () => {
     userEvent.click(deleteLicenseButtonNode);
     expect(deleteLicenseButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the licenses page with no license', async () => {
+  test('should able to test the licenses page with no license', async () => {
     const props = {
       match: {
         path: '/connectors/:connectorId/connectorLicenses',
@@ -246,10 +244,10 @@ describe('Licenses', () => {
         path: '/type',
         value: 'integrationApp',
       },
-    ], 'value'));
+    ]));
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });
-  test('Should able to test the back button on license page', async () => {
+  test('should able to test the back button on license page', async () => {
     const props = {
       match: {
         path: '/connectors/:connectorId/connectorLicenses',
@@ -292,7 +290,7 @@ describe('Licenses', () => {
     userEvent.click(backButtonNode[0]);
     expect(mockReplace).toHaveBeenCalledTimes(1);
   });
-  test('Should able to test the search button on license page', async () => {
+  test('should able to test the search button on license page', async () => {
     const props = {
       match: {
         path: '/connectors/:connectorId/connectorLicenses',
@@ -347,7 +345,7 @@ describe('Licenses', () => {
     userEvent.clear(searchButtonNode);
     await waitFor(() => expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i)).not.toBeInTheDocument());
   });
-  test('Should able to test the license page with no connectors', async () => {
+  test('should able to test the license page with no connectors', async () => {
     const props = {
       match: {
         path: '/connectors/:connectorId/connectorLicenses',
@@ -396,7 +394,7 @@ describe('Licenses', () => {
 
     expect(utils.container.firstChild).toBeEmptyDOMElement();
   });
-  test('Should able to test the license page with the license type as integrationAppChild', async () => {
+  test('should able to test the license page with the license type as integrationAppChild', async () => {
     const props = {
       match: {
         path: '/connectors/:connectorId/connectorLicenses',

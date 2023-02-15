@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -24,48 +24,41 @@ async function initAddOrSelect({
           path: '/_id',
           value: 'new-uwmt5Mi92',
           timestamp: 1657615760352,
-          scope: 'value',
         },
         {
           op: 'replace',
           path: '/type',
           value: 'netsuite',
           timestamp: 1657615760352,
-          scope: 'value',
         },
         {
           op: 'replace',
           path: '/name',
           value: 'NetSuite Connection',
           timestamp: 1657615760352,
-          scope: 'value',
         },
         {
           op: 'replace',
           path: '/newIA',
           value: true,
           timestamp: 1657615760352,
-          scope: 'value',
         },
         {
           op: 'replace',
           path: '/_integrationId',
           value: '62cd3575a7777017e5a4a44a',
           timestamp: 1657615760352,
-          scope: 'value',
         },
         {
           op: 'replace',
           path: '/_connectorId',
           timestamp: 1657615760352,
-          scope: 'value',
         },
         {
           op: 'replace',
           path: '/installStepConnection',
           value: true,
           timestamp: 1657615760352,
-          scope: 'value',
         },
       ],
     },
@@ -140,7 +133,7 @@ jest.mock('../drawer/Resource/Panel/ResourceFormActionsPanel', () => ({
   },
 }));
 
-describe('AddOrSelect test cases', () => {
+describe('addOrSelect test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -205,7 +198,7 @@ describe('AddOrSelect test cases', () => {
     expect(submitButton).toBeInTheDocument();
 
     userEvent.click(submitButton);
-    expect(onSubmitComplete).toBeCalledTimes(1);
+    expect(onSubmitComplete).toHaveBeenCalledTimes(1);
 
     // existing connection
     userEvent.click(existingConn);
@@ -217,7 +210,7 @@ describe('AddOrSelect test cases', () => {
 
     userEvent.click(doneButton);
     userEvent.click(cancelButton);
-    expect(onClose).toBeCalled();
+    expect(onClose).toHaveBeenCalled();
 
     const dispatch = reactRedux.useDispatch();
 
@@ -243,7 +236,7 @@ describe('AddOrSelect test cases', () => {
     });
 
     userEvent.click(doneButton);
-    expect(onSubmitComplete).toBeCalledTimes(2);
+    expect(onSubmitComplete).toHaveBeenCalledTimes(2);
   });
 });
 

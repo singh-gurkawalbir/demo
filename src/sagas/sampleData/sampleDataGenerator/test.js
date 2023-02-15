@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -86,18 +85,17 @@ describe('Sample data generator sagas', () => {
           _id: '123',
           adaptorType: 'RESTExport',
         };
-        const test1 = expectSaga(fileAdaptorSampleData, { resource })
-          .not.call.fn(parseFileData)
-          .not.call.fn(parseFileDefinition)
-          .returns(undefined)
-          .run();
-        const test2 = expectSaga(fileAdaptorSampleData, { resource: null })
-          .not.call.fn(parseFileData)
-          .not.call.fn(parseFileDefinition)
-          .returns(undefined)
-          .run();
 
-        return test1 && test2;
+        expectSaga(fileAdaptorSampleData, { resource })
+          .not.call.fn(parseFileData)
+          .not.call.fn(parseFileDefinition)
+          .returns(undefined)
+          .run();
+        expectSaga(fileAdaptorSampleData, { resource: null })
+          .not.call.fn(parseFileData)
+          .not.call.fn(parseFileDefinition)
+          .returns(undefined)
+          .run();
       });
       test('should call parseFileData saga to calculate sample data for csv, xlsx and xml file types', () => {
         const sampleData = "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE\nC1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0\nC1000010839|Unitech|1400-900035G|1400-900035G|80.00|PA720/PA726 3.6V 3120mAH BATTERY -20C|43.53|0\nC1000010839|Magtek|21073131-NMI|21073131NMI|150.00|iDynamo 5 with NMI Encryption|89.29|0";
@@ -123,7 +121,7 @@ describe('Sample data generator sagas', () => {
 
         const expectedCsvSampleData = csvParsedData[0];
 
-        return expectSaga(fileAdaptorSampleData, { resource: ftpResource })
+        expectSaga(fileAdaptorSampleData, { resource: ftpResource })
           .provide([
             [call(parseFileData, {
               sampleData,
@@ -156,7 +154,7 @@ describe('Sample data generator sagas', () => {
           },
         };
 
-        return expectSaga(fileAdaptorSampleData, { resource: fileDefResource })
+        expectSaga(fileAdaptorSampleData, { resource: fileDefResource })
           .provide([
             [call(parseFileDefinition, {
               sampleData,
@@ -168,7 +166,7 @@ describe('Sample data generator sagas', () => {
           .returns(expectedFileDefSampleData)
           .run();
       });
-      test('should return json calculated sample data from the ftp json resource passed  ', () => {
+      test('should return json calculated sample data from the ftp json resource passed', () => {
         const sampleData = {
           _id: '999',
           name: 'As2 json',
@@ -197,7 +195,7 @@ describe('Sample data generator sagas', () => {
         };
         const expectedPreviewData = {data: 'jsonData', node: true, type: 'csv', whitespace: ''};
 
-        return expectSaga(fileAdaptorSampleData, { resource: ftpJsonResource })
+        expectSaga(fileAdaptorSampleData, { resource: ftpJsonResource })
           .provide([
             [call(parseFileData, {
               sampleData,
@@ -209,7 +207,7 @@ describe('Sample data generator sagas', () => {
           .returns(expectedPreviewData)
           .run();
       });
-      test('should consider sample data from formState resource when formKey is passed  ', () => {
+      test('should consider sample data from formState resource when formKey is passed', () => {
         const sampleData = {
           _id: '999',
           name: 'As2 json',
@@ -239,7 +237,7 @@ describe('Sample data generator sagas', () => {
         const formKey = 'form-123';
         const expectedPreviewData = {data: 'jsonData', node: true, type: 'csv', whitespace: ''};
 
-        return expectSaga(fileAdaptorSampleData, { resource: ftpJsonResource, formKey })
+        expectSaga(fileAdaptorSampleData, { resource: ftpJsonResource, formKey })
           .provide([
             [call(extractFileSampleDataProps, { formKey }), { sampleData }],
             [call(parseFileData, {
@@ -275,7 +273,7 @@ describe('Sample data generator sagas', () => {
 
         const expectedCsvSampleData = csvParsedData[0];
 
-        return expectSaga(fileAdaptorSampleData, { resource: ftpResource, formKey })
+        expectSaga(fileAdaptorSampleData, { resource: ftpResource, formKey })
           .provide([
             [call(extractFileSampleDataProps, { formKey }), { sampleData: sampleXlsxData }],
             [call(getCsvFromXlsx, sampleXlsxData), { result: csvSampleData }],
@@ -297,7 +295,7 @@ describe('Sample data generator sagas', () => {
           },
         };
 
-        return expectSaga(fileAdaptorSampleData, { resource })
+        expectSaga(fileAdaptorSampleData, { resource })
           .not.call.fn(parseFileData)
           .not.call.fn(parseFileDefinition)
           .returns(undefined)
@@ -308,7 +306,7 @@ describe('Sample data generator sagas', () => {
   describe('realTimeSampleData related sagas', () => {
     describe('realTimeSampleData saga', () => {
       test('should do nothing in case of invalid resource', () => {
-        const test1 = expectSaga(realTimeSampleData, { resource: null })
+        expectSaga(realTimeSampleData, { resource: null })
           .not.call.fn(fetchMetadata)
           .returns(undefined)
           .run();
@@ -316,12 +314,11 @@ describe('Sample data generator sagas', () => {
           _id: 'id-123',
           adaptorType: 'RESTExport',
         };
-        const test2 = expectSaga(realTimeSampleData, { resource: restResource })
+
+        expectSaga(realTimeSampleData, { resource: restResource })
           .not.call.fn(fetchMetadata)
           .returns(undefined)
           .run();
-
-        return test1 && test2;
       });
       test('should do nothing incase of NS resource without recordType', () => {
         const nsResource = {
@@ -329,7 +326,7 @@ describe('Sample data generator sagas', () => {
           adaptorType: 'NetSuiteExport',
         };
 
-        return expectSaga(realTimeSampleData, { resource: nsResource })
+        expectSaga(realTimeSampleData, { resource: nsResource })
           .not.call.fn(fetchMetadata)
           .returns(undefined)
           .run();
@@ -340,12 +337,12 @@ describe('Sample data generator sagas', () => {
           adaptorType: 'SalesforceExport',
         };
 
-        return expectSaga(realTimeSampleData, { resource: sfResource })
+        expectSaga(realTimeSampleData, { resource: sfResource })
           .not.call.fn(fetchMetadata)
           .returns(undefined)
           .run();
       });
-      test('should call fetchMetadata saga and return sample data from the metadata incase of NS resource ', () => {
+      test('should call fetchMetadata saga and return sample data from the metadata incase of NS resource', () => {
         const connectionId = 'conn-123';
         const recordType = 'account';
 
@@ -362,7 +359,7 @@ describe('Sample data generator sagas', () => {
           {group: 'Body Field', id: 'thirdpartyacct', name: '3rd Party Billing Account Number', type: 'text'},
         ];
 
-        const testWithoutRefresh = expectSaga(realTimeSampleData, { resource: nsResource })
+        expectSaga(realTimeSampleData, { resource: nsResource })
           .provide([
             [call(fetchMetadata, {
               connectionId,
@@ -373,7 +370,7 @@ describe('Sample data generator sagas', () => {
           .call.fn(fetchMetadata)
           .returns(getNetsuiteRealTimeSampleData(nsSampleMetadata, recordType))
           .run();
-        const testWithRefresh = expectSaga(realTimeSampleData, { resource: nsResource, refresh: true })
+        expectSaga(realTimeSampleData, { resource: nsResource, refresh: true })
           .provide([
             [call(fetchMetadata, {
               connectionId,
@@ -384,8 +381,6 @@ describe('Sample data generator sagas', () => {
           .call.fn(fetchMetadata)
           .returns(getNetsuiteRealTimeSampleData(nsSampleMetadata, recordType))
           .run();
-
-        return testWithoutRefresh && testWithRefresh;
       });
       test('should call fetchMetadata saga and call _attachRelatedLists saga to update sample data and return the same incase of SF resource', () => {
         const connectionId = 'conn-123';
@@ -410,7 +405,8 @@ describe('Sample data generator sagas', () => {
         };
         const sampleData = getSalesforceRealTimeSampleData(sfAccountMetadata);
         const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
-        const testWithoutRefresh = expectSaga(realTimeSampleData, { resource: sfResource })
+
+        expectSaga(realTimeSampleData, { resource: sfResource })
           .provide([
             [call(fetchMetadata, {
               connectionId,
@@ -429,7 +425,7 @@ describe('Sample data generator sagas', () => {
           .call.fn(_attachRelatedLists)
           .returns(sampleData)
           .run();
-        const testWithRefresh = expectSaga(realTimeSampleData, { resource: sfResource, refresh: true })
+        expectSaga(realTimeSampleData, { resource: sfResource, refresh: true })
           .provide([
             [call(fetchMetadata, {
               connectionId,
@@ -446,10 +442,8 @@ describe('Sample data generator sagas', () => {
           ])
           .returns(sampleData)
           .run();
-
-        return testWithoutRefresh && testWithRefresh;
       });
-      test('should not call _attachRelatedLists saga if the SF resource does not have related lists ', () => {
+      test('should not call _attachRelatedLists saga if the SF resource does not have related lists', () => {
         const connectionId = 'conn-123';
         const sObjectType = 'Account';
 
@@ -471,7 +465,7 @@ describe('Sample data generator sagas', () => {
         const sampleData = getSalesforceRealTimeSampleData(metadata);
         const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
 
-        return expectSaga(realTimeSampleData, { resource: sfResource })
+        expectSaga(realTimeSampleData, { resource: sfResource })
           .provide([
             [call(fetchMetadata, {
               connectionId,
@@ -510,7 +504,7 @@ describe('Sample data generator sagas', () => {
         const sampleData = getSalesforceRealTimeSampleData(metadata);
         const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
 
-        return expectSaga(realTimeSampleData, { resource: sfResource })
+        expectSaga(realTimeSampleData, { resource: sfResource })
           .provide([
             [call(fetchMetadata, {
               connectionId,
@@ -531,7 +525,7 @@ describe('Sample data generator sagas', () => {
           adaptorType: 'WebhookExport',
         };
 
-        return expectSaga(realTimeSampleData, { resource: webhookResource })
+        expectSaga(realTimeSampleData, { resource: webhookResource })
           .returns(undefined)
           .run();
       });
@@ -543,21 +537,19 @@ describe('Sample data generator sagas', () => {
           sampleData: { test: 5 },
         };
 
-        return expectSaga(realTimeSampleData, { resource: webhookResource })
+        expectSaga(realTimeSampleData, { resource: webhookResource })
           .returns(webhookResource.sampleData)
           .run();
       });
     });
     describe('_attachRelatedLists saga', () => {
       test('should return passed metadata if there are no relatedLists', () => {
-        const test1 = expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata, relatedLists: [] })
+        expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata, relatedLists: [] })
           .returns(sfAccountMetadata)
           .run();
-        const test2 = expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata })
+        expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata })
           .returns(sfAccountMetadata)
           .run();
-
-        return test1 && test2;
       });
       test('should call fetchMetadata for all the relatedLists and add its metadata against relationShipName passed in childRelationships', () => {
         const connectionId = 'conn-123';
@@ -590,7 +582,7 @@ describe('Sample data generator sagas', () => {
           }],
         };
 
-        return expectSaga(_attachRelatedLists, {
+        expectSaga(_attachRelatedLists, {
           metadata,
           relatedLists,
           connectionId,
@@ -632,7 +624,7 @@ describe('Sample data generator sagas', () => {
           }],
         };
 
-        return expectSaga(_attachRelatedLists, {
+        expectSaga(_attachRelatedLists, {
           metadata,
           relatedLists,
           connectionId,
@@ -665,7 +657,7 @@ describe('Sample data generator sagas', () => {
           Customer: [{}],
         };
 
-        return expectSaga(_attachRelatedLists, {
+        expectSaga(_attachRelatedLists, {
           metadata,
           relatedLists,
           connectionId,

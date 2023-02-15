@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { JOB_STATUS } from '../../constants';
 import {
   getFlowStepsYetToBeCreated,
@@ -15,7 +14,7 @@ describe('latestJobs utils test cases', () => {
       expect(getFlowStepsYetToBeCreated(null)).toEqual([]);
       expect(getFlowStepsYetToBeCreated({})).toEqual([]);
     });
-    test('should return empty list if the pps are not valid ', () => {
+    test('should return empty list if the pps are not valid', () => {
       const flow = {
         pageProcessors: [
           { _exportId: 'id1', type: 'invalid'},

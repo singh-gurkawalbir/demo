@@ -7,6 +7,7 @@ import DeleteIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
 import DynaAutocomplete from '../../../DynaAutocomplete';
+import DynaExportSelect from '../../../DynaExportSelect';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
   columnsWrapper: {
-    width: '95%',
+    width: `calc(100% - ${theme.spacing(4)}px)`,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   bodyElementsWrapper: {
     display: 'flex',
+    paddingRight: theme.spacing(1),
   },
   child: {
     '& + div': {
@@ -95,7 +97,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
     const items = convertToSelectOptions(options);
 
-    if (type === 'select' || type === 'multiselect') {
+    if (type === 'select' || type === 'multiselect' || type === 'exportSelect') {
       return [{items}];
     }
 
@@ -132,6 +134,19 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
     return (
       <DynaMultiSelect
         {...basicProps}
+        value={fieldValue}
+        errorMessages={errorMessages}
+        onFieldChange={onFieldChange}
+        className={clsx(classes.root, classes.menuItemsWrapper)}
+    />
+    );
+  }
+
+  if (type === 'exportSelect') {
+    return (
+      <DynaExportSelect
+        {...basicProps}
+        {...op}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}

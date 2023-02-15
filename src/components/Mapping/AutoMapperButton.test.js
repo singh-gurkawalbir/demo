@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -55,7 +54,7 @@ async function initAutoMapperButton({
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('AutoMapperButton component Test cases', () => {
+describe('autoMapperButton component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -80,9 +79,9 @@ describe('AutoMapperButton component Test cases', () => {
     expect(autoMapButton).toBeInTheDocument();
     expect(screen.queryByText(/just failed for no reason/i)).toBeInTheDocument();
     userEvent.click(autoMapButton);
-    expect(mockDispatchFn).toBeCalledTimes(2);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.autoMapper.request());
-    expect(mockDispatchFn).toBeCalledWith(actions.analytics.gainsight.trackEvent('AUTO_MAP_BUTTON_CLICKED'));
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.autoMapper.request());
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.analytics.gainsight.trackEvent('AUTO_MAP_BUTTON_CLICKED'));
   });
 
   test('should pass the initial render where button is disabled', async () => {
@@ -94,7 +93,7 @@ describe('AutoMapperButton component Test cases', () => {
     expect(autoMapButton).toBeInTheDocument();
     expect(screen.queryByText(/just failed for no reason/i)).toBeInTheDocument();
     expect(() => userEvent.click(autoMapButton)).toThrow();
-    expect(mockDispatchFn).toBeCalledTimes(0);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(0);
   });
 
   test('should pass the initial render with custom values', async () => {

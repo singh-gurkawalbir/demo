@@ -1,7 +1,8 @@
-/* global describe, test, expect, jest */
-import shortid from 'shortid';
+/* eslint-disable jest/no-identical-title */
+
 import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
+import * as GenerateId from '../../../../utils/string';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
@@ -3083,7 +3084,7 @@ describe('integrationApps reducer test cases', () => {
             },
           },
         };
-        const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+        const mock = jest.spyOn(GenerateId, 'generateId');  // spy on otherFn
 
         mock.mockReturnValue('mock_key');
         state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 'key1', 'value'));
@@ -3269,7 +3270,7 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+        const mock = jest.spyOn(GenerateId, 'generateId');  // spy on otherFn
 
         mock.mockReturnValue('mock_key');
         state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 'key11', '"value"'));
@@ -3691,7 +3692,7 @@ describe('integrationApps reducer test cases', () => {
         });
       });
 
-      test('should set correctly the closeOnSave and status property on mapping', () => {
+      test('should set correctly the closeOnSave and status property on mapping duplicate', () => {
         let state = {
           'flow1-integration1': {
             data: 'dummy',
@@ -6567,10 +6568,10 @@ describe('integrationApps selectors test cases', () => {
     const cmFiltersSelector = selectors.mkCategoryMappingFilters();
 
     test('should not throw exception for bad params', () => {
-      expect(cmFiltersSelector()).toEqual(null);
-      expect(cmFiltersSelector({})).toEqual(null);
-      expect(cmFiltersSelector(null)).toEqual(null);
-      expect(cmFiltersSelector(null, null, null, null)).toEqual(null);
+      expect(cmFiltersSelector()).toBeNull();
+      expect(cmFiltersSelector({})).toBeNull();
+      expect(cmFiltersSelector(null)).toBeNull();
+      expect(cmFiltersSelector(null, null, null, null)).toBeNull();
     });
 
     test('should return correct form state for params passed', () => {
@@ -6611,10 +6612,10 @@ describe('integrationApps selectors test cases', () => {
     const cmFiltersSelector = selectors.mkCategoryMappingFilters();
 
     test('should not throw exception for bad params', () => {
-      expect(cmFiltersSelector()).toEqual(null);
-      expect(cmFiltersSelector({})).toEqual(null);
-      expect(cmFiltersSelector(null)).toEqual(null);
-      expect(cmFiltersSelector(null, null, null, null)).toEqual(null);
+      expect(cmFiltersSelector()).toBeNull();
+      expect(cmFiltersSelector({})).toBeNull();
+      expect(cmFiltersSelector(null)).toBeNull();
+      expect(cmFiltersSelector(null, null, null, null)).toBeNull();
     });
 
     test('should return correct form state for params passed', () => {
@@ -6653,10 +6654,10 @@ describe('integrationApps selectors test cases', () => {
 
   describe('integrationApps settings categoryMapping test', () => {
     test('should not throw exception for bad params', () => {
-      expect(selectors.categoryMapping()).toEqual(null);
+      expect(selectors.categoryMapping()).toBeNull();
       expect(selectors.categoryMapping({})).toEqual();
-      expect(selectors.categoryMapping(null)).toEqual(null);
-      expect(selectors.categoryMapping(null, null, null)).toEqual(null);
+      expect(selectors.categoryMapping(null)).toBeNull();
+      expect(selectors.categoryMapping(null, null, null)).toBeNull();
     });
 
     test('should return correct form state for params passed', () => {
@@ -9366,9 +9367,9 @@ describe('integrationApps selectors test cases', () => {
     const selector = selectors.mkCategoryMappingGeneratesMetadata();
 
     test('should not throw exception for bad params', () => {
-      expect(selector()).toEqual(null);
+      expect(selector()).toBeNull();
       expect(selector({})).toEqual([]);
-      expect(selector(null)).toEqual(null);
+      expect(selector(null)).toBeNull();
     });
 
     test('should return correct form state for params passed for variationAttributes set as false', () => {
@@ -10158,9 +10159,9 @@ describe('integrationApps selectors test cases', () => {
     const selector = selectors.mkPendingCategoryMappings();
 
     test('should not throw exception for bad params', () => {
-      expect(selector()).toEqual(null);
-      expect(selector({})).toEqual(null);
-      expect(selector(null)).toEqual(null);
+      expect(selector()).toBeNull();
+      expect(selector({})).toBeNull();
+      expect(selector(null)).toBeNull();
     });
     test('should return correct data for amazon category mappings', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
@@ -10350,14 +10351,14 @@ describe('integrationApps selectors test cases', () => {
     const selector = selectors.mkCategoryMappingsChanged();
 
     test('should not throw exception for bad params', () => {
-      expect(selector()).toEqual(false);
-      expect(selector({})).toEqual(false);
-      expect(selector(null)).toEqual(false);
+      expect(selector()).toBe(false);
+      expect(selector({})).toBe(false);
+      expect(selector(null)).toBe(false);
     });
     test('should return false when mappings are not changed', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
 
-      expect(selector(state, 'integration', 'flow')).toEqual(false);
+      expect(selector(state, 'integration', 'flow')).toBe(false);
     });
 
     test('should return true when mappings changed', () => {
@@ -10378,15 +10379,15 @@ describe('integrationApps selectors test cases', () => {
           }],
         },
       };
-      expect(selector(state1, 'integration', 'flow')).toEqual(true);
+      expect(selector(state1, 'integration', 'flow')).toBe(true);
     });
   });
 
   describe('integrationApps settings categoryMappingSaveStatus test', () => {
     test('should not throw exception for bad params', () => {
-      expect(selectors.categoryMappingSaveStatus()).toEqual(null);
-      expect(selectors.categoryMappingSaveStatus({})).toEqual(null);
-      expect(selectors.categoryMappingSaveStatus(null)).toEqual(null);
+      expect(selectors.categoryMappingSaveStatus()).toBeNull();
+      expect(selectors.categoryMappingSaveStatus({})).toBeNull();
+      expect(selectors.categoryMappingSaveStatus(null)).toBeNull();
     });
 
     test('should return correct saveStatus value for valid integration and flow', () => {
@@ -10396,7 +10397,7 @@ describe('integrationApps selectors test cases', () => {
         },
       };
 
-      expect(selectors.categoryMappingSaveStatus(state, 'integration', 'flow')).toEqual('saved');
+      expect(selectors.categoryMappingSaveStatus(state, 'integration', 'flow')).toBe('saved');
     });
   });
 
@@ -10450,9 +10451,9 @@ describe('integrationApps selectors test cases', () => {
 
   describe('integrationApps settings checkUpgradeRequested test', () => {
     test('should not throw exception for bad params', () => {
-      expect(selectors.checkUpgradeRequested()).toEqual(false);
-      expect(selectors.checkUpgradeRequested({})).toEqual(false);
-      expect(selectors.checkUpgradeRequested(null)).toEqual(false);
+      expect(selectors.checkUpgradeRequested()).toBe(false);
+      expect(selectors.checkUpgradeRequested({})).toBe(false);
+      expect(selectors.checkUpgradeRequested(null)).toBe(false);
     });
 
     test('should return correct saveStatus value for valid integration and flow', () => {
@@ -10467,15 +10468,15 @@ describe('integrationApps selectors test cases', () => {
         licenseId2: false,
       };
 
-      expect(selectors.checkUpgradeRequested(state, 'licenseId')).toEqual(true);
-      expect(selectors.checkUpgradeRequested(state, 'licenseId2')).toEqual(false);
+      expect(selectors.checkUpgradeRequested(state, 'licenseId')).toBe(true);
+      expect(selectors.checkUpgradeRequested(state, 'licenseId2')).toBe(false);
     });
   });
   describe('integrationApps settings subscribedAddOns test', () => {
     test('should not throw exception for bad params', () => {
-      expect(selectors.subscribedAddOns()).toEqual(null);
-      expect(selectors.subscribedAddOns({})).toEqual(undefined);
-      expect(selectors.subscribedAddOns(null)).toEqual(null);
+      expect(selectors.subscribedAddOns()).toBeNull();
+      expect(selectors.subscribedAddOns({})).toBeUndefined();
+      expect(selectors.subscribedAddOns(null)).toBeNull();
     });
 
     test('should return correct subscribedAddOns value for valid integrationid', () => {

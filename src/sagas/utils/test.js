@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -172,7 +172,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -201,13 +201,13 @@ describe('constructResourceFromFormValues saga', () => {
       patchKey: 'patchValue',
     };
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
     })
       .provide([
-        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [select(selectors.resourceData, 'imports', resourceId), { merged }],
         [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
       ])
       .returns(expectedOutput)
@@ -229,13 +229,13 @@ describe('constructResourceFromFormValues saga', () => {
       },
     ];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
     })
       .provide([
-        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [select(selectors.resourceData, 'imports', resourceId), { merged }],
         [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
       ])
       .returns({})
@@ -246,7 +246,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceType,
     })
@@ -397,7 +397,7 @@ describe('convertResourceFieldstoSampleData', () => {
   test('should return empty when there are no resource fields', () => {
     const sampleData = convertResourceFieldstoSampleData();
 
-    expect(sampleData).toEqual('');
+    expect(sampleData).toBe('');
   });
 });
 describe('getHTTPConnectorMetadata', () => {
@@ -643,6 +643,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -674,6 +675,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -813,7 +815,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -835,7 +837,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1082,7 +1084,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1104,7 +1106,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1613,7 +1615,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 
@@ -1730,7 +1732,7 @@ describe('getEndpointResourceFields', () => {
   test('should not throw any exception for invalid arguments', () => {
     const sampleData = getEndpointResourceFields();
 
-    expect(sampleData).toEqual(undefined);
+    expect(sampleData).toBeUndefined();
   });
   test('should return resourceFields directly if endpoint resource fields are empty', () => {
     const sampleData = getEndpointResourceFields('', resourceFields);
@@ -2303,15 +2305,15 @@ describe('updateWebhookFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateWebhookFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 describe('getDataTypeDefaultValue', () => {
   test('should verify all default values for given datatype', () => {
-    expect(getDataTypeDefaultValue('string')).toEqual('abc');
-    expect(getDataTypeDefaultValue('number')).toEqual(123);
+    expect(getDataTypeDefaultValue('string')).toBe('abc');
+    expect(getDataTypeDefaultValue('number')).toBe(123);
 
-    expect(getDataTypeDefaultValue('boolean')).toEqual(true);
+    expect(getDataTypeDefaultValue('boolean')).toBe(true);
 
     expect(getDataTypeDefaultValue('stringarray')).toEqual(['a', 'b']);
 
@@ -2321,8 +2323,8 @@ describe('getDataTypeDefaultValue', () => {
 
     expect(getDataTypeDefaultValue('objectarray')).toEqual([{a: 'b'}, {c: 'd'}]);
     expect(getDataTypeDefaultValue('object')).toEqual({a: 'b'});
-    expect(getDataTypeDefaultValue()).toEqual('abc');
-    expect(getDataTypeDefaultValue('unknown')).toEqual('abc');
+    expect(getDataTypeDefaultValue()).toBe('abc');
+    expect(getDataTypeDefaultValue('unknown')).toBe('abc');
   });
 });
 

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { INSTALL_STEP_TYPES } from '../../../constants';
@@ -697,7 +697,7 @@ describe('template test cases', () => {
       });
     });
 
-    describe('template steps received reducer', () => {
+    describe('template steps received reducer duplicate', () => {
       test('should find the template with template Id and set installSteps and connectionMap', () => {
         const state = reducer(
           {},
@@ -963,6 +963,7 @@ describe('template test cases', () => {
           installURL: 'connectionId',
           type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
           application: 'netsuite',
+          sourceConnectionId: 'connectionId',
           completed: false,
           options: {},
         });
@@ -998,7 +999,8 @@ describe('template test cases', () => {
                 installURL: 'connectionId',
                 name: 'installBundle',
                 type: 'installPackage',
-                options: {_connectionId: 'new-conn'},
+                sourceConnectionId: 'connectionId',
+                options: {},
               },
             ],
           },
@@ -1388,7 +1390,7 @@ describe('template test cases', () => {
       expect(selectors.templatePublishStatus(state, testTemplateId)).toEqual(PUBLISH_STATES.SUCCESS);
     });
     test('should return template id state with publishStatus as failed if state does not exist', () => {
-      expect(selectors.templatePublishStatus(null, testTemplateId)).toEqual('failed');
+      expect(selectors.templatePublishStatus(null, testTemplateId)).toBe('failed');
     });
   });
 });

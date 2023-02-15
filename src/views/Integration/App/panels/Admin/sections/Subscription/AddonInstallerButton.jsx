@@ -6,6 +6,7 @@ import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import { message } from '../../../../../../../utils/messageStore';
 
 export default function AddonInstallerButton({ resource, ...rest }) {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ export default function AddonInstallerButton({ resource, ...rest }) {
     if (resource.status === 'installed') {
       confirmDialog({
         title: 'Confirm uninstall',
-        message: 'Are you sure you want to uninstall?',
+        message: message.SURE_UNINSTALL,
         buttons: [
           {
             label: 'Uninstall',

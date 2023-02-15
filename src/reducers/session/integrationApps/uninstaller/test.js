@@ -1,13 +1,13 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
 describe('integrationApps uninstaller reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
     expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
-    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
-    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
-    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toBeNull();
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toBe(123);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toBe('string');
     expect(reducer(undefined, { type: null })).toEqual({});
     expect(reducer(undefined, { type: undefined })).toEqual({});
     expect(reducer(undefined, { type: 123 })).toEqual({});
@@ -710,7 +710,7 @@ describe('integrationApps uninstaller reducer test cases', () => {
 
         expect(state).toEqual(expectedValue);
       });
-      test('should not affect the state new integration uninstall steps are received and no integrationId is passed', () => {
+      test('should not affect the state new integration uninstall steps are received and no integrationId is passed duplicate', () => {
         const state = reducer(
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
@@ -787,7 +787,7 @@ describe('integrationApps uninstaller reducer test cases', () => {
         expect(state).toEqual(expectedValue);
       });
 
-      test('should update the uninstaller state and remove the integrationId if found', () => {
+      test('should update the uninstaller state and remove the integrationId if found duplicate', () => {
         const state = reducer(
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.clearSteps(1)

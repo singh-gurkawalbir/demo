@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* eslint-disable jest/no-standalone-expect */
 import each from 'jest-each';
 import { deepClone } from 'fast-json-patch';
 import moment from 'moment';
@@ -6,7 +6,7 @@ import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../constants';
 import { stringCompare } from '../utils/sort';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 
 describe('Accounts region selector testcases', () => {
   describe('isAccountOwnerOrAdmin selector', () => {
@@ -30,7 +30,7 @@ describe('Accounts region selector testcases', () => {
         'some action'
       );
 
-      expect(selectors.isAccountOwnerOrAdmin(state)).toEqual(true);
+      expect(selectors.isAccountOwnerOrAdmin(state)).toBe(true);
     });
     test('should return true for account administrator', () => {
       const state = reducer(
@@ -52,7 +52,7 @@ describe('Accounts region selector testcases', () => {
         'some action'
       );
 
-      expect(selectors.isAccountOwnerOrAdmin(state)).toEqual(true);
+      expect(selectors.isAccountOwnerOrAdmin(state)).toBe(true);
     });
     describe('should return correct flag for org users', () => {
       const accounts = [
@@ -797,7 +797,7 @@ describe('Accounts region selector testcases', () => {
       sampleState.user.org.users = [];
       expect(selectors.availableUsersList(sampleState)).toEqual([]);
     });
-    test('should return integrationUsers list if exist for orgUser when integrationId is passed ', () => {
+    test('should return integrationUsers list if exist for orgUser when integrationId is passed', () => {
       const integrationId = '5e44ee816fb284424f693b43';
       const integrationUserList = orgUserState.data.integrationAShares[integrationId];
       const userList = [
@@ -817,7 +817,7 @@ describe('Accounts region selector testcases', () => {
       expect(selectors.availableUsersList(orgUserState, integrationId)).toEqual(userList.sort(stringCompare('sharedWithUser.name')));
     });
 
-    test('should return integrationUsers list if exist for org admin user when integrationId is passed ', () => {
+    test('should return integrationUsers list if exist for org admin user when integrationId is passed', () => {
       const integrationId = '5e44ee816fb284424f693b43';
       const integrationUserList = orgAdminState.data.integrationAShares[integrationId];
       const userList = [
@@ -915,7 +915,7 @@ describe('Accounts region selector testcases', () => {
 
   describe('selectors.platformLicense test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.platformLicense(undefined, {})).toEqual(null);
+      expect(selectors.platformLicense(undefined, {})).toBeNull();
     });
   });
 
@@ -1009,7 +1009,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-    const expected = {enable: false, message: messageStore('LICENSE_EXPIRED')};
+    const expected = {enable: false, message: message.SUBSCRIPTION.LICENSE_EXPIRED};
 
     test('should return false for expired license', () => {
       expect(selectors.isLicenseValidToEnableFlow(expiredState)).toEqual(expected);
@@ -1021,7 +1021,7 @@ describe('Accounts region selector testcases', () => {
 
   describe('selectors.hasAcceptedAccounts test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAcceptedAccounts()).toEqual(false);
+      expect(selectors.hasAcceptedAccounts()).toBe(false);
     });
     test('should return true if state contains accepted account', () => {
       const state =
@@ -1055,7 +1055,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.hasAcceptedAccounts(state)).toEqual(true);
+      expect(selectors.hasAcceptedAccounts(state)).toBe(true);
     });
     test('should return false if state contains disabled account', () => {
       const state =
@@ -1082,7 +1082,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.hasAcceptedAccounts(state)).toEqual(false);
+      expect(selectors.hasAcceptedAccounts(state)).toBe(false);
     });
     test('should return false if state contains only owner account', () => {
       const state =
@@ -1107,13 +1107,13 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.hasAcceptedAccounts(state)).toEqual(false);
+      expect(selectors.hasAcceptedAccounts(state)).toBe(false);
     });
   });
 
   describe('selectors.hasAcceptedUsers test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAcceptedUsers()).toEqual(false);
+      expect(selectors.hasAcceptedUsers()).toBe(false);
     });
     const orgUserState = {
       user: {
@@ -1176,16 +1176,16 @@ describe('Accounts region selector testcases', () => {
     };
 
     test('should return true if account has accepted users', () => {
-      expect(selectors.hasAcceptedUsers(orgUserState)).toEqual(true);
+      expect(selectors.hasAcceptedUsers(orgUserState)).toBe(true);
     });
     test('should return false if account does not have accepted users', () => {
-      expect(selectors.hasAcceptedUsers(state)).toEqual(false);
+      expect(selectors.hasAcceptedUsers(state)).toBe(false);
     });
   });
 
   describe('selectors.isValidSharedAccountId test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isValidSharedAccountId()).toEqual(false);
+      expect(selectors.isValidSharedAccountId()).toBe(false);
     });
     test('should return true if state contains valid account', () => {
       const state =
@@ -1211,7 +1211,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.isValidSharedAccountId(state, 'ashare1')).toEqual(true);
+      expect(selectors.isValidSharedAccountId(state, 'ashare1')).toBe(true);
     });
     test('should return false if state does not contains valid account', () => {
       const state =
@@ -1237,7 +1237,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.isValidSharedAccountId(state, 'ashare1')).toEqual(false);
+      expect(selectors.isValidSharedAccountId(state, 'ashare1')).toBe(false);
     });
   });
 
@@ -1269,7 +1269,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.getOneValidSharedAccountId(state)).toEqual('ashare1');
+      expect(selectors.getOneValidSharedAccountId(state)).toBe('ashare1');
     });
     test('should return undefined if state does not contains valid shared account id', () => {
       const state =
@@ -1294,7 +1294,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-      expect(selectors.getOneValidSharedAccountId(state)).toEqual(undefined);
+      expect(selectors.getOneValidSharedAccountId(state)).toBeUndefined();
     });
   });
 
@@ -1364,7 +1364,7 @@ describe('Accounts region selector testcases', () => {
 
   describe('selectors.isFormAMonitorLevelAccess test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isFormAMonitorLevelAccess()).toEqual(false);
+      expect(selectors.isFormAMonitorLevelAccess()).toBe(false);
     });
 
     test('should return true if user has monitor level access across all forms', () => {
@@ -1409,7 +1409,7 @@ describe('Accounts region selector testcases', () => {
         'some-action'
       );
 
-      expect(selectors.isFormAMonitorLevelAccess(state)).toEqual(true);
+      expect(selectors.isFormAMonitorLevelAccess(state)).toBe(true);
     });
     test('should return false if user does not have monitor level access across all forms', () => {
       const state = reducer(
@@ -1453,7 +1453,7 @@ describe('Accounts region selector testcases', () => {
         'some-action'
       );
 
-      expect(selectors.isFormAMonitorLevelAccess(state)).toEqual(false);
+      expect(selectors.isFormAMonitorLevelAccess(state)).toBe(false);
     });
     test('should return correct validation based on the user level access for each integration', () => {
       const state = reducer(
@@ -1497,13 +1497,13 @@ describe('Accounts region selector testcases', () => {
         'some-action'
       );
 
-      expect(selectors.isFormAMonitorLevelAccess(state, 'i1')).toEqual(false);
-      expect(selectors.isFormAMonitorLevelAccess(state, 'i2')).toEqual(true);
+      expect(selectors.isFormAMonitorLevelAccess(state, 'i1')).toBe(false);
+      expect(selectors.isFormAMonitorLevelAccess(state, 'i2')).toBe(true);
     });
   });
   describe('selectors.isFormAManageLevelAccess test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isFormAManageLevelAccess()).toEqual(false);
+      expect(selectors.isFormAManageLevelAccess()).toBe(false);
     });
 
     test('should return true if user has manage level access across all forms', () => {
@@ -1548,7 +1548,7 @@ describe('Accounts region selector testcases', () => {
         'some-action'
       );
 
-      expect(selectors.isFormAManageLevelAccess(state)).toEqual(true);
+      expect(selectors.isFormAManageLevelAccess(state)).toBe(true);
     });
     test('should return false if user does not have manage level access across all forms', () => {
       const state = reducer(
@@ -1592,7 +1592,7 @@ describe('Accounts region selector testcases', () => {
         'some-action'
       );
 
-      expect(selectors.isFormAManageLevelAccess(state)).toEqual(false);
+      expect(selectors.isFormAManageLevelAccess(state)).toBe(false);
     });
     test('should return correct validation based on the user level access for each integration', () => {
       const state = reducer(
@@ -1636,8 +1636,8 @@ describe('Accounts region selector testcases', () => {
         'some-action'
       );
 
-      expect(selectors.isFormAManageLevelAccess(state, 'i1')).toEqual(true);
-      expect(selectors.isFormAManageLevelAccess(state, 'i2')).toEqual(false);
+      expect(selectors.isFormAManageLevelAccess(state, 'i1')).toBe(true);
+      expect(selectors.isFormAManageLevelAccess(state, 'i2')).toBe(false);
     });
   });
 
@@ -1803,7 +1803,7 @@ describe('Accounts region selector testcases', () => {
         },
       };
 
-      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(false);
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toBe(false);
     });
     test('should return false if user (with dev mode on) does not have manage permission to the resource', () => {
       const state = {
@@ -1818,7 +1818,7 @@ describe('Accounts region selector testcases', () => {
         },
       };
 
-      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(false);
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toBe(false);
     });
     test('should return false if IA resource user does not have access to publish', () => {
       const state = {
@@ -1835,7 +1835,7 @@ describe('Accounts region selector testcases', () => {
         },
       };
 
-      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(false);
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toBe(false);
     });
     test('should return true for IA publisher with developer mode on', () => {
       const state = {
@@ -1861,7 +1861,7 @@ describe('Accounts region selector testcases', () => {
         },
       };
 
-      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toBe(true);
     });
 
     test('should return true for admin with account of IA publisher with developer mode on', () => {
@@ -1893,7 +1893,7 @@ describe('Accounts region selector testcases', () => {
         },
       };
 
-      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toBe(true);
     });
     test('should return true for non IA resource with developer mode on', () => {
       const state = {
@@ -1910,7 +1910,7 @@ describe('Accounts region selector testcases', () => {
         },
       };
 
-      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toBe(true);
     });
   });
 

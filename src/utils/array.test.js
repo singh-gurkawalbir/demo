@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import arrayUtil from './array';
 
 describe('array utils tests', () => {
@@ -63,14 +63,14 @@ describe('array utils tests', () => {
   });
   describe('isContinuousSubSet test cases', () => {
     test('should not throw error for invalid arguments', () => {
-      expect(arrayUtil.isContinuousSubSet(null)).toEqual(false);
-      expect(arrayUtil.isContinuousSubSet()).toEqual(true);
+      expect(arrayUtil.isContinuousSubSet(null)).toBe(false);
+      expect(arrayUtil.isContinuousSubSet()).toBe(true);
     });
     test('should return false if src array length is less than target', () => {
-      expect(arrayUtil.isContinuousSubSet(['responseMapping'], ['transform', 'raw'])).toEqual(false);
+      expect(arrayUtil.isContinuousSubSet(['responseMapping'], ['transform', 'raw'])).toBe(false);
     });
     test('should return true if target is empty', () => {
-      expect(arrayUtil.isContinuousSubSet(['responseMapping'])).toEqual(true);
+      expect(arrayUtil.isContinuousSubSet(['responseMapping'])).toBe(true);
     });
     test('should return false if src does not contain first index target value', () => {
       const src = [
@@ -81,13 +81,13 @@ describe('array utils tests', () => {
       ];
       const target = ['transform', 'raw'];
 
-      expect(arrayUtil.isContinuousSubSet(src, target)).toEqual(false);
+      expect(arrayUtil.isContinuousSubSet(src, target)).toBe(false);
     });
     test('should return false if arrays are not equal after removing target first value', () => {
       const src = ['inputFilter', 'flowInput'];
       const target = ['outputFilter', 'transform', 'raw'];
 
-      expect(arrayUtil.isContinuousSubSet(src, target)).toEqual(false);
+      expect(arrayUtil.isContinuousSubSet(src, target)).toBe(false);
     });
     test('should return true if arrays are equal after removing target first value', () => {
       const src = [
@@ -99,26 +99,26 @@ describe('array utils tests', () => {
       ];
       const target = ['transform', 'raw'];
 
-      expect(arrayUtil.isContinuousSubSet(src, target)).toEqual(true);
+      expect(arrayUtil.isContinuousSubSet(src, target)).toBe(true);
     });
   });
   describe('areArraysEqual test cases', () => {
     test('should not throw error for invalid arguments', () => {
-      expect(arrayUtil.areArraysEqual(null)).toEqual(false);
-      expect(arrayUtil.areArraysEqual()).toEqual(false);
+      expect(arrayUtil.areArraysEqual(null)).toBe(false);
+      expect(arrayUtil.areArraysEqual()).toBe(false);
     });
     test('should return false if array lengths are different', () => {
-      expect(arrayUtil.areArraysEqual([1, 2, 3], [1, 2])).toEqual(false);
+      expect(arrayUtil.areArraysEqual([1, 2, 3], [1, 2])).toBe(false);
     });
     test('should not ignore the order of array values if the same is passed in options', () => {
-      expect(arrayUtil.areArraysEqual([1, 3, 2], [1, 2, 3])).toEqual(false);
-      expect(arrayUtil.areArraysEqual([1, 2, 3], [1, 2, 3])).toEqual(true);
+      expect(arrayUtil.areArraysEqual([1, 3, 2], [1, 2, 3])).toBe(false);
+      expect(arrayUtil.areArraysEqual([1, 2, 3], [1, 2, 3])).toBe(true);
     });
     test('should return false if arrays are not equal with ignore order', () => {
-      expect(arrayUtil.areArraysEqual([1, 3, 4], [1, 2, 3], {ignoreOrder: true})).toEqual(false);
+      expect(arrayUtil.areArraysEqual([1, 3, 4], [1, 2, 3], {ignoreOrder: true})).toBe(false);
     });
     test('should return true if arrays are equal with ignore order', () => {
-      expect(arrayUtil.areArraysEqual([1, 3, 2], [1, 2, 3], {ignoreOrder: true})).toEqual(true);
+      expect(arrayUtil.areArraysEqual([1, 3, 2], [1, 2, 3], {ignoreOrder: true})).toBe(true);
     });
   });
 });

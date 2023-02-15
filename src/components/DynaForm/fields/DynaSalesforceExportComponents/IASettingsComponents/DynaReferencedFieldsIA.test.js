@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, */
+
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import DynaReferencedFieldsIA from './DynaReferencedFieldsIA';
@@ -18,7 +18,7 @@ jest.mock('../DynaReferencedFields', () => ({
   },
 }));
 
-describe('DynaReferencedFieldsIA UI tests', () => {
+describe('dynaReferencedFieldsIA UI tests', () => {
   test('should pass the initial render', async () => {
     const fieldMetaProps = {resource: {}, properties: {_exportId: '5efd8663a56953365bd28541'}};
     const props = fieldMetaProps;
@@ -32,6 +32,6 @@ describe('DynaReferencedFieldsIA UI tests', () => {
     }]};
 
     renderWithProviders(<DynaReferencedFieldsIA {...props} />, {initialStore});
-    await waitFor(() => expect(mockDynaReferencedFields).toBeCalledWith({...fieldMetaProps, options: 'Quote', connectionId: '6afd8663a56953365bd28541'}));
+    await waitFor(() => expect(mockDynaReferencedFields).toHaveBeenCalledWith({...fieldMetaProps, options: 'Quote', connectionId: '6afd8663a56953365bd28541'}));
   });
 });

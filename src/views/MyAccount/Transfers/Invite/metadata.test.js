@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import defaultRef from './metadata';
 
 describe('metadata agents test cases', () => {
@@ -11,7 +10,7 @@ describe('metadata agents test cases', () => {
       },
     });
 
-    expect(value1Ref).toEqual('API token');
+    expect(value1Ref).toBe('API token');
 
     const value2Ref = columns[1].Value({
       rowData: {
@@ -19,7 +18,7 @@ describe('metadata agents test cases', () => {
       },
     });
 
-    expect(value2Ref).toEqual('name');
+    expect(value2Ref).toBe('name');
 
     const value2Ref1 = columns[1].Value({
       rowData: {
@@ -27,6 +26,6 @@ describe('metadata agents test cases', () => {
       },
     });
 
-    expect(value2Ref1).toEqual('id_1');
+    expect(value2Ref1).toBe('id_1');
   });
 });

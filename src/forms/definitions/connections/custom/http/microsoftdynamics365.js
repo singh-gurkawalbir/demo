@@ -11,6 +11,8 @@ export default {
     '/http/baseURI': `https://${
       formValues['/http/microsoftDynamics365Subdomain']
     }.dynamics.com`,
+    '/http/ping/relativeURI': '/api/data/v8.2/contacts',
+    '/http/ping/method': 'GET',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':

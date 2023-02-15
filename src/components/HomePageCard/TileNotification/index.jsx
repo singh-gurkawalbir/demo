@@ -12,6 +12,7 @@ import ActionGroup from '../../ActionGroup';
 import { FilledButton, TextButton} from '../../Buttons';
 import useHandleDelete from '../../../views/Integration/hooks/useHandleDelete';
 import useConfirmDialog from '../../ConfirmDialog';
+import {message} from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -91,7 +92,7 @@ export default function TileNotification({
     }
     confirmDialog({
       title: 'Request to buy subscription',
-      message: 'We will contact you to buy your subscription.',
+      message: message.SUBSCRIPTION.CONTACT_TO_BUY,
       buttons: [
         {
           label: 'Submit request',
@@ -112,7 +113,7 @@ export default function TileNotification({
     setUpgradeRequested(true);
     if (resumable) {
       if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
-        enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.', variant: 'error' });
+        enquesnackbar({ message: message.INTEGRATION.CONTACT_OWNER, variant: 'error' });
       } else {
         return dispatch(actions.integrationApp.license.resume(integrationId));
       }
@@ -121,7 +122,7 @@ export default function TileNotification({
     } else {
       confirmDialog({
         title: 'Request to renew subscription',
-        message: 'We will contact you to renew your subscription.',
+        message: message.SUBSCRIPTION.CONTACT_TO_RENEW,
         buttons: [
           {
             label: 'Submit request',

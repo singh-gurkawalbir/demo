@@ -1,11 +1,11 @@
-/* global describe, test, expect */
+
 import getFailedRecordDefault from '.';
 
 describe('getFailedRecordDefault component Test cases', () => {
   test('should pass the intial render with default values', async () => {
     const response = getFailedRecordDefault();
 
-    expect(response).toEqual('disallowFailure');
+    expect(response).toBe('disallowFailure');
   });
 
   test('should pass the intial render without allowFailures key', async () => {
@@ -14,7 +14,7 @@ describe('getFailedRecordDefault component Test cases', () => {
       default: 'sd',
     });
 
-    expect(response).toEqual('disallowFailure');
+    expect(response).toBe('disallowFailure');
   });
 
   test('should pass the intial render with allowFailures key empty default value', async () => {
@@ -22,7 +22,7 @@ describe('getFailedRecordDefault component Test cases', () => {
       allowFailures: true,
     });
 
-    expect(response).toEqual('default');
+    expect(response).toBe('default');
   });
 
   test('should pass the intial render with allowFailures key empty string default value', async () => {
@@ -31,7 +31,7 @@ describe('getFailedRecordDefault component Test cases', () => {
       default: '',
     });
 
-    expect(response).toEqual('useEmptyString');
+    expect(response).toBe('useEmptyString');
   });
   test('should pass the intial render with allowFailures key null default value', async () => {
     const response = getFailedRecordDefault({
@@ -39,6 +39,6 @@ describe('getFailedRecordDefault component Test cases', () => {
       default: null,
     });
 
-    expect(response).toEqual('useNull');
+    expect(response).toBe('useNull');
   });
 });

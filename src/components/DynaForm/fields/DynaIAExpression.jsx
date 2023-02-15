@@ -98,9 +98,6 @@ export default function DynaIAExpression(props) {
   const options = { commMetaPath, disableFetch: false, sObjectType: resource?.salesforce?.sObjectType, hasSObjectType: !!resource?.salesforce?.sObjectType };
 
   switch (filterType) {
-    case 'netsuiteImportLookup':
-      ExpressionBuilder = DynaNetSuiteLookup;
-      break;
     case 'salesforceImportLookup':
       ExpressionBuilder = DynaSFLookup;
       break;
@@ -112,7 +109,6 @@ export default function DynaIAExpression(props) {
       break;
     default:
       ExpressionBuilder = DynaNetSuiteLookup;
-      break;
   }
 
   return (

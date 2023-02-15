@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogActions }
+import { makeStyles, Dialog, DialogTitle, DialogContent, DialogActions }
   from '@material-ui/core';
-import shortid from 'shortid';
+import { generateId } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import CodeEditor from '../../../components/CodeEditor2/editor';
+import {TextButton} from '../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -52,7 +53,7 @@ export default function ExportExampleButton({ editorId }) {
     if (open) {
       setExample({
         type,
-        key: `${type}-${shortid.generate()}`,
+        key: `${type}-${generateId()}`,
         name: 'node text in example tree',
         description: 'Not used yet.',
         rule,
@@ -72,12 +73,11 @@ export default function ExportExampleButton({ editorId }) {
 
   return (
     <>
-      <Button
+      <TextButton
         className={classes.exportButton}
-        onClick={handleOpen}
-        variant="text">
+        onClick={handleOpen}>
         Export example
-      </Button>
+      </TextButton>
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="example-dialog" maxWidth="lg">
         <DialogTitle id="example-dialog">Export example</DialogTitle>
@@ -86,9 +86,7 @@ export default function ExportExampleButton({ editorId }) {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
+          <TextButton onClick={handleClose}> Close </TextButton>
         </DialogActions>
       </Dialog>
     </>

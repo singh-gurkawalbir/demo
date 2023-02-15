@@ -1,4 +1,3 @@
-/* global describe, test, expect,jest  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -44,7 +43,7 @@ function ComponentForColumns() {
   return <div>{columndata[1].Value({ rowData: { resouce: 'r' } })}</div>;
 }
 
-describe('UI test cases for ResourceTable connectors', () => {
+describe('uI test cases for ResourceTable connectors', () => {
   test('should display first column component', () => {
     renderWithProviders(<ComponentForColumns />);
     const res1 = screen.getByText('textoverflow');
@@ -94,7 +93,7 @@ describe('UI test cases for ResourceTable connectors', () => {
       },
     });
 
-    expect(valuelinkRef1).toEqual(null);
+    expect(valuelinkRef1).toBeNull();
 
     const valuelinkRef2 = columns[3].Value({
       rowData: {

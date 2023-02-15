@@ -22,7 +22,6 @@ import {
   generateNewId,
 } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
-import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import { getApplication } from '../../utils/template';
@@ -65,7 +64,7 @@ export default function Clone() {
 
   useEffect(() => {
     if (!installSteps.length) {
-      history.push(`/clone/flows/${resourceId}/preview`);
+      history.push(`/clone/${resourceType}/${resourceId}/preview`);
     }
   });
 
@@ -139,6 +138,13 @@ export default function Clone() {
   const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (completed) {
       return false;
@@ -162,7 +168,6 @@ export default function Clone() {
         actions.resource.patchStaged(
           newId,
           jsonUtil.objectToPatchSet(connObj),
-          SCOPES.VALUE
         )
       );
       setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });
@@ -205,7 +210,9 @@ export default function Clone() {
           actions.template.verifyBundleOrPackageInstall(
             step,
             { _id: step.options._connectionId },
-            templateId
+            templateId,
+            netsuitePackageType,
+            true                                  // true here sets the isManualVerification flag to true which means the user has triggered the verification
           )
         );
       }

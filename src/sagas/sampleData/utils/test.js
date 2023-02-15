@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-conditional-in-test */
+
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -6,7 +7,6 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import { SCOPES } from '../../resourceForm';
 import { evaluateExternalProcessor } from '../../editor';
 import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
 import { exportPreview, pageProcessorPreview } from './previewCalls';
@@ -627,11 +627,11 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        return expectSaga(parseFileData, { sampleData: { test: 5 }, resource: ftpFileDefResource})
+        expectSaga(parseFileData, { sampleData: { test: 5 }, resource: ftpFileDefResource})
           .not.call.fn(evaluateExternalProcessor)
           .run();
       });
-      test('should call evaluateExternalProcessor and return processed data on success ', () => {
+      test('should call evaluateExternalProcessor and return processed data on success', () => {
         const ftpCsvResource = {
           _id: 'export-123',
           name: 'FTP export',
@@ -687,7 +687,7 @@ describe('Flow sample data utility sagas', () => {
           resourceType: 'exports',
         };
 
-        return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
+        expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
           .provide([
             [select(selectors.resource, 'exports', ftpCsvResource._id), oldFtpCsvResource],
             [call(evaluateExternalProcessor, { processorData }), processedData],
@@ -696,7 +696,7 @@ describe('Flow sample data utility sagas', () => {
           .returns(processedData)
           .run();
       });
-      test('should return undefined incase evaluateExternalProcessor throws error ', () => {
+      test('should return undefined incase evaluateExternalProcessor throws error', () => {
         const ftpCsvResource = {
           _id: 'export-123',
           name: 'FTP export',
@@ -732,7 +732,7 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],
         });
 
-        return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
+        expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
           .provide([
             [select(selectors.resource, 'exports', ftpCsvResource._id), oldFtpCsvResource],
             [call(evaluateExternalProcessor, { processorData }), throwError(error)],
@@ -753,7 +753,7 @@ describe('Flow sample data utility sagas', () => {
       test('should not invoke file definition processor api if the passed resource is not of file type', () => {
         const resource = { _id: 'id-123', adaptorType: 'RESTSExport', name: 'test'};
 
-        return expectSaga(parseFileDefinition, { sampleData: { test: 5 }, resource})
+        expectSaga(parseFileDefinition, { sampleData: { test: 5 }, resource})
           .not.call.fn(apiCallWithRetry)
           .run();
       });
@@ -774,7 +774,7 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        return expectSaga(parseFileDefinition, { sampleData: { test: 5 }, resource: ftpCsvResource})
+        expectSaga(parseFileDefinition, { sampleData: { test: 5 }, resource: ftpCsvResource})
           .not.call.fn(apiCallWithRetry)
           .run();
       });
@@ -807,7 +807,7 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+        expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
           .provide([
             [call(apiCallWithRetry, {
               path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
@@ -861,7 +861,7 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+        expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
           .provide([
             [call(apiCallWithRetry, {
               path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
@@ -915,7 +915,7 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+        expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
           .provide([
             [call(apiCallWithRetry, {
               path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
@@ -966,7 +966,7 @@ describe('Flow sample data utility sagas', () => {
           data: undefined,
         };
 
-        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+        expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
           .provide([
             [call(apiCallWithRetry, {
               path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
@@ -1006,7 +1006,7 @@ describe('Flow sample data utility sagas', () => {
         };
         const error = { status: 404, message: 'Not found' };
 
-        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+        expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
           .provide([
             [call(apiCallWithRetry, {
               path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
@@ -1042,13 +1042,12 @@ describe('Flow sample data utility sagas', () => {
           pageProcessors: [{ type: 'import', _importId: 'import-111'}],
         };
 
-        return expectSaga(getFlowResourceNode, { resourceId, flowId, resourceType: 'exports'})
+        expectSaga(getFlowResourceNode, { resourceId, flowId, resourceType: 'exports'})
           .provide([
             [select(
               selectors.resourceData,
               'flows',
               flowId,
-              SCOPES.VALUE
             ), { merged: flow}],
           ])
           .returns(undefined)
@@ -1065,13 +1064,12 @@ describe('Flow sample data utility sagas', () => {
         };
         const expectedNode = flow.pageGenerators[0];
 
-        return expectSaga(getFlowResourceNode, { resourceId, flowId, resourceType: 'exports'})
+        expectSaga(getFlowResourceNode, { resourceId, flowId, resourceType: 'exports'})
           .provide([
             [select(
               selectors.resourceData,
               'flows',
               flowId,
-              SCOPES.VALUE
             ), { merged: flow}],
             [select(
               selectors.isPageGenerator,
@@ -1097,13 +1095,12 @@ describe('Flow sample data utility sagas', () => {
         };
         const expectedNode = flow.pageProcessors[0];
 
-        return expectSaga(getFlowResourceNode, { resourceId, flowId, resourceType: 'imports'})
+        expectSaga(getFlowResourceNode, { resourceId, flowId, resourceType: 'imports'})
           .provide([
             [select(
               selectors.resourceData,
               'flows',
               flowId,
-              SCOPES.VALUE
             ), { merged: flow}],
             [select(
               selectors.isPageGenerator,
@@ -1158,7 +1155,7 @@ describe('Flow sample data utility sagas', () => {
       });
     });
     describe('fetchResourceDataForNewFlowResource saga', () => {
-      test('should return undefined incase of invalid/no resourceId ', () => expectSaga(fetchResourceDataForNewFlowResource, {})
+      test('should return undefined incase of invalid/no resourceId', () => expectSaga(fetchResourceDataForNewFlowResource, {})
         .returns(undefined)
         .run());
       test('should add postData on the resource incase of delta export resource', async () => {
@@ -1192,7 +1189,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               '1234',
-              SCOPES.VALUE
             ), { merged: deltaResource}],
           ])
           .run();
@@ -1209,13 +1205,13 @@ describe('Flow sample data utility sagas', () => {
           pageProcessors: [{ type: 'import', _importId: 'import-123'}],
         };
 
-        return expectSaga(fetchFlowResources, {})
+        expectSaga(fetchFlowResources, {})
           .returns({})
           .run() && expectSaga(fetchFlowResources, {flow, type: 'INVALID'})
           .returns({})
           .run();
       });
-      test('should return map of pgs when type is pageGenerators ', () => {
+      test('should return map of pgs when type is pageGenerators', () => {
         const flow = {
           _id: 'flow-123',
           name: 'test flow',
@@ -1230,19 +1226,17 @@ describe('Flow sample data utility sagas', () => {
           'export-456': {doc: pg2, options: {}},
         };
 
-        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+        expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
           .provide([
             [select(
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1268,7 +1262,7 @@ describe('Flow sample data utility sagas', () => {
           .returns(flowResourcesMap)
           .run();
       });
-      test('should return map of pps when type is pageProcessors ', () => {
+      test('should return map of pps when type is pageProcessors', () => {
         const flow = {
           _id: 'flow-123',
           name: 'test flow',
@@ -1306,25 +1300,22 @@ describe('Flow sample data utility sagas', () => {
           'import-123': {doc: {...pp3, mockResponse}, options: { uiData: undefined, files: undefined }},
         };
 
-        return expectSaga(fetchFlowResources, { flow, type: 'pageProcessors' })
+        expectSaga(fetchFlowResources, { flow, type: 'pageProcessors' })
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               'lookup-123',
-              SCOPES.VALUE
             ), { merged: pp1}],
             [select(
               selectors.resourceData,
               'exports',
               'lookup-456',
-              SCOPES.VALUE
             ), { merged: pp2}],
             [select(
               selectors.resourceData,
               'imports',
               'import-123',
-              SCOPES.VALUE
             ), { merged: pp3}],
             [call(
               getPreviewOptionsForResource,
@@ -1393,13 +1384,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1442,19 +1431,17 @@ describe('Flow sample data utility sagas', () => {
           'export-456': {doc: pg2, options: {inputData}},
         };
 
-        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators', addMockData: true })
+        expectSaga(fetchFlowResources, { flow, type: 'pageGenerators', addMockData: true })
           .provide([
             [select(
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1480,7 +1467,7 @@ describe('Flow sample data utility sagas', () => {
           .returns(flowResourcesMap)
           .run();
       });
-      test('should return runOfflineOptions for PGs incase runOffline is true and PG has rawData, should also pass refresh prop to getPreviewOptionsForResource saga if passed true ', async () => {
+      test('should return runOfflineOptions for PGs incase runOffline is true and PG has rawData, should also pass refresh prop to getPreviewOptionsForResource saga if passed true', async () => {
         const flow = {
           _id: 'flow-123',
           name: 'test flow',
@@ -1530,13 +1517,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1619,19 +1604,17 @@ describe('Flow sample data utility sagas', () => {
           'export-456': {doc: pg2, options: { uiData: undefined }},
         };
 
-        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+        expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
           .provide([
             [select(
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1687,19 +1670,17 @@ describe('Flow sample data utility sagas', () => {
           'export-456': {doc: pg2, options: { uiData: undefined, files: undefined }},
         };
 
-        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+        expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
           .provide([
             [select(
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
           ])
           .returns(flowResourcesMap)
@@ -1711,7 +1692,7 @@ describe('Flow sample data utility sagas', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
 
-        return expectSaga(requestSampleDataForImports, { resourceId, flowId })
+        expectSaga(requestSampleDataForImports, { resourceId, flowId })
           .not.call.fn(fetchPageProcessorPreview)
           .run();
       });
@@ -1719,7 +1700,7 @@ describe('Flow sample data utility sagas', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
 
-        return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'flowInput' })
+        expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'flowInput' })
           .call(fetchPageProcessorPreview, {
             flowId,
             _pageProcessorId: resourceId,
@@ -1742,13 +1723,12 @@ describe('Flow sample data utility sagas', () => {
           test: 5,
         };
 
-        return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'sampleResponse' })
+        expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'sampleResponse' })
           .provide([
             [select(
               selectors.resourceData,
               'imports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource}],
           ])
           .put(
@@ -1766,7 +1746,7 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'flow-123';
         const sampleDataStage = 'importMapping';
 
-        return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage })
+        expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage })
           .call(requestProcessorData, {
             flowId,
             resourceId,
@@ -1782,7 +1762,7 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'flow-123';
         const sampleDataStage = 'raw';
 
-        return expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
+        expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
           .provide([
             [select(
               selectors.isPageGenerator,
@@ -1803,7 +1783,7 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'flow-123';
         const sampleDataStage = 'raw';
 
-        return expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
+        expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
           .provide([
             [select(
               selectors.isPageGenerator,
@@ -1827,7 +1807,7 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'flow-123';
         const sampleDataStage = 'raw';
 
-        return expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
+        expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
           .provide([
             [select(
               selectors.isPageGenerator,
@@ -1849,7 +1829,7 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'flow-123';
         const sampleDataStage = 'preSavePage';
 
-        return expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
+        expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
           .provide([
             [select(
               selectors.isPageGenerator,
@@ -1875,7 +1855,7 @@ describe('Flow sample data utility sagas', () => {
         const stage = 'preSavePage';
         const processedData = undefined;
 
-        return expectSaga(updateStateForProcessorData, { flowId, resourceId, stage, processedData })
+        expectSaga(updateStateForProcessorData, { flowId, resourceId, stage, processedData })
           .put(
             actions.flowData.receivedProcessorData(
               flowId,
@@ -1886,7 +1866,7 @@ describe('Flow sample data utility sagas', () => {
           )
           .run();
       });
-      test('should dispatch receivedProcessorData with processedData with data wrapped in array when wrapInArrayProcessedData is true ', () => {
+      test('should dispatch receivedProcessorData with processedData with data wrapped in array when wrapInArrayProcessedData is true', () => {
         const resourceId = 'export-123';
         const flowId = 'flow-123';
         const stage = 'preSavePage';
@@ -1897,7 +1877,7 @@ describe('Flow sample data utility sagas', () => {
           data: [{ test: 5}],
         };
 
-        return expectSaga(updateStateForProcessorData, {
+        expectSaga(updateStateForProcessorData, {
           flowId,
           resourceId,
           stage,
@@ -1914,7 +1894,7 @@ describe('Flow sample data utility sagas', () => {
           )
           .run();
       });
-      test('should dispatch receivedProcessorData with processedData with data formatted with data[0] when removeDataPropFromProcessedData is true ', () => {
+      test('should dispatch receivedProcessorData with processedData with data formatted with data[0] when removeDataPropFromProcessedData is true', () => {
         const resourceId = 'export-123';
         const flowId = 'flow-123';
         const stage = 'preSavePage';
@@ -1927,7 +1907,7 @@ describe('Flow sample data utility sagas', () => {
           data: [{ test: 5}],
         };
 
-        return expectSaga(updateStateForProcessorData, {
+        expectSaga(updateStateForProcessorData, {
           flowId,
           resourceId,
           stage,
@@ -1950,7 +1930,7 @@ describe('Flow sample data utility sagas', () => {
         const stage = 'preSavePage';
         const processedData = { test: 5 };
 
-        return expectSaga(updateStateForProcessorData, {
+        expectSaga(updateStateForProcessorData, {
           flowId,
           resourceId,
           stage,
@@ -1975,7 +1955,7 @@ describe('Flow sample data utility sagas', () => {
         const stage = 'preSavePage';
         const error = undefined;
 
-        return expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error})
+        expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error})
           .not.put(
             actions.flowData.receivedError(
               flowId,
@@ -1992,7 +1972,7 @@ describe('Flow sample data utility sagas', () => {
         const stage = 'preSavePage';
         const error = { status: 401 };
 
-        return expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
+        expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
           .not.put(
             actions.flowData.receivedError(
               flowId,
@@ -2009,7 +1989,7 @@ describe('Flow sample data utility sagas', () => {
         const stage = 'preSavePage';
         const error = { status: 205 };
 
-        return expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
+        expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
           .not.put(
             actions.flowData.receivedError(
               flowId,
@@ -2026,7 +2006,7 @@ describe('Flow sample data utility sagas', () => {
         const stage = 'preSavePage';
         const error = { status: 404, message: 'Not found' };
 
-        return expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
+        expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
           .not.put(
             actions.flowData.receivedError(
               flowId,
@@ -2049,7 +2029,7 @@ describe('Flow sample data utility sagas', () => {
             },
           ] };
 
-        return expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
+        expectSaga(handleFlowDataStageErrors, { resourceId, flowId, stage, error })
           .not.put(
             actions.flowData.receivedError(
               flowId,
@@ -2133,7 +2113,7 @@ describe('Flow sample data utility sagas', () => {
           data: { test: 5 },
         };
 
-        return expectSaga(getFlowStageData, {flowId,
+        expectSaga(getFlowStageData, {flowId,
           resourceId,
           resourceType,
           stage,
@@ -2156,7 +2136,7 @@ describe('Flow sample data utility sagas', () => {
           data: { test: 5 },
         };
 
-        return expectSaga(getFlowStageData, {flowId,
+        expectSaga(getFlowStageData, {flowId,
           resourceId,
           resourceType,
           stage,
@@ -2184,7 +2164,7 @@ describe('Flow sample data utility sagas', () => {
           data: {test: 5},
         };
 
-        return expectSaga(fetchMetadata, { connectionId, commMetaPath })
+        expectSaga(fetchMetadata, { connectionId, commMetaPath })
           .provide([
             [select(selectors.getMetadataOptions, {
               connectionId,
@@ -2199,7 +2179,7 @@ describe('Flow sample data utility sagas', () => {
         const connectionId = 'conn-123';
         const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/users`;
 
-        return expectSaga(fetchMetadata, { connectionId, commMetaPath })
+        expectSaga(fetchMetadata, { connectionId, commMetaPath })
           .provide([
             [select(selectors.getMetadataOptions, {
               connectionId,
@@ -2222,7 +2202,7 @@ describe('Flow sample data utility sagas', () => {
           data: {test: 5},
         };
 
-        return expectSaga(fetchMetadata, { connectionId, commMetaPath, refresh: true })
+        expectSaga(fetchMetadata, { connectionId, commMetaPath, refresh: true })
           .provide([
             [select(selectors.getMetadataOptions, {
               connectionId,
@@ -2242,7 +2222,7 @@ describe('Flow sample data utility sagas', () => {
   });
   describe('previewCalls sagas', () => {
     describe('pageProcessorPreview saga', () => {
-      test('should do nothing if there is no flowId/_pageProcessorId ', () => expectSaga(pageProcessorPreview, {})
+      test('should do nothing if there is no flowId/_pageProcessorId', () => expectSaga(pageProcessorPreview, {})
         .not.call.fn(apiCallWithRetry)
         .run());
       test('should do nothing if the flow does not have at least one PG', () => {
@@ -2256,9 +2236,9 @@ describe('Flow sample data utility sagas', () => {
         };
         const resourceType = 'imports';
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow}],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow}],
           ])
           .not.call.fn(apiCallWithRetry)
           .returns(undefined)
@@ -2313,9 +2293,9 @@ describe('Flow sample data utility sagas', () => {
           hidden: false,
         };
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports' })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports' })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2402,9 +2382,9 @@ describe('Flow sample data utility sagas', () => {
           hidden: false,
         };
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', _pageProcessorDoc })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', _pageProcessorDoc })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2470,9 +2450,9 @@ describe('Flow sample data utility sagas', () => {
           hidden: false,
         };
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', previewType: 'flowInput'})
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', previewType: 'flowInput'})
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2577,9 +2557,9 @@ describe('Flow sample data utility sagas', () => {
           hidden: false,
         };
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports' })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports' })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2697,9 +2677,9 @@ describe('Flow sample data utility sagas', () => {
           hidden: false,
         };
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', _pageProcessorDoc })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', _pageProcessorDoc })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2774,9 +2754,9 @@ describe('Flow sample data utility sagas', () => {
         };
         const runOffline = true;
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', runOffline })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', runOffline })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2847,9 +2827,9 @@ describe('Flow sample data utility sagas', () => {
           hidden: false,
         };
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', refresh, includeStages })
+        expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', refresh, includeStages })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2920,9 +2900,9 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Error in preview call"}'}],
         });
 
-        return expectSaga(pageProcessorPreview, { throwOnError: true, flowId, _pageProcessorId, resourceType: 'imports'})
+        expectSaga(pageProcessorPreview, { throwOnError: true, flowId, _pageProcessorId, resourceType: 'imports'})
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -3001,9 +2981,9 @@ describe('Flow sample data utility sagas', () => {
         const previewType = 'raw';
         const throwOnError = true;
 
-        return expectSaga(pageProcessorPreview, {throwOnError, previewType, flowId, _pageProcessorId, resourceType: 'imports', runOffline })
+        expectSaga(pageProcessorPreview, {throwOnError, previewType, flowId, _pageProcessorId, resourceType: 'imports', runOffline })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -3125,13 +3105,12 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'f1';
         const path = `/integrations/i1/flows/${flowId}/exports/preview`;
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
+        expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3162,13 +3141,12 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
+        expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3195,13 +3173,12 @@ describe('Flow sample data utility sagas', () => {
         const flowId = 'new-f1';
         const path = '/integrations/i1/exports/preview';
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
+        expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3239,13 +3216,12 @@ describe('Flow sample data utility sagas', () => {
         };
         const path = `/integrations/i1/flows/${flowId}/exports/preview`;
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
+        expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3287,13 +3263,12 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, throwOnError: true, flowId})
+        expectSaga(exportPreview, { resourceId, runOffline: true, throwOnError: true, flowId})
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [select(
               selectors.resource,
@@ -3335,13 +3310,12 @@ describe('Flow sample data utility sagas', () => {
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
+        expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [select(
               selectors.resource,
@@ -3375,13 +3349,12 @@ describe('Flow sample data utility sagas', () => {
         const hidden = false;
         const throwOnError = true;
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, throwOnError, flowId})
+        expectSaga(exportPreview, { resourceId, runOffline: true, hidden, throwOnError, flowId})
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [select(
               selectors.resource,
@@ -3425,7 +3398,7 @@ describe('Flow sample data utility sagas', () => {
         const newResourceId = 'new-123';
         const sampleData = undefined;
 
-        return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
+        expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
           .provide([
             [select(
               selectors.getResourceSampleDataWithStatus,
@@ -3444,7 +3417,7 @@ describe('Flow sample data utility sagas', () => {
         const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test', sampleData};
         const fileParserData = {mediaType: 'json', data: [{letter: {}}], duration: 0};
 
-        return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
+        expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
           .provide([
             [call(parseFileData, { sampleData, resource }), fileParserData],
           ])
@@ -3457,7 +3430,7 @@ describe('Flow sample data utility sagas', () => {
         const sampleData = '<?xml version="1.0" encoding="UTF-8"?>';
         const fileParserData = {mediaType: 'json', data: [], duration: 0};
 
-        return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
+        expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
           .provide([
             [select(
               selectors.getResourceSampleDataWithStatus,
@@ -3527,7 +3500,7 @@ describe('Flow sample data utility sagas', () => {
         };
         const xmlParsedData = previewData.stages[0].data[0];
 
-        return expectSaga(_getXmlHttpAdaptorSampleData, { resource, newResourceId })
+        expectSaga(_getXmlHttpAdaptorSampleData, { resource, newResourceId })
           .provide([
             [call(exportPreview, {
               resourceId: resource._id,
@@ -3572,7 +3545,7 @@ describe('Flow sample data utility sagas', () => {
           }],
         };
 
-        return expectSaga(_getXmlHttpAdaptorSampleData, { resource, newResourceId })
+        expectSaga(_getXmlHttpAdaptorSampleData, { resource, newResourceId })
           .provide([
             [select(
               selectors.resourceFormState,
@@ -3596,11 +3569,11 @@ describe('Flow sample data utility sagas', () => {
       test('should do nothing if there is no resourceId', () => expectSaga(saveTransformationRulesForNewXMLExport, {})
         .not.call.fn(_getXmlFileAdaptorSampleData)
         .not.call.fn(_getXmlHttpAdaptorSampleData)
-        .not.put(actions.resource.patchStaged(undefined, [], SCOPES.VALUE))
-        .not.put(actions.resource.commitStaged('exports', undefined, SCOPES.VALUE))
+        .not.put(actions.resource.patchStaged(undefined, []))
+        .not.put(actions.resource.commitStaged('exports', undefined))
         .run()
       );
-      test('should call _getXmlFileAdaptorSampleData saga for FTP XML resource ', () => {
+      test('should call _getXmlFileAdaptorSampleData saga for FTP XML resource', () => {
         const tempResourceId = 'new-123';
         const resourceId = 'id-123';
         const ftpXMLExport = {
@@ -3611,13 +3584,12 @@ describe('Flow sample data utility sagas', () => {
           name: 'test',
         };
 
-        return expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
+        expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), {merged: ftpXMLExport}],
           ])
           .call.fn(_getXmlFileAdaptorSampleData)
@@ -3636,20 +3608,19 @@ describe('Flow sample data utility sagas', () => {
           isLookup: true,
         };
 
-        return expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
+        expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), {merged: httpXmlExport}],
           ])
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
           .run();
       });
-      test('should not patch the resource if there are no transformation rules for the xml data ', () => {
+      test('should not patch the resource if there are no transformation rules for the xml data', () => {
         const tempResourceId = 'new-123';
         const resourceId = 'id-123';
         const httpXmlExport = {
@@ -3661,19 +3632,18 @@ describe('Flow sample data utility sagas', () => {
           isLookup: true,
         };
 
-        return expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
+        expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               'id-123',
-              SCOPES.VALUE
             ), { merged: httpXmlExport}],
           ])
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
-          .not.put(actions.resource.patchStaged(resourceId, [], SCOPES.VALUE))
-          .not.put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
+          .not.put(actions.resource.patchStaged(resourceId, []))
+          .not.put(actions.resource.commitStaged('exports', resourceId))
           .run();
       });
 
@@ -3721,13 +3691,12 @@ describe('Flow sample data utility sagas', () => {
           },
         ];
 
-        return expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
+        expectSaga(saveTransformationRulesForNewXMLExport, { resourceId, tempResourceId})
           .provide([
             [select(
               selectors.resourceData,
               'exports',
               'id-123',
-              SCOPES.VALUE
             ), { merged: httpXmlExport}],
             [call(_getXmlHttpAdaptorSampleData, {
               resource: httpXmlExport,
@@ -3736,12 +3705,11 @@ describe('Flow sample data utility sagas', () => {
           ])
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
-          .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
+          .put(actions.resource.patchStaged(resourceId, patchSet))
           .call(commitStagedChanges,
             {
               resourceType: 'exports',
               id: resourceId,
-              scope: SCOPES.VALUE,
             }
           )
           .run();

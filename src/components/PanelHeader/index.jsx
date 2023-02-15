@@ -26,7 +26,7 @@ export default function PanelHeader({ title, children, infoText, className, plac
       <Typography variant="h4" className={classes.panelHeaderTitle}>
         {title}
         {infoText && (
-          <InfoIconButton info={infoText} className={classes.infoIcon} placement={placement} />
+          <InfoIconButton info={infoText} className={classes.infoIcon} placement={placement} title={title} />
         )}
       </Typography>
       <div>{children}</div>

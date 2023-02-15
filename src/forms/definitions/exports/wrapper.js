@@ -47,6 +47,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
 

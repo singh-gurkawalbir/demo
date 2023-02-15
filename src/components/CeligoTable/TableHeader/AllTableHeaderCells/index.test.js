@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
@@ -44,7 +44,7 @@ async function initAllTableHeaderCells(
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('AllTableHeaderCells component Test cases', () => {
+describe('allTableHeaderCells component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initAllTableHeaderCells();
@@ -52,7 +52,7 @@ describe('AllTableHeaderCells component Test cases', () => {
     expect(utils.container.firstChild.firstChild.firstChild).toBeEmptyDOMElement(); // table, tbody, tr childs
   });
 
-  describe('AllTableHeaderCells component', () => {
+  describe('allTableHeaderCells component', () => {
     const statusHeader = jest.fn().mockReturnValue('Status');
     const useColumns = jest.fn(() => [
       {

@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -25,7 +25,7 @@ const initialStore = reduxStore;
 
 initialStore.getState().session.logs.flowStep = {someresourceId: {activeLogKey: 'somelogKey'}};
 
-describe('LogDetailsLink UI tests', () => {
+describe('logDetailsLink UI tests', () => {
   test('should make dispatch call to set active log when clicked on time', () => {
     const {store} = renderWithProviders(<LogDetailsLink resourceId="someresourceId" logKey="somelogKey" time="2022-05-18T18:16:31.989Z" />);
     const profile = {timezone: 'Asia/Kolkata'};

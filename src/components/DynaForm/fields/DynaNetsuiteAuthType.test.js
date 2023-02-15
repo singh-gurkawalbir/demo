@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -87,7 +87,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     };
 
     renderWithProviders(<DynaNetsuiteAuthType {...props} />);
-    expect(onFieldChange).toBeCalledWith(props.id, '');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, '');
   });
 
   test('should refresh the available authentication types on changing wsdl version', () => {
@@ -108,7 +108,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
 
     const {utils: {rerender: renderFun}} = renderWithProviders(<DynaNetsuiteAuthType {...props} />);
 
-    expect(onFieldChange).not.toBeCalled();
+    expect(onFieldChange).not.toHaveBeenCalled();
     const selectedAuthType = screen.getByRole('button');
 
     expect(selectedAuthType).toHaveTextContent('Basic (To be deprecated - Do not use)');
@@ -123,11 +123,11 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
       'Token Based Auth (Manual)...',
     ]);
     userEvent.click(screen.getByRole('menuitem', {name: 'Token Based Auth (Manual)'}));
-    expect(onFieldChange).toBeCalledWith(props.id, 'token');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'token');
 
     mockWsdlVersion = '2020.2';
     renderWithProviders(<DynaNetsuiteAuthType {...props} />, {renderFun});
-    expect(onFieldChange).toBeCalledWith(props.id, '');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, '');
 
     userEvent.click(screen.getByRole('button'));
     const newOptions = screen.getAllByRole('menuitem').map(ele => ele.textContent);

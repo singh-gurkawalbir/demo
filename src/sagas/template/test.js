@@ -1,4 +1,4 @@
-/* global describe, test */
+/* eslint-disable jest/no-conditional-in-test */
 
 import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -16,7 +16,6 @@ import {
   publishStatus,
 } from '.';
 import templateUtil from '../../utils/template';
-import { SCOPES } from '../resourceForm';
 
 describe('generateZip sagas', () => {
   const integrationId = '123';
@@ -31,7 +30,7 @@ describe('generateZip sagas', () => {
   test('should return undefined if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(generateZip, { integrationId })
+    expectSaga(generateZip, { integrationId })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .run();
@@ -54,7 +53,7 @@ describe('requestPreviews sagas', () => {
       ],
     };
 
-    return expectSaga(requestPreview, { templateId })
+    expectSaga(requestPreview, { templateId })
       .provide([[matchers.call.fn(apiCallWithRetry), testComponents]])
       .call.fn(apiCallWithRetry)
       .put(actions.template.receivedPreview(testComponents, templateId))
@@ -63,7 +62,7 @@ describe('requestPreviews sagas', () => {
   test('should dispatch failedPreview if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(requestPreview, { templateId })
+    expectSaga(requestPreview, { templateId })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .put(actions.template.failedPreview(templateId))
@@ -113,7 +112,7 @@ describe('createComponents sagas', () => {
       saga.call(getResource, dependentResource)
     ));
 
-    return saga.put(actions.template.createdComponents(components, templateId)).run();
+    saga.put(actions.template.createdComponents(components, templateId)).run();
   });
   test('should dispatch receivedIntegrationClonedStatus if template is an integration on successfull api call', () => {
     const templateData = {
@@ -128,7 +127,7 @@ describe('createComponents sagas', () => {
       _integrationId: 'something',
     };
 
-    return expectSaga(createComponents, { templateId, runKey })
+    expectSaga(createComponents, { templateId, runKey })
       .provide([
         [select(selectors.templateSetup, templateId), templateData],
         [(select(selectors.marketplaceTemplateById, { templateId }), template)],
@@ -158,7 +157,7 @@ describe('createComponents sagas', () => {
     const userPreferences = { environment: 'something' };
     const error = new Error('error');
 
-    return expectSaga(createComponents, { templateId, runKey })
+    expectSaga(createComponents, { templateId, runKey })
       .provide([
         [select(selectors.templateSetup, templateId), templateData],
         [(select(selectors.marketplaceTemplateById, { templateId }), template)],
@@ -170,7 +169,8 @@ describe('createComponents sagas', () => {
       .run();
   });
 });
-describe('verifyBundleOrPackageInstall sagas', () => {
+
+describe('verifyBundleOrPackageInstall sagas for packages', () => {
   const step = {
     installURL: 'url',
   };
@@ -182,7 +182,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
   test('the status should be completed if response.success is true on successfull api call', () => {
     const response = { success: true };
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -206,7 +206,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       },
     };
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -226,7 +226,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
   test('status should be failed if there is no response on successfull api call', () => {
     const response = {};
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -244,7 +244,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
   test('status should be failed if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -260,6 +260,263 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       .run();
   });
 });
+
+describe('netsuite suitebundle verifyBundleOrPackageInstall sagas', () => {
+  const step = {
+    installURL: 'url',
+  };
+  const connection = {
+    _id: '111',
+  };
+  const templateId = '123';
+  const variant = 'suitebundle';
+  const isManualVerification = true;
+
+  test('the status should be completed if response.success is true on successfull api call', () => {
+    const response = { success: true };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'completed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('the status should be failed if response.success is false on successfull api call only when user verifies manually', () => {
+    const path = `/connections/${connection._id}/distributed?type=suitebundle`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('should not make the api failure dispatch call when auto verification is done and response.success is false', () => {
+    const path = `/connections/${connection._id}/distributed?type=suitebundle`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+    const isManualVerification = false;
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .not.put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('status should be failed if there is no response on successfull api call', () => {
+    const response = {};
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('status should be failed if api call fails', () => {
+    const error = new Error('error');
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+});
+
+describe('netsuite suiteapp variant verifyBundleOrPackageInstall sagas', () => {
+  const step = {
+    installURL: 'url',
+  };
+  const connection = {
+    _id: '111',
+  };
+  const templateId = '123';
+  const variant = 'suiteapp';
+  const isManualVerification = true;
+
+  test('the status should be completed if response.success is true on successfull api call', () => {
+    const response = { success: true };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'completed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('the status should be failed if response.success is false on successfull api call only when user verifies manually', () => {
+    const path = `/connections/${connection._id}/distributed?type=suiteapp`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('should not make the api failure dispatch call when auto verification is done and response.success is false', () => {
+    const path = `/connections/${connection._id}/distributed?type=suiteapp`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+    const isManualVerification = false;
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .not.put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('status should be failed if there is no response on successfull api call', () => {
+    const response = {};
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('status should be failed if api call fails', () => {
+    const error = new Error('error');
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+});
+
 describe('publishStatus saga', () => {
   test('should publish template correctly', () => {
     const patchSet = [
@@ -272,17 +529,16 @@ describe('publishStatus saga', () => {
     const templateId = '1';
     const isPublished = false;
 
-    return expectSaga(publishStatus, {templateId, isPublished})
+    expectSaga(publishStatus, {templateId, isPublished})
       .provide([
         [
           call(commitStagedChanges, {
             resourceType: 'templates',
             id: templateId,
-            scope: SCOPES.VALUE,
           }), {},
         ],
       ])
-      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged(templateId, patchSet))
       .put(actions.template.publish.success(templateId))
       .run();
   });
@@ -297,17 +553,16 @@ describe('publishStatus saga', () => {
     const templateId = '2';
     const isPublished = false;
 
-    return expectSaga(publishStatus, {templateId, isPublished})
+    expectSaga(publishStatus, {templateId, isPublished})
       .provide([
         [
           call(commitStagedChanges, {
             resourceType: 'templates',
             id: templateId,
-            scope: SCOPES.VALUE,
           }), {error: {msg: '123'}},
         ],
       ])
-      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged(templateId, patchSet))
       .put(actions.template.publish.error(templateId))
       .run();
   });

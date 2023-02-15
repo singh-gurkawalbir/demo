@@ -22,8 +22,8 @@ const sampleData = {
       type: 'text',
       delimiter: ',',
       label: 'Delimited text',
-      description: `Often a form needs to collect a simple set of values as a delimited string (comma or other). 
-        Fail/Success status codes is one example.  Use the optional "delimiter" prop to 
+      description: `Often a form needs to collect a simple set of values as a delimited string (comma or other).
+        Fail/Success status codes is one example.  Use the optional "delimiter" prop to
         set the character(s) to split and observe the field value in the form output.`,
     },
     multiline: {
@@ -142,6 +142,21 @@ const sampleData = {
         { label: 'Canada', value: 'cdn' },
         { label: 'India', value: 'in' },
       ],
+    },
+    datetime: {
+      id: 'datetime',
+      name: 'datetime',
+      type: 'datetime',
+      label: 'Date/time',
+      doNotAllowFutureDates: true,
+      skipTimezoneConversion: true,
+    },
+    date: {
+      id: 'date',
+      name: 'date',
+      type: 'date',
+      label: 'Date',
+      doNotAllowFutureDates: true,
     },
   },
 };

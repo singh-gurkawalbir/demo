@@ -1,7 +1,7 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 import { MAPPING_DATA_TYPES } from '../utils/mapping';
 
 describe('Mappings region selector testcases', () => {
@@ -226,7 +226,7 @@ describe('Mappings region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selector()).toEqual([]);
     });
-    test('should return empty array if importId and flowId are undefined ', () => {
+    test('should return empty array if importId and flowId are undefined', () => {
       expect(selector(state)).toEqual([]);
     });
     test('should return correct import if importId is passed and flowId is undefined', () => {
@@ -273,13 +273,13 @@ describe('Mappings region selector testcases', () => {
     });
     describe('If adaptor type is netsuite', () => {
       test('should return netsuite if adaptor type is NetSuiteDistributedImport', () => {
-        expect(selectors.mappingPreviewType(state, 13)).toEqual('netsuite');
+        expect(selectors.mappingPreviewType(state, 13)).toBe('netsuite');
       });
       test('should return netsuite if adaptor type is NetSuiteImport', () => {
-        expect(selectors.mappingPreviewType(state, 14)).toEqual('netsuite');
+        expect(selectors.mappingPreviewType(state, 14)).toBe('netsuite');
       });
-      test('should return netsuite if adaptor type is NetSuiteImport', () => {
-        expect(selectors.mappingPreviewType(state, 10)).not.toEqual('netsuite');
+      test('should return netsuite if adaptor type is NetSuiteImport1', () => {
+        expect(selectors.mappingPreviewType(state, 10)).not.toBe('netsuite');
       });
     });
     describe('If adaptorType is SalesforceImport', () => {
@@ -335,12 +335,12 @@ describe('Mappings region selector testcases', () => {
         expect(selectors.mappingPreviewType(newState, 'i2')).toBeUndefined();
       });
       test('should return salesforce if record type info is available for the import', () => {
-        expect(selectors.mappingPreviewType(newState, 'i1')).toEqual('salesforce');
+        expect(selectors.mappingPreviewType(newState, 'i1')).toBe('salesforce');
       });
     });
     describe('If import is http', () => {
       test('should return http if http assistant supports mapping preview', () => {
-        expect(selectors.mappingPreviewType(state, 4)).toEqual('http');
+        expect(selectors.mappingPreviewType(state, 4)).toBe('http');
       });
       test('should return undefined if http assistant does not supports mapping preview', () => {
         expect(selectors.mappingPreviewType(state, 3)).toBeUndefined();
@@ -371,7 +371,7 @@ describe('Mappings region selector testcases', () => {
 
   describe('selectors.applicationType test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.applicationType()).toEqual('');
+      expect(selectors.applicationType()).toBe('');
     });
     const newState = {
       ...state,
@@ -412,10 +412,10 @@ describe('Mappings region selector testcases', () => {
 
     describe('adaptor type is WebhookExport', () => {
       test('should return webhook provider for the export', () => {
-        expect(selectors.applicationType(state, 'exports', 16)).toEqual('webhookprovider');
+        expect(selectors.applicationType(state, 'exports', 16)).toBe('webhookprovider');
       });
       test('should return staged value of the resource with path /webhook/provider', () => {
-        expect(selectors.applicationType(newState, 'exports', 16)).toEqual('webhookstagedprovider');
+        expect(selectors.applicationType(newState, 'exports', 16)).toBe('webhookstagedprovider');
       });
       test('should return undefined if export does not have webhook provider and is not staged', () => {
         expect(selectors.applicationType(state, 'exports', 17)).toBeFalsy();
@@ -423,48 +423,48 @@ describe('Mappings region selector testcases', () => {
     });
 
     test('should return rest if adaptor type is http and form type is rest', () => {
-      expect(selectors.applicationType(state, 'exports', 19)).toEqual('rest');
+      expect(selectors.applicationType(state, 'exports', 19)).toBe('rest');
     });
 
     describe('resource is data loader', () => {
       test('should return empty string in case of data loader', () => {
-        expect(selectors.applicationType(state, 'exports', 2)).toEqual('');
+        expect(selectors.applicationType(state, 'exports', 2)).toBe('');
       });
       test('should return empty string if a resource is patched to be a data loader', () => {
-        expect(selectors.applicationType(newState, 'exports', 10)).toEqual('');
+        expect(selectors.applicationType(newState, 'exports', 10)).toBe('');
       });
     });
     describe('adaptor type is rdbms', () => {
       test('should return correct connection rdbms type', () => {
-        expect(selectors.applicationType(state, 'exports', 20)).toEqual('rdbmsconnection');
+        expect(selectors.applicationType(state, 'exports', 20)).toBe('rdbmsconnection');
       });
       test('should return correct connection rdbms type from staged resource with connectionId patched', () => {
-        expect(selectors.applicationType(newState, 'exports', 23)).toEqual('rdbmsconnection');
+        expect(selectors.applicationType(newState, 'exports', 23)).toBe('rdbmsconnection');
       });
     });
     describe('resource is a connection', () => {
       test('should return connection type', () => {
-        expect(selectors.applicationType(state, 'connections', 7)).toEqual('http');
+        expect(selectors.applicationType(state, 'connections', 7)).toBe('http');
       });
       test('should return staged connection type', () => {
-        expect(selectors.applicationType(newState, 'connections', 2)).toEqual('rest');
+        expect(selectors.applicationType(newState, 'connections', 2)).toBe('rest');
       });
       test('should return connection rdbms type if connection is of type rdbms', () => {
-        expect(selectors.applicationType(newState, 'connections', 8)).toEqual('rdbmsconnection');
+        expect(selectors.applicationType(newState, 'connections', 8)).toBe('rdbmsconnection');
       });
       test('should return connection http type if connection is of type http and http connectorId exists', () => {
-        expect(selectors.applicationType(newState, 'connections', 9)).toEqual('http');
+        expect(selectors.applicationType(newState, 'connections', 9)).toBe('http');
       });
     });
 
     test('should replace HTTP with REST if adaptor type starts with HTTP and form type is rest', () => {
-      expect(selectors.applicationType(state, 'exports', 21)).toEqual('RESTExport');
+      expect(selectors.applicationType(state, 'exports', 21)).toBe('RESTExport');
     });
     test('should return assistant if resource has assistant prop', () => {
-      expect(selectors.applicationType(state, 'exports', 22)).toEqual('square');
+      expect(selectors.applicationType(state, 'exports', 22)).toBe('square');
     });
     test('should return empty string if staged resource exists but resource does not exist', () => {
-      expect(selectors.applicationType(newState, 'exports', 44)).toEqual('');
+      expect(selectors.applicationType(newState, 'exports', 44)).toBe('');
     });
   });
 
@@ -803,8 +803,8 @@ describe('Mappings region selector testcases', () => {
 
   describe('selectors.isMapper2Supported test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isMapper2Supported()).toEqual(false);
-      expect(selectors.isMapper2Supported(null)).toEqual(false);
+      expect(selectors.isMapper2Supported()).toBe(false);
+      expect(selectors.isMapper2Supported(null)).toBe(false);
     });
     test('should return false for exports', () => {
       const state = {
@@ -825,7 +825,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toBe(false);
     });
     test('should return false for IAs if the doc does not have mappings2', () => {
       const state = {
@@ -847,7 +847,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toBe(false);
     });
     test('should return true for IAs if the doc has mappings2', () => {
       const state = {
@@ -870,7 +870,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(true);
+      expect(selectors.isMapper2Supported(state)).toBe(true);
     });
     test('should return false for db imports', () => {
       const state = {
@@ -891,7 +891,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toBe(false);
     });
     test('should return true for file imports', () => {
       const state = {
@@ -912,7 +912,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(true);
+      expect(selectors.isMapper2Supported(state)).toBe(true);
     });
     test('should return true for http/rest import', () => {
       const state = {
@@ -933,14 +933,14 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(true);
+      expect(selectors.isMapper2Supported(state)).toBe(true);
     });
   });
 
   describe('selectors.resourceHasMappings test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceHasMappings()).toEqual(false);
-      expect(selectors.resourceHasMappings(null, null)).toEqual(false);
+      expect(selectors.resourceHasMappings()).toBe(false);
+      expect(selectors.resourceHasMappings(null, null)).toBe(false);
     });
     test('should return false if neither v1 nor v2 mappings exist', () => {
       const state = {
@@ -956,7 +956,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(false);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(false);
     });
     test('should return true if both v1 and v2 mappings exist', () => {
       const state = {
@@ -981,7 +981,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(true);
     });
     test('should return true if only v1 mappings exist', () => {
       const state = {
@@ -1001,7 +1001,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(true);
     });
     test('should return true if only v2 mappings exist', () => {
       const state = {
@@ -1023,16 +1023,16 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(true);
     });
   });
 
   describe('selectors.flowHasMappings test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowHasMappings()).toEqual(false);
-      expect(selectors.flowHasMappings(null, null)).toEqual(false);
+      expect(selectors.flowHasMappings()).toBe(false);
+      expect(selectors.flowHasMappings(null, null)).toBe(false);
     });
-    test('should return false if the flow has neither page processors nor routers ', () => {
+    test('should return false if the flow has neither page processors nor routers', () => {
       const state = {
         data: {
           resources: {
@@ -1045,7 +1045,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(false);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
     });
     test('should return false if the flow has page processors without mappings', () => {
       const state = {
@@ -1067,7 +1067,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(false);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
     });
     test('should return true if the flow has page processors with mappings', () => {
       const state = {
@@ -1092,7 +1092,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(true);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
     });
     test('should return false if the flow has routers without mappings', () => {
       const state = {
@@ -1122,7 +1122,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(false);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
     });
     test('should return true if the flow has routers with mappings', () => {
       const state = {
@@ -1155,7 +1155,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(true);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
     });
   });
 
@@ -1350,7 +1350,7 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
-        message: messageStore('MAPPER1_REFERENCE_INFO'),
+        message: message.MAPPER2.MAPPER1_REFERENCE_INFO,
         variant: 'info',
       });
     });
@@ -1383,7 +1383,7 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
-        message: messageStore('MAPPER2_BANNER_WARNING'),
+        message: message.MAPPER2.BANNER_WARNING,
         variant: 'warning',
       });
     });

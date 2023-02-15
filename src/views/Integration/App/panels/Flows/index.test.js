@@ -1,10 +1,8 @@
-/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
@@ -202,12 +200,12 @@ const layout = {
 
 describe('Flows index file UI tests', () => {
   describe('should test AcctionsPanel', () => {
-    test('should test when no action is provided ', () => {
+    test('should test when no action is provided', () => {
       const {utils} = renderWithProviders(<MemoryRouter><ActionsPanel actions={[]} /></MemoryRouter>);
 
       expect(utils.container.textContent).toBe('');
     });
-    test('should test when action is provided ', () => {
+    test('should test when action is provided', () => {
       renderWithProviders(<MemoryRouter><ActionsPanel actions={[{id: 'integrationsettings'}]} /></MemoryRouter>);
       expect(screen.getByText('Save')).toBeInTheDocument();
       expect(screen.getByText('Close')).toBeInTheDocument();

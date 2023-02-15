@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -30,7 +30,7 @@ describe('session.data.accountSettings reducers', () => {
 
   describe('areUserAccountSettingsLoaded selector', () => {
     test('should return false if account settings are not loaded.', () => {
-      expect(selectors.areUserAccountSettingsLoaded(undefined)).toEqual(false);
+      expect(selectors.areUserAccountSettingsLoaded(undefined)).toBe(false);
     });
     test('should return true if account settings are loaded.', () => {
       const accountSettings = {
@@ -38,13 +38,13 @@ describe('session.data.accountSettings reducers', () => {
       };
       const state = reducer(undefined, actions.accountSettings.received(accountSettings));
 
-      expect(selectors.areUserAccountSettingsLoaded(state)).toEqual(true);
+      expect(selectors.areUserAccountSettingsLoaded(state)).toBe(true);
     });
   });
 
   describe('dataRetentionPeriod selector', () => {
     test('should return undefined if account settings are not loaded.', () => {
-      expect(selectors.dataRetentionPeriod(undefined)).toEqual(undefined);
+      expect(selectors.dataRetentionPeriod(undefined)).toBeUndefined();
     });
     test('should return dataRetentionPeriod if account settings are loaded.', () => {
       const accountSettings = {
@@ -52,7 +52,7 @@ describe('session.data.accountSettings reducers', () => {
       };
       const state = reducer(undefined, actions.accountSettings.received(accountSettings));
 
-      expect(selectors.dataRetentionPeriod(state)).toEqual(60);
+      expect(selectors.dataRetentionPeriod(state)).toBe(60);
     });
   });
 });

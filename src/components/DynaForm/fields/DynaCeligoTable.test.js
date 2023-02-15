@@ -1,12 +1,12 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaCeligoTable from './DynaCeligoTable';
 
-describe('DynaCeligoTable tests', () => {
-  test('Should able to test DynaCeligoTable with no data and non collapsable table', async () => {
+describe('dynaCeligoTable tests', () => {
+  test('should able to test DynaCeligoTable with no data and non collapsable table', async () => {
     const props = {
       useColumns: jest.fn().mockReturnValue([]),
     };
@@ -14,7 +14,7 @@ describe('DynaCeligoTable tests', () => {
     await renderWithProviders(<DynaCeligoTable {...props} />);
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
-  test('Should able to test DynaCeligoTable without data and collapsable table', async () => {
+  test('should able to test DynaCeligoTable without data and collapsable table', async () => {
     const props = {
       useColumns: jest.fn().mockReturnValue([]),
       title: 'Table title',
@@ -28,7 +28,7 @@ describe('DynaCeligoTable tests', () => {
     expect(screen.getByRole('heading', {name: 'Table title'})).toBeInTheDocument();
     expect(screen.getByText('No data in the table')).toBeInTheDocument();
   });
-  test('Should able to test DynaCeligoTable with table data', async () => {
+  test('should able to test DynaCeligoTable with table data', async () => {
     const props = {
       useColumns: jest.fn().mockReturnValue([]),
       title: 'Table title',

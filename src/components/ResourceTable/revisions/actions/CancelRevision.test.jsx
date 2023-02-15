@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -80,7 +80,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('UI tests for cancel revision ', () => {
+describe('uI tests for cancel revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -97,7 +97,7 @@ describe('UI tests for cancel revision ', () => {
     const cancelmerge = screen.getByText('Cancel merge');
 
     userEvent.click(cancelmerge);
-    expect(mockDispatchFn).toBeCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
   });
 
   test('should test continue merge button', () => {

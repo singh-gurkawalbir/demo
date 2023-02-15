@@ -1,4 +1,5 @@
-/* global describe expect test */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import {
   sampleDataStage,
@@ -70,7 +71,7 @@ describe('_compareSampleDataStage util', () => {
 
     expect(_compareSampleDataStage(previousStage, currentStage, 'exports')).toBe(-1);
   });
-  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run', () => {
     const previousStage = 'inputFilter';
     const currentStage = 'outputFilter';
 
@@ -88,7 +89,7 @@ describe('_compareSampleDataStage util', () => {
 
     expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(1);
   });
-  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run', () => {
     const previousStage = 'postMap';
     const currentStage = 'postSubmit';
 
@@ -114,7 +115,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
   });
-  test('should return 1 if the previous stage is a subset of current stage  ', () => {
+  test('should return 1 if the previous stage is a subset of current stage', () => {
     const prevStagesRunning = ['inputFilter', 'transform'];
     const expectedCurrentStageStatus = {
       currentStageStatus: 1,
@@ -123,7 +124,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'responseMapping', 'exports')).toEqual(expectedCurrentStageStatus);
   });
-  test('should return 0 if the current stage already exists in the list of running previous stage sagas  ', () => {
+  test('should return 0 if the current stage already exists in the list of running previous stage sagas', () => {
     const prevStagesRunning = ['transform', 'inputFilter'];
     const expectedCurrentStageStatus = {
       currentStageStatus: 0,
@@ -304,44 +305,38 @@ describe('getFlowUpdatesFromPatch util', () => {
     const addPG = [{
       op: 'add',
       path: '/pageGenerators/0',
-      scope: 'value',
       value: { _exportId: '1234'},
     }];
     const deletePG = [{
       op: 'remove',
       path: '/pageGenerators/0/id',
-      scope: 'value',
     }, {
       op: 'remove',
       path: '/pageGenerators/0/_exportId',
-      scope: 'value',
     }, {
       op: 'add',
       path: '/pageGenerators/0/setupInProgress',
-      scope: 'value',
       value: true,
     }];
     const addPP = [{
       op: 'replace',
       path: '/routers/0/branches/0/pageProcessors/0',
-      scope: 'value',
       value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
     }];
     const deletePP = [{
       op: 'remove',
       path: '/routers/0/branches/0/pageProcessors/0',
-      scope: 'value',
     }];
     const addOldPP = [{
       op: 'add',
       path: '/pageProcessors/0',
-      scope: 'value',
       value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
     }];
 
     const expectedOutput = {
       sequence: true,
       responseMapping: false,
+      router: false,
     };
 
     expect(getFlowUpdatesFromPatch(addPG)).toEqual(expectedOutput);
@@ -350,7 +345,7 @@ describe('getFlowUpdatesFromPatch util', () => {
     expect(getFlowUpdatesFromPatch(addOldPP)).toEqual(expectedOutput);
     expect(getFlowUpdatesFromPatch(deletePP)).toEqual(expectedOutput);
   });
-  test('should return sequence as true if the pgs or pps are dragged and dropped to change the order ', () => {
+  test('should return sequence as true if the pgs or pps are dragged and dropped to change the order', () => {
     const ppOrderChange = [
       {
         op: 'replace',
@@ -425,6 +420,7 @@ describe('getFlowUpdatesFromPatch util', () => {
     const expectedOutput = {
       sequence: true,
       responseMapping: false,
+      router: false,
     };
 
     expect(getFlowUpdatesFromPatch(ppOrderChange)).toEqual(expectedOutput);
@@ -450,6 +446,7 @@ describe('getFlowUpdatesFromPatch util', () => {
         resourceIndex: 2,
       },
       sequence: false,
+      router: false,
     });
   });
   test('should return responseMapping with resourceIndex if the patchSet has responseMapping for new flow format', () => {
@@ -471,7 +468,93 @@ describe('getFlowUpdatesFromPatch util', () => {
         routerIndex: 0,
       },
       sequence: false,
+      router: false,
     });
+  });
+  test('should return router with deleted true when the patch has delete router patch', () => {
+    const removeRouterPatch1 = [
+      {op: 'remove', path: '/routers'},
+      {op: 'add', path: '/pageProcessors', value: {}},
+    ];
+
+    const removeRouterPatch2 = [
+      {op: 'remove', path: '/routers/0/branches/1'},
+      {op: 'remove', path: '/routers/0/routeRecordsTo'},
+      {op: 'remove', path: '/routers/0/routeRecordsUsing'},
+    ];
+    const removeRouterPatch3 = [
+      {op: 'replace', path: '/routers/0/branches/0/pageProcessors', value: {}},
+      {op: 'replace', path: '/routers/0/branches/0/nextRouterId', value: 'ecQ3RZiQFOy'},
+      {op: 'remove', path: '/routers/1'},
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        deleted: true,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(removeRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(removeRouterPatch2)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(removeRouterPatch3)).toEqual(expectedOutput);
+  });
+  test('should return router with updated true and respective router index updated when the patch has update router patch', () => {
+    const updateRouterPatch1 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {} },
+    ];
+    const updateRouterPatch2 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'add', path: '/routers', value: {}},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {} },
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        updated: true,
+        routerIndex: 0,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(updateRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(updateRouterPatch2)).toEqual(expectedOutput);
+  });
+  test('should return router with updated true and respective router index updated when the router is added to the flow', () => {
+    const addRouterPatch1 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'add', path: '/routers', value: [{id: 'qUjQUKZpX8T'}]},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {}},
+    ];
+    const addRouterPatch2 = [
+      {op: 'remove', path: '/routers/0/script/function'},
+      {op: 'add', path: '/routers/0/branches/0/pageProcessors/0/id', value: '639a9d31a6ed283567403f40'},
+      {op: 'remove', path: '/routers/0/branches/0/name'},
+      {op: 'add', path: '/routers/0/branches/1'},
+      {op: 'replace', path: '/routers/0/id', value: 'zErvJOswDVO'},
+      {op: 'remove', path: '/routers/0/name'},
+      {op: 'add', path: '/routers/0/routeRecordsTo', value: 'first_matching_branch'},
+      {op: 'add', path: '/routers/0/routeRecordsUsing', value: 'input_filters'},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: { branches: [], script: {function: 'branching'}}},
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        updated: true,
+        routerIndex: 0,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(addRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addRouterPatch2)).toEqual(expectedOutput);
   });
 });
 describe('isRawDataPatchSet util', () => {
@@ -706,7 +789,7 @@ describe('isPostDataNeededInResource util', () => {
 
     expect(isPostDataNeededInResource(salesforceScheduledExport)).toBeTruthy();
   });
-  test('should return false for resources other than salesforce ', () => {
+  test('should return false for resources other than salesforce', () => {
     const restExport = {
       name: 'Test export',
       _id: '1234',
@@ -744,7 +827,7 @@ describe('generateDefaultExtractsObject util', () => {
 
     expect(generateDefaultExtractsObject('imports')).toEqual(importDefaultExtracts);
   });
-  test('should return  by default exports related default extracts when there is no resource type ', () => {
+  test('should return  by default exports related default extracts when there is no resource type', () => {
     const lookupDefaultExtracts = {
       errors: '',
       data: '',
@@ -883,6 +966,7 @@ describe('generatePostResponseMapData util', () => {
       },
     ]);
   });
+  // eslint-disable-next-line jest/no-commented-out-tests
   // test('should return list of records of flowData merged with rawData on each record when flowData is an array and rawData is an array', () => {
   //   // const rawData = [{
   //   //   recordId: '123',

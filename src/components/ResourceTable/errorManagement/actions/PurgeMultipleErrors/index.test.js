@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {
   screen,
@@ -48,7 +48,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('PurgeMultipleErrors action Test cases', () => {
+describe('purgeMultipleErrors action Test cases', () => {
   runServer();
   afterEach(() => {
     mockHistoryPush.mockClear();

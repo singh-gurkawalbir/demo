@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -40,7 +39,7 @@ function initRefreshableIntegrationAppSetting(props = {}) {
   return renderWithProviders(<RefreshableIntegrationAppSetting {...props} />, {initialStore});
 }
 
-describe('RefreshableIntegrationAppSetting UI tests', () => {
+describe('refreshableIntegrationAppSetting UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -86,7 +85,6 @@ describe('RefreshableIntegrationAppSetting UI tests', () => {
     const refreshButton = document.querySelector('[title="Refresh"]');
 
     expect(refreshButton).toBeInTheDocument();
-    screen.debug();
   });
   test('should open the dropdown when clicked on dropdown', () => {
     initRefreshableIntegrationAppSetting(props);
@@ -97,7 +95,6 @@ describe('RefreshableIntegrationAppSetting UI tests', () => {
     expect(screen.getByText('label1')).toBeInTheDocument();
     expect(screen.getByText('label2')).toBeInTheDocument();
     expect(screen.getByText('label3')).toBeInTheDocument();
-    screen.debug();
   });
   test('should call the onFieldChange function when an option is selected from the dropdown', () => {
     initRefreshableIntegrationAppSetting(props);
@@ -109,7 +106,7 @@ describe('RefreshableIntegrationAppSetting UI tests', () => {
 
     expect(option).toBeInTheDocument();
     userEvent.click(option);
-    expect(mockonFieldChange).toBeCalled();
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
   test('should make a dispatch call when clicked on refresh button in the select', async () => {
     initRefreshableIntegrationAppSetting(props);
@@ -117,7 +114,7 @@ describe('RefreshableIntegrationAppSetting UI tests', () => {
 
     expect(refreshButton).toBeInTheDocument();
     userEvent.click(refreshButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connectors.refreshMetadata(null, 'demo fieldname', '6ced8663a56953365bd28541')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata(null, 'demo fieldname', '6ced8663a56953365bd28541')));
   });
   test('should make a dispatch call when autoPostBack prop is true', async () => {
     initRefreshableIntegrationAppSetting({...props, autoPostBack: true});
@@ -129,7 +126,7 @@ describe('RefreshableIntegrationAppSetting UI tests', () => {
 
     expect(option).toBeInTheDocument();
     userEvent.click(option);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connectors.refreshMetadata('value2', 'demo fieldname', '6ced8663a56953365bd28541', {key: 'fieldValue', autoPostBack: true})));
-    expect(mockonFieldChange).toBeCalled();
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('value2', 'demo fieldname', '6ced8663a56953365bd28541', {key: 'fieldValue', autoPostBack: true})));
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies

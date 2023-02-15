@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -76,10 +76,10 @@ describe('test suite for DynaMultiSelect field', () => {
     ]);
 
     userEvent.click(screen.getByRole('option', {name: 'Flow 1'}));
-    expect(onFieldChange).toBeCalledWith(props.id, ['flow-456', 'flow-789', 'flow-123']);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-456', 'flow-789', 'flow-123']);
 
     userEvent.click(screen.getByRole('option', {name: 'flow-789'}));
-    expect(onFieldChange).toBeCalledWith(props.id, ['flow-456']);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-456']);
 
     userEvent.click(screen.getByRole('button', {name: /done/i}));
     expect(screen.queryByRole('option')).not.toBeInTheDocument();
@@ -134,9 +134,9 @@ describe('test suite for DynaMultiSelect field', () => {
 
     renderWithProviders(<DynaMultiSelect {...props} />);
     userEvent.click(screen.getByRole('button', {name: 'Flow 2 Flow 3'}));
-    expect(onFieldChange).not.toBeCalled();
+    expect(onFieldChange).not.toHaveBeenCalled();
     userEvent.click(screen.getByRole('option', {name: 'All flows'}));
-    expect(onFieldChange).toBeCalledWith(props.id, ['integration-123']);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, ['integration-123']);
   });
 
   test('should deselect selectAll option if user selects other options', () => {
@@ -187,11 +187,11 @@ describe('test suite for DynaMultiSelect field', () => {
 
     renderWithProviders(<DynaMultiSelect {...props} />);
     userEvent.click(screen.getByRole('button', {name: 'All flows'}));
-    expect(onFieldChange).not.toBeCalled();
+    expect(onFieldChange).not.toHaveBeenCalled();
     userEvent.click(screen.getByRole('option', {name: 'Flow 1'}));
-    expect(onFieldChange).toBeCalledWith(props.id, ['flow-123']);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-123']);
     userEvent.click(screen.getByRole('option', {name: 'Flow 2'}));
-    expect(onFieldChange).toBeCalledWith(props.id, ['flow-456']);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-456']);
   });
 
   test('should show fieldMessages if any', () => {

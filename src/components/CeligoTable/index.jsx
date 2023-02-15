@@ -25,6 +25,7 @@ export default function CeligoTable({
   size,
   actionProps = emptyObj,
   additionalConfigs,
+  key,
 }) {
   // if no useColumns hook no means to generate table
   if (!useColumns) { return null; }
@@ -32,7 +33,7 @@ export default function CeligoTable({
   return (
     <div className={className}>
       <TableContextWrapper value={actionProps}>
-        <Table size={size || 'medium'}>
+        <Table size={size || 'medium'} key={key}>
           <TableHeader
             data={data}
             onSelectChange={onSelectChange}

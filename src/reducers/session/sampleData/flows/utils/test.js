@@ -1,10 +1,11 @@
-/* global describe test expect */
+
 import { deepClone } from 'fast-json-patch';
 
 import {
   getFirstOutOfOrderIndex,
   clearInvalidPgOrPpStates,
   clearInvalidStagesForPgOrPp,
+  clearInvalidStatesOnRouterUpdate,
 } from '.';
 
 const dummyFlowStateWithStages = {
@@ -70,7 +71,73 @@ const dummyFlowStateWithStages = {
   },
 };
 
+const dummyFlowStateWithRouters = {
+  'flow-5678': {
+    pageGeneratorsMap: {
+      123: {
+        raw: {
+          status: 'received',
+          data: { test: 5 },
+        },
+        transform: {
+          status: 'received',
+          data: { tx: 5 },
+        },
+        preSavePage: {
+          status: 'received',
+          data: { preSave: 5 },
+        },
+      },
+    },
+    pageProcessorsMap: {
+      111: {
+        flowInput: {
+          status: 'received',
+          data: { test1: 6 },
+        },
+        responseTransform: {
+          status: 'received',
+          data: { tx: 5 },
+        },
+        preMap: {
+          status: 'received',
+          data: { preSave: 5 },
+        },
+      },
+    },
+    routersMap: {
+      'router-1': {
+        router: {
+          status: 'error',
+          error: '{"error":"InvalidEndpoint","description":"Not found"}',
+        },
+      },
+    },
+    pageGenerators: [{ _exportId: '123' }],
+    pageProcessors: [],
+    routers: [
+      {
+        id: 'router-1',
+        routeRecordsTo: 'first_matching_branch',
+        branches: [
+          {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                type: 'import',
+                _importId: '111',
+              },
+            ],
+          },
+          { name: 'Branch 1.1', pageProcessors: [{ setupInProgress: true }] },
+        ],
+      },
+    ],
+  },
+};
+
 const dummyFlowId = 'flow-1234';
+const branchedFlowId = 'flow-5678';
 
 describe('getFirstOutOfOrderIndex util', () => {
   test('should return -1 incase of empty lists passed', () => {
@@ -398,5 +465,180 @@ describe('clearInvalidStagesForPgOrPp util', () => {
         },
       },
     });
+  });
+});
+describe('clearInvalidStatesOnRouterUpdate util', () => {
+  test('should do nothing and return undefined if the flow is undefined', () => {
+    expect(clearInvalidStatesOnRouterUpdate()).toBeUndefined();
+  });
+  test('should do nothing if the flow is empty', () => {
+    const flow = {};
+
+    clearInvalidStatesOnRouterUpdate(flow);
+    expect(flow).toBe(flow);
+  });
+  test('should do nothing if the routeId is invalid', () => {
+    const flow = deepClone(dummyFlowStateWithRouters);
+    const routeId = 'invalid';
+
+    clearInvalidStatesOnRouterUpdate(flow[branchedFlowId], routeId);
+    expect(flow).toEqual(dummyFlowStateWithRouters);
+  });
+  test('should do nothing if the flow is a linear flow', () => {
+    const flow = deepClone(dummyFlowStateWithStages);
+    const routeId = '123';
+
+    clearInvalidStatesOnRouterUpdate(flow[dummyFlowId], routeId);
+    expect(flow).toBe(flow);
+  });
+  test('should update the pps of the passed router to empty if the routeId is valid', () => {
+    const flow = deepClone(dummyFlowStateWithRouters);
+
+    clearInvalidStatesOnRouterUpdate(flow[branchedFlowId], 'router-1');
+
+    const expectedState = {
+      ...flow[branchedFlowId],
+      pageProcessorsMap: {
+        111: {},
+      },
+    };
+
+    expect(flow[branchedFlowId]).toEqual(expectedState);
+  });
+  test('should update pps of router and all subsequent routers and their pps', () => {
+    const nestedRouterFlow = {
+      'flow-5678': {
+        pageGeneratorsMap: {
+          e1: {
+            raw: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+          },
+        },
+        pageProcessorsMap: {
+          e2: {
+            processedFlowInput: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+            flowInput: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+          },
+          i1: {
+            processedFlowInput: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+            flowInput: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+          },
+          i2: {
+            processedFlowInput: {
+              status: 'error',
+              error: 'error',
+            },
+            flowInput: {
+              status: 'error',
+              error: 'error',
+            },
+          },
+        },
+        routersMap: {
+          r1: {
+            router: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+          },
+          r2: {
+            router: {
+              status: 'received',
+              data: { id: '123456' },
+            },
+          },
+        },
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+            skipRetries: false,
+          },
+        ],
+        routers: [
+          {
+            id: 'r1',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    type: 'export',
+                    _exportId: 'e2',
+                  },
+                ],
+                nextRouterId: 'r2',
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    setupInProgress: true,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'r2',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    type: 'import',
+                    _importId: 'i1',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    type: 'import',
+                    _importId: 'i2',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    clearInvalidStatesOnRouterUpdate(nestedRouterFlow[branchedFlowId], 'r1');
+
+    const expectedState = {
+      ...nestedRouterFlow[branchedFlowId],
+      pageProcessorsMap: {
+        e2: {},
+        i1: {},
+        i2: {},
+      },
+      routersMap: {
+        r1: {
+          router: {
+            status: 'received',
+            data: { id: '123456' },
+          },
+        },
+        r2: {},
+      },
+    };
+
+    expect(nestedRouterFlow[branchedFlowId]).toEqual(expectedState);
   });
 });

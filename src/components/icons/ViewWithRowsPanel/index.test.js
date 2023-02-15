@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import ViewResolvedHistoryIcon from '.';
 import { runServer } from '../../../test/api/server';
@@ -14,7 +14,7 @@ async function initViewResolvedHistoryIcon({ props = {}} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('ViewResolvedHistoryIcon component Test cases', () => {
+describe('viewResolvedHistoryIcon component Test cases', () => {
   runServer();
 
   test('should pass the intial render no props', async () => {

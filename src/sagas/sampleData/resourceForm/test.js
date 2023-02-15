@@ -1,4 +1,4 @@
-/* global describe, test */
+/* eslint-disable jest/no-conditional-in-test */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -42,22 +42,21 @@ const ssLinkedConnectionId = 'ss-con-123';
 
 describe('resourceFormSampleData sagas', () => {
   describe('_handlePreviewError saga', () => {
-    test('should do nothing if there is no resourceId or invalid error ', () => {
+    test('should do nothing if there is no resourceId or invalid error', () => {
       const e = {
         status: 401,
         message: '{"message":"invalid processor", "code":"code"}',
       };
-      const test1 = expectSaga(_handlePreviewError, { e })
-        .returns(undefined)
-        .run();
-      const test2 = expectSaga(_handlePreviewError, { e: {} })
-        .returns(undefined)
-        .run();
-      const test3 = expectSaga(_handlePreviewError, { resourceId })
-        .returns(undefined)
-        .run();
 
-      return test1 && test2 && test3;
+      expectSaga(_handlePreviewError, { e })
+        .returns(undefined)
+        .run();
+      expectSaga(_handlePreviewError, { e: {} })
+        .returns(undefined)
+        .run();
+      expectSaga(_handlePreviewError, { resourceId })
+        .returns(undefined)
+        .run();
     });
     test('should dispatch receivedPreviewError action when there is a valid error', () => {
       const e = {
@@ -66,42 +65,41 @@ describe('resourceFormSampleData sagas', () => {
       };
       const parsedMessage = { message: 'invalid processor', code: 'code'};
 
-      return expectSaga(_handlePreviewError, { e, resourceId })
+      expectSaga(_handlePreviewError, { e, resourceId })
         .put(actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedMessage))
         .run();
     });
   });
   describe('_getProcessorOutput saga', () => {
-    test('should return nothing if the output of processor call has violations ', () => {
+    test('should return nothing if the output of processor call has violations', () => {
       const processorOutput = { violations: { dataError: 'must have sample data'}};
 
-      return expectSaga(_getProcessorOutput, { processorData: {} })
+      expectSaga(_getProcessorOutput, { processorData: {} })
         .provide([
           [call(evaluateExternalProcessor, { processorData: {} }), processorOutput],
         ])
         .returns(undefined)
         .run();
     });
-    test('should return processor output incase of proper output or error ', () => {
+    test('should return processor output incase of proper output or error', () => {
       const processorOutput = { data: { test: 5 }};
       const errorOutput = {
         status: 422,
         message: '{"message":"invalid data to process", "code":"code"}',
       };
-      const test1 = expectSaga(_getProcessorOutput, { processorData: {} })
+
+      expectSaga(_getProcessorOutput, { processorData: {} })
         .provide([
           [call(evaluateExternalProcessor, { processorData: {} }), processorOutput],
         ])
         .returns(processorOutput)
         .run();
-      const test2 = expectSaga(_getProcessorOutput, { processorData: {} })
+      expectSaga(_getProcessorOutput, { processorData: {} })
         .provide([
           [call(evaluateExternalProcessor, { processorData: {} }), errorOutput],
         ])
         .returns(errorOutput)
         .run();
-
-      return test1 && test2;
     });
   });
   describe('_fetchFBActionsSampleData saga', () => {
@@ -143,7 +141,7 @@ describe('resourceFormSampleData sagas', () => {
       }))
       .run());
 
-    test('should dispatch parse stage data if there are no transform rules to process on the resource ', () => {
+    test('should dispatch parse stage data if there are no transform rules to process on the resource', () => {
       const r = {
         _id: 'id-123',
         adaptorType: 'RESTExport',
@@ -151,7 +149,7 @@ describe('resourceFormSampleData sagas', () => {
       };
       const parsedData = { test: 5 };
 
-      return expectSaga(_fetchFBActionsSampleData, { formKey })
+      expectSaga(_fetchFBActionsSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: r, resourceId }],
           [select(
@@ -183,7 +181,7 @@ describe('resourceFormSampleData sagas', () => {
       const parsedData = { active: 5 };
       const transformedData = { Active: 5 };
 
-      return expectSaga(_fetchFBActionsSampleData, { formKey })
+      expectSaga(_fetchFBActionsSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: r, resourceId }],
           [select(
@@ -219,7 +217,7 @@ describe('resourceFormSampleData sagas', () => {
       const transformedData = { Active: 5 };
       const preSavePageHookData = { Active: 5, test: 1 };
 
-      return expectSaga(_fetchFBActionsSampleData, { formKey })
+      expectSaga(_fetchFBActionsSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId }],
           [select(
@@ -271,7 +269,7 @@ describe('resourceFormSampleData sagas', () => {
         resourceObj: {},
       };
 
-      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+      expectSaga(_fetchResourceInfoFromFormKey, { formKey })
         .provide([
           [select(selectors.formState, formKey), formState],
           [select(selectors.formParentContext, formKey), parentContext],
@@ -323,7 +321,7 @@ describe('resourceFormSampleData sagas', () => {
         ssLinkedConnectionId,
       };
 
-      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+      expectSaga(_fetchResourceInfoFromFormKey, { formKey })
         .provide([
           [select(selectors.formState, formKey), formState],
           [select(selectors.formParentContext, formKey), parentContext],
@@ -358,10 +356,10 @@ describe('resourceFormSampleData sagas', () => {
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
       .run());
-    test('should dispatch requested status and call _requestImportSampleData with refreshCache option incase of imports resourceType', () => {
+    test('should dispatch requested status and call _requestExportSampleData with refreshCache option incase of imports resourceType', () => {
       const resourceId = 'import-123';
 
-      return expectSaga(requestResourceFormSampleData, { formKey })
+      expectSaga(requestResourceFormSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'imports', resourceObj: {} }],
           [call(_requestImportSampleData, { formKey }), {}],
@@ -372,10 +370,10 @@ describe('resourceFormSampleData sagas', () => {
         .call(_requestImportSampleData, { formKey, refreshCache: undefined })
         .run(500);
     });
-    test('should dispatch requested status and call _requestExportSampleData incase of exports resourceType', () => {
+    test('should dispatch requested status and call _requestImportSampleData incase of exports resourceType', () => {
       const refreshCache = true;
 
-      return expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache} })
+      expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache} })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
           [call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
@@ -390,7 +388,7 @@ describe('resourceFormSampleData sagas', () => {
       const refreshCache = true;
       const asyncKey = 'export-123';
 
-      return expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache, asyncKey} })
+      expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache, asyncKey} })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
           [call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
@@ -408,7 +406,7 @@ describe('resourceFormSampleData sagas', () => {
     const refreshCache = true;
 
     test('should call _requestPGExportSampleData if the resource is PG export or stand alone export', () => {
-      const testPGWithoutFlowId = expectSaga(_requestExportSampleData, { formKey, refreshCache })
+      expectSaga(_requestExportSampleData, { formKey, refreshCache })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId }],
           [call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
@@ -416,7 +414,8 @@ describe('resourceFormSampleData sagas', () => {
         .call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
         .not.call.fn(_requestLookupSampleData)
         .run();
-      const testPGWithFlowId = expectSaga(_requestExportSampleData, { formKey, refreshCache })
+
+      expectSaga(_requestExportSampleData, { formKey, refreshCache })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
           [select(selectors.isPageGenerator, flowId, resourceId), true],
@@ -425,7 +424,8 @@ describe('resourceFormSampleData sagas', () => {
         .call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
         .not.call.fn(_requestLookupSampleData)
         .run();
-      const testStandaloneExport = expectSaga(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+
+      expectSaga(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
           [select(selectors.isPageGenerator, flowId, resourceId), false],
@@ -435,8 +435,6 @@ describe('resourceFormSampleData sagas', () => {
         .call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
         .not.call.fn(_requestLookupSampleData)
         .run();
-
-      return testPGWithoutFlowId && testPGWithFlowId && testStandaloneExport;
     });
     test('should call _requestLookupSampleData if the resource is a PP lookup', () => expectSaga(_requestExportSampleData, { formKey, refreshCache })
       .provide([
@@ -458,7 +456,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestExportSampleData, { formKey })
+      expectSaga(_requestExportSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
         ])
@@ -472,7 +470,7 @@ describe('resourceFormSampleData sagas', () => {
         type: 'rakuten',
       };
 
-      return expectSaga(_requestExportSampleData, { formKey })
+      expectSaga(_requestExportSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, ssLinkedConnectionId, resourceObj }],
         ])
@@ -497,7 +495,7 @@ describe('resourceFormSampleData sagas', () => {
         sampleData: { test: 5 },
       };
 
-      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
+      expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource }],
           [call(_requestFileSampleData, { formKey }), {}],
@@ -519,7 +517,7 @@ describe('resourceFormSampleData sagas', () => {
         sampleData: { test: 5 },
       };
 
-      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
+      expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource }],
           [call(_requestFileSampleData, { formKey }), {}],
@@ -541,7 +539,7 @@ describe('resourceFormSampleData sagas', () => {
         type: 'distributed',
       };
 
-      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
+      expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: nsResource }],
           [call(_requestRealTimeSampleData, { formKey, refreshCache }), {}],
@@ -562,7 +560,7 @@ describe('resourceFormSampleData sagas', () => {
         type: 'distributed',
       };
 
-      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
+      expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: nsResource }],
           [call(_requestRealTimeSampleData, { formKey, refreshCache }), {}],
@@ -580,7 +578,7 @@ describe('resourceFormSampleData sagas', () => {
         adaptorType: 'RESTExport',
       };
 
-      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
+      expectSaga(_requestPGExportSampleData, { formKey, refreshCache })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: restResource }],
           [call(_requestExportPreviewData, { formKey, executeProcessors: undefined }), {}],
@@ -596,7 +594,7 @@ describe('resourceFormSampleData sagas', () => {
         adaptorType: 'RESTExport',
       };
 
-      return expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
+      expectSaga(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors: true })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: restResource }],
           [call(_requestExportPreviewData, { formKey, executeProcessors: true }), {}],
@@ -639,7 +637,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestExportPreviewData, { formKey })
+      expectSaga(_requestExportPreviewData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -686,7 +684,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestExportPreviewData, { formKey })
+      expectSaga(_requestExportPreviewData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -704,7 +702,7 @@ describe('resourceFormSampleData sagas', () => {
         })
         .run();
     });
-    test('should not remove transformations and hooks from the resource when executeProcessors is true while making export preview call ', () => {
+    test('should not remove transformations and hooks from the resource when executeProcessors is true while making export preview call', () => {
       const resourceObj = {
         _id: '123',
         adaptorType: 'RESTExport',
@@ -739,7 +737,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestExportPreviewData, { formKey, executeProcessors: true })
+      expectSaga(_requestExportPreviewData, { formKey, executeProcessors: true })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -777,7 +775,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestExportPreviewData, { formKey })
+      expectSaga(_requestExportPreviewData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId: STANDALONE_INTEGRATION.id }],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -795,7 +793,7 @@ describe('resourceFormSampleData sagas', () => {
         })
         .run();
     });
-    test('should call _handlePreviewError saga on preview error ', () => {
+    test('should call _handlePreviewError saga on preview error', () => {
       const resourceObj = {
         _id: '123',
         adaptorType: 'RESTExport',
@@ -809,7 +807,7 @@ describe('resourceFormSampleData sagas', () => {
 
       const error = { status: 401, message: '{"code":"error code"}' };
 
-      return expectSaga(_requestExportPreviewData, { formKey })
+      expectSaga(_requestExportPreviewData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -831,12 +829,12 @@ describe('resourceFormSampleData sagas', () => {
       type: 'distributed',
     };
 
-    test('should pass refreshCache as false if not passed when it calls requestRealTimeMetadata saga ', () => {
+    test('should pass refreshCache as false if not passed when it calls requestRealTimeMetadata saga', () => {
       const realTimeSampleData = [
         {group: 'Body Field', id: 'thirdpartyacct', name: '3rd Party Billing Account Number', type: 'text'},
       ];
 
-      return expectSaga(_requestRealTimeSampleData, { formKey })
+      expectSaga(_requestRealTimeSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: nsResource }],
           [call(requestRealTimeMetadata, { resource: nsResource, refresh: false }), realTimeSampleData],
@@ -852,7 +850,7 @@ describe('resourceFormSampleData sagas', () => {
         {group: 'Body Field', id: 'thirdpartyacct', name: '3rd Party Billing Account Number', type: 'text'},
       ];
 
-      return expectSaga(_requestRealTimeSampleData, { formKey, refreshCache })
+      expectSaga(_requestRealTimeSampleData, { formKey, refreshCache })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: nsResource }],
           [call(requestRealTimeMetadata, { resource: nsResource, refresh: refreshCache }), realTimeSampleData],
@@ -891,7 +889,7 @@ describe('resourceFormSampleData sagas', () => {
         adaptorType: 'FTPExport',
       };
 
-      return expectSaga(_requestFileSampleData, { formKey })
+      expectSaga(_requestFileSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), {resourceObj: ftpResource, resourceId}],
           [call(extractFileSampleDataProps, { formKey }), {}],
@@ -929,7 +927,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestFileSampleData, { formKey })
+      expectSaga(_requestFileSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource, resourceType: 'exports'}],
           [call(extractFileSampleDataProps, { formKey }), response],
@@ -947,7 +945,7 @@ describe('resourceFormSampleData sagas', () => {
         .not.put(actions.resourceFormSampleData.clearStages(resourceId))
         .run();
     });
-    test('should check for uploaded file content from getUploadedFile and call parseFileData saga with that content for other valid file types ', () => {
+    test('should check for uploaded file content from getUploadedFile and call parseFileData saga with that content for other valid file types', () => {
       const fileProps = {
         columnDelimiter: '|',
         hasHeaderRow: true,
@@ -975,7 +973,7 @@ describe('resourceFormSampleData sagas', () => {
         file: "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE↵C1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0",
       };
 
-      return expectSaga(_requestFileSampleData, { formKey })
+      expectSaga(_requestFileSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource, resourceType: 'exports'}],
           [call(extractFileSampleDataProps, { formKey }), {
@@ -1012,7 +1010,7 @@ describe('resourceFormSampleData sagas', () => {
         sampleData: "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE↵C1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0",
       };
 
-      return expectSaga(_requestLookupSampleData, { formKey })
+      expectSaga(_requestLookupSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: ftpResource}],
           [call(_requestFileSampleData, { formKey }), {}],
@@ -1045,7 +1043,7 @@ describe('resourceFormSampleData sagas', () => {
         test: { limit: 10 },
       };
 
-      return expectSaga(_requestLookupSampleData, { formKey })
+      expectSaga(_requestLookupSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
           [call(pageProcessorPreview, {
@@ -1082,7 +1080,7 @@ describe('resourceFormSampleData sagas', () => {
       };
       const error = { status: 401, message: '{"code":"error code"}' };
 
-      return expectSaga(_requestLookupSampleData, { formKey })
+      expectSaga(_requestLookupSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
           [matchers.call.fn(pageProcessorPreview), throwError(error)],
@@ -1118,7 +1116,7 @@ describe('resourceFormSampleData sagas', () => {
         transform: {},
       };
 
-      return expectSaga(_requestPageProcessorSampleData, { formKey, addMockData: true })
+      expectSaga(_requestPageProcessorSampleData, { formKey, addMockData: true })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
           [call(pageProcessorPreview, {
@@ -1155,7 +1153,7 @@ describe('resourceFormSampleData sagas', () => {
       };
       const error = { status: 401, message: '{"code":"error code"}' };
 
-      return expectSaga(_requestPageProcessorSampleData, { formKey })
+      expectSaga(_requestPageProcessorSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
           [matchers.call.fn(pageProcessorPreview), throwError(error)],
@@ -1180,7 +1178,7 @@ describe('resourceFormSampleData sagas', () => {
       };
       const resourceId = 'import-123';
 
-      return expectSaga(_requestImportSampleData, { formKey })
+      expectSaga(_requestImportSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource }],
           [call(_requestImportFileSampleData, { formKey }), {}],
@@ -1196,7 +1194,7 @@ describe('resourceFormSampleData sagas', () => {
       };
       const resourceId = 'import-123';
 
-      return expectSaga(_requestImportSampleData, { formKey })
+      expectSaga(_requestImportSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: restResource }],
         ])
@@ -1242,7 +1240,7 @@ describe('resourceFormSampleData sagas', () => {
         },
       };
 
-      return expectSaga(_requestImportFileSampleData, { formKey })
+      expectSaga(_requestImportFileSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: ftpResource, resourceId }],
           [select(selectors.fieldState, formKey, 'file.filedefinition.rules'), fieldState],
@@ -1268,7 +1266,7 @@ describe('resourceFormSampleData sagas', () => {
       const fileId = `${resourceId}-uploadFile`;
       const uploadedFileContent = { test: 5 };
 
-      return expectSaga(_requestImportFileSampleData, { formKey })
+      expectSaga(_requestImportFileSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: ftpResource, resourceId }],
           [select(selectors.getUploadedFile, fileId), { file: uploadedFileContent }],
@@ -1291,7 +1289,7 @@ describe('resourceFormSampleData sagas', () => {
       const uploadedFileContent = '00123450x12345';
       const csvData = 'users,name,id';
 
-      return expectSaga(_requestImportFileSampleData, { formKey })
+      expectSaga(_requestImportFileSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj: ftpResource, resourceId }],
           [select(selectors.getUploadedFile, fileId), { file: uploadedFileContent }],
@@ -1336,7 +1334,7 @@ describe('resourceFormSampleData sagas', () => {
         users: { test: 5 },
       };
 
-      return expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
+      expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])
@@ -1380,7 +1378,7 @@ describe('resourceFormSampleData sagas', () => {
         users: { test: 5 },
       };
 
-      return expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
+      expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])
@@ -1434,7 +1432,7 @@ describe('resourceFormSampleData sagas', () => {
         users: { test: 5 },
       };
 
-      return expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+      expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])

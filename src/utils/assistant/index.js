@@ -16,7 +16,6 @@ import {
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
-import {VALID_MONGO_ID} from '../../constants/regex';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -122,6 +121,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'jira',
     'quickbooks',
     'microsoftbusinesscentral',
+    'sapbydesign',
   ]
 );
 export function routeToRegExp(route = '') {
@@ -898,9 +898,9 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
-    operation = VALID_MONGO_ID.test(operation) ? operation : exportDoc.http?._httpConnectorEndpointId;
-    resource = VALID_MONGO_ID.test(resource) ? resource : exportDoc.http?._httpConnectorResourceId;
-    version = VALID_MONGO_ID.test(version) ? version : exportDoc.http?._httpConnectorVersionId;
+    operation = operation || exportDoc.http?._httpConnectorEndpointId;
+    resource = resource || exportDoc.http?._httpConnectorResourceId;
+    version = version || exportDoc.http?._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1183,11 +1183,33 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     encode: false,
     indices: false,
   }); /* indices should be false to handle IO-1776 */
+  const hardcodedQueries = qs.stringify(assistantConfig.queryParams, {
+    encode: false,
+    indices: false,
+  });
+  const finalQueryString = hardcodedQueries.includes(queryString) ? hardcodedQueries : queryString;
 
-  if (queryString) {
-    relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
+  if (finalQueryString) {
+    const [pathPart, queryPart] = relativeURI.split('?');
+    const queryStringObj = new URLSearchParams(finalQueryString);
+    const queryObj = new URLSearchParams(queryPart);
+
+    if (queryPart) {
+      [...queryStringObj.entries()].forEach(([key, value]) => {
+        const paramType = operationDetails.queryParameters.find(({id}) => id === key)?.fieldType;
+
+        if (paramType && (paramType === 'array' || paramType === 'multiselect')) {
+          queryObj.append(key, value);
+        } else {
+          queryObj.set(key, value);
+        }
+      });
+      const queryString = qs.stringify(Array.from(queryObj.entries()).reduce((acc, [key, value]) => ({...acc, [key]: value}), {}), {encode: false, indices: false });
+
+      relativeURI = `${pathPart}?${queryString}`;
+    } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }
     if (pagingRelativeURI) {
-      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + queryString;
+      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + finalQueryString;
     }
   }
 
@@ -1794,14 +1816,14 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
-      if (operation === 'create-update-id' || isArray(operation)) {
+      if (operation === 'create-update-id' || isArray(operation) || importDoc.http._httpConnectorEndpointIds?.length > 1) {
         operation = operation || importDoc.http._httpConnectorEndpointIds;
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
       } else {
-        operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
-        resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
-        version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
+        operation = operation || importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
+        resource = resource || importDoc.http?._httpConnectorResourceId;
+        version = version || importDoc.http?._httpConnectorVersionId;
       }
     }
     if (operation !== 'create-update-id' && ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1))) {
@@ -2072,15 +2094,15 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
           if (
             howToFindIdentifierLookupConfig.id &&
             assistantMetadata &&
-            assistantMetadata.lookups &&
-            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]
+            ((assistantMetadata.lookups &&
+            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]) || importDoc.http?._httpConnectorResourceId)
           ) {
             const luEndpoint = getExportOperationDetails({
               version: assistantMetadata.version,
               resource:
-                assistantMetadata.lookups[pathParams[p.id] || existingLookupName].resource ||
-                assistantMetadata.resource,
-              operation: assistantMetadata.lookups[pathParams[p.id] || existingLookupName].operation,
+                assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.resource || operationDetails.lookupOperationDetails?.resource ||
+                 assistantMetadata.resource,
+              operation: assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.operation || operationDetails.lookupOperationDetails?.id,
               assistantData,
             });
 
@@ -2606,8 +2628,14 @@ export function isLoopReturnsv2Connection(connection) {
 export function isAcumaticaEcommerceConnection(connection) {
   return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
 }
+export function isAcumaticaManufacturingConnection(connection) {
+  return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'manufacturing';
+}
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
+}
+export function isSapByDesignSoapConnection(connection) {
+  return connection?.assistant === 'sapbydesign' && connection?.http?.unencrypted?.apiType === 'soap';
 }
 
 export function shouldLoadAssistantFormForImports(resource, connection) {

@@ -289,7 +289,7 @@ export function* purgeError({ flowId, resourceId, errors, isRowAction }) {
       actions.errorManager.flowErrorDetails.purge.success({
         flowId,
         resourceId,
-        message: messageStore(errorIdList?.length ? 'MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE' : 'ERROR_PURGE_SUCCESS_MESSAGE'),
+        message: messageStore(errorIdList?.length ? 'PURGE.MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE' : 'PURGE.ERROR_PURGE_SUCCESS_MESSAGE'),
       })
     );
   } catch (error) {

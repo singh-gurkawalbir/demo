@@ -44,11 +44,11 @@ export default function PreviewBodyTabs({
     }
 
     if (resourceSampleData.status === 'error') {
-      if (resourceType === 'imports' && activeSendOrPreviewTab === 'preview') {
-        return setDefaultTab('request');
-      }
       if (shouldShowParseTab) {
         return setDefaultTab('preview');
+      }
+      if (resourceType === 'imports' && activeSendOrPreviewTab === 'preview') {
+        return setDefaultTab('request');
       }
       if (availablePreviewStages === HTTP_STAGES) {
         return setDefaultTab('raw');

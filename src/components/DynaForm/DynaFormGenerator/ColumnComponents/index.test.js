@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import ColumnComponent from '.';
@@ -131,14 +131,14 @@ const props = {
   resourceId: '5ff687fa4f59bb348d41b332',
 };
 
-describe('Collapsed Components UI tests', () => {
+describe('collapsed Components UI tests', () => {
   test('should pass the initial render', () => {
     props.fields = [{visible: true, id: 'name', isValid: false}, {visible: 'true', id: 'description', isValid: false}, {visible: 'true', id: 'content', isValid: false}, {visible: 'true', id: 'insertFunction', isValid: false}];
     initColumnComponent(props);
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
   });
-  test('should not render a container when all the fields corresponding to the container are not mapped ', () => {
+  test('should not render a container when all the fields corresponding to the container are not mapped', () => {
     props.fields = [{visible: true, id: 'name'}, {visible: 'true', id: 'description'}];
     initColumnComponent(props);
     expect(screen.getByText('General')).toBeInTheDocument();

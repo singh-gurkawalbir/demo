@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import moment from 'moment';
 import { selectors } from '../reducers';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../constants';
@@ -32,18 +31,18 @@ const getRandomDatesOfTomorrow = (n = 5) => {
 describe('license util function test', () => {
   describe('upgradeStatus function test', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(upgradeStatus()).toEqual('');
-      expect(upgradeStatus([])).toEqual('');
-      expect(upgradeStatus([], [])).toEqual('');
-      expect(upgradeStatus(123, [])).toEqual('');
-      expect(upgradeStatus(null, {})).toEqual('');
-      expect(upgradeStatus(null, [])).toEqual('');
-      expect(upgradeStatus({}, {})).toEqual('');
-      expect(upgradeStatus(new Date(), new Date())).toEqual('');
+      expect(upgradeStatus()).toBe('');
+      expect(upgradeStatus([])).toBe('');
+      expect(upgradeStatus([], [])).toBe('');
+      expect(upgradeStatus(123, [])).toBe('');
+      expect(upgradeStatus(null, {})).toBe('');
+      expect(upgradeStatus(null, [])).toBe('');
+      expect(upgradeStatus({}, {})).toBe('');
+      expect(upgradeStatus(new Date(), new Date())).toBe('');
     });
 
     test('should return always return empty string for custom fba licensed integration', () => {
-      expect(upgradeStatus({}, { settings: {connectorEdition: 'Custom FBA'}})).toEqual('');
+      expect(upgradeStatus({}, { settings: {connectorEdition: 'Custom FBA'}})).toBe('');
       expect(upgradeStatus({
         opts: {
           connectorEdition: 'starter',
@@ -55,7 +54,7 @@ describe('license util function test', () => {
           connectorEdition: 'Custom FBA',
         },
       }
-      )).toEqual('');
+      )).toBe('');
     });
 
     test('should return correct upgrade status for upgradable licenses', () => {
@@ -67,7 +66,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'starter',
         },
-      })).toEqual('upgrade');
+      })).toBe('upgrade');
     });
 
     test('should return correct upgrade status for license and highest edition are same', () => {
@@ -79,7 +78,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'standard',
         },
-      })).toEqual('');
+      })).toBe('');
     });
 
     test('should return correct upgrade status for license and installed edition are same and highest edition is available', () => {
@@ -91,7 +90,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'starter',
         },
-      })).toEqual('requestUpgrade');
+      })).toBe('requestUpgrade');
     });
 
     test('should return correct upgrade status for license and installed edition and highest edition are same', () => {
@@ -103,31 +102,31 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'standard',
         },
-      })).toEqual('');
+      })).toBe('');
     });
   });
   describe('upgradeButtonText function test', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(upgradeButtonText()).toEqual('');
-      expect(upgradeButtonText([])).toEqual('');
-      expect(upgradeButtonText([], [])).toEqual('');
-      expect(upgradeButtonText(123, [])).toEqual('');
-      expect(upgradeButtonText(null, {})).toEqual('');
-      expect(upgradeButtonText(null, [])).toEqual('');
-      expect(upgradeButtonText({}, {})).toEqual('');
-      expect(upgradeButtonText(new Date(), new Date())).toEqual('');
-      expect(upgradeButtonText(undefined, null, null)).toEqual('');
-      expect(upgradeButtonText([], null, 123)).toEqual('Upgrade requested');
-      expect(upgradeButtonText([], [], [])).toEqual('Upgrade requested');
-      expect(upgradeButtonText(123, [], {})).toEqual('Upgrade requested');
-      expect(upgradeButtonText(null, {}, null)).toEqual('');
-      expect(upgradeButtonText(null, [], 'string')).toEqual('Upgrade requested');
-      expect(upgradeButtonText({}, {}, null)).toEqual('');
-      expect(upgradeButtonText(new Date(), new Date(), new Date())).toEqual('Upgrade requested');
+      expect(upgradeButtonText()).toBe('');
+      expect(upgradeButtonText([])).toBe('');
+      expect(upgradeButtonText([], [])).toBe('');
+      expect(upgradeButtonText(123, [])).toBe('');
+      expect(upgradeButtonText(null, {})).toBe('');
+      expect(upgradeButtonText(null, [])).toBe('');
+      expect(upgradeButtonText({}, {})).toBe('');
+      expect(upgradeButtonText(new Date(), new Date())).toBe('');
+      expect(upgradeButtonText(undefined, null, null)).toBe('');
+      expect(upgradeButtonText([], null, 123)).toBe('Upgrade requested');
+      expect(upgradeButtonText([], [], [])).toBe('Upgrade requested');
+      expect(upgradeButtonText(123, [], {})).toBe('Upgrade requested');
+      expect(upgradeButtonText(null, {}, null)).toBe('');
+      expect(upgradeButtonText(null, [], 'string')).toBe('Upgrade requested');
+      expect(upgradeButtonText({}, {}, null)).toBe('');
+      expect(upgradeButtonText(new Date(), new Date(), new Date())).toBe('Upgrade requested');
     });
 
     test('should return always return empty string for custom fba licensed integration', () => {
-      expect(upgradeButtonText({}, { settings: {connectorEdition: 'Custom FBA'}})).toEqual('');
+      expect(upgradeButtonText({}, { settings: {connectorEdition: 'Custom FBA'}})).toBe('');
       expect(upgradeButtonText({
         opts: {
           connectorEdition: 'starter',
@@ -139,7 +138,7 @@ describe('license util function test', () => {
           connectorEdition: 'Custom FBA',
         },
       }
-      )).toEqual('');
+      )).toBe('');
     });
 
     test('should return correct upgrade status for upgradable licenses', () => {
@@ -151,7 +150,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'starter',
         },
-      })).toEqual('Upgrade');
+      })).toBe('Upgrade');
     });
 
     test('should return correct upgrade status for license and highest edition are same', () => {
@@ -163,7 +162,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'standard',
         },
-      })).toEqual('');
+      })).toBe('');
     });
 
     test('should return correct upgrade status for license and installed edition are same and highest edition is available', () => {
@@ -175,7 +174,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'starter',
         },
-      })).toEqual('Request upgrade');
+      })).toBe('Request upgrade');
     });
 
     test('should return correct upgrade status for license and installed edition and highest edition are same', () => {
@@ -187,24 +186,24 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'standard',
         },
-      })).toEqual('');
+      })).toBe('');
     });
   });
 
   describe('expiresInfo function test', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(expiresInfo()).toEqual('');
-      expect(expiresInfo([])).toEqual('');
-      expect(expiresInfo('string')).toEqual('');
-      expect(expiresInfo(123)).toEqual('');
-      expect(expiresInfo(null)).toEqual('');
-      expect(expiresInfo({})).toEqual('');
-      expect(expiresInfo(new Date())).toEqual('');
+      expect(expiresInfo()).toBe('');
+      expect(expiresInfo([])).toBe('');
+      expect(expiresInfo('string')).toBe('');
+      expect(expiresInfo(123)).toBe('');
+      expect(expiresInfo(null)).toBe('');
+      expect(expiresInfo({})).toBe('');
+      expect(expiresInfo(new Date())).toBe('');
     });
 
     test('should return empty string when license doesnt have expires', () => {
-      expect(expiresInfo({expires: undefined})).toEqual('');
-      expect(expiresInfo({dummy: 'data'})).toEqual('');
+      expect(expiresInfo({expires: undefined})).toBe('');
+      expect(expiresInfo({dummy: 'data'})).toBe('');
     });
 
     test('should return correct expires info for past dates', () => {
@@ -265,7 +264,7 @@ describe('license util function test', () => {
       const dates = getRandomDatesOfToday(10);
 
       dates.forEach(date => {
-        expect(expiresInfo({expires: date})).toEqual(`Expires on ${moment().format('MMM Do, YYYY')} (Today)`);
+        expect(expiresInfo({expires: date})).toBe(`Expires on ${moment().format('MMM Do, YYYY')} (Today)`);
       });
     });
 
@@ -273,23 +272,23 @@ describe('license util function test', () => {
       const dates = getRandomDatesOfTomorrow(10);
 
       dates.forEach(date => {
-        expect(expiresInfo({expires: date})).toEqual(`Expires on ${moment().add(1, 'days').format('MMM Do, YYYY')} (Tomorrow)`);
+        expect(expiresInfo({expires: date})).toBe(`Expires on ${moment().add(1, 'days').format('MMM Do, YYYY')} (Tomorrow)`);
       });
     });
   });
 
   describe('isNextTheHighestPlan function test', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(isNextTheHighestPlan()).toEqual(false);
-      expect(isNextTheHighestPlan('', false, [])).toEqual(false);
-      expect(isNextTheHighestPlan('')).toEqual(false);
-      expect(isNextTheHighestPlan('231', false)).toEqual(false);
-      expect(isNextTheHighestPlan('231', true, [])).toEqual(false);
+      expect(isNextTheHighestPlan()).toBe(false);
+      expect(isNextTheHighestPlan('', false, [])).toBe(false);
+      expect(isNextTheHighestPlan('')).toBe(false);
+      expect(isNextTheHighestPlan('231', false)).toBe(false);
+      expect(isNextTheHighestPlan('231', true, [])).toBe(false);
     });
 
     test('should return correct value for correct arguments', () => {
-      expect(isNextTheHighestPlan('123')).toEqual(false);
-      expect(isNextTheHighestPlan('123', false, [])).toEqual(false);
+      expect(isNextTheHighestPlan('123')).toBe(false);
+      expect(isNextTheHighestPlan('123', false, [])).toBe(false);
       expect(isNextTheHighestPlan('123', true, [
         {
           _id: '111',
@@ -303,7 +302,7 @@ describe('license util function test', () => {
           _id: '123',
           order: 2,
         },
-      ])).toEqual(true);
+      ])).toBe(true);
     });
   });
 });

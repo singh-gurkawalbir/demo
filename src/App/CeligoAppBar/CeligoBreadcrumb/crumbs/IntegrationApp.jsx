@@ -11,7 +11,7 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
   const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   return (
-    <LoadResources resources={isIntegrationAppV2 ? 'integrations' : ''}>
+    <LoadResources integrationId={integrationId} resources={isIntegrationAppV2 ? 'integrations' : ''}>
       {integrationAppName}
     </LoadResources>
   );
@@ -34,7 +34,7 @@ export const ChildCrumb = ({ integrationId, childId }) => {
   }
 
   return (
-    <LoadResources resources={isIntegrationAppV2 ? 'integrations' : ''}>
+    <LoadResources integrationId={childId} resources={isIntegrationAppV2 ? 'integrations' : ''}>
       {child ? child.label : childId}
     </LoadResources>
   );

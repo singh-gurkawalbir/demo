@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-conditional-in-test */
+
 import {getAmalgamatedOptionsHandler} from '.';
 
 jest.mock('../../definitions/index', () => ({
@@ -119,15 +120,15 @@ describe('form factory options handler amalgamation getAmalgamatedOptionsHandler
     );
 
     // checking for the optionsHandler within the meta
-    expect(amalgamatedOptionsHandlers('anotherFieldId')).toEqual('someValue');
+    expect(amalgamatedOptionsHandlers('anotherFieldId')).toBe('someValue');
     expect(
       amalgamatedOptionsHandlers('someField', [
         { id: 'someField', value: 'hi' },
       ])
-    ).toEqual('hi');
+    ).toBe('hi');
   });
 });
-describe('form factory options handler amalgamation getAmalgamatedOptionsHandler', () => {
+describe('form factory options handler amalgamation getAmalgamatedOptionsHandler duplicate', () => {
   test('should club options handlers both in the root metadata as well within the containers', () => {
     const resourceType = 'someResourceType';
     // metadata with a form visibility rule
@@ -150,11 +151,11 @@ describe('form factory options handler amalgamation getAmalgamatedOptionsHandler
     );
 
     // checking for the optionsHandler within the meta
-    expect(amalgamatedOptionsHandlers('anotherFieldId')).toEqual('someValue');
+    expect(amalgamatedOptionsHandlers('anotherFieldId')).toBe('someValue');
     expect(
       amalgamatedOptionsHandlers('someField', [
         { id: 'someField', value: 'hi' },
       ])
-    ).toEqual('hi');
+    ).toBe('hi');
   });
 });

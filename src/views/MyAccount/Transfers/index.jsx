@@ -9,6 +9,7 @@ import AddIcon from '../../../components/icons/AddIcon';
 import PanelHeader from '../../../components/PanelHeader';
 import { TextButton } from '../../../components/Buttons';
 import infoText from '../../../components/Help/infoText';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,14 +64,7 @@ export default function Transfers() {
             />
             </div>
             <div className={classes.description}>
-              Transfer individual integrations between integrator.io accounts.
-              Send integrations by specifying the email of the owner
-              of the integrator.io account you want to send the integration to.
-              The receiving account owner needs to accept the transfer. Once
-              accepted, the integration will be removed from your account and
-              instead reside in the receiver’s account. Note: the receiver needs
-              to be an account owner and cannot be part of the same organization
-              as the sender.
+              {message.TRANSFERS.TRANSFER_INTEGRATIONS}
             </div>
           </>
         )}

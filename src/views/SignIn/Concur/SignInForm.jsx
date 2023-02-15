@@ -8,12 +8,12 @@ import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ErrorIcon from '../../../components/icons/ErrorIcon';
-import { getDomain } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../../components/Buttons';
 import getImageUrl from '../../../utils/image';
+import { isGoogleSignInAllowed } from '../../../utils/resource';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -70,6 +70,14 @@ const useStyles = makeStyles(theme => ({
     minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
   },
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
+  },
 }));
 
 function ForgotPassworLink({email = ''}) {
@@ -106,7 +114,7 @@ export default function SignIn({dialogOpen, className}) {
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
     }
-    if (window.signInError) {
+    if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
     }
 
@@ -177,7 +185,7 @@ export default function SignIn({dialogOpen, className}) {
           required
           type="password"
           placeholder="Password*"
-          className={classes.textField}
+          className={clsx(classes.textField, classes.passwordTextField)}
         />
 
         <ForgotPassworLink email={email} />
@@ -202,7 +210,8 @@ export default function SignIn({dialogOpen, className}) {
             </FilledButton>
           )}
       </form>
-      { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
+      { !isAuthenticating &&
+      isGoogleSignInAllowed() && (
       <div>
         {!dialogOpen && (
         <form onSubmit={handleSignInWithGoogle}>
@@ -222,15 +231,16 @@ export default function SignIn({dialogOpen, className}) {
           </OutlinedButton>
         </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-        <form onSubmit={handleReSignInWithGoogle}>
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
+         isGoogleSignInAllowed() && (
+         <form onSubmit={handleReSignInWithGoogle}>
+           <OutlinedButton
+             type="submit"
+             color="secondary"
+             className={classes.googleBtn}>
+             Sign in with Google
+           </OutlinedButton>
+         </form>
         )}
       </div>
       )}

@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import getSettingsMetadata from './metadata';
 
 describe('metadata test cases', () => {

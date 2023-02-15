@@ -4,12 +4,14 @@ import { merge } from 'lodash';
 import produce from 'immer';
 import light from './light';
 import dark from './dark';
+import orion from './orion';
 import sandbox from './sandbox';
 
 const DEFAULT_THEME = 'light';
 const themes = {
   light,
   dark,
+  orion,
   sandbox,
 };
 

@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +37,7 @@ function initImports(data = {}) {
   renderWithProviders(ui);
 }
 
-describe('Test suite for Imports', () => {
+describe('test suite for Imports', () => {
   test('should render the table accordingly', () => {
     const data = [{
       _id: 'imp123',

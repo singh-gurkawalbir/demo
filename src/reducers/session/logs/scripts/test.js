@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest  */
 
 import { addMinutes } from 'date-fns';
 import reducer, { selectors } from '.';

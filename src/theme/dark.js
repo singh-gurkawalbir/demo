@@ -19,13 +19,13 @@ export default {
   palette: {
     type: 'dark',
     background: {
-      paper: colors.celigoNeutral8,
+      paper: colors.celigoNeutral9,
       paper2: colors.celigoNeutral5,
-      default: colors.celigoNeutral6,
+      default: colors.celigoNeutral8,
       main: colors.celigoAccent3,
       arrowAfter: colors.celigoNeutral6,
       drawer: colors.celigoNeutral9,
-      drawer2: colors.celigoNeutral8,
+      drawer2: colors.celigoNeutral9,
       drawer3: colors.celigoNeutral90,
       drawerActive: colors.celigoAccent1,
       toggle: colors.celigoNeutral7,
@@ -40,9 +40,9 @@ export default {
       dark: colors.celigoAccent1,
     },
     secondary: {
-      light: colors.celigoAccent3,
-      main: colors.celigoAccent1,
-      lightest: colors.celigoNeutral7,
+      light: colors.celigoNeutral3,
+      main: colors.celigoNeutral3,
+      lightest: colors.celigoNeutral3,
       dark: colors.celigoNeutral9,
       darkest: colors.celigoNeutral90,
       contrastText: colors.celigoNeutral4,
@@ -78,18 +78,18 @@ export default {
   },
   overrides: {
     MuiTypography: {
-      root: { color: colors.celigoWhite },
-      body2: { color: colors.celigoWhite },
-      body1: { color: colors.celigoWhite },
-      h1: { color: colors.celigoWhite },
-      h2: { color: colors.celigoWhite },
-      h3: { color: colors.celigoWhite },
-      h4: { color: colors.celigoWhite },
-      h5: { color: colors.celigoWhite },
+      root: { color: colors.celigoNeutral3 },
+      body2: { color: colors.celigoNeutral3 },
+      body1: { color: colors.celigoNeutral3 },
+      h1: { color: colors.celigoNeutral3 },
+      h2: { color: colors.celigoNeutral3 },
+      h3: { color: colors.celigoNeutral3 },
+      h4: { color: colors.celigoNeutral3 },
+      h5: { color: colors.celigoNeutral3 },
       h6: { color: colors.celigoNeutral9 },
       subtitle1: { color: colors.celigoNeutral9 },
       subtitle2: { color: colors.celigoNeutral9 },
-      overline: { color: colors.celigoWhite },
+      overline: { color: colors.celigoNeutral3 },
       caption: { color: colors.celigoNeutral9 },
     },
     MuiButton: {
@@ -106,7 +106,7 @@ export default {
         },
       },
       textSecondary: {
-        color: colors.celigoAccent2,
+        color: colors.celigoNeutral3,
         '&::after': {
           backgroundColor: colors.celigoAccent3,
         },
@@ -318,7 +318,7 @@ export default {
     },
     MuiFormLabel: {
       root: {
-        color: colors.celigoNeutral2,
+        color: colors.celigoNeutral3,
       },
     },
     MuiFilledInput: {

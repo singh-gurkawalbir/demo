@@ -11,6 +11,7 @@ import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../constants';
 import useConfirmDialog from '../ConfirmDialog';
 import { FilledButton } from '../Buttons';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   contentWrapper: {
@@ -52,8 +53,7 @@ const StaleUIVersion = () => (
   <ModalDialog show>
     <div>Reload page</div>
     <Typography>
-      It looks like your browser has cached an older version of our app.
-      Click &apos;Reload&apos; to refresh the page.
+      {message.USER_SIGN_IN.CACHED}
     </Typography>
     <FilledButton
       data-test="ok"
@@ -69,7 +69,7 @@ const UserAcceptedAccountTransfer = () => (
   <ModalDialog show>
     <div>Success!</div>
     <Typography>
-      You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
+      {message.USER_SIGN_IN.OWNER_ACCOUNT}
     </Typography>
     <FilledButton
       data-test="ok"
@@ -97,7 +97,9 @@ const ExpiredSessionContent = () => {
         Your session has expired
       </div>
       <div className={classes.contentWrapper}>
-        <Typography component="div" variant="body2" className={classes.sessionExpiredInfo}>For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.</Typography>
+        <Typography component="div" variant="body2" className={classes.sessionExpiredInfo}>
+          {message.USER_SIGN_IN.SESSION_EXPIRED}
+        </Typography>
         {showSSOSignIn ? <SignInSSOForm /> : <SignInForm dialogOpen />}
       </div>
     </ModalDialog>
@@ -140,7 +142,7 @@ export default function AlertDialog() {
   useEffect(() => {
     if (showSessionStatus === 'warning') {
       confirmDialog({
-        message: 'Your session is about to expire. Do you want to stay signed in?',
+        message: message.USER_SIGN_IN.SESSION_ABOUT_TO_EXPIRE,
         title: 'Session expiring',
         hideClose: true,
         buttons: [

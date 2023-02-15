@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { JOB_STATUS } from '../../../../constants';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import TextButton from '../../../Buttons/TextButton';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../ConfirmDialog';
@@ -33,7 +33,7 @@ export default function CancelRetryJob({retryJob}) {
     () => {
       confirmDialog({
         title: 'Confirm cancel retry',
-        message: messageStore('CANCEL_RETRY_CONFIRM'),
+        message: message.RETRY.CANCEL_RETRY_CONFIRM,
         buttons: [
           {
             label: 'Cancel retry',

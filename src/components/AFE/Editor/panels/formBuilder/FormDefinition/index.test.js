@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -34,7 +33,7 @@ function initFormDefinitonPanel(props = {}) {
 
   return renderWithProviders(<FormDefinitonPanel {...props} />, {initialStore});
 }
-describe('AFE DataPanel UI tests', () => {
+describe('aFE DataPanel UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -75,7 +74,7 @@ describe('AFE DataPanel UI tests', () => {
     expect(CodePanel).toBeInTheDocument();
 
     userEvent.click(CodePanel);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('filecsv', {data: 'new feature value'})));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.toggleAutoPreview('filecsv', true)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchFeatures('filecsv', {data: 'new feature value'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.toggleAutoPreview('filecsv', true)));
   });
 });

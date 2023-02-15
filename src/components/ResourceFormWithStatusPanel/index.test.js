@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -132,7 +132,7 @@ const connections = [
   },
 ];
 
-describe('ResourceFormWithStatusPanel UI test', () => {
+describe('resourceFormWithStatusPanel UI test', () => {
   async function readyStore() {
     const initialStore = getCreatedStore();
 
@@ -222,7 +222,7 @@ describe('ResourceFormWithStatusPanel UI test', () => {
 
     renderWithStoreAsndProps(store, props);
 
-    store.dispatch(actions.resourceForm.showBundleInstallNotification('1.0', '/', 'exports', '5e74798ec2c20f66f05cd370'));
+    store.dispatch(actions.resourceForm.showBundleInstallNotification('/', 'exports', '5e74798ec2c20f66f05cd370'));
     const link = screen.getByRole('link');
 
     expect(link).toHaveAttribute('href', '/');

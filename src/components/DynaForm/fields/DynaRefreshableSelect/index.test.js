@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -29,7 +28,7 @@ function initDynaSelectOptionsGenerator(props = {}) {
   return renderWithProviders(<DynaSelectOptionsGenerator {...props} />, {initialStore});
 }
 
-describe('DynaSelectOptionsGenerator UI tests', () => {
+describe('dynaSelectOptionsGenerator UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -67,19 +66,17 @@ describe('DynaSelectOptionsGenerator UI tests', () => {
     const dropdown = document.querySelector('[class="MuiSelect-nativeInput"]');
 
     expect(dropdown).toBeInTheDocument();
-    screen.debug();
   });
   test('should display the html error message when ignoreValidation prop is false', () => {
     initDynaSelectOptionsGenerator(props);
     expect(screen.getByText('Test Error Message')).toBeInTheDocument();
-    screen.debug();
   });
   test('should make a dispatch call when clicked on refresh', async () => {
     initDynaSelectOptionsGenerator(props);
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
     userEvent.click(refreshButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.refresh(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.refresh(
       '5efd8663a56953365bd28541',
       'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote',
       {
@@ -94,11 +91,11 @@ describe('DynaSelectOptionsGenerator UI tests', () => {
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
     userEvent.click(refreshButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledTimes(0));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(0));
   });
   test('should make a dispatch call on initial render when data is undefined and disableFetch is false', async () => {
     initDynaSelectOptionsGenerator({...props, data: undefined, fieldData: undefined});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.request(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request(
       '5efd8663a56953365bd28541',
       'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote',
       { bundleUrlHelp: 'test url', bundlePath: 'test path' }

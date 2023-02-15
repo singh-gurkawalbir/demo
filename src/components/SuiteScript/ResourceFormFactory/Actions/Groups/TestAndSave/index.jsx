@@ -9,6 +9,7 @@ import TestButton, { PingMessage } from './TestButton';
 import useHandleClickWhenValid from '../../../../../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../../../../../constants';
 import SaveAndCloseResourceForm from '../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
+import { message } from '../../../../../../utils/messageStore';
 
 const ConfirmDialog = props => {
   const {
@@ -24,7 +25,7 @@ const ConfirmDialog = props => {
     if (commErrorMessage) {
       confirmDialog({
         title: 'Confirm save',
-        message: `Are you sure you want to save this connection? Test connection failed with the following error: ${commErrorMessage}.`,
+        message: `${message.CONNECTION.SAVE_FAILED} ${commErrorMessage}.`,
         buttons: [
           {
             label: 'Save',

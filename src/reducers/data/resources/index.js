@@ -269,7 +269,7 @@ selectors.exportNeedsRouting = (state, id) => {
 
   const exp = allExports.find(r => r._id === id);
 
-  if (!exp || exp.adaptorType !== 'AS2Export') return false;
+  if (!exp || (exp.adaptorType !== 'AS2Export' && exp.adaptorType !== 'VANExport')) return false;
 
   const as2ConnectionId = exp._connectionId;
 

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -171,10 +171,9 @@ describe('customSettings selectors', () => {
 
   describe('customSettingsForm', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors.customSettingsForm(undefined, 'dummy')).toEqual(
-        undefined
+      expect(selectors.customSettingsForm(undefined, 'dummy')).toBeUndefined(
       );
-      expect(selectors.customSettingsForm({}, 'dummy')).toEqual(undefined);
+      expect(selectors.customSettingsForm({}, 'dummy')).toBeUndefined();
     });
 
     test('should return correct state when match is found.', () => {

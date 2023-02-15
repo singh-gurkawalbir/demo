@@ -54,6 +54,7 @@ export default {
       type: 'select',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'anaplan.connection.http.auth.type',
       options: [
         {

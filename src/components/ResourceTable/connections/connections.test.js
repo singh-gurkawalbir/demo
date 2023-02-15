@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
@@ -60,7 +60,7 @@ function initConnections(data = {}, initialStore) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('Test suite for Connections', () => {
+describe('test suite for Connections', () => {
   const globalStore = getCreatedStore();
   let useDispatchSpy;
   let mockDispatchFn;
@@ -304,10 +304,10 @@ describe('Test suite for Connections', () => {
       'Used by',
       'Delete connection',
     ]);
-    const downloadDebugLogs = screen.getByRole('menuitem', {name: 'Download debug logs'});
+    const downloadDebugLogs = screen.getByRole('link', {name: 'Download debug logs'});
 
-    userEvent.click(downloadDebugLogs);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.download('conn123'));
+    expect(downloadDebugLogs).toHaveAttribute('download');
+    expect(downloadDebugLogs).toHaveAttribute('href', '/api/connections/conn123/debug');
   });
 
   test('should be able to debug a connection when not in flowBuilder', () => {
@@ -477,7 +477,7 @@ describe('Test suite for Connections', () => {
       const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
 
       userEvent.click(refreshMetadata);
-      expect(document.querySelector('[aria-describedby="client-snackbar"]').textContent).toEqual('Connection is offline.');
+      expect(document.querySelector('[aria-describedby="client-snackbar"]').textContent).toBe('Connection is offline.');
     });
   });
 

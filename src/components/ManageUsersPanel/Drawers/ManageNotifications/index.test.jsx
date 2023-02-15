@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach, jest, beforeEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, fireEvent, waitFor } from '@testing-library/react';

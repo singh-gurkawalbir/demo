@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -28,7 +27,7 @@ describe('clone sagas', () => {
         ],
       };
 
-      return expectSaga(requestPreview, { resourceType, resourceId })
+      expectSaga(requestPreview, { resourceType, resourceId })
         .provide([[matchers.call.fn(apiCallWithRetry), testComponents]])
         .call.fn(apiCallWithRetry)
         .put(
@@ -42,7 +41,7 @@ describe('clone sagas', () => {
     test('should call failedPreview if api call fails', () => {
       const error = new Error('error');
 
-      return expectSaga(requestPreview, { resourceType, resourceId })
+      expectSaga(requestPreview, { resourceType, resourceId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -84,7 +83,7 @@ describe('clone sagas', () => {
         _integrationId: 'dummy',
       };
 
-      return expectSaga(createComponents, { resourceType, resourceId })
+      expectSaga(createComponents, { resourceType, resourceId })
         .provide([
           [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), testComponents],
@@ -125,7 +124,7 @@ describe('clone sagas', () => {
         _integrationId: 'dummy',
       };
 
-      return expectSaga(createComponents, { resourceType, resourceId })
+      expectSaga(createComponents, { resourceType, resourceId })
         .provide([
           [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), testComponents],
@@ -159,7 +158,7 @@ describe('clone sagas', () => {
       };
       const error = new Error('error');
 
-      return expectSaga(createComponents, { resourceType, resourceId })
+      expectSaga(createComponents, { resourceType, resourceId })
         .provide([
           [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
@@ -183,7 +182,7 @@ describe('clone sagas', () => {
       };
       const error = new Error('error');
 
-      return expectSaga(createComponents, { resourceType, resourceId })
+      expectSaga(createComponents, { resourceType, resourceId })
         .provide([
           [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
@@ -214,7 +213,7 @@ describe('clone sagas', () => {
       };
       const error = new Error('error');
 
-      return expectSaga(createComponents, { resourceType, resourceId })
+      expectSaga(createComponents, { resourceType, resourceId })
         .provide([
           [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],

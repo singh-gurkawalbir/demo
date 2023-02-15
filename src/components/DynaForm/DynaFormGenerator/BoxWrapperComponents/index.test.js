@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import BoxWrapperComponents from '.';
@@ -120,7 +120,7 @@ jest.mock('..', () => ({
   default: () => <div>Form Fragment</div>,
 }));
 
-describe('BoxComponents UI tests', () => {
+describe('boxComponents UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<BoxWrapperComponents {...props} />);
     const formFragments = screen.getAllByText('Form Fragment');

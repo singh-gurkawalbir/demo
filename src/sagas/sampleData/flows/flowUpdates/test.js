@@ -1,10 +1,8 @@
-/* global describe, test */
-
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { updateFlowDoc, SCOPES } from '../../../resourceForm';
+import { updateFlowDoc } from '../../../resourceForm';
 import { updateFlowOnResourceUpdate, updateFlowData, updateFlowsDataForResource, _updateResponseMapping } from '.';
 import { getSubsequentStages } from '../../../../utils/flowData';
 
@@ -40,7 +38,7 @@ describe('flow updates sagas', () => {
       const resourceId = '123';
       const flowId = '456';
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
         context: {
@@ -59,7 +57,7 @@ describe('flow updates sagas', () => {
       const resourceId = '123';
       const flowId = '456';
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
         context: {
@@ -78,7 +76,7 @@ describe('flow updates sagas', () => {
       const resourceId = '123';
       const flowId = '456';
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
         context: {
@@ -93,22 +91,20 @@ describe('flow updates sagas', () => {
         .run();
     });
     test('should do nothing when patchSet is empty for any resourceType', () => {
-      const test1 = expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceType: 'exports',
       })
         .not.put(actions.flowData.updateFlow(undefined))
         .not.call.fn(_updateResponseMapping)
         .not.put(actions.flowData.updateFlowsForResource(undefined, 'flows', []))
         .run();
-      const test2 = expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceType: 'flows',
       })
         .not.put(actions.flowData.updateFlow(undefined))
         .not.call.fn(_updateResponseMapping)
         .not.put(actions.flowData.updateFlowsForResource(undefined, 'flows', []))
         .run();
-
-      return test1 && test2;
     });
     test('should do nothing incase of flows when patchSet does not have change of sequence of pp/pg or responseMapping update', () => {
       const patchSet = [{
@@ -117,7 +113,7 @@ describe('flow updates sagas', () => {
         value: 'flow test',
       }];
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceId: 'flow-123',
         resourceType: 'flows',
         patch: patchSet,
@@ -125,7 +121,7 @@ describe('flow updates sagas', () => {
         .not.call.fn(_updateResponseMapping)
         .run();
     });
-    test('should do nothing incase of export/imports when patchSet has rawData patch ', () => {
+    test('should do nothing incase of export/imports when patchSet has rawData patch', () => {
       const patchSet = [
         {
           path: '/rawData',
@@ -134,7 +130,7 @@ describe('flow updates sagas', () => {
         },
       ];
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceId: 'export-123',
         resourceType: 'exports',
         patch: patchSet,
@@ -142,15 +138,14 @@ describe('flow updates sagas', () => {
         .not.put(actions.flowData.updateFlowsForResource(undefined, 'flows', []))
         .run();
     });
-    test('should dispatch updateFlow when pp/pg sequence is changed on a flow ', () => {
+    test('should dispatch updateFlow when pp/pg sequence is changed on a flow', () => {
       const flowPatchSet = [{
         op: 'replace',
         path: '/routers/0/branches/0/pageProcessors/0',
-        scope: 'value',
         value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
       }];
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceId: 'flow-123',
         resourceType: 'flows',
         patch: flowPatchSet,
@@ -191,7 +186,7 @@ describe('flow updates sagas', () => {
         ],
       };
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceId: 'flow-123',
         resourceType: 'flows',
         patch: flowPatchSet,
@@ -201,7 +196,6 @@ describe('flow updates sagas', () => {
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), { merged: flow}],
         ])
         .not.put(actions.flowData.updateFlow('flow-123'))
@@ -218,7 +212,7 @@ describe('flow updates sagas', () => {
       }];
       const stagesToReset = ['preSavePage', ...getSubsequentStages('preSavePage', 'exports')];
 
-      return expectSaga(updateFlowOnResourceUpdate, {
+      expectSaga(updateFlowOnResourceUpdate, {
         resourceId: 'export-123',
         resourceType: 'exports',
         patch: hooksPatchSet,
@@ -226,45 +220,85 @@ describe('flow updates sagas', () => {
         .put(actions.flowData.updateFlowsForResource('export-123', 'exports', stagesToReset))
         .run();
     });
-    test('should dispatch updateFlowsForResource action with empty stagesToReset when the patch is of inputFilter change for export/import', () => {
-      const exportInputFilterPatchSet = [{
-        path: '/inputFilter',
-        op: 'replace',
-        value: {
-          type: 'expression',
-          expression: {
-            rules: ['equals', ['string', ['extract', 'id']], '456'],
-          },
-        },
-      }];
-      const importInputFilterPatchSet = [{
-        path: '/filter',
-        op: 'replace',
-        value: {
-          type: 'expression',
-          expression: {
-            rules: ['equals', ['string', ['extract', 'id']], '456'],
-          },
+    test('should dispatch clear flow action when there is a router removal patchSet', () => {
+      const removeRouterPatchSet = [
+        {op: 'remove', path: '/routers'},
+        {op: 'add', path: '/pageProcessors', value: {}},
+      ];
 
-        },
-      }];
-
-      const test1 = expectSaga(updateFlowOnResourceUpdate, {
-        resourceId: 'export-123',
-        resourceType: 'exports',
-        patch: exportInputFilterPatchSet,
+      expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: 'flow-123',
+        resourceType: 'flows',
+        patch: removeRouterPatchSet,
       })
-        .put(actions.flowData.updateFlowsForResource('export-123', 'exports', []))
+        .not.put(actions.flowData.updateFlow('flow-123'))
+        .not.call.fn(_updateResponseMapping)
+        .put(actions.flowData.clear('flow-123', 'flows'))
         .run();
-      const test2 = expectSaga(updateFlowOnResourceUpdate, {
-        resourceId: 'import-123',
-        resourceType: 'imports',
-        patch: importInputFilterPatchSet,
-      })
-        .put(actions.flowData.updateFlowsForResource('import-123', 'imports', []))
-        .run();
+    });
+    test('should dispatch init and resetStages action with the updated routerId when  a router is updated', () => {
+      const updateRouterPatchSet = [
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'add', path: '/routers', value: {}},
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'replace', path: '/routers/0', value: {} },
+      ];
+      const flowId = 'flow-123';
+      const updatedFlow = {
+        _id: flowId,
+        name: 'test-flow',
+        routers: [{
+          id: 'router-123',
+          name: 'test',
+        }],
+      };
 
-      return test1 && test2;
+      expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: flowId,
+        resourceType: 'flows',
+        patch: updateRouterPatchSet,
+      })
+        .provide([
+          [select(selectors.resourceData, 'flows', flowId), { merged: updatedFlow }],
+        ])
+        .not.put(actions.flowData.updateFlow(flowId))
+        .not.call.fn(_updateResponseMapping)
+        .not.put(actions.flowData.clear(flowId, 'flows'))
+        .put(actions.flowData.init(updatedFlow))
+        .put(actions.flowData.resetStages(flowId, 'router-123'))
+        .run();
+    });
+    test('should not dispatch init and resetStages action when the route is updated but routerIndex is invalid', () => {
+      const updateRouterPatchSet = [
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'add', path: '/routers', value: {}},
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'replace', path: '/routers/1', value: {} },
+      ];
+      const flowId = 'flow-123';
+      const updatedFlow = {
+        _id: flowId,
+        name: 'test-flow',
+        routers: [{
+          id: 'router-123',
+          name: 'test',
+        }],
+      };
+
+      expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: flowId,
+        resourceType: 'flows',
+        patch: updateRouterPatchSet,
+      })
+        .provide([
+          [select(selectors.resourceData, 'flows', flowId), { merged: updatedFlow }],
+        ])
+        .not.put(actions.flowData.updateFlow(flowId))
+        .not.call.fn(_updateResponseMapping)
+        .not.put(actions.flowData.clear(flowId, 'flows'))
+        .not.put(actions.flowData.init(updatedFlow))
+        .not.put(actions.flowData.resetStages(flowId, undefined))
+        .run();
     });
   });
   describe('_updateResponseMapping saga', () => {
@@ -309,13 +343,12 @@ describe('flow updates sagas', () => {
       };
       const stagesToReset = ['responseMapping', ...getSubsequentStages('responseMapping', 'exports')];
 
-      return expectSaga(_updateResponseMapping, { flowId: 'flow-123', resourceIndex: 0 })
+      expectSaga(_updateResponseMapping, { flowId: 'flow-123', resourceIndex: 0 })
         .provide([
           [select(
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), {merged: flow}],
         ])
         .put(actions.flowData.updateResponseMapping('flow-123', 0, updatedResponseMapping))
@@ -355,13 +388,12 @@ describe('flow updates sagas', () => {
       };
       const stagesToReset = ['responseMapping', ...getSubsequentStages('responseMapping', 'imports')];
 
-      return expectSaga(_updateResponseMapping, { flowId: 'flow-123', resourceIndex: 1 })
+      expectSaga(_updateResponseMapping, { flowId: 'flow-123', resourceIndex: 1 })
         .provide([
           [select(
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), {merged: flow}],
         ])
         .put(actions.flowData.updateResponseMapping('flow-123', 1, updatedResponseMapping))
@@ -377,7 +409,7 @@ describe('flow updates sagas', () => {
       const resourceId = 'export-123';
       const resourceType = 'exports';
 
-      return expectSaga(updateFlowsDataForResource, { resourceId, resourceType })
+      expectSaga(updateFlowsDataForResource, { resourceId, resourceType })
         .provide([
           [select(
             selectors.flowReferencesForResource,
@@ -399,7 +431,7 @@ describe('flow updates sagas', () => {
         resourceId: exportId,
       }];
 
-      return expectSaga(updateFlowsDataForResource, { resourceId: exportId, resourceType })
+      expectSaga(updateFlowsDataForResource, { resourceId: exportId, resourceType })
         .provide([
           [select(
             selectors.flowReferencesForResource,
@@ -422,7 +454,7 @@ describe('flow updates sagas', () => {
         resourceId: 'export-567',
       }];
 
-      return expectSaga(updateFlowsDataForResource, { resourceId: scriptId, resourceType })
+      expectSaga(updateFlowsDataForResource, { resourceId: scriptId, resourceType })
         .provide([
           [select(
             selectors.flowReferencesForResource,
@@ -463,13 +495,12 @@ describe('flow updates sagas', () => {
         ],
       };
 
-      return expectSaga(updateFlowData, { flowId: 'flow-123'})
+      expectSaga(updateFlowData, { flowId: 'flow-123'})
         .provide([
           [select(
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), {merged: updatedFlow}],
         ])
         .put(actions.flowData.resetFlowSequence('flow-123', updatedFlow))

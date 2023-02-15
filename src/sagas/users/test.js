@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -50,7 +50,7 @@ const changeEmailError = new APIException({
 });
 
 describe('all modal sagas', () => {
-  describe('change password saga ', () => {
+  describe('change password saga', () => {
     test('Should update user password with correct user password in the db and also merge the data in the redux store', () => {
       const updatedPassword = {
         newPassword: 'abc',
@@ -125,7 +125,7 @@ describe('all modal sagas', () => {
       const { errors } = JSON.parse(error.message);
       const errorMsg = errors[0].message;
 
-      return expectSaga(changePassword, { updatedPassword })
+      expectSaga(changePassword, { updatedPassword })
         .provide([
           [call(apiCallWithRetry, args), throwError(error)],
         ])
@@ -183,7 +183,7 @@ describe('all modal sagas', () => {
         }),
       );
       saga.throw(changeEmailError);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('update user and profile preferences sagas', () => {
@@ -206,7 +206,7 @@ describe('all modal sagas', () => {
         );
       });
 
-      test('should generate the appropriate message failure in a api failure ', () => {
+      test('should generate the appropriate message failure in a api failure', () => {
         const preferences = {
           timeFormat: 'something',
         };
@@ -306,7 +306,7 @@ describe('all modal sagas', () => {
         expect(
           saga.next({ defaultAShareId: 'SomeSharedAccount' }).value,
         ).toEqual(put(actions.resource.requestCollection('shared/ashares')));
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should update aShare successfuly and clear store and re-init session when the default account is own', () => {
         const aShare = {
@@ -324,10 +324,10 @@ describe('all modal sagas', () => {
         );
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
         expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
-          put(actions.auth.clearStore()),
+          put(actions.auth.clearStore({ authenticated: true })),
         );
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should update aShare successfully and accept account transfer if resource is a transfer and invite is an accountTransfer', () => {
         const resourceType = 'transfer';
@@ -345,7 +345,7 @@ describe('all modal sagas', () => {
           defaultAShareId: 'own',
         };
 
-        return expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
+        expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
           .provide([
             [call(apiCallWithRetry, args)],
             [select(selectors.userPreferences), userPreferences],
@@ -369,7 +369,7 @@ describe('all modal sagas', () => {
           defaultAShareId: 'own',
         };
 
-        return expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
+        expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
           .provide([
             [call(apiCallWithRetry, args)],
             [select(selectors.userPreferences), userPreferences],
@@ -393,8 +393,8 @@ describe('all modal sagas', () => {
             message: 'Accepting account share invite',
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.throw(new Error()).value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('rejecting account share invite', () => {
@@ -415,7 +415,7 @@ describe('all modal sagas', () => {
         expect(saga.next().value).toEqual(
           put(actions.resource.requestCollection('shared/ashares')),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should update aShare successfuly and update resource collection if the account is own and resourcetype is a transfer', () => {
         const resourceType = 'transfer';
@@ -432,7 +432,7 @@ describe('all modal sagas', () => {
           message: `Rejecting ${resourceType} share invite`,
         };
 
-        return expectSaga(rejectSharedInvite, { resourceType, id })
+        expectSaga(rejectSharedInvite, { resourceType, id })
           .provide([
             [call(apiCallWithRetry, args)],
             [select(selectors.resourcePermissions), permissions],
@@ -456,7 +456,7 @@ describe('all modal sagas', () => {
           message: `Rejecting ${resourceType} share invite`,
         };
 
-        return expectSaga(rejectSharedInvite, { resourceType, id })
+        expectSaga(rejectSharedInvite, { resourceType, id })
           .provide([
             [call(apiCallWithRetry, args)],
             [select(selectors.resourcePermissions), permissions],
@@ -487,7 +487,7 @@ describe('all modal sagas', () => {
             ),
           ),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('switching account', () => {
@@ -507,7 +507,7 @@ describe('all modal sagas', () => {
             put(actions.auth.abortAllSagasAndSwitchAcc(aShare.preferences.defaultAShareId))
           );
 
-          expect(saga.next().done).toEqual(true);
+          expect(saga.next().done).toBe(true);
         });
       });
     });
@@ -531,10 +531,10 @@ describe('all modal sagas', () => {
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
 
         expect(saga.next({ defaultAShareId }).value).toEqual(
-          put(actions.auth.clearStore()),
+          put(actions.auth.clearStore({ authenticated: true })),
         );
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should leave the non-default account successfuly', () => {
@@ -556,7 +556,7 @@ describe('all modal sagas', () => {
         expect(saga.next({ defaultAShareId }).value).toEqual(
           put(actions.resource.requestCollection('shared/ashares')),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should generate appropriate error message in case of api failure', () => {
         const aShare = {
@@ -576,7 +576,7 @@ describe('all modal sagas', () => {
         expect(saga.throw(new Error()).value).toEqual(
           put(actions.api.failure(path, opts.method, 'Could not leave account')),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('integrator license trial & upgrade requests', () => {
@@ -609,7 +609,7 @@ describe('all modal sagas', () => {
             refresh: true,
           }),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while starting license trial', () => {
         const saga = requestTrialLicense();
@@ -627,8 +627,8 @@ describe('all modal sagas', () => {
           }),
         );
 
-        expect(saga.throw(new Error()).value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.throw(new Error()).value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('create/invite user', () => {
@@ -659,7 +659,7 @@ describe('all modal sagas', () => {
         expect(saga.next(response).value).toEqual(
           put(actions.user.org.users.created(response)),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while creating user', () => {
         const user = {
@@ -682,8 +682,8 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(put(actions.asyncTask.failed('asyncKey')));
-        expect(saga.next().value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('update user', () => {
@@ -717,7 +717,7 @@ describe('all modal sagas', () => {
         expect(saga.next(response).value).toEqual(
           put(actions.user.org.users.updated({ ...user, _id: userId})),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while updating user', () => {
         const userId = 'something';
@@ -743,8 +743,8 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(put(actions.asyncTask.failed('asyncKey')));
-        expect(saga.next().value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('delete user', () => {
@@ -767,7 +767,7 @@ describe('all modal sagas', () => {
         expect(saga.next({}).value).toEqual(
           put(actions.user.org.users.deleted(userId)),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while deleting user', () => {
         const userId = 'something';
@@ -785,8 +785,8 @@ describe('all modal sagas', () => {
             hidden: true,
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.throw(new Error()).value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('disable user', () => {
@@ -809,7 +809,7 @@ describe('all modal sagas', () => {
         expect(saga.next({}).value).toEqual(
           put(actions.user.org.users.disabled(userId)),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should enable user successfully', () => {
         const userId = 'something';
@@ -830,7 +830,7 @@ describe('all modal sagas', () => {
         expect(saga.next({}).value).toEqual(
           put(actions.user.org.users.disabled(userId)),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while disabling user', () => {
         const userId = 'something';
@@ -848,8 +848,8 @@ describe('all modal sagas', () => {
             message: 'Disabling User',
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.throw(new Error()).value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('making an user as owner', () => {
@@ -869,7 +869,7 @@ describe('all modal sagas', () => {
             hidden: true,
           }),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while requesting an account transfer', () => {
         const email = 'something@something.com';
@@ -887,8 +887,8 @@ describe('all modal sagas', () => {
             hidden: true,
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
-        expect(saga.next().done).toEqual(true);
+        expect(saga.throw(new Error()).value).toBe(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     describe('reinviteUser user', () => {
@@ -910,7 +910,7 @@ describe('all modal sagas', () => {
         expect(saga.next({}).value).toEqual(
           put(actions.user.org.users.reinvited(userId)),
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should handle api error properly while reinviting user', () => {
         const userId = 'something';
@@ -928,7 +928,7 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(put(actions.user.org.users.reinviteError(userId)));
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
     });
   });
@@ -946,7 +946,7 @@ describe('all modal sagas', () => {
     test('should handle api error properly', () => {
       const error = new Error('error');
 
-      return expectSaga(unlinkWithGoogle)
+      expectSaga(unlinkWithGoogle)
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -970,7 +970,7 @@ describe('all modal sagas', () => {
     test('should handle api error properly', () => {
       const error = new Error('error');
 
-      return expectSaga(requestLicenseUpgrade)
+      expectSaga(requestLicenseUpgrade)
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -1009,7 +1009,7 @@ describe('all modal sagas', () => {
         actionType, connectorId, licenseId,
       });
 
-      return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
+      expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
           [matchers.call.fn(apiCallWithRetry)],
         ])
@@ -1035,7 +1035,7 @@ describe('all modal sagas', () => {
         key: 'something',
       };
 
-      return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
+      expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -1058,7 +1058,7 @@ describe('all modal sagas', () => {
         actionType, feature,
       });
 
-      return expectSaga(requestLicenseUpdate, { actionType, feature })
+      expectSaga(requestLicenseUpdate, { actionType, feature })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -1080,7 +1080,7 @@ describe('all modal sagas', () => {
         key: 'something',
       };
 
-      return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
+      expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -1134,7 +1134,7 @@ describe('all modal sagas', () => {
     };
     const error = { code: 422, message: 'error occured' };
 
-    test('Should update receivedLicenseEntitlementUsage, On successful api call ', () => expectSaga(requestLicenseEntitlementUsage)
+    test('Should update receivedLicenseEntitlementUsage, On successful api call', () => expectSaga(requestLicenseEntitlementUsage)
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -1164,7 +1164,7 @@ describe('all modal sagas', () => {
     };
     const error = { code: 422, message: 'error occured' };
 
-    test('Should update ashares resource, On successful api call ', () => expectSaga(addSuiteScriptLinkedConnection, {connectionId})
+    test('Should update ashares resource, On successful api call', () => expectSaga(addSuiteScriptLinkedConnection, {connectionId})
       .provide([
         [call(apiCallWithRetry, {
           path,

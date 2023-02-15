@@ -1,8 +1,5 @@
-/* global describe, test, jest, expect, */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {screen, fireEvent} from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaStaticMap from './DynaStaticMap';
 import { renderWithProviders } from '../../../../test/test-utils';

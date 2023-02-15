@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import defaulty from './netsuite';
 
 describe('getLookupMetadata component Test cases', () => {
@@ -53,7 +53,7 @@ describe('getLookupMetadata component Test cases', () => {
     }];
     const expressionTextRes = response.optionsHandler('_expressionText', fields);
 
-    expect(expressionTextRes).toEqual(null);
+    expect(expressionTextRes).toBeNull();
     expect(fields).toEqual([
       { id: '_expression', value: 'expression' },
       { id: '_expressionText', value: 'expression' },
@@ -99,6 +99,6 @@ describe('getLookupMetadata component Test cases', () => {
 
     const dummyRes = response.optionsHandler('_resultData', fields);
 
-    expect(dummyRes).toEqual(null);
+    expect(dummyRes).toBeNull();
   });
 });

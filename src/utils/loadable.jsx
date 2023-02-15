@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Loader from '../components/Loader';
+import LoadingNotification from '../App/LoadingNotification';
 
 const useStyles = makeStyles(theme => ({
   view: {
@@ -49,7 +50,7 @@ const Content = ({error, timedOut, pastDelay, classes}) => {
   return null;
 };
 
-function Loading({ error, timedOut, pastDelay }) {
+export function Loading({ error, timedOut, pastDelay }) {
   const classes = useStyles();
 
   return (
@@ -66,8 +67,20 @@ function Loading({ error, timedOut, pastDelay }) {
   );
 }
 
-export default loader =>
+export function flowBuilderLoading({ error, timedOut, pastDelay }) {
+  if (error) {
+    throw error;
+  } else if (timedOut || pastDelay) {
+    return (
+      <LoadingNotification message="Loading" />
+    );
+  }
+
+  return null;
+}
+
+export default (loader, customLoading = Loading) =>
   Loadable({
     loader,
-    loading: Loading,
+    loading: customLoading,
   });

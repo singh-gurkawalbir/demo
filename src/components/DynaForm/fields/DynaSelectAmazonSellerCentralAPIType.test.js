@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
@@ -38,7 +38,7 @@ const props =
   formKey: 'someformKey',
 };
 
-describe('DynaSelectAmazonSellerCentralAPIType UI test cases', () => {
+describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors, defaultState } from '.';
 import actions from '../../actions';
 
@@ -97,7 +97,7 @@ describe('app selectors', () => {
     const state = reducer(undefined, actions.app.reload());
 
     test('should return null if state is undefined', () => {
-      expect(selectors.appErrored()).toBe(null);
+      expect(selectors.appErrored()).toBeNull();
     });
 
     test('should return false if there is no error in state', () => {
@@ -113,7 +113,7 @@ describe('app selectors', () => {
     const state = reducer(undefined, actions.app.updateUIVersion('version1'));
 
     test('should return undefined if state is undefined', () => {
-      expect(selectors.initVersion()).toBe(undefined);
+      expect(selectors.initVersion()).toBeUndefined();
     });
 
     test('should return correct initial version', () => {
@@ -129,7 +129,7 @@ describe('app selectors', () => {
     const state = reducer(undefined, actions.app.updateUIVersion('version1'));
 
     test('should return undefined if state is undefined', () => {
-      expect(selectors.version()).toBe(undefined);
+      expect(selectors.version()).toBeUndefined();
     });
 
     test('should return correct version', () => {

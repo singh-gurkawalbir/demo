@@ -14,7 +14,7 @@ import AddIcon from '../../../../components/icons/AddIcon';
 import ViewAliasDetailsDrawer from '../../../../components/drawer/Aliases/ViewAliasesDetails';
 import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 import errorMessageStore from '../../../../utils/errorStore';
-import messageStore from '../../../../utils/messageStore';
+import messageStore, {message} from '../../../../utils/messageStore';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import actions from '../../../../actions';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
@@ -77,11 +77,11 @@ export default function Aliases({ integrationId, childId }) {
     if (!isAliasActionCompleted) return;
 
     if (isAliasActionCompleted === 'delete') {
-      enqueueSnackbar({ message: messageStore('ALIAS_DELETE_MESSAGE')});
+      enqueueSnackbar({ message: message.ALIAS.DELETE_MESSAGE});
     }
 
     if (isAliasActionCompleted === 'save') {
-      enqueueSnackbar({ message: messageStore('ALIAS_SAVE_MESSAGE')});
+      enqueueSnackbar({ message: message.ALIAS.SAVE_MESSAGE});
     }
 
     dispatch(actions.resource.aliases.clear(currentIntegrationId));
@@ -89,7 +89,7 @@ export default function Aliases({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Aliases" infoText={messageStore('ALIAS_PANEL_HELPINFO')} placement="right-end" className={classes.aliasesHeader} >
+      <PanelHeader title="Aliases" infoText={messageStore('ALIAS.PANEL_HELPINFO')} placement="right-end" className={classes.aliasesHeader} >
         <ActionGroup>
           {hasManageAccess && (
           <TextButton

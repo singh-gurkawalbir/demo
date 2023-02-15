@@ -1,10 +1,9 @@
-/* global describe, test, expect, jest, beforeEach */
+/* eslint-disable jest/no-conditional-in-test */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactredux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
@@ -148,7 +147,6 @@ describe('SettingsForm UI tests', () => {
             value: { selectApp: 'value2' },
           },
         ],
-        scope: 'value',
         options: { refetchResources: true },
         context: undefined,
         parentContext: undefined,

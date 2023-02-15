@@ -9,6 +9,7 @@ import { selectors } from '../../reducers';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import useQuery from '../../hooks/useQuery';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -81,9 +82,9 @@ function ConcurConnectSuccess({module}) {
   const history = useHistory();
 
   if (module === 'expense') {
-    displayMessage = 'Great news! Now you can send your SAP Concur expense reports through Celigo integrator.io.';
+    displayMessage = messageStore('SEND_SAP_CONCUR_MODULE', {module: 'expense reports'});
   } else if (module === 'invoice') {
-    displayMessage = 'Great news! Now you can send your SAP Concur invoices through Celigo integrator.io.';
+    displayMessage = messageStore('SEND_SAP_CONCUR_MODULE', {module: 'invoices'});
   }
 
   return (

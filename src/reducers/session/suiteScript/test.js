@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { SUITESCRIPT_CONNECTORS } from '../../../constants';

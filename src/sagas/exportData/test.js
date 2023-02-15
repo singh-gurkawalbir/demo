@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { all } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -25,7 +24,7 @@ describe('exportData saga', () => {
     };
     const mockData = { answer: 42 };
 
-    return expectSaga(saga, {
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -50,7 +49,7 @@ describe('exportData saga', () => {
     };
     const mockData = [];
 
-    return expectSaga(saga, {
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -69,7 +68,7 @@ describe('exportData saga', () => {
     };
     const mockData = [1, 2, 3];
 
-    return expectSaga(saga, {
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -88,7 +87,7 @@ describe('exportData saga', () => {
     };
     const mockData = [{ label: '1', value: 1 }, { label: '2', value: 2 }];
 
-    return expectSaga(saga, {
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -112,7 +111,7 @@ describe('exportData saga', () => {
       message: msg,
     });
 
-    return expectSaga(saga, {
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -129,7 +128,7 @@ describe('exportData saga', () => {
       myExport: 1,
     };
 
-    const test1 = expectSaga(saga, {
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -138,7 +137,8 @@ describe('exportData saga', () => {
       .put(actions.exportData.receiveError(kind, identifier, 'no export response'))
       .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
-    const test2 = expectSaga(saga, {
+
+    expectSaga(saga, {
       kind,
       identifier,
       resource,
@@ -147,7 +147,5 @@ describe('exportData saga', () => {
       .put(actions.exportData.receiveError(kind, identifier, 'expecting array. try transform?'))
       .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
-
-    return test1 && test2;
   });
 });

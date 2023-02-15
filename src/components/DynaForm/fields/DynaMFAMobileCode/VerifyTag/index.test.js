@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -20,7 +20,7 @@ function initVerifyTag(props = {}) {
 
   return renderWithProviders(<VerifyTag {...props} />, {initialStore});
 }
-describe('VerifyTag UI tests', () => {
+describe('verifyTag UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -48,7 +48,7 @@ describe('VerifyTag UI tests', () => {
   });
   test('should make a dispatch call when isValid is false for the field', async () => {
     initVerifyTag({status: 'error', isValid: false});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mfa.resetMobileCodeStatus()));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mfa.resetMobileCodeStatus()));
   });
   test('should render an empty DOM when the mobileCode state is not present in the session', () => {
     const {utils} = initVerifyTag({isValid: true});

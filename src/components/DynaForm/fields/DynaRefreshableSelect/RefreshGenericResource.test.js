@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -35,7 +35,7 @@ jest.mock('../../../../utils/window', () => ({
   default: props => mockOpenUrl(props),
 }));
 
-describe('RefreshGenericResource UI tests', () => {
+describe('refreshGenericResource UI tests', () => {
   const mockonFieldChange = jest.fn();
   const mockOnRefresh = jest.fn();
   const mockOnFetch = jest.fn();
@@ -69,8 +69,6 @@ describe('RefreshGenericResource UI tests', () => {
     const removeRefreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(removeRefreshButton).toBeInTheDocument();
-
-    screen.debug();
   });
   test('should not render the buttons when removeRefresh prop is true and urlToOpen is absent', () => {
     initRefreshGenericResource({...props, removeRefresh: true, urlToOpen: undefined});
@@ -82,7 +80,7 @@ describe('RefreshGenericResource UI tests', () => {
 
     expect(openResButton).toBeInTheDocument();
     userEvent.click(openResButton);
-    await waitFor(() => expect(mockOpenUrl).toBeCalledWith({ url: props.urlToOpen }));
+    await waitFor(() => expect(mockOpenUrl).toHaveBeenCalledWith({ url: props.urlToOpen }));
   });
   test('should call the onRefresh button passed in props when clicked on removeRefresh button', () => {
     initRefreshGenericResource(props);
@@ -90,18 +88,18 @@ describe('RefreshGenericResource UI tests', () => {
 
     expect(removeRefreshButton).toBeInTheDocument();
     userEvent.click(removeRefreshButton);
-    expect(mockOnRefresh).toBeCalled();
+    expect(mockOnRefresh).toHaveBeenCalled();
   });
   test('should call the onFieldChange function passed in props when resourceToFetch prop is true', () => {
     initRefreshGenericResource(props);
-    expect(mockonFieldChange).toBeCalled();
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
   test('should call the onFetch function when disableOptionsLoad prop is false and fieldData is not passed', () => {
     initRefreshGenericResource({...props, disableOptionsLoad: false, fieldData: undefined});
-    expect(mockOnFetch).toBeCalled();
+    expect(mockOnFetch).toHaveBeenCalled();
   });
   test('should call the onFieldChange function when selected option is not present in the options list', () => {
     initRefreshGenericResource({...props, value: 'not default value'});
-    expect(mockonFieldChange).toBeCalled();
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
 });

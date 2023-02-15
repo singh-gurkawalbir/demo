@@ -1,4 +1,4 @@
-/* global describe, test, expect , jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -195,7 +195,7 @@ jest.mock('../../../../hooks/useFormInitWithPermissions', () => ({
   },
 }));
 
-describe('DynaAssistantSearchParams UI tests', () => {
+describe('dynaAssistantSearchParams UI tests', () => {
   const mockOnFieldChangeFn = jest.fn();
   const props = {
     assistantFieldType: 'operation',
@@ -297,14 +297,13 @@ describe('DynaAssistantSearchParams UI tests', () => {
     userEvent.click(screen.getByText('admin'));
     expect(screen.getByText('Save')).toBeInTheDocument();
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       [{
         op: 'replace',
         path: '/assistantMetadata/operationChanged',
         value: false,
       }],
-      'value'
     )));
   });
   test('should make a dispatch call when required prop is true', async () => {
@@ -339,6 +338,6 @@ describe('DynaAssistantSearchParams UI tests', () => {
     };
 
     initDynaDate({...props, paramMeta: param, required: true });
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('imports-5bf18b09294767270c62fad9')('formId', {isValid: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('imports-5bf18b09294767270c62fad9')('formId', {isValid: true})));
   });
 });

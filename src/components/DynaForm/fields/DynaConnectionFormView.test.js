@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +13,7 @@ jest.mock('../../../constants/applications', () => ({
   getHttpConnector: _id => _id ? ({ _id: 'httpConnectorId', _userId: 'userId', name: 'Sample' }) : {},
 }));
 
-describe('FormView tests', () => {
+describe('formView tests', () => {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources = {
@@ -53,7 +53,7 @@ describe('FormView tests', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('Should able to test FormView with required resource', async () => {
+  test('should able to test FormView with required resource', async () => {
     const props = {
       resourceType: 'connections', resourceId: '_connectionId', defaultValue: false, formKey: 'connections-_connectionId', sourceForm: 'title',
     };
@@ -84,7 +84,7 @@ describe('FormView tests', () => {
       Connector: 'Sample',
     }));
   });
-  test('Should able to test FormView without sourceForm', async () => {
+  test('should able to test FormView without sourceForm', async () => {
     await renderWithProviders(<FormView />, { initialStore });
     expect(screen.queryByRole('group')).not.toBeInTheDocument();
   });

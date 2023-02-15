@@ -1,4 +1,8 @@
-/* global describe, test, expect, jest,afterEach, fail  */
+/* eslint-disable no-undef */
+/* eslint-disable jest/expect-expect */
+/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable jest/no-jasmine-globals */
+
 import { call, put, all, select } from 'redux-saga/effects';
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -170,7 +174,7 @@ describe('pollApiRequests', () => {
         .delay(2 * pollDuration);
     });
 
-    test('should ignore slow down polling when the polling status is slow and disableSlowPolling is set to true ', () => {
+    test('should ignore slow down polling when the polling status is slow and disableSlowPolling is set to true', () => {
       const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, disableSlowPolling: true, duration: pollDuration});
       const afterPollingOnce = pollRegularly(startTheSaga.next());
 
@@ -184,7 +188,7 @@ describe('pollApiRequests', () => {
         .delay(pollDuration);
     });
 
-    test('should terminate polling when the pollSaga return terminatePolling set to true  ', () => {
+    test('should terminate polling when the pollSaga return terminatePolling set to true', () => {
       const startTheSaga = testSaga(pollApiRequests, {pollSaga: somePollSaga, pollSagaArgs, duration: pollDuration});
       const afterPollingOnce = pollRegularly(startTheSaga.next());
 
@@ -268,7 +272,7 @@ describe('initialize all app relevant resources sagas', () => {
 
       expect(saga.next().value).toEqual(callValidateAShareIdEffect);
       expect(saga.next(true).value).toEqual(aShareId);
-      expect(saga.next(true).done).toEqual(true);
+      expect(saga.next(true).done).toBe(true);
     });
     test('should return a new AShareId for invalid AShareId', () => {
       const aShareId = 'ashare1';
@@ -288,8 +292,8 @@ describe('initialize all app relevant resources sagas', () => {
       expect(saga.next(false).value).toEqual(
         callGetOneValidSharedAccountIdEffect
       );
-      expect(saga.next('ashare2').value).toEqual('ashare2');
-      expect(saga.next(true).done).toEqual(true);
+      expect(saga.next('ashare2').value).toBe('ashare2');
+      expect(saga.next(true).done).toBe(true);
     });
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is an org owner', () => {
@@ -333,7 +337,7 @@ describe('initialize all app relevant resources sagas', () => {
 
     expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
-    expect(saga.next(false).done).toEqual(true);
+    expect(saga.next(false).done).toBe(true);
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
@@ -385,7 +389,7 @@ describe('initialize all app relevant resources sagas', () => {
     expect(saga.next('ashare1').value).toEqual(
       put(actions.auth.defaultAccountSet())
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
@@ -447,7 +451,7 @@ describe('initialize all app relevant resources sagas', () => {
     );
     expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('auth saga flow', () => {
@@ -526,6 +530,40 @@ describe('auth saga flow', () => {
 
     expect(effect).toEqual(put(actions.user.profile.delete()));
   });
+
+  test('should dispatch a setCSRFToken and mfaRequired action when auth is succesful but it needs mfa otp', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const _csrf = 'someCSRF';
+    const saga = auth({ email, password });
+    const getCSRFBackend = saga.next().value;
+
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
+
+    const callEffect = saga.next(_csrf).value;
+    const payload = {
+      ...authParams.opts,
+      body: { email, password, _csrf },
+    };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+        hidden: true,
+      })
+    );
+    const authResponse = {
+      succes: true,
+      mfaRequired: true,
+      _csrf,
+    };
+
+    expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
+    expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
+  });
+
   test('should dispatch an auth failure action when authentication fails with a message from sign in api', () => {
     const email = 'someUserEmail';
     const password = 'someUserPassword';
@@ -645,12 +683,12 @@ describe('auth saga flow', () => {
 
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(initializeApp, { reload: false }));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
 describe('initialize app saga', () => {
-  test('should set authentication flag true when the user successfuly makes a profile call when there is a valid user session ', () => {
+  test('should set authentication flag true when the user successfuly makes a profile call when there is a valid user session', () => {
     expectSaga(initializeSession)
       .provide([
         [call(validateSession), {authenticated: true, mfaRequired: false}],
@@ -695,7 +733,7 @@ describe('initialize app saga', () => {
 });
 
 describe('invalidate session app', () => {
-  test('Should invalidate session when user attempts to logout ', () => {
+  test('Should invalidate session when user attempts to logout', () => {
     const saga = invalidateSession();
     const getCSRFTokenEffect = saga.next().value;
 
@@ -902,7 +940,7 @@ describe('fetchUiVersion', () => {
       .put(actions.app.updateUIVersion('uiVersion'))
       .run();
   });
-  test('should not update ui version in state when version could not be retrieved due to a network call failure ', () => {
+  test('should not update ui version in state when version could not be retrieved due to a network call failure', () => {
     expectSaga(fetchUIVersion)
       .provide([[
         call(apiCallWithRetry, { path: '/ui/version?app=react'}), throwError({someError: 'error'}),
@@ -1055,7 +1093,7 @@ describe('initializeApp', () => {
 
 jest.mock('logrocket');
 jest.mock('logrocket-react');
-describe('initializeLogrocket', () => {
+describe('initializeLogrocket 1', () => {
   test('should call Logrocket logrocketInitialize and setupLogrocketReact', () => {
     expectSaga(initializeLogrocket).call(identifyLogRocketSession).run();
     expect(setupLogRocketReact).toHaveBeenCalled();

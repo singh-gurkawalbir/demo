@@ -1,6 +1,7 @@
 module.exports = {
   bail: false,
   testRegex: undefined,
+  testTimeout: 50000,
   roots: [
     '<rootDir>/src',
   ],
@@ -50,5 +51,9 @@ module.exports = {
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
     PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
     SHOPIFY_USER_IDS: '',
+    ALLOW_SIGNUP: 'true',
+    ALLOW_GOOGLE_SIGNIN: 'true',
+    ALLOW_SIGNUP_EU: 'true',
+    ALLOW_GOOGLE_SIGNIN_EU: 'true',
   },
 };

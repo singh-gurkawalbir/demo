@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 
 import processorLogic, { generateScriptInput, extractForm, toggleData, generatePatchPath } from './index';
 
@@ -163,9 +162,9 @@ describe('settingsForm processor logic', () => {
   });
   describe('generatePatchPath util', () => {
     test('should return the passed path if section is general or undefined or all sections are empty', () => {
-      expect(generatePatchPath(undefined, [], '/settings')).toEqual('/settings');
-      expect(generatePatchPath('general', [], '/settings')).toEqual('/settings');
-      expect(generatePatchPath('groupA', undefined, '/settings')).toEqual('/settings');
+      expect(generatePatchPath(undefined, [], '/settings')).toBe('/settings');
+      expect(generatePatchPath('general', [], '/settings')).toBe('/settings');
+      expect(generatePatchPath('groupA', undefined, '/settings')).toBe('/settings');
     });
     test('should return the correct index path when section is not general by excluding general section', () => {
       const allSections = [
@@ -174,8 +173,8 @@ describe('settingsForm processor logic', () => {
         {sectionId: 'groupB'},
       ];
 
-      expect(generatePatchPath('groupA', allSections, '/settings')).toEqual('/flowGroupings/0/settings');
-      expect(generatePatchPath('groupB', allSections, '/settingsForm')).toEqual('/flowGroupings/1/settingsForm');
+      expect(generatePatchPath('groupA', allSections, '/settings')).toBe('/flowGroupings/0/settings');
+      expect(generatePatchPath('groupB', allSections, '/settingsForm')).toBe('/flowGroupings/1/settingsForm');
     });
   });
   describe('skipPreview util', () => {
@@ -194,10 +193,10 @@ describe('settingsForm processor logic', () => {
 
       delete editor.rule.script.code;
 
-      expect(skipPreview(editor)).toEqual(true);
+      expect(skipPreview(editor)).toBe(true);
       editor.rule.script.code = 'some code';
       delete editor.rule.script.entryFunction;
-      expect(skipPreview(editor)).toEqual(true);
+      expect(skipPreview(editor)).toBe(true);
     });
     test('should return false if both code and entry function exists in editor rule', () => {
       const editor = {
@@ -212,7 +211,7 @@ describe('settingsForm processor logic', () => {
         },
       };
 
-      expect(skipPreview(editor)).toEqual(false);
+      expect(skipPreview(editor)).toBe(false);
     });
   });
   describe('init util', () => {
@@ -242,7 +241,7 @@ describe('settingsForm processor logic', () => {
         data: { fieldMap: {}, layout: { fields: [] } },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -307,7 +306,7 @@ describe('settingsForm processor logic', () => {
         data: { fieldMap: {}, layout: { fields: [] } },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -413,8 +412,8 @@ describe('settingsForm processor logic', () => {
   });
   describe('dirty util', () => {
     test('should return false if data is undefined or invalid', () => {
-      expect(dirty({})).toEqual(false);
-      expect(dirty({data: '{"id": 123}}'})).toEqual(false);
+      expect(dirty({})).toBe(false);
+      expect(dirty({data: '{"id": 123}}'})).toBe(false);
     });
     test('should return true if original data is different than new data', () => {
       const editor = {
@@ -443,7 +442,7 @@ describe('settingsForm processor logic', () => {
         settingsFormPatchPath: '/settingsForm',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return true if original rule is different than new rule', () => {
       const editor = {
@@ -473,7 +472,7 @@ describe('settingsForm processor logic', () => {
         settingsFormPatchPath: '/settingsForm',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return false if nothing changed in the editor', () => {
       const editor = {
@@ -502,7 +501,7 @@ describe('settingsForm processor logic', () => {
         settingsFormPatchPath: '/settingsForm',
       };
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
   });
   describe('validate util', () => {

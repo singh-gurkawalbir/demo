@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach,jest, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -150,14 +149,14 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('UI test cases for SelectSource', () => {
+describe('uI test cases for SelectSource', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
   const flowId = '5ea16c600e2fab71928a6152';
   const resourceId = '621ce7db7988314f51662c09';
 
-  test('should test source options are checked and filterkey is set to resolved ', () => {
+  test('should test source options are checked and filterkey is set to resolved', () => {
     renderWithProviders(<SelectSource flowId={flowId} resourceId={resourceId} isResolved="true" />, {initialStore});
     const sourcebutton = screen.getByRole('button');
 
@@ -176,7 +175,7 @@ describe('UI test cases for SelectSource', () => {
     }));
   });
 
-  test('should test source options are checked and filter key is set to open ', () => {
+  test('should test source options are checked and filter key is set to open', () => {
     renderWithProviders(<SelectSource flowId={flowId} resourceId={resourceId} isResolved="false" />, {initialStore});
     const sourcebutton = screen.getByRole('button');
 

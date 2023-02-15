@@ -1,11 +1,15 @@
 import React, { useState, useCallback } from 'react';
 import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import FieldHelp from '../FieldHelp';
 import DynaHook from './DynaHook_afe';
 import ModalDialog from '../../ModalDialog';
 import { OutlinedButton, FilledButton, TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
+import { selectors } from '../../../reducers';
+import { useSelectorMemo } from '../../../hooks';
+import { emptyObject } from '../../../constants';
 
 const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {
@@ -29,11 +33,24 @@ export default function DynaRoutingRules(props) {
     id,
     label,
     title,
+    resourceId,
+    resourceType,
+    isVanConnector = false,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  )?.merged || emptyObject;
+
+  const licenseActionDetails = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state)
+  );
+  const isVanLicenseAbsent = (isVanConnector && (licenseActionDetails.van === false));
 
   const handleClose = useCallback(() => {
     handleEditorClick();
@@ -64,9 +81,11 @@ export default function DynaRoutingRules(props) {
         </div>
         <OutlinedButton
           data-test={id}
-          color="secondary"
+          color="primary"
           className={classes.dynaRoutingRulesBtn}
-          onClick={handleEditorClick}>
+          onClick={handleEditorClick}
+          disabled={resource.type === 'van' && isVanLicenseAbsent}
+          >
           Launch
         </OutlinedButton>
       </div>

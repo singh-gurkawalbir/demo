@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
@@ -33,7 +33,7 @@ async function initSelectableCheckBoxCell({ props = {}, rowData = {} } = {}) {
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('SelectableCheckBoxCell component Test cases', () => {
+describe('selectableCheckBoxCell component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initSelectableCheckBoxCell();

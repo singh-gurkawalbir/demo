@@ -71,6 +71,12 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.ACTIVE_SET:
         draft.activeConnection = connectionId;
         break;
+      case actionTypes.CONNECTION.UPDATED_VERSION:
+        draft.isHttpVersionUpdated = true;
+        break;
+      case actionTypes.CONNECTION.CLEAR_UPDATED_VERSION:
+        draft.isHttpVersionUpdated = false;
+        break;
 
       default:
     }
@@ -111,4 +117,12 @@ selectors.queuedJobs = (state, connectionId) => {
   }
 
   return state.queuedJobs[connectionId] || emptySet;
+};
+
+selectors.isHTTPConnectionVersionModified = state => {
+  if (!state) {
+    return false;
+  }
+
+  return !!state.isHttpVersionUpdated;
 };

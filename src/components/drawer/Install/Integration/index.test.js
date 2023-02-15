@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -42,7 +42,7 @@ describe('InstallIntegrationDrawer tests', () => {
     expect(mockHistoryReplace).toHaveBeenCalledWith('/home');
   });
 
-  test('Should able to test the render with Preview ', async () => {
+  test('Should able to test the render with Preview', async () => {
     await initInstallIntegrationDrawer('/preview/_someId');
     expect(screen.getByRole('heading', {name: 'Install integration'})).toBeInTheDocument();
     expect(screen.getByText('Preview')).toBeInTheDocument();

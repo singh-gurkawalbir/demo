@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -525,7 +525,6 @@ describe('editors reducers', () => {
           editorType: 'handlebars',
           stage: 'flowInput',
           autoEvaluate: true,
-          previewStatus: 'requested',
         },
       };
 
@@ -1783,7 +1782,7 @@ describe('editors selectors', () => {
         actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors.editorDataVersion(state, editorId)).toEqual(2);
+      expect(selectors.editorDataVersion(state, editorId)).toBe(2);
     });
   });
   describe('editorLayout', () => {
@@ -1808,7 +1807,7 @@ describe('editors selectors', () => {
         actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors.editorLayout(state, editorId)).toEqual('compact');
+      expect(selectors.editorLayout(state, editorId)).toBe('compact');
     });
   });
   describe('editorViolations', () => {
@@ -1851,7 +1850,7 @@ describe('editors selectors', () => {
         actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors.isEditorDirty(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDirty(state, editorId)).toBe(true);
     });
   });
 });

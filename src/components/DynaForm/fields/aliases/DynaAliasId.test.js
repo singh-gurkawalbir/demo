@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -27,7 +27,7 @@ function initDynaAliasId(props = {}) {
 
   return renderWithProviders(<DynaAliasId {...props} />, {initialStore});
 }
-describe('DynaAliasId UI tests', () => {
+describe('dynaAliasId UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -66,11 +66,11 @@ describe('DynaAliasId UI tests', () => {
   });
   test('should make the respective dispatch call based on the props passed on initial render', async () => {
     initDynaAliasId(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {isValid: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {isValid: true})));
   });
   test('should make a different dispatch call when aliasData is empty', async () => {
     initDynaAliasId({...props, aliasData: {}});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
       isValid: false,
       errorMessages: 'An alias with the same ID already exists. Provide a different ID.',
     })));

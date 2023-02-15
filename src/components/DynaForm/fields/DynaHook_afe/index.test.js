@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   waitFor, screen,
@@ -34,7 +34,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('DynaHook_afe UI tests', () => {
+describe('dynaHook_afe UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -88,7 +88,7 @@ describe('DynaHook_afe UI tests', () => {
     const functionField = screen.getByPlaceholderText('function field');
 
     userEvent.type(functionField, 'a');
-    await waitFor(() => expect(mockOnFieldChange).toBeCalledWith('id', {function: 'a'}));
+    await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('id', {function: 'a'}));
   });
   test('should make a url redirection when a new script is added', async () => {
     props.hookType = 'script';
@@ -97,19 +97,19 @@ describe('DynaHook_afe UI tests', () => {
     const n = buttons.length;
 
     userEvent.click(buttons[n - 2]);
-    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('//add/scripts/new-scriptId'));
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('//add/scripts/new-scriptId'));
   });
   test('should make a dispatch call for resourceType "apis" and value prop contains both a function and scriptId', async () => {
     const newprops = {...props, value: {function: 'function', _scriptId: 'scriptId'}, resourceType: 'apis'};
 
     renderWithProviders(<MemoryRouter><DynaHookAFE {...newprops} /></MemoryRouter>);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('imports-56r912e45gferb43r5ef374')('id', {isValid: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('imports-56r912e45gferb43r5ef374')('id', {isValid: true})));
   });
   test('should make a different dispatch call when value prop does not contain both function and scriptId', async () => {
     const newprops = {...props, resourceType: 'apis'};
 
     renderWithProviders(<MemoryRouter><DynaHookAFE {...newprops} /></MemoryRouter>);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('imports-56r912e45gferb43r5ef374')('id', {isValid: false, errorMessages: 'A value must be provided'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('imports-56r912e45gferb43r5ef374')('id', {isValid: false, errorMessages: 'A value must be provided'})));
   });
   test('should pass the initial render for hookType "stack"', () => {
     props.hookType = 'stack';

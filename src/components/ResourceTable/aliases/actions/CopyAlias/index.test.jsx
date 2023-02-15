@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, afterEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, waitFor } from '@testing-library/react';
@@ -12,7 +12,7 @@ import CeligoTable from '../../../../CeligoTable';
 
 const enqueueSnackbar = jest.fn();
 
-window.prompt = jest.fn();
+jest.spyOn(window, 'prompt').mockImplementation();
 
 function renderFuntion(data) {
   renderWithProviders(
@@ -23,7 +23,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', { name: /more/i }));
 }
 
-describe('UI test cases for copy alias ', () => {
+describe('uI test cases for copy alias', () => {
   beforeEach(() => {
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
   });

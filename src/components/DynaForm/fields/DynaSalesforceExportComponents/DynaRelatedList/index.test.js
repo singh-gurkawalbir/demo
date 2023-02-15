@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -33,7 +33,7 @@ jest.mock('../../../../CodeEditor', () => ({
   default: () => <div>CodeEditor<input /></div>,
 }));
 
-describe('DynaRelatedList UI tests', () => {
+describe('dynaRelatedList UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -98,7 +98,6 @@ describe('DynaRelatedList UI tests', () => {
 
     expect(screen.getByText('test relation')).toBeInTheDocument();
     expect(screen.getByText('Quote')).toBeInTheDocument();
-    screen.debug();
   });
   test('should display the edit and delete actions when clicked on the ellipsis menu in the table', () => {
     initDynaRelatedList(props);
@@ -106,14 +105,12 @@ describe('DynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     userEvent.click(editButton);
-    screen.debug();
     const ellipsisButton = document.querySelector('[data-test="openActionsMenu"]');
 
     expect(ellipsisButton).toBeInTheDocument();
     userEvent.click(ellipsisButton);
     expect(screen.getByText('Edit')).toBeInTheDocument();
     expect(screen.getByText('Delete')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should close the current open Modal and open another modal when clicked on the edit button from the menu', () => {
     initDynaRelatedList(props);
@@ -121,7 +118,6 @@ describe('DynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     userEvent.click(editButton);
-    screen.debug();
     const ellipsisButton = document.querySelector('[data-test="openActionsMenu"]');
 
     expect(ellipsisButton).toBeInTheDocument();
@@ -139,7 +135,6 @@ describe('DynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     userEvent.click(editButton);
-    screen.debug();
     const ellipsisButton = document.querySelector('[data-test="openActionsMenu"]');
 
     expect(ellipsisButton).toBeInTheDocument();
@@ -161,7 +156,7 @@ describe('DynaRelatedList UI tests', () => {
 
     expect(saveButton).toBeInTheDocument();
     userEvent.click(saveButton);
-    expect(mockonFieldChange).toBeCalled();
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
 
   test('should close the current modal and open another modal when clicked on Add related list option', () => {
@@ -196,6 +191,6 @@ describe('DynaRelatedList UI tests', () => {
   });
   test('should make a dispatch call on initial render when metadata call status is undefined', async () => {
     initDynaRelatedList({...props, status: undefined});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.request('5efd8663a56953365bd28541', 'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote', {refreshCache: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('5efd8663a56953365bd28541', 'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote', {refreshCache: true})));
   });
 });

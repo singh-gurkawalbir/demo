@@ -13,7 +13,6 @@ import {
   isMetaRequiredValuesMet,
 } from '../../../../utils/assistant';
 import { selectors } from '../../../../reducers/index';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
@@ -88,7 +87,6 @@ const SearchParamsModal = props => {
           path: '/assistantMetadata/operationChanged',
           value: false,
         }],
-        SCOPES.VALUE
       )
     );
     onClose();
@@ -197,8 +195,7 @@ export default function DynaAssistantSearchParams(props) {
             className={classes.dynaAssistantFormLabel}>
             {label}
           </FormLabel>
-          {/* {Todo (shiva): we need helpText for the component} */}
-          <FieldHelp {...props} helpText="Configure search parameters" />
+          <FieldHelp {...props} helpKey="import.assistantMetadata.lookupQueryParams" />
         </div>
         <OutlinedButton
           color="secondary"

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useRef, useEffect} from 'react';
 import { Typography, InputAdornment} from '@material-ui/core';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -19,7 +19,7 @@ import TooltipContent from '../../components/TooltipContent';
 import CloseIcon from '../../components/icons/CloseIcon';
 import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
-import messageStore from '../../utils/messageStore';
+import {message} from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -113,6 +113,7 @@ const useStyles = makeStyles(theme => ({
   },
   iconPassword: {
     cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -229,7 +230,7 @@ export default function SetPassword() {
           }}
 
       />
-        <FieldMessage errorMessages={showError ? messageStore('NEW_PASSWORD_EMPTY') : null} />
+        <FieldMessage errorMessages={showError ? message.MFA.NEW_PASSWORD_EMPTY : null} />
 
         <div className={classes.passwordStrongSteps}>
           <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
@@ -289,10 +290,11 @@ export default function SetPassword() {
             </FilledButton>
           )}
         <TextButton
-          href="/signin"
-          data-test="cancel"
-          type="cancel"
+          to={getRoutePath('/signin')}
+          data-test="cancelSetPassword"
           color="primary"
+          component={Link}
+          role="link"
           className={classes.submit}
           value="Cancel">
           Cancel

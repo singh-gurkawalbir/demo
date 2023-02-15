@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -29,7 +29,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', { name: /more/i }));
 }
 
-describe('UI test cases for view alias details', () => {
+describe('uI test cases for view alias details', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -39,7 +39,7 @@ describe('UI test cases for view alias details', () => {
   const _parentId = 'someparentId';
   const _integrationId = '5e44efa28015c9464272256f';
 
-  test('Should push viewdetails URL onClick without parentId when it is not provided', () => {
+  test('should push viewdetails URL onClick without parentId when it is not provided', () => {
     renderFuntion({ _id, alias, status, _integrationId });
     const request = screen.getByText('View details');
 
@@ -48,7 +48,7 @@ describe('UI test cases for view alias details', () => {
       '/integrations/5e44efa28015c9464272256f/aliases/viewdetails/6368de0bec4c35664453023b'
     );
   });
-  test('Should push viewdetails URL onClick with parentId when it is provided', () => {
+  test('should push viewdetails URL onClick with parentId when it is provided', () => {
     renderFuntion({ _id, alias, _parentId, status, _integrationId });
     const request = screen.getByText('View details');
 

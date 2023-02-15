@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
@@ -26,7 +25,7 @@ export default function DynaNetSuiteRecordType(props) {
           op: 'remove',
           path: '/netsuite_da/subrecords',
         },
-      ], SCOPES.VALUE)
+      ])
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

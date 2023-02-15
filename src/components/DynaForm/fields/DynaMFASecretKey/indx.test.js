@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ function initDynaMFASecretKey(props = {}) {
   return renderWithProviders(<DynaMFASecretKey {...props} />, {initialStore});
 }
 
-describe('DynaMFASecretKey UI tests', () => {
+describe('dynaMFASecretKey UI tests', () => {
   test('should render field with the secret key hidden initially', () => {
     initDynaMFASecretKey({label: 'form label', code: '5186Nb'});
     expect(screen.getByText('form label')).toBeInTheDocument();

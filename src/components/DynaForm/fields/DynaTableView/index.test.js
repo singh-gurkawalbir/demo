@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -41,7 +41,7 @@ jest.mock('./DynaTable', () => ({
   ...jest.requireActual('./DynaTable'),
   default: () => <div>DynaTable</div>,
 }));
-describe('DynaTable UI tests', () => {
+describe('dynaTable UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     connectionId: '5b3c75dd5d3c125c88b5dd20',
@@ -59,7 +59,6 @@ describe('DynaTable UI tests', () => {
   test('should pass the initial render when extractFieldHeader and extracts are present', () => {
     renderWithProviders(<DynaTable {...props} />);
     expect(screen.getByText('DynaStaticMapWidget')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render DynaStaticMap when keyResource,valueResource,connectionId are not passed', () => {
     const newProps = {...props, extractFieldHeader: null, extracts: null, keyResource: undefined, valueResource: undefined, connectionId: undefined};

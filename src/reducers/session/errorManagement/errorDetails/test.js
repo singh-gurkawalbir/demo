@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
@@ -95,7 +95,7 @@ const errorStateWithActions = {
   },
 };
 
-describe(' Error details in EM 2.0 reducer ', () => {
+describe('Error details in EM 2.0 reducer', () => {
   test('should retain previous state if the action is invalid', () => {
     const prevState = {};
     const currState = reducer(prevState, { type: 'INVALID_ACTION'});
@@ -145,7 +145,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
 
       expect(currStateForOpenErrors).toEqual(expectedStateForOpenErrors);
     });
-    test('should add error default state for flowId and resourceId with status as requested for resolved errors ', () => {
+    test('should add error default state for flowId and resourceId with status as requested for resolved errors', () => {
       const prevState = {};
       const currStateForResolvedErrors = reducer(prevState, actions.errorManager.flowErrorDetails.request({
         flowId,
@@ -293,7 +293,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
         errorDetails: undefined,
       }))).toEqual(expectedState);
     });
-    test('should update state properly with passed open error details ', () => {
+    test('should update state properly with passed open error details', () => {
       const prevState = reducer({}, actions.errorManager.flowErrorDetails.request({
         flowId,
         resourceId,
@@ -590,7 +590,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
         errorIds,
       }))).toEqual(expectedState);
     });
-    test('should not update state if the state of error list is already empty ', () => {
+    test('should not update state if the state of error list is already empty', () => {
       const initState = reducer({}, actions.errorManager.flowErrorDetails.request({
         flowId,
         resourceId,
@@ -641,7 +641,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
       expect(currState).toBe(errorStateWithoutActions);
     });
 
-    test('should update status as requested for retry action ', () => {
+    test('should update status as requested for retry action', () => {
       const currState = reducer(errorStateWithoutActions, actions.errorManager.flowErrorDetails.retry({
         flowId,
         resourceId,
@@ -723,7 +723,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
 
       expect(currState).toBe(errorStateWithoutActions);
     });
-    test('should update status as requested for resolve action ', () => {
+    test('should update status as requested for resolve action', () => {
       const currState = reducer(errorStateWithoutActions, actions.errorManager.flowErrorDetails.resolve({
         flowId,
         resourceId,
@@ -843,7 +843,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
 
       expect(currState).toEqual(expectedState);
     });
-    test('should add passed resolved count to the existing count with status received ', () => {
+    test('should add passed resolved count to the existing count with status received', () => {
       const currState = reducer(errorStateWithActions, actions.errorManager.flowErrorDetails.resolveReceived({
         flowId,
         resourceId,
@@ -970,7 +970,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
 
       expect(currState).toEqual(expectedState);
     });
-    test('should add passed retry count to the existing count with status received ', () => {
+    test('should add passed retry count to the existing count with status received', () => {
       const currState = reducer(errorStateWithActions, actions.errorManager.flowErrorDetails.retryReceived({
         flowId,
         resourceId,
@@ -1225,7 +1225,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
   });
 });
 
-describe('allResourceErrorDetails selector ', () => {
+describe('allResourceErrorDetails selector', () => {
   test('should return default object if the state does not exist on any of the props are invalid', () => {
     expect(selectors.allResourceErrorDetails(undefined, {})).toEqual(defaultValue);
     expect(selectors.allResourceErrorDetails({}, { flowId, resourceId })).toEqual(defaultValue);
@@ -1325,7 +1325,7 @@ describe('isAllErrorsSelected selector', () => {
     expect(selectors.isAllErrorsSelected(sampleErrorState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     expect(selectors.isAllErrorsSelected(sampleErrorState, { flowId, resourceId })).toBeFalsy();
   });
-  test('should return false if all the passed errorIds are not selected ', () => {
+  test('should return false if all the passed errorIds are not selected', () => {
     expect(selectors.isAllErrorsSelected(sampleErrorState, {
       flowId,
       resourceId,

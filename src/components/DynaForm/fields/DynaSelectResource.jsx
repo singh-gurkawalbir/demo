@@ -23,8 +23,11 @@ import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
+import { getHttpConnector} from '../../../constants/applications';
 
 const emptyArray = [];
+const emptyObj = {};
+
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -40,6 +43,7 @@ const handleAddNewResource = args => {
     connectorId,
     isFrameWork2,
     email,
+    _httpConnectorId,
   } = args;
 
   if (
@@ -81,6 +85,7 @@ const handleAddNewResource = args => {
     } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options?.appType,
+        _httpConnectorId,
       });
 
       if (resourceType === 'asyncHelpers' || statusExport) {
@@ -109,7 +114,6 @@ const handleAddNewResource = args => {
       actions.resource.patchStaged(
         newResourceId,
         [...missingPatches, ...patchValues],
-        'value'
       )
     );
   }
@@ -239,6 +243,7 @@ export default function DynaSelectResource(props) {
     addTitle,
     editTitle,
     disabledTitle,
+    isValueValid = false,
   } = props;
   const { options = {}, getItemInfo } = props;
   const classes = useStyles();
@@ -247,6 +252,7 @@ export default function DynaSelectResource(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
+
   const optionRef = useRef(options);
 
   useEffect(() => {
@@ -263,6 +269,8 @@ export default function DynaSelectResource(props) {
   );
 
   const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
+
+  const isHTTPVersionUpdated = useSelector(state => selectors.isHTTPConnectionVersionModified(state));
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -333,6 +341,9 @@ export default function DynaSelectResource(props) {
     }),
     [merged]
   );
+  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+
   const handleAddNewResourceMemo = useCallback(
     () =>
       handleAddNewResource({
@@ -349,8 +360,9 @@ export default function DynaSelectResource(props) {
         connectorId,
         isFrameWork2,
         email: preferences?.email,
+        _httpConnectorId,
       }),
-    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email]
+    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email, _httpConnectorId]
   );
   const handleEditResource = useCallback(() => {
     if (
@@ -374,7 +386,7 @@ export default function DynaSelectResource(props) {
       }
 
       // this not an actual value we would like to commit...this is just to load the right form
-      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(value, patchSet));
     }
     if (resourceType === 'connectorLicenses') {
       const patchSet = [
@@ -398,7 +410,7 @@ export default function DynaSelectResource(props) {
         });
       }
 
-      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(value, patchSet));
     }
 
     history.push(buildDrawerUrl({
@@ -420,7 +432,14 @@ export default function DynaSelectResource(props) {
     }));
 
   useEffect(() => {
-    if (!appTypeIsStatic && value && !Array.isArray(value)) {
+    if (isHTTPVersionUpdated && _httpConnectorId) {
+      onFieldChange(value, value);
+      dispatch(actions.connection.clearUpdatedVersion());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHTTPVersionUpdated]);
+  useEffect(() => {
+    if (!appTypeIsStatic && value && !Array.isArray(value) && isValueValid) {
       const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);
 
       if (!isValuePresentInOption) {

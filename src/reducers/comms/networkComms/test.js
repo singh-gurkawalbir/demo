@@ -1,8 +1,3 @@
-// TODO: Figure out how to configure the linter to ignore warnings about global
-// references introduced by JEST. Witout the below exclusion in every test file,
-// the linter precommit step will fail. ...and the IDE doesnt like the globals
-// either.
-/* global describe, test, expect */
 import reducer, { COMM_STATES, COMM_STATES as STATES, selectors } from './index';
 import actions from '../../../actions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
@@ -16,7 +11,7 @@ describe('comms reducers', () => {
   const method = 'GET';
   const commKey = commKeyGenerator(path, method);
 
-  describe('clear comms action ', () => {
+  describe('clear comms action', () => {
     test('clear the comms part of the redux store', () => {
       const newState = reducer(undefined, actions.api.request(path, method));
       let completedApiActionState = reducer(
@@ -105,12 +100,12 @@ describe('comms reducers', () => {
         actions.api.failure(path, method, 'error')
       );
 
-      expect(state[commKey].message).toEqual('error');
+      expect(state[commKey].message).toBe('error');
     });
     test('should default an error message if none is provided in the action', () => {
       const state = reducer(undefined, actions.api.failure(path, method));
 
-      expect(state[commKey].message).toEqual('unknown error');
+      expect(state[commKey].message).toBe('unknown error');
     });
     test('should clear loading and retry count', () => {
       let state = reducer(undefined, actions.api.request(path, method));
@@ -207,24 +202,22 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
-        undefined
+      expect(selectors.commStatusByKey(state, 'GET:/something')).toBeUndefined(
       );
     });
     test('should return undefined if state is undefined', () => {
       const state = reducer(undefined, 'some action');
 
-      expect(selectors.commStatusByKey(state, 'GET:/something')).toEqual(
-        undefined
+      expect(selectors.commStatusByKey(state, 'GET:/something')).toBeUndefined(
       );
     });
   });
   describe('commReqType', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(selectors.commReqType()).toEqual('GET');
-      expect(selectors.commReqType({})).toEqual('GET');
-      expect(selectors.commReqType({}, 'get')).toEqual('GET');
-      expect(selectors.commReqType(undefined, 'get')).toEqual('GET');
+      expect(selectors.commReqType()).toBe('GET');
+      expect(selectors.commReqType({})).toBe('GET');
+      expect(selectors.commReqType({}, 'get')).toBe('GET');
+      expect(selectors.commReqType(undefined, 'get')).toBe('GET');
     });
     test('should return correct comm request method for given resource', () => {
       const state = reducer(
@@ -234,7 +227,7 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.commReqType(state, 'GET:/something')).toEqual('PUT');
+      expect(selectors.commReqType(state, 'GET:/something')).toBe('PUT');
     });
   });
   describe('isRefreshing', () => {
@@ -326,7 +319,7 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.requestMessage(state, 'someKey')).toEqual('something');
+      expect(selectors.requestMessage(state, 'someKey')).toBe('something');
     });
   });
   describe('timestampComms', () => {
@@ -344,15 +337,15 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.timestampComms(state, 'someKey')).toEqual(123432);
+      expect(selectors.timestampComms(state, 'someKey')).toBe(123432);
     });
   });
   describe('retryCount', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(selectors.retryCount()).toEqual(0);
-      expect(selectors.retryCount({})).toEqual(0);
-      expect(selectors.retryCount({}, 'get')).toEqual(0);
-      expect(selectors.retryCount(undefined, 'get')).toEqual(0);
+      expect(selectors.retryCount()).toBe(0);
+      expect(selectors.retryCount({})).toBe(0);
+      expect(selectors.retryCount({}, 'get')).toBe(0);
+      expect(selectors.retryCount(undefined, 'get')).toBe(0);
     });
     test('should return correct retry count for comm', () => {
       const state = reducer(
@@ -362,7 +355,7 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.retryCount(state, 'someKey')).toEqual(123432);
+      expect(selectors.retryCount(state, 'someKey')).toBe(123432);
     });
   });
   describe('commsErrors', () => {
@@ -491,9 +484,9 @@ describe('comms selectors', () => {
   });
   describe('changePasswordMsg', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(selectors.changePasswordMsg()).toEqual('');
-      expect(selectors.changePasswordMsg({}, '123')).toEqual('');
-      expect(selectors.changePasswordMsg(undefined, '123')).toEqual('');
+      expect(selectors.changePasswordMsg()).toBe('');
+      expect(selectors.changePasswordMsg({}, '123')).toBe('');
+      expect(selectors.changePasswordMsg(undefined, '123')).toBe('');
     });
     test('should return comm message for password change', () => {
       const commKey = commKeyGenerator(
@@ -507,7 +500,7 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.changePasswordMsg(state)).toEqual('message');
+      expect(selectors.changePasswordMsg(state)).toBe('message');
     });
   });
   describe('changeEmailSuccess', () => {
@@ -554,9 +547,9 @@ describe('comms selectors', () => {
   });
   describe('changeEmailMsg', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(selectors.changeEmailMsg()).toEqual('');
-      expect(selectors.changeEmailMsg({}, '123')).toEqual('');
-      expect(selectors.changeEmailMsg(undefined, '123')).toEqual('');
+      expect(selectors.changeEmailMsg()).toBe('');
+      expect(selectors.changeEmailMsg({}, '123')).toBe('');
+      expect(selectors.changeEmailMsg(undefined, '123')).toBe('');
     });
     test('should return correct comm message for email change', () => {
       const commKey = commKeyGenerator(
@@ -570,7 +563,7 @@ describe('comms selectors', () => {
         'some action'
       );
 
-      expect(selectors.changeEmailMsg(state)).toEqual('message');
+      expect(selectors.changeEmailMsg(state)).toBe('message');
     });
   });
   describe('isLoading', () => {
@@ -594,7 +587,7 @@ describe('comms selectors', () => {
       expect(isLoading).toBe(false);
     });
   });
-  describe('retryCount', () => {
+  describe('retryCount1', () => {
     test('should be 0 on initial state', () => {
       const count = selectors.retryCount(undefined, commKey);
 

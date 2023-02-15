@@ -349,6 +349,7 @@ export default {
       id: 'type',
       type: 'selectwithvalidations',
       label: 'Export type',
+      isLoggable: true,
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -403,6 +404,7 @@ export default {
       id: 'once.booleanField',
       type: 'textwithconnectioncontext',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       visibleWhenAll: [
         { field: 'type', is: ['once'] },
       ],

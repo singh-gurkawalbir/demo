@@ -1,4 +1,3 @@
-/* global describe, expect, test, beforeEach, afterEach, jest */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
@@ -71,8 +70,10 @@ jest.mock('../../../../components/DynaForm/DynaSubmit', () => ({
     );
   },
 }));
-describe('Testsuite for SSO Account Settings', () => {
+describe('testsuite for SSO Account Settings', () => {
+  // eslint-disable-next-line jest/prefer-spy-on
   window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
   runServer();
 
   let mockDispatchFn;
@@ -92,7 +93,7 @@ describe('Testsuite for SSO Account Settings', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('Should test the SSO when OIDC-based is disabled and click on switch button to enable', async () => {
+  test('should test the SSO when OIDC-based is disabled and click on switch button to enable', async () => {
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -131,7 +132,7 @@ describe('Testsuite for SSO Account Settings', () => {
     await userEvent.click(switchButtonNode);
     expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitchChecked-'));
   });
-  test('Should test the SSO when OIDC-based is enabled and should test the loading spinner when isEnableSSOSwitchInProgress is true', async () => {
+  test('should test the SSO when OIDC-based is enabled and should test the loading spinner when isEnableSSOSwitchInProgress is true', async () => {
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -159,7 +160,7 @@ describe('Testsuite for SSO Account Settings', () => {
     });
     expect(document.querySelector('circle').getAttribute('class')).toEqual(expect.stringContaining('MuiCircularProgress-'));
   });
-  test('Should test the SSO and enable OIDC-based switch and should test the form', async () => {
+  test('should test the SSO and enable OIDC-based switch and should test the form', async () => {
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -206,7 +207,7 @@ describe('Testsuite for SSO Account Settings', () => {
       asyncKey: undefined,
     });
   });
-  test('Should test the SSO when OIDC-based is enabled and should test the form', async () => {
+  test('should test the SSO when OIDC-based is enabled and should test the form', async () => {
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -252,7 +253,7 @@ describe('Testsuite for SSO Account Settings', () => {
     userEvent.type(orgIdInputNode, 'testorg');
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'SSO_ORG_ID_VALIDATION_REQUEST', orgId: 'testorg' }));
   });
-  test('Should test the SSO Account settings page by clicking switch button', async () => {
+  test('should test the SSO Account settings page by clicking switch button', async () => {
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -298,7 +299,7 @@ describe('Testsuite for SSO Account Settings', () => {
       asyncKey: undefined,
     }));
   });
-  test('Should test the existing SSO Account settings by clicking on save button', async () => {
+  test('should test the existing SSO Account settings by clicking on save button', async () => {
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -346,14 +347,13 @@ describe('Testsuite for SSO Account Settings', () => {
         { op: 'replace', path: '/oidc/clientId', value: undefined },
         { op: 'replace', path: '/oidc/clientSecret', value: undefined },
       ],
-      scope: 'value',
       options: undefined,
       context: undefined,
       parentContext: undefined,
       asyncKey: undefined,
     });
   });
-  test('Should test the new SSO Account settings by clicking on save button', async () => {
+  test('should test the new SSO Account settings by clicking on save button', async () => {
     const mockHandleSubmit1 = jest.fn().mockReturnValue({
       formVal: {
         orgId: 'testorg',
@@ -419,14 +419,13 @@ describe('Testsuite for SSO Account Settings', () => {
         { op: 'add', path: '/oidc/clientId', value: 'sampleClientId' },
         { op: 'add', path: '/oidc/clientSecret', value: '******' },
       ],
-      scope: 'value',
       options: undefined,
       context: undefined,
       parentContext: undefined,
       asyncKey: undefined,
     });
   });
-  test('Should test the SSO page when there is no license and click on request upgrade', async () => {
+  test('should test the SSO page when there is no license and click on request upgrade', async () => {
     initialStore.getState().session.resource = {
       ssoLicenseUpgradeRequested: false,
     };
@@ -468,7 +467,7 @@ describe('Testsuite for SSO Account Settings', () => {
     });
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'SSO_LICENSE_UPGRADE_REQUESTED' });
   });
-  test('Should test the SSO page when licence is requested', async () => {
+  test('should test the SSO page when licence is requested', async () => {
     initialStore.getState().session.resource = {
       platformLicenseActionMessage: 'Thanks for your request! We will be in touch soon.',
       ssoLicenseUpgradeRequested: true,

@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -62,7 +62,7 @@ jest.mock('./DynaRelatedList', () => ({
   useCallMetadataAndReturnStatus: () => ({status: 'success'}),
 }));
 
-describe('DynaReferencedFields UI tests', () => {
+describe('dynaReferencedFields UI tests', () => {
   const mockHandleClose = jest.fn();
   const mockonFieldChange = jest.fn();
   const props = {
@@ -85,7 +85,6 @@ describe('DynaReferencedFields UI tests', () => {
 
     expect(editButton).toBeInTheDocument();
     userEvent.click(editButton);
-    screen.debug();
   });
   test('should render the form inside the modal when clicked on edit button', () => {
     initDynaReferencedFields(props);
@@ -108,6 +107,6 @@ describe('DynaReferencedFields UI tests', () => {
 
     userEvent.type(inputField, 'a');
     userEvent.click(screen.getByText('Save'));
-    expect(mockonFieldChange).toBeCalled();
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
 });
