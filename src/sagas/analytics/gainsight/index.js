@@ -6,14 +6,33 @@ import * as pendo from '../../../utils/analytics/pendo';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
 import { getResourceSubType, resourceCategory } from '../../../utils/resource';
 import { getAllPageProcessors } from '../../../utils/flows';
+import { requestLicenseEntitlementUsage } from '../../users';
 
 export function* identifyUser() {
   const profile = yield select(
     selectors.userProfile
   );
   const user = yield select(selectors.ownerUser);
-  const { _id, name, email, createdAt } = profile || {};
+  const { _id, name, email, createdAt, role, developer } = profile || {};
   const [firstName, ...lastName] = (name || '').split(' ');
+
+  const licenseActionDetails = yield select(
+    selectors.platformLicenseWithMetadata
+  );
+
+  if (licenseActionDetails.type !== 'diy') {
+    yield call(requestLicenseEntitlementUsage);
+  }
+
+  const licenseEntitlementUsage = yield select(selectors.getLicenseEntitlementUsage);
+
+  const accessLevelDetails = yield select(
+    selectors.resourcePermissions
+  );
+
+  const productionTypesEndpoints = [...(licenseEntitlementUsage?.production?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set()) || [])].join();
+  const sandboxTypesEndpoints = [...(licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set()) || [])].join();
+
   const accountInfo = {
     id: user?._id,
     name: user?.company || user?.name,
@@ -26,9 +45,43 @@ export function* identifyUser() {
     lastName: lastName.join(' '),
     signUpDate: createdAt ? new Date(createdAt).getTime() : '',
   };
+  const accountInfoPendo = {
+    id: user?._id,
+    accountName: user?.company || user?.name,
+    licenseType: licenseActionDetails.type,
+    licenseTier: licenseActionDetails.tier,
+    licenseExpirationDate: licenseActionDetails.expires,
+    trialEndDate: licenseActionDetails.trialEndDate,
+    trialInProgress: licenseActionDetails.inTrial,
+    hasSandbox: licenseActionDetails.hasSandbox,
+    hasApiManagement: licenseActionDetails?.endpoint?.apiManagement,
+    hasSso: licenseActionDetails.hasSSO,
+    ssoEnabled: licenseActionDetails.sso,
+    numEntitledEndpointsProduction: licenseActionDetails.totalNumberofProductionEndpoints,
+    numEntitledFlowsProduction: licenseActionDetails.totalNumberofProductionFlows,
+    numEnabledEndpointsProduction: licenseEntitlementUsage?.production?.endpointUsage?.numConsumed,
+    numEnabledFlowsProduction: licenseEntitlementUsage?.production?.flowUsage?.numEnabled,
+    numEntitledEndpointsSandbox: licenseActionDetails.totalNumberofSandboxEndpoints,
+    numEntitledFlowsSandbox: licenseActionDetails.totalNumberofSandboxFlows,
+    numEnabledEndpointsSandbox: licenseEntitlementUsage?.sandbox?.endpointUsage?.numConsumed,
+    numEnabledFlowsSandbox: licenseEntitlementUsage?.sandbox?.flowUsage?.numEnabled,
+    enabledEndpointsProd: productionTypesEndpoints,
+    enabledEndpointsSandbox: sandboxTypesEndpoints,
+  };
+  const userInfoPendo = {
+    id: `${accountInfo.id}_${_id}`,
+    _userId: _id,
+    email,
+    firstName,
+    lastName: lastName?.join(' '),
+    signUpDate: createdAt,
+    role,
+    developerModeEnabled: developer,
+    accessLevel: accessLevelDetails?.accessLevel,
+  };
 
   gainsight.identify(userInfo, accountInfo);
-  pendo.identify(userInfo, accountInfo);
+  pendo.identify(userInfoPendo, accountInfoPendo);
 }
 
 export function trackEvent({ eventId, details }) {

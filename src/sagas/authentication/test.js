@@ -530,6 +530,40 @@ describe('auth saga flow', () => {
 
     expect(effect).toEqual(put(actions.user.profile.delete()));
   });
+
+  test('should dispatch a setCSRFToken and mfaRequired action when auth is succesful but it needs mfa otp', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const _csrf = 'someCSRF';
+    const saga = auth({ email, password });
+    const getCSRFBackend = saga.next().value;
+
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
+
+    const callEffect = saga.next(_csrf).value;
+    const payload = {
+      ...authParams.opts,
+      body: { email, password, _csrf },
+    };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+        hidden: true,
+      })
+    );
+    const authResponse = {
+      succes: true,
+      mfaRequired: true,
+      _csrf,
+    };
+
+    expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
+    expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
+  });
+
   test('should dispatch an auth failure action when authentication fails with a message from sign in api', () => {
     const email = 'someUserEmail';
     const password = 'someUserPassword';
