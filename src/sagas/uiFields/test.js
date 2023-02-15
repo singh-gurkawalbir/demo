@@ -159,7 +159,7 @@ describe('onFlowUpdate saga', () => {
       .run();
   });
   test('should call loadResourceUIFields and also dispatch updateFlowResources when the patches for the flow has PG or PP added for the first time', () => {
-    const patch = [{
+    const ppPatch = [{
       op: 'add',
       path: '/pageProcessors',
       value: [{
@@ -167,14 +167,32 @@ describe('onFlowUpdate saga', () => {
         _importId: 'i1',
       }],
     }];
+    const pgPatch = [{
+      op: 'add',
+      path: '/pageGenerators',
+      value: [{
+        _exportId: 'e1',
+      }],
+    }];
 
-    expectSaga(onFlowUpdate, { resourceId, resourceType, patch })
+    const test1 = expectSaga(onFlowUpdate, { resourceId, resourceType, patch: ppPatch })
       .provide([
         [select(selectors.flowResourceIds, resourceId), resourceIds],
+        [select(selectors.resourceUIFields, importId), {}],
       ])
       .call.fn(loadResourceUIFields)
       .put(actions.uiFields.updateFlowResources(resourceId, resourceIds))
       .run();
+    const test2 = expectSaga(onFlowUpdate, { resourceId, resourceType, patch: pgPatch })
+      .provide([
+        [select(selectors.flowResourceIds, resourceId), resourceIds],
+        [select(selectors.resourceUIFields, exportId), {}],
+      ])
+      .call.fn(loadResourceUIFields)
+      .put(actions.uiFields.updateFlowResources(resourceId, resourceIds))
+      .run();
+
+    return test1 && test2;
   });
   test('should not call loadResourceUIFields but dispatch updateFlowResources when the patches for the flow has PG or PP removed', () => {
     const removeRouterPatch = [ // remove router with node
