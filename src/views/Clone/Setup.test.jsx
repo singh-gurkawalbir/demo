@@ -1291,4 +1291,107 @@ describe('clone Setup', () => {
     await userEvent.click(configureNode[1]);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
   });
+
+  test('should able to access the setup page without install steps', async () => {
+    const integrationSession = {
+      'imports-60db46af9433830f8f0e0fe8': {
+        preview: {
+          components: {
+            objects: [
+              {
+                model: 'Flow',
+                doc: {
+                  _id: '60db46af9433830f8f0e0fe8',
+                  description: 'Testing Flow',
+                  disabled: false,
+                  _integrationId: '5fc5e0e66cfe5b44bb95de70',
+                  skipRetries: false,
+                },
+              },
+              {
+                model: 'Export',
+                doc: {
+                  _id: '60dbc5a8a706701ed4a148ac',
+                  name: 'Test 3pl central export',
+                  description: 'Test 3PL central export description',
+                  _connectionId: '5fc5e4a46cfe5b44bb95df44',
+                  assistant: '3plcentral',
+                  sandbox: false,
+                  adaptorType: 'HTTPExport',
+                },
+              },
+              {
+                model: 'Import',
+                doc: {
+                  _id: '605b30767904202f31742092',
+                  name: 'FTP Import 1',
+                  description: 'Test FTP Import description',
+                  _connectionId: '5d529bfbdb0c7b14a6011a57',
+                  sandbox: false,
+                  adaptorType: 'FTPImport',
+                },
+              },
+              {
+                model: 'Connection',
+                doc: {
+                  _id: '5d529bfbdb0c7b14a6011a57',
+                  type: 'ftp',
+                  name: 'FTP Connection',
+                  offline: true,
+                },
+              },
+              {
+                model: 'Connection',
+                doc: {
+                  _id: '5fc5e4a46cfe5b44bb95df44',
+                  type: 'http',
+                  name: '3PL Central Connection',
+                  assistant: '3plcentral',
+                  offline: false,
+                  sandbox: false,
+                },
+              },
+            ],
+            stackRequired: false,
+            _stackId: null,
+          },
+          status: 'success',
+        },
+        connectionMap: {
+          '5d529bfbdb0c7b14a6011a57': {
+            _id: '5d529bfbdb0c7b14a6011a57',
+            type: 'ftp',
+            name: 'FTP Connection',
+            offline: true,
+            sandbox: false,
+          },
+          '5fc5e4a46cfe5b44bb95df44': {
+            _id: '5fc5e4a46cfe5b44bb95df44',
+            type: 'http',
+            name: '3PL Central Connection',
+            assistant: '3plcentral',
+            offline: false,
+            sandbox: false,
+          },
+        },
+        data: {
+          name: 'Clone - 3PL Central - FTP',
+          sandbox: false,
+          _integrationId: '5fc5e0e66cfe5b44bb95de70',
+          _flowGroupingId: null,
+        },
+      },
+    };
+    const props = {
+      pathname: '/clone/imports/60db46af9433830f8f0e0fe8/setup',
+      resourceId: '60db46af9433830f8f0e0fe8',
+      resourceType: 'flows',
+
+    };
+
+    await initStore(integrationSession);
+
+    await initClone(props);
+    expect(mockHistoryPush).toBeCalledWith('/clone/imports/60db46af9433830f8f0e0fe8/preview');
+  });
 });

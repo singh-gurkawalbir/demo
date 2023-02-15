@@ -214,11 +214,6 @@ describe('dynaHFAssistantOptions UI tests', () => {
       },
       {
         op: 'replace',
-        path: '/assistantMetadata/version',
-        value: '',
-      },
-      {
-        op: 'replace',
         path: '/assistantMetadata/dontConvert',
         value: true,
       },

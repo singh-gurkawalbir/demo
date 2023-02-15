@@ -73,11 +73,13 @@ export default function DynaReplaceConnection(props) {
     const patch = [];
     let metaDataExists = false;
 
-    patch.push({
-      op: 'replace',
-      path: '/_connectionId',
-      value: newConnectionId,
-    });
+    if (id !== newConnectionId) {
+      patch.push({
+        op: 'replace',
+        path: '/_connectionId',
+        value: newConnectionId,
+      });
+    }
 
     // assistantMetadata is removed on connection replace because the metadata changes on
     // switching between different versions of constant contact i.e. v2 & v3
