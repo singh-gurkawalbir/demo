@@ -433,6 +433,10 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
 
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));
+  } else if (resourceType === 'connections') {
+    if (updated.http?._httpConnectorId && updated.http?.unencrypted?.version !== master?.http?.unencrypted?.version) {
+      yield put(actions.connection.updatedVersion());
+    }
   }
 
   if (resourceType === 'connections' && merged.type === 'netsuite') {
