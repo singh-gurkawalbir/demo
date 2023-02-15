@@ -27,8 +27,8 @@ export function* identifyUser() {
     selectors.resourcePermissions
   );
 
-  const productionTypesEndpoints = [...licenseEntitlementUsage?.production?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set())].join();
-  const sandboxTypesEndpoints = [...licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set())].join();
+  const productionTypesEndpoints = [...(licenseEntitlementUsage?.production?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set()) || [])].join();
+  const sandboxTypesEndpoints = [...(licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set()) || [])].join();
 
   const accountInfo = {
     id: user?._id,
@@ -51,7 +51,7 @@ export function* identifyUser() {
     trialEndDate: licenseActionDetails.trialEndDate,
     trialInProgress: licenseActionDetails.inTrial,
     hasSandbox: licenseActionDetails.hasSandbox,
-    hasApiManagement: licenseActionDetails.endpoint.apiManagement,
+    hasApiManagement: licenseActionDetails?.endpoint?.apiManagement,
     hasSso: licenseActionDetails.hasSSO,
     ssoEnabled: licenseActionDetails.sso,
     numEntitledEndpointsProduction: licenseActionDetails.totalNumberofProductionEndpoints,
