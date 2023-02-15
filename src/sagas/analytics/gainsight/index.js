@@ -16,12 +16,15 @@ export function* identifyUser() {
   const { _id, name, email, createdAt, role, developer } = profile || {};
   const [firstName, ...lastName] = (name || '').split(' ');
 
-  yield call(requestLicenseEntitlementUsage);
-  const licenseEntitlementUsage = yield select(selectors.getLicenseEntitlementUsage);
-
   const licenseActionDetails = yield select(
     selectors.platformLicenseWithMetadata
   );
+
+  if (licenseActionDetails.type !== 'diy') {
+    yield call(requestLicenseEntitlementUsage);
+  }
+
+  const licenseEntitlementUsage = yield select(selectors.getLicenseEntitlementUsage);
 
   const accessLevelDetails = yield select(
     selectors.resourcePermissions
