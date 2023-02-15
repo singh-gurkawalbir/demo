@@ -127,12 +127,12 @@ describe('loadResources component', () => {
 
   describe('loadResources component required', () => {
     test('should pass the initial render required true', async () => {
-      await initLoadResources({initialStore,
+      const { utils } = await initLoadResources({initialStore,
         props: {
           required: true,
         }});
 
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(utils.container).toBeEmptyDOMElement();
     });
   });
 
