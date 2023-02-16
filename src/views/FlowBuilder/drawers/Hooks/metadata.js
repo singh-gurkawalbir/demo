@@ -205,7 +205,8 @@ const generateImportHooksMetadata = ({
       importHooksMetadata,
       resourceType,
       defaultSuiteScriptHooks,
-      resource.netsuite_da?.useSS2Restlets,
+      // eslint-disable-next-line camelcase
+      resource?.netsuite_da?.restletVersion === 'suiteapp2.0' || resource?.netsuite_da?.useSS2Restlets,
     )
     : importHooksMetadata;
 };
