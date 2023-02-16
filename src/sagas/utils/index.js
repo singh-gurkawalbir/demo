@@ -113,8 +113,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
       }];
   }
   if (connectionVersion) {
-    versions = versions.filter(v => v.version === connectionVersion);
-    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
+    versions = versions.filter(v => v._id === connectionVersion);
+    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]?._id));
   }
   exportData.versions = cloneDeep(versions);
 
@@ -216,8 +216,8 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   }
 
   if (connectionVersion) {
-    versions = versions.filter(v => v.version === connectionVersion);
-    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
+    versions = versions.filter(v => v._id === connectionVersion);
+    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]?._id));
   }
 
   importData.versions = cloneDeep(versions);
@@ -404,6 +404,11 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
   }
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = cloneDeep(finalFieldMeta);
+  let resourceVersion = resource?.http?.unencrypted?.version;
+
+  if (!resourceVersion && resource?.http?._httpConnectorVersionId) {
+    resourceVersion = connector.versions?.find(ver => ver._id === resource.http._httpConnectorVersionId)?.name;
+  }
 
   if (!isGenericHTTP) {
     Object.keys(tempFiledMeta.fieldMap).map(key => {
@@ -430,8 +435,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         if (!tempFiledMeta.fieldMap[key].defaultValue) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
         } else if (connector.versioning?.location === 'uri') {
-          if (resource.http?.unencrypted?.version) {
-            tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http.unencrypted.version}`, '');
+          if (resourceVersion) {
+            tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
           } else if (connector.versions?.[0]?.name) {
             tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${connector.versions?.[0]?.name}`, '');
           }
@@ -510,8 +515,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (key === 'http.auth.token.token' || key === 'http.auth.token.refreshToken') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
       } else if (key === 'http.baseURI') {
-        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resource.http?.unencrypted?.version) {
-          tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http?.unencrypted?.version}`, '');
+        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resourceVersion) {
+          tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
         }
         if (connector?.baseURIs?.length > 1) {
           const options = [
@@ -553,7 +558,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         type: 'select',
         visible: !(versions && versions.length <= 1),
         options: versionOptions,
-        defaultValue: isNewId(resource._id) ? versions?.[0] : resource?.http?.unencrypted?.version,
+        defaultValue: isNewId(resource._id) ? versions?.[0] : resourceVersion,
       },
     });
   }
