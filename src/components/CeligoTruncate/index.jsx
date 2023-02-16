@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Tooltip, Zoom } from '@material-ui/core';
-import Truncate from 'react-truncate';
+import TruncateMarkup from 'react-truncate-markup';
 import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
@@ -25,19 +25,19 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
         placement={placement}
         enterDelay={delay}
         disableHoverListener={disableHoverListener}>
-        <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
-          {children}
-        </Truncate>
+        <TruncateMarkup lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
+          <div>{children}</div>
+        </TruncateMarkup>
       </Tooltip>
     );
   }
 
   return (
-    <Truncate
+    <TruncateMarkup
       lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
       {...isLoggableAttr(isLoggable)}>
-      {children}
-    </Truncate>
+      <div>{children}</div>
+    </TruncateMarkup>
   );
 }
 
