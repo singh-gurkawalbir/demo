@@ -732,7 +732,7 @@ describe('initialize app saga', () => {
     );
   });
 
-  test('should dispatch mfaRequired when the user switch accounts mfa setup complete', () => {
+  test('should dispatch mfaRequired when the user switch accounts mfa setup in complete', () => {
     const validationRes = { authenticated: true, mfaRequired: true, mfaVerified: false };
 
     expectSaga(initializeSession, { opts: { switchAcc: true } })
@@ -747,7 +747,7 @@ describe('initialize app saga', () => {
       .run();
   });
 
-  test('should dispatch mfaRequired when the user switch accounts mfa setup not complete', () => {
+  test('should dispatch mfaRequired when the user switch accounts mfa setup not in complete', () => {
     const validationRes = { authenticated: true, mfaRequired: true, mfaVerified: false };
 
     expectSaga(initializeSession, { opts: { switchAcc: true } })
