@@ -1268,7 +1268,7 @@ describe('getHTTPConnectorMetadata', () => {
     expect(metaData).toEqual(output1);
   });
   test('should return correct metadata if version set on connection level', () => {
-    const metaData = getHTTPConnectorMetadata(input1, '2022-01');
+    const metaData = getHTTPConnectorMetadata(input1, '62cffbf79b51830e4d641d6d');
 
     expect(metaData).toEqual(output2);
   });
@@ -1558,7 +1558,6 @@ describe('updateFinalMetadataWithHttpFramework', () => {
               {
                 label: '2022-01',
                 value: '2022-01',
-
               },
 
             ],
