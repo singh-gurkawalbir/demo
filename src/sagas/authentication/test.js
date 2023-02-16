@@ -561,6 +561,7 @@ describe('auth saga flow', () => {
     };
 
     expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
+    expect(saga.next().value).toEqual(call(getResourceCollection, actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')));
     expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
   });
 
@@ -729,6 +730,36 @@ describe('initialize app saga', () => {
     expect(saga.throw(new Error('Some error')).value).toEqual(
       put(actions.auth.logout())
     );
+  });
+
+  test('should dispatch mfaRequired when the user switch accounts mfa setup complete', () => {
+    const validationRes = { authenticated: true, mfaRequired: true, mfaVerified: false };
+
+    expectSaga(initializeSession, { opts: { switchAcc: true } })
+      .provide([
+        [call(validateSession), validationRes],
+        [select(selectors.isMFASetupIncomplete), true],
+        [call(getCSRFTokenBackend), '1234'],
+      ])
+      .call(setCSRFToken, '1234')
+      .put(actions.auth.mfaRequired({...validationRes, isAccountUser: true, dontAllowTrustedDevices: true}))
+      .call(retrieveAppInitializationResources)
+      .run();
+  });
+
+  test('should dispatch mfaRequired when the user switch accounts mfa setup not complete', () => {
+    const validationRes = { authenticated: true, mfaRequired: true, mfaVerified: false };
+
+    expectSaga(initializeSession, { opts: { switchAcc: true } })
+      .provide([
+        [call(validateSession), validationRes],
+        [select(selectors.isMFASetupIncomplete), false],
+        [call(getCSRFTokenBackend), '1234'],
+      ])
+      .call(setCSRFToken, '1234')
+      .put(actions.auth.mfaRequired({...validationRes, isAccountUser: true, dontAllowTrustedDevices: true}))
+      .not.call(retrieveAppInitializationResources)
+      .run();
   });
 });
 
