@@ -105,7 +105,7 @@ export default function HooksForm({flowId, integrationId, formKey}) {
       let isInvalidHook = false;
       const suiteScriptHooksList =
         // eslint-disable-next-line camelcase
-        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList((resource?.netsuite_da?.restletVersion === 'suiteapp2.0' || resource?.netsuite_da?.useSS2Restlets === true));
+        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList((resource?.netsuite_da?.restletVersion === 'suiteapp2.0' || resource?.netsuite_da?.useSS2Restlets));
 
       suiteScriptHooksList.forEach(suiteScriptHook => {
         const value = values[`suiteScript-${suiteScriptHook}`];
