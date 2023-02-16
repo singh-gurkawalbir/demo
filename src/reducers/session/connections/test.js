@@ -18,6 +18,17 @@ describe('Connections API', () => {
 
         expect(state.activeConnection).toBeUndefined();
       });
+      test('should properly store isHttpVersionUpdated when version update received', () => {
+        const state = reducer(undefined, actions.connection.updatedVersion());
+
+        expect(state.isHttpVersionUpdated).toBe(true);
+      });
+
+      test('should properly store isHttpVersionUpdated when clear version update received', () => {
+        const state = reducer(undefined, actions.connection.clearUpdatedVersion());
+
+        expect(state.isHttpVersionUpdated).toBe(false);
+      });
 
       test('should update offline flag of connection once connection is authorized', () => {
         const prevState = {
@@ -334,6 +345,21 @@ describe('Connections API', () => {
         expect(selectors.tradingPartnerConnections(state, 'conn4')).toEqual({
           status: COMM_STATES.LOADING,
         });
+      });
+      test('should return http connector version update status', () => {
+        const state = reducer(
+          undefined,
+          actions.connection.updatedVersion()
+        );
+
+        const state2 = reducer(
+          state,
+          actions.connection.clearUpdatedVersion()
+        );
+
+        expect(selectors.isHTTPConnectionVersionModified(state)).toBe(true);
+
+        expect(selectors.isHTTPConnectionVersionModified(state2)).toBe(false);
       });
     });
   });
