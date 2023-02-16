@@ -899,8 +899,8 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
-    operation = (VALID_MONGO_ID.test(operation) || operation.includes('+')) ? operation : exportDoc.http?._httpConnectorEndpointId;
-    resource = (VALID_MONGO_ID.test(resource) || resource.includes('+')) ? resource : exportDoc.http?._httpConnectorResourceId;
+    operation = (VALID_MONGO_ID.test(operation) || operation?.includes('+')) ? operation : exportDoc.http?._httpConnectorEndpointId;
+    resource = (VALID_MONGO_ID.test(resource) || resource?.includes('+')) ? resource : exportDoc.http?._httpConnectorResourceId;
     version = VALID_MONGO_ID.test(version) ? version : exportDoc.http?._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
@@ -1822,8 +1822,8 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
       } else {
-        operation = (VALID_MONGO_ID.test(operation) || operation.includes('+')) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
-        resource = (VALID_MONGO_ID.test(resource) || resource.includes('+')) ? resource : importDoc.http?._httpConnectorResourceId;
+        operation = (VALID_MONGO_ID.test(operation) || operation?.includes('+')) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
+        resource = (VALID_MONGO_ID.test(resource) || resource?.includes('+')) ? resource : importDoc.http?._httpConnectorResourceId;
         version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
       }
     }
