@@ -18,7 +18,7 @@ const transformations = {
     { value: 'uppercase', label: 'Uppercase' },
   ],
 };
-const optionsHandler = (fieldId, fields) => {
+export const optionsHandler = (fieldId, fields) => {
   if (fieldId === 'transformations') {
     const dataTypeField = fields.find(field => field.id === 'dataType');
 
