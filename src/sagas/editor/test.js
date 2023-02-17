@@ -1524,6 +1524,47 @@ describe('editor sagas', () => {
         .returns({ data: { record: {id: 999}}, templateVersion: 2 })
         .run();
     });
+
+    test('should make /getContext api call when integration id is none', () => {
+      const editor = {
+        id: 'eFilter',
+        editorType: 'exportFilter',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        stage: 'exportFilter',
+        _integrationId: 'none',
+      };
+
+      expectSaga(requestEditorSampleData, { id: 'eFilter' })
+        .provide([
+          [select(selectors.editor, 'eFilter'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: undefined,
+              export: { oneToMany: false },
+              fieldPath: 'filter',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .not.put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
     test('should not call getFlowSampleData and also sampleDataWrapper selector for csv generator return data as is', () => {
       const editor = {
         id: 'filecsv',
@@ -2075,13 +2116,13 @@ describe('editor sagas', () => {
         },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
         originalRule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -2156,13 +2197,13 @@ describe('editor sagas', () => {
         },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
         originalRule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -2257,14 +2298,14 @@ describe('editor sagas', () => {
         originalData: JSON.stringify(expectedData, null, 2),
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
             scriptId: '888',
           },
         },
         originalRule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
             scriptId: '888',
           },
