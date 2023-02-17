@@ -19,8 +19,9 @@ export function* identifyUser() {
   const licenseActionDetails = yield select(
     selectors.platformLicenseWithMetadata
   );
+  const isUserAuthenticated = yield select(selectors.isUserAuthenticated);
 
-  if (licenseActionDetails.type !== 'diy') {
+  if (licenseActionDetails.type !== 'diy' && isUserAuthenticated) {
     yield call(requestLicenseEntitlementUsage);
   }
 
