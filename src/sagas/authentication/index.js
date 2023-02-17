@@ -179,17 +179,16 @@ export function* retrieveAppInitializationResources() {
   if (isMFASetupIncomplete) {
     // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
     // all other APIs are evaded
-    yield call(
+    return yield call(
       getResourceCollection,
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     );
-  } else {
-    yield all([
-      call(retrievingOrgDetails),
-      call(retrievingAssistantDetails),
-      call(retrievingHttpConnectorDetails),
-    ]);
   }
+  yield all([
+    call(retrievingOrgDetails),
+    call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
+  ]);
 
   yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
@@ -488,6 +487,11 @@ export function* auth({ email, password }) {
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
+      yield call(setCSRFToken, apiAuthentications._csrf);
+      yield call(
+        getResourceCollection,
+        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+      );
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
@@ -587,7 +591,8 @@ export function* initializeSession({opts} = {}) {
         yield put(actions.auth.mfaRequired({...resp, isAccountUser: true, dontAllowTrustedDevices: true}));
       } else if (!isMFASetupIncomplete) {
         yield put(actions.auth.logout(true));
-      } else {
+      }
+      if (isMFASetupIncomplete) {
         yield call(retrieveAppInitializationResources);
       }
     }

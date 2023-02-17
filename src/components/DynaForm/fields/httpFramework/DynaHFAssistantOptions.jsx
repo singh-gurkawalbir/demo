@@ -7,7 +7,7 @@ import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { getExportOperationDetails } from '../../../../utils/assistant';
+import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
 
 const emptyObj = {};
 export const useHFSetInitializeFormData = ({
@@ -194,12 +194,11 @@ function DynaAssistantOptions(props) {
         fieldDependencyMap = {
           exports: {
             resource: ['operation', 'version', 'exportType'],
-            operation: ['exportType', 'version'],
+            operation: ['exportType'],
             version: ['exportType'],
           },
           imports: {
             resource: ['version', 'operation', 'updateEndpoint', 'createEndpoint'],
-            operation: ['version'],
           },
         };
       }
@@ -247,15 +246,8 @@ function DynaAssistantOptions(props) {
       }
       if (assistantFieldType === 'operation' && versions?.length > 1) {
         const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
-        const endpointDetails = getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
+        const endpointDetails = resourceType === 'imports' ? getImportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData }) : getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
 
-        // if (value.includes('+')) {
-        //   patch.push({
-        //     op: 'replace',
-        //     path: '/assistantMetadata/operation',
-        //     value: endpointDetails?.id,
-        //   });
-        // }
         if (formContext.resource !== endpointDetails?._httpConnectorResourceIds?.[0]) {
           patch.push({
             op: 'replace',
@@ -272,7 +264,7 @@ function DynaAssistantOptions(props) {
       // When version is changed corresponding resource and operation/endpoint ids
       // needs to be updated to get correct operationDetails
       if (assistantFieldType === 'version') {
-        const endpointDetails = getExportOperationDetails({...formContext, version: value, assistantData });
+        const endpointDetails = resourceType === 'imports' ? getImportOperationDetails({...formContext, version: value, assistantData }) : getExportOperationDetails({...formContext, version: value, assistantData });
 
         patch.push({
           op: 'replace',
@@ -311,7 +303,9 @@ function DynaAssistantOptions(props) {
         .map(field => ({ id: field.id, value: field.value }));
 
       allTouchedFields.push({ id, value });
-
+      if (id === 'assistantMetadata.operation') {
+        allTouchedFields.push({id: 'assistantMetadata.version', value: patch.find(({path}) => path === '/assistantMetadata/version')?.value || versions?.[0]._id });
+      }
       if (id === 'assistantMetadata.exportType') {
         if (value === 'delta') {
           setDefaultValuesForDelta('queryParams', queryParamsMeta, queryParams, allTouchedFields);

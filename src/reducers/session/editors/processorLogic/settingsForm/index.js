@@ -1,5 +1,6 @@
 import produce from 'immer';
 import { isEqual, isEmpty } from 'lodash';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import util from '../../../../../utils/json';
 import { safeParse, isJsonString } from '../../../../../utils/string';
 import javascript from '../javascript';
@@ -112,7 +113,7 @@ export default {
 
     const rule = {
       script: {
-        entryFunction: init.function || 'main',
+        entryFunction: init.function || hooksToFunctionNamesMap.formInit,
         fetchScriptContent: true,
       },
     };

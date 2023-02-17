@@ -235,6 +235,8 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
+  updatedVersion: () => action(actionTypes.CONNECTION.UPDATED_VERSION),
+  clearUpdatedVersion: () => action(actionTypes.CONNECTION.CLEAR_UPDATED_VERSION),
 };
 const marketplace = {
   requestConnectors: () =>

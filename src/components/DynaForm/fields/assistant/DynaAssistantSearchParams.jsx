@@ -195,8 +195,7 @@ export default function DynaAssistantSearchParams(props) {
             className={classes.dynaAssistantFormLabel}>
             {label}
           </FormLabel>
-          {/* {Todo (shiva): we need helpText for the component} */}
-          <FieldHelp {...props} helpText="Configure search parameters" />
+          <FieldHelp {...props} helpKey="import.assistantMetadata.lookupQueryParams" />
         </div>
         <OutlinedButton
           color="secondary"

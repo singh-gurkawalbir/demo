@@ -2588,4 +2588,5 @@ use the custom option.`,
   'myaccount.colorTheme': 'Turning on this setting will display dark surfaces across the majority of a UI. It\'s designed to be a supplemental mode to a default (or light) theme. Dark themes reduce the luminance emitted by device screens, reduce eye strain, and facilitate screen use in dark environments.',
   'transfer.email': 'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',
   'transfer._integrationIds': 'Click the checkbox for each integration to be transferred to the new owner.',
+  'import.assistantMetadata.lookupQueryParams': 'Click Launch to enter the dynamic search parameters to identify existing records.',
 };
