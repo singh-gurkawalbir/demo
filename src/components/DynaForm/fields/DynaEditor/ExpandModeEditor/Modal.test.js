@@ -59,10 +59,10 @@ describe('editorModal UI tests', () => {
     userEvent.type(editorInputArea, 'a');
     expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).not.toBeInTheDocument();
   });
-  test('should call both handleClose and handleUpdate functions passed in props when clicked on "Done"', () => {
+  test('should call both handleClose and handleUpdate functions passed in props when clicked on "Done"', async () => {
     renderWithProviders(<EditorModal {...props} />);
     expect(screen.getByText('Done')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Done'));
     expect(mockHandleClose).toHaveBeenCalled();
     expect(mockHandleUpdate).toHaveBeenCalled();
   });

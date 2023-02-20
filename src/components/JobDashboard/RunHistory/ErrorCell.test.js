@@ -92,7 +92,7 @@ describe('testsuite for ErrorCell', () => {
 
     expect(errorButtonNode).toBeInTheDocument();
     expect(errorButtonNode).not.toBeDisabled();
-    userEvent.click(errorButtonNode);
+    await userEvent.click(errorButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: '67890-76543-xsjxks',
@@ -130,7 +130,7 @@ describe('testsuite for ErrorCell', () => {
 
     expect(successButtonNode).toBeInTheDocument();
     expect(successButtonNode).not.toBeDisabled();
-    userEvent.click(successButtonNode);
+    await userEvent.click(successButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: '67890-76543-xsjxks',
@@ -167,7 +167,7 @@ describe('testsuite for ErrorCell', () => {
 
     expect(errorButtonNode).toBeInTheDocument();
     expect(errorButtonNode).not.toBeDisabled();
-    userEvent.click(errorButtonNode);
+    await userEvent.click(errorButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: '67890-76543-xsjxks',

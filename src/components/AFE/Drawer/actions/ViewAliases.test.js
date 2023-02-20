@@ -45,7 +45,7 @@ function initViewAliases(props = {}) {
 }
 
 describe('ViewAliases UI tests', () => {
-  test('Should test the ViewAliases button when resource type is of exports', () => {
+  test('Should test the ViewAliases button when resource type is of exports', async () => {
     initialStore.getState().session.editors = {
       preSavePagescript: {
         editorType: 'javascript',
@@ -56,10 +56,10 @@ describe('ViewAliases UI tests', () => {
       },
     };
     initViewAliases({editorId: 'preSavePagescript'});
-    userEvent.click(screen.getByRole('button', {name: 'View aliases'}));
+    await userEvent.click(screen.getByRole('button', {name: 'View aliases'}));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/63433f87ba338228f2401609/flowBuilder/63a9330112b8264c6c2393b0/hooks/exports/63a55e14d9e20c15d94dacb6/editor/preSavePagescript/aliases/view');
   });
-  test('Should test the ViewAliases button when resource type is of integrations', () => {
+  test('Should test the ViewAliases button when resource type is of integrations', async () => {
     initialStore.getState().session.editors = {
       preSavePagescript: {
         editorType: 'javascript',
@@ -70,7 +70,7 @@ describe('ViewAliases UI tests', () => {
       },
     };
     initViewAliases({editorId: 'preSavePagescript'});
-    userEvent.click(screen.getByRole('button', {name: 'View aliases'}));
+    await userEvent.click(screen.getByRole('button', {name: 'View aliases'}));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/63433f87ba338228f2401609/flowBuilder/63a9330112b8264c6c2393b0/hooks/exports/63a55e14d9e20c15d94dacb6/editor/preSavePagescript/aliases/view');
   });
 });

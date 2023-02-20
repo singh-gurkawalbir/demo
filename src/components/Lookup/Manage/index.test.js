@@ -99,10 +99,10 @@ describe('manageLookup component Test cases', () => {
     expect(saveButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
   });
 
   describe('netSuite Import Lookup save test cases', () => {
@@ -145,7 +145,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {
         recordType: '',
@@ -167,7 +167,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {
         map: {
@@ -217,7 +217,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {
         whereClause: '',
@@ -240,7 +240,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {
         map: {
@@ -300,7 +300,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, response);
     });
@@ -312,7 +312,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {...response, allowFailures: true, default: ''});
     });
@@ -324,7 +324,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {...response, allowFailures: true, default: null});
     });
@@ -336,7 +336,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {...response, allowFailures: true, default: 'custom_value'});
     });
@@ -350,7 +350,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {
         map: {},
@@ -372,7 +372,7 @@ describe('manageLookup component Test cases', () => {
 
       const saveButton = screen.getByRole('button', {name: /save/i});
 
-      userEvent.click(saveButton);
+      await userEvent.click(saveButton);
       await expect(onSave).toHaveBeenCalledTimes(1);
       expect(onSave).toHaveBeenCalledWith(true, {
         map: {

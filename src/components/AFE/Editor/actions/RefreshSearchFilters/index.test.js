@@ -112,7 +112,7 @@ describe('refreshSearchFilters UI tests', () => {
     const refreshIcon = screen.getByRole('button');
 
     expect(refreshIcon).toBeInTheDocument();
-    userEvent.click(refreshIcon);
+    await userEvent.click(refreshIcon);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('6b3c75dd5d3c125c88b5dd20', 'testCommMetaPath', {refreshCache: true })));
   });
   test('should display the loading spinner when search filters are not present', () => {

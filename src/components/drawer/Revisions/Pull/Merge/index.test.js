@@ -33,7 +33,7 @@ describe('MergePullDrawer tests', () => {
     const close = screen.getAllByRole('button', {name: 'Close'})[0];
 
     expect(close).toBeInTheDocument();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/');
   });
 });

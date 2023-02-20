@@ -78,12 +78,12 @@ describe('searchCriteriaDialog UI tests', () => {
 
     expect(fields).toHaveLength(3);
   });
-  test('should display the dropdownwhen clicked on the operator dropdown', () => {
+  test('should display the dropdownwhen clicked on the operator dropdown', async () => {
     initSearchCriteriaDialog(props);
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('any')).toBeInTheDocument();
     expect(screen.getByText('contains')).toBeInTheDocument();
     expect(screen.getByText('does not contain')).toBeInTheDocument();
@@ -93,28 +93,28 @@ describe('searchCriteriaDialog UI tests', () => {
     expect(screen.getByText('is')).toBeInTheDocument();
     expect(screen.getByText('is empty')).toBeInTheDocument();
   });
-  test('should call the onSave function passed in props when save button is clicked', () => {
+  test('should call the onSave function passed in props when save button is clicked', async () => {
     initSearchCriteriaDialog(props);
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
-    userEvent.click(screen.getByText('contains'));
+    await userEvent.click(dropdown);
+    await userEvent.click(screen.getByText('contains'));
     const deleteButton = document.querySelector('[id="delete-0"]');
 
     expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
 
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     expect(mockOnSave).toHaveBeenCalled();
   });
-  test('should change the window size of the form when clicked on fullscreen button', () => {
+  test('should change the window size of the form when clicked on fullscreen button', async () => {
     initSearchCriteriaDialog(props);
     const toggleScreenButton = document.querySelector('[data-test="toggleEditorSize"]');
 
     expect(toggleScreenButton).toBeInTheDocument();
     expect(screen.queryByText('FullScreenCloseIcon')).toBeNull();
-    userEvent.click(toggleScreenButton);
+    await userEvent.click(toggleScreenButton);
     expect(screen.getByText('FullScreenCloseIcon')).toBeInTheDocument();
   });
 });

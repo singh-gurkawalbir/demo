@@ -32,10 +32,10 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
     renderWithProviders(<DynaSelectOverrideMediaType />);
     expect(screen.getByText('Please select')).toBeInTheDocument();
   });
-  test('should show the modified options', () => {
+  test('should show the modified options', async () => {
     initDynaSelectOverrideMediaType(genProps);
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
@@ -50,13 +50,13 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
       ]
     );
   });
-  test('should show the modified Options except for the dependable field', () => {
+  test('should show the modified Options except for the dependable field', async () => {
     renderWithProviders(
       <DynaSelectOverrideMediaType
         {...{...genProps, dependentFieldForMediaType: 'fieldForMediaType'}}
     />, {initialStore});
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
@@ -70,9 +70,9 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
       ]
     );
   });
-  test('should show option provided from props', () => {
+  test('should show option provided from props', async () => {
     initDynaSelectOverrideMediaType({...genProps, resourceType: 'anyresource'});
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 

@@ -152,7 +152,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const launchButton = screen.getByRole('button', {name: 'Launch NetSuite assistant'});
 
     expect(launchButton).toBeEnabled();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const snackBar = screen.getByRole('alert');
 
     expect(snackBar.textContent).toEqual(message.NETSUITE_ASSISTANT_LAUNCH_ERROR);
@@ -187,7 +187,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const launchButton = screen.getByRole('button', {name: 'Launch NetSuite assistant'});
 
     expect(launchButton).toBeEnabled();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const nsMapAsst = screen.getByTitle('NetSuite Mapping Assistant');
 
     expect(nsMapAsst).toBeInTheDocument();

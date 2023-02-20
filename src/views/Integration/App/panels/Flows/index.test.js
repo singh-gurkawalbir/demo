@@ -230,7 +230,7 @@ describe('Flows index file UI tests', () => {
       );
       const tabs = screen.getAllByRole('tab');
 
-      userEvent.click(tabs[0]);
+      await userEvent.click(tabs[0]);
 
       expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
       expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
@@ -281,7 +281,7 @@ describe('Flows index file UI tests', () => {
       );
       const handleInitbutton = screen.getByText('Form state manager button');
 
-      userEvent.click(handleInitbutton);
+      await userEvent.click(handleInitbutton);
       expect(mockDispatch).toHaveBeenCalledWith(
         {flowId: '5ea16c600e2fab71928a6152',
           integrationId: '5ff579d745ceef7dcd797c15',

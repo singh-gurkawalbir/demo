@@ -138,7 +138,7 @@ describe('template List', () => {
     const createTemplateNode = screen.getByRole('button', {name: 'Create template'});
 
     expect(createTemplateNode).toBeInTheDocument();
-    userEvent.click(createTemplateNode);
+    await userEvent.click(createTemplateNode);
     expect(createTemplateNode).toHaveAttribute('href', '/templates/add/templates/somegeneratedID');
     const tableNode = screen.getAllByRole('table');
 
@@ -170,7 +170,7 @@ describe('template List', () => {
     const publishedButtonNode = document.querySelectorAll('input[type="checkbox"]');
 
     expect(publishedButtonNode[0]).not.toBeChecked();
-    userEvent.click(publishedButtonNode[0]);
+    await userEvent.click(publishedButtonNode[0]);
     const confirmPublishNode = screen.getByText('Confirm publish');
 
     expect(confirmPublishNode).toBeInTheDocument();
@@ -180,13 +180,13 @@ describe('template List', () => {
     const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     await waitFor(() => expect(confirmPublishNode).not.toBeInTheDocument());
-    userEvent.click(publishedButtonNode[0]);
+    await userEvent.click(publishedButtonNode[0]);
     const publishButtonNode = screen.getByRole('button', {name: 'Publish'});
 
     expect(publishButtonNode).toBeInTheDocument();
-    userEvent.click(publishButtonNode);
+    await userEvent.click(publishButtonNode);
     await waitFor(() => expect(confirmPublishNode).not.toBeInTheDocument());
   }, 30000);
   test('should able to test the Template List delete action button by having templates', async () => {
@@ -213,14 +213,14 @@ describe('template List', () => {
     const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
     expect(openActionMenuNode).toBeInTheDocument();
-    userEvent.click(openActionMenuNode);
+    await userEvent.click(openActionMenuNode);
     const deleteTemplateNode = screen.getByRole('menuitem', {name: 'Delete template'});
 
     expect(deleteTemplateNode).toBeInTheDocument();
-    userEvent.click(deleteTemplateNode);
+    await userEvent.click(deleteTemplateNode);
     const deleteTemplateButtonNode = screen.getByRole('button', {name: 'Delete'});
 
-    userEvent.click(deleteTemplateButtonNode);
+    await userEvent.click(deleteTemplateButtonNode);
     expect(deleteTemplateButtonNode).not.toBeInTheDocument();
   });
 
@@ -248,11 +248,11 @@ describe('template List', () => {
     const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
     expect(openActionMenuNode).toBeInTheDocument();
-    userEvent.click(openActionMenuNode);
+    await userEvent.click(openActionMenuNode);
     const downloadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Download template zip'});
 
     expect(downloadTemplateZipMenuItemNode).toBeInTheDocument();
-    userEvent.click(downloadTemplateZipMenuItemNode);
+    await userEvent.click(downloadTemplateZipMenuItemNode);
     expect(mockDispatchFn).toHaveBeenCalledTimes(4);
   });
   test('should able to test the Template List upload template zip action button by having templates', async () => {
@@ -279,18 +279,18 @@ describe('template List', () => {
     const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
     expect(openActionMenuNode).toBeInTheDocument();
-    userEvent.click(openActionMenuNode);
+    await userEvent.click(openActionMenuNode);
     const uploadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Upload template zip'});
 
     expect(uploadTemplateZipMenuItemNode).toBeInTheDocument();
-    userEvent.click(uploadTemplateZipMenuItemNode);
+    await userEvent.click(uploadTemplateZipMenuItemNode);
     const dialogtext = screen.getByText('Upload template zip file');
 
     expect(dialogtext).toBeInTheDocument();
     const selectTemplateZipButtonNode = screen.getByRole('button', {name: 'Select template zip file'});
 
     expect(selectTemplateZipButtonNode).toBeInTheDocument();
-    userEvent.click(selectTemplateZipButtonNode);
+    await userEvent.click(selectTemplateZipButtonNode);
   });
   test('should able to test the Template List edit template action button by having templates and save', async () => {
     const templates = [
@@ -316,11 +316,11 @@ describe('template List', () => {
     const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
     expect(openActionMenuNode).toBeInTheDocument();
-    userEvent.click(openActionMenuNode);
+    await userEvent.click(openActionMenuNode);
     const editTemplateMenuItemNode = screen.getByRole('menuitem', {name: 'Edit template'});
 
     expect(editTemplateMenuItemNode).toBeInTheDocument();
-    userEvent.click(editTemplateMenuItemNode);
+    await userEvent.click(editTemplateMenuItemNode);
     const editTemplateNameNode = document.querySelector('input[name="/name"]');
 
     expect(editTemplateNameNode).toBeInTheDocument();
@@ -330,7 +330,7 @@ describe('template List', () => {
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(saveButtonNode).toBeDisabled();
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(22));
     const savingTextNode = screen.getByRole('button', {name: 'Saving...'});
@@ -361,11 +361,11 @@ describe('template List', () => {
     const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
     expect(openActionMenuNode).toBeInTheDocument();
-    userEvent.click(openActionMenuNode);
+    await userEvent.click(openActionMenuNode);
     const editTemplateMenuItemNode = screen.getByRole('menuitem', {name: 'Edit template'});
 
     expect(editTemplateMenuItemNode).toBeInTheDocument();
-    userEvent.click(editTemplateMenuItemNode);
+    await userEvent.click(editTemplateMenuItemNode);
     const editTemplateNameNode = document.querySelector('input[name="/name"]');
 
     expect(editTemplateNameNode).toBeInTheDocument();
@@ -375,7 +375,7 @@ describe('template List', () => {
     const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
 
     expect(saveAndCloseButtonNode).toBeInTheDocument();
-    userEvent.click(saveAndCloseButtonNode);
+    await userEvent.click(saveAndCloseButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledTimes(21);
     expect(editTemplateMenuItemNode).not.toBeInTheDocument();
   });

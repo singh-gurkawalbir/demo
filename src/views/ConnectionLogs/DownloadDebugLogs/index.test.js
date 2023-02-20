@@ -54,7 +54,7 @@ describe('downloadDebugLogs_afe test cases', () => {
 
     expect(downloadButton).toBeInTheDocument();
     expect(downloadButton).not.toHaveAttribute('disabled');
-    userEvent.click(downloadButton);
+    await userEvent.click(downloadButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.download('connection_id'));
   });
 

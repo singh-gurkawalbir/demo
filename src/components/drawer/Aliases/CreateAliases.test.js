@@ -97,20 +97,20 @@ describe('CreateAliasDrawer tests', () => {
     expect(closeBtn).toBeEnabled();
     expect(saveBtn).not.toBeEnabled();
 
-    userEvent.click(pageInfo);
-    userEvent.click(closeBtn);
+    await userEvent.click(pageInfo);
+    await userEvent.click(closeBtn);
     expect(mockHistoryGoBack).toHaveBeenCalled();
 
     // creating alias
-    userEvent.click(screen.getAllByRole('textbox')[0]);
+    await userEvent.click(screen.getAllByRole('textbox')[0]);
     userEvent.keyboard('new-alias-id');
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
-    userEvent.click(screen.getByRole('menuitem', {name: 'Connection'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'Connection'}));
     expect(screen.queryByText('Resource name')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
-    userEvent.click(screen.getByRole('menuitem', {name: 'RegisteredConnection'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'RegisteredConnection'}));
     mockDispatchFn.mockClear();
-    userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resource.aliases.createOrUpdate('_integrationId', 'integrations', undefined, false, 'integration-alias'));
     expect(mockHistoryReplace).toHaveBeenCalledWith('//edit/new-alias-id');
   });
@@ -122,12 +122,12 @@ describe('CreateAliasDrawer tests', () => {
     const buttons = screen.getAllByRole('button');
     const pageInfo = buttons.find(b => b.getAttribute('data-test') === 'openPageInfo');
 
-    userEvent.click(pageInfo);
+    await userEvent.click(pageInfo);
     expect(screen.getByRole('link', {name: 'Learn more about aliases'})).toBeInTheDocument();
     // editing alias description
-    userEvent.click(screen.getAllByRole('textbox')[1]);
+    await userEvent.click(screen.getAllByRole('textbox')[1]);
     userEvent.keyboard('added');
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockHistoryReplace).not.toHaveBeenCalled();
   });
 });

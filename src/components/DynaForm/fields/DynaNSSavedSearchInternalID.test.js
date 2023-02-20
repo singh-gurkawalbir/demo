@@ -61,7 +61,7 @@ describe('test suite for saved search internal id field', () => {
     expect(openSavedSearchBtn).not.toBeInTheDocument();
   });
 
-  test('should be able to open netsuite saved search', () => {
+  test('should be able to open netsuite saved search', async () => {
     const domain = 'https://tstdrv.netsuite.com';
     const connectionId = 'connection123';
     const props = {
@@ -83,11 +83,11 @@ describe('test suite for saved search internal id field', () => {
     renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
-    userEvent.click(openSavedSearchBtn);
+    await userEvent.click(openSavedSearchBtn);
     expect(mockOpenExternalUrl).toHaveBeenCalledWith({url});
   });
 
-  test('should not be able to open saved search if netsuite domain does not exist', () => {
+  test('should not be able to open saved search if netsuite domain does not exist', async () => {
     const connectionId = 'connection123';
     const props = {
       value: '5152',
@@ -98,7 +98,7 @@ describe('test suite for saved search internal id field', () => {
     renderWithProviders(<DynaNSSavedSearchInternalID {...props} />);
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
-    userEvent.click(openSavedSearchBtn);
+    await userEvent.click(openSavedSearchBtn);
     expect(mockOpenExternalUrl).not.toHaveBeenCalled();
   });
 });

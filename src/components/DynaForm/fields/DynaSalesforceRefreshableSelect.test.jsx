@@ -33,7 +33,7 @@ describe('dynaRefreshable UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('dispatch call should happen when clicked on refresh button and when entity name is provided', () => {
+  test('dispatch call should happen when clicked on refresh button and when entity name is provided', async () => {
     const data = {
       connectionId: '62f10f423dde9221e47c7a8b',
       filterKey: 'salesforce-sObjects',
@@ -70,18 +70,18 @@ describe('dynaRefreshable UI test cases', () => {
     initDynaSalesforceRefreshableSelect(data);
     const selectButton = screen.getByText('Please select');
 
-    userEvent.click(selectButton);
-    userEvent.click(screen.getByText('Once Export'));
+    await userEvent.click(selectButton);
+    await userEvent.click(screen.getByText('Once Export'));
     const refreshButton = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'refreshResource');
 
     expect(refreshButton).toBeInTheDocument();
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(actions.metadata.refresh('62f10f423dde9221e47c7a8b', 'salesforce/metadata/connections/62f10f423dde9221e47c7a8b/sObjectTypes/someentityname', {
       refreshCache: true,
     }));
   });
-  test('error message should be displayed', () => {
+  test('error message should be displayed', async () => {
     const data = {connectionId: '62f10f423dde9221e47c7a8b',
       filterKey: 'salesforce-sObjects',
       fieldName: 'somefieldname',
@@ -114,10 +114,10 @@ describe('dynaRefreshable UI test cases', () => {
 
     const selectButton = screen.getByText('Please select');
 
-    userEvent.click(selectButton);
+    await userEvent.click(selectButton);
     expect(screen.getByText('A value must be provided')).toBeInTheDocument();
   });
-  test('dispatch call should be made when clicked on refresh button for no entity provided', () => {
+  test('dispatch call should be made when clicked on refresh button for no entity provided', async () => {
     const data = {connectionId: '62f10f423dde9221e47c7a8b',
       filterKey: 'salesforce-sObjects',
       fieldName: 'somefieldname',
@@ -151,10 +151,10 @@ describe('dynaRefreshable UI test cases', () => {
     initDynaSalesforceRefreshableSelect(data);
     const selectButton = screen.getByText('Please select');
 
-    userEvent.click(selectButton);
+    await userEvent.click(selectButton);
     const userButton = document.querySelector('[data-test="refreshResource"]');
 
-    userEvent.click(userButton);
+    await userEvent.click(userButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(actions.metadata.refresh('62f10f423dde9221e47c7a8b', 'salesforce/metadata/connections/62f10f423dde9221e47c7a8b/sObjectTypes/', {
       refreshCache: true,

@@ -159,7 +159,7 @@ describe('dynaHFAssistantOptions UI tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should pass the initial render and open the dropdown with options when clicked on it', () => {
+  test('should pass the initial render and open the dropdown with options when clicked on it', async () => {
     const extendedPatch = [
       {
         op: 'replace',
@@ -199,18 +199,18 @@ describe('dynaHFAssistantOptions UI tests', () => {
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     // import operations are operations while for exports these are endpoints
     expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
       '_exportId',
       extendedPatch,
     ));
   });
-  test('should display options for versions in the dropdown when assistantFieldType is "version"', () => {
+  test('should display options for versions in the dropdown when assistantFieldType is "version"', async () => {
     const patch = [
       {
         op: 'replace',
@@ -240,23 +240,23 @@ describe('dynaHFAssistantOptions UI tests', () => {
     ];
 
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'version' });
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     expect(screen.getByText('v2')).toBeInTheDocument();
     const option = screen.getByText('v3');
 
     expect(option).toBeInTheDocument();
-    userEvent.click(option);
+    await userEvent.click(option);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
       '_exportId',
       patch,
     ));
   });
-  test('should display options for resources in the dropdown when assistantFieldType is "resource"', () => {
+  test('should display options for resources in the dropdown when assistantFieldType is "resource"', async () => {
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'resource' });
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     expect(screen.getByText('resource1')).toBeInTheDocument();
   });
-  test('should display options passed as props in the dropdown when assistantFieldType is exportType', () => {
+  test('should display options passed as props in the dropdown when assistantFieldType is exportType', async () => {
     const props = {
       formKey: 'exports-_exportId',
       id: 'assistantMetadata.exportType',
@@ -280,10 +280,10 @@ describe('dynaHFAssistantOptions UI tests', () => {
     };
 
     initDynaHFAssistantOptions(props, extraFields);
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     expect(screen.getByText('delta')).toBeInTheDocument();
     expect(screen.getByText('option2')).toBeInTheDocument();
-    userEvent.click(screen.getByText('option2'));
+    await userEvent.click(screen.getByText('option2'));
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'option2');
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resourceForm.init(
       undefined,
@@ -293,7 +293,7 @@ describe('dynaHFAssistantOptions UI tests', () => {
       undefined,
       [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'option2' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId'} }]
     ));
-    userEvent.click(screen.getByText('delta'));
+    await userEvent.click(screen.getByText('delta'));
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'delta');
     expect(mockDispatchFn).toHaveBeenNthCalledWith(4, actions.resourceForm.init(
       undefined,
@@ -304,7 +304,7 @@ describe('dynaHFAssistantOptions UI tests', () => {
       [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'delta' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId', lastExportDateTime: 'lastExportDateTime' } }]
     ));
   });
-  test('should display options for resources with resourceType "imports" and perform form init', () => {
+  test('should display options for resources with resourceType "imports" and perform form init', async () => {
     const resourceContext = { resourceType: 'imports', resourceId: '_importId' };
 
     initDynaHFAssistantOptions({
@@ -315,10 +315,10 @@ describe('dynaHFAssistantOptions UI tests', () => {
       ...resourceContext,
       fieldId: 'fieldId',
     });
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByRole('menuitem', { name: 'resource1' }));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'resource1' }));
   });
-  test('should display no options for resources with invalid resourceType', () => {
+  test('should display no options for resources with invalid resourceType', async () => {
     const resourceContext = { resourceType: 'imports', resourceId: '_importId' };
 
     initDynaHFAssistantOptions({
@@ -326,8 +326,8 @@ describe('dynaHFAssistantOptions UI tests', () => {
       resourceContext,
       fields: {},
     });
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByRole('menuitem'));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByRole('menuitem'));
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith(undefined, '', true);
   });
 });

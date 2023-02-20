@@ -13,9 +13,9 @@ describe('dynaSelectSetFieldValues tests', () => {
 
     await renderWithProviders(<DynaSelectSetFieldValues {...props} />);
     expect(screen.getByRole('button', {name: 'Please select'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('presentation')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('menuitem', {name: 'DynaSelect label'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'DynaSelect label'}));
     expect(mockChange).toHaveBeenNthCalledWith(1, undefined, 'dynaSelectValue');
     expect(mockChange).toHaveBeenNthCalledWith(2, 'first', '', true);
   });
@@ -24,8 +24,8 @@ describe('dynaSelectSetFieldValues tests', () => {
     const props = {onFieldChange: mockChange, options: [{items: [{value: 'dynaSelectValue', label: 'DynaSelect label'}]}]};
 
     await renderWithProviders(<DynaSelectSetFieldValues {...props} />);
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
-    userEvent.click(screen.getByRole('menuitem', {name: 'DynaSelect label'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'DynaSelect label'}));
     expect(mockChange).toHaveBeenNthCalledWith(1, undefined, 'dynaSelectValue');
     expect(mockChange).not.toHaveBeenNthCalledWith(2, 'first', '', true);
   });

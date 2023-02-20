@@ -36,12 +36,12 @@ describe('multiSelectFilter component Test cases', () => {
 
     expect(button).toBeInTheDocument();
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const header = screen.queryByText(/Test Header/i);
 
     expect(header).toBeInTheDocument();
-    userEvent.click(header);
+    await userEvent.click(header);
 
     expect(screen.queryByText(/apply/i)).not.toBeInTheDocument();
   });
@@ -64,7 +64,7 @@ describe('multiSelectFilter component Test cases', () => {
     const button = screen.getByRole('button');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(screen.queryByText(/Mock Name/i)).toBeInTheDocument();
 
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
@@ -72,7 +72,7 @@ describe('multiSelectFilter component Test cases', () => {
     expect(screen.queryByText(/apply/i)).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(screen.queryByText(/apply/i)).not.toBeInTheDocument();
   });
   test('should pass the intial render for handleSave', async () => {
@@ -174,7 +174,7 @@ describe('multiSelectFilter component Test cases', () => {
     const button = screen.getByRole('button');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const parent0Checkbox = screen.getByRole('checkbox', {name: 'parent 0'});
     const parent4Checkbox = screen.getByRole('checkbox', {name: 'parent 4'});
@@ -182,9 +182,9 @@ describe('multiSelectFilter component Test cases', () => {
     const expandButtons = screen.getAllByRole('button').filter(eachButton => eachButton.hasAttribute('data-test', 'toggleJobDetail'));
 
     expect(expandButtons[0]).toBeInTheDocument();
-    userEvent.click(expandButtons[0]);
+    await userEvent.click(expandButtons[0]);
     expect(expandButtons[5]).toBeInTheDocument();
-    userEvent.click(expandButtons[5]);
+    await userEvent.click(expandButtons[5]);
     const child1Checkbox = screen.getByRole('checkbox', {name: 'Child 1'});
     const child9Checkbox = screen.getByRole('checkbox', {name: 'Child 9'});
     const child3Checkbox = screen.getByRole('checkbox', {name: 'Child 3'});
@@ -202,22 +202,22 @@ describe('multiSelectFilter component Test cases', () => {
     expect(child6Checkbox).toBeInTheDocument(); // uncheck
     expect(child8Checkbox).toBeInTheDocument(); // uncheck
 
-    userEvent.click(parent0Checkbox);
-    userEvent.click(parent4Checkbox);
-    userEvent.click(parent5Checkbox);
-    userEvent.click(child1Checkbox);
-    userEvent.click(child9Checkbox);
-    userEvent.click(child4Checkbox);
-    userEvent.click(child3Checkbox);
-    userEvent.click(child6Checkbox);
-    userEvent.click(child8Checkbox);
+    await userEvent.click(parent0Checkbox);
+    await userEvent.click(parent4Checkbox);
+    await userEvent.click(parent5Checkbox);
+    await userEvent.click(child1Checkbox);
+    await userEvent.click(child9Checkbox);
+    await userEvent.click(child4Checkbox);
+    await userEvent.click(child3Checkbox);
+    await userEvent.click(child6Checkbox);
+    await userEvent.click(child8Checkbox);
 
     const applyButton = screen.getByRole('button', {name: /Apply/i});
 
     expect(screen.queryByText(/cancel/i)).toBeInTheDocument();
     expect(applyButton).toBeInTheDocument();
 
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith(['id_1', 'id_0', 'id_4', 'child_id_1', 'child_id_9', 'child_id_4']);
     expect(screen.queryByText(/apply/i)).not.toBeInTheDocument();
@@ -248,13 +248,13 @@ describe('multiSelectFilter component Test cases', () => {
     const button = screen.getByRole('button');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const parent0Checkbox = screen.getByRole('checkbox', {name: 'parent 0'});
 
     expect(parent0Checkbox).toBeInTheDocument();
 
-    userEvent.click(parent0Checkbox);
+    await userEvent.click(parent0Checkbox);
 
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect).toHaveBeenCalledWith([], 'id_0');

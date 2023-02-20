@@ -62,20 +62,20 @@ describe('connectionStatusPanel UI tests', () => {
     expect(message).toBeInTheDocument();
   });
 
-  test('should test offline message for export', () => {
+  test('should test offline message for export', async () => {
     renderWithStore('exports', 'export1');
     const message = screen.getByRole('button', {name: /Fix your connection/i});
 
-    userEvent.click(message);
+    await userEvent.click(message);
     expect(mockHistoryPush).toHaveBeenCalledWith('/edit/connections/connection1?fixConnnection=true');
   });
 
-  test('should test offline message for import', () => {
+  test('should test offline message for import', async () => {
     renderWithStore('imports', 'import1');
 
     const message = screen.getByRole('button', {name: /Fix your connection/i});
 
-    userEvent.click(message);
+    await userEvent.click(message);
     expect(mockHistoryPush).toHaveBeenCalledWith('/edit/connections/connection1?fixConnnection=true');
   });
 

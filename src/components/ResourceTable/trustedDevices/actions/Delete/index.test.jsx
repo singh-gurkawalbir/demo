@@ -25,7 +25,7 @@ initialStore.getState().session.asyncTask[asyncTaskKey] =
   status: 'complete',
 };
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <ConfirmDialogProvider>
       <CeligoTable
@@ -33,7 +33,7 @@ function renderFuntion(data) {
         data={[data]} />
     </ConfirmDialogProvider>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for trusted Devices', () => {
@@ -42,11 +42,11 @@ describe('uI test cases for trusted Devices', () => {
   });
   const data = {_id: '6287678bdh893338hdn3', browser: 'Chrome', os: 'windows'};
 
-  test('should make dispatch calls when trusted MFA devices are deleted', () => {
+  test('should make dispatch calls when trusted MFA devices are deleted', async () => {
     renderFuntion(data);
     const deleteDeviceButton = screen.getByText('Delete device');
 
-    userEvent.click(deleteDeviceButton);
+    await userEvent.click(deleteDeviceButton);
     const response = screen.getByText('Delete trusted MFA device?');
 
     expect(response).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe('uI test cases for trusted Devices', () => {
     const deleteButton = screen.getByText('Delete');
 
     expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(deleteButton).not.toBeInTheDocument();
     expect(mockDispatch).toHaveBeenCalledWith({
       deviceId: '6287678bdh893338hdn3',
@@ -70,7 +70,7 @@ describe('uI test cases for trusted Devices', () => {
       type: 'ASYNC_TASK_CLEAR',
     });
   });
-  test('should test cancel button', () => {
+  test('should test cancel button', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <CeligoTable
@@ -78,10 +78,10 @@ describe('uI test cases for trusted Devices', () => {
           data={[data]} />
       </ConfirmDialogProvider>
     );
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const deleteDeviceButton = screen.getByText('Delete device');
 
-    userEvent.click(deleteDeviceButton);
+    await userEvent.click(deleteDeviceButton);
     const devices = screen.getByText('Delete trusted MFA device?');
 
     expect(devices).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('uI test cases for trusted Devices', () => {
     const cancelButton = screen.getByText('Cancel');
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(cancelButton).not.toBeInTheDocument();
   });
 });

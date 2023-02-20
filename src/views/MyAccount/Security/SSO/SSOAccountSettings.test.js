@@ -450,7 +450,7 @@ describe('testsuite for SSO Account Settings', () => {
     const cancelButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Cancel');
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     await waitFor(() => expect(cancelButtonNode).not.toBeInTheDocument());
     await userEvent.click(requestUpgradeButton);
     const submitRequestButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Submit request');
@@ -486,7 +486,7 @@ describe('testsuite for SSO Account Settings', () => {
     const closeButtonNode = screen.getByRole('button', {name: /close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     await waitFor(() => expect(closeButtonNode).not.toBeInTheDocument());
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'LICENSE_CLEAR_ACTION_MESSAGE' });
   });

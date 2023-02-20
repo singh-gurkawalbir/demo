@@ -115,7 +115,7 @@ describe('test suite for eventreports', () => {
   const endDate = new Date('2022-10-02T10:33:30.000+05:30');
   const createdDate = new Date('2022-12-22T10:33:30.000+05:30');
 
-  test('should render the table accordingly and status is set to completed', () => {
+  test('should render the table accordingly and status is set to completed', async () => {
     const data = [{_id: 'flow_id_1', status: 'completed', _flowIds: ['flow_id_1'], startTime: startDate, endTime: endDate, createdAt: createdDate, requestedByUser: {name: 'def', email: 'def@gmail.com'}}];
 
     initImports(data);
@@ -149,7 +149,7 @@ describe('test suite for eventreports', () => {
     ]);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -157,13 +157,13 @@ describe('test suite for eventreports', () => {
       'Download results',
     ]);
   });
-  test('should render the table accordingly and status is set to running', () => {
+  test('should render the table accordingly and status is set to running', async () => {
     const data = [{_id: 'flow_id_1', status: 'running', _flowIds: ['flow_id_1'], startTime: startDate, endTime: endDate, createdAt: createdDate, requestedByUser: {name: 'def', email: 'def@gmail.com'}}];
 
     initImports(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -171,13 +171,13 @@ describe('test suite for eventreports', () => {
       'Cancel Report',
     ]);
   });
-  test('should render the table accordingly and status is set to queued', () => {
+  test('should render the table accordingly and status is set to queued', async () => {
     const data = [{_id: 'flow_id_1', status: 'queued', _flowIds: ['flow_id_1'], startTime: startDate, endTime: endDate, createdAt: createdDate, requestedByUser: {name: 'def', email: 'def@gmail.com'}}];
 
     initImports(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

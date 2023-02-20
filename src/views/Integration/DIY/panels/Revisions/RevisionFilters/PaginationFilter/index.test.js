@@ -76,7 +76,7 @@ describe('Testsuite for Revision Filters for pagination', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should test the revision pagination filter by clicking on page button', () => {
+  test('should test the revision pagination filter by clicking on page button', async () => {
     initRevisionFilterForPagination({
       revisionsData: {
         12345: {
@@ -131,7 +131,7 @@ describe('Testsuite for Revision Filters for pagination', () => {
     });
 
     expect(pageButtonNode).toBeInTheDocument();
-    userEvent.click(pageButtonNode);
+    await userEvent.click(pageButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter(
       '12345-revisions',
       { paging: { currPage: 1, rowsPerPage: 1 } }

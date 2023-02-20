@@ -164,13 +164,13 @@ describe('HooksForm test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(remountButton);
+    await userEvent.click(remountButton);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
     mockDispatchFn.mockClear();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('exports', 'export_id', [
       {
         op: 'replace',
@@ -215,12 +215,12 @@ describe('HooksForm test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(remountButton);
+    await userEvent.click(remountButton);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
 
-    userEvent.click(saveButton); // onSave will return null. can't check any dispatch or operations at component level
+    await userEvent.click(saveButton); // onSave will return null. can't check any dispatch or operations at component level
   });
 
   test('should pass the initial render with invalid import hooks', async () => {
@@ -237,10 +237,10 @@ describe('HooksForm test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
 
-    userEvent.click(saveButton); // onSave will return null. can't check any dispatch or operations at component level
+    await userEvent.click(saveButton); // onSave will return null. can't check any dispatch or operations at component level
   });
 
   test('should pass the initial render with import hook', async () => {
@@ -257,12 +257,12 @@ describe('HooksForm test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(remountButton);
+    await userEvent.click(remountButton);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('imports', 'import_id_2', [
       {
         op: 'replace',

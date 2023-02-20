@@ -64,7 +64,7 @@ describe('testsuite for JobActionMenu', () => {
     const moreJobActionMenuButtonNode = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
-    userEvent.click(moreJobActionMenuButtonNode);
+    await userEvent.click(moreJobActionMenuButtonNode);
     const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {
       name: /download diagnostics/i,
     });
@@ -92,7 +92,7 @@ describe('testsuite for JobActionMenu', () => {
     const moreJobActionMenuButtonNode = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
-    userEvent.click(moreJobActionMenuButtonNode);
+    await userEvent.click(moreJobActionMenuButtonNode);
     const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {
       name: /download diagnostics/i,
     });
@@ -126,7 +126,7 @@ describe('testsuite for JobActionMenu', () => {
     const moreJobActionMenuButtonNode = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
-    userEvent.click(moreJobActionMenuButtonNode);
+    await userEvent.click(moreJobActionMenuButtonNode);
     const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {
       name: /download diagnostics/i,
     });
@@ -159,7 +159,7 @@ describe('testsuite for JobActionMenu', () => {
     const moreJobActionMenuButtonNode = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
-    userEvent.click(moreJobActionMenuButtonNode);
+    await userEvent.click(moreJobActionMenuButtonNode);
     const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {
       name: /download diagnostics/i,
     });

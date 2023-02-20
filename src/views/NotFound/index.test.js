@@ -52,7 +52,7 @@ describe('notFound test cases', () => {
 
     expect(goBackButton).toBeInTheDocument();
 
-    userEvent.click(goBackButton);
+    await userEvent.click(goBackButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 });

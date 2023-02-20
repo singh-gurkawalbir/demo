@@ -160,7 +160,7 @@ describe('LogsDrawerActions tests', () => {
     const nextPage = buttons.find(button => button.getAttribute('data-testid') === 'nextPage');
 
     expect(nextPage).toBeInTheDocument();
-    userEvent.click(nextPage);
+    await userEvent.click(nextPage);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.logs.flowStep.request({flowId: props.flowId, resourceId: props.resourceId, loadMore: true}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.patchFilter('flowStepLogs', {paging: {currPage: 2}}));
   });
@@ -173,9 +173,9 @@ describe('LogsDrawerActions tests', () => {
 
     expect(startDebug).toBeInTheDocument();
     expect(stopDebug).toBeInTheDocument();
-    userEvent.click(startDebug);
+    await userEvent.click(startDebug);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.flowStep.startDebug(props.flowId, props.resourceId, props.resourceType, 15));
-    userEvent.click(stopDebug);
+    await userEvent.click(stopDebug);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.flowStep.stopDebug(props.flowId, props.resourceId, props.resourceType));
   });
 
@@ -188,10 +188,10 @@ describe('LogsDrawerActions tests', () => {
 
     expect(pauseFetch).toBeInTheDocument();
     expect(resumeFetch).toBeInTheDocument();
-    userEvent.click(pauseFetch);
+    await userEvent.click(pauseFetch);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.logs.flowStep.setFetchStatus(props.resourceId, 'paused'));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.logs.flowStep.pauseFetch(props.flowId, props.resourceId));
-    userEvent.click(resumeFetch);
+    await userEvent.click(resumeFetch);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.flowStep.request({flowId: props.flowId, resourceId: props.resourceId, loadMore: true}));
   });
 
@@ -204,7 +204,7 @@ describe('LogsDrawerActions tests', () => {
     const refreshLogs = screen.getByText(/Refresh logs/i);
 
     expect(refreshLogs).toBeInTheDocument();
-    userEvent.click(refreshLogs);
+    await userEvent.click(refreshLogs);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.clearFilter('flowStepLogs'));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.logs.flowStep.request({flowId: props.flowId, resourceId: props.resourceId, loadMore: undefined}));
   });

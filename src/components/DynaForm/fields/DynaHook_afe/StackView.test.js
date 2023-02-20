@@ -71,11 +71,11 @@ describe('stackView UI tests', () => {
     initStackView({...props, stackId: '634664b80eeae84271ab534e'});
     expect(screen.getByText('Stack 3')).toBeInTheDocument();
   });
-  test('should display the dropdown when clicked on the stack field', () => {
+  test('should display the dropdown when clicked on the stack field', async () => {
     initStackView(props);
     const dropdownButton = screen.getByText('None');
 
-    userEvent.click(dropdownButton);
+    await userEvent.click(dropdownButton);
     expect(screen.getByText('Stack 1')).toBeInTheDocument();
     expect(screen.getByText('Stack 2')).toBeInTheDocument();
     expect(screen.getByText('Stack 3')).toBeInTheDocument();

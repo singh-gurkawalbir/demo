@@ -43,7 +43,7 @@ describe('test suite for DynaIclient field', () => {
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
-  test('should be able to select from available iClients if associated with a connector', () => {
+  test('should be able to select from available iClients if associated with a connector', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'iClients',
@@ -65,7 +65,7 @@ describe('test suite for DynaIclient field', () => {
 
     renderWithProviders(<DynaIclient {...props} />, {initialStore});
     expect(mockDispatchFn).not.toHaveBeenCalled();
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const availableIclients = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableIclients).toEqual([

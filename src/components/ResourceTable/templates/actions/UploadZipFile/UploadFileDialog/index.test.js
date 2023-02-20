@@ -45,7 +45,7 @@ describe('testsuite for Upload File Dialog', () => {
     mockDispatchFn.mockClear();
     mockOnClose.mockClear();
   });
-  test('should test the upload file dialog box close button', () => {
+  test('should test the upload file dialog box close button', async () => {
     const props = {
       resourceType: 'exports',
       fileType: 'csv',
@@ -59,7 +59,7 @@ describe('testsuite for Upload File Dialog', () => {
     const uploadCloseButtonNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(uploadCloseButtonNode).toBeInTheDocument();
-    userEvent.click(uploadCloseButtonNode);
+    await userEvent.click(uploadCloseButtonNode);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
   test('should test the upload file dialog box upload button by uploading a file', async () => {
@@ -79,7 +79,7 @@ describe('testsuite for Upload File Dialog', () => {
     });
 
     expect(uploadButtonNode).toBeInTheDocument();
-    userEvent.click(uploadButtonNode);
+    await userEvent.click(uploadButtonNode);
     const str = JSON.stringify(someValues);
     const blob = new Blob([str]);
     const file = new File([blob], 'values.json', {
@@ -109,7 +109,7 @@ describe('testsuite for Upload File Dialog', () => {
     });
 
     expect(uploadButtonNode).toBeInTheDocument();
-    userEvent.click(uploadButtonNode);
+    await userEvent.click(uploadButtonNode);
     const str = JSON.stringify(someValues);
     const blob = new Blob([str]);
 

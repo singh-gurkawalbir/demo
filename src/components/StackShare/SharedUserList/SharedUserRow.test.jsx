@@ -54,7 +54,7 @@ describe('Shared User Row', () => {
     const enableButton = screen.getByText('Enable');
 
     expect(enableButton).toBeInTheDocument();
-    userEvent.click(enableButton);
+    await userEvent.click(enableButton);
     expect(confirmEnable).not.toBeInTheDocument();
   });
   test('Should able to list the pending shared user and delete the user', async () => {
@@ -76,7 +76,7 @@ describe('Shared User Row', () => {
     const deleteMessage = screen.getByRole('button');
 
     expect(deleteMessage).toBeInTheDocument();
-    userEvent.click(deleteMessage);
+    await userEvent.click(deleteMessage);
     const confirmRemoveText = screen.getByText('Confirm remove');
 
     expect(confirmRemoveText).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('Shared User Row', () => {
     const removeText = screen.getByText('Remove');
 
     expect(removeText).toBeInTheDocument();
-    userEvent.click(removeText);
+    await userEvent.click(removeText);
     expect(confirmRemoveText).not.toBeInTheDocument();
   });
   test('Should able to list the enabled accepted shared users', async () => {
@@ -118,7 +118,7 @@ describe('Shared User Row', () => {
     const disableButton = screen.getByText('Disable');
 
     expect(disableButton).toBeInTheDocument();
-    userEvent.click(disableButton);
+    await userEvent.click(disableButton);
     expect(confirmDisable).not.toBeInTheDocument();
   });
   test('Should able to list the dismissed shared users list and reinvite the user', async () => {
@@ -147,7 +147,7 @@ describe('Shared User Row', () => {
     const button = screen.queryAllByRole('button');
 
     expect(button[0]).toBeInTheDocument();
-    userEvent.click(button[0]);
+    await userEvent.click(button[0]);
     await waitFor(() => expect(mockPutResolverFunction).toHaveBeenCalledTimes(1));
   });
 });

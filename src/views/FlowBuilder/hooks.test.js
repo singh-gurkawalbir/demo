@@ -144,7 +144,7 @@ describe('FlowBuilder hooks UI tests', () => {
     });
   });
   describe('useHandleDelete hook test', () => {
-    test('should test handle delete when type is PageProcessor', () => {
+    test('should test handle delete when type is PageProcessor', async () => {
       const initialStore = getCreatedStore();
 
       initialStore.getState().data.resources.flows = flows;
@@ -155,9 +155,9 @@ describe('FlowBuilder hooks UI tests', () => {
         </ConfirmDialogProvider>,
         {initialStore}
       );
-      userEvent.click(screen.getByText('Delete button'));
+      await userEvent.click(screen.getByText('Delete button'));
       expect(screen.getByText('Are you sure you want to remove this resource?')).toBeInTheDocument();
-      userEvent.click(screen.getByText('Remove'));
+      await userEvent.click(screen.getByText('Remove'));
       expect(mockDispatch).toHaveBeenCalledWith(
         {
           type: 'RESOURCE_STAGE_PATCH_AND_COMMIT',
@@ -171,7 +171,7 @@ describe('FlowBuilder hooks UI tests', () => {
         }
       );
     });
-    test('should test handle delete when type is PageGenerator', () => {
+    test('should test handle delete when type is PageGenerator', async () => {
       const initialStore = getCreatedStore();
 
       initialStore.getState().data.resources.flows = flows;
@@ -182,9 +182,9 @@ describe('FlowBuilder hooks UI tests', () => {
         </ConfirmDialogProvider>,
         {initialStore}
       );
-      userEvent.click(screen.getByText('Delete button'));
+      await userEvent.click(screen.getByText('Delete button'));
       expect(screen.getByText('Are you sure you want to remove this resource?')).toBeInTheDocument();
-      userEvent.click(screen.getByText('Remove'));
+      await userEvent.click(screen.getByText('Remove'));
       expect(mockDispatch).toHaveBeenCalledWith(
         {
           type: 'RESOURCE_STAGE_PATCH_AND_COMMIT',

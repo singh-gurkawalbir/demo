@@ -159,14 +159,14 @@ describe('LineGraphDrawer test cases', () => {
     expect(mockHandleDateRangeButton).toBeInTheDocument();
     expect(mockHandleResourcesButton).toBeInTheDocument();
 
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
     mockDispatchFn.mockClear();
 
-    userEvent.click(mockHandleDateRangeButton);
+    await userEvent.click(mockHandleDateRangeButton);
     expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
     expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({
       linegraphs: {
@@ -182,7 +182,7 @@ describe('LineGraphDrawer test cases', () => {
       },
     }));
 
-    userEvent.click(mockHandleResourcesButton);
+    await userEvent.click(mockHandleResourcesButton);
     expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
     expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({
       linegraphs: {

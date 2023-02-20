@@ -132,7 +132,7 @@ describe('ViewRevisionDetails tests', () => {
 
     expect(closeDrawer).toBeEnabled();
     expect(cancelViewChanges).toBeEnabled();
-    userEvent.click(closeDrawer);
+    await userEvent.click(closeDrawer);
     expect(mockHistoryReplace).toHaveBeenCalledWith('parentURL/view/_revisionId/mode/details');
   });
   test('Should able to test the initial render with invalid revisionType', async () => {
@@ -146,7 +146,7 @@ describe('ViewRevisionDetails tests', () => {
     const detailstab = screen.getByRole('tab', {name: 'View details'});
 
     expect(detailstab).toBeInTheDocument();
-    userEvent.click(detailstab);
+    await userEvent.click(detailstab);
     expect(mockHistoryPush).toHaveBeenCalledWith('parentURL/view/_revertRevId/mode/changes/view/_revertRevId/mode/details');
   });
 });

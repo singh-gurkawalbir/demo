@@ -106,11 +106,11 @@ describe('SettingsForm UI tests', () => {
   test('should test dispatch call when clicked on Save', async () => {
     const {mockDispatch} = await initStoreAndRender('61dedf725c907e4eac13af03', '/61b9d5803deb5437e2dfaadd');
 
-    userEvent.click(screen.getByText('Deprovisioning'));
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByText('Option1'));
+    await userEvent.click(screen.getByText('Deprovisioning'));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Option1'));
 
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_PATCH',
@@ -130,11 +130,11 @@ describe('SettingsForm UI tests', () => {
   test('should click on Save when isFrameWork2 is true', async () => {
     const {mockDispatch} = await initStoreAndRender('61dedf725c907e4eac13af04', '/61b9d5803deb5437e2dfaadd');
 
-    userEvent.click(screen.getByText('Deprovisioning'));
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByText('Option2'));
+    await userEvent.click(screen.getByText('Deprovisioning'));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Option2'));
 
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH_AND_COMMIT',

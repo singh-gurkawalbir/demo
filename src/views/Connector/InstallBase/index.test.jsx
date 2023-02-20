@@ -114,7 +114,7 @@ describe('install Base', () => {
     const installBaseUpdateNode = screen.getByRole('button', {name: 'Update'});
 
     expect(installBaseUpdateNode).toBeInTheDocument();
-    userEvent.click(installBaseUpdateNode);
+    await userEvent.click(installBaseUpdateNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
       _integrationIds: [],
       connectorId: '12345',
@@ -252,12 +252,12 @@ describe('install Base', () => {
     await initInstallBase(props);
     const checkBoxNode = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkBoxNode[0]);
+    await userEvent.click(checkBoxNode[0]);
     expect(checkBoxNode).toBeTruthy();
     const update1userButtonNode = screen.getByRole('button', {name: 'Update 1 user(s)'});
 
     expect(update1userButtonNode).toBeInTheDocument();
-    userEvent.click(update1userButtonNode);
+    await userEvent.click(update1userButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
       _integrationIds: ['123454321'],
       connectorId: '12345',

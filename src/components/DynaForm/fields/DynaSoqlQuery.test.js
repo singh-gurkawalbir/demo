@@ -69,7 +69,7 @@ describe('DynaSoqlQuery test cases', () => {
     initDynaSoqlQuery();
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'sql', {
         formKey: 'someFormKey',

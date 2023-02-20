@@ -35,7 +35,7 @@ describe('dynaFieldExpressionSelect tests', () => {
   test('should able to test DynaFieldExpressionSelect', async () => {
     await renderWithProviders(<DynaFieldExpressionSelect />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.refreshHelperFunctions());
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('menuitem', {name: 'Please select'})).toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'abs'})).toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'timestamp'})).toBeInTheDocument();

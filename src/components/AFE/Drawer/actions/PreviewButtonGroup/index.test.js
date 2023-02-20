@@ -67,8 +67,8 @@ describe('test suite for PreviewButtonGroup', () => {
     });
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
-    await waitFor(() => expect(button).toBeChecked());
+    await userEvent.click(button);
+    waitFor(() => expect(button).toBeChecked());
   });
   test('Preview button should call action on clicking', async () => {
     await initPreviewButtonGroup('1');
@@ -78,7 +78,7 @@ describe('test suite for PreviewButtonGroup', () => {
 
     expect(button).toBeInTheDocument();
     expect(button).not.toBeDisabled();
-    userEvent.click(button);
+    await userEvent.click(button);
     await expect(mockDispatchFn).toBeCalledWith(actions.editor.previewRequest('1'));
   });
   test('Preview button should be disabled if disablePreview is true on editor', async () => {
@@ -98,7 +98,8 @@ describe('test suite for PreviewButtonGroup', () => {
 
     expect(button).toBeInTheDocument();
     expect(button).toBeDisabled();
-    fireEvent.mouseOver(screen.getByTitle(messageStore('EDITOR_PREVIEW_DISABLED')));
+    fireEvent.mouseOver(button);
+    await waitFor(() => screen.getByTitle(messageStore('EDITOR_PREVIEW_DISABLED')));
   });
   test('Preview button should be disabled if save is in progress', async () => {
     await initPreviewButtonGroup('3');

@@ -22,7 +22,7 @@ jest.mock('../../../../../components/icons/InstallationGuideIcon', () => ({
   default: () => <div>Mocking Installation Guide</div>,
 }));
 describe('Testsuite for FormHeader', () => {
-  test('should test Form header when the selectedAccountHasSandbox is set to true', () => {
+  test('should test Form header when the selectedAccountHasSandbox is set to true', async () => {
     const mockHandleToggle = jest.fn();
 
     render(
@@ -41,7 +41,7 @@ describe('Testsuite for FormHeader', () => {
     });
 
     expect(handleToggle).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /handletoggle/i,
     }));
     expect(mockHandleToggle).toHaveBeenCalled();

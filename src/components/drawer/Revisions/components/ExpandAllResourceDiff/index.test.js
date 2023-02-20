@@ -40,7 +40,7 @@ describe('ExpandAllResourceDiff tests', () => {
     const expandButton = screen.getByRole('button', {name: 'Expand all'});
 
     expect(expandButton).toBeEnabled();
-    userEvent.click(expandButton);
+    await userEvent.click(expandButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.compare.toggleExpandAll('_integrationId'));
   });
   test('Should able to test the initial render with resourceDiff expanded', async () => {
@@ -48,7 +48,7 @@ describe('ExpandAllResourceDiff tests', () => {
     const collapseButton = screen.getByRole('button', {name: 'Collapse all'});
 
     expect(collapseButton).toBeEnabled();
-    userEvent.click(collapseButton);
+    await userEvent.click(collapseButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.compare.toggleExpandAll('_integrationId'));
   });
 });

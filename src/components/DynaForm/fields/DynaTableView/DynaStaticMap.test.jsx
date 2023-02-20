@@ -17,7 +17,7 @@ function initDynaStaticMap(props = {}) {
 }
 
 describe('DynaStaticMap UI test cases', () => {
-  test('should test static mapping by modifying the data inside the rows and deleting', () => {
+  test('should test static mapping by modifying the data inside the rows and deleting', async () => {
     const genralProps = {
       keyName: 'export',
       keyLabel: 'Export field value',
@@ -54,13 +54,13 @@ describe('DynaStaticMap UI test cases', () => {
     const deleteButton = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(screen.queryByText('Idexport')).not.toBeInTheDocument();
     expect(screen.queryByText('Idimport')).not.toBeInTheDocument();
     const deleteButtontest = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleteButtontest).toBeInTheDocument();
-    userEvent.click(deleteButtontest);
+    await userEvent.click(deleteButtontest);
     expect(screen.queryByText('name')).not.toBeInTheDocument();
     expect(screen.queryByText('samplename')).not.toBeInTheDocument();
     expect(mockonFieldChange).toBeCalled();

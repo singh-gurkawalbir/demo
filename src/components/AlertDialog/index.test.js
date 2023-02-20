@@ -122,7 +122,7 @@ describe('alertDialog component', () => {
       const buttonRef = screen.getByRole('button', {name: ''});
 
       expect(buttonRef).toBeInTheDocument();
-      userEvent.click(buttonRef);
+      await userEvent.click(buttonRef);
       await expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.logout());
     });
   });
@@ -140,7 +140,7 @@ describe('alertDialog component', () => {
     test('should pass the render with sign me in button', async () => {
       await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
       await waitFor(() => expect(SignMeIn).toBeInTheDocument());
-      userEvent.click(SignMeIn);
+      await userEvent.click(SignMeIn);
       await expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.auth.logout());
       await expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.profile.request('Refreshing session'));
     });
@@ -148,7 +148,7 @@ describe('alertDialog component', () => {
     test('should pass the render with sign me out button', async () => {
       await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
       await waitFor(() => expect(signMeOut).toBeInTheDocument());
-      userEvent.click(signMeOut);
+      await userEvent.click(signMeOut);
       await expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.logout());
       await expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.user.profile.request('Refreshing session'));
     });
@@ -171,12 +171,12 @@ describe('alertDialog component', () => {
     test('should pass the render with different react version', async () => {
       await initActionButton({initVersion: 'release-v8.6.1.0.10-06-13-55', initialStore});
 
-      await waitFor(() => {
+      await waitFor(async () => {
         expect(screen.queryByText('Reload page')).toBeInTheDocument();
         const buttonRef = screen.getByRole('button', {name: 'Reload'});
 
         expect(buttonRef).toBeInTheDocument();
-        userEvent.click(buttonRef);
+        await userEvent.click(buttonRef);
       });
 
       await waitFor(() => {
@@ -201,12 +201,12 @@ describe('alertDialog component', () => {
     test('should pass the render with account trasfered', async () => {
       await initActionButton({userAcceptedAccountTransfer: true, authenticated: false, initialStore});
 
-      await waitFor(() => {
+      await waitFor(async () => {
         expect(screen.queryByText('Success!')).toBeInTheDocument();
         const buttonRef = screen.getByRole('button', {name: 'Reload'});
 
         expect(buttonRef).toBeInTheDocument();
-        userEvent.click(buttonRef);
+        await userEvent.click(buttonRef);
       });
       await waitFor(() => {
         expect(window.location.reload).toHaveBeenCalledTimes(1);
@@ -230,12 +230,12 @@ describe('alertDialog component', () => {
     test('should pass the render with account trasfered', async () => {
       await initActionButton({userLoggedInDifferentTab: true, initialStore});
 
-      await waitFor(() => {
+      await waitFor(async () => {
         expect(screen.queryByText('Please click the following button to resume working')).toBeInTheDocument();
         const buttonRef = screen.getByRole('button', {name: 'Sign In'});
 
         expect(buttonRef).toBeInTheDocument();
-        userEvent.click(buttonRef);
+        await userEvent.click(buttonRef);
       });
       await waitFor(() => {
         expect(window.location.replace).toHaveBeenCalledTimes(1);

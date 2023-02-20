@@ -96,7 +96,7 @@ describe('dynaHook_afe UI tests', () => {
     const buttons = screen.getAllByRole('button');
     const n = buttons.length;
 
-    userEvent.click(buttons[n - 2]);
+    await userEvent.click(buttons[n - 2]);
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('//add/scripts/new-scriptId'));
   });
   test('should make a dispatch call for resourceType "apis" and value prop contains both a function and scriptId', async () => {

@@ -67,7 +67,7 @@ describe('branchItem tests', () => {
     expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByText('R1B1')).toBeInTheDocument();
     expect(screen.getByText('Record flow conditions:')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo'));
+    await userEvent.click(screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo'));
     expect(screen.getByText('For branch')).toBeInTheDocument();
     expect(screen.getByText('Add condition')).toBeInTheDocument();
     expect(screen.getByText('Add conditions group')).toBeInTheDocument();
@@ -76,9 +76,9 @@ describe('branchItem tests', () => {
     expect(screen.getByRole('radio', {name: 'OR'})).toBeInTheDocument();
     expect(screen.getByText('No conditions defined. All records will flow through this branch.')).toBeInTheDocument();
     mockDispatchFn.mockClear();
-    userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getAllByRole('button')[0]);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.editor.patchRule('router-abcd', true, {rulePath: `branches[${0}].collapsed`}));
-    userEvent.click(screen.getByText('R1B1'));
+    await userEvent.click(screen.getByText('R1B1'));
     userEvent.keyboard('Branch 1 edited inline');
     userEvent.tab();
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', 'R1B1Branch 1 edited inline', {rulePath: `branches[${0}].name`}));

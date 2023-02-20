@@ -142,7 +142,7 @@ describe('mock input drawer test cases', () => {
     const doneButtonNode = screen.getByText(/Done/i);
 
     expect(doneButtonNode).toBeInTheDocument();
-    userEvent.click(doneButtonNode);
+    await userEvent.click(doneButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT,
       resourceId: '98765',
@@ -161,7 +161,7 @@ describe('mock input drawer test cases', () => {
     const onCloseButtonNode = screen.getByRole('button', {name: 'On Close'});
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/654321/flowBuilder/12345/edit/imports/98765');
   });
   test('should show error for invalid JSON input', async () => {
@@ -228,7 +228,7 @@ describe('mock input drawer test cases', () => {
 
     expect(fetchLatestInputButton).toBeInTheDocument();
 
-    userEvent.click(fetchLatestInputButton);
+    await userEvent.click(fetchLatestInputButton);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: actionTypes.MOCK_INPUT.REQUEST,
       resourceId,
@@ -255,7 +255,7 @@ describe('mock input drawer test cases', () => {
 
     expect(fetchLatestInputButton).toBeInTheDocument();
 
-    userEvent.click(fetchLatestInputButton);
+    await userEvent.click(fetchLatestInputButton);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: actionTypes.MOCK_INPUT.REQUEST,
       resourceId,

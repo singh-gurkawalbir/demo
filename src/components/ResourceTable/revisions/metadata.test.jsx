@@ -68,7 +68,7 @@ function initImports(data) {
 describe('test suite for revisions metadata', () => {
   const date = new Date().toUTCString();
 
-  test('should render the table accordingly for rowactions when status is inprogress and type is revert', () => {
+  test('should render the table accordingly for rowactions when status is inprogress and type is revert', async () => {
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -107,7 +107,7 @@ describe('test suite for revisions metadata', () => {
     ]);
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);
@@ -118,7 +118,7 @@ describe('test suite for revisions metadata', () => {
       'View details',
     ]);
   });
-  test('should render the table accordingly for rowactions when status is failed and type is revert', () => {
+  test('should render the table accordingly for rowactions when status is failed and type is revert', async () => {
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -131,7 +131,7 @@ describe('test suite for revisions metadata', () => {
 
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);
@@ -142,7 +142,7 @@ describe('test suite for revisions metadata', () => {
     ]);
   });
 
-  test('should render the table accordingly for rowactions when status is cancelled', () => {
+  test('should render the table accordingly for rowactions when status is cancelled', async () => {
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -154,7 +154,7 @@ describe('test suite for revisions metadata', () => {
 
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);
@@ -164,7 +164,7 @@ describe('test suite for revisions metadata', () => {
     ]);
   });
 
-  test('should render the table accordingly for rowactions when status is completed and type is snapshot', () => {
+  test('should render the table accordingly for rowactions when status is completed and type is snapshot', async () => {
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -177,7 +177,7 @@ describe('test suite for revisions metadata', () => {
 
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);
@@ -187,7 +187,7 @@ describe('test suite for revisions metadata', () => {
       'View details',
     ]);
   });
-  test('should render the table accordingly for rowactions when status is completed', () => {
+  test('should render the table accordingly for rowactions when status is completed', async () => {
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -199,7 +199,7 @@ describe('test suite for revisions metadata', () => {
 
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);
@@ -212,7 +212,7 @@ describe('test suite for revisions metadata', () => {
     ]);
   });
 
-  test('should render the table accordingly for rowactions when status is completed and type is not snapshot', () => {
+  test('should render the table accordingly for rowactions when status is completed and type is not snapshot', async () => {
     initialStore.getState().user = {
       preferences: {
         defaultAShareId: '5f7011605b2e3244837309f9',
@@ -263,7 +263,7 @@ describe('test suite for revisions metadata', () => {
 
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);
@@ -272,7 +272,7 @@ describe('test suite for revisions metadata', () => {
       'View details',
     ]);
   });
-  test('should render the table accordingly for rowactions when status is completed and type is snapshot duplicate', () => {
+  test('should render the table accordingly for rowactions when status is completed and type is snapshot duplicate', async () => {
     initialStore.getState().user = {
       preferences: {
         defaultAShareId: '5f7011605b2e3244837309f9',
@@ -323,7 +323,7 @@ describe('test suite for revisions metadata', () => {
 
     const actionButton = screen.getByRole('button', { name: /more/i });
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen
       .getAllByRole('menuitem')
       .map(ele => ele.textContent);

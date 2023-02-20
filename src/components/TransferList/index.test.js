@@ -76,28 +76,28 @@ describe('transferList test cases', () => {
     const value3Input = screen.getByRole('checkbox', {name: 'value_3'});
     const value2Input = screen.queryByText('value_2');
 
-    userEvent.click(value3Input);
-    userEvent.click(value2Input); // checking
-    userEvent.click(value2Input); // unchecking
-    userEvent.click(rightButton);
+    await userEvent.click(value3Input);
+    await userEvent.click(value2Input); // checking
+    await userEvent.click(value2Input); // unchecking
+    await userEvent.click(rightButton);
     expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2']);
     expect(setRight).toHaveBeenCalledWith(['value_3', 'value_4', 'value_5']);
 
     // all right
-    userEvent.click(allRightButton);
+    await userEvent.click(allRightButton);
     expect(setLeft).toHaveBeenCalledWith([]);
     expect(setRight).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4', 'value_5']);
 
     // left
     const value4Input = screen.queryByText('value_4');
 
-    userEvent.click(value4Input);
-    userEvent.click(leftButton);
+    await userEvent.click(value4Input);
+    await userEvent.click(leftButton);
     expect(setRight).toHaveBeenCalledWith(['value_5']);
     expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4']);
 
     // all left
-    userEvent.click(allLeftButton);
+    await userEvent.click(allLeftButton);
     expect(setRight).toHaveBeenCalledWith([]);
     expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4', 'value_5']);
   });

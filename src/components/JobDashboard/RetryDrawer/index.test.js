@@ -122,7 +122,7 @@ describe('testsuite for Retry Drawer', () => {
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'JOB_ERROR_UPDATE_RETRY_DATA',
       retryData: { data: { id: '123' } },
@@ -150,7 +150,7 @@ describe('testsuite for Retry Drawer', () => {
     const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
 
     expect(saveAndCloseButtonNode).toBeInTheDocument();
-    userEvent.click(saveAndCloseButtonNode);
+    await userEvent.click(saveAndCloseButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'JOB_ERROR_UPDATE_RETRY_DATA',
       retryData: { data: { id: '123' } },
@@ -174,7 +174,7 @@ describe('testsuite for Retry Drawer', () => {
     const closeButtonNode = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockHistoryGoBack).toHaveBeenCalled();
     mockHistoryGoBack.mockClear();
   });
@@ -194,7 +194,7 @@ describe('testsuite for Retry Drawer', () => {
     const retryButtonNode = screen.getByRole('button', {name: 'Retry'});
 
     expect(retryButtonNode).toBeInTheDocument();
-    userEvent.click(retryButtonNode);
+    await userEvent.click(retryButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'JOB_ERROR_RETRY_SELECTED',
       jobId: '0987',

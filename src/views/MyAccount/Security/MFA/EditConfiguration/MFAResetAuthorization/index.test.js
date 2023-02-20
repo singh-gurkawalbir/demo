@@ -62,12 +62,12 @@ describe('Testsuite for MFA Reset Authorization', () => {
     const cancelButtonNode = screen.getByRole('button', { name: 'Cancel' });
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(mockCloseButtonFunction).toHaveBeenCalledTimes(1);
     const resetMFAButtonNode = screen.getByRole('button', {name: 'Reset MFA'});
 
     expect(resetMFAButtonNode).toBeInTheDocument();
-    userEvent.click(resetMFAButtonNode);
+    await userEvent.click(resetMFAButtonNode);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_RESET', aShareId: undefined, password: 'testpassword' }));
   });
   test('should test the MFA Reset authorization by entering password and by clicking on Reset MFA button duplicate', async () => {

@@ -35,7 +35,7 @@ describe('DrawerContext tests', () => {
     const button = screen.getByRole('button', {name: 'Click Here'});
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mock).toBeCalled();
   });
 });

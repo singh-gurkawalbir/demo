@@ -102,7 +102,7 @@ describe('aFE DataPanel UI tests', () => {
 
     expect(DataPanel).toBeInTheDocument();
 
-    userEvent.click(DataPanel);
+    await userEvent.click(DataPanel);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchData('filecsv', 'new value')));
   });
 });

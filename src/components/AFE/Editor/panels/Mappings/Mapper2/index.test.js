@@ -235,10 +235,10 @@ describe('ewrv', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should scroll left when whell is scrolled', () => {
+  test('should scroll left when whell is scrolled', async () => {
     renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
 
-    userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
+    await userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
 
     fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
     fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });

@@ -93,9 +93,9 @@ describe('connectionLogs_afe test cases', () => {
     expect(refreshButton).toBeInTheDocument();
     expect(clearButton).toBeInTheDocument();
 
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.refresh('connection_id'));
-    userEvent.click(clearButton);
+    await userEvent.click(clearButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.delete('connection_id'));
   });
 

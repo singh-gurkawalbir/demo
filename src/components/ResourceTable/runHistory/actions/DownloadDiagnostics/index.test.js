@@ -26,18 +26,18 @@ jest.mock('../../../../JobDashboard/JobFilesDownloadDialog', () => ({
   ),
 }));
 
-function initRunHistoryTable(data, initialStore = null) {
+async function initRunHistoryTable(data, initialStore = null) {
   const ui = (
     <CeligoTable {...metadata} data={[data]} />
   );
 
   renderWithProviders(ui, {initialStore});
-  userEvent.click(screen.queryByRole('button', {name: /more/i}));
+  await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 }
 describe("runHistory's Downlaod diagnostics Action UI test case", () => {
-  test('should click on Download diagnostics button', () => {
+  test('should click on Download diagnostics button', async () => {
     initRunHistoryTable({ _id: '_id'});
-    userEvent.click(screen.getByText('Download diagnostics'));
+    await userEvent.click(screen.getByText('Download diagnostics'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '_id', fileType: 'diagnostics' }));
   });
 });

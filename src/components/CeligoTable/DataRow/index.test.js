@@ -71,7 +71,7 @@ describe('dataRow component Test cases', () => {
     expect(onRowOut).toHaveBeenCalledTimes(1);
     expect(onRowOver).toHaveBeenCalledTimes(1);
 
-    userEvent.click(rowItem1);
+    await userEvent.click(rowItem1);
     expect(onRowClick).toHaveBeenCalledTimes(1);
   });
 
@@ -86,7 +86,7 @@ describe('dataRow component Test cases', () => {
     const rowItem1 = screen.getByRole('columnheader', {name: 'Item1'});
 
     expect(rowItem1).toBeInTheDocument();
-    userEvent.click(rowItem1);
+    await userEvent.click(rowItem1);
     expect(rowItem1).toBeInTheDocument();
   });
 

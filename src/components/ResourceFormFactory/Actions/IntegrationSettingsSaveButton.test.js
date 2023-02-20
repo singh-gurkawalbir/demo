@@ -56,7 +56,7 @@ describe('test suite for IntegrationSettingsSaveButton', () => {
 
     expect(saveButton).toBeEnabled();
     expect(postProcessValuesFn).not.toHaveBeenCalled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(postProcessValuesFn).toHaveBeenCalledTimes(1);
   });
 });

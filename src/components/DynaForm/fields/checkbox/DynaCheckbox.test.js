@@ -28,7 +28,7 @@ describe('dynaCheckbox UI tests', () => {
 
     expect(checkBox).toBeDisabled();
   });
-  test('should call the onChange function passed in props when checkbox is checked', () => {
+  test('should call the onChange function passed in props when checkbox is checked', async () => {
     const mockOnChange = jest.fn();
     const props = {onFieldChange: mockOnChange};
 
@@ -36,7 +36,7 @@ describe('dynaCheckbox UI tests', () => {
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
     const checkBox = screen.getByRole('checkbox');
 
-    userEvent.click(checkBox);
+    await userEvent.click(checkBox);
     expect(mockOnChange).toHaveBeenCalled();
   });
 });

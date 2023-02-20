@@ -38,7 +38,7 @@ describe('dynaMFASecretKey UI tests', () => {
     const viewSecretKeyButton = screen.getByRole('button');
 
     expect(viewSecretKeyButton).toBeInTheDocument();
-    userEvent.click(viewSecretKeyButton);
+    await userEvent.click(viewSecretKeyButton);
     expect(screen.getByText('View secret key')).toBeInTheDocument();
     expect(screen.getByText('Enter your account password to view your secret key.')).toBeInTheDocument();
     expect(screen.getByText('View secret key')).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe('dynaMFASecretKey UI tests', () => {
     expect(passwordField).toBeInTheDocument();
     expect(screen.getByText('View key')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('closeModalDialog'));
+    await userEvent.click(screen.getByTestId('closeModalDialog'));
     expect(screen.queryByText('View key')).toBeNull();       // indicates the closing of modal when clicked on close icon //
   });
   test('should display the secret code when clicked on "View secret key" button and showsecretcode is true in the state', async () => {
@@ -58,7 +58,7 @@ describe('dynaMFASecretKey UI tests', () => {
 
     expect(viewSecretKeyButton).toBeInTheDocument();
 
-    userEvent.click(viewSecretKeyButton);
+    await userEvent.click(viewSecretKeyButton);
     const secretcode = screen.getByRole('textbox');
 
     await waitFor(() => expect(secretcode).toHaveValue('5186Nb'));
@@ -70,12 +70,12 @@ describe('dynaMFASecretKey UI tests', () => {
 
     expect(viewSecretKeyButton).toBeInTheDocument();
 
-    userEvent.click(viewSecretKeyButton);
+    await userEvent.click(viewSecretKeyButton);
     const secretcode = screen.getByRole('textbox');
 
     await waitFor(() => expect(secretcode).toHaveValue('5186Nb'));
 
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const hiddencode = screen.getByRole('textbox');
 
     await waitFor(() => expect(hiddencode).toHaveValue('xxxxxxxxx'));

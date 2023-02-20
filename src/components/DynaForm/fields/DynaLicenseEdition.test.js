@@ -32,7 +32,7 @@ describe('test suite for DynaLicenseEdition field', () => {
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
   });
 
-  test('should be required when creating new license', () => {
+  test('should be required when creating new license', async () => {
     const props = {
       id: 'edition',
       label: 'Edition',
@@ -64,7 +64,7 @@ describe('test suite for DynaLicenseEdition field', () => {
     const {utils: {unmount}} = renderWithProviders(<DynaLicenseEdition {...props} />, {initialStore});
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState(props.formKey)(props.id, {required: true}));
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     [
       'Please select',
       'id_starter',

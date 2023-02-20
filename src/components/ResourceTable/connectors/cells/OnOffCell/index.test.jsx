@@ -38,7 +38,7 @@ describe('uI test cases for OnOffCell', () => {
 
     expect(utils.container.textContent).toBe('');
   });
-  test('should display unpublish button', () => {
+  test('should display unpublish button', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell
@@ -52,17 +52,17 @@ describe('uI test cases for OnOffCell', () => {
     const checkBoxButton = screen.getByRole('checkbox');
 
     expect(checkBoxButton).toBeInTheDocument();
-    userEvent.click(checkBoxButton);
+    await userEvent.click(checkBoxButton);
     const unPublishButton = screen.getByText('Unpublish');
 
     expect(unPublishButton).toBeInTheDocument();
-    userEvent.click(unPublishButton);
+    await userEvent.click(unPublishButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.connectors.publish.request('2345678', true)
     );
   });
 
-  test('should display publish button', () => {
+  test('should display publish button', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell
@@ -76,16 +76,16 @@ describe('uI test cases for OnOffCell', () => {
     const checkBoxButton = screen.getByRole('checkbox');
 
     expect(checkBoxButton).toBeInTheDocument();
-    userEvent.click(checkBoxButton);
+    await userEvent.click(checkBoxButton);
     const publishButton = screen.getByText('Publish');
 
     expect(publishButton).toBeInTheDocument();
-    userEvent.click(publishButton);
+    await userEvent.click(publishButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.connectors.publish.request('2345678', false)
     );
   });
-  test('should display the cancel button', () => {
+  test('should display the cancel button', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell
@@ -98,11 +98,11 @@ describe('uI test cases for OnOffCell', () => {
     const checkBoxButton = screen.getByRole('checkbox');
 
     expect(checkBoxButton).toBeInTheDocument();
-    userEvent.click(checkBoxButton);
+    await userEvent.click(checkBoxButton);
     const cancelButton = screen.getByText('Cancel');
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
   });
   test('should display toggle status as loading', () => {
     renderWithProviders(

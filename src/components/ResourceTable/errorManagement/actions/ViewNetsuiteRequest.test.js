@@ -30,7 +30,7 @@ initialStore.getState().data.resources.exports = [{
   adaptorType: 'NetSuiteExport',
 }];
 
-function renderFuntion(actionProps, data, errorType) {
+async function renderFuntion(actionProps, data, errorType) {
   renderWithProviders(
     <MemoryRouter initialEntries={[`/${errorType}`]}>
       <Route path="/:errorType">
@@ -43,25 +43,25 @@ function renderFuntion(actionProps, data, errorType) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error management View netsuite request action tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should click on View Request when error type is resolved', () => {
+  test('should click on View Request when error type is resolved', async () => {
     renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
     const request = screen.getByText('View request');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/request');
   });
-  test('should click on View Request when error type is open', () => {
+  test('should click on View Request when error type is open', async () => {
     renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
     const request = screen.getByText('View request');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.patchFilter('openErrors', {
         activeErrorId: 'someerrorId',

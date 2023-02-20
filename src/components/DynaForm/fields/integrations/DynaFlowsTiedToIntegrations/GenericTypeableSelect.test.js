@@ -136,24 +136,24 @@ describe('genericTypeableSelect UI tests', () => {
 
     expect(dropdown).toBeInTheDocument();
   });
-  test('should open the dropdown with options when dropdown field is clicked', () => {
+  test('should open the dropdown with options when dropdown field is clicked', async () => {
     initGenericTypeableSelect(props);
     const dropdown = screen.getByRole('textbox');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('integration2')).toBeInTheDocument();
     expect(screen.getByText('integration3')).toBeInTheDocument();
     expect(screen.getByText('integration4')).toBeInTheDocument();
   });
-  test('should call the onchange function passed in props when selected option is changed', () => {
+  test('should call the onchange function passed in props when selected option is changed', async () => {
     initGenericTypeableSelect(props);
     const dropdown = screen.getByRole('textbox');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('integration2')).toBeInTheDocument();
-    userEvent.click(screen.getByText('integration2'));
+    await userEvent.click(screen.getByText('integration2'));
     expect(mockonFieldChange).toHaveBeenCalled();
   });
 });

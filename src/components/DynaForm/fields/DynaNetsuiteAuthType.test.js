@@ -18,7 +18,7 @@ jest.mock('../../Form/FormContext', () => ({
 }));
 
 describe('test suite for DynaNetsuiteAuthType field', () => {
-  test('should not show basic option for version 2020.2', () => {
+  test('should not show basic option for version 2020.2', async () => {
     mockWsdlVersion = '2020.2';
     const props = {
       resourceId: 'new-_20KI3tVF3',
@@ -35,7 +35,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     const label = document.querySelector('label');
 
     expect(label).toHaveTextContent(`${props.label} *`);
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const options = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(options).toEqual([
@@ -45,7 +45,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     ]);
   });
 
-  test('should show basic option for versions below 2020.2', () => {
+  test('should show basic option for versions below 2020.2', async () => {
     mockWsdlVersion = '2018.1';
     const props = {
       resourceId: 'new-_20KI3tVF3',
@@ -59,7 +59,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     };
 
     renderWithProviders(<DynaNetsuiteAuthType {...props} />);
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const options = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(options).toEqual([
@@ -90,7 +90,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     expect(onFieldChange).toHaveBeenCalledWith(props.id, '');
   });
 
-  test('should refresh the available authentication types on changing wsdl version', () => {
+  test('should refresh the available authentication types on changing wsdl version', async () => {
     mockWsdlVersion = '2016.2';
     const onFieldChange = jest.fn();
     const props = {
@@ -113,7 +113,7 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
 
     expect(selectedAuthType).toHaveTextContent('Basic (To be deprecated - Do not use)');
     expect(document.querySelector('input')).toHaveValue('basic');
-    userEvent.click(selectedAuthType);
+    await userEvent.click(selectedAuthType);
     const options = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(options).toEqual([
@@ -122,14 +122,14 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
       'Token Based Auth (Automatic)...',
       'Token Based Auth (Manual)...',
     ]);
-    userEvent.click(screen.getByRole('menuitem', {name: 'Token Based Auth (Manual)'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'Token Based Auth (Manual)'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'token');
 
     mockWsdlVersion = '2020.2';
     renderWithProviders(<DynaNetsuiteAuthType {...props} />, {renderFun});
     expect(onFieldChange).toHaveBeenCalledWith(props.id, '');
 
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const newOptions = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(newOptions).toEqual([

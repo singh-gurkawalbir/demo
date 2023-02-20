@@ -197,19 +197,19 @@ describe('addOrSelect test cases', () => {
     expect(screen.queryByText(/General/i)).toBeInTheDocument();
     expect(submitButton).toBeInTheDocument();
 
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
     expect(onSubmitComplete).toHaveBeenCalledTimes(1);
 
     // existing connection
-    userEvent.click(existingConn);
+    await userEvent.click(existingConn);
     const doneButton = screen.getByRole('button', {name: 'Mock handleSave'});
     const cancelButton = screen.getByRole('button', {name: 'Mock handleCancel'});
 
     expect(doneButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(doneButton);
-    userEvent.click(cancelButton);
+    await userEvent.click(doneButton);
+    await userEvent.click(cancelButton);
     expect(onClose).toHaveBeenCalled();
 
     const dispatch = reactRedux.useDispatch();
@@ -235,7 +235,7 @@ describe('addOrSelect test cases', () => {
       renderFun: utils.rerender,
     });
 
-    userEvent.click(doneButton);
+    await userEvent.click(doneButton);
     expect(onSubmitComplete).toHaveBeenCalledTimes(2);
   });
 });

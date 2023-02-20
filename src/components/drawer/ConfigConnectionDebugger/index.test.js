@@ -100,7 +100,7 @@ describe('ConfigConnectionDebugger tests', () => {
     expect(closeIcon).toBeInTheDocument();
     expect(closeButton).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Save'})).toBeInTheDocument();
-    userEvent.click(helpButton);
+    await userEvent.click(helpButton);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     expect(screen.queryByText('_helpTitle')).not.toBeInTheDocument();
@@ -111,9 +111,9 @@ describe('ConfigConnectionDebugger tests', () => {
     expect(screen.getByRole('radio', {name: /Next 45 mins/i})).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: /Next 60 mins/i})).toBeInTheDocument();
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
-    userEvent.click(closeIcon);
+    await userEvent.click(closeIcon);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 
@@ -122,8 +122,8 @@ describe('ConfigConnectionDebugger tests', () => {
     const save = screen.getByRole('button', {name: 'Save'});
 
     expect(save).not.toBeEnabled();
-    userEvent.click(screen.getByRole('radio', {name: 'Next 15 mins'}));
-    userEvent.click(save);
+    await userEvent.click(screen.getByRole('radio', {name: 'Next 15 mins'}));
+    await userEvent.click(save);
     await mockPatchRequestOnce('api/connections/_connectionId', []);
     await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 14 minutes./i)).toBeInTheDocument());
   });
@@ -131,11 +131,11 @@ describe('ConfigConnectionDebugger tests', () => {
   test('Should able to test the ConfigConnectionDebugger drawer When debugger is Turned Off', async () => {
     await initConfigConnectionDebugger({debugTime: 45});
     expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('radio', {name: /Off/i}));
+    await userEvent.click(screen.getByRole('radio', {name: /Off/i}));
     const saveAndClose = screen.getByRole('button', {name: 'Save & close'});
 
     expect(saveAndClose).toBeEnabled();
-    userEvent.click(saveAndClose);
+    await userEvent.click(saveAndClose);
     await mockPatchRequestOnce('api/connections/_connectionId', []);
     await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).not.toBeInTheDocument());
   });

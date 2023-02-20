@@ -123,7 +123,7 @@ describe('PageBar2 UI tests', () => {
     await prefAndIntegInStore(store);
     const name = screen.getByText('AFE 2.0 refactoring for DB\'s');
 
-    userEvent.click(name);
+    await userEvent.click(name);
     const input = screen.getByRole('textbox');
 
     userEvent.type(input, 'changed');
@@ -152,7 +152,7 @@ describe('PageBar2 UI tests', () => {
     await prefAndIntegInStore(store);
     const deletebutton = screen.getByRole('button', {name: 'Delete integration'});
 
-    userEvent.click(deletebutton);
+    await userEvent.click(deletebutton);
     await waitFor(() => expect(screen.getByText('Confirm delete')).toBeInTheDocument());
   });
   test('should test add child option', async () => {
@@ -184,7 +184,7 @@ describe('PageBar2 UI tests', () => {
     await prefAndIntegInStore(store);
     const add = screen.getByText('Add new child');
 
-    userEvent.click(add);
+    await userEvent.click(add);
     expect(mockdispatch).toHaveBeenCalledWith({id: '5ff579d745ceef7dcd797c15', type: 'NTEGRATION_APPS_INSTALLER_INIT_CHILD'});
   });
   test('should test change child where mode is none', async () => {
@@ -192,11 +192,11 @@ describe('PageBar2 UI tests', () => {
 
     const select = screen.getByText('AFE 2.0 2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const options = screen.getAllByRole('option');
 
-    userEvent.click(options[1]);
+    await userEvent.click(options[1]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/5ff579d745ceef7dcd797c15/flows');
   });
@@ -205,11 +205,11 @@ describe('PageBar2 UI tests', () => {
 
     const select = screen.getByText('AFE 2.0 2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const options = screen.getAllByRole('option');
 
-    userEvent.click(options[3]);
+    await userEvent.click(options[3]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/setup');
   });
@@ -218,11 +218,11 @@ describe('PageBar2 UI tests', () => {
 
     const select = screen.getByText('AFE 2.0 2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const options = screen.getAllByRole('option');
 
-    userEvent.click(options[3]);
+    await userEvent.click(options[3]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/uninstall');
   });

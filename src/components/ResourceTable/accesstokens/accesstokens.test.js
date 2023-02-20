@@ -117,7 +117,7 @@ describe('access Tokens test suite', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -194,7 +194,7 @@ describe('access Tokens test suite', () => {
     expect(apiToken).toHaveTextContent('Purged');
   });
 
-  test('should be able to show the API token', () => {
+  test('should be able to show the API token', async () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -217,7 +217,7 @@ describe('access Tokens test suite', () => {
     const {utils, store} = initAccessTokens(data, globalStore);
     const showToken = screen.getByRole('button', {name: 'Show token'});
 
-    userEvent.click(showToken);
+    await userEvent.click(showToken);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.accessToken.displayToken('token123'));
     initAccessTokens(data, store, utils.rerender);
     const apiToken = screen.getAllByRole('cell').filter(ele => ele.getAttribute('data-private'))[0];
@@ -225,7 +225,7 @@ describe('access Tokens test suite', () => {
     expect(apiToken).toHaveTextContent('TOKEN_VALUE');
   });
 
-  test('should be able to reactivate a revoked token', () => {
+  test('should be able to reactivate a revoked token', async () => {
     const lastModified = moment().format('DD/MM/YYYY');
     const data = [{
       _id: 'token123',
@@ -259,7 +259,7 @@ describe('access Tokens test suite', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     //  Should not show delete option if connector id is not present
@@ -271,7 +271,7 @@ describe('access Tokens test suite', () => {
     ]);
     const reactivateButton = screen.getByRole('menuitem', {name: 'Reactivate token'});
 
-    userEvent.click(reactivateButton);
+    await userEvent.click(reactivateButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchAndCommitStaged(
       'accesstokens',
       'token123',
@@ -283,7 +283,7 @@ describe('access Tokens test suite', () => {
     ));
   });
 
-  test('should be able to regenerate a token', () => {
+  test('should be able to regenerate a token', async () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -306,16 +306,16 @@ describe('access Tokens test suite', () => {
     initAccessTokens(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const regenerateButton = screen.getByRole('menuitem', {name: 'Generate new token'});
 
-    userEvent.click(regenerateButton);
+    await userEvent.click(regenerateButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.accessToken.generateToken(
       'token123'
     ));
   });
 
-  test('should be able to revoke an active token', () => {
+  test('should be able to revoke an active token', async () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -338,10 +338,10 @@ describe('access Tokens test suite', () => {
     initAccessTokens(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const revokeButton = screen.getByRole('menuitem', {name: 'Revoke API token'});
 
-    userEvent.click(revokeButton);
+    await userEvent.click(revokeButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchAndCommitStaged(
       'accesstokens',
       'token123',

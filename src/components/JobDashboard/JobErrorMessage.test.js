@@ -25,7 +25,7 @@ describe('testsuite for Job Error Message', () => {
   afterEach(() => {
     windowSpy.mockRestore();
   });
-  test('should be able to click on export record link', () => {
+  test('should be able to click on export record link', async () => {
     render(
       <JobErrorMessage
         message="test message"
@@ -39,11 +39,11 @@ describe('testsuite for Job Error Message', () => {
     });
 
     expect(exportButton).toBeInTheDocument();
-    userEvent.click(exportButton);
+    await userEvent.click(exportButton);
     expect(document.querySelector('div > div:nth-child(2) > button > span > span').className).toEqual(expect.stringContaining('MuiTouchRipple-'));
     expect(screen.getByText(/Import Id: importURI/i)).toBeInTheDocument();
   });
-  test('should be able to click on import record link', () => {
+  test('should be able to click on import record link', async () => {
     render(
       <JobErrorMessage
         message="test message"
@@ -58,7 +58,7 @@ describe('testsuite for Job Error Message', () => {
     });
 
     expect(importButton).toBeInTheDocument();
-    userEvent.click(importButton);
+    await userEvent.click(importButton);
     expect(document.querySelector('div > div:nth-child(2) > button > span > span').className).toEqual(expect.stringContaining('MuiTouchRipple-'));
   });
 });

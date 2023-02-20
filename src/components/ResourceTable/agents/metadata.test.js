@@ -76,9 +76,9 @@ describe('agents metadata UI tests', () => {
 
     expectFunction(headerI, cellI);
   });
-  test('should test Actions fields', () => {
+  test('should test Actions fields', async () => {
     expect(screen.getByText('Actions')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit agent')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();
     expect(screen.getByText('Generate new token')).toBeInTheDocument();

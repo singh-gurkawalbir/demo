@@ -29,7 +29,7 @@ describe('pill button component test', () => {
   //     </PillButton>);
   //   const Message = screen.getByText('licenseActionDetailslabel');
 
-  //   userEvent.click(Message);
+  //   await userEvent.click(Message);
   // });
 
   test('passing number', () => {

@@ -86,7 +86,7 @@ describe('on/Off cell UI test case', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should click to disable the on/off checkbox', () => {
+  test('should click to disable the on/off checkbox', async () => {
     const props = {
       actionProps: {flowAttributes: {}},
       flowId: 'someflowId',
@@ -95,8 +95,8 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Disable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Disable'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.flow.isOnOffActionInprogress(true, 'someflowId')
     );
@@ -110,7 +110,7 @@ describe('on/Off cell UI test case', () => {
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should click to enable the on/off checkbox', () => {
+  test('should click to enable the on/off checkbox', async () => {
     const props = {
       actionProps: {flowAttributes: {}},
       flowId: 'someflowId',
@@ -120,8 +120,8 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Enable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Enable'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.flow.isOnOffActionInprogress(true, 'someflowId')
     );
@@ -135,7 +135,7 @@ describe('on/Off cell UI test case', () => {
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should show snackbar message when license not valid to enable', () => {
+  test('should show snackbar message when license not valid to enable', async () => {
     const props = {
       actionProps: {flowAttributes: {}},
       flowId: 'someflowId',
@@ -145,8 +145,8 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props, initialStore);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Enable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).toHaveBeenCalledWith(
       {
         variant: 'error',
@@ -154,7 +154,7 @@ describe('on/Off cell UI test case', () => {
       }
     );
   });
-  test('should not call enqueue snack bar when licnese is free', () => {
+  test('should not call enqueue snack bar when licnese is free', async () => {
     const props = {
       actionProps: {flowAttributes: {}},
       flowId: 'someflowId',
@@ -164,11 +164,11 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Enable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
-  test('should not call enqueue snack bar when flow is DataLoader', () => {
+  test('should not call enqueue snack bar when flow is DataLoader', async () => {
     const props = {
       actionProps: {flowAttributes: {someflowId: {isDataLoader: true}}},
       flowId: 'someflowId',
@@ -178,11 +178,11 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Enable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
-  test('should not call enqueue snack bar when flow belong to 2.0 framework', () => {
+  test('should not call enqueue snack bar when flow belong to 2.0 framework', async () => {
     const props = {
       actionProps: {integration: {installSteps: [1]}, flowAttributes: {}},
       flowId: 'someflowId',
@@ -192,11 +192,11 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Enable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
-  test('should click on the disable for integrator app', () => {
+  test('should click on the disable for integrator app', async () => {
     const props = {
       actionProps: {flowAttributes: {}},
       isIntegrationApp: true,
@@ -206,8 +206,8 @@ describe('on/Off cell UI test case', () => {
     };
 
     initonoffCell(props);
-    userEvent.click(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByText('Disable'));
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByText('Disable'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.flow.isOnOffActionInprogress(true, 'someflowId')
     );

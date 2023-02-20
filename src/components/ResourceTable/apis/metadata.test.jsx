@@ -33,7 +33,7 @@ function initImports(data = []) {
   renderWithProviders(ui);
 }
 describe('test suite for apis', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const lastModified = new Date().toUTCString();
     const data = [{
       _id: 'api123',
@@ -69,7 +69,7 @@ describe('test suite for apis', () => {
     expect(screen.getByRole('link', {name: 'The api'})).toBeInTheDocument();
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

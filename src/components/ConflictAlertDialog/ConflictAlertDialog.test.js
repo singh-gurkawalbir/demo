@@ -42,14 +42,14 @@ describe('conflictAlertDialog testing', () => {
     expect(screen.getByText('12')).toBeInTheDocument();
   });
 
-  test('should click on refresh button', () => {
+  test('should click on refresh button', async () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
     store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}]));
 
     const refresh = screen.getByText('Refresh');
 
-    userEvent.click(refresh);
+    await userEvent.click(refresh);
     expect(window.location.reload).toHaveBeenCalled();
   });
 });

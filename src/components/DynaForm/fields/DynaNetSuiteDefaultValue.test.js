@@ -86,7 +86,7 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     expect(screen.getByText('someName')).toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should show call the onField change when field is changed', () => {
+  test('should show call the onField change when field is changed', async () => {
     initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
       data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
         {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
@@ -97,10 +97,10 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
 
     initDynaNetSuiteDefaultValue({...genralProps, ...props}, initialStore);
     fireEvent.focusIn(screen.getByRole('textbox'));
-    userEvent.click(screen.getByText('someName12'));
+    await userEvent.click(screen.getByText('someName12'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', 'somevalue12');
   });
-  test('should click on refresh button', () => {
+  test('should click on refresh button', async () => {
     initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
       data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
         {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
@@ -110,7 +110,7 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     const props = { onFieldChange: mockOnFieldChange, label: 'PropsLabel'};
 
     initDynaNetSuiteDefaultValue({...genralProps, ...props}, initialStore);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.metadata.refresh(
         'someconnectionId',

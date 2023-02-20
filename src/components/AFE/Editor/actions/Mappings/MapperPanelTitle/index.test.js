@@ -72,7 +72,7 @@ describe('mapperPanelTitle UI tests', () => {
     const collapseRowsButton = document.querySelector('[title="Collapse all rows"]');
 
     expect(collapseRowsButton).toBeInTheDocument();
-    userEvent.click(collapseRowsButton);
+    await userEvent.click(collapseRowsButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.toggleRows(false)));
   });
   test('should make a dispatch call when clicked on the expandRows icon', async () => {
@@ -80,7 +80,7 @@ describe('mapperPanelTitle UI tests', () => {
     const expandRowsButton = document.querySelector('[title="Expand all rows"]');
 
     expect(expandRowsButton).toBeInTheDocument();
-    userEvent.click(expandRowsButton);
+    await userEvent.click(expandRowsButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.toggleRows(true)));
   });
   test('should make a dispatch call when clicked on the refresf filters icon', async () => {
@@ -88,7 +88,7 @@ describe('mapperPanelTitle UI tests', () => {
     const RefreshFiltersButton = screen.getByRole('button', {name: 'Refresh fields'});
 
     expect(RefreshFiltersButton).toBeInTheDocument();
-    userEvent.click(RefreshFiltersButton);
+    await userEvent.click(RefreshFiltersButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.flowData.requestSampleData('5ea16c600e2fab71928a6152', '5ea16cd30e2fab71928a6166', 'imports', 'importMappingExtract', true)));
   });
   test('should make a dispatch call when clicked on the search icon', async () => {
@@ -96,7 +96,7 @@ describe('mapperPanelTitle UI tests', () => {
     const searchIconButton = screen.getByText('SearchIcon');
 
     expect(searchIconButton).toBeInTheDocument();
-    userEvent.click(searchIconButton);
+    await userEvent.click(searchIconButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.searchTree('')));
   });
 });

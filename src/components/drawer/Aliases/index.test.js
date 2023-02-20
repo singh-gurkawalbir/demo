@@ -89,18 +89,18 @@ describe('AliasDrawerWrapper tests', () => {
     expect(screen.getByRole('heading', {name: 'Manage Aliases'})).toBeInTheDocument();
     const infoText = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo');
 
-    userEvent.click(infoText);
+    await userEvent.click(infoText);
     expect(screen.getByRole('link', {name: 'Learn more about aliases'})).toBeInTheDocument();
     const createAlias = screen.getByRole('button', {name: 'Create alias'});
 
     expect(createAlias).toBeInTheDocument();
-    userEvent.click(createAlias);
+    await userEvent.click(createAlias);
     expect(mockHistoryPush).toHaveBeenCalledWith('/parentURL/aliases/manage/add');
     expect(screen.getByRole('button', {name: 'Aliases'})).toBeInTheDocument();
     expect(screen.getByText('You don’t have any custom aliases.')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Inherited aliases'})).toBeInTheDocument();
     expect(screen.getByText('You don’t have any inherited aliases.')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'closeLogs'));
+    await userEvent.click(screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'closeLogs'));
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 
@@ -109,7 +109,7 @@ describe('AliasDrawerWrapper tests', () => {
     expect(screen.getByRole('heading', {name: 'View Aliases'})).toBeInTheDocument();
     const infoText = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo');
 
-    userEvent.click(infoText);
+    await userEvent.click(infoText);
     expect(screen.getByText('View the list of aliases defined for your resources (flows, connections, export, and imports).')).toBeInTheDocument();
     expect(screen.getByText('You don’t have any aliases.')).toBeInTheDocument();
   });

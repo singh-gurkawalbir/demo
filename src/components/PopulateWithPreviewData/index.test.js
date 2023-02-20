@@ -180,7 +180,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeDisabled();
   });
-  test('should disable populate with preview data button after click for exports', () => {
+  test('should disable populate with preview data button after click for exports', async () => {
     initPopulateWithPreviewData({
       resourceId: 'export1',
       resourceType: 'exports',
@@ -189,10 +189,10 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeInTheDocument();
     expect(buttonRef).toBeEnabled();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
     expect(buttonRef).toBeDisabled();
   });
-  test('should not disable populate with preview data button after click for imports', () => {
+  test('should not disable populate with preview data button after click for imports', async () => {
     initPopulateWithPreviewData({
       resourceId: 'import1',
       resourceType: 'imports',
@@ -201,7 +201,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeInTheDocument();
     expect(buttonRef).toBeEnabled();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
     expect(buttonRef).toBeEnabled();
   });
   test('should dispatch correct action and render correct snackbar on click for imports', async () => {
@@ -213,7 +213,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeInTheDocument();
     expect(buttonRef).toBeEnabled();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
     const previewData = [
       {
         id: '1234567890',
@@ -247,7 +247,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeInTheDocument();
     expect(buttonRef).toBeEnabled();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
     expect(buttonRef).toBeDisabled();
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
       actions.resourceFormSampleData.request(formKey, { refreshCache: true, asyncKey: getAsyncKey(resourceType, resourceId) })
@@ -289,7 +289,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeInTheDocument();
     expect(buttonRef).toBeEnabled();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
     expect(buttonRef).toBeDisabled();
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
       actions.resourceFormSampleData.request(formKey, { refreshCache: true, asyncKey: getAsyncKey(resourceType, resourceId) })

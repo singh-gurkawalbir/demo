@@ -38,67 +38,67 @@ function renderFuntion(data, actionProps) {
 }
 
 describe('flowStepLogs meta data UI tests', () => {
-  test('should verify the time column', () => {
+  test('should verify the time column', async () => {
     renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Time'));
-    userEvent.click(screen.getAllByRole('button')[0]);
-    userEvent.click(screen.getByText('Last 4 hours'));
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getByText('Time'));
+    await userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getByText('Last 4 hours'));
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should verify the method coulmn', () => {
+  test('should verify the method coulmn', async () => {
     renderFuntion({key: 'someKey', method: 'someMethod'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Method')).toBeInTheDocument();
     expect(screen.getByText('someMethod')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[1]);
-    userEvent.click(screen.getByText('POST'));
+    await userEvent.click(screen.getAllByRole('button')[1]);
+    await userEvent.click(screen.getByText('POST'));
 
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should verify the Stage column', () => {
+  test('should verify the Stage column', async () => {
     renderFuntion({key: 'someKey', stage: 'somestage'}, {resourceId: 'someresourceId', flowId: 'someflowId', isImport: true});
 
-    userEvent.click(screen.getByText('Stage'));
+    await userEvent.click(screen.getByText('Stage'));
     expect(screen.getByText('somestage')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[2]);
-    userEvent.click(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getAllByRole('button')[2]);
+    await userEvent.click(screen.getAllByRole('checkbox')[0]);
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should verify the Response code column', () => {
+  test('should verify the Response code column', async () => {
     renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Response code')).toBeInTheDocument();
     expect(screen.getByText('somestatusCode')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[2]);
-    userEvent.click(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getAllByRole('button')[2]);
+    await userEvent.click(screen.getAllByRole('checkbox')[0]);
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should click the actions button', () => {
+  test('should click the actions button', async () => {
     renderFuntion({key: 'someKey'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Delete log'));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Delete log'));
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.removeLog(

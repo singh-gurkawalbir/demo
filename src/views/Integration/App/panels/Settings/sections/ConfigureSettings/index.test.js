@@ -40,7 +40,7 @@ describe('ConfigureSettings UI tests', () => {
     const option1 = screen.getByText('SomeOption1');
 
     expect(option1).toBeInTheDocument();
-    userEvent.click(option1);
+    await userEvent.click(option1);
     expect(screen.getByText('SomeOption2')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
   });

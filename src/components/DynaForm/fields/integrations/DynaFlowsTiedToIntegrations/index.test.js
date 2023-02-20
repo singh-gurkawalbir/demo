@@ -111,12 +111,12 @@ describe('dynaFlowsTiedToIntegration UI tests', () => {
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('Select...')).toBeInTheDocument();
   });
-  test('should diplay the attached flows when clicked on the dropdown', () => {
+  test('should diplay the attached flows when clicked on the dropdown', async () => {
     initDynaFlowsTiedToIntegration(props);
     const dropdown = screen.getByText('Select...');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('flow2')).toBeInTheDocument();
     expect(screen.getByText('flow3')).toBeInTheDocument();
     expect(screen.getByText('flow4')).toBeInTheDocument();

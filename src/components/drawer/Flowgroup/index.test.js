@@ -138,10 +138,10 @@ describe('FlowgroupDrawer tests', () => {
     expect(closeIcon).toBeInTheDocument();
     expect(closeButton).toBeInTheDocument();
     expect(saveButton).toBeInTheDocument();
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     expect(saveButton).not.toBeEnabled();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 
@@ -151,9 +151,9 @@ describe('FlowgroupDrawer tests', () => {
     await waitFor(() => userEvent.click(screen.getAllByRole('checkbox')[0]));
     const nameInput = document.querySelector('input');
 
-    userEvent.click(nameInput);
+    await userEvent.click(nameInput);
     userEvent.keyboard('Mock flowgroup');
-    userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
   test('Should able to test the FlowGroup drawer with create flowgroup having flows and move to edit drawer', async () => {
@@ -162,9 +162,9 @@ describe('FlowgroupDrawer tests', () => {
     await waitFor(() => userEvent.click(screen.getAllByRole('checkbox')[0]));
     const nameInput = document.querySelector('input');
 
-    userEvent.click(nameInput);
+    await userEvent.click(nameInput);
     userEvent.keyboard('Mock flowgroup');
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockHistoryGoBack).not.toHaveBeenCalled();
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/_integrationId/flows/sections/undefined/flowgroups/edit');
   });
@@ -188,10 +188,10 @@ describe('FlowgroupDrawer tests', () => {
     await waitFor(() => userEvent.click(checkboxes[0]));
     const nameInput = document.querySelector('input');
 
-    userEvent.click(nameInput);
+    await userEvent.click(nameInput);
     userEvent.keyboard('mockFlowGroupName');
     mockDispatchFn.mockClear();
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resource.integrations.flowGroups.createOrUpdate('_integrationId', '', 'flow-flowgroup'));
   });
 });

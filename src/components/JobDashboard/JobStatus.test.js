@@ -54,7 +54,7 @@ describe('testsuite for JobStatus', () => {
     const retryingButtonNode = screen.getByRole('button', {name: 'Retrying...'});
 
     expect(retryingButtonNode).toBeInTheDocument();
-    userEvent.click(retryingButtonNode);
+    await userEvent.click(retryingButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/0987/dashboard/runningFlows/flows/8765/queuedJobs');
   });
   test('should test the Jobstatus when the status is in running and doneExporting as true', async () => {
@@ -96,7 +96,7 @@ describe('testsuite for JobStatus', () => {
     const retryingButtonNode = screen.getByRole('button', {name: 'Waiting in queue...'});
 
     expect(retryingButtonNode).toBeInTheDocument();
-    userEvent.click(retryingButtonNode);
+    await userEvent.click(retryingButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/0987/dashboard/runningFlows/flows/8765/queuedJobs');
   });
   test('should test the Jobstatus when the status is in completed', async () => {

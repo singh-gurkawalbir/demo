@@ -172,7 +172,7 @@ describe('Panel component test cases', () => {
     });
 
     expect(screen.queryByText(/sObjectType is a non-layoutable entity./i)).toBeInTheDocument();
-    userEvent.click(screen.queryByText(/sObjectType is a non-layoutable entity./i));
+    await userEvent.click(screen.queryByText(/sObjectType is a non-layoutable entity./i));
     expect(mockDispatchFn).toBeCalledTimes(1);
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('id'));
   });
@@ -199,7 +199,7 @@ describe('Panel component test cases', () => {
     });
 
     expect(screen.queryByText(/sObjectType is a non-layoutable entity./i)).toBeInTheDocument();
-    userEvent.click(screen.queryByText(/sObjectType is a non-layoutable entity./i));
+    await userEvent.click(screen.queryByText(/sObjectType is a non-layoutable entity./i));
     expect(mockDispatchFn).toBeCalledTimes(0);
   });
 
@@ -216,7 +216,7 @@ describe('Panel component test cases', () => {
     });
 
     await expect(screen.queryByText(/Missing connection configuration./i)).toBeInTheDocument();
-    userEvent.click(screen.queryByText(/Missing connection configuration./i));
+    await userEvent.click(screen.queryByText(/Missing connection configuration./i));
     expect(mockDispatchFn).toBeCalledTimes(1);
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('sublistName[*].id'));
   });
@@ -239,7 +239,7 @@ describe('Panel component test cases', () => {
     });
 
     await expect(screen.queryByText(/Missing connection configuration./i)).toBeInTheDocument();
-    userEvent.click(screen.queryByText(/Missing connection configuration./i));
+    await userEvent.click(screen.queryByText(/Missing connection configuration./i));
     expect(mockDispatchFn).toBeCalledTimes(1);
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('id'));
   });

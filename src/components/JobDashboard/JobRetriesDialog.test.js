@@ -57,7 +57,7 @@ describe('testsuite for JobDialog', () => {
     const closeButtonNode = screen.getAllByRole('button').find(eachOptions => eachOptions.getAttribute('data-test') === 'closeJobRetriesDialog');
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockClose).toHaveBeenCalled();
   });
   test('should render the job dialog with the job data with no job name', async () => {

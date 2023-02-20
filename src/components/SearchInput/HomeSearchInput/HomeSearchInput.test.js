@@ -74,7 +74,7 @@ describe('homeSearchInput UI tests', () => {
     input.focus();
     expect(mockdispatch).toHaveBeenNthCalledWith(11, {type: 'onFocus'});
   });
-  test('should clear the test field and placeholder text should appear', () => {
+  test('should clear the test field and placeholder text should appear', async () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -88,7 +88,7 @@ describe('homeSearchInput UI tests', () => {
     const clearButton = screen.getByRole('button');
     const input = screen.getByDisplayValue('');
 
-    userEvent.click(clearButton);
+    await userEvent.click(clearButton);
     expect(input).toHaveFocus();
 
     expect(input).toHaveAttribute('placeholder', 'Search integrations & flows');

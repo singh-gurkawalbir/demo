@@ -5,13 +5,13 @@ import {renderWithProviders} from '../../test/test-utils';
 import CeligoSwitch from '.';
 
 describe('celigoSwitch test', () => {
-  test('should do click on checkbox', () => {
+  test('should do click on checkbox', async () => {
     const onChange = jest.fn();
 
     renderWithProviders(<CeligoSwitch onChange={onChange} />);
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 
@@ -23,13 +23,13 @@ describe('celigoSwitch test', () => {
 
     expect(checkbox).toBeDisabled();
   });
-  test('should do test when button is initially checked', () => {
+  test('should do test when button is initially checked', async () => {
     const onChange = jest.fn();
 
     renderWithProviders(<CeligoSwitch checked onChange={onChange} />);
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 });

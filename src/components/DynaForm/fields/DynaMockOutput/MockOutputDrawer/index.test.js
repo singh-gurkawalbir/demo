@@ -189,7 +189,7 @@ describe('MockOutputDrawerContent UI tests', () => {
 
     expect(doneButton).toBeInTheDocument();
     expect(doneButton).toBeEnabled();
-    userEvent.click(doneButton);
+    await userEvent.click(doneButton);
     await waitFor(() => {
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange(formKey)(fieldId, mockOutputJson));
     });

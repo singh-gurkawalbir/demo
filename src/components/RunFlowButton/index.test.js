@@ -158,11 +158,11 @@ describe('runflowComponent UI testing', () => {
 
       const button = screen.getByRole('button');
 
-      userEvent.click(button);
+      await userEvent.click(button);
 
       const runflow = screen.getByText('Run');
 
-      userEvent.click(runflow);
+      await userEvent.click(runflow);
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
@@ -180,11 +180,11 @@ describe('runflowComponent UI testing', () => {
 
       const button = screen.getByRole('button');
 
-      userEvent.click(button);
+      await userEvent.click(button);
 
       const cancelrunflow = screen.getByText('Cancel');
 
-      userEvent.click(cancelrunflow);
+      await userEvent.click(cancelrunflow);
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
@@ -197,7 +197,7 @@ describe('runflowComponent UI testing', () => {
       await renderFunction(props, 'error');
       const button = screen.getByRole('button');
 
-      userEvent.click(button);
+      await userEvent.click(button);
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
@@ -210,7 +210,7 @@ describe('runflowComponent UI testing', () => {
       await renderFunction(props, 'error');
       const button = screen.getByRole('button');
 
-      userEvent.click(button);
+      await userEvent.click(button);
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
@@ -223,7 +223,7 @@ describe('runflowComponent UI testing', () => {
       await renderFunction(props);
       const button = screen.getByRole('button');
 
-      userEvent.click(button);
+      await userEvent.click(button);
 
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
@@ -252,7 +252,7 @@ describe('runflowComponent UI testing', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(input.click).toHaveBeenCalled();
   });
   test('should test simple import clicking run now button here', async () => {
@@ -279,7 +279,7 @@ describe('runflowComponent UI testing', () => {
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     await waitFor(() => store?.getState()?.session?.flows.runStatus === 'started');
     expect(input.click).toHaveBeenCalledTimes(1);
@@ -308,7 +308,7 @@ describe('runflowComponent UI testing', () => {
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
     const button = screen.getByText('Run flow');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(input.click).toHaveBeenCalledTimes(1);
   });
   test('should do test for simple export with pagegenerator length = 0', async () => {
@@ -326,7 +326,7 @@ describe('runflowComponent UI testing', () => {
     const button = screen.getByRole('button');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'FLOW_RUN',

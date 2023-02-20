@@ -131,7 +131,7 @@ describe('topPanel component Test cases', () => {
 
     expect(refreshExtracts).toBeInTheDocument();
     expect(refreshGenerates).toBeInTheDocument();
-    userEvent.click(refreshExtracts);
+    await userEvent.click(refreshExtracts);
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flowData.requestSampleData(
       'flow_id',
@@ -141,7 +141,7 @@ describe('topPanel component Test cases', () => {
       true
     ));
 
-    userEvent.click(refreshGenerates);
+    await userEvent.click(refreshGenerates);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.refreshGenerates());
   });

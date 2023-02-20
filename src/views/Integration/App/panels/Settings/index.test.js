@@ -50,7 +50,7 @@ describe('SettingsPanel UI tests', () => {
 
     expect(screen.getByText('Configure all Fulfillment flows')).toBeInTheDocument();
 
-    userEvent.click(screen.getByText('General'));
+    await userEvent.click(screen.getByText('General'));
     expect(screen.getByText('Your store')).toBeInTheDocument();
     expect(screen.getByText('Option1')).toBeInTheDocument();
   });

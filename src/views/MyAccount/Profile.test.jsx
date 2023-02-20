@@ -83,7 +83,7 @@ describe('Profile', () => {
     const passwordEditButton = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editPassword');
 
     expect(passwordEditButton).toBeInTheDocument();
-    userEvent.click(passwordEditButton);
+    await userEvent.click(passwordEditButton);
     const passwordModalText = screen.getAllByText('Change password');
 
     expect(passwordModalText[0]).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe('Profile', () => {
     const changePasswordButtonNode = screen.getByRole('button', {name: 'Change password'});
 
     expect(changePasswordButtonNode).toBeInTheDocument();
-    userEvent.click(changePasswordButtonNode);
+    await userEvent.click(changePasswordButtonNode);
     await waitForElementToBeRemoved(passwordModalText);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
     const passwordChangedText = screen.getByText('Password changed.');
@@ -113,7 +113,7 @@ describe('Profile', () => {
     const passwordCloseButton = screen.getByRole('button', {name: 'Close'});
 
     expect(passwordCloseButton).toBeInTheDocument();
-    userEvent.click(passwordCloseButton);
+    await userEvent.click(passwordCloseButton);
     await waitForElementToBeRemoved(passwordCloseButton);
     done();
   });
@@ -170,11 +170,11 @@ describe('Profile', () => {
     const timeZoneButtonNode = screen.getByRole('button', {name: '(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi'});
 
     expect(timeZoneButtonNode).toBeInTheDocument();
-    userEvent.click(timeZoneButtonNode);
+    await userEvent.click(timeZoneButtonNode);
     const timeZoneMenuItems = screen.getByRole('menuitem', {name: '(GMT-01:00) Azores'});
 
     expect(timeZoneMenuItems).toBeInTheDocument();
-    userEvent.click(timeZoneMenuItems);
+    await userEvent.click(timeZoneMenuItems);
     await waitForElementToBeRemoved(timeZoneMenuItems);
 
     const dateFormatLabelNode = screen.getByText('Date format', { selector: 'label' });
@@ -183,11 +183,11 @@ describe('Profile', () => {
     const dateFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-dateFormat');
 
     expect(dateFormatButtonNode).toBeInTheDocument();
-    userEvent.click(dateFormatButtonNode);
+    await userEvent.click(dateFormatButtonNode);
     const dateFormatMenuItemNode = screen.getByRole('menuitem', {name: '12/31/1900'});
 
     expect(dateFormatMenuItemNode).toBeInTheDocument();
-    userEvent.click(dateFormatMenuItemNode);
+    await userEvent.click(dateFormatMenuItemNode);
     await waitForElementToBeRemoved(dateFormatMenuItemNode);
 
     const timeFormatLabelNode = screen.getByText('Time format');
@@ -196,22 +196,22 @@ describe('Profile', () => {
     const timeFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-timeFormat');
 
     expect(timeFormatButtonNode).toBeInTheDocument();
-    userEvent.click(timeFormatButtonNode);
+    await userEvent.click(timeFormatButtonNode);
     const timeMenuItemNode = screen.getByRole('menuitem', {name: '2:34:25 pm'});
 
     expect(timeMenuItemNode).toBeInTheDocument();
-    userEvent.click(timeMenuItemNode);
+    await userEvent.click(timeMenuItemNode);
     await waitForElementToBeRemoved(timeMenuItemNode);
     const showTimestampsAsRelativeCheckboxNode = screen.getByRole('checkbox', {name: 'Show timestamps as relative'});
 
     expect(showTimestampsAsRelativeCheckboxNode).not.toBeChecked();
-    userEvent.click(showTimestampsAsRelativeCheckboxNode);
+    await userEvent.click(showTimestampsAsRelativeCheckboxNode);
     expect(showTimestampsAsRelativeCheckboxNode).toBeChecked();
 
     const developerCheckboxNode = screen.getByRole('checkbox', {name: 'Developer mode'});
 
     expect(developerCheckboxNode).toBeChecked();
-    userEvent.click(developerCheckboxNode);
+    await userEvent.click(developerCheckboxNode);
     expect(developerCheckboxNode).not.toBeChecked();
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
@@ -235,7 +235,7 @@ describe('Profile', () => {
     const emailText = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editEmail');
 
     expect(emailText).toBeInTheDocument();
-    userEvent.click(emailText);
+    await userEvent.click(emailText);
     const changeEmailText = screen.getAllByText('Change email');
 
     expect(changeEmailText[0]).toBeInTheDocument();
@@ -254,7 +254,7 @@ describe('Profile', () => {
     const changeEmailButton = screen.queryAllByRole('button');
 
     expect(changeEmailButton[1]).toBeInTheDocument();
-    userEvent.click(changeEmailButton[1]);
+    await userEvent.click(changeEmailButton[1]);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
     await waitForElementToBeRemoved(changeEmailText[0]);
 
@@ -262,7 +262,7 @@ describe('Profile', () => {
     const closeSnackbar = screen.queryByRole('button', {name: 'Close'});
 
     expect(closeSnackbar).toBeInTheDocument();
-    userEvent.click(closeSnackbar);
+    await userEvent.click(closeSnackbar);
     await waitForElementToBeRemoved(closeSnackbar);
     done();
   });

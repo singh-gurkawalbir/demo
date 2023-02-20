@@ -11,36 +11,36 @@ describe('operandSettingsDialog UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call onsubmit with type field when field radio button is clicked', () => {
+  test('should call onsubmit with type field when field radio button is clicked', async () => {
     renderWithProviders(<OperandSettingsDialog onSubmit={onSubmit} onClose={onClose} ruleData={{type: 'value'}} />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    userEvent.click(screen.getAllByRole('radio')[0]);
+    await userEvent.click(screen.getAllByRole('radio')[0]);
 
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
 
     expect(onSubmit).toHaveBeenCalledWith({ type: 'field' });
   });
-  test('should call onsubmit with type value when field radio button is clicked', () => {
+  test('should call onsubmit with type value when field radio button is clicked', async () => {
     renderWithProviders(<OperandSettingsDialog onSubmit={onSubmit} onClose={onClose} />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('radio')[1]);
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getAllByRole('radio')[1]);
+    await userEvent.click(screen.getByText('Save'));
 
     expect(onSubmit).toHaveBeenCalledWith({ type: 'value' });
   });
-  test('should call onsubmit with type expression when field radio button is clicked', () => {
+  test('should call onsubmit with type expression when field radio button is clicked', async () => {
     renderWithProviders(<OperandSettingsDialog onSubmit={onSubmit} onClose={onClose} />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('radio')[2]);
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getAllByRole('radio')[2]);
+    await userEvent.click(screen.getByText('Save'));
 
     expect(onSubmit).toHaveBeenCalledWith({ type: 'expression' });
   });
-  test('should call onClose when clicked on cancel button', () => {
+  test('should call onClose when clicked on cancel button', async () => {
     renderWithProviders(<OperandSettingsDialog onSubmit={onSubmit} onClose={onClose} />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Cancel'));
+    await userEvent.click(screen.getByText('Cancel'));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });

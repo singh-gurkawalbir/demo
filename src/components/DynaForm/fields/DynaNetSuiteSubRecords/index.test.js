@@ -263,11 +263,11 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
     expect(screen.getByText('fieldId1')).toBeInTheDocument();
     expect(screen.getByText('fieldId2')).toBeInTheDocument();
   });
-  test('shoud display the confirm dialogue when we attempt to delete a subrecord', () => {
+  test('shoud display the confirm dialogue when we attempt to delete a subrecord', async () => {
     initDynaNetSuiteSubRecords({...props});
     const deleteButton = document.querySelector('[title="Delete subrecord"]');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(screen.getByText('Confirm remove')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to remove this subrecord import?')).toBeInTheDocument();
     expect(screen.getByText('Remove')).toBeInTheDocument();
@@ -276,9 +276,9 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
     initDynaNetSuiteSubRecords({...props});
     const deleteButton = document.querySelector('[title="Delete subrecord"]');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(screen.getByText('Remove')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Remove'));
+    await userEvent.click(screen.getByText('Remove'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '633dc83108cc753ca5688d34',
       [

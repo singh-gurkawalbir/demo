@@ -97,19 +97,19 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('mapper2ExtractsTypeableSelect UI test case', () => {
-  test('should make dispatch call when the data type of Source field is changed to number', () => {
+  test('should make dispatch call when the data type of Source field is changed to number', async () => {
     renderWithProviders(<MemoryRouter><Mapper2ExtractsTypeableSelect onBlur={onBlur} /></MemoryRouter>);
     userEvent.type(screen.getByPlaceholderText('Source field'), 'Value');
-    userEvent.click(screen.getByText('Arror Down Icon'));
+    await userEvent.click(screen.getByText('Arror Down Icon'));
     const exrtactPopper = screen.getByRole('tooltip');
 
     expect(exrtactPopper).toBeInTheDocument();
     expect(exrtactPopper).toHaveAttribute('id', 'extractPopper');
   });
-  test('should click on Arrow down iconand choose an option call onBlur with new value', () => {
+  test('should click on Arrow down iconand choose an option call onBlur with new value', async () => {
     renderWithProviders(<MemoryRouter><Mapper2ExtractsTypeableSelect onBlur={onBlur} /></MemoryRouter>, {initialStore});
-    userEvent.click(screen.getByText('Arror Down Icon'));
-    userEvent.click(screen.getByText('name'));
+    await userEvent.click(screen.getByText('Arror Down Icon'));
+    await userEvent.click(screen.getByText('name'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.patchExtractsFilter('', '')

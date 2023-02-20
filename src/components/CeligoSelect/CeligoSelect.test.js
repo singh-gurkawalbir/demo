@@ -52,11 +52,11 @@ describe('celigoSelect UI Test', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const japan = screen.getByText('Japan');
     const unitedstates = screen.getByText('United States');
 
-    userEvent.click(japan);
+    await userEvent.click(japan);
     expect(button.textContent).toBe('Japan');
     const brazil = screen.getByText('Brazil');
 
@@ -70,13 +70,13 @@ describe('celigoSelect UI Test', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const unitedstates = screen.getByText('United States');
 
-    userEvent.click(unitedstates);
+    await userEvent.click(unitedstates);
     const donebutton = screen.getByText('Done');
 
-    userEvent.click(donebutton);
+    await userEvent.click(donebutton);
     expect(button.textContent).toBe('Brazil, United States');
 
     const japan = screen.getByText('Japan');

@@ -59,13 +59,13 @@ describe('Testsuite for AccountSettings', () => {
 
     expect(trustedDeviceNode).toBeInTheDocument();
     expect(trustedDeviceNode).not.toBeChecked();
-    userEvent.click(trustedDeviceNode);
+    await userEvent.click(trustedDeviceNode);
     expect(trustedDeviceNode).toBeChecked();
     expect(screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('name') === 'trustDeviceForPeriod')).toBeDisabled();
     const saveButtonNode = screen.getByRole('button', { name: /save/i });
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_ACCOUNT_SETTINGS_UPDATE',
       accountSettings: { dontAllowTrustedDevices: true, trustDeviceForPeriod: undefined },
@@ -74,7 +74,7 @@ describe('Testsuite for AccountSettings', () => {
     const snackbarCloseButton = screen.getByRole('button', { name: /close/i });
 
     expect(snackbarCloseButton).toBeInTheDocument();
-    userEvent.click(snackbarCloseButton);
+    await userEvent.click(snackbarCloseButton);
     await waitFor(() => expect(snackbarCloseButton).not.toBeInTheDocument());
   }, 10000);
   test('should able to click on save by entering no of days in account settings', async () => {
@@ -88,7 +88,7 @@ describe('Testsuite for AccountSettings', () => {
     const saveButtonNode = screen.getByRole('button', { name: /save/i });
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_ACCOUNT_SETTINGS_UPDATE',
       accountSettings: { dontAllowTrustedDevices: undefined, trustDeviceForPeriod: '10' },

@@ -73,7 +73,7 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     expect(screen.getByText(props.description)).toBeInTheDocument();
   });
 
-  test('should render dropdown field when options are provided', () => {
+  test('should render dropdown field when options are provided', async () => {
     const extraProps = {
       labelName: 'name',
       valueName: 'value',
@@ -85,16 +85,16 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     const label = document.querySelector('label');
 
     expect(label).toHaveTextContent(props.label);
-    userEvent.click(screen.getByRole('textbox'));
+    await userEvent.click(screen.getByRole('textbox'));
     expect(screen.getByRole('option', {name: 'option1'})).toBeInTheDocument();
   });
 
-  test('should open handlebars editor on clicking AFE Icon', () => {
+  test('should open handlebars editor on clicking AFE Icon', async () => {
     renderWithProviders(<DynaHFAssistantPathParams {...props} />);
     const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
 
     expect(openAfeBtn).toHaveAttribute('title', 'Open handlebars editor');
-    userEvent.click(openAfeBtn);
+    await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('assistantMetadatapathParamspathField', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -110,7 +110,7 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith('/exports/edit/exports/export-123/editor/assistantMetadatapathParamspathField');
   });
 
-  test('should be able to save the changes in AFE', () => {
+  test('should be able to save the changes in AFE', async () => {
     mockRouteMatch = {
       path: '/exports/:operation(add|edit)/:resourceType/:id',
       url: '/exports/edit/exports/export-123',
@@ -129,8 +129,8 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     );
     const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
 
-    userEvent.click(openAfeBtn);
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(openAfeBtn);
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

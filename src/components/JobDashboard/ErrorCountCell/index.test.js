@@ -27,7 +27,7 @@ describe('testsuite for ErrorCountCell', () => {
     userEvent.hover(document.querySelector('td[data-test="view-job-error"]'));
     expect(document.querySelector('td[data-test="view-job-error"]')).toHaveTextContent(0);
   });
-  test('should render error count when job is not in progress and has errors and click on the count', () => {
+  test('should render error count when job is not in progress and has errors and click on the count', async () => {
     const mockOnClick = jest.fn();
 
     initErrorCountCell({count: 1, isError: true, onClick: mockOnClick, isJobInProgress: false});
@@ -36,7 +36,7 @@ describe('testsuite for ErrorCountCell', () => {
     expect(document.querySelector('td[data-test="view-job-error"]')).toHaveTextContent(/view/i);
     userEvent.unhover(document.querySelector('td[data-test="view-job-error"]'));
     expect(document.querySelector('td[data-test="view-job-error"]')).toHaveTextContent(1);
-    userEvent.click(document.querySelector('td[data-test="view-job-error"]'));
+    await userEvent.click(document.querySelector('td[data-test="view-job-error"]'));
     expect(mockOnClick).toHaveBeenCalledTimes(1);
     expect(screen.getByText(/View/)).toBeInTheDocument();
   });

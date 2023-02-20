@@ -28,7 +28,7 @@ describe('Testsuite for AppPill', () => {
   afterEach(() => {
     mockOnRemove.mockClear();
   });
-  test('should test the App Pill initial render and test the Application Image when there is no app icon and test the close button', () => {
+  test('should test the App Pill initial render and test the Application Image when there is no app icon and test the close button', async () => {
     jest.spyOn(ApplicationsList, 'applicationsList').mockReturnValue([{id: '123', assistant: 'test assistant', type: 'test type'}]);
     render(
       <AppPill appId="123" onRemove={mockOnRemove} />
@@ -40,10 +40,10 @@ describe('Testsuite for AppPill', () => {
     const closeButtonNode = screen.getByRole('button', {name: /Mock Close Icon/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockOnRemove).toHaveBeenCalled();
   });
-  test('should test the App Pill initial render and test the Application Image when there is app icon and test the close button', () => {
+  test('should test the App Pill initial render and test the Application Image when there is app icon and test the close button', async () => {
     jest.spyOn(ApplicationsList, 'applicationsList').mockReturnValue([{id: '123', icon: 'test icon', type: 'test type'}]);
     render(
       <AppPill appId="123" onRemove={mockOnRemove} />
@@ -56,7 +56,7 @@ describe('Testsuite for AppPill', () => {
     const closeButtonNode = screen.getByRole('button', {name: /Mock Close Icon/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockOnRemove).toHaveBeenCalled();
   });
 });

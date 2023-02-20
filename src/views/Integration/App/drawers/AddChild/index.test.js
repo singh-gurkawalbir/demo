@@ -251,7 +251,7 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     expect(screen.getByText(/complete the below steps to add new test store label\./i)).toBeInTheDocument();
     expect(screen.getByText('Mocking InstallationStep')).toBeInTheDocument();
   });
-  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is connection id and isTriggered is set to true', () => {
+  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is connection id and isTriggered is set to true', async () => {
     mockConnectionId = '4567';
     mockIsTriggered = true;
     initIntegrationAppAddNewChild(
@@ -287,11 +287,11 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(handleStepButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepButtonNode);
+    await userEvent.click(handleStepButtonNode);
     expect(mockDispatchFn).not.toHaveBeenCalled();
     expect(mockHistoryPush).not.toHaveBeenCalled();
   });
-  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is connection id and isTriggered is set to false', () => {
+  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is connection id and isTriggered is set to false', async () => {
     mockConnectionId = '4567';
     mockIsTriggered = false;
     initIntegrationAppAddNewChild(
@@ -327,7 +327,7 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(handleStepButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepButtonNode);
+    await userEvent.click(handleStepButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('Mock BuildDrawerURL');
   });
   test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is installURL, no connection id and isTriggered is set to false', async () => {
@@ -371,7 +371,7 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.updateStep('123', mockInstallerFunction, 'inProgress'));
     expect(mockOpenExternalURL).toHaveBeenCalledWith({url: '/test'});
   });
-  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is installURL, no connection id and isVerifying is set to false', () => {
+  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is installURL, no connection id and isVerifying is set to false', async () => {
     mockConnectionId = '';
     mockInstallURL = '/test';
     mockIsTriggered = true;
@@ -409,11 +409,11 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(handleStepButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepButtonNode);
+    await userEvent.click(handleStepButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.updateStep('123', mockInstallerFunction, 'verify'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.installStep('123', mockInstallerFunction));
   });
-  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is installURL, no connection id and verifying is set to true', () => {
+  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when there is installURL, no connection id and verifying is set to true', async () => {
     mockInstallURL = '/test';
     mockIsTriggered = true;
     mockIsVerifying = true;
@@ -450,10 +450,10 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(handleStepButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepButtonNode);
+    await userEvent.click(handleStepButtonNode);
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
-  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when the form is not empty', () => {
+  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when the form is not empty', async () => {
     mockConnectionId = '';
     mockInstallURL = '';
     mockIsTriggered = true;
@@ -491,11 +491,11 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(handleStepButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepButtonNode);
+    await userEvent.click(handleStepButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.updateStep('123', mockInstallerFunction, 'inProgress', true));
     expect(mockHistoryPush).toHaveBeenCalledWith('Mock BuildDrawerURL');
   });
-  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when the triggered is false', () => {
+  test('should test addNewChild when there are addNewChildSteps with the store label in the settings and test the handle step click when the triggered is false', async () => {
     mockConnectionId = '';
     mockInstallURL = '';
     mockForm = '';
@@ -533,11 +533,11 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(handleStepButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepButtonNode);
+    await userEvent.click(handleStepButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.updateStep('123', mockInstallerFunction, 'inProgress'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.installStep('123', mockInstallerFunction));
   });
-  test('should test addNewChild by clicking on handlSubmitComplete', () => {
+  test('should test addNewChild by clicking on handlSubmitComplete', async () => {
     initIntegrationAppAddNewChild(
       {
         addChildData:
@@ -572,11 +572,11 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.updateStep('123', mockInstallerFunction, 'inProgress'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.installStep('123', mockInstallerFunction));
   });
-  test('should test addNewChild by clicking on close button', () => {
+  test('should test addNewChild by clicking on close button', async () => {
     initIntegrationAppAddNewChild(
       {
         addChildData:
@@ -611,10 +611,10 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     });
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.child.updateStep('123', mockInstallerFunction, 'reset'));
   });
-  test('should test addNewChild uninstall button when the integration app settings has defaultSectionId', () => {
+  test('should test addNewChild uninstall button when the integration app settings has defaultSectionId', async () => {
     initIntegrationAppAddNewChild(
       {
         addChildData:
@@ -648,7 +648,7 @@ describe('Testsuite for IntegrationAppAddNewChild', () => {
     const uninstallButtonNode = screen.getByRole('button', { name: 'Mocking Close Icon Uninstall' });
 
     expect(uninstallButtonNode).toBeInTheDocument();
-    userEvent.click(uninstallButtonNode);
+    await userEvent.click(uninstallButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/IntegrationName/123/uninstall/child/testid');
   });
   test('should test addNewChild when the step setup is completed', () => {

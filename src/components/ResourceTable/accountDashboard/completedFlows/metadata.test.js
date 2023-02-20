@@ -72,9 +72,9 @@ const flowId = 'flowID';
 const id = 'someId';
 
 describe('running flows metadata column UI Tests', () => {
-  test('should show FlowSearchFilter', () => {
+  test('should show FlowSearchFilter', async () => {
     renderFunction({_id: id});
-    userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getAllByRole('button')[0]);
     expect(screen.getByText('All flows')).toBeInTheDocument();
     const selecFlow = screen.getByText('demo flow');
 
@@ -199,7 +199,7 @@ describe('running flows metadata column UI Tests', () => {
     expect(screen.getByText('Pages')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
   });
-  test('should verify Integration options', () => {
+  test('should verify Integration options', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={['/flowId']}>
         <Route path="/:flowId">
@@ -212,9 +212,9 @@ describe('running flows metadata column UI Tests', () => {
     );
 
     expect(screen.getByText('Integration')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[0]);
-    userEvent.click(screen.getAllByRole('checkbox')[1]);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getAllByRole('checkbox')[1]);
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'PATCH_FILTER',
@@ -223,12 +223,12 @@ describe('running flows metadata column UI Tests', () => {
       }
     );
   });
-  test('should verify Actions', () => {
+  test('should verify Actions', async () => {
     renderFunction();
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     expect(actionButton).toBeInTheDocument();
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(screen.getByText('Run flow')).toBeInTheDocument();
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
   });

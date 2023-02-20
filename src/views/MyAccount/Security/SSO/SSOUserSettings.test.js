@@ -68,7 +68,7 @@ describe('testsuite for SSOUserSettings', () => {
     const useThisAccountForSSOHelpText = document.querySelector('div > div:nth-child(1) > button');
 
     expect(useThisAccountForSSOHelpText).toBeInTheDocument();
-    userEvent.click(useThisAccountForSSOHelpText);
+    await userEvent.click(useThisAccountForSSOHelpText);
     expect(screen.getByRole('heading', {name: /use this account for sso/i})).toBeInTheDocument();
     // checking help text for use this account for SSO
     expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('testsuite for SSOUserSettings', () => {
     const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
     expect(helpTextYesButtonNode).toBeInTheDocument();
-    userEvent.click(helpTextYesButtonNode);
+    await userEvent.click(helpTextYesButtonNode);
     expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
     await userEvent.click(useThisAccountForSSOHelpText);
     const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');

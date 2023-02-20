@@ -32,7 +32,7 @@ initialStore.getState().data.resources.exports = [{
   adaptorType: 'NetSuiteExport',
 }];
 
-function renderFuntion(actionProps, data, errorType) {
+async function renderFuntion(actionProps, data, errorType) {
   renderWithProviders(
     <MemoryRouter initialEntries={[`/${errorType}`]}>
       <Route path="/:errorType">
@@ -45,7 +45,7 @@ function renderFuntion(actionProps, data, errorType) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error Management Response UI tests', () => {
@@ -56,19 +56,19 @@ describe('error Management Response UI tests', () => {
   const reqAndResKey = '5590954468519-f6627557287841d8b99ac35ab9461f80-404-GET';
   const errorId = '7587697723';
 
-  test('should redirect to HTTP response page', () => {
+  test('should redirect to HTTP response page', async () => {
     renderFuntion({resourceId}, {reqAndResKey, errorId}, 'close');
     const request = screen.getByText('View HTTP response');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith('/close/details/7587697723/response');
   });
-  test('should make dispatch call and redirect to HTTP response page', () => {
+  test('should make dispatch call and redirect to HTTP response page', async () => {
     renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
 
     const request = screen.getByText('View HTTP response');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.patchFilter('openErrors', {
         activeErrorId: '7587697723',

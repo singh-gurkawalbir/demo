@@ -27,7 +27,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup', () => {
+  test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup', async () => {
     initialStore.getState().session.connectors = {
       someIntegrationId: {
         someId: {
@@ -63,10 +63,10 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {allowFailures: true, default: 'defaultValue', map: {id: 'Id', name: 'samplename'}}, true);
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-14"]'));
+    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-14"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('extracts', 'someId', 'someIntegrationId'));
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('radio')[0]);
+    await userEvent.click(screen.getAllByRole('radio')[0]);
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: { name: 'samplename', id: 'Id' },
       default: undefined,
@@ -86,7 +86,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     unmount();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.clearMetadata('someId', 'someIntegrationId'));
   });
-  test('should test static mapping refresh buttons and selecting use null as default value radio button in action to take if unique match not found radio options', () => {
+  test('should test static mapping refresh buttons and selecting use null as default value radio button in action to take if unique match not found radio options', async () => {
     initialStore.getState().session.connectors = {
       someIntegrationId: {
         someId: {
@@ -118,7 +118,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
     const radiobutton = document.querySelectorAll('input[type="radio"]');
 
-    userEvent.click(radiobutton[2]);
+    await userEvent.click(radiobutton[2]);
     expect(radiobutton[2]).toBeChecked();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: {},
@@ -127,7 +127,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     }, true);
   });
 
-  test('should test static mapping refresh buttons and selecting empty string as default value radio button in action to take if unique match not found radio options', () => {
+  test('should test static mapping refresh buttons and selecting empty string as default value radio button in action to take if unique match not found radio options', async () => {
     initialStore.getState().session.connectors = {
       someIntegrationId: {
         someId: {
@@ -158,7 +158,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
     const radiobutton = document.querySelectorAll('input[type="radio"]');
 
-    userEvent.click(radiobutton[1]);
+    await userEvent.click(radiobutton[1]);
     expect(radiobutton[1]).toBeChecked();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: {},
@@ -179,7 +179,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     unmount();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.clearMetadata('someId', 'someIntegrationId'));
   });
-  test('should test perform mapping dropdown', () => {
+  test('should test perform mapping dropdown', async () => {
     initialStore.getState().session.connectors = {
       someIntegrationId: {
         someId: {
@@ -217,7 +217,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {allowFailures: true, default: 'defaultValue', map: {id: 'Id', name: 'samplename'}}, true);
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[2]);
+    await userEvent.click(screen.getAllByRole('button')[2]);
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
@@ -228,7 +228,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
         'exportop2...',
       ]
     );
-    userEvent.click(screen.getAllByRole('menuitem')[0]);
+    await userEvent.click(screen.getAllByRole('menuitem')[0]);
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: { name: 'samplename', id: 'Id' },
       default: '',

@@ -56,7 +56,7 @@ describe('SigninForm UI testcases', () => {
     jest.clearAllMocks();
     jest.resetModules();
   });
-  test('should show sign in page form and click on Sign in with google', () => {
+  test('should show sign in page form and click on Sign in with google', async () => {
     initialStore = getCreatedStore();
 
     initfunction(initialStore);
@@ -64,12 +64,12 @@ describe('SigninForm UI testcases', () => {
     expect(screen.getByText('Sign in')).toBeInTheDocument();
     expect(screen.getByText('Sign in with Google')).toBeInTheDocument();
 
-    userEvent.click(screen.getByText('Sign in with Google'));
+    await userEvent.click(screen.getByText('Sign in with Google'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.auth.signInWithGoogle('/')
     );
   });
-  test('should enter the the value for the form and click the unhide icon to show password', () => {
+  test('should enter the the value for the form and click the unhide icon to show password', async () => {
     initialStore = getCreatedStore();
 
     initfunction(initialStore);
@@ -83,7 +83,7 @@ describe('SigninForm UI testcases', () => {
     userEvent.type(email, 'testuser@test.com');
     userEvent.type(password, 'xbsbxsxazl223xbsbixi');
 
-    userEvent.click(screen.getByText('HideContentIcon'));
+    await userEvent.click(screen.getByText('HideContentIcon'));
 
     const showContent = screen.getByText('ShowContentIcon');
 
@@ -97,7 +97,7 @@ describe('SigninForm UI testcases', () => {
     type = password.getAttribute('type');
     expect(type).toBe('password');
   });
-  test('should fill the email, password and click on sign in button', () => {
+  test('should fill the email, password and click on sign in button', async () => {
     initialStore = getCreatedStore();
 
     initfunction(initialStore);
@@ -114,7 +114,7 @@ describe('SigninForm UI testcases', () => {
     const signinButtonNode = screen.getByRole('button', {name: 'Sign in'});
 
     expect(signinButtonNode).toBeInTheDocument();
-    userEvent.click(signinButtonNode);
+    await userEvent.click(signinButtonNode);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true)
@@ -156,7 +156,7 @@ describe('SigninForm UI testcases', () => {
 
     expect(screen.getByText('error message')).toBeInTheDocument();
   });
-  test('should show the option for SSO sign and google sign in in when account has ssoclients and user has google authentication available', () => {
+  test('should show the option for SSO sign and google sign in in when account has ssoclients and user has google authentication available', async () => {
     initialStore = getCreatedStore();
     initialStore.getState().user.preferences = {defaultAShareId: 'own'};
     initialStore.getState().data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
@@ -169,13 +169,13 @@ describe('SigninForm UI testcases', () => {
 
     expect(googleSignIn).toBeInTheDocument();
 
-    userEvent.click(googleSignIn);
+    await userEvent.click(googleSignIn);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.auth.reSignInWithGoogle('userEmail')
     );
   });
-  test('should not show the option for google sign in when user doesnot has goog authentication avialable', () => {
+  test('should not show the option for google sign in when user doesnot has goog authentication avialable', async () => {
     initialStore = getCreatedStore();
     initialStore.getState().user.preferences = {defaultAShareId: 'own'};
     initialStore.getState().data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
@@ -184,7 +184,7 @@ describe('SigninForm UI testcases', () => {
 
     expect(screen.getByText('Sign in with SSO')).toBeInTheDocument();
     expect(screen.queryByText('Sign in with Google')).not.toBeInTheDocument();
-    userEvent.click(screen.getByText('Sign in with SSO'));
+    await userEvent.click(screen.getByText('Sign in with SSO'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.auth.reSignInWithSSO()
     );

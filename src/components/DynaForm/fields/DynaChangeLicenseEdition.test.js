@@ -51,7 +51,7 @@ describe('dynaChangeLicenseEdition tests', () => {
     };
 
     await renderWithProviders(<DynaChangeLicenseEdition {...props} />, {initialStore});
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('menuitem', {name: '_editionId3'})).toBeInTheDocument();
   });
   test('should able to test DynaChangeLicenseEdition with invalid connectorId', async () => {

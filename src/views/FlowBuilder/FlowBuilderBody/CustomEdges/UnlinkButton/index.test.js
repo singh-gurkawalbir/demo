@@ -37,7 +37,7 @@ describe('Testsuite for Unlink Button', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test unlink merge button by passing edge id in the props', () => {
+  test('should test unlink merge button by passing edge id in the props', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({flowId: '234'});
 
     renderWithProviders(
@@ -49,10 +49,10 @@ describe('Testsuite for Unlink Button', () => {
     });
 
     expect(unmergeButtonNode).toBeInTheDocument();
-    userEvent.click(unmergeButtonNode);
+    await userEvent.click(unmergeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteEdge('234', '123'));
   });
-  test('should test unlink merge button when no edge id passed in the props', () => {
+  test('should test unlink merge button when no edge id passed in the props', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({flowId: '234'});
 
     renderWithProviders(
@@ -64,10 +64,10 @@ describe('Testsuite for Unlink Button', () => {
     });
 
     expect(unmergeButtonNode).toBeInTheDocument();
-    userEvent.click(unmergeButtonNode);
+    await userEvent.click(unmergeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteEdge('234', ''));
   });
-  test('should test unlink merge button when no edge id passed in the props and no flow id from flow context', () => {
+  test('should test unlink merge button when no edge id passed in the props and no flow id from flow context', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({flowId: ''});
 
     renderWithProviders(
@@ -79,7 +79,7 @@ describe('Testsuite for Unlink Button', () => {
     });
 
     expect(unmergeButtonNode).toBeInTheDocument();
-    userEvent.click(unmergeButtonNode);
+    await userEvent.click(unmergeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteEdge('', ''));
   });
 });

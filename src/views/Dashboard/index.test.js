@@ -111,7 +111,7 @@ describe('Dashboard UI tests', () => {
     initDashboard();
     const element = document.querySelector('[aria-haspopup="true"]');
 
-    userEvent.click(element);
+    await userEvent.click(element);
     expect(screen.getByText('This dashboard offers a comprehensive view of all running and completed flows in each integration.')).toBeInTheDocument();
   });
 });

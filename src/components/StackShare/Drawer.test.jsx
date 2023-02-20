@@ -65,12 +65,12 @@ describe('Invite Users UI tests', () => {
     const refreshText = screen.getByText('Refresh');
 
     expect(refreshText).toBeInTheDocument();
-    userEvent.click(refreshText);
+    await userEvent.click(refreshText);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
     const inviteStackUserText = screen.getByText('Invite user');
 
     expect(inviteStackUserText).toBeInTheDocument();
-    userEvent.click(inviteStackUserText);
+    await userEvent.click(inviteStackUserText);
     const emailText = screen.getByText('Email');
 
     expect(emailText).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe('Invite Users UI tests', () => {
     const saveAndCloseButton = screen.getByText('Invite user & close');
 
     expect(saveAndCloseButton).toBeInTheDocument();
-    userEvent.click(saveAndCloseButton);
+    await userEvent.click(saveAndCloseButton);
     await waitFor(() => expect(mockPostResolverFunction).toHaveBeenCalledTimes(1));
   });
 });

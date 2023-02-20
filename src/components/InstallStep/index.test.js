@@ -135,7 +135,7 @@ describe('installationStep UI tests', () => {
 
     type = 'merge';
   });
-  test('should run the handleStepclick function on clicking of configure button', () => {
+  test('should run the handleStepclick function on clicking of configure button', async () => {
     const mockClick = jest.fn();
     const props = {
       index: 1,
@@ -159,7 +159,7 @@ describe('installationStep UI tests', () => {
     };
 
     initInstallation(props);
-    userEvent.click(screen.getByText(/configure/i));
+    await userEvent.click(screen.getByText(/configure/i));
 
     expect(mockClick).toHaveBeenCalled();
   });

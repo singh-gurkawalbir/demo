@@ -6,13 +6,13 @@ import {renderWithProviders} from '../../test/test-utils';
 import ChipInput from '.';
 
 describe('chipInput testing', () => {
-  test('should test to store some value', () => {
+  test('should test to store some value', async () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} />);
     const tag = screen.getByText('tag');
 
-    userEvent.click(tag);
+    await userEvent.click(tag);
 
     const textbox = screen.getByRole('textbox');
 
@@ -32,13 +32,13 @@ describe('chipInput testing', () => {
 
     expect(textbox).not.toBeInTheDocument();
   });
-  test('should test again with same value', () => {
+  test('should test again with same value', async () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} />);
     const tag = screen.getByText('tag');
 
-    userEvent.click(tag);
+    await userEvent.click(tag);
 
     const textbox = screen.getByRole('textbox');
 
@@ -47,7 +47,7 @@ describe('chipInput testing', () => {
     expect(onchange).toHaveBeenCalledTimes(1);
     const button = screen.getByText('Hello, World!');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const textbox2 = screen.getByRole('textbox');
 
     userEvent.clear(textbox2);
@@ -57,14 +57,14 @@ describe('chipInput testing', () => {
     expect(onchange).not.toHaveBeenCalledTimes(2);
     expect(onchange).toHaveBeenCalledTimes(1);
   });
-  test('should test while sending null', () => {
+  test('should test while sending null', async () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} value={null} />);
     const tag = screen.getByText('tag');
 
     expect(tag).toBeInTheDocument();
-    userEvent.click(tag);
+    await userEvent.click(tag);
 
     const textbox = screen.getByRole('textbox');
 

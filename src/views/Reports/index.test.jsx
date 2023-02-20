@@ -152,14 +152,14 @@ describe('reports', () => {
     const flowEventsDropDownButtonNode = screen.getByRole('button', {name: 'Flow events'});
 
     expect(flowEventsDropDownButtonNode).toBeInTheDocument();
-    userEvent.click(flowEventsDropDownButtonNode);
+    await userEvent.click(flowEventsDropDownButtonNode);
     const listBoxButtonNode = document.querySelector('ul[role="listbox"]');
 
     expect(listBoxButtonNode).toBeInTheDocument();
     const optionsNode = screen.getByRole('option', {name: 'Flow events'});
 
     expect(optionsNode).toBeInTheDocument();
-    userEvent.click(optionsNode);
+    await userEvent.click(optionsNode);
     await waitForElementToBeRemoved(optionsNode);
     expect(optionsNode).not.toBeInTheDocument();
   });
@@ -199,7 +199,7 @@ describe('reports', () => {
     const refreshButtonNode = screen.getByRole('button', {name: 'Refresh'});
 
     expect(refreshButtonNode).toBeInTheDocument();
-    userEvent.click(refreshButtonNode);
+    await userEvent.click(refreshButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('eventreports', null, true));
   });
   test('should able to test report page with the reports which has status loading', async () => {

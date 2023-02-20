@@ -27,7 +27,7 @@ async function initPurgeMultipleErrors(rowData) {
   );
   const { utils, store } = await renderWithProviders(ui);
 
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 
   return { utils, store };
 }
@@ -85,14 +85,14 @@ describe('purgeMultipleErrors action Test cases', () => {
     expect(purgeLogs).toBeInTheDocument();
     expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
 
-    userEvent.click(purgeLogs);
+    await userEvent.click(purgeLogs);
     expect(screen.getByText('Are you sure you want to purge all logs of this script? This cannot be undone.')).toBeInTheDocument();
     const confirmPurgeButton = screen.getByRole('button', {name: 'Purge all logs of this script'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     expect(confirmPurgeButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(confirmPurgeButton);
+    await userEvent.click(confirmPurgeButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.scripts.purge.request({scriptId, flowId})
     );

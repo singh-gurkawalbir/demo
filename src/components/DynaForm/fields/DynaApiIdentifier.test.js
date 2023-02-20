@@ -15,7 +15,7 @@ describe('dynaApiIdentifier tests', () => {
     const copyBtn = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'copyToClipboard');
 
     expect(copyBtn).toBeInTheDocument();
-    userEvent.click(copyBtn);
+    await userEvent.click(copyBtn);
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByText('URL copied to clipboard.')).toBeInTheDocument();
   });

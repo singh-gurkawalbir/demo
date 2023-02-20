@@ -62,7 +62,7 @@ describe('ResourceDrawer tests', () => {
     mockLengthFn.mockReturnValue(2);
     await initResourceDrawer(props, 'imports');
     await waitFor(() => expect(screen.getByRole('heading', {name: 'Edit import'})).toBeInTheDocument());
-    userEvent.click(screen.getByRole('button', {name: 'HERE'}));
+    await userEvent.click(screen.getByRole('button', {name: 'HERE'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/_integrationId/flowbuilder/_flowId');
   });
 
@@ -70,7 +70,7 @@ describe('ResourceDrawer tests', () => {
     mockLengthFn.mockReturnValue(5);
     await initResourceDrawer(props, 'asyncHelpers');
     await waitFor(() => expect(screen.getByRole('heading', {name: 'Edit async helper'})).toBeInTheDocument());
-    userEvent.click(screen.getByRole('button', {name: 'HERE'}));
+    await userEvent.click(screen.getByRole('button', {name: 'HERE'}));
     expect(mockHistoryGoBack).toBeCalled();
   });
 });

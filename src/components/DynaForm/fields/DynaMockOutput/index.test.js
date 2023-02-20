@@ -172,7 +172,7 @@ describe('MockOutputEditorField UI tests', () => {
       actions.form.forceFieldState(formKey)(id, {isValid: true})
     );
   });
-  test('should push correct drawer url when clicked on expand button if preview panel is available for the resource', () => {
+  test('should push correct drawer url when clicked on expand button if preview panel is available for the resource', async () => {
     initMockOutputEditorField();
 
     const expandButton = screen.getByRole('button');
@@ -181,7 +181,7 @@ describe('MockOutputEditorField UI tests', () => {
 
     expect(expandButton).toBeEnabled();
 
-    userEvent.click(expandButton);
+    await userEvent.click(expandButton);
 
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
 

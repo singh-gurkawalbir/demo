@@ -73,7 +73,7 @@ describe('scheduleAction UI tests', () => {
 
     jest.spyOn(cancelContext, 'default').mockReturnValue({disabled: false, setCancelTriggered: mockSetCancelTriggered});
     await initStoreAndRender();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
 
     expect(mockSetCancelTriggered).toHaveBeenCalled();
   });

@@ -89,20 +89,20 @@ describe('dynaKeyValue UI tests', () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     const handlebarButton = document.querySelector('[title="Open handlebars editor"]');
 
-    userEvent.click(handlebarButton);
+    await userEvent.click(handlebarButton);
     await waitFor(() => expect(mockhandleEditorClick).toHaveBeenCalled());
   });
   test('should call the onFieldChange function when clicked on the delete button', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     const deleteButton = document.querySelector('[title="Delete"]');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should call the onSortEnd function when attempted to sort', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     expect(screen.getByText('Sort')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Sort'));
+    await userEvent.click(screen.getByText('Sort'));
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
 });

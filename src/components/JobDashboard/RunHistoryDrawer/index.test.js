@@ -69,13 +69,13 @@ describe('testsuite for Run History Drawer', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the Run History Drawer heading and click on close button node', () => {
+  test('should test the Run History Drawer heading and click on close button node', async () => {
     initRunHistoryDrawer({range: '', filterKey: 'completedFlows', flowId: '123'});
     expect(screen.getByRole('heading', {name: /run history: 123/i})).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {name: /close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/dashboard/completedFlows');
   });
   test('should test the patch filter action on mount and test the filter action when flow id is modified', () => {

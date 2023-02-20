@@ -92,32 +92,32 @@ describe('Shared User List', () => {
     const checkbox = screen.getByRole('checkbox');
 
     expect(checkbox).toBeInTheDocument();
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     const confirmEnableText = screen.getByText('Confirm enable');
 
     expect(confirmEnableText).toBeInTheDocument();
     const enableText = screen.getByText('Enable');
 
     expect(enableText).toBeInTheDocument();
-    userEvent.click(enableText);
+    await userEvent.click(enableText);
     const deleteText = screen.getByRole('button');
 
     expect(deleteText).toBeInTheDocument();
-    userEvent.click(deleteText);
+    await userEvent.click(deleteText);
     const deleteMessageText = screen.getByText('Are you sure you want to remove?');
 
     expect(deleteMessageText).toBeInTheDocument();
     const cancelText = screen.getByText('Cancel');
 
     expect(cancelText).toBeInTheDocument();
-    userEvent.click(deleteText);
+    await userEvent.click(deleteText);
     const confirmRemoveText = screen.getByText('Confirm remove');
 
     expect(confirmRemoveText).toBeInTheDocument();
     const removeText = screen.getByText('Remove');
 
     expect(removeText).toBeInTheDocument();
-    userEvent.click(removeText);
+    await userEvent.click(removeText);
     await waitForElementToBeRemoved(() =>
       screen.queryByText('testuser+1@celigo.com')
     );

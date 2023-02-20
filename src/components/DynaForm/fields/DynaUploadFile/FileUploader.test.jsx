@@ -50,7 +50,7 @@ describe('FileUploader UI test cases', () => {
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.csv');
   });
-  test('Should upload a new file', () => {
+  test('Should upload a new file', async () => {
     const data = {
       id: 'uploadFile',
       disabled: false,
@@ -69,7 +69,7 @@ describe('FileUploader UI test cases', () => {
     expect(screen.getByText('fileA.csv')).toBeInTheDocument();
     const uploadfile = document.querySelector('[data-test="uploadFile"]');
 
-    userEvent.click(uploadfile);
+    await userEvent.click(uploadfile);
     const input = document.querySelector('input[data-test="uploadFile"]');
     const file = new File(['sample'], 'sample1.csv', {
       type: 'csv',

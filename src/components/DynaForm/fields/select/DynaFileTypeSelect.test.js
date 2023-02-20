@@ -41,7 +41,7 @@ describe('dynaFileTypeSelect tests', () => {
   });
   test('should render dynaSelect with fileType xml', async () => {
     await initDynaFileTypeSelect(props, 'xml');
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(onFieldChange).toHaveBeenCalledWith('file.type', 'filedefinition', true);
   });

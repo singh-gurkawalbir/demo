@@ -84,33 +84,33 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
       actions.metadata.request('someconnectionId', 'somePath')
     );
   });
-  test('should make dispatch call for the metadata request when clicked on refresh icon', () => {
+  test('should make dispatch call for the metadata request when clicked on refresh icon', async () => {
     initDynaNetSuiteLookupFiltersafe();
     expect(screen.getByText('Refresh search filters')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.metadata.request('someconnectionId', 'somePath', {
         refreshCache: true,
       })
     );
   });
-  test('should not call refresh dispatch when fetch is disabled', () => {
+  test('should not call refresh dispatch when fetch is disabled', async () => {
     initDynaNetSuiteLookupFiltersafe(true);
     expect(screen.getByText('Refresh search filters')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).not.toHaveBeenCalledWith(
       actions.metadata.request('someconnectionId', 'somePath', {
         refreshCache: true,
       })
     );
   });
-  test('should call onFieldChangeButton function when editor is initialised', () => {
+  test('should call onFieldChangeButton function when editor is initialised', async () => {
     initialStore.getState().session.editors = {'sf-mappingLookupFilter': {fieldId: 'someFieldID'}};
     initDynaNetSuiteLookupFiltersafe(true, initialStore);
     expect(screen.getByText('id: salesforce.operation')).toBeInTheDocument();
     expect(screen.getByText('editorId: sf-mappingLookupFilter')).toBeInTheDocument();
 
-    userEvent.click(screen.getByText('onFieldChangeButton'));
+    await userEvent.click(screen.getByText('onFieldChangeButton'));
     expect(mockOnFieldChange).toHaveBeenCalledTimes(1);
   });
 });

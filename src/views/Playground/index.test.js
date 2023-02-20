@@ -42,32 +42,32 @@ describe('editors test cases', () => {
     const csvParser = screen.queryByText('CSV parser helper');
 
     expect(csvParser).toBeInTheDocument();
-    userEvent.click(csvParser);
+    await userEvent.click(csvParser);
 
     const simpleCSVParser = screen.queryByText('Simple CSV');
 
     expect(simpleCSVParser).toBeInTheDocument();
     expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
-    userEvent.click(simpleCSVParser);
+    await userEvent.click(simpleCSVParser);
     expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
 
     const fullScreenButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('title') === 'Fullscreen mode');
 
     expect(fullScreenButton).toBeInTheDocument();
-    userEvent.click(fullScreenButton);
+    await userEvent.click(fullScreenButton);
 
     const closeButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'closeRightDrawer');
 
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
 
-    userEvent.click(simpleCSVParser);
+    await userEvent.click(simpleCSVParser);
     expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
 
     expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
   });

@@ -61,7 +61,7 @@ describe('textFieldList test cases', () => {
 
     expect(deleteButton).toBeInTheDocument();
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(onChange).toHaveBeenCalledTimes(7);
     expect(onChange).toHaveBeenCalledWith([]);
   });

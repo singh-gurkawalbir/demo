@@ -31,7 +31,7 @@ describe('Globalsearch feature tests', () => {
   runServer();
   test('Should display filters allowed for Administer account', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
 
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
@@ -41,7 +41,7 @@ describe('Globalsearch feature tests', () => {
 
     expect(resourceFiltersButton).toBeInTheDocument();
 
-    userEvent.click(resourceFiltersButton);
+    await userEvent.click(resourceFiltersButton);
 
     await waitFor(() => {
       expect(screen.queryByText(/Resources/i)).toBeInTheDocument();
@@ -181,12 +181,12 @@ describe('Globalsearch feature tests', () => {
     store.dispatch(actions.user.org.accounts.requestCollection());
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts?.length).toBeGreaterThan(0));
 
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     const resourceFiltersButton = screen.getByText('All');
 
     expect(resourceFiltersButton).toBeInTheDocument();
 
-    userEvent.click(resourceFiltersButton);
+    await userEvent.click(resourceFiltersButton);
 
     await waitFor(() => {
       expect(screen.queryByText(/Resources/i)).toBeInTheDocument();
@@ -326,12 +326,12 @@ describe('Globalsearch feature tests', () => {
 
     store.dispatch(actions.user.org.accounts.requestCollection());
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts?.length).toBeGreaterThan(0));
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     const resourceFiltersButton = screen.getByText('All');
 
     expect(resourceFiltersButton).toBeInTheDocument();
 
-    userEvent.click(resourceFiltersButton);
+    await userEvent.click(resourceFiltersButton);
 
     await waitFor(() => {
       expect(screen.queryByText(/Resources/i)).toBeInTheDocument();
@@ -348,7 +348,7 @@ describe('Globalsearch feature tests', () => {
   });
   test('Should display results containing the characters typed in both Resources and Marketplace Results', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -366,12 +366,12 @@ describe('Globalsearch feature tests', () => {
     expect(screen.queryByText('Acumatica - Location Import')).toBeInTheDocument();
     expect(screen.queryByText('Acumatica-Location Import')).toBeInTheDocument();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeInTheDocument();
-    userEvent.click(screen.queryByText('Checkout 1 result in Marketplace'));
+    await userEvent.click(screen.queryByText('Checkout 1 result in Marketplace'));
     expect(screen.queryByText('ADP Workforce Now (API) - Acumatica')).toBeInTheDocument();
   });
   test('Should display results containing the characters typed in Resources Tab only', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -388,12 +388,12 @@ describe('Globalsearch feature tests', () => {
     expect(screen.queryByText('4cast plus')).toBeInTheDocument();
     expect(screen.queryByText('AS2')).toBeInTheDocument();
     expect(screen.queryByText('Base64 Encode')).toBeInTheDocument();
-    userEvent.click(marketplaceTab);
+    await userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
   test('Should display results containing the characters in Marketplace Tab only', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -408,12 +408,12 @@ describe('Globalsearch feature tests', () => {
     expect(resourcesTab).toBeInTheDocument();
     // expect(screen.queryByText('AMZ test- Dinesh')).toBeInTheDocument();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeNull();
-    userEvent.click(resourcesTab);
+    await userEvent.click(resourcesTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
   test('Should display empty results in both when no results start with the given characters', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -428,12 +428,12 @@ describe('Globalsearch feature tests', () => {
     expect(resourcesTab).toBeInTheDocument();
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeNull();
-    userEvent.click(resourcesTab);
+    await userEvent.click(resourcesTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
   test('Should display filtered results after typing 2 or more characters', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -451,23 +451,23 @@ describe('Globalsearch feature tests', () => {
     expect(screen.queryByText('Acumatica - Location Import')).toBeInTheDocument();
     expect(screen.queryByText('Acumatica-Location Import')).toBeInTheDocument();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeInTheDocument();
-    userEvent.click(screen.queryByText('Checkout 1 result in Marketplace'));
+    await userEvent.click(screen.queryByText('Checkout 1 result in Marketplace'));
     expect(screen.queryByText('ADP Workforce Now (API) - Acumatica')).toBeInTheDocument();
     const resourceFilterButton = screen.queryByText(/all/i);
 
-    userEvent.click(resourceFilterButton);
-    userEvent.click(screen.queryByLabelText(/Connections/i));
+    await userEvent.click(resourceFilterButton);
+    await userEvent.click(screen.queryByLabelText(/Connections/i));
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeNull();
     expect(screen.queryByText('Acumatica Agent HTTP')).toBeInTheDocument();
     expect(screen.queryByText('Acumatica - Location Import')).toBeNull();
     expect(screen.queryByText('Acumatica-Location Import')).toBeNull();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeNull();
-    userEvent.click(marketplaceTab);
+    await userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
   test('Should open resource filters after typing special character , select filters starting with the string before : and should display filtered results', async () => {
     await initGlobalSearch();
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -484,7 +484,7 @@ describe('Globalsearch feature tests', () => {
     expect(screen.queryByText('Acumatica - Location Import')).toBeNull();
     expect(screen.queryByText('Acumatica-Location Import')).toBeNull();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeNull();
-    userEvent.click(marketplaceTab);
+    await userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
   test('Should raise a request to backend and open a modal on clicking on marketplace app preview', async () => {
@@ -503,7 +503,7 @@ describe('Globalsearch feature tests', () => {
     }
     );
 
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -514,7 +514,7 @@ describe('Globalsearch feature tests', () => {
     expect(screen.queryByText(/ADP IA/i)).toBeInTheDocument();
     const requestForDemoButton = screen.queryByText('Request demo');
 
-    userEvent.click(requestForDemoButton);
+    await userEvent.click(requestForDemoButton);
     await waitFor(() => {
       expect(mockResolverFunction).toHaveBeenCalledTimes(1);
     });
@@ -544,7 +544,7 @@ describe('Globalsearch feature tests', () => {
         </Switch>
       </MemoryRouter>
     );
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -554,13 +554,13 @@ describe('Globalsearch feature tests', () => {
     });
     const marketplaceTab = screen.queryByText(/Marketplace: Apps & templates \(1\)/i);
 
-    userEvent.click(marketplaceTab);
+    await userEvent.click(marketplaceTab);
     const template = screen.queryByText('ADP Workforce Now (API) - Acumatica');
 
     expect(template).toBeInTheDocument();
     const previewButton = screen.queryByText(/Preview/i);
 
-    userEvent.click(previewButton);
+    await userEvent.click(previewButton);
     expect(screen.queryByText(/^Templates Preview route application:acumatica templateId:5d4aa1dcdaf8cb66639f0a89/i)).toBeInTheDocument();
   });
   test('Should navigate to that route on clicking on resource results', async () => {
@@ -587,7 +587,7 @@ describe('Globalsearch feature tests', () => {
         </Switch>
       </MemoryRouter>
     );
-    userEvent.click(screen.queryByLabelText(/Global search/i));
+    await userEvent.click(screen.queryByLabelText(/Global search/i));
     expect(screen.queryByLabelText(/Global search/i)).not.toBeInTheDocument();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -596,7 +596,7 @@ describe('Globalsearch feature tests', () => {
       expect(screen.queryByLabelText(/Global search results/i)).toBeInTheDocument();
     });
     expect(screen.queryByText('Acumatica Agent HTTP')).toBeInTheDocument();
-    userEvent.click(screen.queryByText('Acumatica Agent HTTP'));
+    await userEvent.click(screen.queryByText('Acumatica Agent HTTP'));
     await waitFor(() => expect(screen.queryByText(/Connections route 5ee0b67a3c11e4201f43102d/i)).toBeInTheDocument());
   });
 });

@@ -158,7 +158,7 @@ describe('Tile UI tests', () => {
     };
 
     initTile(props);
-    userEvent.click(screen.getByText('Continue setup', {exact: false}));
+    await userEvent.click(screen.getByText('Continue setup', {exact: false}));
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
   test('should make the respective dispatch call and redirection when setup status is other than pending', async () => {
@@ -169,7 +169,7 @@ describe('Tile UI tests', () => {
     };
 
     initTile(props);
-    userEvent.click(screen.getByText(/success/i, {exact: false}));
+    await userEvent.click(screen.getByText(/success/i, {exact: false}));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('jobs', { status: 'all'})));
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/dashboard'));
   });
@@ -184,7 +184,7 @@ describe('Tile UI tests', () => {
     initTile(props);
     const userButton = document.querySelector('[aria-label="tooltip"]');
 
-    userEvent.click(userButton);
+    await userEvent.click(userButton);
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
   test('should redirect to the integration connections when connection icon is clicked on the tile', async () => {
@@ -204,7 +204,7 @@ describe('Tile UI tests', () => {
     userEvent.hover(buttonList[1]);
     await waitFor(() => expect(screen.getByText(/Connection down/i)).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText(/Success/i)).toBeInTheDocument());
-    userEvent.click(buttonList[1]);
+    await userEvent.click(buttonList[1]);
     expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/connections');
   });
   test('should display the license expiry message on the tile', () => {
@@ -226,7 +226,7 @@ describe('Tile UI tests', () => {
     };
 
     initTile(props);
-    userEvent.click(screen.getByText('Clone - demoint'));
+    await userEvent.click(screen.getByText('Clone - demoint'));
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
 });

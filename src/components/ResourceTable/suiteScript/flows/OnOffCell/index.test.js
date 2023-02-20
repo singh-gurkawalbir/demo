@@ -25,18 +25,18 @@ describe('on/Off cell UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should disable the flow via click', () => {
+  test('should disable the flow via click', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{_id: 'FlowId', _integrationId: 'integrationId'}} />
       </ConfirmDialogProvider>, {initialStore});
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     const yesButton = screen.getByText('Yes');
 
     expect(yesButton).toBeInTheDocument();
-    userEvent.click(yesButton);
+    await userEvent.click(yesButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: true, ssLinkedConnectionId: 'ssLinkedConnectionId', _id: 'FlowId'})
     );
@@ -45,18 +45,18 @@ describe('on/Off cell UI tests', () => {
     );
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should enable the flow via click', () => {
+  test('should enable the flow via click', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{_id: 'FlowId', _integrationId: 'integrationId', disabled: true}} />
       </ConfirmDialogProvider>, {initialStore});
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     const yesButton = screen.getByText('Yes');
 
     expect(yesButton).toBeInTheDocument();
-    userEvent.click(yesButton);
+    await userEvent.click(yesButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: true, ssLinkedConnectionId: 'ssLinkedConnectionId', _id: 'FlowId'})
     );

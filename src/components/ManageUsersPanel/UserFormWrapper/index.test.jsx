@@ -172,7 +172,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = screen.getByText('Access level');
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     expect(screen.getByText('Administer account')).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
@@ -199,7 +199,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = screen.getByText('Access level');
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     expect(screen.getByText('Administer account')).toBeInTheDocument();
     const cancelMessage = screen.getByText('Cancel');
 
@@ -239,7 +239,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'administrator');
 
     expect(administratorMessage).toBeInTheDocument();
@@ -284,7 +284,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'manage');
 
     expect(administratorMessage).toBeInTheDocument();
@@ -325,7 +325,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'monitor');
 
     expect(administratorMessage).toBeInTheDocument();
@@ -333,16 +333,16 @@ describe('user Form Wrapper', () => {
     const pleaseSelectMessage = screen.getByRole('button', {name: 'Please select'});
 
     expect(pleaseSelectMessage).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage);
+    await userEvent.click(pleaseSelectMessage);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
 
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'USER_CREATE',
       user: {
@@ -387,7 +387,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select', hidden: true }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
 
     expect(administratorMessage).toBeInTheDocument();
@@ -395,20 +395,20 @@ describe('user Form Wrapper', () => {
     const pleaseSelectMessage = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-integrationsToManage');
 
     expect(pleaseSelectMessage).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage);
+    await userEvent.click(pleaseSelectMessage);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'USER_CREATE',
       user: {
@@ -453,7 +453,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select', hidden: true }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
 
     expect(administratorMessage).toBeInTheDocument();
@@ -461,20 +461,20 @@ describe('user Form Wrapper', () => {
     const pleaseSelectMessage = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-integrationsToMonitor');
 
     expect(pleaseSelectMessage).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage);
+    await userEvent.click(pleaseSelectMessage);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'USER_CREATE',
       user: {
@@ -512,14 +512,14 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select' }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
@@ -545,14 +545,14 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select' }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');

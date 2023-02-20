@@ -103,7 +103,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should test save button', () => {
+  test('should test save button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -127,7 +127,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
 
     const savebutton = screen.getByText('Save');
 
-    userEvent.click(savebutton);
+    await userEvent.click(savebutton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -145,7 +145,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5ff579d745ceef7dcd797c15');
   });
-  test('should test close button', () => {
+  test('should test close button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -168,7 +168,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
     );
     const closebutton = screen.getByText('Close');
 
-    userEvent.click(closebutton);
+    await userEvent.click(closebutton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -180,7 +180,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5ff579d745ceef7dcd797c15');
   });
-  test('should test close when variation atrributes is provided', () => {
+  test('should test close when variation atrributes is provided', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -209,7 +209,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
 
     const closebutton = screen.getByText('Close');
 
-    userEvent.click(closebutton);
+    await userEvent.click(closebutton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {

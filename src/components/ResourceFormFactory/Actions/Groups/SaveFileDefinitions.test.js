@@ -72,7 +72,7 @@ describe('test suite for SaveFileDefinitions', () => {
     await initSaveFileDefinitions({formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     const snackBar = screen.getByRole('alert');
 
     expect(snackBar).toHaveTextContent(ERROR_MSG);
@@ -99,7 +99,7 @@ describe('test suite for SaveFileDefinitions', () => {
     await initSaveFileDefinitions({formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.fileDefinitions.definition.userDefined.save(
       JSON.parse(definitionRules),
       { values: { '/file/filedefinition/rules': definitionRules }},

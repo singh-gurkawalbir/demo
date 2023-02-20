@@ -150,11 +150,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('title2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
@@ -170,11 +170,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('title3');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
@@ -190,11 +190,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('title2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[0]);
+    await userEvent.click(option[0]);
     await waitFor(() => expect(option[2]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/tab');
@@ -210,11 +210,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
@@ -224,7 +224,7 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
@@ -235,7 +235,7 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
@@ -318,7 +318,7 @@ describe('PageBar UI testing', () => {
 
     const add = screen.getByText('Add');
 
-    userEvent.click(add);
+    await userEvent.click(add);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/install/addNewStore');
   });
 
@@ -332,7 +332,7 @@ describe('PageBar UI testing', () => {
     await prepareStore(store);
     const tag = screen.getByText('tag');
 
-    userEvent.click(tag);
+    await userEvent.click(tag);
     const input = screen.getByRole('textbox');
 
     userEvent.type(input, 'changed');
@@ -351,11 +351,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/dashboard');

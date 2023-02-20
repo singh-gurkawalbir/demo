@@ -88,7 +88,7 @@ describe('Testsuite for Page processor node', () => {
     });
 
     expect(deleteButtonNode).toBeInTheDocument();
-    userEvent.click(deleteButtonNode);
+    await userEvent.click(deleteButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteStep('234', 'Deleting..'));
   });
   test('should test the branch name when is virtual is set to false and verify the delete option when the setup is not in progress and click on remove button on confirm dialog', async () => {
@@ -129,7 +129,7 @@ describe('Testsuite for Page processor node', () => {
     });
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(removeButtonNode);
+    await userEvent.click(removeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteStep('234', 'Deleting..'));
   });
   test('should test the page processor when no branch name passed and click on cancel button on confirm dialog', async () => {
@@ -166,7 +166,7 @@ describe('Testsuite for Page processor node', () => {
     });
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(screen.queryByText(/confirm remove/i)).not.toBeInTheDocument();
   });
 });

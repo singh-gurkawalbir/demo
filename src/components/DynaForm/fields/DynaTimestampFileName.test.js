@@ -153,7 +153,7 @@ describe('Testsuite for DynaTimestampFileName', () => {
     const textBox = document.querySelector('input[name="test_name"]');
 
     expect(textBox).toBeInTheDocument();
-    userEvent.click(textBox);
+    await userEvent.click(textBox);
     expect(document.querySelector('ul').className).toEqual(expect.stringContaining('makeStyles-suggestions-'));
   });
 });

@@ -16,10 +16,10 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('CategoryMappingActions UI tests', () => {
-  test('should test the redirection to required page', () => {
+  test('should test the redirection to required page', async () => {
     renderWithProviders(<MemoryRouter initialEntries={['/someinitialURl']}><Route path="/someinitialURl"><CategoryMappingActions /></Route></MemoryRouter>);
 
-    userEvent.click(screen.getByText('Add category'));
+    await userEvent.click(screen.getByText('Add category'));
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/someinitialURl/addCategory');
   });

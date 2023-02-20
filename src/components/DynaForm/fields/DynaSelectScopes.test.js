@@ -142,7 +142,7 @@ describe('Testsuite for DynaSelectScopes', () => {
     })).toBeInTheDocument();
     expect(screen.getByText(/mocking field message/i)).toBeInTheDocument();
   });
-  test('should test the modal dialog when we click on scope button and close the modal dialog', () => {
+  test('should test the modal dialog when we click on scope button and close the modal dialog', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['testscope1', 'testscope2', 'testscope3'],
@@ -165,16 +165,16 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /close/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scope transfer list and help link when we click on scope button and save it', () => {
+  test('should test the scope transfer list and help link when we click on scope button and save it', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['testscope1', 'testscope2', 'testscope3'],
@@ -197,7 +197,7 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
@@ -206,13 +206,13 @@ describe('Testsuite for DynaSelectScopes', () => {
     expect(screen.getByText(/helplink = test_help_link/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking transferlist/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking filled button/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', []);
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scopes when there are default scopes set and click on save', () => {
+  test('should test the scopes when there are default scopes set and click on save', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['testscope1', 'testscope2', 'testscope3'],
@@ -236,7 +236,7 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
@@ -245,13 +245,13 @@ describe('Testsuite for DynaSelectScopes', () => {
     expect(screen.getByText(/helplink = test_help_link/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking transferlist/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking filled button/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['testscope1']);
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scopes when the value is already selected', () => {
+  test('should test the scopes when the value is already selected', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['testscope1', 'testscope2', 'testscope3'],
@@ -275,17 +275,17 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['testscope1']);
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scopes when there is no resourceType and resourceId', () => {
+  test('should test the scopes when there is no resourceType and resourceId', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['testscope1', 'testscope2', 'testscope3'],
@@ -298,17 +298,17 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['testscope1']);
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scope when the type of scopes is an array of objects', () => {
+  test('should test the scope when the type of scopes is an array of objects', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: [{scopes: ['test1'], subHeader: 'test_sub_header_1'}, {scopes: ['test2'], subHeader: 'test_sub_header_2'}],
@@ -331,7 +331,7 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
@@ -340,13 +340,13 @@ describe('Testsuite for DynaSelectScopes', () => {
     expect(screen.getByText(/helplink = test_help_link/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking transferlist/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking filled button/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', []);
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scope when the pathToScopeField has been set to fetch the scopes from store', () => {
+  test('should test the scope when the pathToScopeField has been set to fetch the scopes from store', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['test1', 'test2'],
@@ -371,7 +371,7 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
@@ -380,13 +380,13 @@ describe('Testsuite for DynaSelectScopes', () => {
     expect(screen.getByText(/helplink = test_help_link/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking transferlist/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking filled button/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['test3']);
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
   });
-  test('should test the scope when the pathToScopeField has been set to fetch the empty scopes from store', () => {
+  test('should test the scope when the pathToScopeField has been set to fetch the empty scopes from store', async () => {
     const props = {
       label: 'Test Scope Label',
       scopes: ['test1', 'test2'],
@@ -411,7 +411,7 @@ describe('Testsuite for DynaSelectScopes', () => {
 
     initDynaSelectScopes({props, resourcesData});
     expect(screen.queryByText(/mocking modal dialog/i)).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /test scope label/i,
     }));
     expect(screen.queryByText(/mocking modal dialog/i)).toBeInTheDocument();
@@ -420,7 +420,7 @@ describe('Testsuite for DynaSelectScopes', () => {
     expect(screen.getByText(/helplink = test_help_link/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking transferlist/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking filled button/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /save/i,
     }));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', []);

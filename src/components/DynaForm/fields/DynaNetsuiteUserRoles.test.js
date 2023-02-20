@@ -18,7 +18,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
   });
 
-  test('should auto-set itself to environment if value already exists', () => {
+  test('should auto-set itself to environment if value already exists', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'connections',
@@ -62,7 +62,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     expect(label).toHaveTextContent(props.label);
     expect(selectedEnvironment).toHaveValue('production');
 
-    userEvent.click(screen.getByRole('button', {name: 'production'}));
+    await userEvent.click(screen.getByRole('button', {name: 'production'}));
     const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableEnvironments).toEqual([
@@ -72,7 +72,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
       'sandbox...',
     ]);
 
-    userEvent.click(screen.getByRole('menuitem', {name: 'beta'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'beta'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'beta');
 
     //  should reset account and role fields if environment is changed
@@ -80,7 +80,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     expect(onFieldChange).toHaveBeenCalledWith('netsuite.roleId', '', true);
   });
 
-  test('should set itself to other environment if the only other one is beta', () => {
+  test('should set itself to other environment if the only other one is beta', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'connections',
@@ -114,7 +114,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableEnvironments).toEqual([
@@ -125,7 +125,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'sandbox', true);
   });
 
-  test('should default to the only option when selecting environment', () => {
+  test('should default to the only option when selecting environment', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'connections',
@@ -155,7 +155,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableEnvironments).toEqual([
@@ -165,7 +165,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'production', true);
   });
 
-  test('should default to the only option when selecting account', () => {
+  test('should default to the only option when selecting account', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'connections',
@@ -207,7 +207,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const availableAccounts = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableAccounts).toEqual([
@@ -217,7 +217,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TSTDRV12345', true);
   });
 
-  test('should default to the only option when selecting role', () => {
+  test('should default to the only option when selecting role', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'connections',
@@ -263,7 +263,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const availableAccounts = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableAccounts).toEqual([

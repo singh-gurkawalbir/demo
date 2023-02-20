@@ -79,15 +79,15 @@ describe('refreshGenericResource UI tests', () => {
     const openResButton = document.querySelector('[data-test="openResource"]');
 
     expect(openResButton).toBeInTheDocument();
-    userEvent.click(openResButton);
+    await userEvent.click(openResButton);
     await waitFor(() => expect(mockOpenUrl).toHaveBeenCalledWith({ url: props.urlToOpen }));
   });
-  test('should call the onRefresh button passed in props when clicked on removeRefresh button', () => {
+  test('should call the onRefresh button passed in props when clicked on removeRefresh button', async () => {
     initRefreshGenericResource(props);
     const removeRefreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(removeRefreshButton).toBeInTheDocument();
-    userEvent.click(removeRefreshButton);
+    await userEvent.click(removeRefreshButton);
     expect(mockOnRefresh).toHaveBeenCalled();
   });
   test('should call the onFieldChange function passed in props when resourceToFetch prop is true', () => {

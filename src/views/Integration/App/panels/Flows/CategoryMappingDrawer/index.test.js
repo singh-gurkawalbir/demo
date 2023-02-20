@@ -162,7 +162,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
   });
-  test('should click on the expand all button', () => {
+  test('should click on the expand all button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -186,7 +186,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
     expect(screen.getByText('NetSuite')).toBeInTheDocument();
     const expandbutton = screen.getByText('Expand All');
 
-    userEvent.click(expandbutton);
+    await userEvent.click(expandbutton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -196,7 +196,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
   });
-  test('should click on the collapse all button', () => {
+  test('should click on the collapse all button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -230,7 +230,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
 
     const collapseAll = screen.getByText('Collapse All');
 
-    userEvent.click(collapseAll);
+    await userEvent.click(collapseAll);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -246,7 +246,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
     expect(screen.getByText('Loading')).toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should click on save button', () => {
+  test('should click on save button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -270,7 +270,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
 
     const save = screen.getByText('Save');
 
-    userEvent.click(save);
+    await userEvent.click(save);
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'INTEGRATION_APPS_SETTINGS_CATEGORY_MAPPINGS_SAVE',
@@ -280,7 +280,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
   });
-  test('shoudl click on Save & close button', () => {
+  test('shoudl click on Save & close button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -304,7 +304,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
 
     const close = screen.getByText('Save & close');
 
-    userEvent.click(close);
+    await userEvent.click(close);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -315,7 +315,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5ff579d745ceef7dcd797c15');
   });
-  test('should click on restore and hide categories button', () => {
+  test('should click on restore and hide categories button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -341,9 +341,9 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    userEvent.click(screen.getByTitle('Hide categories'));
+    await userEvent.click(screen.getByTitle('Hide categories'));
     expect(screen.getByTitle('Enable categories')).toBeInTheDocument();
-    userEvent.click(screen.getByTitle('Restore category'));
+    await userEvent.click(screen.getByTitle('Restore category'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -355,7 +355,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
   });
-  test('should test the Configure variation button', () => {
+  test('should test the Configure variation button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -381,12 +381,12 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    userEvent.click(screen.getAllByTitle('Configure variations')[0]);
+    await userEvent.click(screen.getAllByTitle('Configure variations')[0]);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/5ff579d745ceef7dcd797c15/5ea16c600e2fab71928a6152/utilitymapping/categoryId/depth/0/variations/categoryId'
     );
   });
-  test('should click on Delete category button', () => {
+  test('should click on Delete category button', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -412,7 +412,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    userEvent.click(screen.getByTitle('Delete category'));
+    await userEvent.click(screen.getByTitle('Delete category'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {

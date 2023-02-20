@@ -48,10 +48,10 @@ describe('linegraph UI Tests', () => {
 
     const dateRangebutton = screen.getByText('Last 30 days');
 
-    userEvent.click(dateRangebutton);
+    await userEvent.click(dateRangebutton);
 
-    userEvent.click(screen.getByText('Last 15 days'));
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getByText('Last 15 days'));
+    await userEvent.click(screen.getByText('Apply'));
     expect(store?.getState()?.user?.preferences?.linegraphs).toBeDefined();
     expect(dateRangebutton).toHaveTextContent('Last 15 days');
   });
@@ -60,27 +60,27 @@ describe('linegraph UI Tests', () => {
 
     const dateRangebutton = screen.getByText('Last 30 days');
 
-    userEvent.click(dateRangebutton);
+    await userEvent.click(dateRangebutton);
 
-    userEvent.click(screen.getByText('Last 15 days'));
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getByText('Last 15 days'));
+    await userEvent.click(screen.getByText('Apply'));
     expect(store?.getState()?.user?.preferences?.linegraphs).toBeDefined();
 
-    userEvent.click(screen.getByText('Select flow group'));
+    await userEvent.click(screen.getByText('Select flow group'));
     const somegroup2 = screen.getByText('some group2');
 
-    userEvent.click(screen.getByText('some group2'));
+    await userEvent.click(screen.getByText('some group2'));
 
     expect(somegroup2).toHaveAttribute('aria-selected', 'true');
   });
   test('should change the flow Checkbox', async () => {
     await renderWithStore();
 
-    userEvent.click(screen.getByText('Integration-level'));
+    await userEvent.click(screen.getByText('Integration-level'));
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(checkbox);
+    await userEvent.click(screen.getByText('Apply'));
     expect(screen.getByText('No flows selected')).toBeInTheDocument();
   });
 });

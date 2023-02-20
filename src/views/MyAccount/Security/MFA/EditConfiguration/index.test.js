@@ -87,7 +87,7 @@ describe('Testsuite for Edit MFA Configuration', () => {
     });
 
     expect(resetMFAButton).toBeInTheDocument();
-    userEvent.click(resetMFAButton);
+    await userEvent.click(resetMFAButton);
     expect(screen.getByText('Reset MFA?')).toBeInTheDocument();
     expect(screen.getByText(/are you sure you want to reset mfa\? you'll need to re-associate your authenticator app and configure your device in integrator\.io\./i)).toBeInTheDocument();
     const confirmDialogResetButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Reset');
@@ -96,19 +96,19 @@ describe('Testsuite for Edit MFA Configuration', () => {
     const cancelButtonNode = screen.getByRole('button', {name: /cancel/i});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     await waitFor(() => expect(cancelButtonNode).not.toBeInTheDocument());
-    userEvent.click(resetMFAButton);
+    await userEvent.click(resetMFAButton);
     const resetButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Reset');
 
     expect(resetButtonNode).toBeInTheDocument();
-    userEvent.click(resetButtonNode);
+    await userEvent.click(resetButtonNode);
     expect(screen.getByText(/re-authenticate your account/i)).toBeInTheDocument();
     expect(screen.getByText(/enter your account password to confirm if you want to reset mfa\./i)).toBeInTheDocument();
     const closeDialogBoxNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(closeDialogBoxNode).toBeInTheDocument();
-    userEvent.click(closeDialogBoxNode);
+    await userEvent.click(closeDialogBoxNode);
     await waitFor(() => expect(closeDialogBoxNode).not.toBeInTheDocument());
   });
   test('should test the QR code and click on view code button', async () => {
@@ -138,13 +138,13 @@ describe('Testsuite for Edit MFA Configuration', () => {
     });
 
     expect(viewCodeButtonNode).toBeInTheDocument();
-    userEvent.click(viewCodeButtonNode);
+    await userEvent.click(viewCodeButtonNode);
     expect(screen.getByText(/View QR code/i)).toBeInTheDocument();
     expect(screen.getByText(/Enter your account password to view your QR code./i)).toBeInTheDocument();
     const closeDialogBoxNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(closeDialogBoxNode).toBeInTheDocument();
-    userEvent.click(closeDialogBoxNode);
+    await userEvent.click(closeDialogBoxNode);
     await waitFor(() => expect(closeDialogBoxNode).not.toBeInTheDocument());
   });
   test('should test the secret key', async () => {
@@ -172,13 +172,13 @@ describe('Testsuite for Edit MFA Configuration', () => {
     const viewSecretKeyButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'showSecretKey');
 
     expect(viewSecretKeyButtonNode).toBeInTheDocument();
-    userEvent.click(viewSecretKeyButtonNode);
+    await userEvent.click(viewSecretKeyButtonNode);
     expect(screen.getByText(/view secret key/i)).toBeInTheDocument();
     expect(screen.getByText(/enter your account password to view your secret key\./i)).toBeInTheDocument();
     const closeDialogBoxNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(closeDialogBoxNode).toBeInTheDocument();
-    userEvent.click(closeDialogBoxNode);
+    await userEvent.click(closeDialogBoxNode);
     await waitFor(() => expect(closeDialogBoxNode).not.toBeInTheDocument());
   });
   test('should test the trusted devices and click on manage devices button', async () => {
@@ -208,12 +208,12 @@ describe('Testsuite for Edit MFA Configuration', () => {
     });
 
     expect(manageDevicesButton).toBeInTheDocument();
-    userEvent.click(manageDevicesButton);
+    await userEvent.click(manageDevicesButton);
     expect(screen.getByRole('heading', { name: /manage devices/i })).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', { name: 'Close' });
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(closeButtonNode).not.toBeInTheDocument();
   });
   test('should test the viewed QR code', async () => {
@@ -289,14 +289,14 @@ describe('Testsuite for Edit MFA Configuration', () => {
 
     expect(saveButtonNode).toBeInTheDocument();
     expect(saveButtonNode).toBeDisabled();
-    userEvent.click(testCompanyDropdownButtonNode);
+    await userEvent.click(testCompanyDropdownButtonNode);
     const testCompany1ButtonNode = screen.getByRole('menuitem', {name: 'Test company 1'});
 
     expect(testCompany1ButtonNode).toBeInTheDocument();
-    userEvent.click(testCompany1ButtonNode);
+    await userEvent.click(testCompany1ButtonNode);
     await waitFor(() => expect(testCompany1ButtonNode).not.toBeInTheDocument());
     await waitFor(() => expect(saveButtonNode).toBeEnabled());
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_USER_SETTINGS_SETUP',
       mfaConfig: {

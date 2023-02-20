@@ -73,7 +73,7 @@ describe('Testsuite for SourceTitle', () => {
   afterEach(() => {
     mockUseHandleAddGenerator.mockClear();
   });
-  test('should test the Source Title when a flow doesn\'t have a data loader page generator', () => {
+  test('should test the Source Title when a flow doesn\'t have a data loader page generator', async () => {
     initSourceTitle([
       {
         _id: 'flow_id',
@@ -84,10 +84,10 @@ describe('Testsuite for SourceTitle', () => {
 
     expect(sourcesButtonNode).toBeInTheDocument();
     expect(sourcesButtonNode.className).toEqual(expect.stringContaining('makeStyles-sourceTitle-'));
-    userEvent.click(sourcesButtonNode);
+    await userEvent.click(sourcesButtonNode);
     expect(mockUseHandleAddGenerator).toHaveBeenCalledTimes(1);
   });
-  test('should test the Source Title when the flow has a data loader', () => {
+  test('should test the Source Title when the flow has a data loader', async () => {
     initSourceTitle([
       {
         _id: 'flow_id',
@@ -101,7 +101,7 @@ describe('Testsuite for SourceTitle', () => {
 
     expect(sourceButtonNode).toBeInTheDocument();
     expect(sourceButtonNode.className).toEqual(expect.stringContaining('makeStyles-sourceTitle-'));
-    userEvent.click(sourceButtonNode);
+    await userEvent.click(sourceButtonNode);
     expect(mockUseHandleAddGenerator).toHaveBeenCalledTimes(1);
   });
 });

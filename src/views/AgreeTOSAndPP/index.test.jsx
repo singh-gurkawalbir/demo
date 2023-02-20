@@ -71,7 +71,7 @@ describe('AgreeTOSAndPP test cases', () => {
     });
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     await waitFor(() => expect(button).toBeChecked());
     const continueButton = screen.getByRole('button', {name: 'Continue'});
 
@@ -84,18 +84,18 @@ describe('AgreeTOSAndPP test cases', () => {
       name: /I agree to the Terms of Service \/ Service Subscription Agreement and Privacy Policy ./i,
     });
 
-    userEvent.click(button);
+    await userEvent.click(button);
     await waitFor(() => expect(button).toBeChecked());
     const continueButton = screen.getByRole('button', {name: 'Continue'});
 
-    userEvent.click(continueButton);
+    await userEvent.click(continueButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.profile.update({ agreeTOSAndPP: true }));
   });
   test('Should logout user on signout click', async () => {
     await initAgreeTOSAndPP();
     const signoutButton = screen.getByRole('button', {name: 'Sign out'});
 
-    userEvent.click(signoutButton);
+    await userEvent.click(signoutButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.logout());
   });
 });

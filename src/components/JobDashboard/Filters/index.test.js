@@ -115,7 +115,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     expect(selectedEnabledFlowJobsNode).toBeInTheDocument();
     expect(selectedEnabledFlowJobsNode.className).toEqual(expect.stringContaining('disabled'));
 
-    userEvent.click(allEnabledFlowJobsNode);
+    await userEvent.click(allEnabledFlowJobsNode);
     expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the enabled retry button by setting disableRetry as false and isFlowBuilderView as true and by clicking on it', async () => {
@@ -143,7 +143,7 @@ describe('testsuite for Job Dashboard Filters', () => {
 
     expect(selectedJobsNode).toBeInTheDocument();
     expect(selectedJobsNode.className).not.toEqual(expect.stringContaining('disabled'));
-    userEvent.click(allJobsNode);
+    await userEvent.click(allJobsNode);
     expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the resolve button by setting disableResolve by false and with no jobs', async () => {
@@ -161,7 +161,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     });
 
     expect(resolveButtonNode).toBeInTheDocument();
-    userEvent.click(resolveButtonNode);
+    await userEvent.click(resolveButtonNode);
     const allJobsNode = screen.getByRole('option', {
       name: /all jobs/i,
     });
@@ -174,7 +174,7 @@ describe('testsuite for Job Dashboard Filters', () => {
 
     expect(zeroSelectedJobsButtonNode).toBeInTheDocument();
     expect(zeroSelectedJobsButtonNode.className).toEqual(expect.stringContaining('disabled'));
-    userEvent.click(allJobsNode);
+    await userEvent.click(allJobsNode);
     expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the resolve button by setting disableResolve by false and with jobs', async () => {
@@ -192,7 +192,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     });
 
     expect(resolveButtonNode).toBeInTheDocument();
-    userEvent.click(resolveButtonNode);
+    await userEvent.click(resolveButtonNode);
     const allJobsNode = screen.getByRole('option', {
       name: /all jobs/i,
     });
@@ -205,7 +205,7 @@ describe('testsuite for Job Dashboard Filters', () => {
 
     expect(oneSelectedJobsButtonNode).toBeInTheDocument();
     expect(oneSelectedJobsButtonNode.className).not.toEqual(expect.stringContaining('disabled'));
-    userEvent.click(allJobsNode);
+    await userEvent.click(allJobsNode);
     expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the resolve button by setting disableResolve by false and with jobs duplicate', async () => {
@@ -223,7 +223,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     });
 
     expect(resolveButtonNode).toBeInTheDocument();
-    userEvent.click(resolveButtonNode);
+    await userEvent.click(resolveButtonNode);
     const allJobsNode = screen.getByRole('option', {
       name: /all jobs/i,
     });
@@ -236,7 +236,7 @@ describe('testsuite for Job Dashboard Filters', () => {
 
     expect(oneSelectedJobsButtonNode).toBeInTheDocument();
     expect(oneSelectedJobsButtonNode.className).not.toEqual(expect.stringContaining('disabled'));
-    userEvent.click(allJobsNode);
+    await userEvent.click(allJobsNode);
     expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the filter button when it has flows', async () => {
@@ -253,7 +253,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     const selectStatusNode = screen.getByRole('button', {name: /select status/i});
 
     expect(selectStatusNode).toBeInTheDocument();
-    userEvent.click(selectStatusNode);
+    await userEvent.click(selectStatusNode);
     const selectStatusListBoxNode = screen.getByRole('listbox');
 
     expect(selectStatusListBoxNode).toBeInTheDocument();
@@ -338,7 +338,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     const refreshButtonNode = screen.getByRole('button', {name: /refresh/i});
 
     expect(refreshButtonNode).toBeInTheDocument();
-    userEvent.click(refreshButtonNode);
+    await userEvent.click(refreshButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: 'jobs',

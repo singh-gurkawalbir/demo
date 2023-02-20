@@ -155,7 +155,7 @@ describe('Manage Permissions', () => {
     const pleaseSelectText = await screen.getByRole('button', { name: 'Please select' });
 
     expect(pleaseSelectText).toBeInTheDocument();
-    userEvent.click(pleaseSelectText);
+    await userEvent.click(pleaseSelectText);
     const administratorMessage = screen.getByRole('menuitem', {name: 'Administer account'});
 
     expect(administratorMessage).toBeInTheDocument();

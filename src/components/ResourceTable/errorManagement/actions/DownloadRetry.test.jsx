@@ -25,7 +25,7 @@ initialStore.getState().data.resources.exports = [{
   adaptorType: 'NetSuiteExport',
 }];
 
-function renderFuntion(actionProps, data) {
+async function renderFuntion(actionProps, data) {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable
@@ -35,7 +35,7 @@ function renderFuntion(actionProps, data) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error Management Retry UI tests', () => {
@@ -46,12 +46,12 @@ describe('error Management Retry UI tests', () => {
   const errorId = 'someerrorId';
   const isFlowDisabled = true;
 
-  test('should make a dispatch call clicking on download retry action', () => {
+  test('should make a dispatch call clicking on download retry action', async () => {
     renderFuntion({resourceId, flowId}, {source, retryDataKey, errorId});
     const downloadRetry = screen.getByText('Download retry data');
 
     expect(downloadRetry).toBeInTheDocument();
-    userEvent.click(downloadRetry);
+    await userEvent.click(downloadRetry);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.errorManager.retryData.download({flowId: '6938764rh739d3378', resourceId: '6439276e7uybwe78292878', retryDataKey: 'somereqAndResKey'})
     );

@@ -454,10 +454,10 @@ describe('Clone Preview', () => {
     const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
     expect(environmentSandboxNode).toBeInTheDocument();
-    userEvent.click(environmentSandboxNode);
+    await userEvent.click(environmentSandboxNode);
     expect(environmentSandboxNode).toBeChecked();
     expect(environmentProductionNode).not.toBeChecked();
-    userEvent.click(environmentProductionNode);
+    await userEvent.click(environmentProductionNode);
     expect(environmentSandboxNode).not.toBeChecked();
     expect(environmentProductionNode).toBeChecked();
     const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
@@ -467,7 +467,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    userEvent.click(flowButtonNode);
+    await userEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -480,30 +480,30 @@ describe('Clone Preview', () => {
 
     expect(integrationsButtonNode).toBeInTheDocument();
     expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(integrationsButtonNode);
+    await userEvent.click(integrationsButtonNode);
     expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
     const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
 
     expect(exportButtonNode).toBeInTheDocument();
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(exportButtonNode);
+    await userEvent.click(exportButtonNode);
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
     const importButtonNode = screen.getByRole('button', {name: 'Imports'});
 
     expect(importButtonNode).toBeInTheDocument();
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(importButtonNode);
+    await userEvent.click(importButtonNode);
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
     const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
 
     expect(connectionsButtonNode).toBeInTheDocument();
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(connectionsButtonNode);
+    await userEvent.click(connectionsButtonNode);
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
     const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
 
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
-    userEvent.click(cloneIntegrationButtonNode);
+    await userEvent.click(cloneIntegrationButtonNode);
     await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
   }, 30000);
   test('Should able to access the Flow clone preview page', async () => {
@@ -612,10 +612,10 @@ describe('Clone Preview', () => {
     const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
     expect(environmentSandboxNode).toBeInTheDocument();
-    userEvent.click(environmentSandboxNode);
+    await userEvent.click(environmentSandboxNode);
     expect(environmentSandboxNode).toBeChecked();
     expect(environmentProductionNode).not.toBeChecked();
-    userEvent.click(environmentProductionNode);
+    await userEvent.click(environmentProductionNode);
     expect(environmentSandboxNode).not.toBeChecked();
     expect(environmentProductionNode).toBeChecked();
     const paragraphNode = screen.getByText('The following components will get cloned with this flow.');
@@ -635,7 +635,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    userEvent.click(flowButtonNode);
+    await userEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -648,19 +648,19 @@ describe('Clone Preview', () => {
 
     expect(exportButtonNode).toBeInTheDocument();
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(exportButtonNode);
+    await userEvent.click(exportButtonNode);
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
     const importButtonNode = screen.getByRole('button', {name: 'Imports'});
 
     expect(importButtonNode).toBeInTheDocument();
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(importButtonNode);
+    await userEvent.click(importButtonNode);
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
     const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
 
     expect(connectionsButtonNode).toBeInTheDocument();
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(connectionsButtonNode);
+    await userEvent.click(connectionsButtonNode);
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
   }, 30000);
   test('Should able to access the Integration App clone preview page', async () => {
@@ -813,10 +813,10 @@ describe('Clone Preview', () => {
     const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
     expect(environmentSandboxNode).toBeInTheDocument();
-    userEvent.click(environmentSandboxNode);
+    await userEvent.click(environmentSandboxNode);
     expect(environmentSandboxNode).toBeChecked();
     expect(environmentProductionNode).not.toBeChecked();
-    userEvent.click(environmentProductionNode);
+    await userEvent.click(environmentProductionNode);
     expect(environmentSandboxNode).not.toBeChecked();
     expect(environmentProductionNode).toBeChecked();
     const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
@@ -826,7 +826,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    userEvent.click(flowButtonNode);
+    await userEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -839,36 +839,36 @@ describe('Clone Preview', () => {
 
     expect(integrationsButtonNode).toBeInTheDocument();
     expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(integrationsButtonNode);
+    await userEvent.click(integrationsButtonNode);
     expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
     const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
 
     expect(exportButtonNode).toBeInTheDocument();
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(exportButtonNode);
+    await userEvent.click(exportButtonNode);
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
     const importButtonNode = screen.getByRole('button', {name: 'Imports'});
 
     expect(importButtonNode).toBeInTheDocument();
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(importButtonNode);
+    await userEvent.click(importButtonNode);
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
     const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
 
     expect(connectionsButtonNode).toBeInTheDocument();
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(connectionsButtonNode);
+    await userEvent.click(connectionsButtonNode);
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
     const scriptButtonNode = screen.getByRole('button', {name: 'Scripts'});
 
     expect(scriptButtonNode).toBeInTheDocument();
     expect(scriptButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(scriptButtonNode);
+    await userEvent.click(scriptButtonNode);
     expect(scriptButtonNode).toHaveAttribute('aria-expanded', 'true');
     const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
 
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
-    userEvent.click(cloneIntegrationButtonNode);
+    await userEvent.click(cloneIntegrationButtonNode);
     await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
   }, 30000);
   test('Should able to access the Integration clone preview page of type sandbox', async () => {
@@ -995,7 +995,7 @@ describe('Clone Preview', () => {
     const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
     expect(environmentSandboxNode).toBeInTheDocument();
-    userEvent.click(environmentSandboxNode);
+    await userEvent.click(environmentSandboxNode);
     expect(environmentSandboxNode).toBeChecked();
     expect(environmentProductionNode).not.toBeChecked();
     const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
@@ -1005,7 +1005,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    userEvent.click(flowButtonNode);
+    await userEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -1018,30 +1018,30 @@ describe('Clone Preview', () => {
 
     expect(integrationsButtonNode).toBeInTheDocument();
     expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(integrationsButtonNode);
+    await userEvent.click(integrationsButtonNode);
     expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
     const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
 
     expect(exportButtonNode).toBeInTheDocument();
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(exportButtonNode);
+    await userEvent.click(exportButtonNode);
     expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
     const importButtonNode = screen.getByRole('button', {name: 'Imports'});
 
     expect(importButtonNode).toBeInTheDocument();
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(importButtonNode);
+    await userEvent.click(importButtonNode);
     expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
     const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
 
     expect(connectionsButtonNode).toBeInTheDocument();
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(connectionsButtonNode);
+    await userEvent.click(connectionsButtonNode);
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
     const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
 
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
-    userEvent.click(cloneIntegrationButtonNode);
+    await userEvent.click(cloneIntegrationButtonNode);
     await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
   }, 30000);
   test('Should able to acess the Integration Clone preview page by using created components which has Integrations', async () => {

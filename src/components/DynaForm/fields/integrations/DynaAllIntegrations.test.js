@@ -49,13 +49,13 @@ describe('dynaAllIntegrations UI tests', () => {
     renderWithProviders(<DynaAllIntegrations />);
     expect(screen.getByText('Please select')).toBeInTheDocument();
   });
-  test('should display integrations in the dropdown when clicked on please select option', () => {
+  test('should display integrations in the dropdown when clicked on please select option', async () => {
     initialStore.getState().data.resources = {
       integrations,
     };
     renderWithProviders(<DynaAllIntegrations />, {initialStore});
     expect(screen.getByText('Please select')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     expect(screen.getByText('integration1')).toBeInTheDocument();
     expect(screen.getByText('integration2')).toBeInTheDocument();
     expect(screen.getByText('integration3')).toBeInTheDocument();

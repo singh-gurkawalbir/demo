@@ -244,7 +244,7 @@ describe('Testsuite for Uninstaller2', () => {
     expect(screen.getByText(/mocking installationstep/i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.requestSteps('12345'));
   });
-  test('should test uninstaller2 by clicking on steps when type has set to url and is triggere has set to false', () => {
+  test('should test uninstaller2 by clicking on steps when type has set to url and is triggere has set to false', async () => {
     mockTypeData = 'url';
     mockIsTriggeredData = false;
     mockFormData = true;
@@ -284,11 +284,11 @@ describe('Testsuite for Uninstaller2', () => {
     const handleStepClickButtonNode = screen.getByRole('button', {name: 'Handle Step Click'});
 
     expect(handleStepClickButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepClickButtonNode);
+    await userEvent.click(handleStepClickButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.updateStep('12345', 'inProgress'));
     expect(mockOpenExternalURL).toHaveBeenCalledWith({url: '/test'});
   });
-  test('should test uninstaller2 by clicking on steps when type has set to url and is triggere has set to true and verifying to true', () => {
+  test('should test uninstaller2 by clicking on steps when type has set to url and is triggere has set to true and verifying to true', async () => {
     mockTypeData = 'url';
     mockIsTriggeredData = true;
     mockFormData = true;
@@ -330,10 +330,10 @@ describe('Testsuite for Uninstaller2', () => {
     const handleStepClickButtonNode = screen.getByRole('button', {name: 'Handle Step Click'});
 
     expect(handleStepClickButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepClickButtonNode);
+    await userEvent.click(handleStepClickButtonNode);
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
-  test('should test uninstaller2 by clicking on steps when type has set to url and is triggere has set to true', () => {
+  test('should test uninstaller2 by clicking on steps when type has set to url and is triggere has set to true', async () => {
     mockTypeData = 'url';
     mockIsTriggeredData = true;
     mockFormData = true;
@@ -373,11 +373,11 @@ describe('Testsuite for Uninstaller2', () => {
     const handleStepClickButtonNode = screen.getByRole('button', {name: 'Handle Step Click'});
 
     expect(handleStepClickButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepClickButtonNode);
+    await userEvent.click(handleStepClickButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.updateStep('12345', 'verify'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.uninstallStep('12345'));
   });
-  test('should test uninstaller2 by clicking on steps when type has set to form and is triggere has set to false', () => {
+  test('should test uninstaller2 by clicking on steps when type has set to form and is triggere has set to false', async () => {
     mockTypeData = 'form';
     mockIsTriggeredData = false;
     mockFormData = true;
@@ -417,11 +417,11 @@ describe('Testsuite for Uninstaller2', () => {
     const handleStepClickButtonNode = screen.getByRole('button', {name: 'Handle Step Click'});
 
     expect(handleStepClickButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepClickButtonNode);
+    await userEvent.click(handleStepClickButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.updateStep('12345', 'inProgress'));
     expect(mockHistoryPush).toHaveBeenCalledWith('Mock BuildDrawerURL');
   });
-  test('should test uninstaller2 by clicking on steps when type has not set to form and is triggere has set to false', () => {
+  test('should test uninstaller2 by clicking on steps when type has not set to form and is triggere has set to false', async () => {
     mockTypeData = 'settings';
     mockIsTriggeredData = false;
     mockFormData = true;
@@ -461,10 +461,10 @@ describe('Testsuite for Uninstaller2', () => {
     const handleStepClickButtonNode = screen.getByRole('button', {name: 'Handle Step Click'});
 
     expect(handleStepClickButtonNode).toBeInTheDocument();
-    userEvent.click(handleStepClickButtonNode);
+    await userEvent.click(handleStepClickButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.uninstallStep('12345'));
   });
-  test('should test uninstaller2 form step drawer close button', () => {
+  test('should test uninstaller2 form step drawer close button', async () => {
     mockTypeData = 'settings';
     mockIsTriggeredData = false;
     mockFormData = true;
@@ -501,10 +501,10 @@ describe('Testsuite for Uninstaller2', () => {
     const closeButtonNode = screen.getByRole('button', {name: /close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.updateStep('12345', 'reset'));
   });
-  test('should test uninstaller2 form step drawer submit button', () => {
+  test('should test uninstaller2 form step drawer submit button', async () => {
     mockTypeData = 'settings';
     mockIsTriggeredData = false;
     mockFormData = true;
@@ -541,7 +541,7 @@ describe('Testsuite for Uninstaller2', () => {
     const submitButtonNode = screen.getByRole('button', {name: /submit/i});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller2.uninstallStep('12345', 'formVal'));
   });
 });

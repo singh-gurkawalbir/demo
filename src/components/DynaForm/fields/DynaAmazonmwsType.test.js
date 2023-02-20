@@ -10,7 +10,7 @@ describe('dynaAmazonmwsType tests', () => {
     const props = {resourceId: '_resourceId'};
 
     await renderWithProviders(<DynaAmazonmwsType {...props} />);
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('presentation')).toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'Hybrid Selling Partner API (SP-API and MWS)'})).toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'Marketplace Web Service API (MWS)'})).toBeInTheDocument();
@@ -20,7 +20,7 @@ describe('dynaAmazonmwsType tests', () => {
     const props = {resourceId: 'new_resourceId'};
 
     await renderWithProviders(<DynaAmazonmwsType {...props} />);
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.queryByRole('menuitem', {name: 'Marketplace Web Service API (MWS)'})).not.toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'Selling Partner API (SP-API)'})).toBeInTheDocument();
   });

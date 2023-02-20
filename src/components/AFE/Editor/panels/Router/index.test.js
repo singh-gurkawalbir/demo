@@ -77,9 +77,9 @@ describe('routerPanel tests', () => {
     const addBranch = screen.getByRole('button', {name: 'Add branch'});
 
     expect(addBranch).toBeInTheDocument();
-    userEvent.click(addBranch);
+    await userEvent.click(addBranch);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', undefined, {actionType: 'addBranch'}));
-    userEvent.click(allMatchingBranchesOption);
+    await userEvent.click(allMatchingBranchesOption);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.editor.patchRule('router-abcd', 'all_matching_branches', {rulePath: 'routeRecordsTo'}));
   });
   test('should able to pass initial render having branches >= 25', async () => {

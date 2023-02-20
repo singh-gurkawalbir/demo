@@ -9,8 +9,8 @@ describe('globalSearch UI Tests', () => {
   beforeEach(() => {
     render(<MemoryRouter><GlobalSearchProto /></MemoryRouter>);
   });
-  const clickOnSearchIcon = () => {
-    userEvent.click(screen.getByLabelText(/Global search/i));
+  const clickOnSearchIcon = async () => {
+    await userEvent.click(screen.getByLabelText(/Global search/i));
   };
 
   test('should open globalsearch on clicking on search icon', () => {
@@ -25,14 +25,14 @@ describe('globalSearch UI Tests', () => {
 
     expect(resourceFiltersButton).toBeInTheDocument();
   });
-  test('should close searchbox on clicking on close icon in search input', () => {
+  test('should close searchbox on clicking on close icon in search input', async () => {
     clickOnSearchIcon();
 
     const searchInputCloseButton = screen.getByTitle(/Close Search/i);
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
     const resourceFiltersButton = screen.getByText('All');
 
-    userEvent.click(searchInputCloseButton);
+    await userEvent.click(searchInputCloseButton);
 
     expect(searchInput).not.toBeInTheDocument();
 
@@ -121,7 +121,7 @@ describe('globalSearch UI Tests', () => {
     await waitFor(() => expect(screen.queryByLabelText(/Global search results/i)).toBeInTheDocument());
     const closeResultsPanelButton = screen.queryByLabelText(/Close Resultspanel/);
 
-    userEvent.click(closeResultsPanelButton);
+    await userEvent.click(closeResultsPanelButton);
     expect(searchInput).toHaveFocus();
     expect(searchInput).toHaveValue('');
   });
@@ -137,7 +137,7 @@ describe('globalSearch UI Tests', () => {
     });
     const marketplaceTab = screen.queryByText(/Marketplace: Apps & templates \(/i);
 
-    userEvent.click(marketplaceTab);
+    await userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
     expect(searchInput).toHaveFocus();
     expect(searchInput).toHaveValue('am');
@@ -155,11 +155,11 @@ describe('globalSearch UI Tests', () => {
     });
     const marketplaceTab = screen.queryByText(/Marketplace: Apps & templates \(/i);
 
-    userEvent.click(marketplaceTab);
+    await userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
     const resourcesTab = screen.queryByText(/Resources \(/i);
 
-    userEvent.click(resourcesTab);
+    await userEvent.click(resourcesTab);
     expect(searchInput).toHaveFocus();
     expect(searchInput).toHaveValue('am');
     expect(screen.queryByText(/Checkout/)).not.toBeInTheDocument();
@@ -206,7 +206,7 @@ describe('globalSearch UI Tests', () => {
     });
     const scriptsItem = screen.queryByLabelText(/scripts/i);
 
-    userEvent.click(scriptsItem);
+    await userEvent.click(scriptsItem);
     expect(searchInput).toHaveFocus();
     await waitFor(() => expect(searchInput).toHaveValue(' am'), {timeout: 8000});
     expect(screen.queryByLabelText(/Integrations/i)).toBeChecked();
@@ -214,41 +214,41 @@ describe('globalSearch UI Tests', () => {
     expect(screen.queryByLabelText(/Connections/)).toBeChecked();
     expect(screen.queryByLabelText(/Scripts/i)).toBeChecked();
   });
-  test('should open resource filters on clicking on ResourceFilter button', () => {
+  test('should open resource filters on clicking on ResourceFilter button', async () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
 
-    userEvent.click(resourceFilterButton);
+    await userEvent.click(resourceFilterButton);
     expect(screen.queryByLabelText(/^Resource Filter/i)).toBeInTheDocument();
   });
-  test('should close resource filters on clicking on ResourceFilter button when it is already open', () => {
+  test('should close resource filters on clicking on ResourceFilter button when it is already open', async () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
 
-    userEvent.click(resourceFilterButton);
+    await userEvent.click(resourceFilterButton);
 
     expect(screen.queryByLabelText(/^Resource Filter/i)).toBeInTheDocument();
-    userEvent.click(resourceFilterButton);
+    await userEvent.click(resourceFilterButton);
     expect(screen.queryByLabelText(/^Resource Filter/i)).not.toBeInTheDocument();
   });
-  test('should close resource filters on clicking on close button on ResourceFilter popup and focus the search input', () => {
+  test('should close resource filters on clicking on close button on ResourceFilter popup and focus the search input', async () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
-    userEvent.click(resourceFilterButton);
+    await userEvent.click(resourceFilterButton);
     const closeButton = screen.queryByLabelText(/^Close Resource filter/i);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByLabelText(/^Resource Filter/i)).not.toBeInTheDocument();
     expect(searchInput).toHaveFocus();
   });
-  test('should enable the filter on clicking on Menu Item in resource filters  and focus the search input and uncheck all filter', () => {
+  test('should enable the filter on clicking on Menu Item in resource filters  and focus the search input and uncheck all filter', async () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
-    userEvent.click(resourceFilterButton);
+    await userEvent.click(resourceFilterButton);
     const allMenuItem = screen.queryByLabelText('All');
 
     expect(allMenuItem).toBeChecked();
@@ -256,30 +256,30 @@ describe('globalSearch UI Tests', () => {
     const connections = screen.queryByLabelText(/Connections/i);
     const scripts = screen.queryByLabelText(/Scripts/i);
 
-    userEvent.click(connections);
+    await userEvent.click(connections);
     expect(searchInput).toHaveFocus();
     expect(allMenuItem).not.toBeChecked();
     expect(connections).toBeChecked();
-    userEvent.click(scripts);
+    await userEvent.click(scripts);
     expect(scripts).toBeChecked();
   });
-  test('clicking on an already selected Filter Menu Item in resource filters should uncheck and update the filter and focus the search input and if no filters are selected, all should be checked by default', () => {
+  test('clicking on an already selected Filter Menu Item in resource filters should uncheck and update the filter and focus the search input and if no filters are selected, all should be checked by default', async () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
-    userEvent.click(resourceFilterButton);
+    await userEvent.click(resourceFilterButton);
     const allMenuItem = screen.queryByLabelText('All');
 
     expect(allMenuItem).toBeChecked();
 
     const connections = screen.queryByLabelText(/Connections/i);
 
-    userEvent.click(connections);
+    await userEvent.click(connections);
     expect(searchInput).toHaveFocus();
     expect(allMenuItem).not.toBeChecked();
     expect(connections).toBeChecked();
-    userEvent.click(connections);
+    await userEvent.click(connections);
     expect(allMenuItem).toBeChecked();
     expect(connections).not.toBeChecked();
   });

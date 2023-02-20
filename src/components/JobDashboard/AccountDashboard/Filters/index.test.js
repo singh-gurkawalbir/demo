@@ -117,7 +117,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     const refreshButtonNode = screen.getByRole('button', { name: /refresh/i });
 
     expect(refreshButtonNode).toBeInTheDocument();
-    userEvent.click(refreshButtonNode);
+    await userEvent.click(refreshButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: 'completedFlows',
@@ -139,7 +139,7 @@ describe('testsuite for Job Dashboard Filters', () => {
     const applyButtonNode = screen.getByRole('button', {name: /apply/i});
 
     expect(applyButtonNode).toBeInTheDocument();
-    userEvent.click(applyButtonNode);
+    await userEvent.click(applyButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: 'completedFlows',
@@ -177,49 +177,49 @@ describe('testsuite for Job Dashboard Filters', () => {
     const nextPageButtonNode = document.querySelector('button[data-testid="nextPage"]');
 
     expect(nextPageButtonNode).toBeInTheDocument();
-    userEvent.click(nextPageButtonNode);
+    await userEvent.click(nextPageButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: 'completedFlows',
       filter: { paging: { rowsPerPage: 10, currPage: 1 } },
     });
   });
-  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod', () => {
+  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod', async () => {
     initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 60});
 
     const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    userEvent.click(last24ButtonNode[0]);
+    await userEvent.click(last24ButtonNode[0]);
     expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
   });
-  test('should show corresponding options in the dateRange component based on the max dataRetentionPeriod selected', () => {
+  test('should show corresponding options in the dateRange component based on the max dataRetentionPeriod selected', async () => {
     initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 180});
 
     const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    userEvent.click(last24ButtonNode[0]);
+    await userEvent.click(last24ButtonNode[0]);
 
     expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Last 180 days'})).toBeInTheDocument();
   });
-  test('should be able to select new corresponding options in the dateRange component based on the max dataRetentionPeriod selected', () => {
+  test('should be able to select new corresponding options in the dateRange component based on the max dataRetentionPeriod selected', async () => {
     initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 180});
 
     const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    userEvent.click(last24ButtonNode[0]);
+    await userEvent.click(last24ButtonNode[0]);
 
     expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
     const last180daysMenuItemButtonNode = screen.getByRole('button', {name: 'Last 180 days'});
 
     expect(last180daysMenuItemButtonNode).toBeInTheDocument();
-    userEvent.click(last180daysMenuItemButtonNode);
+    await userEvent.click(last180daysMenuItemButtonNode);
     const applyButtonNode = screen.getByRole('button', {name: /apply/i});
 
     expect(applyButtonNode).toBeInTheDocument();
-    userEvent.click(applyButtonNode);
+    await userEvent.click(applyButtonNode);
 
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
@@ -233,12 +233,12 @@ describe('testsuite for Job Dashboard Filters', () => {
       },
     });
   });
-  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod selected for a shared user', () => {
+  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod selected for a shared user', async () => {
     initFilters({filterKey: 'completedFlows', defaultAShareId: 'user1'});
 
     const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    userEvent.click(last24ButtonNode[0]);
+    await userEvent.click(last24ButtonNode[0]);
 
     expect(screen.queryByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Last 90 days'})).not.toBeInTheDocument();

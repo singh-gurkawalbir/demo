@@ -60,11 +60,11 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('tabbedRow test case', () => {
-  test('should make a dispatch call when a tab is selected', () => {
+  test('should make a dispatch call when a tab is selected', async () => {
     renderWithProviders(<TabbedRow parentKey="qruRI-RD35w_UbFrJz_m5" />, {initialStore});
     const tabs = screen.getAllByRole('tab');
 
-    userEvent.click(tabs[0]);
+    await userEvent.click(tabs[0]);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.changeArrayTab('qruRI-RD35w_UbFrJz_m5', 0, '$[*].name1')
     );

@@ -64,7 +64,7 @@ describe('Invite User', () => {
 
     expect(button[0]).toBeInTheDocument();
 
-    userEvent.click(button[0]);
+    await userEvent.click(button[0]);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
   });
   test('Should able to click on Invite a user for stacks with an empty email id', async () => {
@@ -92,7 +92,7 @@ describe('Invite User', () => {
 
     expect(button[0]).toBeInTheDocument();
 
-    userEvent.click(button[0]);
+    await userEvent.click(button[0]);
     await waitFor(() => expect(mockResolverFunction).not.toHaveBeenCalledTimes(1));
   });
 });

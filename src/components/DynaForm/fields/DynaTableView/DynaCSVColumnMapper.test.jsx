@@ -20,7 +20,7 @@ function initDynaCSVColumnMapper(props = {}) {
 }
 
 describe('dynaCSVColumnMapper UI test cases', () => {
-  test('should verify content and create a new row', () => {
+  test('should verify content and create a new row', async () => {
     const genralProps = {
       maxNumberOfColumns: 3,
       value: [
@@ -41,11 +41,11 @@ describe('dynaCSVColumnMapper UI test cases', () => {
     };
 
     initDynaCSVColumnMapper(genralProps);
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItemsOptionNode = screen.getAllByRole('menuitem');
 
-    userEvent.click(menuItemsOptionNode[3]);
-    userEvent.click(screen.getByText('Please enter a value'));
+    await userEvent.click(menuItemsOptionNode[3]);
+    await userEvent.click(screen.getByText('Please enter a value'));
     const input = screen.getAllByRole('textbox');
 
     userEvent.type(input[6], 'Payment Amount');

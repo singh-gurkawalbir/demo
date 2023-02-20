@@ -79,9 +79,9 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
     expect(label).toHaveTextContent(props.label);
     expect(screen.getByRole('textbox')).toHaveValue(props.value);
   });
-  test('should open the AFE editor on clicking filter Icon with value', () => {
+  test('should open the AFE editor on clicking filter Icon with value', async () => {
     initDynaSalesforceQualifiersafe(props);
-    userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
+    await userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('salesforcequalifierwhereClause', 'salesforceQualificationCriteria', {
       formKey: 'imports-6368996d667fdb7984b49949',
       flowId: '63947b4ffc58924d43aec619',
@@ -98,7 +98,7 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
     }));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949/editor/salesforcequalifierwhereClause');
   });
-  test('should open the AFE editor on clicking filter Icon without value', () => {
+  test('should open the AFE editor on clicking filter Icon without value', async () => {
     const props = {
       connectionId: '4567',
       errorMessages: '',
@@ -121,7 +121,7 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
     };
 
     initDynaSalesforceQualifiersafe(props);
-    userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
+    await userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('salesforcequalifierwhereClause', 'salesforceQualificationCriteria', {
       formKey: 'imports-6368996d667fdb7984b49949',
       flowId: '63947b4ffc58924d43aec619',
@@ -139,13 +139,13 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949/editor/salesforcequalifierwhereClause');
   });
 
-  test('should be able to save the modified code in AFE', () => {
+  test('should be able to save the modified code in AFE', async () => {
     initDynaSalesforceQualifiersafe(props);
-    userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
+    await userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
 
     const saveBtn = screen.getByRole('button', {name: /save/i});
 
-    userEvent.click(saveBtn);
+    await userEvent.click(saveBtn);
     expect(mockonFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

@@ -19,7 +19,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-function renderFuntion(actionProps, data) {
+async function renderFuntion(actionProps, data) {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable
@@ -28,11 +28,11 @@ function renderFuntion(actionProps, data) {
         data={[data]} />
     </MemoryRouter>
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error Management Resolve UI tests', () => {
-  test('should make dispatch call for Resolve click', () => {
+  test('should make dispatch call for Resolve click', async () => {
     renderFuntion({
       isFlowDisabled: false,
       isResolved: false,
@@ -42,7 +42,7 @@ describe('error Management Resolve UI tests', () => {
     const resolve = screen.getByText('Resolve');
 
     expect(resolve).toBeInTheDocument();
-    userEvent.click(resolve);
+    await userEvent.click(resolve);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.errorManager.flowErrorDetails.resolve(
         {

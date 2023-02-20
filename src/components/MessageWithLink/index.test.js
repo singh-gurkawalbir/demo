@@ -5,7 +5,7 @@ import MessageWithLink from '.';
 import { renderWithProviders } from '../../test/test-utils';
 
 describe('MessageWithLink test cases', () => {
-  test('should pass the initial render with default values', () => {
+  test('should pass the initial render with default values', async () => {
     const props = {
       type: 'sometype',
       message: 'Some Notification Message',
@@ -21,15 +21,15 @@ describe('MessageWithLink test cases', () => {
     const linkNode = document.querySelector('[href="https://www.google.com/"]');
 
     expect(linkNode).toBeInTheDocument();
-    userEvent.click(linkNode);
+    await userEvent.click(linkNode);
     expect(screen.getByText('somelinktext')).toBeInTheDocument();
     const instructionlink = document.querySelector('[href="https://www.celigo.com/"]');
 
     expect(instructionlink).toBeInTheDocument();
-    userEvent.click(instructionlink);
+    await userEvent.click(instructionlink);
     expect(screen.getByText('View instructions')).toBeInTheDocument();
   });
-  test('should not display view instructions option when instruction link is not provided', () => {
+  test('should not display view instructions option when instruction link is not provided', async () => {
     const props = {
       type: 'sometype',
       message: 'Some Notification Message',
@@ -44,7 +44,7 @@ describe('MessageWithLink test cases', () => {
     const linkNode = document.querySelector('[href="https://www.google.com/"]');
 
     expect(linkNode).toBeInTheDocument();
-    userEvent.click(linkNode);
+    await userEvent.click(linkNode);
     expect(screen.getByText('somelinktext')).toBeInTheDocument();
     expect(screen.queryByText('View instructions')).not.toBeInTheDocument();
   });

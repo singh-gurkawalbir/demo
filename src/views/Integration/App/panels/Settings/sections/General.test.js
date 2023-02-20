@@ -35,7 +35,7 @@ describe('GeneralPanel UI tests', () => {
     const option1 = screen.getByText('Option1');
 
     expect(option1).toBeInTheDocument();
-    userEvent.click(option1);
+    await userEvent.click(option1);
     expect(screen.getByText('Option2')).toBeInTheDocument();
   });
   test('should test when form status is loading', async () => {

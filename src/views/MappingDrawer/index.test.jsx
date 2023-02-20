@@ -327,23 +327,23 @@ describe('Mapping Drawer', () => {
     const mapper1ButtonNode = screen.getByRole('button', {name: 'Mapper 1.0'});
 
     expect(mapper1ButtonNode).toBeInTheDocument();
-    userEvent.click(mapper1ButtonNode);
+    await userEvent.click(mapper1ButtonNode);
     const mapper2ButtonNode = screen.getByRole('button', {name: 'Mapper 2.0'});
 
     expect(mapper2ButtonNode).toBeInTheDocument();
-    userEvent.click(mapper2ButtonNode);
+    await userEvent.click(mapper2ButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.toggleVersion(2));
-    userEvent.click(mapper1ButtonNode);
+    await userEvent.click(mapper1ButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.toggleVersion(1));
     const learnAboutMapper2LinkNode = screen.getByRole('link', {name: 'Learn about Mapper 2.0'});
 
     expect(learnAboutMapper2LinkNode.closest('a')).toHaveAttribute('href', 'https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0');
     const autoPreviewCheckBoxNode = screen.getByRole('checkbox', {name: 'Auto preview'});
 
-    userEvent.click(autoPreviewCheckBoxNode);
+    await userEvent.click(autoPreviewCheckBoxNode);
     expect(autoPreviewCheckBoxNode).toBeChecked();
 
-    userEvent.click(autoPreviewCheckBoxNode);
+    await userEvent.click(autoPreviewCheckBoxNode);
 
     expect(autoPreviewCheckBoxNode).not.toBeChecked();
   });
@@ -356,7 +356,7 @@ describe('Mapping Drawer', () => {
     const previewButtonNode = screen.getByRole('button', {name: 'Preview'});
 
     expect(previewButtonNode).toBeInTheDocument();
-    userEvent.click(previewButtonNode);
+    await userEvent.click(previewButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.previewRequest('mappings-5fe2f66953d36d03e6210255'));
   });
   test('Should be able to test the list box', async () => {
@@ -368,7 +368,7 @@ describe('Mapping Drawer', () => {
     const toggleLayoutNode = document.querySelectorAll('div[id="toggle-layout"]');
 
     expect(toggleLayoutNode[0]).toBeInTheDocument();
-    userEvent.click(toggleLayoutNode[0]);
+    await userEvent.click(toggleLayoutNode[0]);
     const listBoxNode = document.querySelectorAll('ul[aria-labelledby="toggle-layout-label"]');
 
     expect(listBoxNode[0]).toBeInTheDocument();
@@ -378,7 +378,7 @@ describe('Mapping Drawer', () => {
     const listItem2Node = document.querySelectorAll('li[data-value="compactRow"]');
 
     expect(listItem2Node[0]).toBeInTheDocument();
-    userEvent.click(listItem1Node[0]);
+    await userEvent.click(listItem1Node[0]);
     await waitForElementToBeRemoved(listItem1Node[0]);
   });
   test('Should be able to test the cancel drawer button', async () => {
@@ -399,7 +399,7 @@ describe('Mapping Drawer', () => {
     const closeButton1Node = screen.getAllByRole('button', {name: 'Close'});
 
     expect(closeButton1Node[0]).toBeInTheDocument();
-    userEvent.click(closeButton1Node[0]);
+    await userEvent.click(closeButton1Node[0]);
   });
   test('Should be able to test the close button', async () => {
     const props = {
@@ -410,7 +410,7 @@ describe('Mapping Drawer', () => {
     const closeButtonNode = document.querySelectorAll('button[data-test="cancel"]');
 
     expect(closeButtonNode[0]).toBeInTheDocument();
-    userEvent.click(closeButtonNode[0]);
+    await userEvent.click(closeButtonNode[0]);
     await waitFor(() => expect(closeButtonNode[0]).not.toBeInTheDocument());
 
     expect(mockHistoryBack).toHaveBeenCalledTimes(1);

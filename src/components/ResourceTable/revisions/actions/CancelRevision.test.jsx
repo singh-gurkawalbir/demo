@@ -66,7 +66,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <ConfirmDialogProvider>
       <MemoryRouter>
@@ -77,14 +77,14 @@ function renderFuntion(data) {
       </MemoryRouter>
     </ConfirmDialogProvider>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI tests for cancel revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should make a dispatch call when cancel revision is clicked', () => {
+  test('should make a dispatch call when cancel revision is clicked', async () => {
     renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
@@ -93,14 +93,14 @@ describe('uI tests for cancel revision', () => {
       type: 'pull'});
     const cancelrevision = screen.getByText('Cancel revision');
 
-    userEvent.click(cancelrevision);
+    await userEvent.click(cancelrevision);
     const cancelmerge = screen.getByText('Cancel merge');
 
-    userEvent.click(cancelmerge);
+    await userEvent.click(cancelmerge);
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should test continue merge button', () => {
+  test('should test continue merge button', async () => {
     renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
@@ -109,10 +109,10 @@ describe('uI tests for cancel revision', () => {
       type: 'pull'});
     const cancelrevision = screen.getByText('Cancel revision');
 
-    userEvent.click(cancelrevision);
+    await userEvent.click(cancelrevision);
     const continueMerge = screen.getByText('Continue merge');
 
-    userEvent.click(continueMerge);
+    await userEvent.click(continueMerge);
     expect(continueMerge).not.toBeInTheDocument();
   });
 

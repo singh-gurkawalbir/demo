@@ -113,43 +113,43 @@ describe('SuiteScript Tile UI tests', () => {
     expect(screen.getByText('Integration app')).toBeInTheDocument();
     expect(screen.getByText('Celigo')).toBeInTheDocument();
   });
-  test('should redirect to the respective url when clicked on tile status', () => {
+  test('should redirect to the respective url when clicked on tile status', async () => {
     history.push = jest.fn();
     const props = {tile: cprops, status: true};
 
     initSsTile(props);
-    userEvent.click(screen.getByText('Continue setup', {exact: false}));
+    await userEvent.click(screen.getByText('Continue setup', {exact: false}));
     expect(history.push).toBeCalledWith(getRoutePath(buildDrawerUrl({
       path: 'edit/:resourceType/:id',
       baseUrl: '/',
       params: { resourceType: 'connections', id: '6141b16ad316a90f0c3b6d5d' },
     })));
   });
-  test('should redirect to a different url,when ss linked connection is offline', () => {
+  test('should redirect to a different url,when ss linked connection is offline', async () => {
     history.push = jest.fn();
     cprops.offlineConnections = ['6141b16ad316a90f0c3b6d5d'];
     const props = {tile: cprops, status: false};
 
     initSsTile(props);
-    userEvent.click(screen.getByText('Continue setup', {exact: false}));
+    await userEvent.click(screen.getByText('Continue setup', {exact: false}));
     expect(history.push).toBeCalledWith('/suitescript/6141b16ad316a90f0c3b6d5d/integrationapps/undefined/62bedcdca0f5f21448171ea2/dashboard');
   });
-  test('should redirect to the tile when clicked on the tile dispay name', () => {
+  test('should redirect to the tile when clicked on the tile dispay name', async () => {
     history.push = jest.fn();
     cprops.offlineConnections = [];
     const props = {tile: cprops, status: true};
 
     initSsTile(props);
-    userEvent.click(screen.getByText('Clone - demoint', {exact: false}));
+    await userEvent.click(screen.getByText('Clone - demoint', {exact: false}));
     expect(history.push).toBeCalled();
   });
-  test('should redirect to a different url when the sslinked connection is offline', () => {
+  test('should redirect to a different url when the sslinked connection is offline', async () => {
     history.push = jest.fn();
     cprops.offlineConnections = ['6141b16ad316a90f0c3b6d5d'];
     const props = {tile: cprops, status: false};
 
     initSsTile(props);
-    userEvent.click(screen.getByText('Clone - demoint', {exact: false}));
+    await userEvent.click(screen.getByText('Clone - demoint', {exact: false}));
     expect(history.push).toBeCalledWith('/suitescript/6141b16ad316a90f0c3b6d5d/integrationapps/suitescript-salesforce-netsuite/setup');
   });
 });

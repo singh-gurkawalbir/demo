@@ -148,7 +148,7 @@ describe('boxComponents UI tests', () => {
     expect(screen.getByText('Script content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
-  test('should pass the initial render for  SuiteScriptTabIACompleteSave Component', () => {
+  test('should pass the initial render for  SuiteScriptTabIACompleteSave Component', async () => {
     const Component = Components.SuiteScriptTabIACompleteSave;
 
     renderWithProviders(<Component {...props} />);
@@ -156,7 +156,7 @@ describe('boxComponents UI tests', () => {
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
-    userEvent.click(screen.getByText('General'));
+    await userEvent.click(screen.getByText('General'));
   });
   test('should pass the initial render for  TabComponentWithoutSave Component', () => {
     const Component = Components.TabComponentWithoutSave;

@@ -49,7 +49,7 @@ describe('Testsuite for Router prompt', () => {
     const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(utils.container).toBeEmptyDOMElement();
   });
   test('should test the router prompt when show is true and click on continue setup button on modal dialog box', async () => {

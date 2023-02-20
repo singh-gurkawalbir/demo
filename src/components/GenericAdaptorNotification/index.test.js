@@ -32,7 +32,7 @@ describe('genericAdaptorNotification ui tests', () => {
     );
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     waitFor(() => expect(mockFunc).toHaveBeenCalledTimes(1));
   });
   test('should not render the close icon when onClose function is not passed', () => {

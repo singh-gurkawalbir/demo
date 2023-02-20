@@ -39,12 +39,12 @@ describe('mapper2Generates test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should change the data type Generates field', () => {
+  test('should change the data type Generates field', async () => {
     initFunction();
 
     userEvent.type(screen.getByRole('textbox'), 'number');
-    userEvent.click(screen.getByText('string'));
-    userEvent.click(screen.getByRole('button', {name: 'number'}));
+    await userEvent.click(screen.getByText('string'));
+    await userEvent.click(screen.getByRole('button', {name: 'number'}));
     expect(mockOnBlur).toHaveBeenCalledWith('number');
   });
   test('should show the textbox as disabled', () => {

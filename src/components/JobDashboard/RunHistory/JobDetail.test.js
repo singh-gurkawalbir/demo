@@ -84,7 +84,7 @@ describe('testsuite for JobDetail', () => {
     expect(jobDetailButtonNode).toBeInTheDocument();
     expect(screen.getByText('Test')).toBeInTheDocument();
     expect(screen.queryByText(/Test export/i)).not.toBeInTheDocument();
-    userEvent.click(jobDetailButtonNode);
+    await userEvent.click(jobDetailButtonNode);
     expect(screen.getByText(/Test export/i)).toBeInTheDocument();
   });
   test('should render the Job details and click on dropdown button when the child jobs are not loaded', async () => {
@@ -207,7 +207,7 @@ describe('testsuite for JobDetail', () => {
     expect(jobDetailButtonNode).toBeInTheDocument();
     expect(screen.getByText('67890')).toBeInTheDocument();
     expect(screen.queryByText(/Test export/i)).not.toBeInTheDocument();
-    userEvent.click(jobDetailButtonNode);
+    await userEvent.click(jobDetailButtonNode);
     expect(screen.getByText(/Test export/i)).toBeInTheDocument();
   });
 });

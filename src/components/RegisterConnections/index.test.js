@@ -43,7 +43,7 @@ describe('test suite for RegisterConnections component', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should pass initial rendering', () => {
+  test('should pass initial rendering', async () => {
     const onClose = jest.fn();
 
     initRegisterConnections({onClose});
@@ -62,18 +62,18 @@ describe('test suite for RegisterConnections component', () => {
     const registerButton = screen.getByRole('button', {name: 'Register'});
 
     expect(registerButton).toBeInTheDocument();
-    userEvent.click(registerButton);
+    await userEvent.click(registerButton);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.requestRegister([], undefined));
 
     const closeDialogButton = screen.getByTestId('closeModalDialog');
 
     expect(closeDialogButton).toBeInTheDocument();
-    userEvent.click(closeDialogButton);
+    await userEvent.click(closeDialogButton);
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
-  test('should be able to register multiple connections', () => {
+  test('should be able to register multiple connections', async () => {
     const integrationId = '626int';
     const onClose = jest.fn();
     const state = reduxStore.getState();
@@ -135,8 +135,8 @@ describe('test suite for RegisterConnections component', () => {
     const registerButton = screen.getByRole('button', {name: 'Register'});
     const selectAllConnections = screen.getAllByRole('checkbox')[0];
 
-    userEvent.click(selectAllConnections);
-    userEvent.click(registerButton);
+    await userEvent.click(selectAllConnections);
+    await userEvent.click(registerButton);
 
     expect(mockDispatchFn).toHaveBeenLastCalledWith(actions.connection.requestRegister(['627conn1', '627conn2', '627conn3'], integrationId));
   });

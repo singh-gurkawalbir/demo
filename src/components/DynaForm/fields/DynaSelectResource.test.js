@@ -634,7 +634,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     expect(screen.getByText(/mocking onlinestatus/i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.connections.pingAndUpdate('conn_id', {flowId: 'flow_id', integrationId: 'integration_id', parentId: 'resource_id', parentType: 'connections'}));
   });
-  test('should test the add new icon when allownew is set to true when the resource type is connection', () => {
+  test('should test the add new icon when allownew is set to true when the resource type is connection', async () => {
     jest.spyOn(Resource, 'generateNewId').mockReturnValue('mockNewId');
     jest.spyOn(MockUseIntegration, 'default').mockReturnValue('mockIntegrationFromURL');
     jest.spyOn(ApplicationList, 'applicationsList').mockReturnValue([{id: 'acumatica', assistant: 'acumatica', type: 'http'}]);
@@ -686,7 +686,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [{ path: '/_connectionId', op: 'add', value: {} },
       { path: '/_httpConnectorId', op: 'add', value: {} },
       { path: '/adaptorType', op: 'add', value: {} },
@@ -707,7 +707,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     ));
     expect(mockHistoryPush).toBeCalled();
   });
-  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to true', () => {
+  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to true', async () => {
     jest.spyOn(Resource, 'generateNewId').mockReturnValue('mockNewId');
     jest.spyOn(MockUseIntegration, 'default').mockReturnValue('mockIntegrationFromURL');
     jest.spyOn(ApplicationList, 'applicationsList').mockReturnValue([{id: 'acumatica', assistant: 'acumatica', type: 'http'}]);
@@ -759,7 +759,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [
       { path: '/_connectionId', op: 'add', value: {} },
       { path: '/http', op: 'add', value: {} },
@@ -774,7 +774,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     ));
     expect(mockHistoryPush).toBeCalled();
   });
-  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to false', () => {
+  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to false', async () => {
     jest.spyOn(Resource, 'generateNewId').mockReturnValue('mockNewId');
     jest.spyOn(MockUseIntegration, 'default').mockReturnValue('mockIntegrationFromURL');
     jest.spyOn(ApplicationList, 'applicationsList').mockReturnValue([{id: 'acumatica', assistant: 'acumatica', type: 'http'}]);
@@ -826,7 +826,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [
       { path: '/_connectionId', op: 'add', value: {} },
       { path: '/http', op: 'add', value: {} },

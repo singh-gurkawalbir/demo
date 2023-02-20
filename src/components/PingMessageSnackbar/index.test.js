@@ -19,7 +19,7 @@ describe('pingMessageSnackbar UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should pass the initial render for comm status loading', () => {
+  test('should pass the initial render for comm status loading', async () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
     const props = {
@@ -32,7 +32,7 @@ describe('pingMessageSnackbar UI tests', () => {
 
     expect(screen.getByText(/Testing your connection/i, {exact: false})).toBeInTheDocument();
     expect(screen.getByText(/Cancel/i, {exact: false})).toBeInTheDocument();
-    userEvent.click(screen.getByText(/Cancel/i, {exact: false}));
+    await userEvent.click(screen.getByText(/Cancel/i, {exact: false}));
     expect(mockOnCancel).toHaveBeenCalledTimes(1);
   });
   test('should pass the initial render for comm status error', () => {

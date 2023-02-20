@@ -96,9 +96,9 @@ describe('RefreshableTreeComponent UI tests', () => {
     initRefreshableTreeComponent({...props, nodeId: 'newone', status: 'received'});
     const checkboxes = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkboxes[0]);
+    await userEvent.click(checkboxes[0]);
     expect(screen.getByText('Node')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Node'));
+    await userEvent.click(screen.getByText('Node'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.refresh(
       '5efd8663a56953365bd28541',
       'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/newone', {refreshCache: true}

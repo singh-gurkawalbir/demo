@@ -66,7 +66,7 @@ describe('dynaSuiteScriptUploadFile UI test cases', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const uploadfile = document.querySelector('[data-test="uploadFile"]');
 
-    userEvent.click(uploadfile);
+    await userEvent.click(uploadfile);
     const inputupload = document.querySelector('input[data-test="uploadFile"]');
 
     await waitFor(() => userEvent.upload(inputupload, file));
@@ -117,7 +117,7 @@ describe('dynaSuiteScriptUploadFile UI test cases', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const uploadfile = document.querySelector('[data-test="uploadFile"]');
 
-    userEvent.click(uploadfile);
+    await userEvent.click(uploadfile);
     const input = document.querySelector('input[data-test="uploadFile"]');
 
     await waitFor(() => userEvent.upload(input, file));
@@ -150,7 +150,7 @@ describe('dynaSuiteScriptUploadFile UI test cases', () => {
     expect(input.files).toHaveLength(0);
     const uploadfile = document.querySelector('[data-test="uploadFile"]');
 
-    userEvent.click(uploadfile);
+    await userEvent.click(uploadfile);
     const inputupload = document.querySelector('input[data-test="uploadFile"]');
 
     await waitFor(() => userEvent.upload(inputupload, undefined));

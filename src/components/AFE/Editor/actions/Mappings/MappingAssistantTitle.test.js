@@ -108,7 +108,7 @@ describe('mappingAssistantTitle UI tests', () => {
     const refreshIcon = document.querySelector('[title="Refresh data"]');
 
     expect(refreshIcon).toBeInTheDocument();
-    userEvent.click(refreshIcon);
+    await userEvent.click(refreshIcon);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('5efd8663a56953365bd28541', commMetaPath, {refreshCache: true})));
   });
 });

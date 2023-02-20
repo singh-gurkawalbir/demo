@@ -357,7 +357,7 @@ describe('test suite for SalesforceMappingAssistant', () => {
     const inputField = screen.getAllByRole('textbox')[0];
 
     expect(onFieldClick).not.toHaveBeenCalled();
-    userEvent.click(inputField);
+    await userEvent.click(inputField);
     expect(onFieldClick).toHaveBeenCalledTimes(1);
   });
 });

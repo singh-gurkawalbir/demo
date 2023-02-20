@@ -165,7 +165,7 @@ describe('Flow ellipsis menu ui tests', () => {
     await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const menuItems = screen.getAllByRole('menuitem');
 
     expect(menuItems).toHaveLength(8);
@@ -177,10 +177,10 @@ describe('Flow ellipsis menu ui tests', () => {
     );
     const icon = screen.getByRole('button');
 
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const cloneFlowButton = screen.getByText('Clone flow');
 
-    userEvent.click(cloneFlowButton);
+    await userEvent.click(cloneFlowButton);
     await waitFor(() => expect(history.push).toHaveBeenCalledTimes(1));
   });
   test('should display and perform the functionality of delete flow button', async () => {
@@ -188,14 +188,14 @@ describe('Flow ellipsis menu ui tests', () => {
     await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: ['mapping', 'detach', 'audit', 'schedule'] });
     const icon = screen.getByRole('button');
 
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const deleteFlowButton = screen.getByText('Delete flow');
 
     expect(deleteFlowButton).toBeInTheDocument();
-    userEvent.click(deleteFlowButton);
+    await userEvent.click(deleteFlowButton);
     const confirmDelete = screen.getByRole('button', {name: 'Delete'});
 
-    userEvent.click(confirmDelete);
+    await userEvent.click(confirmDelete);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.delete('flows', '62677c19737f015ed4aff4fd')));
     await waitFor(() => expect(history.replace).toHaveBeenCalledTimes(1));
   });
@@ -205,11 +205,11 @@ describe('Flow ellipsis menu ui tests', () => {
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const downloadFlowButton = screen.getByText('Download flow');
 
     expect(downloadFlowButton).toBeInTheDocument();
-    userEvent.click(downloadFlowButton);
+    await userEvent.click(downloadFlowButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.downloadFile('62677c19737f015ed4aff4fd', 'flows')));
   });
   test('should display and perform the functionality of detach flow button', async () => {
@@ -220,15 +220,15 @@ describe('Flow ellipsis menu ui tests', () => {
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const detachFlowButton = screen.getByText('Detach flow');
 
     expect(detachFlowButton).toBeInTheDocument();
-    userEvent.click(detachFlowButton);
+    await userEvent.click(detachFlowButton);
     const confirmButton = screen.getByText('Detach');
 
     expect(confirmButton).toBeInTheDocument();
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', '62677c19737f015ed4aff4fd', patchSet)));
   });
   test('should display and perform the functionality of delete EditMapping button', async () => {
@@ -237,11 +237,11 @@ describe('Flow ellipsis menu ui tests', () => {
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const mappingButton = screen.getByText('Edit mapping');
 
     expect(mappingButton).toBeInTheDocument();
-    userEvent.click(mappingButton);
+    await userEvent.click(mappingButton);
     expect(history.push).toHaveBeenCalledTimes(1);
   });
   test('should display and perform the functionality of schedule flow button', async () => {
@@ -250,11 +250,11 @@ describe('Flow ellipsis menu ui tests', () => {
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const scheduleButton = screen.getByText('Schedule');
 
     expect(scheduleButton).toBeInTheDocument();
-    userEvent.click(scheduleButton);
+    await userEvent.click(scheduleButton);
     expect(history.push).toHaveBeenCalledTimes(1);
   });
   test('should display and perform the functionality of Audit Log button', async () => {
@@ -263,11 +263,11 @@ describe('Flow ellipsis menu ui tests', () => {
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const auditlogButton = screen.getByText('View audit log');
 
     expect(auditlogButton).toBeInTheDocument();
-    userEvent.click(auditlogButton);
+    await userEvent.click(auditlogButton);
     waitFor(() => expect(screen.getByText('/Audit Log/i')).toBeInTheDocument());
   });
   test('should display and perform the functionality of Usedby references button', async () => {
@@ -276,11 +276,11 @@ describe('Flow ellipsis menu ui tests', () => {
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    userEvent.click(icon);
+    await userEvent.click(icon);
     const referencesButton = screen.getByText('Used by');
 
     expect(referencesButton).toBeInTheDocument();
-    userEvent.click(referencesButton);
+    await userEvent.click(referencesButton);
     waitFor(() => expect(screen.getByText('/This resource is not being used anywhere/i')).toBeInTheDocument());
   });
 });

@@ -117,7 +117,7 @@ describe('Should test Code Editor', () => {
     expect(mockOnLoad).toHaveBeenCalled();
     expect(document.querySelector('div[id="test name"]').className).toEqual(expect.stringContaining('makeStyles-editorErrorWrapper-'));
   });
-  test('should test the code editor resize function and rerender when hasWarning is modified to true and test the warning message style', () => {
+  test('should test the code editor resize function and rerender when hasWarning is modified to true and test the warning message style', async () => {
     const props = {
       name: 'test name',
       value: 'function preSavePage(){\n  return (\n    console.log("Hello world")\n    )\n}',
@@ -158,7 +158,7 @@ describe('Should test Code Editor', () => {
     const reSizeButtonNode = screen.getByRole('button', {name: 'reSize'});
 
     expect(reSizeButtonNode).toBeInTheDocument();
-    userEvent.click(reSizeButtonNode);
+    await userEvent.click(reSizeButtonNode);
     utils.unmount();
     initCodeEditor({props: (props1 || props), renderFun: utils.rerender});
     expect(mockOnLoad).toHaveBeenCalled();

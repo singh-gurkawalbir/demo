@@ -375,7 +375,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
     const copyToClipBoardButtonNode = document.querySelector('button[data-test="copyToClipboard"]');
 
     expect(copyToClipBoardButtonNode).toBeInTheDocument();
-    userEvent.click(copyToClipBoardButtonNode);
+    await userEvent.click(copyToClipBoardButtonNode);
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Copied to clipboard'});
   });
 });

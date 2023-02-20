@@ -78,7 +78,7 @@ describe('autoMapperButton component Test cases', () => {
 
     expect(autoMapButton).toBeInTheDocument();
     expect(screen.queryByText(/just failed for no reason/i)).toBeInTheDocument();
-    userEvent.click(autoMapButton);
+    await userEvent.click(autoMapButton);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.autoMapper.request());
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.analytics.gainsight.trackEvent('AUTO_MAP_BUTTON_CLICKED'));
@@ -92,7 +92,7 @@ describe('autoMapperButton component Test cases', () => {
 
     expect(autoMapButton).toBeInTheDocument();
     expect(screen.queryByText(/just failed for no reason/i)).toBeInTheDocument();
-    expect(() => userEvent.click(autoMapButton)).toThrow();
+    await expect(() => userEvent.click(autoMapButton)).rejects.toThrow();
     expect(mockDispatchFn).toHaveBeenCalledTimes(0);
   });
 

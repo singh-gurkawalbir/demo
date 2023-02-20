@@ -6,7 +6,7 @@ import { renderWithProviders } from '../../../test/test-utils';
 import DynaMultiSelect from './DynaMultiSelect';
 
 describe('test suite for DynaMultiSelect field', () => {
-  test('should be able to change selected options', () => {
+  test('should be able to change selected options', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'flows',
@@ -64,7 +64,7 @@ describe('test suite for DynaMultiSelect field', () => {
     expect(selectedOptions).toBeInTheDocument();
     expect(inputField).toHaveValue(props.value.join(','));
 
-    userEvent.click(selectedOptions);
+    await userEvent.click(selectedOptions);
     const options = screen.getAllByRole('option').map(ele => ele.textContent);
 
     expect(options).toEqual([
@@ -75,17 +75,17 @@ describe('test suite for DynaMultiSelect field', () => {
       'Flow 4',
     ]);
 
-    userEvent.click(screen.getByRole('option', {name: 'Flow 1'}));
+    await userEvent.click(screen.getByRole('option', {name: 'Flow 1'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-456', 'flow-789', 'flow-123']);
 
-    userEvent.click(screen.getByRole('option', {name: 'flow-789'}));
+    await userEvent.click(screen.getByRole('option', {name: 'flow-789'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-456']);
 
-    userEvent.click(screen.getByRole('button', {name: /done/i}));
+    await userEvent.click(screen.getByRole('button', {name: /done/i}));
     expect(screen.queryByRole('option')).not.toBeInTheDocument();
   });
 
-  test('should deselect all other options, if user selects selectAll option', () => {
+  test('should deselect all other options, if user selects selectAll option', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'flows',
@@ -133,13 +133,13 @@ describe('test suite for DynaMultiSelect field', () => {
     };
 
     renderWithProviders(<DynaMultiSelect {...props} />);
-    userEvent.click(screen.getByRole('button', {name: 'Flow 2 Flow 3'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Flow 2 Flow 3'}));
     expect(onFieldChange).not.toHaveBeenCalled();
-    userEvent.click(screen.getByRole('option', {name: 'All flows'}));
+    await userEvent.click(screen.getByRole('option', {name: 'All flows'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, ['integration-123']);
   });
 
-  test('should deselect selectAll option if user selects other options', () => {
+  test('should deselect selectAll option if user selects other options', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'flows',
@@ -186,11 +186,11 @@ describe('test suite for DynaMultiSelect field', () => {
     };
 
     renderWithProviders(<DynaMultiSelect {...props} />);
-    userEvent.click(screen.getByRole('button', {name: 'All flows'}));
+    await userEvent.click(screen.getByRole('button', {name: 'All flows'}));
     expect(onFieldChange).not.toHaveBeenCalled();
-    userEvent.click(screen.getByRole('option', {name: 'Flow 1'}));
+    await userEvent.click(screen.getByRole('option', {name: 'Flow 1'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-123']);
-    userEvent.click(screen.getByRole('option', {name: 'Flow 2'}));
+    await userEvent.click(screen.getByRole('option', {name: 'Flow 2'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, ['flow-456']);
   });
 

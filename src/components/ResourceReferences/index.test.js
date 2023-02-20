@@ -99,7 +99,7 @@ describe('resourceReferences test cases', () => {
     const closeButton = screen.getByRole('button');
 
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onClose).toHaveBeenCalled();
   });
 

@@ -27,7 +27,7 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-3')).toBeInTheDocument();
   });
 
-  test('should click the close button', () => {
+  test('should click the close button', async () => {
     const onclose = jest.fn();
 
     render(
@@ -42,7 +42,7 @@ describe('modalDialog UI tests', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     expect(onclose).toHaveBeenCalledTimes(1);
   });
@@ -65,7 +65,7 @@ describe('modalDialog UI tests', () => {
     expect(button).toBeDisabled();
   });
 
-  test('should click on the action handler function provided through prop', () => {
+  test('should click on the action handler function provided through prop', async () => {
     const actionhanlder = jest.fn();
 
     render(
@@ -80,7 +80,7 @@ describe('modalDialog UI tests', () => {
 
     const actionbutton = screen.getByText('actionLabel');
 
-    userEvent.click(actionbutton);
+    await userEvent.click(actionbutton);
     expect(actionhanlder).toHaveBeenCalledTimes(1);
   });
 });

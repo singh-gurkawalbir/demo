@@ -26,13 +26,13 @@ const initialStore = reduxStore;
 initialStore.getState().session.logs.flowStep = {someresourceId: {activeLogKey: 'somelogKey'}};
 
 describe('logDetailsLink UI tests', () => {
-  test('should make dispatch call to set active log when clicked on time', () => {
+  test('should make dispatch call to set active log when clicked on time', async () => {
     const {store} = renderWithProviders(<LogDetailsLink resourceId="someresourceId" logKey="somelogKey" time="2022-05-18T18:16:31.989Z" />);
     const profile = {timezone: 'Asia/Kolkata'};
 
     store.dispatch(actions.user.profile.update(profile));
 
-    userEvent.click(screen.getByText('05/18/2022 11:46:31 pm'));
+    await userEvent.click(screen.getByText('05/18/2022 11:46:31 pm'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.setActiveLog('someresourceId', 'somelogKey')
     );

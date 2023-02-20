@@ -70,12 +70,12 @@ describe('application type Http matadata text cases', () => {
   test('should show only two option of Standard and Hard coded for array Datatype', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const arrayNumber = screen.getByRole('menuitem', {name: '[number]'});
 
-    userEvent.click(arrayNumber);
+    await userEvent.click(arrayNumber);
     await waitFor(() => expect(arrayNumber).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
 
     const menuItem = screen.getAllByRole('menuitem');
 
@@ -88,12 +88,12 @@ describe('application type Http matadata text cases', () => {
   test('should show all the option for the any non array data type', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const numberData = screen.getByRole('menuitem', {name: 'number'});
 
-    userEvent.click(numberData);
+    await userEvent.click(numberData);
     await waitFor(() => expect(numberData).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
 
     const menuItem = screen.getAllByRole('menuitem');
 
@@ -104,15 +104,15 @@ describe('application type Http matadata text cases', () => {
     );
     const lookupOption = screen.getByRole('menuitem', {name: 'Lookup'});
 
-    userEvent.click(lookupOption);
+    await userEvent.click(lookupOption);
     await waitFor(() => expect(lookupOption).not.toBeInTheDocument());
 
-    userEvent.click(screen.getByRole('radio', {name: 'Static'}));
+    await userEvent.click(screen.getByRole('radio', {name: 'Static'}));
 
     expect(screen.getByText('Destination field value')).toBeInTheDocument();
     expect(screen.getByText('Source field value')).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('radio', {name: 'Dynamic'}));
+    await userEvent.click(screen.getByRole('radio', {name: 'Dynamic'}));
 
     expect(screen.getByText('Relative URI')).toBeInTheDocument();
   });

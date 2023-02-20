@@ -22,7 +22,7 @@ jest.mock('../../CeligoTable/TableContext', () => ({
 }));
 
 describe('test suite for scripts', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const lastModified = new Date().toISOString();
     const data = [{
       _id: 'script123',
@@ -52,7 +52,7 @@ describe('test suite for scripts', () => {
       '',
     ]);
     expect(screen.getByRole('link', {name: 'scriptName'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
 
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
@@ -65,7 +65,7 @@ describe('test suite for scripts', () => {
     ]);
   });
 
-  test('should not be able to delete script when in flowBuilder', () => {
+  test('should not be able to delete script when in flowBuilder', async () => {
     mockTableContext.type = 'flowBuilder';
     const data = [{
       _id: 'script123',
@@ -78,7 +78,7 @@ describe('test suite for scripts', () => {
         <CeligoTable {...metadata} data={data} />
       </MemoryRouter>
     );
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).not.toContain('Delete script');

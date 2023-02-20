@@ -73,12 +73,12 @@ describe('metadata for FTP type file test cases', () => {
   test('should show only two option for array type data', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const numberArray = screen.getByRole('menuitem', {name: '[number]'});
 
-    userEvent.click(numberArray);
+    await userEvent.click(numberArray);
     await waitFor(() => expect(numberArray).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
 
     const menuItem = screen.getAllByRole('menuitem');
 
@@ -91,15 +91,15 @@ describe('metadata for FTP type file test cases', () => {
   test('should show handle look up change option for date field should be shown', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const numberOption = screen.getByRole('menuitem', {name: 'number'});
 
-    userEvent.click(numberOption);
+    await userEvent.click(numberOption);
     await waitFor(() => expect(numberOption).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const standardOption = screen.getByRole('menuitem', {name: 'Standard'});
 
-    userEvent.click(standardOption);
+    await userEvent.click(standardOption);
 
     await waitFor(() => expect(standardOption).not.toBeInTheDocument());
 
@@ -108,15 +108,15 @@ describe('metadata for FTP type file test cases', () => {
   test('should not show option for data field for boolean data', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const booleanOption = screen.getByRole('menuitem', {name: 'boolean'});
 
-    userEvent.click(booleanOption);
+    await userEvent.click(booleanOption);
     await waitFor(() => expect(booleanOption).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const standardOption = screen.getByRole('menuitem', {name: 'Standard'});
 
-    userEvent.click(standardOption);
+    await userEvent.click(standardOption);
 
     await waitFor(() => expect(standardOption).not.toBeInTheDocument());
 

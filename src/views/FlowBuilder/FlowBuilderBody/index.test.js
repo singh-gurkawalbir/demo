@@ -230,20 +230,20 @@ describe('FlowBuilderBody UI tests', () => {
     expect(actualTitles).toEqual(expectedButtonTitles);
   });
 
-  test('should make the respective dispatch calls when navigating the mini map', () => {
+  test('should make the respective dispatch calls when navigating the mini map', async () => {
     const props = { flowId: '62c6f122a2f4a703c3dee3d0' };
 
     initFlowBuilderBody(props);
-    userEvent.click(screen.getByText('DragStop')); // Drag events have been modified as buttons //
+    await userEvent.click(screen.getByText('DragStop')); // Drag events have been modified as buttons //
     expect(mockDispatchFn).toBeCalled();
-    userEvent.click(screen.getByText('NodeDrag'));
+    await userEvent.click(screen.getByText('NodeDrag'));
     expect(mockDispatchFn).toBeCalled();
   });
-  test('should make the respective dispatch call when clicked on SourceTitle', () => {
+  test('should make the respective dispatch call when clicked on SourceTitle', async () => {
     const props = { flowId: '62c6f122a2f4a703c3dee3d0' };
 
     initFlowBuilderBody(props);
-    userEvent.click(screen.getByText('SOURCES'));
+    await userEvent.click(screen.getByText('SOURCES'));
     expect(mockDispatchFn).toBeCalledWith(
       actions.flow.addNewPGStep('62c6f122a2f4a703c3dee3d0')
     );

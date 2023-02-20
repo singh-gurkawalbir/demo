@@ -150,7 +150,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value1 = screen.getByText('Cancel');
 
     expect(value1).toBeInTheDocument();
-    userEvent.click(value1);
+    await userEvent.click(value1);
   });
 
   test('testing dialogue box without userevents', async () => {
@@ -164,7 +164,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value = screen.getByText('Button Clicked');
 
     expect(value).toBeInTheDocument();
-    userEvent.click(value);
+    await userEvent.click(value);
     const value1 = screen.getByRole('textbox');
 
     expect(value1).toBeInTheDocument();
@@ -264,7 +264,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value2 = screen.getAllByRole('button');
 
     expect(value2[0]).toBeInTheDocument();
-    userEvent.click(value2[0]);
+    await userEvent.click(value2[0]);
   });
 });
 

@@ -159,7 +159,7 @@ initialStore.getState().session.errorManagement = {
 };
 
 describe('ErrorDetailsPanel UI test cases', () => {
-  test('should make a dispatch call on changing retry data', () => {
+  test('should make a dispatch call on changing retry data', async () => {
     const props = {
       errorsInCurrPage: [
         { errorId: '5646501091' },
@@ -208,19 +208,19 @@ describe('ErrorDetailsPanel UI test cases', () => {
         retryId: 2,
       })
     );
-    userEvent.click(
+    await userEvent.click(
       screen.getByRole('checkbox', {
         name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
       })
     );
-    userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
     expect(
       document.querySelector(
         'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
-  test('should push http response and request tabs when reqAndResKey is provided and adatptor type for resource is not netsuite', () => {
+  test('should push http response and request tabs when reqAndResKey is provided and adatptor type for resource is not netsuite', async () => {
     const props = {
       errorsInCurrPage: [
         { errorId: '5646501091' },
@@ -250,14 +250,14 @@ describe('ErrorDetailsPanel UI test cases', () => {
     expect(getByRole('tab', { name: 'HTTP response' })).toBeInTheDocument();
     expect(getByRole('tab', { name: 'Error fields' })).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
     expect(
       document.querySelector(
         'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
-  test('should push view response and view request tabs when reqAndResKey is provided and adatptor type for resource is netsuite', () => {
+  test('should push view response and view request tabs when reqAndResKey is provided and adatptor type for resource is netsuite', async () => {
     initialStore.getState().data.resources.exports = [
       {
         _id: '63234d05514d5b0bfxsfrgvddv',
@@ -297,18 +297,18 @@ describe('ErrorDetailsPanel UI test cases', () => {
     expect(getByRole('tab', { name: 'View response' })).toBeInTheDocument();
     expect(getByRole('tab', { name: 'Error fields' })).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
     expect(
       document.querySelector(
         'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
-    userEvent.click(
+    await userEvent.click(
       screen.getByRole('checkbox', {
         name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
       })
     );
-    userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
     expect(
       document.querySelector(
         'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'

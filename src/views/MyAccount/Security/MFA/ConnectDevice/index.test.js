@@ -69,13 +69,13 @@ describe('Testsuite for Connect device', () => {
 
     expect(trustDeviceCheckboxNode).toBeInTheDocument();
     expect(trustDeviceCheckboxNode).not.toBeChecked();
-    userEvent.click(trustDeviceCheckboxNode);
+    await userEvent.click(trustDeviceCheckboxNode);
     expect(trustDeviceCheckboxNode).toBeChecked();
     expect(screen.getByText(/connect your mobile device \*/i)).toBeInTheDocument();
     const connectButtonNode = screen.getByRole('button', { name: /connect/i});
 
     expect(connectButtonNode).toBeInTheDocument();
-    userEvent.click(connectButtonNode);
+    await userEvent.click(connectButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_USER_SETTINGS_SETUP',
       mfaConfig: { trustDevice: true, enabled: true, context: 'setup' },
@@ -98,7 +98,7 @@ describe('Testsuite for Connect device', () => {
     });
 
     expect(pleaseSelectButtonNode).toBeInTheDocument();
-    userEvent.click(pleaseSelectButtonNode);
+    await userEvent.click(pleaseSelectButtonNode);
     const menuItemsOptionNode = screen.getByRole('menuitem', { name: /test company/i });
 
     expect(menuItemsOptionNode).toBeInTheDocument();
@@ -112,14 +112,14 @@ describe('Testsuite for Connect device', () => {
     });
 
     expect(trustDeviceCheckboxNode).toBeInTheDocument();
-    userEvent.click(trustDeviceCheckboxNode);
+    await userEvent.click(trustDeviceCheckboxNode);
     expect(screen.getByRole('heading', {
       name: /connect your mobile device \*/i,
     })).toBeInTheDocument();
     const connectButtonNode = screen.getByRole('button', { name: /connect/i});
 
     expect(connectButtonNode).toBeInTheDocument();
-    userEvent.click(connectButtonNode);
+    await userEvent.click(connectButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_USER_SETTINGS_SETUP',
       mfaConfig: {
@@ -148,7 +148,7 @@ describe('Testsuite for Connect device', () => {
     const connectButtonNode = screen.getByRole('button', { name: /connect/i});
 
     expect(connectButtonNode).toBeInTheDocument();
-    userEvent.click(connectButtonNode);
+    await userEvent.click(connectButtonNode);
     expect(screen.getByText(/A value must be provided/i)).toBeInTheDocument();
   });
 });

@@ -56,7 +56,7 @@ describe('Testsuite for MobileCodeVerification', () => {
     const verifyButtonNode = screen.getByRole('button', { name: 'Verify'});
 
     expect(verifyButtonNode).toBeInTheDocument();
-    userEvent.click(verifyButtonNode);
+    await userEvent.click(verifyButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_MOBILE_CODE_VERIFY', code: '123456' });
   });
 });

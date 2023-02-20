@@ -32,7 +32,7 @@ initialStore.getState().data.resources.flows = [
   },
 ];
 
-function renderFunction() {
+async function renderFunction() {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable
@@ -41,13 +41,13 @@ function renderFunction() {
       />
     </MemoryRouter>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('edit Flow action test cases', () => {
-  test('should click on Edit Flow button', () => {
+  test('should click on Edit Flow button', async () => {
     renderFunction();
-    userEvent.click(screen.getByText('Edit flow'));
+    await userEvent.click(screen.getByText('Edit flow'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/integration_id/flowBuilder/flow_id');
   });
 });

@@ -216,7 +216,7 @@ describe('FlowBuilder Body PageBar UI tests', () => {
     const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010'};
 
     initPageBar(props);
-    userEvent.click(screen.getByText('Editable Text'));
+    await userEvent.click(screen.getByText('Editable Text'));
     expect(screen.getByText('Editable Text')).toBeInTheDocument();
   });
   test('should display the last saved time as never for new flows', () => {

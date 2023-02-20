@@ -65,7 +65,7 @@ describe('Testsuite for ReAuthModal', () => {
     const viewCodeButtonNode = screen.getByRole('button', {name: /view code/i});
 
     expect(viewCodeButtonNode).toBeInTheDocument();
-    userEvent.click(viewCodeButtonNode);
+    await userEvent.click(viewCodeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_REQUEST_SECRET_CODE',
       password: 'testpassword',
@@ -94,7 +94,7 @@ describe('Testsuite for ReAuthModal', () => {
     const viewCodeButtonNode = screen.getByRole('button', {name: /view key/i});
 
     expect(viewCodeButtonNode).toBeInTheDocument();
-    userEvent.click(viewCodeButtonNode);
+    await userEvent.click(viewCodeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_REQUEST_SECRET_CODE',
       password: 'testpassword',

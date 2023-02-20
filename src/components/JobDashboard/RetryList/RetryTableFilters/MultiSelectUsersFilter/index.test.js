@@ -198,7 +198,7 @@ describe('multiSelectUsersFilter UI tests', () => {
     expect(screen.queryByText(/Select/i)).toBeInTheDocument();
   });
 
-  test('should pass the initial render when a user is selected', () => {
+  test('should pass the initial render when a user is selected', async () => {
     initMultiSelectUsersFilter({
       props: {
         flowId: 'flow1',
@@ -207,7 +207,7 @@ describe('multiSelectUsersFilter UI tests', () => {
       },
     });
 
-    userEvent.click(screen.getByText('Select'));
+    await userEvent.click(screen.getByText('Select'));
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).toBeChecked();
@@ -215,16 +215,16 @@ describe('multiSelectUsersFilter UI tests', () => {
     expect(checkboxes[2]).not.toBeChecked();
     expect(checkboxes[3]).not.toBeChecked();
 
-    userEvent.click(checkboxes[0]);
+    await userEvent.click(checkboxes[0]);
 
     const cancelButton = screen.getByText('Cancel');
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(screen.getByText(/Select/i)).toBeInTheDocument();
   });
 
-  test('should pass the initial render when a user is selected duplicate', () => {
+  test('should pass the initial render when a user is selected duplicate', async () => {
     initMultiSelectUsersFilter({
       props: {
         flowId: 'flow1',
@@ -233,7 +233,7 @@ describe('multiSelectUsersFilter UI tests', () => {
       },
     });
 
-    userEvent.click(screen.getByText('Select'));
+    await userEvent.click(screen.getByText('Select'));
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).toBeChecked();
@@ -241,7 +241,7 @@ describe('multiSelectUsersFilter UI tests', () => {
     expect(checkboxes[2]).not.toBeChecked();
     expect(checkboxes[3]).not.toBeChecked();
 
-    userEvent.click(checkboxes[1]);
+    await userEvent.click(checkboxes[1]);
 
     expect(checkboxes[0]).not.toBeChecked();
     expect(checkboxes[1]).toBeChecked();
@@ -250,10 +250,10 @@ describe('multiSelectUsersFilter UI tests', () => {
     const applyButton = screen.getByText('Apply');
 
     expect(applyButton).toBeInTheDocument();
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
     expect(screen.getByText(/Shared user 1/i)).toBeInTheDocument();
   });
-  test('should pass the initial render when multiple users are selected', () => {
+  test('should pass the initial render when multiple users are selected', async () => {
     initMultiSelectUsersFilter({
       props: {
         flowId: 'flow1',
@@ -262,7 +262,7 @@ describe('multiSelectUsersFilter UI tests', () => {
       },
     });
 
-    userEvent.click(screen.getByText('Select'));
+    await userEvent.click(screen.getByText('Select'));
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).toBeChecked();
@@ -270,8 +270,8 @@ describe('multiSelectUsersFilter UI tests', () => {
     expect(checkboxes[2]).not.toBeChecked();
     expect(checkboxes[3]).not.toBeChecked();
 
-    userEvent.click(checkboxes[1]);
-    userEvent.click(checkboxes[2]);
+    await userEvent.click(checkboxes[1]);
+    await userEvent.click(checkboxes[2]);
 
     expect(checkboxes[0]).not.toBeChecked();
     expect(checkboxes[1]).toBeChecked();
@@ -280,10 +280,10 @@ describe('multiSelectUsersFilter UI tests', () => {
     const applyButton = screen.getByText('Apply');
 
     expect(applyButton).toBeInTheDocument();
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
     expect(screen.getByText(/2 users selected/i)).toBeInTheDocument();
   });
-  test('should pass the initial render when there are default users', () => {
+  test('should pass the initial render when there are default users', async () => {
     initMultiSelectUsersFilter({
       props: {
         flowId: 'flow1',
@@ -298,11 +298,11 @@ describe('multiSelectUsersFilter UI tests', () => {
     });
 
     expect(screen.getByText(/Shared user 3/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText('Shared user 3'));
+    await userEvent.click(screen.getByText('Shared user 3'));
     const checkboxes = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkboxes[0]);
-    userEvent.click(checkboxes[1]);
+    await userEvent.click(checkboxes[0]);
+    await userEvent.click(checkboxes[1]);
 
     expect(checkboxes[0]).not.toBeChecked();
     expect(checkboxes[1]).toBeChecked();
@@ -311,7 +311,7 @@ describe('multiSelectUsersFilter UI tests', () => {
     const applyButton = screen.getByText('Apply');
 
     expect(applyButton).toBeInTheDocument();
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
     expect(screen.getByText(/Shared user 1/i)).toBeInTheDocument();
   });
 });

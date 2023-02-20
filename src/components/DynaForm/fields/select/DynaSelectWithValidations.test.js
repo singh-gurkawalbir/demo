@@ -23,7 +23,7 @@ async function initDynaSelectWithValidations(props = {}) {
 describe('dynaSelectWithValidations tests', () => {
   test('should test dynaSelect field validation without proper formFields', async () => {
     await initDynaSelectWithValidations({...props, formKey: 'random'});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(screen.queryByText('_description')).toBeInTheDocument();
   });

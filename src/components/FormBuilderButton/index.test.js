@@ -121,7 +121,7 @@ describe('formbuilder button UI tests', () => {
     const button = screen.getByText('Launch form builder');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(history.push).toHaveBeenCalledTimes(1);
   });

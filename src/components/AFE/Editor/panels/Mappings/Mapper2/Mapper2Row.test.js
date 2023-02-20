@@ -131,53 +131,53 @@ describe('Mapper2Row UI test cases', () => {
       actions.mapping.v2.patchField('extract', undefined, 'sometext', undefined, 'somejsonpath')
     );
   });
-  test('should make dispatch call to add new row when add button is clicked', () => {
+  test('should make dispatch call to add new row when add button is clicked', async () => {
     const nodeKey = 'somenodeey';
 
     initMapper2Row({nodeKey});
 
     const addButton = screen.getByText('AddIcon');
 
-    userEvent.click(addButton);
+    await userEvent.click(addButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.addRow(nodeKey)
     );
   });
-  test('should click on trash icon and delete row for rows having no child', () => {
+  test('should click on trash icon and delete row for rows having no child', async () => {
     const nodeKey = 'somenodekey';
 
     initMapper2Row({nodeKey});
 
     const deleteButton = screen.getByText('TrashIcon');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.deleteRow(nodeKey)
     );
   });
-  test('should show dialog box on clicking trashicon and make dispatch call for deleting node', () => {
+  test('should show dialog box on clicking trashicon and make dispatch call for deleting node', async () => {
     const nodeKey = 'somenodekey';
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
     const deleteButton = screen.getByText('TrashIcon');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.deleteRow(nodeKey)
     );
   });
-  test('should redirect to setting page when setting icon is clicked', () => {
+  test('should redirect to setting page when setting icon is clicked', async () => {
     const nodeKey = 'somenodekey';
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row generate={[]} nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
     const settingsIcon = screen.getByText('SettingsIcon');
 
-    userEvent.click(settingsIcon);
+    await userEvent.click(settingsIcon);
     expect(mockHistoryPush).toHaveBeenCalledWith('intialURL/settings/v2/somenodekey/');
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.updateActiveKey(nodeKey)

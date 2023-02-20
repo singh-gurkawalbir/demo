@@ -114,31 +114,31 @@ describe("resolvedErros table's metadata UI tests", () => {
 
     expect(screen.queryByRole('button', {name: /more/i})).not.toBeInTheDocument();
   });
-  test('should show actions options for the non retryable errors', () => {
+  test('should show actions options for the non retryable errors', async () => {
     initFunction(props, {actionInProgress: false});
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('View error details')).toBeInTheDocument();
   });
-  test('should show actions options for the retryable errors', () => {
+  test('should show actions options for the retryable errors', async () => {
     initFunction({...props, retryDataKey: 'someRetryDataKEy'}, {actionInProgress: false});
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit retry data')).toBeInTheDocument();
     expect(screen.getByText('Retry')).toBeInTheDocument();
     expect(screen.getByText('View error details')).toBeInTheDocument();
   });
-  test('should show option for View respone and request for Netsuite resource', () => {
+  test('should show option for View respone and request for Netsuite resource', async () => {
     initFunction({...props, reqAndResKey: 'reqAndResKey'}, {actionInProgress: false, resourceId}, initialStore);
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('View error details')).toBeInTheDocument();
     expect(screen.getByText('View request')).toBeInTheDocument();
   });
-  test('should show option for View respone and request for HTTP', () => {
+  test('should show option for View respone and request for HTTP', async () => {
     initFunction({...props, reqAndResKey: 'reqAndResKey'}, {actionInProgress: false, resourceId});
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('View error details')).toBeInTheDocument();
     expect(screen.getByText('View HTTP request')).toBeInTheDocument();
   });

@@ -41,7 +41,7 @@ describe('test suite for DynaIASelect field', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should render DynaMultiSelect field if multiselect flag is set', () => {
+  test('should render DynaMultiSelect field if multiselect flag is set', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'http.multiselect',
@@ -76,7 +76,7 @@ describe('test suite for DynaIASelect field', () => {
       [{items: [{value: 'value1', label: 'Option 1'}, {value: 'value2', label: 'Option 2'}, {value: 'value3', label: 'Option 3'}]}]
     ));
 
-    userEvent.click(screen.getByRole('button', {name: 'changeField'}));
+    await userEvent.click(screen.getByRole('button', {name: 'changeField'}));
     expect(onFieldChange).toBeCalledWith(props.id, 'sampleVal');
     expect(mockDispatchFn).toBeCalledWith(actions.connectors.refreshMetadata('sampleVal', props.id, props._integrationId, {
       key: 'fieldValue',
@@ -84,7 +84,7 @@ describe('test suite for DynaIASelect field', () => {
     }));
   });
 
-  test('should render DynaSelect field if multiselect flag is unset', () => {
+  test('should render DynaSelect field if multiselect flag is unset', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'http.select',
@@ -104,12 +104,12 @@ describe('test suite for DynaIASelect field', () => {
       [{items: [{label: 'Option 4', value: 'value4'}, {label: 'Option 5', value: 'value5'}]}]
     ));
 
-    userEvent.click(screen.getByRole('button', {name: 'changeField'}));
+    await userEvent.click(screen.getByRole('button', {name: 'changeField'}));
     expect(mockDispatchFn).not.toBeCalled();
     expect(onFieldChange).toBeCalledWith(props.id, 'sampleVal');
   });
 
-  test('should not refresh metadata on changing value if autoPostBack flag is not set and state contains options', () => {
+  test('should not refresh metadata on changing value if autoPostBack flag is not set and state contains options', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'http.select',
@@ -137,7 +137,7 @@ describe('test suite for DynaIASelect field', () => {
     expect(screen.getByTestId('options')).toHaveTextContent(JSON.stringify(
       [{items: [{value: 'value1', label: 'Option 1'}, {value: 'value2', label: 'Option 2'}, {value: 'value3', label: 'Option 3'}]}]));
 
-    userEvent.click(screen.getByRole('button', {name: 'changeField'}));
+    await userEvent.click(screen.getByRole('button', {name: 'changeField'}));
     expect(mockDispatchFn).not.toBeCalled();
     expect(onFieldChange).toBeCalledWith(props.id, 'sampleVal');
   });

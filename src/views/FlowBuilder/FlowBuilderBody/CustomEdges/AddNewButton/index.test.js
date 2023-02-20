@@ -45,7 +45,7 @@ describe('Testsuite for Add New Button', () => {
     mockUseHandleAddNode.mockClear();
     mockUseHandleAddNewRouter.mockClear();
   });
-  test('should test the Add new button and by clicking on add destination lookup menu item', () => {
+  test('should test the Add new button and by clicking on add destination lookup menu item', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({elementsMap: {456: {type: 'router'}},
     });
     jest.spyOn(mockLib, 'isNodeConnectedToRouter').mockReturnValue(false);
@@ -56,7 +56,7 @@ describe('Testsuite for Add New Button', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     const addDestinationLookUpMenuItemNode = screen.getByRole('menuitem', {
       name: /add destination \/ lookup/i,
     });
@@ -69,10 +69,10 @@ describe('Testsuite for Add New Button', () => {
 
     expect(addBranchingMenuItemNode).toBeInTheDocument();
     expect(addBranchingMenuItemNode).toBeEnabled();
-    userEvent.click(addDestinationLookUpMenuItemNode);
+    await userEvent.click(addDestinationLookUpMenuItemNode);
     expect(mockUseHandleAddNode).toBeCalled();
   });
-  test('should test the Add new button and disabled Add branching menubuttons', () => {
+  test('should test the Add new button and disabled Add branching menubuttons', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({elementsMap: {456: {type: 'router'}},
     });
     jest.spyOn(mockLib, 'isNodeConnectedToRouter').mockReturnValue(false);
@@ -83,7 +83,7 @@ describe('Testsuite for Add New Button', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     const addDestinationLookUpMenuItemNode = screen.getByRole('menuitem', {
       name: /add destination \/ lookup/i,
     });
@@ -97,7 +97,7 @@ describe('Testsuite for Add New Button', () => {
     expect(addBranchingMenuItemNode).toBeInTheDocument();
     expect(addBranchingMenuItemNode.className).toEqual(expect.stringContaining('Mui-disabled'));
   });
-  test('should test the Add new button and by clicking on add branch menu item', () => {
+  test('should test the Add new button and by clicking on add branch menu item', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({elementsMap: {456: {type: 'router'}},
     });
     jest.spyOn(mockLib, 'isNodeConnectedToRouter').mockReturnValue(false);
@@ -108,7 +108,7 @@ describe('Testsuite for Add New Button', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     const addDestinationLookUpMenuItemNode = screen.getByRole('menuitem', {
       name: /add destination \/ lookup/i,
     });
@@ -121,10 +121,10 @@ describe('Testsuite for Add New Button', () => {
 
     expect(addBranchingMenuItemNode).toBeInTheDocument();
     expect(addBranchingMenuItemNode).toBeEnabled();
-    userEvent.click(addBranchingMenuItemNode);
+    await userEvent.click(addBranchingMenuItemNode);
     expect(mockUseHandleAddNewRouter).toBeCalled();
   });
-  test('should test the Add new button when flowBranch is disabled', () => {
+  test('should test the Add new button when flowBranch is disabled', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({elementsMap: {456: {type: 'router'}},
     });
     jest.spyOn(mockLib, 'isNodeConnectedToRouter').mockReturnValue(true);
@@ -135,10 +135,10 @@ describe('Testsuite for Add New Button', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockUseHandleAddNode).toBeCalled();
   });
-  test('should test the icon when node is not connected to the router and when flow branching is disabled', () => {
+  test('should test the icon when node is not connected to the router and when flow branching is disabled', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({elementsMap: {456: {type: 'router'}},
     });
     jest.spyOn(mockLib, 'isNodeConnectedToRouter').mockReturnValue(false);
@@ -147,7 +147,7 @@ describe('Testsuite for Add New Button', () => {
     const addButtonNode = screen.getByRole('button');
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockUseHandleAddNode).toBeCalled();
   });
 });

@@ -161,7 +161,7 @@ describe('SettingsDrawer test cases', () => {
     mockHistoryGoBack.mockClear();
   });
 
-  test('should pass the initial render with default value', () => {
+  test('should pass the initial render with default value', async () => {
     initSettingsDrawer();
     const saveButton = screen.getByRole('button', { name: 'mock Save'});
     const closeButton = screen.getByRole('button', { name: 'mock Close'});
@@ -172,9 +172,9 @@ describe('SettingsDrawer test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(remountAfterSaveFnButton);
+    await userEvent.click(remountAfterSaveFnButton);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
 
     const notifyOnFlowError = screen.getByRole('radiogroup', { name: 'Notify me of flow errors'});
@@ -185,8 +185,8 @@ describe('SettingsDrawer test cases', () => {
 
     expect(yesRadio).toBeInTheDocument();
 
-    userEvent.click(yesRadio);
-    userEvent.click(saveButton);
+    await userEvent.click(yesRadio);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id', [
       {
         op: 'replace',
@@ -221,7 +221,7 @@ describe('SettingsDrawer test cases', () => {
     ], { asyncKey: 'flowbuildersettings' }));
   });
 
-  test('should pass the initial render with invliad setting value', () => {
+  test('should pass the initial render with invliad setting value', async () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_2',
@@ -236,7 +236,7 @@ describe('SettingsDrawer test cases', () => {
     expect(saveButton).toBeInTheDocument();
     expect(closeButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_2', [
       {
         op: 'replace',
@@ -266,7 +266,7 @@ describe('SettingsDrawer test cases', () => {
     ], { asyncKey: 'flowbuildersettings' }));
   });
 
-  test('should pass the initial render with monitor level access', () => {
+  test('should pass the initial render with monitor level access', async () => {
     initSettingsDrawer({
       accessLevel: 'monitor',
       accountId: 'account_id_1',
@@ -280,10 +280,10 @@ describe('SettingsDrawer test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
   });
 
-  test('should pass the initial render with integration app flow', () => {
+  test('should pass the initial render with integration app flow', async () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_1',
@@ -301,7 +301,7 @@ describe('SettingsDrawer test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_1', [
       {
         op: 'replace',
@@ -336,7 +336,7 @@ describe('SettingsDrawer test cases', () => {
     ], { asyncKey: 'flowbuildersettings' }));
   });
 
-  test('should pass the initial render with integration app flow with monitor access', () => {
+  test('should pass the initial render with integration app flow with monitor access', async () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_1',
@@ -356,7 +356,7 @@ describe('SettingsDrawer test cases', () => {
     expect(closeButton).toBeInTheDocument();
     expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
   });
 
   test('should pass the initial render with integration app flow duplicate', () => {

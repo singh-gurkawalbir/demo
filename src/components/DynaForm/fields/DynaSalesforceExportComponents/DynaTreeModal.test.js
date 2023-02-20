@@ -104,7 +104,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
     })).toBeInTheDocument();
     expect(screen.getByText(/errorMessages =/i)).toBeInTheDocument();
   });
-  test('should test the Dyna Tree Modal by clicking the action button the it should show the error message when the disabled is set to true', () => {
+  test('should test the Dyna Tree Modal by clicking the action button the it should show the error message when the disabled is set to true', async () => {
     const props = {
       id: 'test_id',
       onFieldChange: mockOnFieldChange,
@@ -127,12 +127,12 @@ describe('Testsuite for Dyna Tree Modal', () => {
       name: /mock action button/i,
     })).toBeInTheDocument();
     expect(screen.getByText(/errorMessages =/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /mock action button/i,
     }));
     expect(screen.getByText(/errorMessages = test error message/i)).toBeInTheDocument();
   });
-  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the modal close button', () => {
+  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the modal close button', async () => {
     const props = {
       id: 'test_id',
       onFieldChange: mockOnFieldChange,
@@ -154,15 +154,15 @@ describe('Testsuite for Dyna Tree Modal', () => {
     expect(screen.getByRole('button', {
       name: /mock action button/i,
     })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /mock action button/i,
     }));
     expect(screen.getByText('Mock Modal Dialog')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Mock Modal Dialog OnClose'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Mock Modal Dialog OnClose'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Mock Modal Dialog OnClose'}));
     expect(screen.queryByText('Mock Modal Dialog')).not.toBeInTheDocument();
   });
-  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the Add selected button', () => {
+  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the Add selected button', async () => {
     const props = {
       id: 'test_id',
       onFieldChange: mockOnFieldChange,
@@ -184,17 +184,17 @@ describe('Testsuite for Dyna Tree Modal', () => {
     expect(screen.getByRole('button', {
       name: /mock action button/i,
     })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /mock action button/i,
     }));
     expect(screen.getByText('Mock Modal Dialog')).toBeInTheDocument();
     expect(screen.getByText('Mock Action Group')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Add Selected'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Add Selected'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Add Selected'}));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['test value']);
     expect(screen.queryByText('Mock Modal Dialog')).not.toBeInTheDocument();
   });
-  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the cancel button when the no value is passed', () => {
+  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the cancel button when the no value is passed', async () => {
     const props = {
       id: 'test_id',
       onFieldChange: mockOnFieldChange,
@@ -216,16 +216,16 @@ describe('Testsuite for Dyna Tree Modal', () => {
     expect(screen.getByRole('button', {
       name: /mock action button/i,
     })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /mock action button/i,
     }));
     expect(screen.getByText('Mock Modal Dialog')).toBeInTheDocument();
     expect(screen.getByText('Mock Action Group')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Cancel'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Cancel'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Cancel'}));
     expect(screen.queryByText('Mock Modal Dialog')).not.toBeInTheDocument();
   });
-  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the Add selected button when the value type is number', () => {
+  test('should test the Dyna Tree Modal by clicking the action button the it should show the ReferencedFieldsModal when the disabled is set to false and test the Add selected button when the value type is number', async () => {
     const props = {
       id: 'test_id',
       onFieldChange: mockOnFieldChange,
@@ -247,13 +247,13 @@ describe('Testsuite for Dyna Tree Modal', () => {
     expect(screen.getByRole('button', {
       name: /mock action button/i,
     })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {
+    await userEvent.click(screen.getByRole('button', {
       name: /mock action button/i,
     }));
     expect(screen.getByText('Mock Modal Dialog')).toBeInTheDocument();
     expect(screen.getByText('Mock Action Group')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Add Selected'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Add Selected'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Add Selected'}));
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', 123);
     expect(screen.queryByText('Mock Modal Dialog')).not.toBeInTheDocument();
   });

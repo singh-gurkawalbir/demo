@@ -121,6 +121,6 @@ describe('resetPassword', () => {
     const setpasswordButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(setpasswordButtonNode).toBeInTheDocument();
-    userEvent.click(setpasswordButtonNode);
+    await userEvent.click(setpasswordButtonNode);
   });
 });

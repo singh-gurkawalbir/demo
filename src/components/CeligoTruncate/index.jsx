@@ -25,19 +25,23 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
         placement={placement}
         enterDelay={delay}
         disableHoverListener={disableHoverListener}>
-        <TruncateMarkup lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
-          <div>{children}</div>
-        </TruncateMarkup>
+        <span style={{width: '100%'}}>
+          <TruncateMarkup lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
+            <div>{children}</div>
+          </TruncateMarkup>
+        </span>
       </Tooltip>
     );
   }
 
   return (
-    <TruncateMarkup
-      lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
-      {...isLoggableAttr(isLoggable)}>
-      <div>{children}</div>
-    </TruncateMarkup>
+    <span style={{width: '100%'}}>
+      <TruncateMarkup
+        lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
+        {...isLoggableAttr(isLoggable)}>
+        <div>{children}</div>
+      </TruncateMarkup>
+    </span>
   );
 }
 

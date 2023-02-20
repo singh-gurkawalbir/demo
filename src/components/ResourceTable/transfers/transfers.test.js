@@ -85,7 +85,7 @@ describe('test suite for transfers', () => {
   });
 
   describe('owner user should be able to cancel or delete the transfer', () => {
-    test('should be able to cancel a transfer if it is yet to be unapproved by receiver or queued, but not dismissed', () => {
+    test('should be able to cancel a transfer if it is yet to be unapproved by receiver or queued, but not dismissed', async () => {
       const data = [{
         _id: 'transfer123',
         transferToUser: {
@@ -98,14 +98,14 @@ describe('test suite for transfers', () => {
       }];
 
       initTransfers(data);
-      userEvent.click(screen.getByRole('button', {name: /more/i}));
+      await userEvent.click(screen.getByRole('button', {name: /more/i}));
       const actionItems = screen.getAllByRole('menuitem');
 
       expect(actionItems).toHaveLength(1);
       expect(actionItems[0].textContent).toBe('Cancel transfer');
       const cancelTransfer = actionItems[0];
 
-      userEvent.click(cancelTransfer);
+      await userEvent.click(cancelTransfer);
       const confirmDialog = screen.getByRole('dialog');
       const confirmButton = screen.getByRole('button', {name: 'Yes, cancel'});
       const cancelButton = screen.getByRole('button', {name: 'No, go back'});
@@ -114,11 +114,11 @@ describe('test suite for transfers', () => {
       expect(confirmDialog).toContainElement(confirmButton);
       expect(confirmDialog).toContainElement(cancelButton);
 
-      userEvent.click(confirmButton);
+      await userEvent.click(confirmButton);
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.transfer.cancel('transfer123'));
     });
 
-    test('should be able to delete a transfer if it is yet to be approved, or accepted, or failed or declined by receiver', () => {
+    test('should be able to delete a transfer if it is yet to be approved, or accepted, or failed or declined by receiver', async () => {
       const data = [{
         _id: 'transfer123',
         transferToUser: {
@@ -131,14 +131,14 @@ describe('test suite for transfers', () => {
       }];
 
       initTransfers(data);
-      userEvent.click(screen.getByRole('button', {name: /more/i}));
+      await userEvent.click(screen.getByRole('button', {name: /more/i}));
       const actionItems = screen.getAllByRole('menuitem');
 
       expect(actionItems).toHaveLength(1);
       expect(actionItems[0].textContent).toBe('Delete transfer');
       const deleteTransfer = actionItems[0];
 
-      userEvent.click(deleteTransfer);
+      await userEvent.click(deleteTransfer);
       const confirmDialog = screen.getByRole('dialog');
       const confirmButton = screen.getByRole('button', {name: 'Delete'});
       const cancelButton = screen.getByRole('button', {name: 'Cancel'});
@@ -147,7 +147,7 @@ describe('test suite for transfers', () => {
       expect(confirmDialog).toContainElement(confirmButton);
       expect(confirmDialog).toContainElement(cancelButton);
 
-      userEvent.click(confirmButton);
+      await userEvent.click(confirmButton);
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.delete('transfers', 'transfer123'));
     });
   });

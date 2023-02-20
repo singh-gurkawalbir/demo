@@ -71,7 +71,7 @@ describe('test suite for useHandleDelete hook', () => {
     await initUseHandleDelete({_integrationId});
     const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     let confirmDialog = screen.getByRole('dialog');
     const { getByRole, getByText } = within(confirmDialog);
 
@@ -80,15 +80,15 @@ describe('test suite for useHandleDelete hook', () => {
     const cancelButton = getByRole('button', {name: 'Cancel'});
 
     //  Should close the dialog and do nothing on Cancelling
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(confirmDialog).not.toBeInTheDocument();
 
     //  Should initiate delete process on confirming
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     confirmDialog = screen.getByRole('dialog');
     const confirmButton = within(confirmDialog).getByRole('button', {name: 'Delete'});
 
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(confirmDialog).not.toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.integrations.delete(_integrationId));
     expect(screen.queryByText(messageStore('INTEGRATION.INTEGRATION_DELETE_VALIDATE'))).not.toBeInTheDocument();
@@ -109,10 +109,10 @@ describe('test suite for useHandleDelete hook', () => {
       await initUseHandleDelete({_integrationId}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
-      userEvent.click(deleteButton);
+      await userEvent.click(deleteButton);
       const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
-      userEvent.click(confirmButton);
+      await userEvent.click(confirmButton);
       const snackbar = document.getElementById('client-snackbar');
 
       expect(snackbar).toBeInTheDocument();
@@ -133,10 +133,10 @@ describe('test suite for useHandleDelete hook', () => {
       await initUseHandleDelete({_integrationId}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
-      userEvent.click(deleteButton);
+      await userEvent.click(deleteButton);
       const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
-      userEvent.click(confirmButton);
+      await userEvent.click(confirmButton);
       const snackbar = document.getElementById('client-snackbar');
 
       expect(snackbar).toBeInTheDocument();
@@ -159,7 +159,7 @@ describe('test suite for useHandleDelete hook', () => {
     await initUseHandleDelete({_integrationId, ops: {_connectorId: '123conn'}}, initialStore);
     const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     let confirmDialog = screen.getByRole('dialog');
     const { getByRole, getByText } = within(confirmDialog);
 
@@ -168,15 +168,15 @@ describe('test suite for useHandleDelete hook', () => {
     const cancelButton = getByRole('button', {name: 'Cancel'});
 
     //  Should close the dialog and do nothing on Cancelling
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(confirmDialog).not.toBeInTheDocument();
 
     //  Should initiate uninstall process on confirming
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     confirmDialog = screen.getByRole('dialog');
     const confirmButton = within(confirmDialog).getByRole('button', {name: 'Uninstall'});
 
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(confirmDialog).not.toBeInTheDocument();
     expect(mockHistoryPush).toHaveBeenCalledWith(`/integrationapps/integrationApp/${_integrationId}/uninstall`);
   });
@@ -196,7 +196,7 @@ describe('test suite for useHandleDelete hook', () => {
       await initUseHandleDelete({_integrationId, ops: {_connectorId: '123conn'}}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
-      userEvent.click(deleteButton);
+      await userEvent.click(deleteButton);
       expect(screen.getByText('Contact your account owner to uninstall this integration app.')).toBeInTheDocument();
       expect(screen.queryByText('Confirm uninstall')).not.toBeInTheDocument();
     });
@@ -215,7 +215,7 @@ describe('test suite for useHandleDelete hook', () => {
       await initUseHandleDelete({_integrationId, ops: {_connectorId: '123conn', supportsMultiStore: true, name: 'Connector'}}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
-      userEvent.click(deleteButton);
+      await userEvent.click(deleteButton);
       expect(screen.getByText('To uninstall, please navigate to Admin → Uninstall inside the Integration App and select the desired store.')).toBeInTheDocument();
       expect(screen.queryByText('Confirm uninstall')).not.toBeInTheDocument();
     });
