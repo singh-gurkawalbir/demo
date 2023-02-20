@@ -66,12 +66,14 @@ describe('signUp', () => {
     const company = screen.getByPlaceholderText('Company');
     const role = screen.getByPlaceholderText('Role');
     const phone = screen.getByPlaceholderText('Phone');
+    const alreadyHaveAcc = screen.getByText('Already have an account?');
 
     expect(name).toBeInTheDocument();
     expect(businessEmail).toBeInTheDocument();
     expect(company).toBeInTheDocument();
     expect(role).toBeInTheDocument();
     expect(phone).toBeInTheDocument();
+    expect(alreadyHaveAcc).toBeInTheDocument();
   });
 
   test('should able to test the  signin link', async () => {

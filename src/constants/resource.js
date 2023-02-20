@@ -264,3 +264,5 @@ export const OPEN_ERRORS_VIEW_TYPES = {
   SPLIT: 'split', // new view
   LIST: 'list', // old view
 };
+
+export const RESOURCE_DEPENDENCIES = { uninstall2: ['flows', 'exports', 'imports', 'connections', 'integrations', 'tree/metadata', 'asynchelpers', 'scripts']};

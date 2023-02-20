@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import { selectors } from '../../../../../reducers';
-import LoadResources from '../../../../../components/LoadResources';
+import LoadResource from '../../../../../components/LoadResource';
 import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';
 import InstallationStep from '../../../../../components/InstallStep';
@@ -106,7 +106,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   }, [dispatch, history, mode, integrationAppName, integrationId, isUninstallComplete, defaultSectionId, childId]);
 
   if (!integration || !integration._id) {
-    return <LoadResources required resources="integrations" />;
+    return <LoadResource resourceId={integrationId} resourceType="integrations" />;
   }
 
   if (error) {
