@@ -87,17 +87,15 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http' || (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId)) {
-    if (getHttpConnector(connection?.http?._httpConnectorId)) {
-      if (connection.http?._httpConnectorId) {
-        expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
-      }
+    const httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId);
+
+    if (httpConnectorId) {
+      expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
     }
-    if (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId) {
-      expression.push({ 'http.formType': 'assistant' });
+    if (type === 'rest' && connection?.isHTTP === true && httpConnectorId) {
       expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
       expression.push({ isHTTP: { $ne: false } });
-    } else if (type === 'http' && connection?.http?._httpConnectorId) {
-      expression.push({ 'http.formType': 'assistant' });
+    } else if (type === 'http' && httpConnectorId) {
       expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
       expression.push({ isHTTP: { $ne: false } });
     } else {
