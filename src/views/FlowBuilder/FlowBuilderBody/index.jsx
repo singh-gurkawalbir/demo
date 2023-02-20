@@ -8,6 +8,7 @@ import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
 import PageBar from './PageBar';
 import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements } from './lib';
+import {newlayoutElements} from './newlib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
@@ -121,7 +122,7 @@ const edgeTypes = {
 };
 const BUFFER_SIZE = 100;
 
-export function Canvas({ flowId, fullscreen }) {
+export function Canvas({ flowId, fullscreen, iconView}) {
   const dispatch = useDispatch();
   const menuDrawerWidth = useMenuDrawerWidth();
   const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
@@ -157,9 +158,15 @@ export function Canvas({ flowId, fullscreen }) {
     selectors.isFlowSaveInProgress(state, flowId)
   );
 
-  const {elements: updatedLayout, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
-    elements, mergedFlow,
-  ]);
+  // const iconView = useSelector(state =>
+  //   selectors.isDataLoaderFlow(state, flowId)
+  // );
+  // const iconView = true;
+  // const iconView = useSelector(state =>
+  //   selectors.fbIconview(state, flowId)
+  // );
+
+  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(elements, mergedFlow), [elements, iconView, mergedFlow]);
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {
@@ -209,6 +216,7 @@ export function Canvas({ flowId, fullscreen }) {
         <FlowProvider
           elements={elements}
           elementsMap={elementsMap}
+          iconView={iconView}
           flow={mergedFlow}
           flowId={flowId}
           translateExtent={translateExtent}
@@ -270,8 +278,11 @@ export function Canvas({ flowId, fullscreen }) {
   );
 }
 
-export default function FlowBuilderBody({ flowId, integrationId }) {
+export default function FlowBuilderBody({ flowId, integrationId}) {
   const dispatch = useDispatch();
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
+  );
 
   useEffect(
     () => () => {
@@ -282,8 +293,8 @@ export default function FlowBuilderBody({ flowId, integrationId }) {
 
   return (
     <>
-      <PageBar flowId={flowId} integrationId={integrationId} />
-      <Canvas flowId={flowId} integrationId={integrationId} />
+      <PageBar flowId={flowId} integrationId={integrationId} iconView={iconView} />
+      <Canvas flowId={flowId} integrationId={integrationId} iconView={iconView} />
     </>
   );
 }

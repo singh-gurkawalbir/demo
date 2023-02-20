@@ -12,16 +12,16 @@ export const handleOffset = 4;
 
 export const nodeSize = {
   pp: {
-    width: 275,
-    height: 295,
+    width: 75,
+    height: 70,
   },
   pg: {
-    width: 275,
-    height: 295,
+    width: 75,
+    height: 95,
   },
   router: {
-    width: 34,
-    height: 34,
+    width: 30,
+    height: 30,
   },
   terminal: {
     width: 20,
@@ -43,8 +43,8 @@ const options = {
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',
   // ranker: 'longest-path', // seems worst
-  ranksep: 200,
-  nodesep: 50,
+  ranksep: 95,
+  nodesep: 30,
   marginx: 50,
   marginy: 50,
 };
@@ -74,7 +74,7 @@ export function rectifyPageGeneratorOrder(nodes = [], flow) {
   });
 }
 
-export function layoutElements(elements = [], flow) {
+export function newlayoutElements(elements = [], flow) {
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));
@@ -119,12 +119,21 @@ export function layoutElements(elements = [], flow) {
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
+      const position = {};
+
+      if (el.type === 'pp') {
+        position.x = node.x;
+        position.y = node.y - 31;
+      } else if (el.type === 'terminal') {
+        position.x = node.x;
+        position.y = node.y + 7;
+      } else {
+        position.x = node.x;
+        position.y = node.y;
+      }
       nodes.push({
         ...el,
-        position: {
-          x: node.x - size.width / 2 - offsetX,
-          y: node.y - size.height / 2 - offsetY,
-        },
+        position,
       });
     } else {
       // these are the edges...

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
@@ -97,7 +97,9 @@ export default function FlowBuilder() {
           integrationId={integrationId}
           childId={childId} />
 
-        <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
+        <FBComponent
+          flowId={flowId} integrationId={integrationId}
+          childId={childId} />
         <MappingDrawerRoute integrationId={integrationId} />
       </Redirection>
     </LoadResources>

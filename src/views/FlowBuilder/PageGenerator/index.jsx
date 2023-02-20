@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
+// import {sele}
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -15,6 +16,7 @@ import {
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
+import IconBlock from '../IconBlock';
 import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
@@ -57,6 +59,9 @@ const PageGenerator = ({
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
+  );
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
   );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
@@ -296,9 +301,11 @@ const PageGenerator = ({
   // #endregion
   // console.log('render: <PageGenerator>');
 
+  const Component = iconView === 'icon' ? IconBlock : AppBlock;
+
   return (
     <div className={clsx(classes.pgContainer, className)} >
-      <AppBlock
+      <Component
         integrationId={integrationId}
         name={blockName}
         onDelete={!isDataLoader && onDelete}

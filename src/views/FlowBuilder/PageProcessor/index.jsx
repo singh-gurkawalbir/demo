@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
+import IconBlock from '../IconBlock';
 import { getResourceSubType, resourceCategory} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe';
@@ -61,6 +62,9 @@ const PageProcessor = ({
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
+  );
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
   );
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const pendingBlockType = isDataLoaderFlow ? 'newImport' : 'newPP';
@@ -133,7 +137,7 @@ const PageProcessor = ({
     } else {
       history.replace(to);
     }
-  }, [pending, match.url, match.isExact, resourceType, resourceId, resource, pp._connectionId, pp.id, rdbmsAppType, dispatch, history]);
+  }, [pending, match.url, match.isExact, pp.id, pp._connectionId, pp.routerIndex, pp.branchIndex, resourceType, resourceId, resource, rdbmsAppType, dispatch, flowId, index, history]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
   const processorActions = useMemo(() => {
@@ -215,10 +219,14 @@ const PageProcessor = ({
 
   const name = pending ? '' : resource.name || resource.id;
 
+  const Component = iconView === 'icon' ? IconBlock : AppBlock;
+
+  console.log(iconView);
+
   return (
     <>
       <div className={classes.ppContainer} >
-        <AppBlock
+        <Component
           {...pp}
           integrationId={integrationId}
           name={name}

@@ -26,6 +26,7 @@ import LineGraphButton from '../../LineGraphButton';
 import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
+import RefreshIcon from '../../../../components/icons/RefreshIcon';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -175,9 +176,10 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId}) => {
+const PageBarChildren = ({integrationId, flowId, iconView}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -215,8 +217,20 @@ const PageBarChildren = ({integrationId, flowId}) => {
     placement: 'bottom',
   };
 
+  console.log(iconView);
+  const handleViewChange = () => {
+    if (iconView === 'icon') { dispatch(actions.flow.iconView(flowId, 'bubble')); } else {
+      dispatch(actions.flow.iconView(flowId, 'icon'));
+    }
+  };
+
   return (
     <div className={classes.actions}>
+      <IconButtonWithTooltip
+        onClick={handleViewChange}
+        data-test="flowSettings">
+        <RefreshIcon />
+      </IconButtonWithTooltip>
       {isUserInErrMgtTwoDotZero && (
       <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
@@ -296,6 +310,9 @@ export default function PageBar({flowId, integrationId}) {
 
     return flow?.description;
   });
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
+  );
 
   return (
     <CeligoPageBar
@@ -306,7 +323,7 @@ export default function PageBar({flowId, integrationId}) {
     >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
-        flowId={flowId} integrationId={integrationId}
+        flowId={flowId} integrationId={integrationId} iconView={iconView}
       />
     </CeligoPageBar>
   );

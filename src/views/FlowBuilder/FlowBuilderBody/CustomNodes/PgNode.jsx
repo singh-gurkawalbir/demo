@@ -12,9 +12,17 @@ import { useHandleMovePG } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   pgContainer: {
+    paddingTop: 60,
+  },
+  newpgContainer: {
     paddingTop: 0,
   },
   root: {
+    width: 250,
+    margin: theme.spacing(0, -0.5),
+    cursor: 'default',
+  },
+  newroot: {
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },
@@ -37,9 +45,13 @@ export default function PageGeneratorNode(props) {
   }, [dispatch, flowId]);
   const handleMove = useHandleMovePG(flowId);
 
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
+  );
+
   return (
-    <div className={classes.root}>
-      <div className={classes.pgContainer}>
+    <div className={iconView === 'icon' ? classes.newroot : classes.root}>
+      <div className={iconView === 'icon' ? classes.newpgContainer : classes.pgContainer}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
@@ -50,6 +62,7 @@ export default function PageGeneratorNode(props) {
           integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}
           isViewMode={isViewMode || isFreeFlow}
+          iconView={iconView}
         />
       </div>
 

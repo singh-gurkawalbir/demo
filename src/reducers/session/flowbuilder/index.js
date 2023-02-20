@@ -5,13 +5,13 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info, isDataLoader } = action;
+  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info, isDataLoader, view } = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW.INIT_FLOW_GRAPH:
         if (!draft[flowId]) {
-          draft[flowId] = {};
+          draft[flowId] = {iconView: 'bubble'};
         }
         draft[flowId].elements = generateReactFlowGraph(flow, isViewMode, isDataLoader);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
@@ -22,6 +22,11 @@ export default function reducer(state = {}, action) {
         break;
       case actionTypes.FLOW.DRAG_START: {
         draft[flowId].dragStepIdInProgress = stepId;
+
+        break;
+      }
+      case actionTypes.FLOW.ICON_VIEW: {
+        draft[flowId].iconView = view;
 
         break;
       }
@@ -84,6 +89,7 @@ selectors.fbDragStepId = (state, flowId) => state?.[flowId]?.dragStepId;
 selectors.fbInfo = (state, flowId) => state?.[flowId]?.info || emptyObject;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
+selectors.fbIconview = (state, flowId) => state?.[flowId]?.iconView;
 selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
 
 selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
