@@ -49,11 +49,11 @@ describe('loadResource component', () => {
 
   describe('loadResource component ways to send resources', () => {
     test('should pass the initial render', async () => {
-      const { utils } = await initLoadResource({initialStore, resourceType: 'resources', props: {resourceId: 'resource_id'}});
+      await initLoadResource({initialStore, resourceType: 'resources', props: {resourceId: 'resource_id'}});
 
       await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.request('resources', 'resource_id'));
 
-      expect(utils.container).toBeEmptyDOMElement();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
   });
 
