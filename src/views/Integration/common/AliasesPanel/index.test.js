@@ -39,10 +39,6 @@ jest.mock('../../../../utils/messageStore', () => ({
   ...jest.requireActual('../../../../utils/messageStore'),
   default: props => {
     switch (props) {
-      case 'ALIAS_DELETE_MESSAGE':
-        return 'Mock Alias Delete Message';
-      case 'ALIAS_SAVE_MESSAGE':
-        return 'Mock Alias Save Message';
       case 'ALIAS.PANEL_HELPINFO':
         return 'Mock Alias Help Panel HelpInfo';
       default:
@@ -321,14 +317,13 @@ describe('Testsuite for Aliases', () => {
       }
     );
     expect(screen.getByText(/mock add icon/i)).toBeInTheDocument();
-    expect(screen.getByText(/mock alias save message/i)).toBeInTheDocument();
+    expect(screen.getByText(/You’ve successfully created an alias./i)).toBeInTheDocument();
     const buttonNode = screen.getByRole('button', {
       name: /create alias/i,
     });
 
     expect(buttonNode).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.aliases.clear('12345'));
-    screen.debug();
   });
   test('should test Aliases when there are no aliases data and when the integration is not of type v2 and has owner access and allias status is delete', () => {
     initAliases(
@@ -355,7 +350,7 @@ describe('Testsuite for Aliases', () => {
       }
     );
     expect(screen.getByText(/mock add icon/i)).toBeInTheDocument();
-    expect(screen.getByText(/mock alias delete message/i)).toBeInTheDocument();
+    expect(screen.getByText(/you’ve successfully deleted your alias\./i)).toBeInTheDocument();
     const buttonNode = screen.getByRole('button', {
       name: /create alias/i,
     });
