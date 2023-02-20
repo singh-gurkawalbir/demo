@@ -1817,7 +1817,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
-      if (operation === 'create-update-id' || isArray(operation) || importDoc.http._httpConnectorEndpointIds?.length > 1) {
+      if (operation === 'create-update-id' || isArray(operation) || (importDoc.http._httpConnectorEndpointIds?.length > 1 && operation !== '')) {
         operation = (VALID_MONGO_ID.test(operation) || VALID_MONGO_ID.test(operation?.[0]) || operation?.includes('+') || operation?.includes('create-update-id')) ? operation : importDoc.http._httpConnectorEndpointIds;
       } else {
         operation = (VALID_MONGO_ID.test(operation) || operation?.includes('+')) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
