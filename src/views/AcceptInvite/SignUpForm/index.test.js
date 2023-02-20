@@ -8,6 +8,8 @@ import { renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
 
 let initialStore;
+const mockGetFieldMeta = jest.fn();
+const mockUseFormInitWithPermissions = jest.fn();
 
 function initSignUp({acceptInviteData}) {
   initialStore.getState().auth.acceptInvite = acceptInviteData;
@@ -48,14 +50,14 @@ jest.mock('../../../components/DynaForm/DynaSubmit', () => ({
 jest.mock('./metadata', () => ({
   __esModule: true,
   ...jest.requireActual('./metadata'),
-  default: jest.fn().mockReturnValue('mockFieldMeta'),
+  default: props => mockGetFieldMeta(props),
 }));
 
 // Mocking useFormInitWithPermissions as part of unit testing
 jest.mock('../../../hooks/useFormInitWithPermissions', () => ({
   __esModule: true,
   ...jest.requireActual('../../../hooks/useFormInitWithPermissions'),
-  default: jest.fn().mockReturnValue('mockUseFormInitWithPermissions'),
+  default: props => mockUseFormInitWithPermissions(props),
 }));
 
 describe('Testsuite for SignUp', () => {
@@ -71,10 +73,13 @@ describe('Testsuite for SignUp', () => {
       }
     });
     useDispatchFn.mockReturnValue(mockDispatchFn);
+    mockGetFieldMeta.mockReturnValue('mockGetFieldMeta');
   });
   afterEach(() => {
     useDispatchFn.mockClear();
     mockDispatchFn.mockClear();
+    mockGetFieldMeta.mockClear();
+    mockUseFormInitWithPermissions.mockClear();
   });
   test('should render signup and should test the signup button when there are values in store', () => {
     initSignUp({
@@ -88,6 +93,8 @@ describe('Testsuite for SignUp', () => {
     expect(screen.getByText(/mocking dynaform/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
     expect(screen.getByText(/ignoreformtouchedcheck =/i)).toBeInTheDocument();
+    expect(mockGetFieldMeta).toHaveBeenCalledWith({_csrf: 'test_csrf', email: 'testEmail@email.com', skipPassword: true, token: 'test_token'});
+    expect(mockUseFormInitWithPermissions).toHaveBeenCalledWith({fieldMeta: 'mockGetFieldMeta', formKey: 'signupForm', remount: 0});
 
     const signUpButton = screen.getByRole('button', {
       name: /sign up/i,
