@@ -1,7 +1,9 @@
 
 import React from 'react';
-import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import {
+  screen,
+} from '@testing-library/react';
 import AuditPanel from './Audit';
 import { runServer } from '../../../../../test/api/server';
 import { renderWithProviders } from '../../../../../test/test-utils';
@@ -28,27 +30,10 @@ async function initMarketplace({
 
 describe('AuditPanel test cases', () => {
   runServer();
-  let mockDispatchFn;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
-  });
-
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
-  });
 
   test('should pass the initial render with default value', async () => {
-    const { utils } = await initMarketplace();
+    await initMarketplace();
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

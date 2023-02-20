@@ -4,8 +4,9 @@ import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
 import LoadingNotification from '../../App/LoadingNotification';
+import LoadResource from '../LoadResource';
 
-export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
+export function LoadResourcesContect({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
@@ -53,4 +54,21 @@ export default function LoadResources({ children, resources, required, lazyResou
   }
 
   return spinner || (<LoadingNotification message="Loading" />);
+}
+
+export default function LoadResourcesWrappers(props) {
+  const { integrationId } = props;
+
+  if (integrationId) {
+    return (
+      <LoadResource
+        resourceType="integrations"
+        resourceId={integrationId}
+      >
+        <LoadResourcesContect {...props} />
+      </LoadResource>
+    );
+  }
+
+  return <LoadResourcesContect {...props} />;
 }
