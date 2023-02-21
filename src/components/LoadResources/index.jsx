@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
+import LoadingNotification from '../../App/LoadingNotification';
 import LoadResource from '../LoadResource';
 
 export function LoadResourcesContect({ children, resources, required, lazyResources = [], integrationId, spinner }) {
@@ -52,7 +53,7 @@ export function LoadResourcesContect({ children, resources, required, lazyResour
     return children || null;
   }
 
-  return spinner || null;
+  return spinner || (<LoadingNotification message="Loading" />);
 }
 
 export default function LoadResourcesWrappers(props) {

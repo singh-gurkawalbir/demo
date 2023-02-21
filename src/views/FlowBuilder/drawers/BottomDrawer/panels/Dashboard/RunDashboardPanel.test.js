@@ -1,6 +1,8 @@
 
 import React from 'react';
-import * as reactRedux from 'react-redux';
+import {
+  screen,
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import RunDashboardPanel from './RunDashboardPanel';
 import { runServer } from '../../../../../../test/api/server';
@@ -40,33 +42,16 @@ async function initMarketplace({
 
 describe('RunDashboardPanel test cases', () => {
   runServer();
-  let mockDispatchFn;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
-  });
-
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
-  });
 
   test('should pass the initial render with default value', async () => {
-    const { utils } = await initMarketplace();
+    await initMarketplace();
 
-    expect(utils.container.firstChild).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   test('should pass the initial render with integration id', async () => {
-    const { utils } = await initMarketplace();
+    await initMarketplace();
 
-    expect(utils.container.firstChild).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { STANDALONE_INTEGRATION } from '../../constants';
+import LoadingNotification from '../../App/LoadingNotification';
 
 export default function LoadResource({ children, resourceType, resourceId, spinner }) {
   const dispatch = useDispatch();
@@ -18,5 +19,5 @@ export default function LoadResource({ children, resourceType, resourceId, spinn
     return children || null;
   }
 
-  return spinner || null;
+  return spinner || (<LoadingNotification message="Loading" />);
 }
