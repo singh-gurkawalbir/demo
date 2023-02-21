@@ -2107,7 +2107,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               assistantData,
             });
 
-            lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
+            lookupUrlInfo = getMatchingRoute([luEndpoint.url], luEndpoint.url?.includes('?') ? lookupUrl.replace('&', '?') : lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
               assistantData.export.urlResolution,
@@ -2394,7 +2394,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         }); /* indices should be false to handle IO-1776 */
 
         if (queryString) {
-          lookupOperationRelativeURI += `?${queryString}`;
+          lookupOperationRelativeURI += (lookupOperationRelativeURI?.includes('?') ? '&' : '?') + queryString;
         }
       } else if (luConfig.method === 'POST') {
         luConfig.postBody = lookupQueryParams;
