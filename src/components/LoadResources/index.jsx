@@ -6,7 +6,7 @@ import { selectors } from '../../reducers';
 import LoadingNotification from '../../App/LoadingNotification';
 import LoadResource from '../LoadResource';
 
-export function LoadResourcesContect({ children, resources, required, lazyResources = [], integrationId, spinner }) {
+export function LoadResourcesContent({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
@@ -65,10 +65,10 @@ export default function LoadResourcesWrappers(props) {
         resourceType="integrations"
         resourceId={integrationId}
       >
-        <LoadResourcesContect {...props} />
+        <LoadResourcesContent {...props} />
       </LoadResource>
     );
   }
 
-  return <LoadResourcesContect {...props} />;
+  return <LoadResourcesContent {...props} />;
 }
