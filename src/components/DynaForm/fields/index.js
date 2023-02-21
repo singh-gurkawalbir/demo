@@ -146,6 +146,7 @@ import DynaManageAliases from './aliases/DynaManageAliases';
 import DynaAliasId from './aliases/DynaAliasId';
 import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
+import DynaAPISelect from './httpFramework/DynaAPISelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
 import DynaHFAssistantPathParams from './httpFramework/DynaHFAssistantPathParams';
@@ -223,6 +224,7 @@ export default {
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
+  gridSelect: DynaAPISelect,
   celigotable: DynaCeligoTable,
   previewcomponentstable: DynaPreviewComponentsTable,
   hook: DynaHook_afe,

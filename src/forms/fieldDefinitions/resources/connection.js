@@ -69,6 +69,13 @@ export default {
     defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
+  'http.apiType': {
+    type: 'gridSelect',
+    label: 'API type',
+    helpKey: 'connection.http.apiType',
+    defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
+    required: true,
+  },
   application: {
     isLoggable: true,
     id: 'application',
