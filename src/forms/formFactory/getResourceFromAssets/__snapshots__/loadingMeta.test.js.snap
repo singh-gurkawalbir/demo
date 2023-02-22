@@ -9627,6 +9627,16 @@ Object {
       },
       "http.response.resourcePath": Object {
         "fieldId": "http.response.resourcePath",
+        "requiredWhenAll": Array [
+          Object {
+            "field": "http.batchSize",
+            "isNot": Array [
+              "",
+              0,
+              1,
+            ],
+          },
+        ],
       },
       "http.response.successPath": Object {
         "defaultValue": [Function],

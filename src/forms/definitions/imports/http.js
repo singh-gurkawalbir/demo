@@ -469,7 +469,13 @@ export default {
       },
     },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
-    'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
+    'http.response.resourcePath': {
+      fieldId: 'http.response.resourcePath',
+      requiredWhenAll: [{
+        field: 'http.batchSize',
+        isNot: ['', 0, 1],
+      }],
+    },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     'http.batchSize': { fieldId: 'http.batchSize' },
     'http.compositeMethodCreate': {
