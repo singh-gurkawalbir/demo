@@ -246,6 +246,7 @@ describe('router processor logic', () => {
             resourceType: 'flows',
           },
         ],
+        options: {revertChangesOnFailure: true},
       });
     });
     test('should not return the backgroundPatches for /content when no script is present', () => {
@@ -295,6 +296,7 @@ describe('router processor logic', () => {
             resourceType: 'flows',
           },
         ],
+        options: {revertChangesOnFailure: true},
       });
     });
   });
