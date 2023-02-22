@@ -59,13 +59,13 @@ jest.mock('../../../../../components/Spinner', () => ({
 }));
 
 // Mocking LoadResources component Spinner as part of unit testing
-jest.mock('../../../../../components/LoadResources', () => ({
+jest.mock('../../../../../components/LoadResource', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../../components/LoadResources'),
+  ...jest.requireActual('../../../../../components/LoadResource'),
   default: props => (
     <>
       <div>Mocking LoadResources</div>
-      <div>resources = {props.resources}</div>
+      <div>resources = {props.resourceType}</div>
     </>
   ),
 }));

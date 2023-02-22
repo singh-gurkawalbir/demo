@@ -1,10 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
+import LoadingNotification from '../../App/LoadingNotification';
+import LoadResource from '../LoadResource';
 
-export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
+export function LoadResourcesContent({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
@@ -51,5 +53,22 @@ export default function LoadResources({ children, resources, required, lazyResou
     return children || null;
   }
 
-  return spinner || null;
+  return spinner || (<LoadingNotification message="Loading" />);
+}
+
+export default function LoadResourcesWrappers(props) {
+  const { integrationId } = props;
+
+  if (integrationId) {
+    return (
+      <LoadResource
+        resourceType="integrations"
+        resourceId={integrationId}
+      >
+        <LoadResourcesContent {...props} />
+      </LoadResource>
+    );
+  }
+
+  return <LoadResourcesContent {...props} />;
 }

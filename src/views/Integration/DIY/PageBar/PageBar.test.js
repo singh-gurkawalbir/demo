@@ -2,7 +2,6 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import * as reactRedux from 'react-redux';
 import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../test/test-utils';
 import actions from '../../../../actions';
@@ -22,6 +21,65 @@ jest.mock('react-router-dom', () => ({
 describe('PageBar2 UI tests', () => {
   runServer();
   beforeEach(() => {
+    mockGetRequestOnce('/api/integrations/5ff579d745ceef7dcd797c15/tree/metadata?additionalFields=createdAt,_parentId', {
+      childIntegrations: [
+        {
+          _id: '5ff579d745ceef7dcd797c16',
+          mode: 'settings',
+          _connectorId: 'connectorId',
+          name: ' AFE 2.0 2',
+          install: [],
+          sandbox: false,
+          installSteps: [],
+          uninstallSteps: [],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+          _parentId: '5ff579d745ceef7dcd797c15',
+        },
+        {
+          _id: '5ff579d745ceef7dcd797c17',
+          mode: 'uninstall',
+          _connectorId: 'connectorId',
+          name: ' AFE 2.0 3',
+          install: [],
+          sandbox: false,
+          installSteps: [],
+          uninstallSteps: [],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+          _parentId: '5ff579d745ceef7dcd797c15',
+        },
+        {
+          _id: 'uninstall_id',
+          name: ' AFE 2.0 4',
+          mode: 'uninstall',
+          _connectorId: 'connectorId',
+          createdAt: '2021-01-06T08:50:31.935Z',
+          _parentId: '5ff579d745ceef7dcd797c15',
+        },
+      ]});
+
+    mockGetRequestOnce('/api/integrations/5ff579d745ceef7dcd797c15', [
+      {
+        _id: '5ff579d745ceef7dcd797c15',
+        mode: 'setttings',
+        initChild: {function: true},
+        description: 'description',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        _connectorId: 'connectorId',
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5cd51efd3607fe7d8eda9c97',
+          '5ff57a8345ceef7dcd797c21',
+        ],
+        installSteps: [{}, {}],
+        uninstallSteps: [],
+        flowGroupings: [],
+        createdAt: '2021-01-06T08:50:31.935Z',
+      },
+    ]);
     jest.resetAllMocks();
   });
   function renderFunction() {
@@ -37,7 +95,9 @@ describe('PageBar2 UI tests', () => {
   async function prefAndIntegInStore(store) {
     act(() => { store.dispatch(actions.user.preferences.request()); });
     act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+    act(() => { store.dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, '5ff579d745ceef7dcd797c15')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.data?.resources?.['tree/metadata']).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
   }
   async function renderWithIntegrationsMode(mode) {
@@ -56,7 +116,7 @@ describe('PageBar2 UI tests', () => {
           '5cd51efd3607fe7d8eda9c97',
           '5ff57a8345ceef7dcd797c21',
         ],
-        installSteps: [],
+        installSteps: [{}, {}],
         uninstallSteps: [],
         flowGroupings: [],
         createdAt: '2021-01-06T08:50:31.935Z',
@@ -75,7 +135,7 @@ describe('PageBar2 UI tests', () => {
           '5cd51efd3607fe7d8eda9c97',
           '5ff57a8345ceef7dcd797c21',
         ],
-        installSteps: [],
+        installSteps: [{}],
         uninstallSteps: [],
         flowGroupings: [],
         createdAt: '2021-01-06T08:50:31.935Z',
@@ -89,15 +149,23 @@ describe('PageBar2 UI tests', () => {
         lastModified: '2021-01-19T06:34:17.222Z',
         _connectorId: 'connectorId',
         name: ' AFE 2.0 3',
-        install: [],
+        install: [{}],
         sandbox: false,
         _registeredConnectionIds: [
           '5cd51efd3607fe7d8eda9c97',
           '5ff57a8345ceef7dcd797c21',
         ],
-        installSteps: [],
+        installSteps: [{}],
         uninstallSteps: [],
         flowGroupings: [],
+        createdAt: '2021-01-06T08:50:31.935Z',
+        _parentId: '5ff579d745ceef7dcd797c15',
+      },
+      {
+        _id: 'uninstall_id',
+        name: ' AFE 2.0 4',
+        mode: 'uninstall',
+        _connectorId: 'connectorId',
         createdAt: '2021-01-06T08:50:31.935Z',
         _parentId: '5ff579d745ceef7dcd797c15',
       },
@@ -116,10 +184,8 @@ describe('PageBar2 UI tests', () => {
     expect(screen.getByText('Standalone flows')).toBeInTheDocument();
   });
   test('should test title with some integrationId', async () => {
-    const mockdispatch = jest.fn();
-
-    jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockdispatch);
     const store = renderFunction();
+    const spyOnDispatch = jest.spyOn(store, 'dispatch');
 
     await prefAndIntegInStore(store);
     const name = screen.getByText('AFE 2.0 refactoring for DB\'s');
@@ -129,7 +195,7 @@ describe('PageBar2 UI tests', () => {
 
     await userEvent.type(input, 'changed');
     await input.blur();
-    expect(mockdispatch).toHaveBeenCalledWith({asyncKey: undefined,
+    expect(spyOnDispatch).toHaveBeenCalledWith({asyncKey: undefined,
       context: undefined,
       id: '5ff579d745ceef7dcd797c15',
       options: undefined,
@@ -157,9 +223,9 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.getByText('Confirm delete')).toBeInTheDocument());
   });
   test('should test add child option', async () => {
-    const mockdispatch = jest.fn();
+    const store = renderFunction();
 
-    jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockdispatch);
+    const spyOnDispatch = jest.spyOn(store, 'dispatch');
 
     mockGetRequestOnce('/api/integrations', [{
       _id: '5ff579d745ceef7dcd797c15',
@@ -174,21 +240,19 @@ describe('PageBar2 UI tests', () => {
         '5cd51efd3607fe7d8eda9c97',
         '5ff57a8345ceef7dcd797c21',
       ],
-      installSteps: [],
+      installSteps: [{}, {}],
       uninstallSteps: [],
       flowGroupings: [],
       createdAt: '2021-01-06T08:50:31.935Z',
     }]);
 
-    const store = renderFunction();
-
     await prefAndIntegInStore(store);
     const add = screen.getByText('Add new child');
 
     await userEvent.click(add);
-    expect(mockdispatch).toHaveBeenCalledWith({id: '5ff579d745ceef7dcd797c15', type: 'NTEGRATION_APPS_INSTALLER_INIT_CHILD'});
+    expect(spyOnDispatch).toHaveBeenCalledWith({id: '5ff579d745ceef7dcd797c15', type: 'NTEGRATION_APPS_INSTALLER_INIT_CHILD'});
   });
-  test('should test change child where mode is none', async () => {
+  test('should test change child where mode is null', async () => {
     await renderWithIntegrationsMode(null);
 
     const select = screen.getByText('AFE 2.0 2');
@@ -223,8 +287,8 @@ describe('PageBar2 UI tests', () => {
 
     const options = screen.getAllByRole('option');
 
-    await userEvent.click(options[3]);
+    await userEvent.click(options[4]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
-    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/uninstall');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE204/uninstall_id/uninstall');
   });
 });
