@@ -42,7 +42,7 @@ describe('mapper2Generates test cases', () => {
   test('should change the data type Generates field', async () => {
     initFunction();
 
-    userEvent.type(screen.getByRole('textbox'), 'number');
+    await userEvent.type(screen.getByRole('textbox'), 'number');
     await userEvent.click(screen.getByText('string'));
     await userEvent.click(screen.getByRole('button', {name: 'number'}));
     expect(mockOnBlur).toHaveBeenCalledWith('number');
@@ -51,17 +51,17 @@ describe('mapper2Generates test cases', () => {
     initFunction(true);
     expect(screen.getByRole('textbox')).toBeDisabled();
   });
-  test('should press the escape button and textbox should be blurred', () => {
+  test('should press the escape button and textbox should be blurred', async () => {
     initFunction();
 
-    userEvent.type(screen.getByRole('textbox'), 'number');
-    userEvent.keyboard('{Escape}');
+    await userEvent.type(screen.getByRole('textbox'), 'number');
+    await userEvent.keyboard('{Escape}');
     expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });
-  test('should click outside the textbox and the textbox should be blurred', () => {
+  test('should click outside the textbox and the textbox should be blurred', async () => {
     initFunction();
 
-    userEvent.type(screen.getByRole('textbox'), 'number');
+    await userEvent.type(screen.getByRole('textbox'), 'number');
     fireEvent.click(document);
     expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });

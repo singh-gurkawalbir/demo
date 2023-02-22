@@ -4,6 +4,7 @@ import { screen } from '@testing-library/react';
 import { Route, Router } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders} from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import {getCreatedStore} from '../../../../store';
@@ -236,7 +237,7 @@ describe('TabRedirectiion(App) UI tests', () => {
 
     const {store} = renderWithProviders(<Router history={history} ><Route path="/:integrationId/:tab"><TabRedirection>Children</TabRedirection></Route></Router>, {initialStore});
 
-    store.dispatch(actions.job.receivedCollection({collection: [{_id: '09876', _flowId: '5ea16c600e2fab71928a6152', type: 'flow' }]}));
+    act(() => { store.dispatch(actions.job.receivedCollection({collection: [{_id: '09876', _flowId: '5ea16c600e2fab71928a6152', type: 'flow' }]})); });
     expect(screen.getByText('Redirected to " /integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/profile')).toBeInTheDocument();
   });
   test('should redirect to the provided URL', () => {

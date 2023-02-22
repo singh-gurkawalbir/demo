@@ -3,6 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
@@ -34,8 +35,8 @@ describe('PageBar2 UI tests', () => {
     return store;
   }
   async function prefAndIntegInStore(store) {
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { store.dispatch(actions.user.preferences.request()); });
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
   }
@@ -126,8 +127,8 @@ describe('PageBar2 UI tests', () => {
     await userEvent.click(name);
     const input = screen.getByRole('textbox');
 
-    userEvent.type(input, 'changed');
-    input.blur();
+    await userEvent.type(input, 'changed');
+    await input.blur();
     expect(mockdispatch).toHaveBeenCalledWith({asyncKey: undefined,
       context: undefined,
       id: '5ff579d745ceef7dcd797c15',

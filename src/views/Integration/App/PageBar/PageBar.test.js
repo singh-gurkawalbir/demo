@@ -3,6 +3,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
@@ -43,10 +44,10 @@ describe('PageBar UI testing', () => {
     jest.resetAllMocks();
   });
   async function prepareStore(store) {
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    store.dispatch(actions.user.profile.request());
-    store.dispatch(actions.user.org.accounts.requestCollection());
+    act(() => { store.dispatch(actions.user.preferences.request()); });
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+    act(() => { store.dispatch(actions.user.profile.request()); });
+    act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts[0]).toBeDefined());
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
@@ -335,8 +336,8 @@ describe('PageBar UI testing', () => {
     await userEvent.click(tag);
     const input = screen.getByRole('textbox');
 
-    userEvent.type(input, 'changed');
-    input.blur();
+    await userEvent.type(input, 'changed');
+    await input.blur();
 
     expect(screen.getByText('tagchanged')).toBeInTheDocument();
   });

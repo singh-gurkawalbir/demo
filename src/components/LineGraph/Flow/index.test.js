@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
@@ -135,7 +136,7 @@ describe('flowChart UI Tests', () => {
   test('should run with an error', async () => {
     const store = await renderWithProps(props);
 
-    store.dispatch(actions.flowMetrics.failed('629f0dcfccb94d35de6f436b'));
+    act(() => { store.dispatch(actions.flowMetrics.failed('629f0dcfccb94d35de6f436b')); });
 
     expect(screen.getByText('Error occurred')).toBeInTheDocument();
   });

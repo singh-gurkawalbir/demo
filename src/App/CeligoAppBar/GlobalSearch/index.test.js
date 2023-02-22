@@ -4,6 +4,7 @@ import { screen, waitFor, cleanup } from '@testing-library/react';
 import { MemoryRouter, Route, Switch, useParams } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { isEmpty } from 'lodash';
+import { act } from 'react-dom/test-utils';
 import { mockGetRequestOnce, mockPostRequestOnce, renderWithProviders} from '../../../test/test-utils';
 import GlobalSearch from '.';
 import actions from '../../../actions';
@@ -15,9 +16,9 @@ async function initGlobalSearch(ui = (<MemoryRouter><GlobalSearch /></MemoryRout
   const { store, utils } = renderWithProviders(ui);
 
   mockGetRequestOnce('/api/mfa/sessionInfo', {});
-  store.dispatch(actions.user.preferences.request());
-  store.dispatch(actions.user.profile.request());
-  store.dispatch(actions.mfa.receivedSessionInfo());
+  act(() => { store.dispatch(actions.user.preferences.request()); });
+  act(() => { store.dispatch(actions.user.profile.request()); });
+  act(() => { store.dispatch(actions.mfa.receivedSessionInfo()); });
 
   await waitFor(() => expect(isEmpty(store?.getState()?.user?.profile)).not.toBe(true));
   await waitFor(() => expect(isEmpty(store?.getState()?.user?.preferences)).not.toBe(true));
@@ -178,7 +179,7 @@ describe('Globalsearch feature tests', () => {
     ]);
     const {store} = await initGlobalSearch();
 
-    store.dispatch(actions.user.org.accounts.requestCollection());
+    act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts?.length).toBeGreaterThan(0));
 
     await userEvent.click(screen.queryByLabelText(/Global search/i));
@@ -324,7 +325,7 @@ describe('Globalsearch feature tests', () => {
     ]);
     const {store} = await initGlobalSearch();
 
-    store.dispatch(actions.user.org.accounts.requestCollection());
+    act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts?.length).toBeGreaterThan(0));
     await userEvent.click(screen.queryByLabelText(/Global search/i));
     const resourceFiltersButton = screen.getByText('All');

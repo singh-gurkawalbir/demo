@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { createMemoryHistory } from 'history';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import { runServer } from '../../../../../test/api/server';
@@ -297,11 +298,11 @@ describe('Flows index file UI tests', () => {
     });
 
     async function prepareStore(store) {
-      store.dispatch(actions.resource.requestCollection('integrations'));
-      store.dispatch(actions.resource.requestCollection('flows'));
-      store.dispatch(actions.resource.requestCollection('connections'));
-      store.dispatch(actions.resource.requestCollection('exports'));
-      store.dispatch(actions.user.profile.request());
+      act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+      act(() => { store.dispatch(actions.resource.requestCollection('flows')); });
+      act(() => { store.dispatch(actions.resource.requestCollection('connections')); });
+      act(() => { store.dispatch(actions.resource.requestCollection('exports')); });
+      act(() => { store.dispatch(actions.user.profile.request()); });
 
       await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
       await waitFor(() => expect(store?.getState()?.data?.resources?.connections).toBeDefined());

@@ -111,22 +111,22 @@ describe('Mapper2Row UI test cases', () => {
 
     expect(screen.getByText('Mock Tabbed Row')).toBeInTheDocument();
   });
-  test('should make dispatch call when generate field is changed', () => {
+  test('should make dispatch call when generate field is changed', async () => {
     initMapper2Row();
 
     const generateInput = screen.getByTestId('fieldMappingGenerate');
 
-    userEvent.type(generateInput, 'sometext');
+    await userEvent.type(generateInput, 'sometext');
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.patchField('generate', undefined, 'sometext')
     );
   });
-  test('should make dispatch call when extract field is changed', () => {
+  test('should make dispatch call when extract field is changed', async () => {
     initMapper2Row({});
 
     const typableExtractInput = screen.getByTestId('mapper2ExtractsTypeableSelect');
 
-    userEvent.type(typableExtractInput, 'sometext');
+    await userEvent.type(typableExtractInput, 'sometext');
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.patchField('extract', undefined, 'sometext', undefined, 'somejsonpath')
     );

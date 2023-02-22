@@ -75,7 +75,7 @@ describe('branchDrawer tests', () => {
     const closeBtn = screen.getAllByRole('button').find(btn => btn.getAttribute('data-test') === 'cancel');
 
     expect(closeBtn).toBeEnabled();
-    userEvent.type(descInput, 'updated description for branch');
+    await userEvent.type(descInput, 'updated description for branch');
     mockDispatchFn.mockClear();
     await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', {description: 'updated description for branch', name: 'R1B1'}, {rulePath: 'branches[0]'}));
@@ -85,8 +85,8 @@ describe('branchDrawer tests', () => {
     await initBranchDrawer();
     const nameInput = screen.getAllByRole('textbox')[0];
 
-    userEvent.clear(nameInput);
-    userEvent.type(nameInput, 'Branch 1');
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Branch 1');
     mockDispatchFn.mockClear();
     await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', {description: '', name: 'Branch 1'}, {rulePath: 'branches[0]'}));

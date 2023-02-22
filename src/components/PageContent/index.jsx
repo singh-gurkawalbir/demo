@@ -2,7 +2,6 @@ import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core';
-import DynaSelect from '../DynaForm/fields/DynaSelect';
 
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
@@ -20,29 +19,6 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function PageContent({children, showPagingBar = false, hidePagingBar = false, className}) {
   const classes = useStyles();
-  const data = {
-    disabled: false,
-    id: '_connectionId',
-    name: '/_connectionId',
-    connectionId: '',
-    options: [{
-      items: [{
-        label: 'Netsuite 616',
-        optionSearch: 'Netsuite Connection',
-        value: '62f7a541d07aa55c7643a023',
-      }, {
-        label: 'Amazon Connection',
-        optionSearch: 'Amazon Connection',
-        value: '34',
-      }],
-    }],
-    required: true,
-    label: 'Connection',
-    onFieldChange: e => { console.log('test', e); },
-    isLoggable: true,
-    helpText: 'Choose an existing connection to this application, or click the + icon to create a new connection. You can always change your connection later',
-    helpKey: 'pageProcessor.connection',
-  };
 
   return (
     <div
@@ -51,7 +27,6 @@ export default function PageContent({children, showPagingBar = false, hidePaging
         {[classes.pagingBarShow]: showPagingBar},
         {[classes.pagingBarHide]: hidePagingBar},
         className)}>
-      <DynaSelect {...data} />
       {children}
     </div>
   );

@@ -3,6 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import ConnectionStatusPanel from '.';
 import actions from '../../actions';
 import { mockPostRequest, renderWithProviders } from '../../test/test-utils';
@@ -34,9 +35,9 @@ describe('connectionStatusPanel UI tests', () => {
   function renderWithStore(resourcetype, resourceId) {
     const {store} = renderWithProviders(<MemoryRouter ><ConnectionStatusPanel resourceId={resourceId} resourceType={resourcetype} /></MemoryRouter>);
 
-    store.dispatch(actions.resource.receivedCollection(resourceType[0], collection[0]));
-    store.dispatch(actions.resource.receivedCollection(resourceType[1], collection[1]));
-    store.dispatch(actions.resource.receivedCollection(resourceType[2], collection[2]));
+    act(() => { store.dispatch(actions.resource.receivedCollection(resourceType[0], collection[0])); });
+    act(() => { store.dispatch(actions.resource.receivedCollection(resourceType[1], collection[1])); });
+    act(() => { store.dispatch(actions.resource.receivedCollection(resourceType[2], collection[2])); });
   }
 
   test('should test the online message for connection', async () => {
