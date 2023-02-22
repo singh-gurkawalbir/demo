@@ -107,7 +107,7 @@ describe('Dashboard UI tests', () => {
     expect(history.push).toBeCalled();
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should display different infotexts when clicked on InfoIcon button', () => {
+  test('should display different infotexts when clicked on InfoIcon button', async () => {
     initDashboard();
     const element = document.querySelector('[aria-haspopup="true"]');
 

@@ -39,7 +39,7 @@ function renderFuntion(data, actionProps) {
 
 describe('flowStepLogs meta data UI tests', () => {
   test('should verify the time column', async () => {
-    renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+    await renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();
     await userEvent.click(screen.getByText('Time'));
     await userEvent.click(screen.getAllByRole('button')[0]);
@@ -52,7 +52,7 @@ describe('flowStepLogs meta data UI tests', () => {
     );
   });
   test('should verify the method coulmn', async () => {
-    renderFuntion({key: 'someKey', method: 'someMethod'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+    await renderFuntion({key: 'someKey', method: 'someMethod'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Method')).toBeInTheDocument();
     expect(screen.getByText('someMethod')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button')[1]);
@@ -66,7 +66,7 @@ describe('flowStepLogs meta data UI tests', () => {
     );
   });
   test('should verify the Stage column', async () => {
-    renderFuntion({key: 'someKey', stage: 'somestage'}, {resourceId: 'someresourceId', flowId: 'someflowId', isImport: true});
+    await renderFuntion({key: 'someKey', stage: 'somestage'}, {resourceId: 'someresourceId', flowId: 'someflowId', isImport: true});
 
     await userEvent.click(screen.getByText('Stage'));
     expect(screen.getByText('somestage')).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe('flowStepLogs meta data UI tests', () => {
     );
   });
   test('should verify the Response code column', async () => {
-    renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+    await renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Response code')).toBeInTheDocument();
     expect(screen.getByText('somestatusCode')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button')[2]);
@@ -93,7 +93,7 @@ describe('flowStepLogs meta data UI tests', () => {
     );
   });
   test('should click the actions button', async () => {
-    renderFuntion({key: 'someKey'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+    await renderFuntion({key: 'someKey'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     await userEvent.click(screen.getByRole('button', {name: /more/i}));
     await userEvent.click(screen.getByText('Delete log'));
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();

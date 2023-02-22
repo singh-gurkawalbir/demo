@@ -44,7 +44,7 @@ describe('uI test cases for licenses', () => {
   test('should redirect to licenses page after clicking on licenses button', async () => {
     const applications = ['3dcart', 'docusign', 'salesforce', 'magento'];
 
-    renderFuntion({_id: 'someappKey', applications});
+    await renderFuntion({_id: 'someappKey', applications});
     const Licenses = screen.getByText('Licenses');
 
     await userEvent.click(Licenses);

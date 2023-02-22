@@ -43,7 +43,7 @@ describe('uI test cases for trusted Devices', () => {
   const data = {_id: '6287678bdh893338hdn3', browser: 'Chrome', os: 'windows'};
 
   test('should make dispatch calls when trusted MFA devices are deleted', async () => {
-    renderFuntion(data);
+    await renderFuntion(data);
     const deleteDeviceButton = screen.getByText('Delete device');
 
     await userEvent.click(deleteDeviceButton);

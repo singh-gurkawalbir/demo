@@ -57,14 +57,14 @@ describe('error Management Response UI tests', () => {
   const errorId = '7587697723';
 
   test('should redirect to HTTP response page', async () => {
-    renderFuntion({resourceId}, {reqAndResKey, errorId}, 'close');
+    await renderFuntion({resourceId}, {reqAndResKey, errorId}, 'close');
     const request = screen.getByText('View HTTP response');
 
     await userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith('/close/details/7587697723/response');
   });
   test('should make dispatch call and redirect to HTTP response page', async () => {
-    renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
+    await renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
 
     const request = screen.getByText('View HTTP response');
 

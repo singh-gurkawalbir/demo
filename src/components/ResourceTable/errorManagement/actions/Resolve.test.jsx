@@ -33,7 +33,7 @@ async function renderFuntion(actionProps, data) {
 
 describe('error Management Resolve UI tests', () => {
   test('should make dispatch call for Resolve click', async () => {
-    renderFuntion({
+    await renderFuntion({
       isFlowDisabled: false,
       isResolved: false,
       flowId: '6938764rh739ddfv3378',

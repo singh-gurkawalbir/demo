@@ -51,14 +51,14 @@ describe('error management View netsuite request action tests', () => {
     jest.clearAllMocks();
   });
   test('should click on View Request when error type is resolved', async () => {
-    renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
+    await renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
     const request = screen.getByText('View request');
 
     await userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/request');
   });
   test('should click on View Request when error type is open', async () => {
-    renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
+    await renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
     const request = screen.getByText('View request');
 
     await userEvent.click(request);

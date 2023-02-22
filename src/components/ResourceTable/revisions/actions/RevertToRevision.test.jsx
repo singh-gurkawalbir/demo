@@ -88,7 +88,7 @@ describe('uI test cases for revert to revision', () => {
     enqueueSnackbar.mockClear();
   });
   test('redirect to revert revision URL when clicked on revert to this revision button', async () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f', type: 'snapshot'});
+    await renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f', type: 'snapshot'});
     const revertrevisionButton = screen.getByText('Revert to this revision');
 
     await userEvent.click(revertrevisionButton);
@@ -104,7 +104,7 @@ describe('uI test cases for revert to revision', () => {
           status: 'inprogress',
         }],
       }};
-    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'snapshot'});
+    await renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'snapshot'});
     const revertrevisionButton = screen.getByText('Revert to this revision');
 
     await userEvent.click(revertrevisionButton);

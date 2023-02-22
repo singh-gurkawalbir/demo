@@ -47,7 +47,7 @@ describe('error Management Retry UI tests', () => {
   const isFlowDisabled = true;
 
   test('should make a dispatch call clicking on download retry action', async () => {
-    renderFuntion({resourceId, flowId}, {source, retryDataKey, errorId});
+    await renderFuntion({resourceId, flowId}, {source, retryDataKey, errorId});
     const downloadRetry = screen.getByText('Download retry data');
 
     expect(downloadRetry).toBeInTheDocument();
@@ -56,8 +56,8 @@ describe('error Management Retry UI tests', () => {
       actions.errorManager.retryData.download({flowId: '6938764rh739d3378', resourceId: '6439276e7uybwe78292878', retryDataKey: 'somereqAndResKey'})
     );
   });
-  test('should have enabled title when flow is disabled', () => {
-    renderFuntion({resourceId, isFlowDisabled}, {source, retryDataKey, errorId});
+  test('should have enabled title when flow is disabled', async () => {
+    await renderFuntion({resourceId, isFlowDisabled}, {source, retryDataKey, errorId});
     const enableFlowText = screen.getByTitle('Enable the flow to download retry data');
 
     expect(enableFlowText).toBeInTheDocument();

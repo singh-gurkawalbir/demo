@@ -77,7 +77,7 @@ describe('uI test cases for view resource changes', () => {
     jest.resetAllMocks();
   });
   test('should push viewresourcechanges URL when status is set to completed', async () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f'});
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f'});
     const viewresourcechanged = screen.getByText('View resources changed');
 
     await userEvent.click(viewresourcechanged);

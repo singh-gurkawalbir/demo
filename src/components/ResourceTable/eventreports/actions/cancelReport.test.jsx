@@ -39,7 +39,7 @@ describe('uI test cases for cancelreport', () => {
     jest.resetAllMocks();
   });
   test('should make a dispatch call after clicking on cancel report', async () => {
-    renderFuntion({_id: 'flow_id_1', status: 'queued', _flowIds: ['flow_id_1']});
+    await renderFuntion({_id: 'flow_id_1', status: 'queued', _flowIds: ['flow_id_1']});
     const cancelReportButton = screen.getByText('Cancel Report');
 
     await userEvent.click(cancelReportButton);

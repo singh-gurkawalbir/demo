@@ -38,7 +38,7 @@ describe('uI test cases for edit alias', () => {
     jest.resetAllMocks();
   });
   test('should call onclick', async () => {
-    renderFuntion({hasManageAccess: true}, {_id: 'someid',
+    await renderFuntion({hasManageAccess: true}, {_id: 'someid',
       alias: 'editalias',
       integrationId: '6366bee72c1bd1023108c05b'});
     const editAliasButton = screen.getByText('Edit alias');

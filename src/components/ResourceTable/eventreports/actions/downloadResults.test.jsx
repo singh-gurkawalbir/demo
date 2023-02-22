@@ -42,7 +42,7 @@ describe('uI test cases for download results', () => {
     jest.resetAllMocks();
   });
   test('should make a dispatch call after clicking on download result', async () => {
-    renderFuntion({_id: 'flow_id_1', status: 'completed', _flowIds: ['flow_id_1']});
+    await renderFuntion({_id: 'flow_id_1', status: 'completed', _flowIds: ['flow_id_1']});
     const downloadResultsButton = screen.getByText('Download results');
 
     await userEvent.click(downloadResultsButton);

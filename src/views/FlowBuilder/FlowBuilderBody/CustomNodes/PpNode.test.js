@@ -63,7 +63,7 @@ describe('Testsuite for Page processor node', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the branch name when is virtual is set to false and verify the delete option when the setup is in progress', () => {
+  test('should test the branch name when is virtual is set to false and verify the delete option when the setup is in progress', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
       flow: {_integrationId: '345'}, flowId: '234',
     });

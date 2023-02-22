@@ -44,7 +44,7 @@ describe('uI test cases for install base', () => {
   test('should render table accordingly', async () => {
     const applications = ['3dcart', 'docusign', 'salesforce', 'magento'];
 
-    renderFuntion({_id: 'someappKey', applications});
+    await renderFuntion({_id: 'someappKey', applications});
     const viewresourcechanged = screen.getByText('Install base');
 
     await userEvent.click(viewresourcechanged);

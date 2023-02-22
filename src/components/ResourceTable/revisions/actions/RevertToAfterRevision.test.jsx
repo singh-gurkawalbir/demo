@@ -89,7 +89,7 @@ describe('uI tests for revert to after revision', () => {
     enqueueSnackbar.mockClear();
   });
   test('should push revertafter URL when status is set to completed', async () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
+    await renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
     const revertafterbutton = screen.getByText('Revert to after this revision');
 
     await userEvent.click(revertafterbutton);
@@ -105,7 +105,7 @@ describe('uI tests for revert to after revision', () => {
           status: 'inprogress',
         }],
       }};
-    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
+    await renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
     const revertafterbutton = screen.getByText('Revert to after this revision');
 
     await userEvent.click(revertafterbutton);

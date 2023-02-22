@@ -56,7 +56,7 @@ describe('error Management view error details UI tests', () => {
   const errorId = '7587697723';
 
   test('should display error details page after clicking on View error details', async () => {
-    renderFuntion({resourceId}, {errorId}, 'resolved');
+    await renderFuntion({resourceId}, {errorId}, 'resolved');
     const errordetails = screen.getByText('View error details');
 
     await userEvent.click(errordetails);
@@ -64,7 +64,7 @@ describe('error Management view error details UI tests', () => {
   });
 
   test('should make dispatch call after clicking on View error details', async () => {
-    renderFuntion({resourceId}, {errorId}, 'open');
+    await renderFuntion({resourceId}, {errorId}, 'open');
     const errordetails = screen.getByText('View error details');
 
     await userEvent.click(errordetails);

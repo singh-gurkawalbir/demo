@@ -58,7 +58,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
       <Route path="/integrations/:integrationId">
@@ -76,8 +76,8 @@ describe('uI test cases for view details', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should push viewDetails URL when status is set to canceled', () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'canceled', integrationId: '5e44efa28015c9464272256f'});
+  test('should push viewDetails URL when status is set to canceled', async () => {
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'canceled', integrationId: '5e44efa28015c9464272256f'});
     const viewdetailsButton = screen.getByText('View details');
 
     await userEvent.click(viewdetailsButton);

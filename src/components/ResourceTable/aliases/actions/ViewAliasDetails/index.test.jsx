@@ -40,7 +40,7 @@ describe('uI test cases for view alias details', () => {
   const _integrationId = '5e44efa28015c9464272256f';
 
   test('should push viewdetails URL onClick without parentId when it is not provided', async () => {
-    renderFuntion({ _id, alias, status, _integrationId });
+    await renderFuntion({ _id, alias, status, _integrationId });
     const request = screen.getByText('View details');
 
     await userEvent.click(request);
@@ -49,7 +49,7 @@ describe('uI test cases for view alias details', () => {
     );
   });
   test('should push viewdetails URL onClick with parentId when it is provided', async () => {
-    renderFuntion({ _id, alias, _parentId, status, _integrationId });
+    await renderFuntion({ _id, alias, _parentId, status, _integrationId });
     const request = screen.getByText('View details');
 
     await userEvent.click(request);

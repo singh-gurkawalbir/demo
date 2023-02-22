@@ -57,14 +57,14 @@ describe('error Management Netsuite Response UI tests', () => {
   const errorId = 'someerrorId';
 
   test('should redirect to response page', async () => {
-    renderFuntion({resourceId}, {reqAndResKey, errorId}, 'resolved');
+    await renderFuntion({resourceId}, {reqAndResKey, errorId}, 'resolved');
     const viewResponseButton = screen.getByText('View response');
 
     await userEvent.click(viewResponseButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/response');
   });
   test('should make dispatch call and redirect to response page', async () => {
-    renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
+    await renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
     const viewResponseButton = screen.getByText('View response');
 
     await userEvent.click(viewResponseButton);

@@ -45,7 +45,7 @@ describe('uI test cases for view report', () => {
     jest.resetAllMocks();
   });
   test('should make a history call after clicking on view report details', async () => {
-    renderFuntion({_id: '6287678bdh893338hdn3', status: 'completed', _flowIds: ['6287678bdh893338hdn3'], integrationId: '6287678493nff8e93873'});
+    await renderFuntion({_id: '6287678bdh893338hdn3', status: 'completed', _flowIds: ['6287678bdh893338hdn3'], integrationId: '6287678493nff8e93873'});
     const viewReportsButton = screen.getByText('View report details');
 
     await userEvent.click(viewReportsButton);

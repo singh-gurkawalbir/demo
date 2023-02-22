@@ -85,7 +85,7 @@ describe('uI tests for cancel revision', () => {
     jest.resetAllMocks();
   });
   test('should make a dispatch call when cancel revision is clicked', async () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790',
+    await renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
       _integrationId: '5e44ee816fb284424f693b43',
@@ -101,7 +101,7 @@ describe('uI tests for cancel revision', () => {
   });
 
   test('should test continue merge button', async () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790',
+    await renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
       _integrationId: '5e44ee816fb284424f693b43',
@@ -116,8 +116,8 @@ describe('uI tests for cancel revision', () => {
     expect(continueMerge).not.toBeInTheDocument();
   });
 
-  test('should not display cancel revision button when type is set to snapshot and status is set to completed', () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790',
+  test('should not display cancel revision button when type is set to snapshot and status is set to completed', async () => {
+    await renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'completed',
       _integrationId: '5e44ee816fb284424f693b43',

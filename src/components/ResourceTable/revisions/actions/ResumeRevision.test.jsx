@@ -77,14 +77,14 @@ describe('uI tests for resume revision', () => {
     jest.resetAllMocks();
   });
   test('should push resumerevision URL when type is set to pull', async () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
     const resumeOperationButton = screen.getByText('Resume operation');
 
     await userEvent.click(resumeOperationButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44ee816fb284424f693b43/pull/6368de0bec4c35664453023b/merge');
   });
   test('should push resumerevision URL when status is set to completed', async () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'revert'});
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'revert'});
     const resumeOperationButton = screen.getByText('Resume operation');
 
     await userEvent.click(resumeOperationButton);

@@ -37,7 +37,7 @@ describe('error management retry action tests', () => {
     jest.clearAllMocks();
   });
   test('should show "Enable the flow to retry" message when flow is disabled', async () => {
-    renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
+    await renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
     await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const retry = screen.getByTitle('Enable the flow to retry');
 
@@ -45,7 +45,7 @@ describe('error management retry action tests', () => {
     expect(retry.textContent).toBe('Retry');
   });
   test('should make dispatch call for retry on clicking retry button', async () => {
-    renderFuntion({
+    await renderFuntion({
       isFlowDisabled: false,
       isResolved: false,
       flowId: 'someflowId',
@@ -68,7 +68,7 @@ describe('error management retry action tests', () => {
     );
   });
   test('should show "Enable the flow to retry" message when flow is disabled.', async () => {
-    renderFuntion({
+    await renderFuntion({
       isFlowDisabled: false,
       isResolved: true,
       flowId: 'someflowId',
