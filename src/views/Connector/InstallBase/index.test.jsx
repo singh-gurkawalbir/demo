@@ -135,9 +135,9 @@ describe('install Base', () => {
     };
 
     store(connectors);
-    const { utils } = await initInstallBase(props);
+    await initInstallBase(props);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should able to test the Install Base search option', async () => {
     const props = {

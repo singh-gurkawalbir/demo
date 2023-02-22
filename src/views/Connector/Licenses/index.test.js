@@ -95,9 +95,9 @@ describe('licenses test cases', () => {
   });
 
   test('should pass the initial render with default value/pass the wrong id', async () => {
-    const { utils } = await initMarketplace();
+    await initMarketplace();
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   test('should pass the initial render by creating new license with twoDotZero', async () => {

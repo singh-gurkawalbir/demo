@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import IntegrationTabs from './IntegrationTabs';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
@@ -8,11 +9,14 @@ import TabRedirection from './TabRedirection';
 import EditorDrawer from '../../../components/AFE/Drawer';
 
 export default function IntegrationDIY({integrationId}) {
+  const match = useRouteMatch();
+  const { childId } = match.params;
+
   return (
     <>
       <ResourceDrawer />
       <QueuedJobsDrawer integrationId={integrationId} />
-      <LoadResources required resources="marketplacetemplates">
+      <LoadResources required integrationId={childId} resources={childId ? 'published,flows,exports,imports,connections,marketplacetemplates' : 'marketplacetemplates'}>
         <TabRedirection>
           <PageBar />
           <IntegrationTabs />

@@ -175,7 +175,7 @@ export default function Revisions({ integrationId }) {
       </PanelHeader>
       <RevisionFilters />
       <RevisionsList integrationId={integrationId} />
-      <LoadResources integrationId={integrationId} resources="flows,integrations">
+      <LoadResources resources="flows,integrations">
         <DrawerDeclarations
           integrationId={integrationId}
           hasMonitorLevelAccess={hasMonitorLevelAccess}
