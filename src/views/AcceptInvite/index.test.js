@@ -3,14 +3,16 @@ import React from 'react';
 import * as ReactRedux from 'react-redux';
 import AcceptInvite from '.';
 import { getCreatedStore } from '../../store';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import actions from '../../actions';
 
 let initialStore;
 const mockHistoryPush = jest.fn();
 
 function initAcceptInvite({acceptInviteData}) {
-  initialStore.getState().auth.acceptInvite = acceptInviteData;
+  mutateStore(initialStore, draft => {
+    draft.auth.acceptInvite = acceptInviteData;
+  });
   const ui = (
     <AcceptInvite {...{test: 'test1'}} />
   );
