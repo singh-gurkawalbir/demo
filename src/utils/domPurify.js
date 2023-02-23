@@ -78,6 +78,19 @@ export default function getDomPurify(options = {}) {
         node.removeAttribute('xlink:href');
       }
     }
+
+    // check all anchor tags which doesn't has href attribute and converting them to text
+    if (options.allowedTags && options.allowedTags.includes('a') && node.tagName === 'A' && !node.hasAttribute('href')) {
+      DOMPurify.addHook('afterSanitizeElements', node => {
+        if (node.tagName === 'A') {
+          const text = document.createTextNode(node.textContent);
+
+          if (node.parentNode) {
+            node.parentNode.replaceChild(text, node);
+          }
+        }
+      });
+    }
   });
 
   return DOMPurify;
