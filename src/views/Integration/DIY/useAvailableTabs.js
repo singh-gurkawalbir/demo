@@ -29,7 +29,7 @@ import { getTopLevelTabs } from '../../../utils/integrationApps';
 import { STANDALONE_INTEGRATION } from '../../../constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp }) => [
+const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp, isMonitorLevelUser }) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -85,7 +85,7 @@ const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyInteg
     Icon: InstallationGuideIcon,
     Panel: AliasesPanel,
   }] : []),
-  ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
+  ...((!isStandaloneIntegration && !isIntegrationApp && !isMonitorLevelUser) ? [{
     path: 'revisions',
     label: 'Revisions',
     Icon: RevisionsIcon,
@@ -150,6 +150,7 @@ export function useAvailableTabs() {
       isStandaloneIntegration,
       isAnyIntegrationConnectionOffline,
       isIntegrationApp,
+      isMonitorLevelUser,
     }),
     isIntegrationApp,
     isParent,
