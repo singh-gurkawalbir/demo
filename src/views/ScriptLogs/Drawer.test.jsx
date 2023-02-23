@@ -340,7 +340,7 @@ describe('script Logs Drawer Route', () => {
 
   beforeEach(done => {
     initialStore = getCreatedStore();
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
     jest.setTimeout(100000);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -353,9 +353,9 @@ describe('script Logs Drawer Route', () => {
     done();
   });
   afterEach(async () => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllTimers();
+    // jest.runOnlyPendingTimers();
+    // jest.useRealTimers();
+    // jest.clearAllTimers();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
     cleanup();

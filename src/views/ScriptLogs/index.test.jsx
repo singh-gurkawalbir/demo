@@ -314,7 +314,7 @@ describe('script logs', () => {
 
   beforeEach(done => {
     initialStore = getCreatedStore();
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
     jest.setTimeout(100000);
     dateSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
@@ -328,9 +328,9 @@ describe('script logs', () => {
     done();
   });
   afterEach(async () => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllTimers();
+    // jest.runOnlyPendingTimers();
+    // jest.useRealTimers();
+    // jest.clearAllTimers();
     dateSpy.mockRestore();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
