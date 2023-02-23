@@ -5,10 +5,51 @@ import ApplicationImg from '../../icons/ApplicationImg';
 import { getApp } from '../../../constants/applications';
 import { logoSizes } from '../index';
 
-const useStyles = (pxSize, columns, count, hasChildren) => makeStyles(theme => {
-  let cols = count;
+const useStyles = makeStyles(theme => ({
+  logoStripWrapper: {
+    display: 'grid',
+    margin: 0,
+    padding: 0,
+    maxWidth: 300,
+    gridTemplateColumns: props => `repeat(${props.cols}, ${props.pxSize}px)`,
+    '& > *': props => ({
+      justifyContent: 'center',
+      position: 'relative',
+      display: 'flex',
+      height: props.pxSize,
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+      alignItems: 'center',
+      '& > img': {
+        maxWidth: '80%',
+        maxHeight: '80%',
+      },
+      '&:nth-child(n)': {
+        borderLeft: 'none',
+        '&:first-child': {
+          borderLeft: '1px solid',
+          borderColor: theme.palette.secondary.lightest,
+        },
+      },
+      [`&:nth-child(${props.columns}n+1)`]: {
+        borderLeft: '1px solid',
+        borderColor: theme.palette.secondary.lightest,
+      },
+      [`&:nth-child(n+${props.columns + 1})`]: {
+        borderTop: 'none',
+      },
+    }),
+  },
+}));
 
-  if (count > columns) {
+export default function Applications({applications, children, className, columns, size = 'small', type = 'other', value = ''}) {
+  const appCount = applications?.length;
+  // const appWidth = 30;
+  const pxSize = logoSizes[size];
+  const hasChildren = !!children;
+  let cols = appCount;
+
+  if (appCount > columns) {
     cols = columns;
   } else if (hasChildren) {
     // In this case, we have apps that fit into a single row. We need to adjust
@@ -16,50 +57,7 @@ const useStyles = (pxSize, columns, count, hasChildren) => makeStyles(theme => {
     // 'count' prop that only recognizes app count, and throws off the column count.
     cols += 1;
   }
-
-  return {
-    logoStripWrapper: {
-      display: 'grid',
-      margin: 0,
-      padding: 0,
-      maxWidth: 300,
-      gridTemplateColumns: `repeat(${cols}, ${pxSize}px)`,
-      '& > *': {
-        justifyContent: 'center',
-        position: 'relative',
-        display: 'flex',
-        height: pxSize,
-        border: '1px solid',
-        borderColor: theme.palette.secondary.lightest,
-        alignItems: 'center',
-        '& > img': {
-          maxWidth: '80%',
-          maxHeight: '80%',
-        },
-        '&:nth-child(n)': {
-          borderLeft: 'none',
-          '&:first-child': {
-            borderLeft: '1px solid',
-            borderColor: theme.palette.secondary.lightest,
-          },
-        },
-        [`&:nth-child(${columns}n+1)`]: {
-          borderLeft: '1px solid',
-          borderColor: theme.palette.secondary.lightest,
-        },
-        [`&:nth-child(n+${columns + 1})`]: {
-          borderTop: 'none',
-        },
-      },
-    },
-  };
-});
-
-export default function Applications({applications, children, className, columns, size = 'small', type = 'other', value = ''}) {
-  const appCount = applications?.length;
-  // const appWidth = 30;
-  const pxSize = logoSizes[size];
-  const classes = useStyles(pxSize, columns, appCount, !!children)();
+  const classes = useStyles(cols, pxSize, columns, appCount, hasChildren);
 
   return (
     <ul className={clsx(classes.logoStripWrapper, className)}>

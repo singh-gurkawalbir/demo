@@ -145,11 +145,14 @@ export default function SelectApplication(props) {
   const dispatch = useDispatch();
   const handleChange = useCallback(e => {
     ref?.current?.select?.blur();
-    const newValue = isMulti ? [...value, e.value] : e.value;
-    const label = !isMulti && e.label;
+    const inputVal = e ? e.value : '';
+    const newValue = isMulti ? [...value, inputVal] : inputVal;
+    const label = !isMulti && (e ? e.label : '');
 
     setInputValue(value.label);
-    setMenuIsOpen(false);
+    if (e?.value) {
+      setMenuIsOpen(false);
+    }
     if (onFieldChange) {
       onFieldChange(id, newValue);
     }
@@ -252,6 +255,8 @@ export default function SelectApplication(props) {
         autoFocus
         onBlur={handleBlur}
         styles={customStyles}
+        isClearable
+        backspaceRemovesValue
         filterOption={filterOptions}
       />
 
