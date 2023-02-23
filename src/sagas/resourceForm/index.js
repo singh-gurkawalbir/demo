@@ -921,8 +921,8 @@ export function* initFormValues({
           httpConnectorId: httpPublishedConnector._id,
         });
       }
-      if (httpConnectorData?.apis?.length && resource?.http?._httpConnectorApiId) {
-        httpConnectorData = httpConnectorData.apis.find(api => api._id === resource.http._httpConnectorApiId);
+      if (httpConnectorData?.apis?.length && (resource?.http?._httpConnectorApiId || resource?.http?.apiType)) {
+        httpConnectorData = httpConnectorData.apis.find(api => api._id === (resource.http._httpConnectorApiId || resource?.http?.apiType));
       }
       // standard form init fn...
       finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value);
