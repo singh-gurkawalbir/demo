@@ -40,8 +40,8 @@ export default function ErrorNotifications() {
         persist: true,
         key: 'offline',
       });
-      dispatch(actions.api.clearComms());
     }
+    dispatch(actions.api.clearComms());
   }, [dispatch, enqueueSnackbar, isOnline]);
 
   return null;
