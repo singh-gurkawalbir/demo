@@ -2107,7 +2107,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               assistantData,
             });
 
-            if (luEndpoint.url?.includes('?') && luEndpoint._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
+            if (luEndpoint.url?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
             lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
