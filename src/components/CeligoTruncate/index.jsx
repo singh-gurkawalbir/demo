@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children, className, disableHoverListener}) {
+export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children, className, disableHoverListener, lineHeight}) {
   const classes = useStyles();
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -26,7 +26,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
         enterDelay={delay}
         disableHoverListener={disableHoverListener}>
         <span style={{width: '100%'}}>
-          <TruncateMarkup lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
+          <TruncateMarkup lines={lines} ellipsis={ellipsis} className={className} lineHeight={lineHeight}>
             <div>{children}</div>
           </TruncateMarkup>
         </span>
@@ -38,6 +38,7 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
     <span style={{width: '100%'}}>
       <TruncateMarkup
         lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
+        lineHeight={lineHeight}
         {...isLoggableAttr(isLoggable)}>
         <div>{children}</div>
       </TruncateMarkup>
