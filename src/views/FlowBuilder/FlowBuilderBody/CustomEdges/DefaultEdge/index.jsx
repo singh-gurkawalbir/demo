@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { getSmoothStepPath } from 'react-flow-renderer';
+import { getSmoothStepPath } from 'reactflow';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDragDropManager } from 'react-dnd';

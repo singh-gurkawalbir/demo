@@ -1,4 +1,4 @@
-import { isEdge, isNode } from 'react-flow-renderer';
+import { isEdge, isNode } from 'reactflow';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
@@ -148,7 +148,7 @@ export function layoutElements(elements = [], flow) {
   });
   rectifyPageGeneratorOrder(nodes, flow);
 
-  return { elements: [...nodes, ...edges], x: highestX, y: highestY };
+  return { nodes, edges, x: highestX, y: highestY };
 }
 
 export function getAllFlowBranches(flow) {
@@ -220,7 +220,12 @@ export const getPositionInEdge = (
   position = 'center',
   offset = 0
 ) => {
-  const linePlotsCoordinates = edgeCommands
+  let edge = edgeCommands;
+
+  if (Array.isArray(edgeCommands)) {
+    [edge] = edgeCommands;
+  }
+  const linePlotsCoordinates = edge
     .substr(1)
     .split(/[LQ]/)
     .map(cmd => cmd.trim())

@@ -53,11 +53,11 @@ jest.mock('../../Context', () => ({
   ...jest.requireActual('../../Context'),
   useFlowContext: jest.fn().mockReturnValue({flow: {_integrationId: 'integration_id'}, flowId: 'flow_id'}),
 }));
-jest.mock('react-flow-renderer', () => ({
+jest.mock('reactflow', () => ({
   __esModule: true,
-  ...jest.requireActual('react-flow-renderer'),
+  ...jest.requireActual('reactflow'),
   // eslint-disable-next-line no-sparse-arrays
-  useStoreState: jest.fn().mockReturnValue([100, , 100]),
+  useStore: jest.fn().mockReturnValue([100, , 100]),
 }));
 jest.mock('react-router-dom', () => ({
   __esModule: true,

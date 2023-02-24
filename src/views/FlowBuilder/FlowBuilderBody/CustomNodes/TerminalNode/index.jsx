@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { makeStyles, Typography, Tooltip } from '@material-ui/core';
-import { Position } from 'react-flow-renderer';
+import { Position } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import TerminalIcon from '../../../../../components/icons/MergeIcon';

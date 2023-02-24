@@ -1,6 +1,6 @@
 import { makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactFlow, { MiniMap } from 'react-flow-renderer';
+import ReactFlow, { MiniMap } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -26,6 +26,9 @@ import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 import { CanvasControls } from './CanvasControls';
 import AutoScroll from './AutoScroll';
 import CustomDragLayer from './DragPreview';
+import 'reactflow/dist/style.css';
+
+const defaultViewport = { x: 0, y: 0, zoom: 1 };
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -157,9 +160,10 @@ export function Canvas({ flowId, fullscreen }) {
     selectors.isFlowSaveInProgress(state, flowId)
   );
 
-  const {elements: updatedLayout, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
+  const {nodes, edges, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
     elements, mergedFlow,
   ]);
+
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {
@@ -186,9 +190,6 @@ export function Canvas({ flowId, fullscreen }) {
 
   const onLoad = useCallback(reactFlowInstance => {
     setRFInstance(reactFlowInstance);
-    setTimeout(() => {
-      reactFlowInstance.setTransform({x: 0, y: 0, zoom: 1});
-    }, 10);
   }, []);
 
   const handleMoveEnd = useCallback(() => setIsPanning(false), []);
@@ -228,11 +229,14 @@ export function Canvas({ flowId, fullscreen }) {
             panOnScroll
             translateExtent={translateExtent}
                 // nodeExtent={translateExtent}
-            onLoad={onLoad}
-            elements={updatedLayout}
+            onInit={onLoad}
+            defaultViewport={defaultViewport}
+            nodes={nodes}
+            edges={edges}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             preventScrolling={false}
+            attributionPosition="top-right"
             onlyRenderVisibleElements
             >
             <SourceTitle onClick={handleAddNewSource} />

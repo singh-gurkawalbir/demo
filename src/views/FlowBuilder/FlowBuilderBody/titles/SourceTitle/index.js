@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import { useStoreState } from 'react-flow-renderer';
+import { useStore } from 'reactflow';
 import { useSelector } from 'react-redux';
 import Title from '../Title';
 import { useFlowContext } from '../../Context';
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 const SourceTitle = () => {
   // we don't care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const [x, , scale] = useStoreState(s => s.transform);
+  const [x, , scale] = useStore(s => s.transform);
   const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   const titleWidth = Math.max(columnWidth, minTitleWidth);
   let xOffset = (columnWidth - titleWidth) / 2; // + menuWidth;

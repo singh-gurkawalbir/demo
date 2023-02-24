@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
-import { Handle } from 'react-flow-renderer';
+import { Handle } from 'reactflow';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
