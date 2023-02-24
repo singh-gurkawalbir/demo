@@ -79,8 +79,8 @@ describe('branchItem tests', () => {
     await userEvent.click(screen.getAllByRole('button')[0]);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.editor.patchRule('router-abcd', true, {rulePath: `branches[${0}].collapsed`}));
     await userEvent.click(screen.getByText('R1B1'));
-    userEvent.keyboard('Branch 1 edited inline');
-    userEvent.tab();
+    await userEvent.keyboard('Branch 1 edited inline');
+    await userEvent.tab();
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', 'R1B1Branch 1 edited inline', {rulePath: `branches[${0}].name`}));
   });
 
