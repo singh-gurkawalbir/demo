@@ -17,6 +17,7 @@ import ShowContentIcon from '../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../components/icons/HideContentIcon';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -127,7 +128,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
     const errorMessage = selectors.authenticationErrored(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
     if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;

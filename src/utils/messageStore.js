@@ -111,6 +111,10 @@ const USER_SIGN_IN = {
   SESSION_EXPIRED: 'For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.',
   CACHED: 'It looks like your browser has cached an older version of our app.Click \'Reload\' to refresh the page.',
   OWNER_ACCOUNT: 'You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.',
+  SIGNIN_FAILED: 'Sign in failed. Please try again.',
+  SIGNIN_REQUIRED: '{{label}} is required.',
+  INVALID_FIRST_LAST_NAME: 'Please enter your first and last name.',
+  INVALID_EMAIL: 'Please enter a valid email address.',
 };
 // end region
 
@@ -269,8 +273,6 @@ const MFA = {
   USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
   NEW_PASSWORD_EMPTY: 'New password is required',
   CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
-  INVALID_EMAIL: 'Please enter a valid email address.',
-  EMAIL_EMPTY: 'Email is required.',
   SSO_SIGN_UP: 'This is an SSO sign-up. Make sure you have access to <a className="link" href=ssoLink>this</a> SSO provider',
   INSTALL_AUTHENTICATOR: 'Install any authenticator app that supports TOTP protocol or time-based one time password.',
   SCAN_QR: ' Scan the QR code below with your verification app. Once your app reads the QR code, you\'ll get a 6-digit code.',

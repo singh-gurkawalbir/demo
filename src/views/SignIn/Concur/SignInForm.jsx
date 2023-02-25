@@ -13,6 +13,7 @@ import { FilledButton, OutlinedButton } from '../../../components/Buttons';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -89,7 +90,7 @@ export default function SignIn({dialogOpen, className}) {
     const errorMessage = selectors.authenticationErrored(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
     if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;

@@ -68,6 +68,7 @@ import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaPassword from './DynaPassword';
+import DynaForgotPassword from './DynaForgotPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe from './DynaNetSuiteQualifier_afe';
 import DynaSalesforceQualifier_afe from './DynaSalesforceQualifier_afe';
@@ -171,6 +172,7 @@ import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
 import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
+import DynaSigninEmail from './DynaSigninEmail';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -295,7 +297,9 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
+  signinemail: DynaSigninEmail,
   signinpassword: DynaPassword,
+  forgotpassword: DynaForgotPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,

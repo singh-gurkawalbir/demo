@@ -2,11 +2,11 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
-import Signin from './SigninForm';
-import actions from '../../actions';
-import { getCreatedStore } from '../../store';
-import * as useQuery from '../../hooks/useQuery';
+import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import Signin from '.';
+import actions from '../../../actions';
+import { getCreatedStore } from '../../../store';
+import * as useQuery from '../../../hooks/useQuery';
 
 let initialStore = reduxStore;
 

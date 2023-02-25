@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { EMAIL_REGEX } from '../../../../constants';
-import errorMessageStore from '../../../../utils/errorStore';
+import messageStore, { message } from '../../../../utils/messageStore';
 import DynaText from '../DynaText';
 
 export default function DynaSignupEmail(props) {
@@ -17,7 +17,7 @@ export default function DynaSignupEmail(props) {
       } else {
         dispatch(actions.form.forceFieldState(formKey)(id, {
           isValid: false,
-          errorMessages: 'Please enter a valid email address.',
+          errorMessages: message.USER_SIGN_IN.INVALID_EMAIL,
         }));
       }
 
@@ -26,7 +26,7 @@ export default function DynaSignupEmail(props) {
 
     dispatch(actions.form.forceFieldState(formKey)(id, {
       isValid: false,
-      errorMessages: errorMessageStore('SIGN_UP_EMAIL'),
+      errorMessages: messageStore('SIGNIN_REQUIRED', {label: 'Business email'}),
     }));
   }, [dispatch, formKey, id, isValidEmail, value]);
 

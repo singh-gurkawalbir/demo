@@ -50,7 +50,7 @@ export default function ResetPassword() {
     const errorMessage = selectors.requestResetPasswordError(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
 
     return errorMessage;

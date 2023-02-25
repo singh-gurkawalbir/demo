@@ -44,7 +44,7 @@ export default function SetPassword() {
     const errorMessage = selectors.requestSetPasswordError(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
 
     return errorMessage;

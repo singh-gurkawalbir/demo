@@ -1,5 +1,5 @@
 import { EMAIL_REGEX } from '../../../constants';
-import messageStore from '../../../utils/messageStore';
+import messageStore, { message } from '../../../utils/messageStore';
 
 export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
   const fieldMeta = {
@@ -30,7 +30,7 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
         validWhen: {
           matchesRegEx: {
             pattern: EMAIL_REGEX,
-            message: 'Please enter a valid email address.',
+            message: message.USER_SIGN_IN.INVALID_EMAIL,
           },
         },
       },
