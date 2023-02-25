@@ -801,7 +801,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     path = `${path}${excludePath}`;
   }
   if (resourceType === 'tree/metadata') {
-    path += '?additionalFields=_parentId,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps,createdAt,lastModified,description,readme,aliases,update,childDisplayName,pendingLicense';
+    path += '?additionalFields=createdAt,_parentId';
   }
   let updatedResourceType = resourceType;
 
@@ -847,12 +847,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     }
 
     if (resourceType === 'tree/metadata') {
-      const newCollection = collection?.childIntegrations || [];
-
-      yield put(actions.resource.receivedCollection('integrations', newCollection, integrationId));
-    } else {
-      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+      collection = collection?.childIntegrations || [];
     }
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
 
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
