@@ -53,7 +53,7 @@ export default function FieldMessage({ description, errorMessages, warningMessag
   return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(clsx(classes.stack, classes.descriptionWrapper, className))}
+      className={clsx(classes.stack, classes.descriptionWrapper, className)}
       component="div">
       {description && isValid && (
       <div className={clsx(classes.stack, classes.description)}>
