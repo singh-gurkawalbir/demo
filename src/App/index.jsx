@@ -2,10 +2,12 @@ import React, { useMemo, Fragment, useEffect, useCallback, StrictMode } from 're
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
+import { StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { AppShell } from '@celigo/fuse-ui';
 import themeProvider from '../theme/themeProvider';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
@@ -222,6 +224,25 @@ export default function App() {
     }
   }, []);
 
+  // const generateClassName = createGenerateClassName({
+  //   // By enabling this option, if you have non-MUI elements (e.g. `<div />`)
+  //   // using MUI classes (e.g. `.MuiButton`) they will lose styles.
+  //   // Make sure to convert them to use `styled()` or `<Box />` first.
+  //   disableGlobal: true,
+  //   // Class names will receive this seed to avoid name collisions.
+  //   seed: 'mui-jss',
+  // });
+
+  const appContext = {
+    theme: themeName, // "light" | "sandbox";
+    // this should be fetched from user preferences...
+    // timezone?: string;
+    // language?: string;
+    // dateFormat?: string;
+    // timeFormat?: string;
+    // showRelativeDateTime?: boolean;
+  };
+
   const AppRenderer = () => env !== 'development' ? (
     <div className={classes.root}>
       <LoadingNotification />
@@ -245,32 +266,36 @@ export default function App() {
   );
 
   return (
-    <MuiThemeProvider theme={theme}>
-      <CrashReporter>
-        <DndProvider backend={HTML5Backend}>
-          <Fragment key={reloadCount}>
-            <ConfirmDialogProvider>
-              <FormOnCancelProvider>
-                <SnackbarProvider
-                  classes={snackbarClasses} maxSnack={3} ContentProps={{
-                    classes: { root: classes.root },
-                  }}>
-                  <FontStager />
-                  <CssBaseline />
-                  {/* Define empty call back for getUserConfirmation to not let Prompt
+    <StyledEngineProvider injectFirst>
+      <MuiThemeProvider theme={theme}>
+        <AppShell appContext={appContext}>
+          <CrashReporter>
+            <DndProvider backend={HTML5Backend}>
+              <Fragment key={reloadCount}>
+                <ConfirmDialogProvider>
+                  <FormOnCancelProvider>
+                    <SnackbarProvider
+                      classes={snackbarClasses} maxSnack={3} ContentProps={{
+                        classes: { root: classes.root },
+                      }}>
+                      <FontStager />
+                      <CssBaseline />
+                      {/* Define empty call back for getUserConfirmation to not let Prompt
                 * get triggered when history.block is defined in any specific component
                 * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
                 */}
-                  <BrowserRouter getUserConfirmation={() => {}}>
-                    <AppRenderer />
-                  </BrowserRouter>
-                  <ConflictAlertDialog />
-                </SnackbarProvider>
-              </FormOnCancelProvider>
-            </ConfirmDialogProvider>
-          </Fragment>
-        </DndProvider>
-      </CrashReporter>
-    </MuiThemeProvider>
+                      <BrowserRouter getUserConfirmation={() => {}}>
+                        <AppRenderer />
+                      </BrowserRouter>
+                      <ConflictAlertDialog />
+                    </SnackbarProvider>
+                  </FormOnCancelProvider>
+                </ConfirmDialogProvider>
+              </Fragment>
+            </DndProvider>
+          </CrashReporter>
+        </AppShell>
+      </MuiThemeProvider>
+    </StyledEngineProvider>
   );
 }

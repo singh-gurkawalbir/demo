@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
+import { InfoIconButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
-import InfoIconButton from '../InfoIconButton';
 import BackArrowIcon from '../icons/BackArrowIcon';
 import getRoutePath from '../../utils/routePaths';
 
@@ -85,7 +85,7 @@ export default function CeligoPageBar(props) {
             {title}
           </Typography>
           {titleTag && <span>{titleTag}</span>}
-          {infoText && <InfoIconButton info={infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} title={title} />}
+          {true && <InfoIconButton info={infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} title={title} />}
           <div className={classes.emptySpace} />
           {children}
         </Grid>

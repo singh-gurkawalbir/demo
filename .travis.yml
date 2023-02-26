@@ -5,8 +5,10 @@ node_js:
 git:
   depth: 1
   submodules: false
-before_install:
-  git fetch --depth=50 origin refs/heads/$TRAVIS_BRANCH:refs/heads/$TRAVIS_BRANCH
+before_install: git fetch --depth=50 origin refs/heads/$TRAVIS_BRANCH:refs/heads/$TRAVIS_BRANCH
+install:
+  - echo @celigo:registry=https://npm.pkg.github.com >> ~/.npmrc
+  - echo //npm.pkg.github.com/:_authToken=$GIT_READ_PAT >> ~/.npmrc
 cache: false
 jobs:
   fast_finish: true
@@ -14,16 +16,16 @@ jobs:
     - stage: ui/ux test cases
       name: 'Data layer test cases and lint errors'
       script:
-        - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i && 
-              yarn run lint; fi
-        - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" -i && 
-              yarn run lint; fi
-    - script: 
-      - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test "src/views\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i; fi
-      - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test "src/views\/(.*.)?test.js" -i; fi
+        - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i &&
+          yarn run lint; fi
+        - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" -i &&
+          yarn run lint; fi
+    - script:
+        - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test "src/views\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i; fi
+        - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test "src/views\/(.*.)?test.js" -i; fi
 
       name: 'UX test cases - part 1'
-    - script: 
+    - script:
         - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/(.*.)?test.js" --testPathIgnorePatterns="src/views\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i; fi
         - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/(.*.)?test.js" --testPathIgnorePatterns="src/views\/(.*.)?test.js" -i; fi
       name: 'UX test cases - part 2'
@@ -34,11 +36,10 @@ jobs:
       # Deployment information
       deploy:
         provider: pages # Tell Travis we want to deploy to Github Pages
-        skip-cleanup: true 
+        skip-cleanup: true
         github-token: $GITHUB_TOKEN # Will take the environment variable you created on step 5
         local_dir: storybook-static # The folder that needs to be deployed
         repo: celigo/integrator-ui # Add your username/project_name here
         target_branch: gh-pages # Tell Travis to deploy on the gh-pages branch
         on:
           branch: storybook # Tell Travis to trigger a deploy only when we push to this branch
-
