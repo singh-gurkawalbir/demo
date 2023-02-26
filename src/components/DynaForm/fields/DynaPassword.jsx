@@ -13,6 +13,7 @@ import ArrowPopper from '../../ArrowPopper';
 import FieldMessage from './FieldMessage';
 // import { validateMockResponseField } from '../../../utils/flowDebugger';
 import actions from '../../../actions';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   formWrapper: {
@@ -86,7 +87,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaPassword(props) {
-  const { id, label, isLoggable, placeholder, value, errorMessage, formKey, onFieldChange } = props;
+  const { id, label, isLoggable, placeholder, value, formKey, onFieldChange } = props;
   const classes = useStyles();
   const inputFieldRef = useRef();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -113,11 +114,11 @@ export default function DynaPassword(props) {
 
   useEffect(() => {
     if (!value) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: errorMessage}));
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Password'})}));
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }
-  }, [dispatch, errorMessage, formKey, id, value]);
+  }, [dispatch, formKey, id, value]);
   // const handleResetPassword = useCallback(password => {
   //   dispatch(actions.auth.resetPasswordRequest(password, token));
   // }, [dispatch, token]);
