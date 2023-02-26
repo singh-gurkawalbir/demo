@@ -25,6 +25,20 @@ async function initReAuthModal({mfaValues, onClose, isQRCode} = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('Testsuite for ReAuthModal', () => {
   runServer();
   let mockDispatchFn;
@@ -61,7 +75,7 @@ describe('Testsuite for ReAuthModal', () => {
     const passwordTextboxNode = document.querySelector('input[name="password"]');
 
     expect(passwordTextboxNode).toBeInTheDocument();
-    userEvent.type(passwordTextboxNode, 'testpassword');
+    await userEvent.type(passwordTextboxNode, 'testpassword');
     const viewCodeButtonNode = screen.getByRole('button', {name: /view code/i});
 
     expect(viewCodeButtonNode).toBeInTheDocument();
@@ -90,7 +104,7 @@ describe('Testsuite for ReAuthModal', () => {
     const passwordTextboxNode = document.querySelector('input[name="password"]');
 
     expect(passwordTextboxNode).toBeInTheDocument();
-    userEvent.type(passwordTextboxNode, 'testpassword');
+    await userEvent.type(passwordTextboxNode, 'testpassword');
     const viewCodeButtonNode = screen.getByRole('button', {name: /view key/i});
 
     expect(viewCodeButtonNode).toBeInTheDocument();

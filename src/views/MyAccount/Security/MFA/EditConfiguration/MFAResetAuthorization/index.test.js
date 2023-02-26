@@ -28,6 +28,20 @@ async function initMFAResetAuthorization({onClose = '', asyncStatus} = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('Testsuite for MFA Reset Authorization', () => {
   runServer();
   let mockDispatchFn;
@@ -58,7 +72,7 @@ describe('Testsuite for MFA Reset Authorization', () => {
     const passwordTextBoxNode = document.querySelector('input[name="password"]');
 
     expect(passwordTextBoxNode).toBeInTheDocument();
-    userEvent.type(passwordTextBoxNode, 'testpassword');
+    await userEvent.type(passwordTextBoxNode, 'testpassword');
     const cancelButtonNode = screen.getByRole('button', { name: 'Cancel' });
 
     expect(cancelButtonNode).toBeInTheDocument();

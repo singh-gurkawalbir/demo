@@ -44,6 +44,25 @@ async function initProfile() {
     utils,
   };
 }
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 jest.mock('../../components/LoadResources', () => ({
   __esModule: true,
   ...jest.requireActual('../../components/LoadResources'),
@@ -58,15 +77,15 @@ describe('Profile', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
     store();
-    jest.useFakeTimers();
-    jest.setTimeout(100000);
+    // jest.useFakeTimers();
+    // jest.setTimeout(100000);
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllTimers();
+    // jest.runOnlyPendingTimers();
+    // jest.useRealTimers();
+    // jest.clearAllTimers();
     cleanup();
   });
   test('Should able to load the profile pane and able to update the password', async done => {
@@ -93,12 +112,12 @@ describe('Profile', () => {
     const changeCurrentPasswordNode = document.querySelectorAll('input[name="currentPassword"]');
 
     expect(changeCurrentPasswordNode).toHaveLength(1);
-    userEvent.type(changeCurrentPasswordNode[0], 'test@123');
+    await userEvent.type(changeCurrentPasswordNode[0], 'test@123');
     expect(changeCurrentPasswordNode[0]).toHaveValue('test@123');
     const changeNewPasswordNode = document.querySelectorAll('input[name="newPassword"]');
 
     expect(changeNewPasswordNode).toHaveLength(1);
-    userEvent.type(changeNewPasswordNode[0], 'test@12345');
+    await userEvent.type(changeNewPasswordNode[0], 'test@12345');
     expect(changeNewPasswordNode[0]).toHaveValue('test@12345');
 
     const changePasswordButtonNode = screen.getByRole('button', {name: 'Change password'});
@@ -140,13 +159,13 @@ describe('Profile', () => {
 
     expect(textBox[0]).toHaveValue('test user');
 
-    userEvent.type(textBox[0], 'test user1');
+    await userEvent.type(textBox[0], 'test user1');
 
     expect(screen.getByText('Company')).toBeInTheDocument();
     const companyTextBoxNode = screen.getAllByRole('textbox');
 
     expect(companyTextBoxNode[2]).toHaveValue('test');
-    userEvent.clear(companyTextBoxNode[2]);
+    await userEvent.clear(companyTextBoxNode[2]);
     await userEvent.type(companyTextBoxNode[2], 'test company');
     expect(companyTextBoxNode[2]).toHaveValue('test company');
 
@@ -161,7 +180,7 @@ describe('Profile', () => {
     const phoneLabelTextNode = screen.getAllByRole('textbox');
 
     expect(phoneLabelTextNode[4]).toHaveValue('1234567890');
-    userEvent.clear(phoneLabelTextNode[4]);
+    await userEvent.clear(phoneLabelTextNode[4]);
     await userEvent.type(phoneLabelTextNode[4], '9999999999');
     expect(phoneLabelTextNode[4]).toHaveValue('9999999999');
     const timeZoneLabelNode = screen.getByText('Time zone', { selector: 'label' });
@@ -171,7 +190,7 @@ describe('Profile', () => {
 
     expect(timeZoneButtonNode).toBeInTheDocument();
     await userEvent.click(timeZoneButtonNode);
-    const timeZoneMenuItems = screen.getByRole('menuitem', {name: '(GMT-01:00) Azores'});
+    const timeZoneMenuItems = screen.getByRole('menuitem', {name: '(GMT+05:45) Kathmandu'});
 
     expect(timeZoneMenuItems).toBeInTheDocument();
     await userEvent.click(timeZoneMenuItems);
@@ -248,7 +267,7 @@ describe('Profile', () => {
     const emailPasswordText = document.querySelectorAll('input[name="password"]');
 
     expect(emailPasswordText[0]).toBeInTheDocument();
-    userEvent.type(emailPasswordText[0], 'test@123');
+    await userEvent.type(emailPasswordText[0], 'test@123');
 
     expect(screen.getByText('Note: we require your current password again to help safeguard your integrator.io account.')).toBeInTheDocument();
     const changeEmailButton = screen.queryAllByRole('button');

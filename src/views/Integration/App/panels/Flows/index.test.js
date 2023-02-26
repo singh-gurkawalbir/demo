@@ -22,6 +22,24 @@ jest.mock('../../../../../components/ResourceFormFactory', () => ({
   ),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const profile = {
   _id: '5ca5c855ec5c172792285f53',
   name: 'Celigo 123',

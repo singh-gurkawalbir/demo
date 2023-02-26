@@ -131,9 +131,9 @@ describe('template List', () => {
     const searchNode = screen.getByRole('textbox', {name: 'search'});
 
     expect(searchNode).toBeInTheDocument();
-    userEvent.type(searchNode, 'con');
+    await userEvent.type(searchNode, 'con');
     expect(searchNode).toHaveValue('con');
-    userEvent.clear(searchNode);
+    await userEvent.clear(searchNode);
     expect(searchNode).toHaveValue('');
     const createTemplateNode = screen.getByRole('button', {name: 'Create template'});
 
@@ -252,8 +252,10 @@ describe('template List', () => {
     const downloadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Download template zip'});
 
     expect(downloadTemplateZipMenuItemNode).toBeInTheDocument();
-    await userEvent.click(downloadTemplateZipMenuItemNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(4);
+    await waitFor(async () => {
+      await userEvent.click(downloadTemplateZipMenuItemNode);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(4);
+    });
   });
   test('should able to test the Template List upload template zip action button by having templates', async () => {
     const templates = [
@@ -324,8 +326,8 @@ describe('template List', () => {
     const editTemplateNameNode = document.querySelector('input[name="/name"]');
 
     expect(editTemplateNameNode).toBeInTheDocument();
-    userEvent.clear(editTemplateNameNode);
-    userEvent.type(editTemplateNameNode, 'concur edit');
+    await userEvent.clear(editTemplateNameNode);
+    await userEvent.type(editTemplateNameNode, 'concur edit');
     expect(editTemplateNameNode).toHaveValue('concur edit');
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
@@ -369,8 +371,8 @@ describe('template List', () => {
     const editTemplateNameNode = document.querySelector('input[name="/name"]');
 
     expect(editTemplateNameNode).toBeInTheDocument();
-    userEvent.clear(editTemplateNameNode);
-    userEvent.type(editTemplateNameNode, 'concur edit');
+    await userEvent.clear(editTemplateNameNode);
+    await userEvent.type(editTemplateNameNode, 'concur edit');
     expect(editTemplateNameNode).toHaveValue('concur edit');
     const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
 
@@ -406,7 +408,7 @@ describe('template List', () => {
     const searchNode = screen.getByRole('textbox', {name: 'search'});
 
     expect(searchNode).toBeInTheDocument();
-    userEvent.type(searchNode, 'test');
+    await userEvent.type(searchNode, 'test');
     await waitFor(() => expect(tableNode).not.toBeInTheDocument());
     const paragraphNode = screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.');
 

@@ -20,6 +20,20 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 async function initUseHandleDelete(props = {}, initialStore) {
   const DummyComponent = () => {
     const cb = useHandleDelete(props._integrationId, props.ops);

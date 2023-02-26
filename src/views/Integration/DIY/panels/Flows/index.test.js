@@ -238,6 +238,24 @@ jest.mock('../../../common/ErrorsList', () => ({
   ,
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('Flows Panel UI tests', () => {
   test('should render the title along with the error count and searchbar', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf'};
@@ -324,7 +342,7 @@ describe('Flows Panel UI tests', () => {
     const element = document.querySelector('[aria-label="search"]');
 
     await userEvent.click(element);
-    userEvent.type(element, 'senorita');
+    await userEvent.type(element, 'senorita');
     await waitFor(() => expect(screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.')).toBeInTheDocument());
   });
   test('should display the flows that match the keywords in the searchbar', async () => {
@@ -333,9 +351,9 @@ describe('Flows Panel UI tests', () => {
     initFlowsPanel(props);
     const element = document.querySelector('[aria-label="search"]');
 
-    userEvent.clear(element);
+    await userEvent.clear(element);
     await userEvent.click(element);
-    userEvent.type(element, 'flow');
+    await userEvent.type(element, 'flow');
     await waitFor(() => expect(screen.getByText('Showing all flow groups that contain search matches.')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('flow1')).toBeInTheDocument());
   });

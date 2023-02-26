@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import SSOUserSettings from './SSOUserSettings';
@@ -41,6 +41,24 @@ async function initSSOUserSettings() {
   return renderWithProviders(ui, {initialStore});
 }
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('testsuite for SSOUserSettings', () => {
   runServer();
 
@@ -76,8 +94,10 @@ describe('testsuite for SSOUserSettings', () => {
     const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
     expect(helpTextYesButtonNode).toBeInTheDocument();
-    await userEvent.click(helpTextYesButtonNode);
-    expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
+    await waitFor(async () => {
+      await userEvent.click(helpTextYesButtonNode);
+      expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
+    });
     await userEvent.click(useThisAccountForSSOHelpText);
     const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
 
