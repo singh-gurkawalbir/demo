@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaForgotPassword({label, formKey, className}) {
   const classes = useStyles();
-  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, formKey) || {}, shallowEqual);
 
   return (
     <div className={clsx(classes.forgotPass, className)}>

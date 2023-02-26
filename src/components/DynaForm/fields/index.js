@@ -172,7 +172,6 @@ import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
 import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
-import DynaSigninEmail from './DynaSigninEmail';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -297,7 +296,6 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  signinemail: DynaSigninEmail,
   signinpassword: DynaPassword,
   forgotpassword: DynaForgotPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,

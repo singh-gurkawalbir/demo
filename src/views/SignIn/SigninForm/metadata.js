@@ -1,3 +1,4 @@
+import messageStore from '../../../utils/messageStore';
 
 export default function getFieldMeta() {
   const fieldMeta = {
@@ -6,9 +7,10 @@ export default function getFieldMeta() {
       email: {
         id: 'email',
         name: 'email',
-        type: 'signinemail',
+        type: 'signupemail',
         placeholder: 'Email*',
         required: true,
+        errorMessage: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Email'}),
       },
       password: {
         id: 'password',
