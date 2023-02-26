@@ -7,6 +7,24 @@ import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import actions from '../../../actions';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaFieldExpressionSelect tests', () => {
   const initialStore = reduxStore;
 

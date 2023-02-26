@@ -7,6 +7,24 @@ import DynaSelectSetFieldValues from './DynaSelectForSetFields';
 
 const mockChange = jest.fn();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaSelectSetFieldValues tests', () => {
   test('should able to test DynaSelectSetFieldValues', async () => {
     const props = {setFieldIds: ['first'], onFieldChange: mockChange, options: [{items: [{value: 'dynaSelectValue', label: 'DynaSelect label'}]}]};

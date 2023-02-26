@@ -26,14 +26,14 @@ async function initRunHistoryTable(data = {}, initialStore = null) {
 
 describe("run history's Download Files test cases", () => {
   test('should click Download files button when only one files is there to download', async () => {
-    initRunHistoryTable({files: [1], _id: '_id'});
+    await initRunHistoryTable({files: [1], _id: '_id'});
 
     await userEvent.click(screen.getByText('Download files'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '_id' }));
   });
 
   test('should open modal when more than one file is there to downlaod', async () => {
-    initRunHistoryTable({files: [{id: 1}, {id: 2}], _id: '_id'});
+    await initRunHistoryTable({files: [{id: 1}, {id: 2}], _id: '_id'});
 
     await userEvent.click(screen.getByText('Download files'));
     expect(screen.getByText('Download')).toBeInTheDocument();

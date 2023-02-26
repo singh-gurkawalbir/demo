@@ -14,6 +14,20 @@ let initialStore;
 const mockOnClose = jest.fn();
 const someValues = [{ name: 'teresa teng' }];
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 function initUploadFileDialog(props) {
   const ui = (
     <ConfirmDialogProvider>
@@ -89,7 +103,7 @@ describe('testsuite for Upload File Dialog', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const input = document.querySelector('input[data-test="uploadFile"]');
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload({resourceType: 'exports', resourceId: '1234', fileType: 'application/JSON', file, asyncKey: TEMPLATE_ZIP_UPLOAD_ASYNC_KEY})));
   });
   test('should test the upload file dialog box by uploading a wrong format file which is not equal to the file type that sent in prop', async () => {

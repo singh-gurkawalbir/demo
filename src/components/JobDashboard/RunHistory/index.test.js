@@ -85,13 +85,13 @@ describe('testsuite for RunHistory', () => {
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
     initialStore = getCreatedStore();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('29 Oct 2022 00:00:00 GMT').getTime());
+    // jest.useFakeTimers('modern');
+    // jest.setSystemTime(new Date('29 Oct 2022 00:00:00 GMT').getTime());
   });
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
-    jest.useRealTimers();
+    // jest.useRealTimers();
   });
   test('should test the spinner when the data is still loading', async () => {
     initRunHistory({

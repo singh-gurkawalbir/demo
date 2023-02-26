@@ -35,7 +35,7 @@ describe('cancel Run UI Tests', () => {
     jest.clearAllMocks();
   });
   test('should show the confirm dialog box and click on Yes, cancel button', async () => {
-    renderFunction();
+    await renderFunction();
     await userEvent.click(screen.getByText('Cancel run'));
     const title = screen.getByText('Confirm cancel');
 

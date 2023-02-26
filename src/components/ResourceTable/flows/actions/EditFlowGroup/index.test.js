@@ -43,12 +43,12 @@ describe('editFlowGroup action UI test cases', () => {
     jest.clearAllMocks();
   });
   test('should redirect on the edit page for flowgroup', async () => {
-    initceligoTable({});
+    await initceligoTable({});
     await userEvent.click(screen.getByText('Edit flow group'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/603ce75ac4fec33283691f43/flows/flowgroups/edit');
   });
-  test('should show Edit flow group button as disabled', () => {
-    initceligoTable({sectionId: 'unassigned'});
+  test('should show Edit flow group button as disabled', async () => {
+    await initceligoTable({sectionId: 'unassigned'});
 
     const menuitem = screen.getAllByRole('menuitem');
     const editFlowGroupBtn = menuitem.find(item => item.getAttribute('data-test') === 'editFlowGroup');

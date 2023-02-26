@@ -1,7 +1,7 @@
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaSelect from './DynaSelect';
@@ -17,6 +17,24 @@ function initDynaSelect(props = {}) {
   return renderWithProviders(ui);
 }
 const mockOnFieldChange = jest.fn();
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
 
 describe('dynaSelect UI test cases', () => {
   afterEach(() => {
@@ -175,10 +193,10 @@ describe('dynaSelect UI test cases', () => {
 
     await userEvent.click(button);
 
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
+    await userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
+    await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '34');
   });
 
@@ -240,13 +258,15 @@ describe('dynaSelect UI test cases', () => {
 
     await userEvent.click(button);
 
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
 
-    userEvent.keyboard('{arrowup}');
-    fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
-    expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
+    await userEvent.keyboard('{arrowup}');
+    await waitFor(async () => {
+      await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
+      expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
+    });
   });
   test('keyboard listener with keycode 13', async () => {
     const data =
@@ -306,13 +326,13 @@ describe('dynaSelect UI test cases', () => {
 
     await userEvent.click(button);
 
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
+    await userEvent.keyboard('{arrowdown}');
 
-    userEvent.keyboard('{arrowup}');
-    userEvent.keyboard('{enter}');
-    fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', keyCode: 13});
+    await userEvent.keyboard('{arrowup}');
+    await userEvent.keyboard('{enter}');
+    await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', keyCode: 13});
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
   });
 });

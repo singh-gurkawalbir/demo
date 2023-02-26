@@ -13,7 +13,7 @@ function fileUploader(props = {}) {
 }
 
 describe('FileUploader UI test cases', () => {
-  test('Should test the file upload and error message to be displayed', () => {
+  test('Should test the file upload and error message to be displayed', async () => {
     const data = {
       mode: 'csv',
       uploadInProgress: false,
@@ -46,7 +46,7 @@ describe('FileUploader UI test cases', () => {
       type: 'csv',
     });
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.csv');
   });
@@ -75,7 +75,7 @@ describe('FileUploader UI test cases', () => {
       type: 'csv',
     });
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.csv');
   });

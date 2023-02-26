@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -127,8 +127,12 @@ describe('Testsuite for DynaTimestampFileName', () => {
 
     expect(textBox).toBeInTheDocument();
     await userEvent.click(textBox);
-    await userEvent.paste(textBox, '{{');
-    expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', '{{');
+    await waitFor(async () => {
+      await userEvent.paste(textBox, {
+        clipboardData: { getData: () => '{{' },
+      });
+      expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', '{{');
+    });
   });
   test('should test the suggestions on the input', async () => {
     const props = {

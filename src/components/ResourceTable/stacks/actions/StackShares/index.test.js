@@ -38,7 +38,7 @@ describe('share stack metadata UI Tests', () => {
     jest.clearAllMocks();
   });
   test('should click on share stack link', async () => {
-    renderFunction();
+    await renderFunction();
     await userEvent.click(screen.getByText('Share stack'));
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/parent/share/stacks/someId');

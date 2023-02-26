@@ -15,7 +15,7 @@ jest.mock('react', () => {
   };
 });
 describe('homeSearchInput UI tests', () => {
-  test('should call the onChange and dispatch function when input is changed', () => {
+  test('should call the onChange and dispatch function when input is changed', async () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -28,12 +28,12 @@ describe('homeSearchInput UI tests', () => {
     renderWithProviders(<HomeSearchInput onChange={onchange} />);
     const input = screen.getByDisplayValue('');
 
-    userEvent.type(input, 'sometext');
+    await userEvent.type(input, 'sometext');
     expect(mockdispatch).toHaveBeenCalledWith({type: 'onInputChange', value: 'sometext'});
     expect(onchange).toHaveBeenCalled();
   });
 
-  test('should call dispatch action with "blur" as type when the text field is set to blur', () => {
+  test('should call dispatch action with "blur" as type when the text field is set to blur', async () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -46,14 +46,14 @@ describe('homeSearchInput UI tests', () => {
     renderWithProviders(<HomeSearchInput onChange={onchange} />);
     const input = screen.getByDisplayValue('');
 
-    userEvent.type(input, 'sometext');
+    await userEvent.type(input, 'sometext');
     expect(mockdispatch).toHaveBeenCalledWith({type: 'onInputChange', value: 'sometext'});
     expect(onchange).toHaveBeenCalled();
 
-    input.blur();
+    await input.blur();
     expect(mockdispatch).toHaveBeenNthCalledWith(10, {type: 'onBlur', value: 'sometext'});
   });
-  test('should call dispatch with focus as type when text field is set to focus', () => {
+  test('should call dispatch with focus as type when text field is set to focus', async () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -66,12 +66,12 @@ describe('homeSearchInput UI tests', () => {
     renderWithProviders(<HomeSearchInput onChange={onchange} />);
     const input = screen.getByDisplayValue('');
 
-    userEvent.type(input, 'sometext');
+    await userEvent.type(input, 'sometext');
     expect(mockdispatch).toHaveBeenCalledWith({type: 'onInputChange', value: 'sometext'});
     expect(onchange).toHaveBeenCalled();
 
-    input.blur();
-    input.focus();
+    await input.blur();
+    await input.focus();
     expect(mockdispatch).toHaveBeenNthCalledWith(11, {type: 'onFocus'});
   });
   test('should clear the test field and placeholder text should appear', async () => {

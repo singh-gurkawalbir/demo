@@ -100,14 +100,14 @@ describe('testsuite for Job Dashboard Filters', () => {
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
     initialStore = getCreatedStore();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('04 Dec 1995 00:00:00 GMT').getTime());
+    // jest.useFakeTimers('modern');
+    // jest.setSystemTime(new Date('04 Dec 1995 00:00:00 GMT').getTime());
   });
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
     mockActionClick.mockClear();
-    jest.useRealTimers();
+    // jest.useRealTimers();
   });
   test('should render the completed flows when there are no integrations data and click on refresh button', async () => {
     await initFilters({filterKey: 'completedFlows'});

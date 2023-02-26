@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../../../../test/test-utils';
 import CeligoTable from '../../../../CeligoTable';
@@ -31,13 +31,15 @@ async function initRunHistoryTable(data, initialStore = null) {
     <CeligoTable {...metadata} data={[data]} />
   );
 
-  renderWithProviders(ui, {initialStore});
+  await renderWithProviders(ui, {initialStore});
   await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 }
 describe("runHistory's Downlaod diagnostics Action UI test case", () => {
   test('should click on Download diagnostics button', async () => {
     initRunHistoryTable({ _id: '_id'});
-    await userEvent.click(screen.getByText('Download diagnostics'));
-    expect(mockDispatch).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '_id', fileType: 'diagnostics' }));
+    await waitFor(async () => {
+      await userEvent.click(screen.getByText('Download diagnostics'));
+      expect(mockDispatch).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '_id', fileType: 'diagnostics' }));
+    });
   });
 });
