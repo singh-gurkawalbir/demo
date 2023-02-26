@@ -127,10 +127,12 @@ export default function Revisions({ integrationId }) {
   }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
   useEffect(() => {
-    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
+    if (!hasMonitorLevelAccess) {
+      dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
 
-    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
-  }, [dispatch, integrationId]);
+      return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
+    }
+  }, [dispatch, hasMonitorLevelAccess, integrationId]);
 
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
