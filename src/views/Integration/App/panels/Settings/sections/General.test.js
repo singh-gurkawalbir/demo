@@ -10,6 +10,24 @@ import actions from '../../../../../../actions';
 import { getCreatedStore } from '../../../../../../store';
 import GeneralPanel from './General';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('GeneralPanel UI tests', () => {
   runServer();
   async function addInteration() {

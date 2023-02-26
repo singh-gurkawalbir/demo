@@ -14,6 +14,20 @@ jest.mock('./UploadFile', () => ({
     )
   ,
 }));
+
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
 describe('InstallIntegrationDialog UI tests', () => {
   test('should display the upload dialog along with the uploadFile component', () => {
     const props = {onClose: jest.fn()};

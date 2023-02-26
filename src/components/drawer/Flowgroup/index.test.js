@@ -152,7 +152,7 @@ describe('FlowgroupDrawer tests', () => {
     const nameInput = document.querySelector('input');
 
     await userEvent.click(nameInput);
-    userEvent.keyboard('Mock flowgroup');
+    await userEvent.keyboard('Mock flowgroup');
     await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });

@@ -52,6 +52,24 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('CreateAliasDrawer tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
@@ -103,7 +121,7 @@ describe('CreateAliasDrawer tests', () => {
 
     // creating alias
     await userEvent.click(screen.getAllByRole('textbox')[0]);
-    userEvent.keyboard('new-alias-id');
+    await userEvent.keyboard('new-alias-id');
     await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     await userEvent.click(screen.getByRole('menuitem', {name: 'Connection'}));
     expect(screen.queryByText('Resource name')).toBeInTheDocument();
@@ -126,7 +144,7 @@ describe('CreateAliasDrawer tests', () => {
     expect(screen.getByRole('link', {name: 'Learn more about aliases'})).toBeInTheDocument();
     // editing alias description
     await userEvent.click(screen.getAllByRole('textbox')[1]);
-    userEvent.keyboard('added');
+    await userEvent.keyboard('added');
     await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockHistoryReplace).not.toHaveBeenCalled();
   });
