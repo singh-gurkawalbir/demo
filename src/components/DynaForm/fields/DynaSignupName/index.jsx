@@ -26,7 +26,7 @@ export default function DynaSignupName(props) {
 
     dispatch(actions.form.forceFieldState(formKey)(id, {
       isValid: false,
-      errorMessages: messageStore('SIGNIN_REQUIRED', {label: 'NAME'}),
+      errorMessages: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Name'}),
     }));
   }, [dispatch, formKey, id, isValidName, value]);
 

@@ -26,7 +26,7 @@ export default function DynaSignupEmail(props) {
 
     dispatch(actions.form.forceFieldState(formKey)(id, {
       isValid: false,
-      errorMessages: messageStore('SIGNIN_REQUIRED', {label: 'Business email'}),
+      errorMessages: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Business email'}),
     }));
   }, [dispatch, formKey, id, isValidEmail, value]);
 
