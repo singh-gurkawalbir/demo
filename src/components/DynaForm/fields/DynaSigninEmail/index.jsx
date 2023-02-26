@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { EMAIL_REGEX } from '../../../../constants';
+import { message } from '../../../../utils/messageStore';
 import DynaText from '../DynaText';
 
 export default function DynaSigninEmail(props) {
@@ -15,6 +16,12 @@ export default function DynaSigninEmail(props) {
         dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
 
         return;
+      }
+      if (!isValidEmail) {
+        dispatch(actions.form.forceFieldState(formKey)(id,
+          {isValid: false,
+            errorMessage: message.USER_SIGN_IN.INVALID_EMAIL,
+          }));
       }
     }
     dispatch(actions.form.forceFieldState(formKey)(id,

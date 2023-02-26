@@ -1,4 +1,5 @@
-import messageStore from '../../../utils/messageStore';
+import { EMAIL_REGEX } from '../../../constants';
+import messageStore, { message } from '../../../utils/messageStore';
 
 export default function getFieldMeta() {
   const fieldMeta = {
@@ -11,6 +12,12 @@ export default function getFieldMeta() {
         placeholder: 'Email*',
         required: true,
         errorMessage: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Email'}),
+        validWhen: {
+          matchesRegEx: {
+            pattern: EMAIL_REGEX,
+            message: message.USER_SIGN_IN.INVALID_EMAIL,
+          },
+        },
       },
 
       password: {

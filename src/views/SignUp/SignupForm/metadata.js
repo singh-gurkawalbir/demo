@@ -1,3 +1,6 @@
+import { EMAIL_REGEX } from '../../../constants';
+import { message } from '../../../utils/messageStore';
+
 export default function getFieldMeta(email) {
   const fieldMeta = {
     fieldMap: {
@@ -8,6 +11,12 @@ export default function getFieldMeta(email) {
         placeholder: 'Name*',
         required: true,
         noApi: true,
+        validWhen: {
+          matchesRegEx: {
+            pattern: EMAIL_REGEX,
+            message: message.USER_SIGN_IN.INVALID_EMAIL,
+          },
+        },
       },
       email: {
         id: 'email',

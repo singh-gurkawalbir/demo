@@ -9,7 +9,7 @@ import Spinner from '../../components/Spinner';
 import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
-import {message} from '../../utils/messageStore';
+import messageStore, {message} from '../../utils/messageStore';
 import ShowErrorMessage from '../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import DynaPassword from '../../components/DynaForm/fields/DynaPassword';
@@ -69,7 +69,7 @@ export default function SetPassword() {
       )}
       <form onSubmit={handleOnSubmit} className={classes.setPasswordForm}>
         <DynaPassword onFieldChange={onFieldChange} />
-        <FieldMessage errorMessages={showError ? message.MFA.NEW_PASSWORD_EMPTY : null} />
+        <FieldMessage errorMessages={showError ? messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'New password'}) : null} />
 
         { isAuthenticating ? <Spinner />
           : (
