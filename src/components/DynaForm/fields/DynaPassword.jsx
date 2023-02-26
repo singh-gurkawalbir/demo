@@ -83,12 +83,6 @@ const useStyles = makeStyles(theme => ({
   iconPassword: {
     cursor: 'pointer',
   },
-  forgotPass: {
-    color: theme.palette.warning.main,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
-
 }));
 
 export default function DynaPassword(props) {

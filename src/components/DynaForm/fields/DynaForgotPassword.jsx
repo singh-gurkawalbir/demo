@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   forgotPass: {
     color: theme.palette.primary.dark,
     textAlign: 'right',
-    marginBottom: theme.spacing(3),
+    marginTop: theme.spacing(-2),
   },
 
 }));
