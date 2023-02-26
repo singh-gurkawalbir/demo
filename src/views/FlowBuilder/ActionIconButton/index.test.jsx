@@ -29,7 +29,7 @@ describe('Action Icon Button', () => {
     const helpTextButton = screen.getByRole('button', {name: 'Test help text'});
 
     expect(helpTextButton).toBeInTheDocument();
-    userEvent.hover(helpTextButton);
+    await userEvent.hover(helpTextButton);
     expect(helpTextButton).not.toHaveAccessibleName('Test help text');
     const childrenNode = screen.getByText(/Test children/i);
 

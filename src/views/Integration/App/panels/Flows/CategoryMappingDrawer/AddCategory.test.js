@@ -16,6 +16,24 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 jest.mock('../../../../../../components/LoadResources', () => ({
   __esModule: true,
   ...jest.requireActual('../../../../../../components/LoadResources'),

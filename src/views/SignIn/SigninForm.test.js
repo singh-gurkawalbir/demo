@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import Signin from './SigninForm';
@@ -80,8 +80,8 @@ describe('SigninForm UI testcases', () => {
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();
 
-    userEvent.type(email, 'testuser@test.com');
-    userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    await userEvent.type(email, 'testuser@test.com');
+    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
 
     await userEvent.click(screen.getByText('HideContentIcon'));
 
@@ -108,17 +108,19 @@ describe('SigninForm UI testcases', () => {
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();
 
-    userEvent.type(email, 'testuser@test.com');
-    userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    await userEvent.type(email, 'testuser@test.com');
+    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
 
     const signinButtonNode = screen.getByRole('button', {name: 'Sign in'});
 
     expect(signinButtonNode).toBeInTheDocument();
-    await userEvent.click(signinButtonNode);
+    await waitFor(async () => {
+      await userEvent.click(signinButtonNode);
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true)
-    );
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true)
+      );
+    });
   });
   test('should redirect to mfa  verify URL when mfa is required in the account', () => {
     initialStore = getCreatedStore();

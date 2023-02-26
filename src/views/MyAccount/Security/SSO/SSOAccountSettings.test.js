@@ -236,21 +236,21 @@ describe('testsuite for SSO Account Settings', () => {
     const issueURLInputNode = document.querySelector('#issuerURL > div > div > div:nth-child(2) > div > input');
 
     expect(issueURLInputNode).toBeInTheDocument();
-    userEvent.type(issueURLInputNode, 'https://test.com');
+    await userEvent.type(issueURLInputNode, 'https://test.com');
     const clientIdInputNode = document.querySelector('#clientId > div > div > div:nth-child(2) > div > input');
 
     expect(clientIdInputNode).toBeInTheDocument();
-    userEvent.type(clientIdInputNode, 'sampleClientId');
+    await userEvent.type(clientIdInputNode, 'sampleClientId');
 
     const clientSecretInputNode = document.querySelector('#clientSecret > div > div > div:nth-child(2) > div > input');
 
     expect(clientSecretInputNode).toBeInTheDocument();
-    userEvent.type(clientSecretInputNode, '12345');
+    await userEvent.type(clientSecretInputNode, '12345');
 
     const orgIdInputNode = document.querySelector('#orgId > div > div > div > div:nth-child(2) > div > input');
 
     expect(orgIdInputNode).toBeInTheDocument();
-    userEvent.type(orgIdInputNode, 'testorg');
+    await userEvent.type(orgIdInputNode, 'testorg');
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'SSO_ORG_ID_VALIDATION_REQUEST', orgId: 'testorg' }));
   });
   test('should test the SSO Account settings page by clicking switch button', async () => {

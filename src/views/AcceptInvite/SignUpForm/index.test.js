@@ -81,7 +81,7 @@ describe('Testsuite for SignUp', () => {
     mockGetFieldMeta.mockClear();
     mockUseFormInitWithPermissions.mockClear();
   });
-  test('should render signup and should test the signup button when there are values in store', () => {
+  test('should render signup and should test the signup button when there are values in store', async () => {
     initSignUp({
       acceptInviteData: {
         email: 'testEmail@email.com',
@@ -101,10 +101,10 @@ describe('Testsuite for SignUp', () => {
     });
 
     expect(signUpButton).toBeInTheDocument();
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
-  test('should render signup and should test the signup button when there are no values in store', () => {
+  test('should render signup and should test the signup button when there are no values in store', async () => {
     initSignUp({
       acceptInviteData: undefined,
     });
@@ -117,10 +117,10 @@ describe('Testsuite for SignUp', () => {
     });
 
     expect(signUpButton).toBeInTheDocument();
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
-  test('should render signup and should test the signup button when there is no email and no token', () => {
+  test('should render signup and should test the signup button when there is no email and no token', async () => {
     initSignUp({
       acceptInviteData: {
         email: '',
@@ -138,7 +138,7 @@ describe('Testsuite for SignUp', () => {
     });
 
     expect(signUpButton).toBeInTheDocument();
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
 });

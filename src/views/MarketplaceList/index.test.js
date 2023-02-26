@@ -194,7 +194,7 @@ describe('Marketplace test cases', () => {
     expect(screen.queryByText(/Confirm multiple installs/i)).toBeInTheDocument();
     expect(tagInput).toBeInTheDocument();
     expect(installButton).toBeInTheDocument();
-    userEvent.type(tagInput, 'test');
+    await userEvent.type(tagInput, 'test');
     await userEvent.click(installButton);
     expect(mockDispatchFn).toBeCalledWith(actions.marketplace.installConnector('connector_id_5', false, 'test'));
     expect(mockHistoryPush).toBeCalledWith('/home');

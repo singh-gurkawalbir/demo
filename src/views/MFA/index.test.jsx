@@ -87,7 +87,7 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '123456');
+    await userEvent.type(oneTimePassword, '123456');
     const trustedDeviceNode = screen.getByRole('checkbox', {name: 'Trust this device'});
 
     expect(trustedDeviceNode).not.toBeChecked();
@@ -125,7 +125,7 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '');
+    await userEvent.type(oneTimePassword, ' ');
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '123');
+    await userEvent.type(oneTimePassword, '123');
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();

@@ -80,8 +80,8 @@ describe('SigninForm UI testcases', () => {
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();
 
-    userEvent.type(email, 'testuser@test.com');
-    userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    await userEvent.type(email, 'testuser@test.com');
+    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
 
     await userEvent.click(screen.getByText('HideContentIcon'));
 
@@ -108,8 +108,8 @@ describe('SigninForm UI testcases', () => {
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();
 
-    userEvent.type(email, 'testuser@test.com');
-    userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    await userEvent.type(email, 'testuser@test.com');
+    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
 
     const signinButtonNode = screen.getByRole('button', {name: 'Sign in'});
 

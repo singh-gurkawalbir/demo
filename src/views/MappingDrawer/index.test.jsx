@@ -378,7 +378,7 @@ describe('Mapping Drawer', () => {
     const listItem2Node = document.querySelectorAll('li[data-value="compactRow"]');
 
     expect(listItem2Node[0]).toBeInTheDocument();
-    await userEvent.click(listItem1Node[0]);
+    await waitFor(() => userEvent.click(listItem1Node[0]), { interval: 100 });
     await waitForElementToBeRemoved(listItem1Node[0]);
   });
   test('Should be able to test the cancel drawer button', async () => {
