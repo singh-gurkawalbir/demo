@@ -30,6 +30,12 @@ export default function EditorModal(props) {
   }, [content, handleClose, handleUpdate]);
 
   useEffect(() => {
+    if (value) {
+      setContent(value);
+    }
+  }, [value]);
+
+  useEffect(() => {
     if (id === 'settings') {
       if (content && typeof content === 'string' && !isJsonString(content)) {
         setErrorMessage('Settings must be a valid JSON');

@@ -48,6 +48,9 @@ export const validateMockResponseField = value => {
   }
 };
 
+export const validateMockDataField = resourceType => value =>
+  resourceType === 'exports' ? validateMockOutputField(value) : validateMockResponseField(value);
+
 export const getMockOutputFromResource = resource => {
   const {mockOutput} = resource || {};
 

@@ -2,7 +2,7 @@
 
 // import sizeof from 'object-sizeof';
 import * as sizeof from 'object-sizeof';
-import { getMockOutputFromResource, validateMockOutputField, validateMockResponseField } from '.';
+import { getMockOutputFromResource, validateMockDataField, validateMockOutputField, validateMockResponseField } from '.';
 import errorMessageStore from '../errorStore';
 
 jest.mock('object-sizeof', () => ({
@@ -12,7 +12,7 @@ jest.mock('object-sizeof', () => ({
 }));
 
 describe('flowdebugger -', () => {
-  describe('validateMockOutput util test cases', () => {
+  describe('validateMockOutputField util test cases', () => {
     afterEach(() => {
       sizeof.default = () => 1024;
     });
@@ -75,6 +75,20 @@ describe('flowdebugger -', () => {
       const mockResponse = [{id: 'name'}];
 
       expect(validateMockResponseField(mockResponse)).toBeUndefined();
+    });
+  });
+  describe('validateMockDataField util test cases', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(validateMockDataField()()).toBeUndefined();
+    });
+    test('should validate mock output if resource type is exports', () => {
+      expect(validateMockDataField('exports')('value')).toEqual(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'));
+    });
+    test('should validate mock response if resource type is imports', () => {
+      expect(validateMockDataField('imports')('value')).toEqual(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'));
+    });
+    test('should validate mock response if resource type is not passed', () => {
+      expect(validateMockDataField()('value')).toEqual(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'));
     });
   });
   describe('getMockOutputFromResource util test cases', () => {
