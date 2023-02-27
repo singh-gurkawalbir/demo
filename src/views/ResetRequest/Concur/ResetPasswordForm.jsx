@@ -17,75 +17,8 @@ const useStyles = makeStyles(theme => ({
   submit: {
     color: theme.palette.warning.main,
   },
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
-  },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(0),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
-  redText: {
-    color: theme.palette.error.dark,
-  },
-  icon: {
-    border: '1px solid',
-    borderRadius: '50%',
-    fontSize: 18,
-    marginRight: theme.spacing(0.5),
-  },
-  successIcon: {
-    color: theme.palette.success.main,
-    borderColor: theme.palette.success.main,
-  },
-  errorIcon: {
-    color: theme.palette.error.dark,
-    borderColor: theme.palette.error.dark,
-  },
-  forgotPass: {
-    color: theme.palette.warning.main,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
   setPasswordForm: {
     position: 'relative',
-  },
-  arrowPopperPassword: {
-    position: 'absolute',
-    left: '50px !important',
-    top: '0px !important',
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-  },
-  passwordStrongSteps: {
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    },
-  },
-  passwordListItem: {
-    display: 'flex',
-    marginBottom: theme.spacing(1),
-  },
-  passwordListItemTextError: {
-    color: theme.palette.error.dark,
-  },
-  iconPassword: {
-    cursor: 'pointer',
-    marginRight: theme.spacing(1),
   },
 }));
 
