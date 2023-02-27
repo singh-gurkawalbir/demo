@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen, cleanup, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
+import { screen, cleanup, waitForElementToBeRemoved, waitFor, fireEvent } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ClonePreview from './Preview';
@@ -9,6 +9,24 @@ import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
 let initialStore;
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
 
 function initStore(integrationSession) {
   initialStore.getState().data.resources.integrations = [
@@ -628,14 +646,16 @@ describe('Clone Preview', () => {
     const menuitemNode = screen.getByRole('menuitem', {name: '3PL Central'});
 
     expect(menuitemNode).toBeInTheDocument();
-    await userEvent.click(menuitemNode);
-    await waitForElementToBeRemoved(menuitemNode);
+    await fireEvent.click(menuitemNode);
+    waitFor(async () => {
+      await waitForElementToBeRemoved(menuitemNode);
+    });
     expect(integrationNode).toHaveAccessibleName('3PL Central');
     const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 

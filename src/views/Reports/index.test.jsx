@@ -159,7 +159,7 @@ describe('reports', () => {
     const optionsNode = screen.getByRole('option', {name: 'Flow events'});
 
     expect(optionsNode).toBeInTheDocument();
-    await userEvent.click(optionsNode);
+    await fireEvent.click(optionsNode);
     await waitForElementToBeRemoved(optionsNode);
     expect(optionsNode).not.toBeInTheDocument();
   });

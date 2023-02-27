@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore} from '../../../../test/test-utils';
 import scheduleAction from './schedule';
@@ -25,6 +25,20 @@ jest.mock('../../../../components/FlowSchedule', () => ({
         <div>{props.flow.name}</div>
       </>
     );
+  },
+}));
+
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
   },
 }));
 
@@ -70,10 +84,13 @@ describe('scheduleAction UI tests', () => {
   });
   test('should test the onclose modal component function', async () => {
     const mockSetCancelTriggered = jest.fn();
+    const user = userEvent.setup();
 
     jest.spyOn(cancelContext, 'default').mockReturnValue({disabled: false, setCancelTriggered: mockSetCancelTriggered});
     await initStoreAndRender();
-    await userEvent.click(screen.getByRole('button'));
+    await waitFor(async () => {
+      await user.click(screen.getByRole('button'));
+    });
 
     expect(mockSetCancelTriggered).toHaveBeenCalled();
   });

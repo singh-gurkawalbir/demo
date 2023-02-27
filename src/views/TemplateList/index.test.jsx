@@ -1,7 +1,7 @@
 /* eslint-disable jest/max-expects */
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, cleanup, waitFor } from '@testing-library/react';
+import { screen, cleanup, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import TemplateList from '.';
@@ -252,10 +252,8 @@ describe('template List', () => {
     const downloadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Download template zip'});
 
     expect(downloadTemplateZipMenuItemNode).toBeInTheDocument();
-    await waitFor(async () => {
-      await userEvent.click(downloadTemplateZipMenuItemNode);
-      expect(mockDispatchFn).toHaveBeenCalledTimes(4);
-    });
+    await fireEvent.click(downloadTemplateZipMenuItemNode);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(4);
   });
   test('should able to test the Template List upload template zip action button by having templates', async () => {
     const templates = [
@@ -377,7 +375,7 @@ describe('template List', () => {
     const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
 
     expect(saveAndCloseButtonNode).toBeInTheDocument();
-    await userEvent.click(saveAndCloseButtonNode);
+    await fireEvent.click(saveAndCloseButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledTimes(21);
     expect(editTemplateMenuItemNode).not.toBeInTheDocument();
   });

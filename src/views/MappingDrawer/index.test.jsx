@@ -2,7 +2,7 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, waitFor, cleanup, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
@@ -378,7 +378,7 @@ describe('Mapping Drawer', () => {
     const listItem2Node = document.querySelectorAll('li[data-value="compactRow"]');
 
     expect(listItem2Node[0]).toBeInTheDocument();
-    await waitFor(() => userEvent.click(listItem1Node[0]), { interval: 100 });
+    await fireEvent.click(listItem1Node[0]);
     await waitForElementToBeRemoved(listItem1Node[0]);
   });
   test('Should be able to test the cancel drawer button', async () => {

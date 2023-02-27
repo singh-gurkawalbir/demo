@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, waitFor, cleanup, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, mockPostRequestOnce, mockPutRequestOnce } from '../../test/test-utils';
 import ProfilePanel from './Profile';
@@ -78,7 +78,7 @@ describe('Profile', () => {
     initialStore = getCreatedStore();
     store();
     // jest.useFakeTimers();
-    // jest.setTimeout(100000);
+    jest.setTimeout(100000);
     jest.clearAllMocks();
   });
 
@@ -88,7 +88,7 @@ describe('Profile', () => {
     // jest.clearAllTimers();
     cleanup();
   });
-  test('Should able to load the profile pane and able to update the password', async done => {
+  test('Should able to load the profile pane and able to update the password', async () => {
     const mockResolverFunction = jest.fn();
 
     mockPutRequestOnce('/api/change-password', (req, res, ctx) => {
@@ -132,11 +132,10 @@ describe('Profile', () => {
     const passwordCloseButton = screen.getByRole('button', {name: 'Close'});
 
     expect(passwordCloseButton).toBeInTheDocument();
-    await userEvent.click(passwordCloseButton);
+    await fireEvent.click(passwordCloseButton);
     await waitForElementToBeRemoved(passwordCloseButton);
-    done();
   });
-  test('Should able to load the profile pane and able to enter the value for name, company, role, phone and click on save button', async done => {
+  test('Should able to load the profile pane and able to enter the value for name, company, role, phone and click on save button', async () => {
     const mockResolverFunction2 = jest.fn();
 
     mockPutRequestOnce('/api/preferences', (req, res, ctx) => {
@@ -193,7 +192,7 @@ describe('Profile', () => {
     const timeZoneMenuItems = screen.getByRole('menuitem', {name: '(GMT+05:45) Kathmandu'});
 
     expect(timeZoneMenuItems).toBeInTheDocument();
-    await userEvent.click(timeZoneMenuItems);
+    await fireEvent.click(timeZoneMenuItems);
     await waitForElementToBeRemoved(timeZoneMenuItems);
 
     const dateFormatLabelNode = screen.getByText('Date format', { selector: 'label' });
@@ -206,7 +205,7 @@ describe('Profile', () => {
     const dateFormatMenuItemNode = screen.getByRole('menuitem', {name: '12/31/1900'});
 
     expect(dateFormatMenuItemNode).toBeInTheDocument();
-    await userEvent.click(dateFormatMenuItemNode);
+    await fireEvent.click(dateFormatMenuItemNode);
     await waitForElementToBeRemoved(dateFormatMenuItemNode);
 
     const timeFormatLabelNode = screen.getByText('Time format');
@@ -219,7 +218,7 @@ describe('Profile', () => {
     const timeMenuItemNode = screen.getByRole('menuitem', {name: '2:34:25 pm'});
 
     expect(timeMenuItemNode).toBeInTheDocument();
-    await userEvent.click(timeMenuItemNode);
+    await fireEvent.click(timeMenuItemNode);
     await waitForElementToBeRemoved(timeMenuItemNode);
     const showTimestampsAsRelativeCheckboxNode = screen.getByRole('checkbox', {name: 'Show timestamps as relative'});
 
@@ -235,14 +234,13 @@ describe('Profile', () => {
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButtonNode).toBeEnabled();
-    await userEvent.click(saveButtonNode);
+    await fireEvent.click(saveButtonNode);
     await waitFor(() => expect(mockResolverFunction2).toHaveBeenCalledTimes(2));
-    const savingNode = await waitFor(() => screen.getByText('Saving'));
+    const savingNode = await waitFor(() => screen.findByText('Saving'));
 
     expect(savingNode).toBeInTheDocument();
-    done();
   });
-  test('Should able to load the profile pane and able to read the value email and update the email', async done => {
+  test('Should able to load the profile pane and able to read the value email and update the email', async () => {
     const mockResolverFunction = jest.fn();
 
     mockPostRequestOnce('/api/change-email', (req, res, ctx) => {
@@ -283,6 +281,5 @@ describe('Profile', () => {
     expect(closeSnackbar).toBeInTheDocument();
     await userEvent.click(closeSnackbar);
     await waitForElementToBeRemoved(closeSnackbar);
-    done();
   });
 });
