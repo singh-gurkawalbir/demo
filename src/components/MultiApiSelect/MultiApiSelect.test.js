@@ -2,7 +2,7 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders} from '../../test/test-utils';
-import GridSelect from '.';
+import MultiApiSelect from '.';
 
 const props = {
   items: [{
@@ -19,9 +19,9 @@ const props = {
   onClick: jest.fn(),
 };
 
-describe('GridSelect UI tests', () => {
+describe('MultiApiSelect UI tests', () => {
   test('should render the Grid items initially', () => {
-    renderWithProviders(<GridSelect {...props} />);
+    renderWithProviders(<MultiApiSelect {...props} />);
     expect(screen.getByText('Shopify')).toBeInTheDocument();
     expect(screen.getByText('Shopify Graph QL')).toBeInTheDocument();
 
@@ -30,7 +30,7 @@ describe('GridSelect UI tests', () => {
     expect(radioIcons[1]).toHaveAttribute('checked');
   });
   test('should display none when items is []', () => {
-    renderWithProviders(<GridSelect {...props} items={[]} />);
+    renderWithProviders(<MultiApiSelect {...props} items={[]} />);
     expect(screen.queryByText('Shopify')).not.toBeInTheDocument();
   });
 });
