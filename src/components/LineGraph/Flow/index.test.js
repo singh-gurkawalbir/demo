@@ -107,20 +107,20 @@ describe('flowChart UI Tests', () => {
 
     return store;
   }
-  test('should do the testing when flow is loading', () => {
-    renderWithProps(props);
+  test('should do the testing when flow is loading', async () => {
+    await renderWithProps(props);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should test opacity', async () => {
     const store = await renderWithProps(props);
 
-    store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));
+    act(() => { store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', [])); });
     const value = await waitFor(() => screen.getAllByText('123'));
     const lastindex = value.length - 1;
 
-    fireEvent.mouseEnter(value[lastindex]);
+    await fireEvent.mouseEnter(value[lastindex]);
     await waitFor(() => expect(screen.getByText('Opacity : 0.2')).toBeInTheDocument());
-    fireEvent.mouseLeave(screen.getAllByText('123')[lastindex]);
+    await fireEvent.mouseLeave(screen.getAllByText('123')[lastindex]);
     expect(screen.queryByText('Opacity : 0.2')).not.toBeInTheDocument();
     expect(screen.getByText('Opacity : 1')).toBeInTheDocument();
   });
@@ -128,7 +128,7 @@ describe('flowChart UI Tests', () => {
   test('should test Custom tooltip', async () => {
     const store = await renderWithProps(props);
 
-    store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));
+    act(() => { store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', [])); });
     await waitFor(() => expect(screen.getAllByText('Tooltip')[0]).toBeInTheDocument());
     await waitFor(() => expect(screen.getAllByText('06/05/2022')[0]).toBeInTheDocument());
     await waitFor(() => expect(screen.getAllByText('name: nametext')[0]).toBeInTheDocument());
@@ -152,22 +152,24 @@ describe('flowChart UI Tests', () => {
     };
     const store = await renderWithProps(props);
 
-    store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', {
-      lastRun: {
-        startDate: '2022-010-10T18:30:00.000Z',
-        endDate: '2022-011-10T12:16:31.435Z',
-      },
-      FIELD1: '',
-      result: '_result',
-      table: 0,
-      _time: '2021-08-31T18:30:00Z',
-      attribute: 's',
-      by: '',
-      flowId: '629f0dcfccb94d35de6f436b',
-      timeInMills: 1630434600000,
-      type: 'sei',
-      value: 0,
-    }));
+    act(() => {
+      store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', {
+        lastRun: {
+          startDate: '2022-010-10T18:30:00.000Z',
+          endDate: '2022-011-10T12:16:31.435Z',
+        },
+        FIELD1: '',
+        result: '_result',
+        table: 0,
+        _time: '2021-08-31T18:30:00Z',
+        attribute: 's',
+        by: '',
+        flowId: '629f0dcfccb94d35de6f436b',
+        timeInMills: 1630434600000,
+        type: 'sei',
+        value: 0,
+      }));
+    });
     await waitFor(() => expect(screen.getAllByText('1656936991435 , 1656936991435')[0]).toBeInTheDocument());
   });
 });

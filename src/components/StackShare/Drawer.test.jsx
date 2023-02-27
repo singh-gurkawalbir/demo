@@ -10,7 +10,7 @@ import StackShareDrawer from './Drawer';
 import reduxStore from '../../store';
 import { runServer } from '../../test/api/server';
 
-function initDrawer() {
+async function initDrawer() {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources.stacks = [{
@@ -76,12 +76,12 @@ describe('Invite Users UI tests', () => {
     expect(emailText).toBeInTheDocument();
     const textBox = screen.getByRole('textbox');
 
-    fireEvent.change(textBox, { target: { value: 'testuser' } });
-    fireEvent.change(textBox, { target: { value: '' } });
+    await fireEvent.change(textBox, { target: { value: 'testuser' } });
+    await fireEvent.change(textBox, { target: { value: '' } });
     const warningText = screen.getByText('A value must be provided');
 
     expect(warningText).toBeInTheDocument();
-    fireEvent.change(textBox, { target: { value: 'testuser@celigo.com' } });
+    await fireEvent.change(textBox, { target: { value: 'testuser@celigo.com' } });
     const saveAndCloseButton = screen.getByText('Invite user & close');
 
     expect(saveAndCloseButton).toBeInTheDocument();

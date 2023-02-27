@@ -91,7 +91,7 @@ describe('test suite for common actions', () => {
     };
 
     initialStore.getState().data.resources.connections = [connection];
-    initCommonActions([{_id: connection._id}]);
+    await initCommonActions([{_id: connection._id}]);
     const viewAuditLogsButton = screen.getByRole('menuitem', {name: 'View audit log'});
 
     await userEvent.click(viewAuditLogsButton);
@@ -109,7 +109,7 @@ describe('test suite for common actions', () => {
     mockTableContext = { flowId: 'flow123' };
     const scriptId = 'script123';
 
-    initCommonActions([{_id: scriptId}]);
+    await initCommonActions([{_id: scriptId}]);
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     await userEvent.click(viewExecutionLogsButton);
@@ -128,7 +128,7 @@ describe('test suite for common actions', () => {
     mockLocation = { pathname: '/scripts' };
     const scriptId = 'script123';
 
-    initCommonActions([{_id: scriptId}]);
+    await initCommonActions([{_id: scriptId}]);
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     await userEvent.click(viewExecutionLogsButton);
@@ -142,7 +142,7 @@ describe('test suite for common actions', () => {
   describe('cloning resources', () => {
     test('should be able to clone resources (other than integration flows)', async () => {
       mockTableContext.resourceType = 'exports';
-      initCommonActions([{ _id: 'export123' }]);
+      await initCommonActions([{ _id: 'export123' }]);
 
       const cloneButton = screen.getByRole('menuitem', {name: 'Clone export'});
 
@@ -150,7 +150,7 @@ describe('test suite for common actions', () => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/clone/exports/export123/preview');
     });
 
-    test('should be able to clone an integration flow if has permission', () => {
+    test('should be able to clone an integration flow if has permission', async () => {
       mockTableContext.resourceType = 'flows';
       const data = [{
         _id: 'flow123',
@@ -158,19 +158,19 @@ describe('test suite for common actions', () => {
       }];
 
       initialStore.getState().user.preferences.defaultAShareId = 'own';
-      initCommonActions(data);
+      await initCommonActions(data);
 
       expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument();
     });
 
-    test("should not be able to clone an integration flow if doesn't have permissions to clone", () => {
+    test("should not be able to clone an integration flow if doesn't have permissions to clone", async () => {
       mockTableContext.resourceType = 'flows';
       const data = [{
         _id: 'flow123',
         _integrationId: 'int123',
       }];
 
-      initCommonActions(data);
+      await initCommonActions(data);
 
       expect(screen.queryByRole('menuitem', {name: 'Clone flow'})).not.toBeInTheDocument();
     });
@@ -186,7 +186,7 @@ describe('test suite for common actions', () => {
         connectorId: 'connector123',
       },
     };
-    initCommonActions([{
+    await initCommonActions([{
       _id: 'ia123',
       type: 'integrationApp',
     }]);
@@ -199,7 +199,7 @@ describe('test suite for common actions', () => {
 
   test('should be able to delete a resource', async () => {
     mockTableContext.resourceType = 'connectors/connector123/licenses';
-    initCommonActions([{
+    await initCommonActions([{
       _id: 'ia123',
       type: 'integrationApp',
     }]);
@@ -240,7 +240,7 @@ describe('test suite for common actions', () => {
         ],
       },
     };
-    initCommonActions(data);
+    await initCommonActions(data);
     const deleteButton = screen.getByRole('menuitem', {name: 'Delete export'});
 
     await userEvent.click(deleteButton);
@@ -256,7 +256,7 @@ describe('test suite for common actions', () => {
 
   test('should be able to download a resource', async () => {
     mockTableContext.resourceType = 'templates';
-    initCommonActions([{
+    await initCommonActions([{
       _id: 'template123',
       name: 'Shopify template',
     }]);
@@ -281,7 +281,7 @@ describe('test suite for common actions', () => {
       offline: true,
     }];
 
-    initCommonActions(data);
+    await initCommonActions(data);
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
@@ -308,7 +308,7 @@ describe('test suite for common actions', () => {
       },
     }];
 
-    initCommonActions(data);
+    await initCommonActions(data);
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
@@ -321,7 +321,7 @@ describe('test suite for common actions', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.stack.generateToken(data[0]._id));
   });
 
-  test('should not be able to generate new token for stacks of type lambda', () => {
+  test('should not be able to generate new token for stacks of type lambda', async () => {
     mockTableContext.resourceType = 'stacks';
     const data = [{
       _id: 'stack123',
@@ -335,7 +335,7 @@ describe('test suite for common actions', () => {
       },
     }];
 
-    initCommonActions(data);
+    await initCommonActions(data);
     expect(screen.queryByRole('menuitem', {name: 'Generate new token'})).not.toBeInTheDocument();
   });
 
@@ -356,7 +356,7 @@ describe('test suite for common actions', () => {
         ],
       },
     };
-    initCommonActions([{
+    await initCommonActions([{
       _id: 'export123',
       name: 'Netsuite Export',
     }]);

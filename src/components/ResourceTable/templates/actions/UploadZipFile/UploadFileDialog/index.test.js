@@ -1,5 +1,5 @@
 
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
@@ -28,7 +28,7 @@ jest.mock('@material-ui/core/IconButton', () => ({
   },
 }));
 
-function initUploadFileDialog(props) {
+async function initUploadFileDialog(props) {
   const ui = (
     <ConfirmDialogProvider>
       <UploadFileDialog {...props} />
@@ -68,7 +68,7 @@ describe('testsuite for Upload File Dialog', () => {
       resourceId: '1234',
     };
 
-    initUploadFileDialog(props);
+    await initUploadFileDialog(props);
     expect(screen.getByText(/upload export test file/i)).toBeInTheDocument();
     const uploadCloseButtonNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
@@ -85,7 +85,7 @@ describe('testsuite for Upload File Dialog', () => {
       resourceId: '1234',
     };
 
-    initUploadFileDialog(props);
+    await initUploadFileDialog(props);
     expect(screen.getByText(/upload export test file/i)).toBeInTheDocument();
     expect(screen.getByText(/select export test file/i)).toBeInTheDocument();
     const uploadButtonNode = screen.getByRole('button', {
@@ -103,7 +103,10 @@ describe('testsuite for Upload File Dialog', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const input = document.querySelector('input[data-test="uploadFile"]');
 
-    await userEvent.upload(input, file);
+    // await userEvent.upload(input, file);
+    await fireEvent.change(input, {
+      target: { files: { item: () => file, length: 1, 0: file } },
+    });
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload({resourceType: 'exports', resourceId: '1234', fileType: 'application/JSON', file, asyncKey: TEMPLATE_ZIP_UPLOAD_ASYNC_KEY})));
   });
   test('should test the upload file dialog box by uploading a wrong format file which is not equal to the file type that sent in prop', async () => {
@@ -115,7 +118,7 @@ describe('testsuite for Upload File Dialog', () => {
       resourceId: '1234',
     };
 
-    initUploadFileDialog(props);
+    await initUploadFileDialog(props);
     expect(screen.getByText(/upload export test file/i)).toBeInTheDocument();
     expect(screen.getByText(/select export test file/i)).toBeInTheDocument();
     const uploadButtonNode = screen.getByRole('button', {
@@ -134,7 +137,10 @@ describe('testsuite for Upload File Dialog', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const input = document.querySelector('input[data-test="uploadFile"]');
 
-    await userEvent.upload(input, file);
+    // await userEvent.upload(input, file);
+    await fireEvent.change(input, {
+      target: { files: { item: () => file, length: 1, 0: file } },
+    });
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload({resourceType: props.resourceType, resourceId: props.resourceId, fileType: props.fileType, file, asyncKey: TEMPLATE_ZIP_UPLOAD_ASYNC_KEY})));
   });
 });

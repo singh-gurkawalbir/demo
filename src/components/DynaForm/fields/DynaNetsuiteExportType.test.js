@@ -11,6 +11,24 @@ initialStore.getState().session.metadata = {application: {someconnectionId: {som
   data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
 }}}};
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaNetsuiteExportType(props = {}) {
   const ui = (
     <DynaNetsuiteExportType
@@ -69,8 +87,8 @@ describe('dynaNetsuiteExportType Ui test cases', () => {
     const menuItems = screen.getAllByRole('menuitem');
 
     expect(menuItems).toHaveLength(3);
-    expect(menuItems[1].textContent).toBe('once...');
-    expect(menuItems[2].textContent).toBe('someLabel...');
+    expect(menuItems[1].textContent).toBe('once');
+    expect(menuItems[2].textContent).toBe('someLabel');
 
     expect(mockOnFieldChange).not.toHaveBeenCalled();
   });

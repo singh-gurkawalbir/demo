@@ -4,6 +4,24 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('test suite for DynaMatchingCriteriaWithModal field', () => {
   test('should be able to modify account type', async () => {
     const onFieldChange = jest.fn();
@@ -106,10 +124,10 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     const availableAccountTypes = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableAccountTypes).toEqual([
-      'Please select...',
-      'Account type 1...',
-      'Account type 2...',
-      'Account type 3...',
+      'Please select',
+      'Account type 1',
+      'Account type 2',
+      'Account type 3',
     ]);
 
     //  should be able to change account type

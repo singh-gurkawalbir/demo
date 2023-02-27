@@ -22,6 +22,20 @@ const props = {
   },
 };
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('Shared User Row', () => {
   runServer();
   afterEach(cleanup);
@@ -58,7 +72,7 @@ describe('Shared User Row', () => {
     expect(confirmEnable).not.toBeInTheDocument();
   });
   test('Should able to list the pending shared user and delete the user', async () => {
-    renderWithProviders(
+    await renderWithProviders(
       <ConfirmDialogProvider>
         <MemoryRouter>
           <Route>

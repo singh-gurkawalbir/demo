@@ -60,7 +60,7 @@ describe('globalSearch UI Tests', () => {
     expect(searchInput).toBeInTheDocument();
     await userEvent.type(searchInput, 'a');
     expect(searchInput).toHaveValue('/a');
-    await userEvent.keyboard('{esc}');
+    await userEvent.keyboard('{Escape}');
     await waitFor(() => {
       expect(searchInput).toHaveValue('');
     });
@@ -73,9 +73,9 @@ describe('globalSearch UI Tests', () => {
     expect(searchInput).toBeInTheDocument();
     await userEvent.type(searchInput, 'a');
     expect(searchInput).toHaveValue('/a');
-    await userEvent.keyboard('{esc}');
+    await userEvent.keyboard('{Escape}');
     expect(searchInput).toHaveValue('');
-    await userEvent.keyboard('{esc}');
+    await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(screen.getByLabelText(/Global search/i)).toBeInTheDocument());
   });
   test('should not open Results Panel typing one character on input', async () => {

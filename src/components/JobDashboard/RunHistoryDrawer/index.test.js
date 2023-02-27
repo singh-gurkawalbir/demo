@@ -55,7 +55,7 @@ describe('testsuite for Run History Drawer', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    jest.useFakeTimers('modern').setSystemTime(new Date('2022-01-30'));
+    // jest.useFakeTimers('modern').setSystemTime(new Date('2022-01-30'));
     initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {

@@ -163,7 +163,7 @@ describe('FlowgroupDrawer tests', () => {
     const nameInput = document.querySelector('input');
 
     await userEvent.click(nameInput);
-    userEvent.keyboard('Mock flowgroup');
+    await userEvent.keyboard('Mock flowgroup');
     await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockHistoryGoBack).not.toHaveBeenCalled();
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/_integrationId/flows/sections/undefined/flowgroups/edit');
@@ -189,7 +189,7 @@ describe('FlowgroupDrawer tests', () => {
     const nameInput = document.querySelector('input');
 
     await userEvent.click(nameInput);
-    userEvent.keyboard('mockFlowGroupName');
+    await userEvent.keyboard('mockFlowGroupName');
     mockDispatchFn.mockClear();
     await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resource.integrations.flowGroups.createOrUpdate('_integrationId', '', 'flow-flowgroup'));

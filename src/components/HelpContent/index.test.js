@@ -105,7 +105,7 @@ describe('helpContent UI tests', () => {
     await userEvent.click(thumbsdown);
     const input = screen.getByPlaceholderText('How can we make this information more helpful?');
 
-    userEvent.type(input, 'sample userInput');
+    await userEvent.type(input, 'sample userInput');
     await userEvent.click(screen.getByText(/Submit/i));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, false, 'sample userInput'));
   });

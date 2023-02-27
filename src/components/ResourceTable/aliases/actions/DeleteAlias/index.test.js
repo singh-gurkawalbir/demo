@@ -46,7 +46,7 @@ const props = [
 
 describe('deleteAlias test cases', () => {
   test('should show modal dialog for delete Alias on clicking Delete alias', async () => {
-    initHomeTiles(...props);
+    await initHomeTiles(...props);
     await userEvent.click(screen.getByText('Delete alias'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Delete alias?')).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe('deleteAlias test cases', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
   test('should click on cancel button of Delete Alias modal', async () => {
-    initHomeTiles(...props);
+    await initHomeTiles(...props);
     await userEvent.click(screen.getByText('Delete alias'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     const cancel = screen.getByText('Cancel');

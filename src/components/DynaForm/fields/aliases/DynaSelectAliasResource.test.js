@@ -13,6 +13,24 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const initialStore = getCreatedStore();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaSelect(props = {}) {
   initialStore.getState().session.asyncTask = {'integration-alias': props.status};
   initialStore.getState().data.resources = {

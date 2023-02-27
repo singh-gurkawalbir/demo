@@ -88,9 +88,9 @@ describe('test suite for DynaIclient field', () => {
       const availableIclients = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
       expect(availableIclients).toEqual([
-        'Please select...',
-        'Client 1...',
-        'client2...',
+        'Please select',
+        'Client 1',
+        'client2',
       ]);
     });
   });

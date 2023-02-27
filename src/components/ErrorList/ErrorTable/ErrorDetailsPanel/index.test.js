@@ -172,7 +172,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       resourceId: '63234d05514d5b0bf7b3c315',
     };
 
-    renderWithProviders(
+    await renderWithProviders(
       <MemoryRouter>
         <DrawerProvider {...drawerProviderProps}>
           <ErrorDetailsPanel {...props} />
@@ -233,7 +233,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       resourceId: '63234d05514d5b0bfxsfrgvddv',
     };
 
-    renderWithProviders(
+    await renderWithProviders(
       <MemoryRouter>
         <DrawerProvider {...drawerProviderProps}>
           <ErrorDetailsPanel {...props} />
@@ -315,7 +315,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       )
     ).toBeInTheDocument();
   });
-  test('should return empty error details when active error id is not provided', () => {
+  test('should return empty error details when active error id is not provided', async () => {
     initialStore.getState().session.filters = {
       openErrors: {},
     };
@@ -340,7 +340,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       resourceId: '63234d05514d5b0bfxsfrgvddv',
     };
 
-    renderWithProviders(
+    await renderWithProviders(
       <MemoryRouter>
         <DrawerProvider {...drawerProviderProps}>
           <ErrorDetailsPanel {...props} />

@@ -74,6 +74,24 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initFunction() {
   const ui = (
     <MemoryRouter initialEntries={['/generateValue/someNodeKey']} >
@@ -140,7 +158,7 @@ describe('mappingsSettingsV2Wrapper test cases', () => {
 
     await userEvent.click(stringType[0]);
     await userEvent.click(screen.getByText('number'));
-    fireEvent.click(document);
+    await fireEvent.click(document);
     await userEvent.click(stringType[0]);
     await userEvent.click(screen.getAllByText('number')[1]);
     await userEvent.click(screen.getByText('Save & close'));
@@ -215,11 +233,11 @@ describe('mappingsSettingsV2Wrapper test cases', () => {
     await userEvent.click(lookupOption);
 
     await waitFor(() => expect(lookupOption).not.toBeInTheDocument());
-    userEvent.type(screen.getAllByRole('textbox')[0], 'somdedestination');
-    userEvent.type(screen.getAllByRole('textbox')[1], 'somesource');
+    await userEvent.type(screen.getAllByRole('textbox')[0], 'somdedestination');
+    await userEvent.type(screen.getAllByRole('textbox')[1], 'somesource');
     const lookUpName = screen.getByPlaceholderText('Alphanumeric characters only');
 
-    userEvent.type(lookUpName, 'LookupName');
+    await userEvent.type(lookUpName, 'LookupName');
 
     await userEvent.click(screen.getByText('Save'));
     expect(mockDispatch).toHaveBeenCalledWith(

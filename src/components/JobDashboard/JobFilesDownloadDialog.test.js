@@ -7,6 +7,20 @@ import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import { renderWithProviders } from '../../test/test-utils';
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 async function initJobFilesDownloadDialog({job, onCloseClick, initialStore}) {
   const ui = (
     <MemoryRouter>

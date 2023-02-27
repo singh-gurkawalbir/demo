@@ -136,9 +136,9 @@ describe('test suite for Connections', () => {
     ]);
     const connectionRow = screen.getAllByRole('row')[1];
 
-    userEvent.hover(connectionRow);
+    await userEvent.hover(connectionRow);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.setActive('conn123'));
-    userEvent.unhover(connectionRow);
+    await userEvent.unhover(connectionRow);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.setActive());
   });
 
