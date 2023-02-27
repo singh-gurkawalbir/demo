@@ -34,6 +34,7 @@ export function* pageProcessorPreview({
 }) {
   if (!flowId || (!_pageProcessorId && !routerId)) return;
 
+  const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
   const { merged } = yield select(selectors.resourceData, 'flows', flowId);
   const { prePatches } = yield select(selectors.editor, editorId);
 
@@ -164,7 +165,7 @@ export function* pageProcessorPreview({
   const body = {
     flow,
     _pageProcessorId: updatedPageProcessorId,
-    ...(routerId && {_routerId: routerId}),
+    ...(routerId && {_routerId: routerId, options: scriptContext}),
     pageGeneratorMap,
     pageProcessorMap,
     includeStages,
