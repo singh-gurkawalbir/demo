@@ -70,7 +70,7 @@ export default {
     required: true,
   },
   'http.apiType': {
-    type: 'gridSelect',
+    type: 'MultiApiSelect',
     label: 'API type',
     helpKey: 'connection.http.apiType',
     defaultDisabled: r => !!r._connectorId && !isNewId(r._id),

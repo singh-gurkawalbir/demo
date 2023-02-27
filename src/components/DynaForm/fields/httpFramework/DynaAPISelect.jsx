@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback } from 'react';
 import {useSelector, shallowEqual, useDispatch} from 'react-redux';
 import {makeStyles, FormLabel } from '@material-ui/core';
 import clsx from 'clsx';
-import GridSelect from '../../../Grid';
 import FieldHelp from '../../FieldHelp';
 import useFormContext from '../../../Form/FormContext';
 import actions from '../../../../actions';
@@ -12,6 +11,7 @@ import { emptyObject } from '../../../../constants';
 import {useHFSetInitializeFormData} from './DynaHFAssistantOptions';
 import getResourceFormAssets from '../../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../../forms/formFactory/utils';
+import MultiApiSelect from '../../../MultiApiSelect';
 
 const useStyles = makeStyles(() => ({
   fieldWrapper: {
@@ -19,26 +19,26 @@ const useStyles = makeStyles(() => ({
   },
 }));
 const desc = 'Access and manipulate a store\'s data using traditional RESTful methods.';
-// const dummyData = [{
-//   name: 'Shopify',
-//   id: '63d94c4d8ba47f5fa4c00001',
-//   description: 'Access and manipulate a store\'s data using traditional RESTful methods.',
-// },
-// {
-//   name: 'Shopify Graph QL',
-//   id: '63d94c4d8ba47f5fa4c00002',
-//   description: 'Access and manipulate a store\'s data using the GraphQL query language.',
-// },
-// {
-//   name: 'Shopify Graph QL',
-//   id: '63d94c4d8ba47f5fa4c00002',
-//   description: 'Access and manipulate a store\'s data using the GraphQL query language.',
-// },
-// {
-//   name: 'Shopify Graph QL',
-//   id: '63d94c4d8ba47f5fa4c00002',
-//   description: 'Access and manipulate a store\'s data using the GraphQL query language.',
-// }];
+const dummyData = [{
+  name: 'Shopify',
+  id: '63d94c4d8ba47f5fa4c00001',
+  description: 'Access and manipulate a store\'s data using traditional RESTful methods.',
+},
+{
+  name: 'Shopify Graph QL',
+  id: '63d94c4d8ba47f5fa4c00002',
+  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
+},
+{
+  name: 'Shopify Graph QL',
+  id: '63d94c4d8ba47f5fa4c00002',
+  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
+},
+{
+  name: 'Shopify Graph QL',
+  id: '63d94c4d8ba47f5fa4c00002',
+  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
+}];
 
 export default function APISelect(props) {
   const {
@@ -135,9 +135,9 @@ export default function APISelect(props) {
     );
   }, [accountOwner, dispatch, formContext?.fields, formContext?.value, id, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  if (!data || !data.length) {
-    return null;
-  }
+  // if (!data || !data.length) {
+  //   return null;
+  // }
 
   return (
     <div className={clsx(classes.fieldWrapper)}>
@@ -145,7 +145,7 @@ export default function APISelect(props) {
         {label}
       </FormLabel>
       <FieldHelp {...props} />
-      <GridSelect items={data} value={value} onClick={handleClick} />
+      <MultiApiSelect items={dummyData} value={value} onClick={handleClick} />
     </div>
   );
 }
