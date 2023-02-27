@@ -18,7 +18,7 @@ export default function getFieldMeta() {
         required: true,
         type: 'signinpassword',
         inputType: 'password',
-        placeholder: 'Enter new password *',
+        placeholder: 'Password*',
       },
 
       forgotPassword: {
