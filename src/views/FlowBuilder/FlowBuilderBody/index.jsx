@@ -224,11 +224,11 @@ export function Canvas({ flowId, fullscreen }) {
             onMoveEnd={handleMoveEnd}
             onMove={handleMove}
             nodesDraggable={false}
+            nodesConnectable={false}
             minZoom={0.4}
             maxZoom={1.25}
             panOnScroll
             translateExtent={translateExtent}
-                // nodeExtent={translateExtent}
             onInit={onLoad}
             defaultViewport={defaultViewport}
             nodes={nodes}
