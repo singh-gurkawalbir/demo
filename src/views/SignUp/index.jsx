@@ -6,7 +6,7 @@ export default function Signup(props) {
   return (
     <UserSignInPage
       pageTitle="Sign up"
-      footerLinkLabel="Already have an account"
+      footerLinkLabel="Already have an account?"
       footerLinkText="Sign in"
       footerLink="signin">
       <SignUp

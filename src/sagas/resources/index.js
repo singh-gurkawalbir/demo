@@ -433,6 +433,10 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
 
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));
+  } else if (resourceType === 'connections') {
+    if (updated.http?._httpConnectorId && updated.http?.unencrypted?.version !== master?.http?.unencrypted?.version) {
+      yield put(actions.connection.updatedVersion());
+    }
   }
 
   if (resourceType === 'connections' && merged.type === 'netsuite') {
@@ -797,7 +801,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     path = `${path}${excludePath}`;
   }
   if (resourceType === 'tree/metadata') {
-    path += '?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps';
+    path += '?additionalFields=createdAt,_parentId';
   }
   let updatedResourceType = resourceType;
 
@@ -843,12 +847,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     }
 
     if (resourceType === 'tree/metadata') {
-      const newCollection = collection?.childIntegrations || [];
-
-      yield put(actions.resource.receivedCollection('integrations', newCollection, integrationId));
-    } else {
-      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+      collection = collection?.childIntegrations || [];
     }
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
 
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 

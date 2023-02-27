@@ -71,22 +71,24 @@ export default function DynaNetSuiteLookup_afe(props) {
   }, [id, onFieldChange]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions.editor.init(editorId, 'netsuiteLookupFilter', {
-      formKey,
-      flowId,
-      resourceId,
-      resourceType,
-      fieldId: id,
-      stage: 'importMappingExtract',
-      onSave: handleSave,
-      customOptions: options,
-    }));
+    if (resourceType) {
+      dispatch(actions.editor.init(editorId, 'netsuiteLookupFilter', {
+        formKey,
+        flowId,
+        resourceId,
+        resourceType,
+        fieldId: id,
+        stage: 'importMappingExtract',
+        onSave: handleSave,
+        customOptions: options,
+      }));
 
-    history.push(buildDrawerUrl({
-      path: drawerPaths.EDITOR,
-      baseUrl: match.url,
-      params: { editorId },
-    }));
+      history.push(buildDrawerUrl({
+        path: drawerPaths.EDITOR,
+        baseUrl: match.url,
+        params: { editorId },
+      }));
+    }
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (

@@ -16,6 +16,7 @@ import {
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
+import {VALID_MONGO_ID} from '../../constants/regex';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -898,9 +899,9 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
-    operation = operation || exportDoc.http?._httpConnectorEndpointId;
-    resource = resource || exportDoc.http?._httpConnectorResourceId;
-    version = version || exportDoc.http?._httpConnectorVersionId;
+    operation = (VALID_MONGO_ID.test(operation) || operation?.includes('+')) ? operation : exportDoc.http?._httpConnectorEndpointId;
+    resource = (VALID_MONGO_ID.test(resource) || resource?.includes('+')) ? resource : exportDoc.http?._httpConnectorResourceId;
+    version = VALID_MONGO_ID.test(version) ? version : exportDoc.http?._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1204,7 +1205,9 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
           queryObj.set(key, value);
         }
       });
-      relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
+      const queryString = qs.stringify(Array.from(queryObj.entries()).reduce((acc, [key, value]) => ({...acc, [key]: value}), {}), {encode: false, indices: false });
+
+      relativeURI = `${pathPart}?${queryString}`;
     } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }
     if (pagingRelativeURI) {
       pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + finalQueryString;
@@ -1819,9 +1822,9 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
       } else {
-        operation = operation || importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
-        resource = resource || importDoc.http?._httpConnectorResourceId;
-        version = version || importDoc.http?._httpConnectorVersionId;
+        operation = (VALID_MONGO_ID.test(operation) || operation?.includes('+')) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
+        resource = (VALID_MONGO_ID.test(resource) || resource?.includes('+')) ? resource : importDoc.http?._httpConnectorResourceId;
+        version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
       }
     }
     if (operation !== 'create-update-id' && ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1))) {
@@ -2104,6 +2107,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               assistantData,
             });
 
+            if (luEndpoint.url?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
             lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
@@ -2391,7 +2395,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         }); /* indices should be false to handle IO-1776 */
 
         if (queryString) {
-          lookupOperationRelativeURI += `?${queryString}`;
+          lookupOperationRelativeURI += (lookupOperationRelativeURI?.includes('?') ? '&' : '?') + queryString;
         }
       } else if (luConfig.method === 'POST') {
         luConfig.postBody = lookupQueryParams;

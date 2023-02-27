@@ -13,7 +13,6 @@ import VirtualizedTable from './VirtualizedTable';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
-    marginRight: theme.spacing(2),
   },
   childRow: {
     display: 'flex',
@@ -193,7 +192,6 @@ const DynaTable = props => {
               id={id}
               ignoreEmptyRow={ignoreEmptyRow}
               value={value}
-
           />
           </span>
 

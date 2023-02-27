@@ -143,13 +143,15 @@ export const getCurrentSampleDataStageStatus = (
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
-const pathRegex = {
+export const flowPatchRegex = {
   newPPSequence: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)$/,
   pgSequence: /(\/pageGenerators\/(\d+))/,
+  firstPgOrPp: /\/(pageGenerators|pageProcessors)$/,
   oldPPSequence: /(\/pageProcessors\/(\d+)\/(_importId|_exportId))$/,
   responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   oldResponseMapping: /\/pageProcessors\/(\d+)\/responseMapping/,
-  lookupAddition: /\/pageProcessors\/[0-9]+$/,
+  ppAddition: /\/pageProcessors\/[0-9]+$/,
+  routerUpdate: /\/routers\/(\d+)$/,
 };
 
 export function getPreviewStageData(previewData, previewStage = 'parse') {
@@ -212,35 +214,58 @@ export const getPostDataForDeltaExport = resource => ({
   currentExportDateTime: getCurrentExportDateTime(resource),
 });
 
+const isRouterRemoved = patchSet => {
+  const removeRouterRegexList = [
+    /\/routers$/, // remove when only 1 router is present
+    /\/routers\/(\d+)$/, // remove first router in multiple routers
+    /\/routers\/(\d+)\/branches\/(\d+)$/, // multiple routers and remove any router other than first
+  ];
+
+  return removeRouterRegexList.some(regex => {
+    const patch = patchSet.find(patch => patch.path.match(regex));
+
+    return patch && patch.op === 'remove';
+  });
+};
+
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
   if (!patchSet.length) return {};
   // There is a case when we update flow just to update lastModified property
   // In that case, no need of any update for flowData
   if (patchSet.find(patch => patch.path === '/lastModified')) return {};
-  // Analyse patches and update stages updated
+  // Analyze patches and update stages updated
   const updatedPathsFromPatchSet = patchSet.map(patch => patch.path);
   const updates = {
     sequence: false,
     responseMapping: false,
+    router: false,
   };
+
+  if (isRouterRemoved(patchSet)) {
+    updates.router = {
+      deleted: true,
+    };
+
+    return updates;
+  }
 
   updatedPathsFromPatchSet.forEach(path => {
     //  If the patch matches changes for either PP/PG (Old & New formats),
     // then there is a change in Flow sequence ( Add/Delete )
     if (!updates.sequence && (
-      pathRegex.pgSequence.test(path) ||
-      pathRegex.oldPPSequence.test(path) ||
-      pathRegex.newPPSequence.test(path)
+      flowPatchRegex.pgSequence.test(path) ||
+      flowPatchRegex.oldPPSequence.test(path) ||
+      flowPatchRegex.newPPSequence.test(path)
     )) {
       updates.sequence = true;
     }
 
     // If the patch matches changes in response mapping (New formats),
     // then there is a change in pp's response mapping
-    if (!updates.responseMapping && pathRegex.responseMapping.test(path)) {
+    if (!updates.responseMapping && flowPatchRegex.responseMapping.test(path)) {
       // Extract resourceIndex from the path
-      const [,, routerIndex, branchIndex, resourceIndex] = pathRegex.responseMapping.exec(path);
+      const [,, routerIndex, branchIndex, resourceIndex] = flowPatchRegex.responseMapping.exec(path);
 
       if (resourceIndex) {
         updates.responseMapping = {
@@ -253,7 +278,7 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 
     // If the patch matches changes in response mapping (Old format),
     // then there is a change in pp's response mapping
-    if (!updates.responseMapping && pathRegex.oldResponseMapping.test(path)) {
+    if (!updates.responseMapping && flowPatchRegex.oldResponseMapping.test(path)) {
       // Extract resourceIndex from the path
       const [resourceIndex] = path.match(/[0-9]+/);
 
@@ -262,6 +287,14 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
           resourceIndex: parseInt(resourceIndex, 10),
         };
       }
+    }
+
+    if (!updates.router && flowPatchRegex.routerUpdate.test(path)) {
+      // Extract routerIndex from the path
+      updates.router = {
+        updated: true,
+        routerIndex: +path.match(/[0-9]/)[0],
+      };
     }
   });
 

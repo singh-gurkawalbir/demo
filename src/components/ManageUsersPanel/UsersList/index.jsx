@@ -49,7 +49,7 @@ export default function UsersList({ integrationId, childId, className }) {
 
   return (
     <>
-      <LoadResources required integrationId={integrationId} resources={requiredResources}>
+      <LoadResources required resources={requiredResources}>
         <ResourceTable
           resources={users}
           className={className}

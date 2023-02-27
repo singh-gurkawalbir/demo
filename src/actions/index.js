@@ -235,6 +235,8 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
+  updatedVersion: () => action(actionTypes.CONNECTION.UPDATED_VERSION),
+  clearUpdatedVersion: () => action(actionTypes.CONNECTION.CLEAR_UPDATED_VERSION),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -322,8 +324,8 @@ const resource = {
       integrationId,
       isNextPageCollection,
     }),
-  clearCollection: resourceType =>
-    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
+  clearCollection: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType, integrationId }),
   patch: (resourceType, id, patchSet, asyncKey) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>
@@ -1580,6 +1582,7 @@ const flowData = {
       branchIndex,
       responseMapping,
     }),
+  clear: flowId => action(actionTypes.FLOW_DATA.CLEAR, { flowId }),
 };
 const resourceFormSampleData = {
   request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),

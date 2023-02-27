@@ -21,12 +21,14 @@ import {
   generateRulesState,
   generateIOFilterExpression,
   getFilterRuleId,
+  convertBoolean,
 } from '../AFE/Editor/panels/Filter/util';
 import OperandSettingsDialog from '../AFE/Editor/panels/Filter/OperandSettingsDialog';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
-import { safeParse, isNumber } from '../../utils/string';
+import { isNumber, safeParse } from '../../utils/string';
+import { message } from '../../utils/messageStore';
 
 const defaultData = {};
 
@@ -68,11 +70,11 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   }, [dispatch, type, position, editorId]);
 
   const patchEditorValidation = useCallback(
-    (isInvalid, error) => {
+    error => {
       const featurePatch = {
-        isInvalid,
+        isInvalid: !!error?.length,
         error,
-        disablePreview: isInvalid,
+        disablePreview: !!error?.length,
       };
 
       if (error) {
@@ -148,8 +150,9 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   };
 
   const handleFilterRulesChange = () => {
-    patchEditorValidation(!isValid());
     if (isValid()) {
+      // reset editor errors
+      patchEditorValidation();
       const rule = getRules();
 
       handlePatchEditor(rule);
@@ -176,7 +179,11 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
           valueField.val(rulesState[ruleId].data.lhs.value).trigger('input');
         }
-        valueField.off('focusout').on('focusout', () => {
+        valueField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
+        valueField.off('change').on('change', () => {
           if (
             rule.operator &&
             (rule.operator.type === 'is_empty' ||
@@ -208,9 +215,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
             .trigger('input');
         }
+        expressionField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         expressionField
-          .off('focusout')
-          .on('focusout', () => handleFilterRulesChange());
+          .off('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -262,7 +273,11 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     const valueField = rule.$el.find(`[name=${name}]`);
 
-    valueField.off('focusout').on('focusout', () => handleFilterRulesChange());
+    valueField.on(
+      'validationError.queryBuilder',
+      (_1, _2, error) => patchEditorValidation(error)
+    );
+    valueField.off('change').on('change', () => handleFilterRulesChange());
   };
   const updateUIForRHSRule = ({ name, rule = {} }) => {
     function updateUIForField(rule) {
@@ -292,7 +307,10 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
               .trigger('change');
           });
         }
-
+        field.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         field.off('change').on('change', () => handleFilterRulesChange());
       }
     }
@@ -318,10 +336,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
             .trigger('input');
         }
-
+        expressionField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         expressionField
-          .off('focusout')
-          .on('focusout', () => handleFilterRulesChange());
+          .off('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -353,6 +374,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   };
 
   const validateRule = rule => {
+    const arithmeticOperators = [
+      'add',
+      'subtract',
+      'divide',
+      'multiply',
+      'modulo',
+      'ceiling',
+      'floor',
+      'number',
+      'abs',
+    ];
     const r = rule.data;
     const toReturn = {
       isValid: true,
@@ -366,29 +398,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
+          toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
         [op] = JSON.parse(r.lhs.expression);
 
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-            'abs',
-          ].includes(op)
-        ) {
+        if (arithmeticOperators.includes(op)) {
           r.lhs.dataType = 'number';
         } else if (op === 'epochtime') {
           r.lhs.dataType = 'epochtime';
@@ -410,29 +430,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
+          toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
         [op] = JSON.parse(r.rhs.expression);
 
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-            'abs',
-          ].includes(op)
-        ) {
+        if (arithmeticOperators.includes(op)) {
           r.rhs.dataType = 'number';
         } else if (op === 'epochtime') {
           r.rhs.dataType = 'epochtime';
@@ -459,12 +467,33 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       if ((typeRhs === 'value' && dataTypeRhs === 'number' && !isNumber(valueRhs)) ||
           (typeLhs === 'value' && dataTypeLhs === 'number' && !isNumber(valueLhs))) {
         toReturn.isValid = false;
-        toReturn.error = 'Value should have correct data type';
+        toReturn.error = message.FILTER_PANEL.INVALID_DATATYPE;
 
         return toReturn;
       }
-    }
 
+      if (typeRhs === 'value' && dataTypeRhs === 'boolean') {
+        const convertedValue = convertBoolean(valueRhs);
+
+        if (typeof convertedValue !== 'boolean') {
+          toReturn.isValid = false;
+          toReturn.error = convertedValue;
+
+          return toReturn;
+        }
+      }
+
+      if (typeLhs === 'value' && dataTypeLhs === 'boolean') {
+        const convertedValue = convertBoolean(valueLhs);
+
+        if (typeof convertedValue !== 'boolean') {
+          toReturn.isValid = false;
+          toReturn.error = convertedValue;
+
+          return toReturn;
+        }
+      }
+    }
     /*
       if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
         r.lhs.dataType = r.rhs.dataType = 'epochtime'
@@ -472,7 +501,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       */
     if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
       toReturn.isValid = false;
-      toReturn.error = 'Data types of both the operands should match.';
+      toReturn.error = message.FILTER_PANEL.INVALID_DATATYPES_OPERANDS;
     }
 
     if (!toReturn.isValid) {
@@ -481,7 +510,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
       toReturn.isValid = false;
-      toReturn.error = 'Please select left operand.';
+      toReturn.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
     }
 
     if (!toReturn.isValid) {
@@ -490,7 +519,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
       toReturn.isValid = false;
-      toReturn.error = 'Please select right operand.';
+      toReturn.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
     }
 
     if (!toReturn.isValid) {
@@ -764,8 +793,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             const vr = validateRule(rule);
 
             if (!vr.isValid) {
-              patchEditorValidation(true, vr.error);
-
               return vr.error;
             }
 
@@ -776,7 +803,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             if (lhsValue && rhsValue) {
               return true;
             }
-            patchEditorValidation(true, 'Error');
 
             return 'Error';
           },
@@ -821,6 +847,10 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
           rules,
         });
       }
+      qbContainer.on(
+        'validationError.queryBuilder',
+        (_1, _2, error) => patchEditorValidation(error)
+      );
       qbContainer
         .off('rulesChanged.queryBuilder')
         .on('rulesChanged.queryBuilder', () => {
@@ -887,7 +917,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         // eslint-disable-next-line camelcase
           const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-          if (state.data.rhs.type !== 'value' || state.data.rhs.value || state.data.rhs.value === 0 || isSingleInputOperator) return;
+          if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
 
           const $emptyRule = state.rule;
 
@@ -896,8 +926,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         }
       });
     }
-    // validate the query builder on initial render
-    isValid();
     // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
     // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
     // eslint-disable-next-line react-hooks/exhaustive-deps

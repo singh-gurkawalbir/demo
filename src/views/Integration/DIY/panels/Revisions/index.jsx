@@ -127,10 +127,12 @@ export default function Revisions({ integrationId }) {
   }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
   useEffect(() => {
-    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
+    if (!hasMonitorLevelAccess) {
+      dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
 
-    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
-  }, [dispatch, integrationId]);
+      return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
+    }
+  }, [dispatch, hasMonitorLevelAccess, integrationId]);
 
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
@@ -174,7 +176,7 @@ export default function Revisions({ integrationId }) {
       </PanelHeader>
       <RevisionFilters />
       <RevisionsList integrationId={integrationId} />
-      <LoadResources integrationId={integrationId} resources="flows,integrations">
+      <LoadResources resources="flows,integrations">
         <DrawerDeclarations
           integrationId={integrationId}
           hasMonitorLevelAccess={hasMonitorLevelAccess}

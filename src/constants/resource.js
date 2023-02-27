@@ -56,7 +56,6 @@ export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
 export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants', 'tree/metadata']);
 
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'licenses',
   'preferences',
   'profile',
   'published',
@@ -265,3 +264,5 @@ export const OPEN_ERRORS_VIEW_TYPES = {
   SPLIT: 'split', // new view
   LIST: 'list', // old view
 };
+
+export const RESOURCE_DEPENDENCIES = { uninstall2: ['flows', 'exports', 'imports', 'connections', 'integrations', 'tree/metadata', 'asynchelpers', 'scripts']};
