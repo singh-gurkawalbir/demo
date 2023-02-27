@@ -2107,6 +2107,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               assistantData,
             });
 
+            if (luEndpoint.url?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
             lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
@@ -2394,7 +2395,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         }); /* indices should be false to handle IO-1776 */
 
         if (queryString) {
-          lookupOperationRelativeURI += `?${queryString}`;
+          lookupOperationRelativeURI += (lookupOperationRelativeURI?.includes('?') ? '&' : '?') + queryString;
         }
       } else if (luConfig.method === 'POST') {
         luConfig.postBody = lookupQueryParams;
