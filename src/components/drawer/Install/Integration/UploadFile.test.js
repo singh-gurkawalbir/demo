@@ -67,7 +67,7 @@ describe('UploadFile tests', () => {
     const input = screen.getByLabelText(/Choose file/i);
     const file = new File([new ArrayBuffer(1)], 'mockUpload.zip', {type: 'application/zip'});
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
     await waitFor(() => expect(input.files).toHaveLength(1));
     await waitFor(() => expect(input.files[0]).toEqual(file));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.previewZip(file)));

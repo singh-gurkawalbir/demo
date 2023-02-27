@@ -20,6 +20,20 @@ initialStore.getState().session.connectors['2345678'] = {
 };
 const mockDispatch = jest.fn();
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 jest.mock('react-redux', () => ({
   __esModule: true,
   ...jest.requireActual('react-redux'),

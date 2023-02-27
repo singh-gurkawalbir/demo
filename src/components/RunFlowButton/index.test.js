@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as redux from 'react-redux';
 import RunFlowButton from '.';
@@ -243,7 +243,8 @@ describe('runflowComponent UI testing', () => {
 
     jest.spyOn(input, 'click').mockImplementation();
 
-    userEvent.upload(input, files);
+    // userEvent.upload(input, files);
+    fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
 
     const m = Object.keys(store?.getState()?.session?.fileUpload);
@@ -271,7 +272,8 @@ describe('runflowComponent UI testing', () => {
 
     jest.spyOn(input, 'click').mockImplementation();
 
-    userEvent.upload(input, files);
+    // userEvent.upload(input, files);
+    fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
 
     const m = Object.keys(store?.getState()?.session?.fileUpload);
@@ -300,7 +302,8 @@ describe('runflowComponent UI testing', () => {
 
     jest.spyOn(input, 'click').mockImplementation();
 
-    userEvent.upload(input, files);
+    // userEvent.upload(input, files);
+    fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
 
     const m = Object.keys(store?.getState()?.session?.fileUpload);

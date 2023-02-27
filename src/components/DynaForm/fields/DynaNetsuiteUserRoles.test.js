@@ -8,6 +8,24 @@ import { getCreatedStore } from '../../../store';
 
 const onFieldChange = jest.fn();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('tests for netsuiteUserRoles in netsuite connection', () => {
   afterEach(() => {
     onFieldChange.mockClear();
@@ -66,10 +84,10 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableEnvironments).toEqual([
-      'Please select...',
-      'beta...',
-      'production...',
-      'sandbox...',
+      'Please select',
+      'beta',
+      'production',
+      'sandbox',
     ]);
 
     await userEvent.click(screen.getByRole('menuitem', {name: 'beta'}));
@@ -118,9 +136,9 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableEnvironments).toEqual([
-      'Please select...',
-      'beta...',
-      'sandbox...',
+      'Please select',
+      'beta',
+      'sandbox',
     ]);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'sandbox', true);
   });
@@ -159,8 +177,8 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableEnvironments).toEqual([
-      'Please select...',
-      'production...',
+      'Please select',
+      'production',
     ]);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'production', true);
   });
@@ -211,8 +229,8 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     const availableAccounts = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableAccounts).toEqual([
-      'Please select...',
-      'Celigo Epicenter...',
+      'Please select',
+      'Celigo Epicenter',
     ]);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TSTDRV12345', true);
   });
@@ -267,8 +285,8 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     const availableAccounts = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableAccounts).toEqual([
-      'Please select...',
-      'Administrator...',
+      'Please select',
+      'Administrator',
     ]);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, '1074', true);
   });

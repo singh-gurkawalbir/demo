@@ -22,6 +22,24 @@ const props = {
   resourceType: 'imports',
 };
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initLookupDrawer(props = {}, pathname = manageLookupURL, renderFun) {
   const initialStore = reduxStore;
 
@@ -115,8 +133,8 @@ describe('LookupDrawer tests', () => {
     await userEvent.click(dynamicOption);
     await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     await userEvent.click(screen.getByRole('menuitem', {name: 'GET'}));
-    userEvent.type(screen.getAllByRole('textbox')[1], 'data.0.id');
-    userEvent.type(screen.getAllByRole('textbox')[2], 'newLookup');
+    await userEvent.type(screen.getAllByRole('textbox')[1], 'data.0.id');
+    await userEvent.type(screen.getAllByRole('textbox')[2], 'newLookup');
     await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockSave).toHaveBeenCalledWith([{
       allowFailures: false,
@@ -134,9 +152,9 @@ describe('LookupDrawer tests', () => {
 
     await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     await userEvent.click(screen.getByRole('menuitem', {name: 'GET'}));
-    userEvent.type(screen.getAllByRole('textbox')[0], '/persons');
-    userEvent.type(screen.getAllByRole('textbox')[1], 'data.0.name');
-    userEvent.type(screen.getAllByRole('textbox')[2], 'lookup1');
+    await userEvent.type(screen.getAllByRole('textbox')[0], '/persons');
+    await userEvent.type(screen.getAllByRole('textbox')[1], 'data.0.name');
+    await userEvent.type(screen.getAllByRole('textbox')[2], 'lookup1');
     await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(screen.getByRole('heading', {name: 'Lookup with same name is already present!'})).toBeInTheDocument();
   });
@@ -153,8 +171,8 @@ describe('LookupDrawer tests', () => {
 
     await initLookupDrawer({...props, lookups: [lookupObj]}, editLookupURL);
     expect(screen.getByRole('heading', {name: 'Edit lookup'})).toBeInTheDocument();
-    userEvent.clear(screen.getAllByRole('textbox')[0]);
-    userEvent.keyboard('/users.json');
+    await userEvent.clear(screen.getAllByRole('textbox')[0]);
+    await userEvent.keyboard('/users.json');
     await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockSave).toHaveBeenCalledWith([{...lookupObj, relativeURI: '/users.json'}]);
   });

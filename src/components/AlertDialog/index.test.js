@@ -13,6 +13,20 @@ import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import actions from '../../actions';
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 async function initActionButton({
   defaultAShareId = 'own',
   accountSSORequired = false,

@@ -1,5 +1,5 @@
 
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -724,7 +724,8 @@ describe('testsuite for JobErrorTable', () => {
 
     await userEvent.click(uploadProcessedErrorsButtonNode);
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(screen.getByText(/confirm upload/i)).toBeInTheDocument();
     const uploadButtonNode = screen.getByRole('button', {name: 'Upload'});
 
@@ -778,7 +779,8 @@ describe('testsuite for JobErrorTable', () => {
 
     await userEvent.click(uploadProcessedErrorsButtonNode);
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.processFile({
       fileId: 'somegeneratedID',
       file,
@@ -819,7 +821,8 @@ describe('testsuite for JobErrorTable', () => {
 
     await userEvent.click(uploadProcessedErrorsButtonNode);
 
-    userEvent.upload(input, '');
+    // userEvent.upload(input, '');
+    fireEvent.change(input, { target: { files: { item: () => '', length: 1, 0: '' } } });
     expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.file.processFile({}));
     expect(screen.queryByText(/confirm upload/i)).not.toBeInTheDocument();
   });

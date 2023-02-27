@@ -105,7 +105,7 @@ describe('dynaReferencedFields UI tests', () => {
     await userEvent.click(editButton);
     const inputField = screen.getByRole('textbox');
 
-    userEvent.type(inputField, 'a');
+    await userEvent.type(inputField, 'a');
     await userEvent.click(screen.getByText('Save'));
     expect(mockonFieldChange).toHaveBeenCalled();
   });

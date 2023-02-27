@@ -20,7 +20,7 @@ describe('Testsuite for DynaTypeableSelect', () => {
     mockOnBlur.mockClear();
     mockOnTouch.mockClear();
   });
-  test('should test the focus in and focus out when focused on a textarea', () => {
+  test('should test the focus in and focus out when focused on a textarea', async () => {
     jest.spyOn(DynaText, 'default').mockImplementation(props => (
       <div>
         <div>id = {props.id}</div>
@@ -57,14 +57,14 @@ describe('Testsuite for DynaTypeableSelect', () => {
     };
 
     initDynaTypeableSelect({props});
-    fireEvent.focusIn(screen.getByTestId('someinput'));
+    await fireEvent.focusIn(screen.getByTestId('someinput'));
     expect(mockOnTouch).toHaveBeenCalledWith('123');
     expect(screen.getByText('test value')).toBeInTheDocument();
-    fireEvent.focusOut(document.querySelector('input[id="react-select-2-input"]'));
+    await fireEvent.focusOut(document.querySelector('input[id="react-select-2-input"]'));
     expect(screen.queryByText('test value')).not.toBeInTheDocument();
     expect(document.querySelector('input[id="react-select-2-input"]')).not.toBeInTheDocument();
   });
-  test('should test the focus in when we focused on a input and it should result to not call mockOnTouch', () => {
+  test('should test the focus in when we focused on a input and it should result to not call mockOnTouch', async () => {
     jest.spyOn(DynaText, 'default').mockImplementationOnce(props => (
       <div>
         <div>id = {props.id}</div>
@@ -101,7 +101,7 @@ describe('Testsuite for DynaTypeableSelect', () => {
     };
 
     initDynaTypeableSelect({props});
-    fireEvent.focusIn(screen.getByTestId('someinput'));
+    await fireEvent.focusIn(screen.getByTestId('someinput'));
     expect(mockOnTouch).not.toHaveBeenCalledWith('123');
   });
   test('should test the focus in when focused on a textarea and should test the value', async () => {
@@ -148,7 +148,7 @@ describe('Testsuite for DynaTypeableSelect', () => {
 
     initDynaTypeableSelect({props});
     expect(screen.getByText(/value = label_name/i)).toBeInTheDocument();
-    fireEvent.focusIn(screen.getByTestId('someinput'));
+    await fireEvent.focusIn(screen.getByTestId('someinput'));
     const textBoxNode = screen.getByRole('textbox');
 
     expect(textBoxNode).toBeInTheDocument();

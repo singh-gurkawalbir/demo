@@ -15,6 +15,20 @@ const mockDispatch = jest.fn(actions => {
   }
 });
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 jest.mock('react-redux', () => ({
   __esModule: true,
   ...jest.requireActual('react-redux'),

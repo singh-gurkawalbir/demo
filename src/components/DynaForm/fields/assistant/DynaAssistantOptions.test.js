@@ -10,6 +10,24 @@ import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaDate(props = {}) {
   initialStore.getState().session.form = {'imports-5bf18b09294767270c62fad9': {
     fields: {

@@ -59,15 +59,15 @@ describe('testsuite for Job Dashboard Filters', () => {
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('04 Dec 1995 00:12:00 GMT').getTime());
+    // jest.useFakeTimers('modern');
+    // jest.setSystemTime(new Date('04 Dec 1995 00:12:00 GMT').getTime());
   });
 
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
     mockActionClick.mockClear();
-    jest.useRealTimers();
+    // jest.useRealTimers();
   });
   test('should test the disabled retry and disabled resolve button by setting disableRetry and disableResolve as true', async () => {
     const mockActionClick = jest.fn();

@@ -23,7 +23,7 @@ describe('virtualizedTable UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test items length is lesser than number of rows provided valid item in all the rows', () => {
+  test('should test items length is lesser than number of rows provided valid item in all the rows', async () => {
     const props = {
       items: [{key: 'new-wgqeyV1KO--1899857161', value: {export: 'id', import: 'Id'}},
         {key: 'new-wgqeyV1KO--1899857161', value: {export: 'name', import: 'Name'}},
@@ -45,11 +45,11 @@ describe('virtualizedTable UI test cases', () => {
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
     const inputs = screen.getAllByRole('textbox');
 
-    fireEvent.change(inputs[0], { target: { value: '' } });
-    userEvent.type(inputs[0], 'idchanged');
+    await fireEvent.change(inputs[0], { target: { value: '' } });
+    await userEvent.type(inputs[0], 'idchanged');
     expect(screen.getByDisplayValue('idchanged')).toBeInTheDocument();
   });
-  test('should test items length is greater than number of rows provided invalid item in one row', () => {
+  test('should test items length is greater than number of rows provided invalid item in one row', async () => {
     const props = {
       items: [{key: 'new-wgqeyV1KO--1899857161', value: {export: 'id', import: 'Id'}},
         {key: 'new-wgqeyV1KO--1899857161', value: {export: 'name', import: 'Name'}},
@@ -100,8 +100,8 @@ describe('virtualizedTable UI test cases', () => {
     expect(screen.getByDisplayValue('Address')).toBeInTheDocument();
     const inputs = screen.getAllByRole('textbox');
 
-    fireEvent.change(inputs[0], { target: { value: '' } });
-    userEvent.type(inputs[0], 'Typechanged');
+    await fireEvent.change(inputs[0], { target: { value: '' } });
+    await userEvent.type(inputs[0], 'Typechanged');
     expect(screen.getByDisplayValue('Typechanged')).toBeInTheDocument();
   });
 

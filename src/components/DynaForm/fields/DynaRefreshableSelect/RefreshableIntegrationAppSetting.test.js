@@ -9,6 +9,24 @@ import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initRefreshableIntegrationAppSetting(props = {}) {
   initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
     'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {

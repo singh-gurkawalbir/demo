@@ -4,6 +4,24 @@ import userEvent from '@testing-library/user-event';
 import TableRow from './index';
 import { renderWithProviders } from '../../../../../../test/test-utils';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initTableRow(props = {}) {
   const ui = (
     <TableRow
@@ -44,9 +62,9 @@ describe('Table Row UI test cases', () => {
     const inputs = screen.getAllByRole('textbox');
 
     fireEvent.change(inputs[0], { target: { value: '' } });
-    userEvent.type(inputs[0], 'Name');
+    await userEvent.type(inputs[0], 'Name');
     fireEvent.change(inputs[1], { target: { value: '' } });
-    userEvent.type(inputs[1], 'name');
+    await userEvent.type(inputs[1], 'name');
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
     expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
@@ -217,10 +235,10 @@ describe('Table Row UI test cases', () => {
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'N...',
-        'X...',
-        'Y...',
+        'Please select',
+        'N',
+        'X',
+        'Y',
       ]
     );
     await userEvent.click(menuItems[2]);
@@ -280,10 +298,10 @@ describe('Table Row UI test cases', () => {
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'exportop1...',
-        'exportop2...',
-        'exportop3...',
+        'Please select',
+        'exportop1',
+        'exportop2',
+        'exportop3',
       ]
     );
     await userEvent.click(menuItems[2]);

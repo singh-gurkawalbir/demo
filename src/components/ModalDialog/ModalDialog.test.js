@@ -1,7 +1,21 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModalDialog from '.';
+
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
 
 describe('modalDialog UI tests', () => {
   test('should not show the modal dialog when the prop "show" is false', () => {
@@ -30,7 +44,7 @@ describe('modalDialog UI tests', () => {
   test('should click the close button', async () => {
     const onclose = jest.fn();
 
-    render(
+    await render(
       <ModalDialog show onClose={onclose}>
         <div>child-1</div>
         <div>child-2</div>
@@ -42,9 +56,11 @@ describe('modalDialog UI tests', () => {
 
     const button = screen.getByRole('button');
 
-    await userEvent.click(button);
+    await waitFor(async () => {
+      await userEvent.click(button);
 
-    expect(onclose).toHaveBeenCalledTimes(1);
+      expect(onclose).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('should disable the close button', () => {

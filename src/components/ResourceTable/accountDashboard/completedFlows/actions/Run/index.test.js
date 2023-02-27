@@ -33,7 +33,7 @@ async function renderFunction() {
 
 describe('run flow action test cases', () => {
   test('should click on RunFlow button', async () => {
-    renderFunction();
+    await renderFunction();
     await userEvent.click(screen.getByText('Run flow'));
     expect(screen.getByText('flowId: someId true')).toBeInTheDocument();
   });

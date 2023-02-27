@@ -137,7 +137,7 @@ describe('LogsDrawerActions tests', () => {
   let dateSpy;
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
     dateSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate);
 
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');

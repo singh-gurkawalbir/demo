@@ -90,10 +90,10 @@ describe('Testsuite for Multi Select Application', () => {
     const inputButtonNode = document.querySelector('input');
 
     expect(inputButtonNode).toBeInTheDocument();
-    userEvent.type(inputButtonNode, 'acce');
+    await userEvent.type(inputButtonNode, 'acce');
     await userEvent.click(screen.getByText('Accelo'));
     expect(screen.getByText('accelo')).toBeInTheDocument();
-    userEvent.type(inputButtonNode, 'tes');
+    await userEvent.type(inputButtonNode, 'tes');
     await userEvent.click(screen.getByText('Test'));
     expect(screen.getByText('test')).toBeInTheDocument();
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['accelo', 'test']);
@@ -120,7 +120,7 @@ describe('Testsuite for Multi Select Application', () => {
 
     expect(inputButtonNode).toBeInTheDocument();
     expect(inputButtonNode).toHaveValue('');
-    userEvent.type(inputButtonNode, 'acce');
+    await userEvent.type(inputButtonNode, 'acce');
     await userEvent.click(screen.getByText('Accelo'));
     expect(screen.getByText('accelo')).toBeInTheDocument();
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['accelo']);
@@ -196,7 +196,7 @@ describe('Testsuite for Multi Select Application', () => {
 
     expect(inputButtonNode).toBeInTheDocument();
     expect(inputButtonNode).toHaveValue('');
-    userEvent.type(inputButtonNode, 'acce');
+    await userEvent.type(inputButtonNode, 'acce');
     await userEvent.click(screen.getByText('Accelo'));
     expect(screen.getByText('accelo')).toBeInTheDocument();
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['accelo']);
@@ -222,9 +222,9 @@ describe('Testsuite for Multi Select Application', () => {
     const inputButtonNode = document.querySelector('input');
 
     expect(inputButtonNode).toBeInTheDocument();
-    userEvent.type(inputButtonNode, 'tes');
+    await userEvent.type(inputButtonNode, 'tes');
     await userEvent.click(screen.getByText('Test'));
-    userEvent.type(inputButtonNode, 'acce');
+    await userEvent.type(inputButtonNode, 'acce');
     const doneButton = screen.getByRole('button', {name: 'Done Button'});
 
     expect(doneButton).toBeInTheDocument();
@@ -252,7 +252,7 @@ describe('Testsuite for Multi Select Application', () => {
     const inputButtonNode = document.querySelector('input');
 
     expect(inputButtonNode).toBeInTheDocument();
-    userEvent.type(inputButtonNode, 'tes');
+    await userEvent.type(inputButtonNode, 'tes');
     expect(screen.getByText(/mock application image/i)).toBeInTheDocument();
     expect(screen.getByText(/type = test/i)).toBeInTheDocument();
     await userEvent.click(screen.getByText('Test'));
@@ -279,7 +279,7 @@ describe('Testsuite for Multi Select Application', () => {
     const inputButtonNode = document.querySelector('input');
 
     expect(inputButtonNode).toBeInTheDocument();
-    userEvent.type(inputButtonNode, 'acce');
+    await userEvent.type(inputButtonNode, 'acce');
     expect(screen.getByText(/mock application image/i)).toBeInTheDocument();
     expect(screen.getByText(/type = rest/i)).toBeInTheDocument();
     await userEvent.click(screen.getByText('Accelo'));

@@ -143,12 +143,12 @@ describe('Testsuite for Canvas Controls', () => {
     expect(mockToggleMiniMap).toHaveBeenCalled();
   });
   test('should test the camvas controls when show mini map is set to false and click on hide map', async () => {
-    initCanvasControls({showMiniMap: false, toggleMiniMap: mockToggleMiniMap});
+    await initCanvasControls({showMiniMap: false, toggleMiniMap: mockToggleMiniMap});
     expect(screen.getByText(/showinteractive=/i)).toBeInTheDocument();
     expect(screen.getByText(/showZoom=/i)).toBeInTheDocument();
     expect(screen.getByText(/showFitView=/i)).toBeInTheDocument();
     expect(screen.getByText(/mock toggle map icon/i)).toBeInTheDocument();
-    const showMapButtonNode = screen.getByRole('button', {
+    const showMapButtonNode = await screen.findByRole('button', {
       name: /show map/i,
     });
 

@@ -83,7 +83,7 @@ describe('uI test cases for create pull', () => {
     jest.resetAllMocks();
   });
   test('should push createpull URL when status is set to failed', async () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed', integrationId: '5e44efa28015c9464272256f'});
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed', integrationId: '5e44efa28015c9464272256f'});
     const createpullButton = screen.getByText('Create pull');
 
     await userEvent.click(createpullButton);

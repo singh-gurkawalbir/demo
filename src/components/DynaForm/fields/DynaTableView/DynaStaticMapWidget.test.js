@@ -13,6 +13,25 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatchFn,
 }));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const initialStore = reduxStore;
 
 function initDynaStaticMapWidget(props = {}) {
@@ -75,8 +94,8 @@ describe('DynaStaticMapWidget UI test cases', () => {
 
     const inputs = screen.getAllByRole('textbox');
 
-    fireEvent.change(inputs[0], { target: { value: '' } });
-    userEvent.type(inputs[0], 'Typechanged');
+    await fireEvent.change(inputs[0], { target: { value: '' } });
+    await userEvent.type(inputs[0], 'Typechanged');
     expect(screen.getByDisplayValue('Typechanged')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: { Typechanged: 'samplename', id: 'Id' },
@@ -168,7 +187,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
 
     const inputs = screen.getAllByRole('textbox');
 
-    userEvent.type(inputs[0], 'RandomText');
+    await userEvent.type(inputs[0], 'RandomText');
     expect(screen.getByDisplayValue('RandomText')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: {},
@@ -223,9 +242,9 @@ describe('DynaStaticMapWidget UI test cases', () => {
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'exportop1...',
-        'exportop2...',
+        'Please select',
+        'exportop1',
+        'exportop2',
       ]
     );
     await userEvent.click(screen.getAllByRole('menuitem')[0]);

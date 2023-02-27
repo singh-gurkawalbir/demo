@@ -7,7 +7,21 @@ import { renderWithProviders } from '../../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
-function initSettingsDialog(props = {}) {
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
+async function initSettingsDialog(props = {}) {
   initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
@@ -22,8 +36,8 @@ function initSettingsDialog(props = {}) {
 }
 
 describe('operandSettingsDialog UI tests', () => {
-  test('should pass the initial render', () => {
-    initSettingsDialog({disabled: false, onClose: jest.fn()});
+  test('should pass the initial render', async () => {
+    await initSettingsDialog({disabled: false, onClose: jest.fn()});
     expect(screen.getByRole('radio', {name: 'Value'})).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'Field'})).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'Expression'})).toBeInTheDocument();
@@ -31,7 +45,7 @@ describe('operandSettingsDialog UI tests', () => {
     expect(screen.getByText('String')).toBeInTheDocument();
   });
   test('should render the Datatype dropdown when operand type is value', async () => {
-    initSettingsDialog({disabled: false, onClose: jest.fn()});
+    await initSettingsDialog({disabled: false, onClose: jest.fn()});
     expect(screen.queryByText('Boolean')).toBeNull();
     expect(screen.queryByText('Date Time')).toBeNull();
     expect(screen.queryByText('Number')).toBeNull();
@@ -42,7 +56,7 @@ describe('operandSettingsDialog UI tests', () => {
     expect(screen.getByText('Number')).toBeInTheDocument();
   });
   test('should render both dataType and Apply Functions dropdown when Operand type is field', async () => {
-    initSettingsDialog({disabled: false, ruleData: {dataType: 'string'}, onClose: jest.fn()});
+    await initSettingsDialog({disabled: false, ruleData: {dataType: 'string'}, onClose: jest.fn()});
     await userEvent.click(screen.getByRole('radio', {name: 'Field'}));
     await waitFor(() => expect(screen.getByRole('radio', {name: 'Field'})).toBeChecked());
 
@@ -66,7 +80,7 @@ describe('operandSettingsDialog UI tests', () => {
   test('should render a different dropdown for ApplyFunctions field when dataType is number', async () => {
     const mockOnClose = jest.fn();
 
-    initSettingsDialog({disabled: false, ruleData: {dataType: 'number'}, onClose: mockOnClose});
+    await initSettingsDialog({disabled: false, ruleData: {dataType: 'number'}, onClose: mockOnClose});
     await userEvent.click(screen.getByRole('radio', {name: 'Field'}));
     await waitFor(() => expect(screen.getByRole('radio', {name: 'Field'})).toBeChecked());
     const selectButtons = screen.getAllByText('Please select');

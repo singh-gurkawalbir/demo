@@ -48,9 +48,9 @@ describe('dynaCSVColumnMapper UI test cases', () => {
     await userEvent.click(screen.getByText('Please enter a value'));
     const input = screen.getAllByRole('textbox');
 
-    userEvent.type(input[6], 'Payment Amount');
-    userEvent.type(input[7], 'CHECK AMOUNT');
-    userEvent.type(input[8], '/checkamount/i');
+    await userEvent.type(input[6], 'Payment Amount');
+    await userEvent.type(input[7], 'CHECK AMOUNT');
+    await userEvent.type(input[8], '/checkamount/i');
     expect(screen.getByText('Payment Amount')).toBeInTheDocument();
     expect(screen.getByText('CHECK AMOUNT')).toBeInTheDocument();
     expect(screen.getByText('/checkamount/i')).toBeInTheDocument();

@@ -17,6 +17,24 @@ jest.mock('../../Form/FormContext', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('test suite for DynaNetsuiteAuthType field', () => {
   test('should not show basic option for version 2020.2', async () => {
     mockWsdlVersion = '2020.2';
@@ -39,9 +57,9 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     const options = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(options).toEqual([
-      'Please select...',
-      'Token Based Auth (Automatic)...',
-      'Token Based Auth (Manual)...',
+      'Please select',
+      'Token Based Auth (Automatic)',
+      'Token Based Auth (Manual)',
     ]);
   });
 
@@ -63,10 +81,10 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     const options = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(options).toEqual([
-      'Please select...',
-      'Basic (To be deprecated - Do not use)...',
-      'Token Based Auth (Automatic)...',
-      'Token Based Auth (Manual)...',
+      'Please select',
+      'Basic (To be deprecated - Do not use)',
+      'Token Based Auth (Automatic)',
+      'Token Based Auth (Manual)',
     ]);
   });
 
@@ -117,10 +135,10 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     const options = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(options).toEqual([
-      'Please select...',
-      'Basic (To be deprecated - Do not use)...',
-      'Token Based Auth (Automatic)...',
-      'Token Based Auth (Manual)...',
+      'Please select',
+      'Basic (To be deprecated - Do not use)',
+      'Token Based Auth (Automatic)',
+      'Token Based Auth (Manual)',
     ]);
     await userEvent.click(screen.getByRole('menuitem', {name: 'Token Based Auth (Manual)'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'token');
@@ -133,9 +151,9 @@ describe('test suite for DynaNetsuiteAuthType field', () => {
     const newOptions = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(newOptions).toEqual([
-      'Please select...',
-      'Token Based Auth (Automatic)...',
-      'Token Based Auth (Manual)...',
+      'Please select',
+      'Token Based Auth (Automatic)',
+      'Token Based Auth (Manual)',
     ]);
   });
 });

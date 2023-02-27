@@ -7,6 +7,20 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 const onClose = jest.fn();
 const onSubmit = jest.fn();
 
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('operandSettingsDialog UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();

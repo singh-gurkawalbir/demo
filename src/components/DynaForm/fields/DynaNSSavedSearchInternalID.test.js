@@ -19,7 +19,7 @@ describe('test suite for saved search internal id field', () => {
     mockOpenExternalUrl.mockClear();
   });
 
-  test('should render the field accordingly', () => {
+  test('should render the field accordingly', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'dynaNssaved',
@@ -36,24 +36,24 @@ describe('test suite for saved search internal id field', () => {
       _id: props.connectionId,
     }];
 
-    renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
+    await renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
     expect(document.querySelector('label')).toHaveTextContent('Search internal ID *');
     const inputEle = screen.getByRole('textbox');
 
     expect(inputEle).toHaveAttribute('placeholder', props.placeholder);
     expect(inputEle).toBeEnabled();
-    userEvent.type(inputEle, value);
+    await userEvent.type(inputEle, value);
     Array.from(value).forEach(key => expect(onFieldChange).toHaveBeenCalledWith(props.id, key));
   });
 
-  test('should show the error message in case of invalid data', () => {
+  test('should show the error message in case of invalid data', async () => {
     const props = {
       id: 'openResource',
       isValid: false,
       errorMessages: 'Please provide a valid id',
     };
 
-    renderWithProviders(<DynaNSSavedSearchInternalID {...props} />);
+    await renderWithProviders(<DynaNSSavedSearchInternalID {...props} />);
     expect(screen.getByText(props.errorMessages)).toBeInTheDocument();
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
@@ -80,7 +80,7 @@ describe('test suite for saved search internal id field', () => {
         },
       },
     }];
-    renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
+    await renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
     await userEvent.click(openSavedSearchBtn);
@@ -95,7 +95,7 @@ describe('test suite for saved search internal id field', () => {
       connectionId,
     };
 
-    renderWithProviders(<DynaNSSavedSearchInternalID {...props} />);
+    await renderWithProviders(<DynaNSSavedSearchInternalID {...props} />);
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 
     await userEvent.click(openSavedSearchBtn);

@@ -8,6 +8,25 @@ import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import FormView from './DynaFormView';
 
 const onFieldChange = jest.fn();
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const props = { resourceType: 'imports', id: 'id', label: 'FieldLabel', resourceId: 'imp1', formKey: '_formKey', value: {}, flowId: 'flow1' };
 
 async function initFormView(props) {

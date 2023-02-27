@@ -7,6 +7,24 @@ import { renderWithProviders, reduxStore} from '../../../../../../../../../test/
 
 const initialStore = reduxStore;
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 initialStore.getState().session.mapping = {mapping: {
   flowId: '62f0bdfaf8b63672312bbe36',
   importId: '62e6897976ce554057c0f28f',
@@ -85,7 +103,7 @@ describe('metadata for FTP type file test cases', () => {
     const list = menuItem.map(each => each.textContent);
 
     expect(list).toEqual(
-      ['Please select...', 'Standard...', 'Hard-coded...']
+      ['Please select', 'Standard', 'Hard-coded']
     );
   });
   test('should show handle look up change option for date field should be shown', async () => {

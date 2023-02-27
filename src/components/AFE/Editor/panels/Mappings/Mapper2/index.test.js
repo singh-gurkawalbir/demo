@@ -240,8 +240,8 @@ describe('ewrv', () => {
 
     await userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
 
-    fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
-    fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
+    await fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
+    await fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
     expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toBe(12);
   });
   test('should show message when no destination fiels is matched', () => {

@@ -16,8 +16,8 @@ describe('editableText testing', () => {
 
     const input = screen.getByRole('textbox');
 
-    userEvent.type(input, 'Hello, World!');
-    input.blur();
+    await userEvent.type(input, 'Hello, World!');
+    await input.blur();
     const button2 = screen.getByText('button');
 
     await userEvent.click(button2);
@@ -34,8 +34,8 @@ describe('editableText testing', () => {
 
     const input = screen.getByRole('textbox');
 
-    userEvent.type(input, 'Hello, World!');
-    input.blur();
+    await userEvent.type(input, 'Hello, World!');
+    await input.blur();
     const button2 = screen.getByText('button');
 
     await userEvent.click(button2);
@@ -65,9 +65,9 @@ describe('editableText testing', () => {
 
     const input = screen.getByRole('textbox');
 
-    userEvent.clear(input);
-    userEvent.type(input, 'Hello, World!');
-    input.blur();
+    await userEvent.clear(input);
+    await userEvent.type(input, 'Hello, World!');
+    await input.blur();
     const button2 = screen.getByText('button');
 
     await userEvent.click(button2);
@@ -79,7 +79,7 @@ describe('editableText testing', () => {
       keyCode: 27,
       charCode: 27,
     });
-    input2.blur();
+    await input2.blur();
     const button3 = screen.getByText('button');
 
     await userEvent.click(button3);
@@ -100,16 +100,16 @@ describe('editableText testing', () => {
 
     const input = screen.getByRole('textbox');
 
-    userEvent.clear(input);
-    userEvent.type(input, 'Hello, World!');
-    input.blur();
+    await userEvent.clear(input);
+    await userEvent.type(input, 'Hello, World!');
+    await input.blur();
     const button2 = screen.getByText('button');
 
     await userEvent.click(button2);
     const input2 = screen.getByRole('textbox');
 
     fireEvent.keyDown(input2, {key: 'Enter', code: 'Enter', charCode: 13});
-    input2.blur();
+    await input2.blur();
     expect(onchange).toHaveBeenCalledTimes(2);
   });
 });

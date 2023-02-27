@@ -46,7 +46,7 @@ async function renderFunction() {
 
 describe('edit Flow action test cases', () => {
   test('should click on Edit Flow button', async () => {
-    renderFunction();
+    await renderFunction();
     await userEvent.click(screen.getByText('Edit flow'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/integration_id/flowBuilder/flow_id');
   });

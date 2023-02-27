@@ -1,6 +1,7 @@
 import React from 'react';
 import { screen, cleanup, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 import UsersList from '.';
 import { runServer } from '../../../test/api/server';
 import { mockGetRequestOnce, renderWithProviders } from '../../../test/test-utils';
@@ -20,11 +21,11 @@ describe('users List Test Cases', () => {
       </MemoryRouter>
     );
 
-    store.dispatch(actions.resource.requestCollection('connections'));
+    act(() => { store.dispatch(actions.resource.requestCollection('connections')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.connections).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('notifications'));
+    act(() => { store.dispatch(actions.resource.requestCollection('notifications')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.notifications).toBeDefined());
     const nameText = await screen.findByText('Name');
 

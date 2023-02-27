@@ -41,10 +41,10 @@ describe('DynaStaticMap UI test cases', () => {
     expect(screen.getByDisplayValue('samplename')).toBeInTheDocument();
     const input = screen.getAllByRole('textbox');
 
-    fireEvent.change(input[0], { target: { value: '' } });
-    userEvent.type(input[0], 'Idexport');
-    fireEvent.change(input[1], { target: { value: '' } });
-    userEvent.type(input[1], 'Idimport');
+    await fireEvent.change(input[0], { target: { value: '' } });
+    await userEvent.type(input[0], 'Idexport');
+    await fireEvent.change(input[1], { target: { value: '' } });
+    await userEvent.type(input[1], 'Idimport');
     expect(screen.queryByText('id')).not.toBeInTheDocument();
     expect(screen.queryByText('Id')).not.toBeInTheDocument();
     expect(screen.getByDisplayValue('Idexport')).toBeInTheDocument();

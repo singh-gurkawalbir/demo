@@ -58,7 +58,7 @@ describe('handelbars UI tests', () => {
     initHandlebarsPanel({editorId: 'filecsv'});
     const codePanel = screen.getByTestId('codepanel');
 
-    userEvent.type(codePanel, 'a');
+    await userEvent.type(codePanel, 'a');
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', 'a')));
   });
 });

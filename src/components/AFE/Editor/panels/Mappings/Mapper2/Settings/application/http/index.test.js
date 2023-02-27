@@ -7,6 +7,24 @@ import { renderWithProviders, reduxStore} from '../../../../../../../../../test/
 
 const initialStore = reduxStore;
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 initialStore.getState().session.mapping = {mapping: {
   flowId: '62f0bdfaf8b63672312bbe36',
   importId: '638c33d9720bb0629a05f723',
@@ -82,7 +100,7 @@ describe('application type Http matadata text cases', () => {
     const list = menuItem.map(each => each.textContent);
 
     expect(list).toEqual(
-      ['Please select...', 'Standard...', 'Hard-coded...']
+      ['Please select', 'Standard', 'Hard-coded']
     );
   });
   test('should show all the option for the any non array data type', async () => {
@@ -100,7 +118,7 @@ describe('application type Http matadata text cases', () => {
     const list = menuItem.map(each => each.textContent);
 
     expect(list).toEqual(
-      ['Please select...', 'Standard...', 'Hard-coded...', 'Lookup...', 'Handlebars expression...']
+      ['Please select', 'Standard', 'Hard-coded', 'Lookup', 'Handlebars expression']
     );
     const lookupOption = screen.getByRole('menuitem', {name: 'Lookup'});
 

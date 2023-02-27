@@ -5,6 +5,24 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaAmazonmwsType tests', () => {
   test('should able to test DynaAmazonmwsType with already created resource', async () => {
     const props = {resourceId: '_resourceId'};

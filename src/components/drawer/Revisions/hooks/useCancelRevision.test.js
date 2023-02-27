@@ -9,6 +9,20 @@ import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
 
 const mockClose = jest.fn();
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 const props = { integrationId: '_integrationId', revisionId: '_revId', onClose: mockClose };
 
 const MockComponent = props => {

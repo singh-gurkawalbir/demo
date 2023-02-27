@@ -24,7 +24,7 @@ describe('genericAdaptorNotification ui tests', () => {
     expect(secondMessage).toBeInTheDocument();
   });
 
-  test('should invoke the onClose function on closing the notification', () => {
+  test('should invoke the onClose function on closing the notification', async () => {
     const mockFunc = jest.fn();
 
     renderWithProviders(

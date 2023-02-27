@@ -10,6 +10,25 @@ import WrappedContextConsumer from './DynaHFAssistantOptions';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const mockOnFieldChangeFn = jest.fn();
 const resourceId = '_exportId';
 const resourceType = 'exports';

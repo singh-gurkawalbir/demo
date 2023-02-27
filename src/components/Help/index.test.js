@@ -34,8 +34,10 @@ describe('help UI tests', () => {
     renderWithProviders(<div>exterior<Help {...props} /></div>);
     await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText(/Sample help text/i)).toBeInTheDocument();
-    await userEvent.click(screen.getByText('exterior'));
-    expect(screen.queryByText(/Sample help text/i)).toBeNull();
+    await waitFor(async () => {
+      await userEvent.click(screen.getByText('exterior'));
+      expect(screen.queryByText(/Sample help text/i)).toBeNull();
+    });
   });
   test('should not close arrowpopper when clicked on "NO" or User feedback field', async () => {
     const props = {

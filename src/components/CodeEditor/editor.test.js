@@ -192,12 +192,13 @@ describe('Should test Code Editor', () => {
     const textAreaNode = screen.getByRole('textbox');
 
     expect(textAreaNode).toBeInTheDocument();
-    userEvent.clear(textAreaNode);
-    await userEvent.paste(textAreaNode, 'test');
-    await userEvent.paste(textAreaNode, 'test1');
+    await userEvent.clear(textAreaNode);
+    textAreaNode.focus();
+    await userEvent.paste('test');
+    await userEvent.paste('test1');
     expect(textAreaNode).toBeTruthy();
   });
-  test('should test the codeEditor when the value is changed and when skip delay has been set to true', () => {
+  test('should test the codeEditor when the value is changed and when skip delay has been set to true', async () => {
     const props = {
       name: 'test name',
       value: '',
@@ -225,8 +226,9 @@ describe('Should test Code Editor', () => {
     const textAreaNode = screen.getByRole('textbox');
 
     expect(textAreaNode).toBeInTheDocument();
-    userEvent.clear(textAreaNode);
-    userEvent.paste(textAreaNode, 'test');
+    await userEvent.clear(textAreaNode);
+    textAreaNode.focus();
+    await userEvent.paste('test');
     expect(mockOnChange).toBeCalled();
   });
 });

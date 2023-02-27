@@ -40,7 +40,7 @@ initialStore.getState().data.resources.stacks = [{
   },
 }];
 
-function initSharedUserList() {
+async function initSharedUserList() {
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter

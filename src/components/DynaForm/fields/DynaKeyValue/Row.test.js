@@ -134,7 +134,7 @@ describe('keyValueRow UI tests', () => {
     const field = screen.getByRole('textbox');
 
     expect(field).toBeInTheDocument();
-    userEvent.type(field, 'a');
+    await userEvent.type(field, 'a');
     await waitFor(() => expect(mockhandleValueUpdate).toHaveBeenCalled());
   });
   test('should call the handleKeyUpdate function passed in props when the field that appears when suggestKeyConfig prop is undefined is updated', async () => {
@@ -144,14 +144,14 @@ describe('keyValueRow UI tests', () => {
       },
       showSortOrder: false};
 
-    renderWithProviders(<KeyValueRow {...newprops} />);
+    await renderWithProviders(<KeyValueRow {...newprops} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     const field = screen.getByRole('textbox');
 
-    userEvent.type(field);
+    await userEvent.type(field);
     await waitFor(() => expect(mockhandleKeyUpdate).toHaveBeenCalled());
   });
-  test('should display the sortable handle only when enableSorting and showGripper are true', () => {
+  test('should display the sortable handle only when enableSorting and showGripper are true', async () => {
     const newprops = {
       ...props,
       suggestionConfig: undefined,
@@ -164,8 +164,8 @@ describe('keyValueRow UI tests', () => {
     expect(screen.getByRole('textbox').getAttribute('placeholder')).toBe('key1');
     const sortableHandle = document.querySelector('[id="dragHandle"]');
 
-    fireEvent.mouseDown(sortableHandle);
-    fireEvent.mouseLeave(sortableHandle);
+    await fireEvent.mouseDown(sortableHandle);
+    await fireEvent.mouseLeave(sortableHandle);
     expect(sortableHandle).toBeInTheDocument();
   });
   test('should render the inLineClose button additionally when r.disableRowKey is true', async () => {

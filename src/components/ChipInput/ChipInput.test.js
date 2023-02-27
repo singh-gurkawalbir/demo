@@ -17,7 +17,7 @@ describe('chipInput testing', () => {
     const textbox = screen.getByRole('textbox');
 
     await userEvent.type(screen.getByRole('textbox'), 'Hello, World!');
-    textbox.blur();
+    await textbox.blur();
     expect(onchange).toHaveBeenCalled();
   });
   test('should test while disable', () => {
@@ -43,7 +43,7 @@ describe('chipInput testing', () => {
     const textbox = screen.getByRole('textbox');
 
     await userEvent.type(screen.getByRole('textbox'), 'Hello, World!');
-    textbox.blur();
+    await textbox.blur();
     expect(onchange).toHaveBeenCalledTimes(1);
     const button = screen.getByText('Hello, World!');
 
@@ -53,7 +53,7 @@ describe('chipInput testing', () => {
     await userEvent.clear(textbox2);
     await userEvent.type(textbox2, 'Hello, World!');
 
-    textbox2.blur();
+    await textbox2.blur();
     expect(onchange).not.toHaveBeenCalledTimes(2);
     expect(onchange).toHaveBeenCalledTimes(1);
   });
@@ -68,8 +68,8 @@ describe('chipInput testing', () => {
 
     const textbox = screen.getByRole('textbox');
 
-    userEvent.type(screen.getByRole('textbox'), null);
-    textbox.blur();
+    await userEvent.type(screen.getByRole('textbox'), null);
+    await textbox.blur();
     expect(onchange).not.toHaveBeenCalled();
   });
 });

@@ -101,6 +101,24 @@ jest.mock('../../CeligoTable/TableContext', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initImports(data = []) {
   const ui = (
     <MemoryRouter>
@@ -139,7 +157,7 @@ describe('test suite for eventreports', () => {
 
     expect(cells).toEqual([
       'integrationTestName',
-      'flownametest...',
+      'flownametest',
       '12/24/2018 10:33:30 am',
       '10/02/2022 10:33:30 am',
       '12/22/2022 10:33:30 am',

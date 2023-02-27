@@ -22,6 +22,24 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initScriptView(props = {}) {
   initialStore.getState().data.resources = {scripts: [{
     _id: '63342b57bb74b66e32a93e5d',

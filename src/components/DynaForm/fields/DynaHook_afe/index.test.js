@@ -87,7 +87,7 @@ describe('dynaHook_afe UI tests', () => {
     renderWithProviders(<MemoryRouter><DynaHookAFE {...props} /></MemoryRouter>);
     const functionField = screen.getByPlaceholderText('function field');
 
-    userEvent.type(functionField, 'a');
+    await userEvent.type(functionField, 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('id', {function: 'a'}));
   });
   test('should make a url redirection when a new script is added', async () => {

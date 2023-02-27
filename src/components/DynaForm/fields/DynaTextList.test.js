@@ -26,7 +26,7 @@ describe('test suite for DynaTextList', () => {
     expect(screen.getByText(props.description)).toBeInTheDocument();
   });
 
-  test('should respond to change in value', () => {
+  test('should respond to change in value', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'excludeNodes',
@@ -38,7 +38,7 @@ describe('test suite for DynaTextList', () => {
     renderWithProviders(<DynaTextList {...props} />);
     const inputField = screen.getByRole('textbox');
 
-    userEvent.type(inputField, 'record');
+    await userEvent.type(inputField, 'record');
     let currVal = '';
 
     'record'.split('').forEach(char => {

@@ -43,7 +43,7 @@ describe('dataRow component Test cases', () => {
     const rowItem = screen.getByRole('columnheader', {name: 'Item1'});
 
     expect(rowItem).toBeInTheDocument();
-    userEvent.hover(rowItem);
+    await userEvent.hover(rowItem);
     expect(onRowOver).toHaveBeenCalledTimes(1);
   });
 
@@ -63,11 +63,11 @@ describe('dataRow component Test cases', () => {
 
     expect(rowItem1).toBeInTheDocument();
 
-    userEvent.hover(rowItem1);
+    await userEvent.hover(rowItem1);
     expect(onRowOver).toHaveBeenCalledTimes(1);
     expect(onRowOut).toHaveBeenCalledTimes(0);
 
-    userEvent.unhover(rowItem1);
+    await userEvent.unhover(rowItem1);
     expect(onRowOut).toHaveBeenCalledTimes(1);
     expect(onRowOver).toHaveBeenCalledTimes(1);
 

@@ -155,8 +155,8 @@ describe('mock input drawer test cases', () => {
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
     expect(fetchLatestInputButton).toBeInTheDocument();
-    userEvent.clear(inputNode);
-    userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
+    await userEvent.clear(inputNode);
+    await userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
     expect(screen.getByText(/Mock input must be in integrator.io canonical format./)).toBeInTheDocument();
     const onCloseButtonNode = screen.getByRole('button', {name: 'On Close'});
 
@@ -168,8 +168,8 @@ describe('mock input drawer test cases', () => {
     initMockInput({ status: 'received', data: defaultData });
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
-    userEvent.clear(inputNode);
-    userEvent.type(inputNode, 'userinput');
+    await userEvent.clear(inputNode);
+    await userEvent.type(inputNode, 'userinput');
     expect(screen.getByText(/userinput/i)).toBeInTheDocument();
     expect(screen.getByText(message.MOCK_INPUT_REFRESH.INVALID_JSON)).toBeInTheDocument();
   });
