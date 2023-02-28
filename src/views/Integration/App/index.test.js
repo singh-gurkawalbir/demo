@@ -2,6 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 import { renderWithProviders} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions/index';
@@ -65,7 +66,7 @@ describe('IntegrationApp UI testing', () => {
   async function renderWithStore(integrationId) {
     const {store} = renderWithProviders(<MemoryRouter><IntegrationApp integrationId={integrationId} /></MemoryRouter>);
 
-    store.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
   }
 

@@ -146,9 +146,8 @@ describe('keyValueRow UI tests', () => {
 
     await renderWithProviders(<KeyValueRow {...newprops} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    const field = screen.getByRole('textbox');
 
-    await userEvent.type(field);
+    fireEvent.change(screen.getByRole('textbox'), null);
     await waitFor(() => expect(mockhandleKeyUpdate).toHaveBeenCalled());
   });
   test('should display the sortable handle only when enableSorting and showGripper are true', async () => {

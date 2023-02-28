@@ -130,9 +130,8 @@ describe('Testsuite for DynaTimestampFileName', () => {
     expect(textBox).toBeInTheDocument();
     await userEvent.click(textBox);
     await waitFor(async () => {
-      await userEvent.paste(textBox, {
-        clipboardData: { getData: () => '{{' },
-      });
+      textBox.focus();
+      await userEvent.paste('{{');
       expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', '{{');
     });
   });

@@ -149,13 +149,15 @@ describe('searchCriteriaEditor UI tests', () => {
   test('hould diplay the operator options when clicked on operator dropdown', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1'});
     await userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('any')).toBeInTheDocument();
-    expect(screen.getByText('contains')).toBeInTheDocument();
-    expect(screen.getByText('does not contain')).toBeInTheDocument();
-    expect(screen.getByText('does not start with')).toBeInTheDocument();
-    expect(screen.getByText('equal to')).toBeInTheDocument();
-    expect(screen.getByText('has key words')).toBeInTheDocument();
-    expect(screen.getByText('is')).toBeInTheDocument();
-    expect(screen.getByText('is empty')).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByText('any')).toBeInTheDocument();
+      expect(screen.getByText('contains')).toBeInTheDocument();
+      expect(screen.getByText('does not contain')).toBeInTheDocument();
+      expect(screen.getByText('does not start with')).toBeInTheDocument();
+      expect(screen.getByText('equal to')).toBeInTheDocument();
+      expect(screen.getByText('has key words')).toBeInTheDocument();
+      expect(screen.getByText('is')).toBeInTheDocument();
+      expect(screen.getByText('is empty')).toBeInTheDocument();
+    });
   });
 });

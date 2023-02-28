@@ -21,6 +21,24 @@ jest.mock('@material-ui/core/IconButton', () => ({
   },
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initSettingsDialog(props = {}) {
   const mustateState = draft => {
     draft.session.editors = {filecsv: {

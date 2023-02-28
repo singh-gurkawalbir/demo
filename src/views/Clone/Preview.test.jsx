@@ -487,7 +487,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -848,7 +848,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -1027,7 +1027,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 

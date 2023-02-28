@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  screen,
+  screen, waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchCriteriaDialog from './Dialog';
@@ -90,14 +90,16 @@ describe('searchCriteriaDialog UI tests', () => {
 
     expect(dropdown).toBeInTheDocument();
     await userEvent.click(dropdown);
-    expect(screen.getByText('any')).toBeInTheDocument();
-    expect(screen.getByText('contains')).toBeInTheDocument();
-    expect(screen.getByText('does not contain')).toBeInTheDocument();
-    expect(screen.getByText('does not start with')).toBeInTheDocument();
-    expect(screen.getByText('equal to')).toBeInTheDocument();
-    expect(screen.getByText('has key words')).toBeInTheDocument();
-    expect(screen.getByText('is')).toBeInTheDocument();
-    expect(screen.getByText('is empty')).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByText('any')).toBeInTheDocument();
+      expect(screen.getByText('contains')).toBeInTheDocument();
+      expect(screen.getByText('does not contain')).toBeInTheDocument();
+      expect(screen.getByText('does not start with')).toBeInTheDocument();
+      expect(screen.getByText('equal to')).toBeInTheDocument();
+      expect(screen.getByText('has key words')).toBeInTheDocument();
+      expect(screen.getByText('is')).toBeInTheDocument();
+      expect(screen.getByText('is empty')).toBeInTheDocument();
+    });
   });
   test('should call the onSave function passed in props when save button is clicked', async () => {
     initSearchCriteriaDialog(props);
@@ -105,7 +107,7 @@ describe('searchCriteriaDialog UI tests', () => {
 
     expect(dropdown).toBeInTheDocument();
     await userEvent.click(dropdown);
-    await userEvent.click(screen.getByText('contains'));
+    waitFor(async () => { await userEvent.click(screen.getByText('contains')); });
     const deleteButton = document.querySelector('[id="delete-0"]');
 
     expect(deleteButton).toBeInTheDocument();

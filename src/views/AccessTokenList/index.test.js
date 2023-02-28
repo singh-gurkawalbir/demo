@@ -88,7 +88,7 @@ describe('AccessTokenList test cases', () => {
     const searchInput = screen.getByRole('textbox', {name: /Search/i});
 
     expect(searchInput).toBeInTheDocument();
-    userEvent.type(searchInput, 'typ');
+    await userEvent.type(searchInput, 'typ');
     await waitFor(() => expect(screen.queryByText(NO_RESULT_SEARCH_MESSAGE)).toBeInTheDocument());
   });
 

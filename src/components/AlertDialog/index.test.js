@@ -137,7 +137,7 @@ describe('alertDialog component', () => {
     test('should pass the render with session expires true onclose', async () => {
       await initActionButton({sessionExpired: true, initialStore});
       expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: ''});
+      const buttonRef = screen.getByTestId('closeModalDialog');
 
       expect(buttonRef).toBeInTheDocument();
       await userEvent.click(buttonRef);
