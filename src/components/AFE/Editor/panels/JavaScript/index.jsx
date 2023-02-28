@@ -69,11 +69,11 @@ export default function JavaScriptPanel({ editorId }) {
     useSelector(state => selectors.editorPreviewError(state, editorId), shallowEqual);
   const hasError = !!error;
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
-  const {integrationId} = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
-  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
+  const {flowId} = useSelector(state => selectors.editor(state, editorId));
+  const isIntegrationApp = !!useSelector(state => selectors.resource(state, 'flows', flowId)?._connectorId);
   const scriptContent = data?.merged?.content;
   const allScripts = useSelectorMemo(selectors.makeResourceListSelector, scriptFilterConfig).resources;
-  const fetchScript = scriptContent === undefined && scriptId && !isIntegrationApp;
+  const fetchScript = scriptContent === undefined && !!scriptId && !isIntegrationApp;
   const patchRule = useCallback(
     val => {
       dispatch(actions.editor.patchRule(editorId, val));

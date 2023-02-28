@@ -2316,6 +2316,97 @@ describe('Flow sample data utility sagas', () => {
           .returns(previewData)
           .run();
       });
+      test('should construct PP doc for the Routers in flow branching', () => {
+        const flowId = 'flow-123';
+        const _pageProcessorId = 'new-111';
+        const flow = {
+          _id: flowId,
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+        const previewData = { test: 5 };
+        const newPpDoc = { _id: '456', name: 'test import', adaptorType: 'RESTImport'};
+        const pageGeneratorMap = {
+          'export-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTExport'}, options: {},
+          },
+        };
+        const pageProcessorMap = {
+          'import-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+          },
+          'new-111': {
+            doc: newPpDoc,
+          },
+        };
+        const body = {
+          flow: {
+            _id: flowId,
+            name: 'test flow',
+            pageGenerators: [{ _exportId: 'export-123'}],
+            pageProcessors: [
+              { type: 'import', _importId: 'import-123' },
+              { type: 'import', _importId: 'new-111' },
+            ],
+          },
+          options: {
+            _integrationId: 'inetgartionID',
+            _flowId: 'flowId',
+            container: 'inetgration',
+            type: 'hook',
+          },
+          _pageProcessorId,
+          pageGeneratorMap,
+          pageProcessorMap,
+          includeStages: false,
+        };
+        const apiOptions = {
+          path: '/pageProcessors/preview',
+          opts: {
+            method: 'POST',
+            body,
+          },
+          message: 'Loading',
+          hidden: false,
+        };
+        const scriptContext = {
+          _integrationId: 'inetgartionID',
+          _flowId: 'flowId',
+          container: 'inetgration',
+          type: 'hoo',
+        };
+
+        expectSaga(pageProcessorPreview, {
+          flowId,
+          _pageProcessorId,
+          resourceType: 'exports',
+          routerId: 'XZ7DSFgUTF2',
+          previewType: 'router',
+        })
+          .provide([
+            [select(selectors.getScriptContext, {flowId, contextType: 'hook'}), scriptContext],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+            [call(fetchFlowResources, {
+              flow,
+              type: 'pageGenerators',
+              refresh: false,
+              runOffline: false,
+            }), pageGeneratorMap],
+            [call(fetchFlowResources, {
+              flow,
+              type: 'pageProcessors',
+              addMockData: undefined,
+            }), pageProcessorMap],
+            [call(fetchResourceDataForNewFlowResource, {
+              resourceId: _pageProcessorId,
+              resourceType: 'imports',
+            }), newPpDoc],
+            [matchers.call.fn(apiCallWithRetry, apiOptions), previewData],
+          ])
+          .returns(previewData)
+          .run();
+      });
       test('should consider passed _pageProcessorDoc for corresponding _pageProcessorId while constructing body for preview call', () => {
         const flowId = 'flow-123';
         const _pageProcessorId = 'import-111';
