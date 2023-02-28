@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import {Router} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders } from '../../test/test-utils';
+import {mutateStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import actions from '../../actions';
 import UploadFile from '.';
@@ -15,7 +15,10 @@ let initialStore;
 function initUploadFile(props) {
   initialStore = getCreatedStore();
 
-  initialStore.getState().session.templates.template1 = props.obj;
+  mutateStore(initialStore, draft => {
+    draft.session.templates.template1 = props.obj;
+  });
+
   const ui = (<Router history={props.history} ><UploadFile {...props} /></Router>);
 
   return renderWithProviders(ui, {initialStore});

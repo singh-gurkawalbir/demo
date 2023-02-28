@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import AliasDrawerWrapper from '.';
 
 const props = {
@@ -16,46 +16,48 @@ const mockHistoryPush = jest.fn();
 async function initAliasDrawerWrapper({props = {}, manage = true, status = 'save'}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.aliases = {
-    _integrationId: {
-      aliases: [
-        {alias: '_aliasId', _connectionId: '_connId', description: 'some description'},
-      ],
-    },
-    _flowId1: {
-      status,
-      aliases: [
-        {alias: '_aliasId2', _connectionId: '_connId'},
-      ],
-    },
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '_integrationId',
-        name: 'mockIntegration',
-        aliases: [{alias: '_aliasId', _connectionId: '_connId', description: 'some description'}],
+  mutateStore(initialStore, draft => {
+    draft.session.aliases = {
+      _integrationId: {
+        aliases: [
+          {alias: '_aliasId', _connectionId: '_connId', description: 'some description'},
+        ],
       },
-      {
-        _id: '_integrationId2',
-        name: 'mockIntegration',
-      },
-    ],
-    connections: [{
-      _id: '_connId',
-      name: '_mockConnection',
-    }],
-    flows: [
-      {
-        _id: '_flowId1',
-        name: 'mockFlow1',
-        _integrationId: '_integrationId',
+      _flowId1: {
+        status,
         aliases: [
           {alias: '_aliasId2', _connectionId: '_connId'},
         ],
       },
-    ],
-  };
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '_integrationId',
+          name: 'mockIntegration',
+          aliases: [{alias: '_aliasId', _connectionId: '_connId', description: 'some description'}],
+        },
+        {
+          _id: '_integrationId2',
+          name: 'mockIntegration',
+        },
+      ],
+      connections: [{
+        _id: '_connId',
+        name: '_mockConnection',
+      }],
+      flows: [
+        {
+          _id: '_flowId1',
+          name: 'mockFlow1',
+          _integrationId: '_integrationId',
+          aliases: [
+            {alias: '_aliasId2', _connectionId: '_connId'},
+          ],
+        },
+      ],
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: manage ? '/parentURL/aliases/manage' : '/parentURL/aliases/view'}]}>
       <Route path="/parentURL">

@@ -1,8 +1,8 @@
 import produce from 'immer';
-import cloneDeep from 'lodash/cloneDeep';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { REVISION_STATUS } from '../../../constants';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const defaultState = {};
 
@@ -87,7 +87,7 @@ selectors.revisionStatus = (state = defaultState, integrationId, revisionId) => 
 selectors.revisionInstallSteps = createSelector(
   selectors.revision,
   revision => {
-    const steps = cloneDeep(revision?.installSteps) || [];
+    const steps = customCloneDeep(revision?.installSteps) || [];
 
     if (steps.length) {
       const firstInCompleteStep = steps.find(step => !step.completed);

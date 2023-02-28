@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import {
   renderWithProviders,
   reduxStore,
+  mutateStore,
 } from '../../../../../test/test-utils';
 import OnOffCell from '.';
 import { ConfirmDialogProvider } from '../../../../ConfirmDialog';
@@ -14,10 +15,13 @@ import actions from '../../../../../actions';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.connectors = [];
-initialStore.getState().session.connectors['2345678'] = {
-  publishStatus: 'loading',
-};
+mutateStore(initialStore, draft => {
+  draft.session.connectors = [];
+  draft.session.connectors['2345678'] = {
+    publishStatus: 'loading',
+  };
+});
+
 const mockDispatch = jest.fn();
 
 jest.mock('react-redux', () => ({

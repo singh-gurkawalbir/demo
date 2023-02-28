@@ -5,22 +5,24 @@ import {
 import userEvent from '@testing-library/user-event';
 import DynaReportDateRange from './DynaReportDateRange';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
 const mockonFieldChange = jest.fn();
 
 function initDynaReportDateRange(props = {}) {
-  initialStore.getState().session.form = {
-    formKey: {
-      fields: {
-        integration: {
-          value: '5b3c75dd5d3c125c88b5dd20',
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      formKey: {
+        fields: {
+          integration: {
+            value: '5b3c75dd5d3c125c88b5dd20',
+          },
         },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<DynaReportDateRange {...props} />, {initialStore});
 }

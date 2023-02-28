@@ -3,14 +3,16 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore } from '../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 
 function initRunHistoryTable(data = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.profile = { timezone: 'Asia/Calcutta' };
+  mutateStore(initialStore, draft => {
+    draft.user.profile = { timezone: 'Asia/Calcutta' };
+  });
 
   const ui = (
     <CeligoTable {...metadata} data={[data]} />

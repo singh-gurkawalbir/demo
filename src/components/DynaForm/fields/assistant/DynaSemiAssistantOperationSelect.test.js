@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
 import DynaSemiAssistantOperationSelect from './DynaSemiAssistantOperationSelect';
 import { getCreatedStore } from '../../../../store';
@@ -10,81 +10,83 @@ import { getCreatedStore } from '../../../../store';
 const initialStore = getCreatedStore();
 
 function initDynaSemiAssistantOperationSelect(props = {}) {
-  initialStore.getState().session.form = {'imports-5bf18b09294767270c62fad9': {
-    fields: {
-      'http.fields': [
-        {
-          id: 'assistantMetadata.adaptorType',
-          value: 'rest',
-        },
-        {
-          id: 'assistantMetadata.assistant',
-          value: 'zendesk',
-        },
-        {
-          id: 'assistantMetadata.version',
-          value: 'v2',
-        },
-        {
-          id: 'assistantMetadata.resource',
-          touched: props.touched,
-          value: 'user_api',
-        },
-        {
-          id: 'http.assistantMetadata.operation',
-          value: '',
-        },
-      ],
-      type: {},
-      'once.once': {},
-      'delta.delta': {},
-    },
-  }};
-  initialStore.getState().data.resources = {
-    imports: [{_id: '5bf18b09294767270c62fad9', _connectionId: '5ff579d745ceef7dcd797c26', assistant: 'http', name: 'import1'}],
-    connections: [{_id: '5ff579d745ceef7dcd797c26', name: 'connection1', assistant: props.assistant}],
-  };
-  initialStore.getState().session.metadata = {
-    assistants: {
-      http: {
-        openair: {
-          export: {
-            config: {},
-            endpoints: [{id: 'operation1', children: [{key: 'key1', name: 'child1'}], name: 'increment ticket'},
-              {id: 'operation2', children: [{key: 'key2', name: 'child2'}], name: 'increment user access'},
-              {id: 'operation3', children: [{key: 'key3', name: 'child3'}], name: 'increment ticket count'}, {key: ''}],
-            versions: [{
-              resources: [
-                {
-                  id: 'user_api',
-                  operations: [{id: 'create_automations', name: 'Create'},
-                    {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
-                  ],
-                  name: 'resource1',
-                },
-                { id: 'id2',
-                  name: 'resource2',
-                },
-              ],
-              version: 'v2',
-            }, {
-              resources: [],
-              version: 'v3',
-            }],
+  mutateStore(initialStore, draft => {
+    draft.session.form = {'imports-5bf18b09294767270c62fad9': {
+      fields: {
+        'http.fields': [
+          {
+            id: 'assistantMetadata.adaptorType',
+            value: 'rest',
           },
-          import: {versions: [{
-            resources: [{id: 'user_api',
-              operations: [{id: 'create_automations', name: 'Create'},
-                {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
-              ],
-              name: 'resource11'}, {id: 'id22', name: 'resource22'}],
-            version: 'v2',
-          }],
+          {
+            id: 'assistantMetadata.assistant',
+            value: 'zendesk',
+          },
+          {
+            id: 'assistantMetadata.version',
+            value: 'v2',
+          },
+          {
+            id: 'assistantMetadata.resource',
+            touched: props.touched,
+            value: 'user_api',
+          },
+          {
+            id: 'http.assistantMetadata.operation',
+            value: '',
+          },
+        ],
+        type: {},
+        'once.once': {},
+        'delta.delta': {},
+      },
+    }};
+    draft.data.resources = {
+      imports: [{_id: '5bf18b09294767270c62fad9', _connectionId: '5ff579d745ceef7dcd797c26', assistant: 'http', name: 'import1'}],
+      connections: [{_id: '5ff579d745ceef7dcd797c26', name: 'connection1', assistant: props.assistant}],
+    };
+    draft.session.metadata = {
+      assistants: {
+        http: {
+          openair: {
+            export: {
+              config: {},
+              endpoints: [{id: 'operation1', children: [{key: 'key1', name: 'child1'}], name: 'increment ticket'},
+                {id: 'operation2', children: [{key: 'key2', name: 'child2'}], name: 'increment user access'},
+                {id: 'operation3', children: [{key: 'key3', name: 'child3'}], name: 'increment ticket count'}, {key: ''}],
+              versions: [{
+                resources: [
+                  {
+                    id: 'user_api',
+                    operations: [{id: 'create_automations', name: 'Create'},
+                      {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
+                    ],
+                    name: 'resource1',
+                  },
+                  { id: 'id2',
+                    name: 'resource2',
+                  },
+                ],
+                version: 'v2',
+              }, {
+                resources: [],
+                version: 'v3',
+              }],
+            },
+            import: {versions: [{
+              resources: [{id: 'user_api',
+                operations: [{id: 'create_automations', name: 'Create'},
+                  {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
+                ],
+                name: 'resource11'}, {id: 'id22', name: 'resource22'}],
+              version: 'v2',
+            }],
+            },
           },
         },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<ConfirmDialogProvider><DynaSemiAssistantOperationSelect {...props} /></ConfirmDialogProvider>, {initialStore});
 }

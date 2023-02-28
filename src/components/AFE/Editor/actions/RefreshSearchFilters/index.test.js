@@ -2,7 +2,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import { getCreatedStore } from '../../../../../store';
 
@@ -11,37 +11,41 @@ import RefreshSearchFilters from '.';
 const initialStore = getCreatedStore();
 
 function initRefreshSearchFilters(props = {}) {
-  initialStore.getState().session.editors = {
-    filecsv: {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      editorType: 'salesforceLookupFilter',
-      resourceType: 'imports',
-      isSuiteScriptData: true,
-      customOptions: {commMetaPath: 'testCommMetaPath', disableFetch: props.fetch},
+  const mustateState = draft => {
+    draft.session.editors = {
+      filecsv: {
+        fieldId: 'file.csv',
+        formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+        resourceId: '5b3c75dd5d3c125c88b5dd20',
+        editorType: 'salesforceLookupFilter',
+        resourceType: 'imports',
+        isSuiteScriptData: true,
+        customOptions: {commMetaPath: 'testCommMetaPath', disableFetch: props.fetch},
+      },
+    };
+    draft.session.metadata = {application: {'6b3c75dd5d3c125c88b5dd20': {
+      testCommMetaPath: {
+        data: props.data,
+      },
     },
+    }};
+    draft.data.resources = {imports: [
+      {_id: '5b3c75dd5d3c125c88b5dd20',
+        name: 'import1',
+        _connectionId: '6b3c75dd5d3c125c88b5dd20',
+        adaptorType: 'FTPImport',
+      },
+    ],
+    exports: [
+      {_id: '5b3c75dd5d3c125c88b5dd21',
+        name: 'export1',
+        adaptorType: 'HTTPImport',
+      },
+    ],
+    };
   };
-  initialStore.getState().session.metadata = {application: {'6b3c75dd5d3c125c88b5dd20': {
-    testCommMetaPath: {
-      data: props.data,
-    },
-  },
-  }};
-  initialStore.getState().data.resources = {imports: [
-    {_id: '5b3c75dd5d3c125c88b5dd20',
-      name: 'import1',
-      _connectionId: '6b3c75dd5d3c125c88b5dd20',
-      adaptorType: 'FTPImport',
-    },
-  ],
-  exports: [
-    {_id: '5b3c75dd5d3c125c88b5dd21',
-      name: 'export1',
-      adaptorType: 'HTTPImport',
-    },
-  ],
-  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<RefreshSearchFilters {...props} />, {initialStore});
 }

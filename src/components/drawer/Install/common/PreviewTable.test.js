@@ -2,22 +2,24 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import PreviewTable from './PreviewTable';
 
 async function initPreviewTable(props = {}, data = {}, status = 'success') {
   const initialStore = reduxStore;
   const components = data.model ? { objects: [data]} : undefined;
 
-  initialStore.getState().session.templates = {
-    _templateId:
-      {
-        preview: {
-          status,
-          components,
+  mutateStore(initialStore, draft => {
+    draft.session.templates = {
+      _templateId:
+        {
+          preview: {
+            status,
+            components,
+          },
         },
-      },
-  };
+    };
+  });
 
   const ui = (
     <MemoryRouter>

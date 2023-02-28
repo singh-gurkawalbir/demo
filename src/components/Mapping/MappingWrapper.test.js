@@ -1,13 +1,13 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MappingWrapper from './MappingWrapper';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initMappingWrapper({
   props = {
@@ -19,75 +19,77 @@ async function initMappingWrapper({
   validationErrMsg = null,
   status = 'received',
 } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.mapping = {
-    mapping: {
-      flowId: 'flow_id',
-      status,
-      mappings: [{
-        generate: 'generate_1',
-        key: 'key_1',
-      }, {
-        generate: 'generate_2',
-        key: 'key_2',
-      }, {
-        generate: 'generate_3',
-        key: 'key_3',
-      }],
-      validationErrMsg,
-      saveStatus: '',
-      mappingsCopy: [],
-      subRecordMappingId: props.subRecordMappingId,
-    },
-  };
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: props.importId,
-      adaptorType,
-      http: {
-        requestMediaType: 'xml',
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = {
+      mapping: {
+        flowId: 'flow_id',
+        status,
+        mappings: [{
+          generate: 'generate_1',
+          key: 'key_1',
+        }, {
+          generate: 'generate_2',
+          key: 'key_2',
+        }, {
+          generate: 'generate_3',
+          key: 'key_3',
+        }],
+        validationErrMsg,
+        saveStatus: '',
+        mappingsCopy: [],
+        subRecordMappingId: props.subRecordMappingId,
       },
-      sampleData: {
-        name: 'name',
-      },
-    }],
-    flows: [{
-      _id: 'flow_id',
-      pageGenerators: [{
-        _exportId: exportId,
-      }],
-    }],
-    exports: [{
-      _id: 'export_id',
-      adaptorType: 'HTTPExport',
-      sampleData: {
-        name: 'name',
-      },
-    }],
-  };
-  initialStore.getState().session.flowData = {
-    flow_id: {
-      pageGenerators: [{
-        type: 'export',
-        _exportId: 'export_id',
-      }],
-      pageProcessors: [{
-        type: 'import',
-        _importId: props.importId,
-        sampleDataStage: {
-          status: 'requested',
-          data: [
-            {id: 'a', type: 'string'},
-            {id: 'b[*].c', type: 'string'},
-            {id: 'e[*].f', type: 'string'},
-          ],
+    };
+    draft.data.resources = {
+      imports: [{
+        _id: props.importId,
+        adaptorType,
+        http: {
+          requestMediaType: 'xml',
+        },
+        sampleData: {
+          name: 'name',
         },
       }],
-      pageGeneratorsMap: [],
-      pageProcessorsMap: [],
-    },
-  };
+      flows: [{
+        _id: 'flow_id',
+        pageGenerators: [{
+          _exportId: exportId,
+        }],
+      }],
+      exports: [{
+        _id: 'export_id',
+        adaptorType: 'HTTPExport',
+        sampleData: {
+          name: 'name',
+        },
+      }],
+    };
+    draft.session.flowData = {
+      flow_id: {
+        pageGenerators: [{
+          type: 'export',
+          _exportId: 'export_id',
+        }],
+        pageProcessors: [{
+          type: 'import',
+          _importId: props.importId,
+          sampleDataStage: {
+            status: 'requested',
+            data: [
+              {id: 'a', type: 'string'},
+              {id: 'b[*].c', type: 'string'},
+              {id: 'e[*].f', type: 'string'},
+            ],
+          },
+        }],
+        pageGeneratorsMap: [],
+        pageProcessorsMap: [],
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter>

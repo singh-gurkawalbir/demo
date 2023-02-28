@@ -8,6 +8,7 @@ import Section from './Section';
 import { getDomainUrl } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import Spinner from '../Spinner';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export default function SalesforceMappingAssistant({
   connectionId,
@@ -33,7 +34,7 @@ export default function SalesforceMappingAssistant({
     }
   }, [dispatch, connectionId, sObjectType, layoutId, commMetaPath]);
 
-  const editLayoutSections = useMemo(() => layout?.editLayoutSections ? generateLayoutColumns([...layout.editLayoutSections]) : null, [layout?.editLayoutSections]);
+  const editLayoutSections = useMemo(() => layout?.editLayoutSections ? generateLayoutColumns(customCloneDeep(layout.editLayoutSections)) : null, [layout?.editLayoutSections]);
 
   if (!layoutId) {
     return (

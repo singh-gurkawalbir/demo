@@ -3,22 +3,24 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import GeneralSection from './General';
-import {reduxStore, renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../../../../test/test-utils';
 
 async function initGeneralSection(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.integrations = [{_id: '678901234567890', name: 'demo integration', description: 'demo descriptoon', readme: 'Demo HTML content'}];
-  initialStore.getState().user.preferences.defaultAShareId = 'own';
-  initialStore.getState().user.org.accounts = [
-    {
-      _id: 'own',
-      accessLevel: 'owner',
-      ownerUser: {
-        licenses: [],
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{_id: '678901234567890', name: 'demo integration', description: 'demo descriptoon', readme: 'Demo HTML content'}];
+    draft.user.preferences.defaultAShareId = 'own';
+    draft.user.org.accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [],
+        },
       },
-    },
-  ];
+    ];
+  });
 
   return renderWithProviders(<MemoryRouter><GeneralSection {...props} /></MemoryRouter>, {initialStore});
 }

@@ -3,27 +3,29 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import Subscription from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initSubscription() {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    defaultAShareId: 'own',
-    environment: 'production',
-  };
-  initialStore.getState().user.org = {
-    accounts: [{
-      _id: 'own',
-      accessLevel: 'owner',
-      ownerUser: {
-        licenses: [{
-          type: 'diy',
-          usageTierName: 'free',
-        }],
-      },
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      defaultAShareId: 'own',
+      environment: 'production',
+    };
+    draft.user.org = {
+      accounts: [{
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [{
+            type: 'diy',
+            usageTierName: 'free',
+          }],
+        },
+      }],
+    };
+  });
   const ui = (
     <MemoryRouter>
       <Subscription />

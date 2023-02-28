@@ -2,21 +2,23 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import RunCell from '.';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.errorManagement.openErrors = {
-  '62662cc4e06ff462c3db470e': {data: {
-    flow_id1: {
-      numError: 5,
-    },
-    flow_id2: {
-      numError: 1,
-    },
-  }},
-};
+mutateStore(initialStore, draft => {
+  draft.session.errorManagement.openErrors = {
+    '62662cc4e06ff462c3db470e': {data: {
+      flow_id1: {
+        numError: 5,
+      },
+      flow_id2: {
+        numError: 1,
+      },
+    }},
+  };
+});
 
 function initErrorCell(flowID, initialStore = null) {
   const ui = (

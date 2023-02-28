@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ExportExampleButton from '.';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
 import { ConfirmDialogProvider } from '../../../components/ConfirmDialog';
@@ -11,13 +11,15 @@ import { ConfirmDialogProvider } from '../../../components/ConfirmDialog';
 let initialStore;
 
 async function initExportExampleButton({editorId = ''} = {}) {
-  initialStore.getState().user.profile = {
-    developer: true,
-    email: 'test@celigo.com',
-  };
-  initialStore.getState().session.editors = {
-    123: {editorType: '123', rule: {testRule: 'testRule1'}, data: 'testing data'},
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.profile = {
+      developer: true,
+      email: 'test@celigo.com',
+    };
+    draft.session.editors = {
+      123: {editorType: '123', rule: {testRule: 'testRule1'}, data: 'testing data'},
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ConfirmDialogProvider>
