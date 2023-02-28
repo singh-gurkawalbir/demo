@@ -160,6 +160,32 @@ async function initInstallSteps(props = {}, type = 'revert') {
               },
             ],
           },
+          {
+            _id: '_revId8',
+            type,
+            status: 'failed',
+            installSteps: [
+              {
+                type: 'connection',
+                name: 'demo connection',
+                completed: true,
+                isTriggered: true,
+              },
+            ],
+          },
+          {
+            _id: '_revId9',
+            type,
+            status: 'failed',
+            installSteps: [
+              {
+                type: 'connection',
+                name: 'demo connection',
+                completed: true,
+                isTriggered: true,
+              },
+            ],
+          },
         ],
       },
     };

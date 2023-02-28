@@ -83,12 +83,12 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     revisionId]);
 
   useEffect(() => {
-    if (revisionStatus !== 'failed' && areAllRevisionInstallStepsCompleted) {
-      enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_SUCCESS : message.LCM.REVERT_SUCCESS });
-      onClose();
-    } else if (revisionStatus === 'failed' && areAllRevisionInstallStepsCompleted) {
-      enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_ERROR : message.LCM.REVERT_ERROR, variant: 'error' });
-
+    if (areAllRevisionInstallStepsCompleted) {
+      if (revisionStatus !== 'failed') {
+        enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_SUCCESS : message.LCM.REVERT_SUCCESS });
+      } else {
+        enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_ERROR : message.LCM.REVERT_ERROR, variant: 'error' });
+      }
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
