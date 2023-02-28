@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { cleanup, screen } from '@testing-library/react';
 import Subscription from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initSubscription(
   {
@@ -21,51 +21,53 @@ async function initSubscription(
 ) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    defaultAShareId: 'own',
-    environment: 'production',
-    dateFormat: 'DD MMMM, YYYY',
-  };
-  initialStore.getState().user.org = {
-    accounts: [{
-      _id: 'own',
-      accessLevel: 'owner',
-      ownerUser: {
-        licenses: [{
-          type: 'endpoint',
-          tier: 'free',
-          sandbox: true,
-          expires,
-          trialEndDate: '2019-03-09T06:02:00.255Z',
-          ...rest,
-          endpoint: {
-            apiManagement: true,
-            production: {
-              numAddOnAgents: 0,
-              numAddOnSubscriptions: 55,
-              numAddOnFlows: 100,
-              numAddOnTradingPartners: 0,
-              numAgents: 3,
-              numSubscriptions: 20,
-              numFlows: 5000,
-              numTradingPartners: 15,
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      defaultAShareId: 'own',
+      environment: 'production',
+      dateFormat: 'DD MMMM, YYYY',
+    };
+    draft.user.org = {
+      accounts: [{
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [{
+            type: 'endpoint',
+            tier: 'free',
+            sandbox: true,
+            expires,
+            trialEndDate: '2019-03-09T06:02:00.255Z',
+            ...rest,
+            endpoint: {
+              apiManagement: true,
+              production: {
+                numAddOnAgents: 0,
+                numAddOnSubscriptions: 55,
+                numAddOnFlows: 100,
+                numAddOnTradingPartners: 0,
+                numAgents: 3,
+                numSubscriptions: 20,
+                numFlows: 5000,
+                numTradingPartners: 15,
+              },
+              sandbox: {
+                numAddOnAgents: 0,
+                numAddOnSubscriptions: 0,
+                numAddOnFlows: 0,
+                numAddOnTradingPartners: 0,
+                numAgents: 3,
+                numSubscriptions: 20,
+                numFlows: 5000,
+                numTradingPartners: 15,
+              },
             },
-            sandbox: {
-              numAddOnAgents: 0,
-              numAddOnSubscriptions: 0,
-              numAddOnFlows: 0,
-              numAddOnTradingPartners: 0,
-              numAgents: 3,
-              numSubscriptions: 20,
-              numFlows: 5000,
-              numTradingPartners: 15,
-            },
-          },
-        }],
-      },
-    }],
-  };
-  initialStore.getState().session.resource = resource;
+          }],
+        },
+      }],
+    };
+    draft.session.resource = resource;
+  });
   const ui = (
     <MemoryRouter>
       <Subscription />

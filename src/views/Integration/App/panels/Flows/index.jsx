@@ -30,6 +30,7 @@ import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../const
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 import ActionGroup from '../../../../../components/ActionGroup';
 import NoResultTypography from '../../../../../components/NoResultTypography';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -373,7 +374,7 @@ const FlowsTable = ({integrationId, childId}) => {
   return (
     <LoadResources required integrationId={integrationId} resources="flows,connections,exports">
       <CeligoTable
-        data={flows}
+        data={customCloneDeep(flows)}
         filterKey={filterKey}
         {...flowTableMeta}
         actionProps={actionProps}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import DynaIASelect from './DynaIASelect';
@@ -56,17 +56,19 @@ describe('test suite for DynaIASelect field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.connectors[props._integrationId] = {
-      [props.id]: {
-        data: {
-          options: [
-            ['value1', 'Option 1'],
-            ['value2', 'Option 2'],
-            ['value3', 'Option 3'],
-          ],
+    mutateStore(initialStore, draft => {
+      draft.session.connectors[props._integrationId] = {
+        [props.id]: {
+          data: {
+            options: [
+              ['value1', 'Option 1'],
+              ['value2', 'Option 2'],
+              ['value3', 'Option 3'],
+            ],
+          },
         },
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaIASelect {...props} />, {initialStore});
     expect(screen.getByTestId('multiselect')).toBeInTheDocument();
@@ -118,17 +120,19 @@ describe('test suite for DynaIASelect field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.connectors[props._integrationId] = {
-      [props.id]: {
-        data: {
-          options: [
-            ['value1', 'Option 1'],
-            ['value2', 'Option 2'],
-            ['value3', 'Option 3'],
-          ],
+    mutateStore(initialStore, draft => {
+      draft.session.connectors[props._integrationId] = {
+        [props.id]: {
+          data: {
+            options: [
+              ['value1', 'Option 1'],
+              ['value2', 'Option 2'],
+              ['value3', 'Option 3'],
+            ],
+          },
         },
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaIASelect {...props} />, {initialStore});
     expect(screen.getByTestId('select')).toBeInTheDocument();

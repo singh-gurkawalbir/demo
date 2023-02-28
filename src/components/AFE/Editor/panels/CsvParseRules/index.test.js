@@ -1,7 +1,7 @@
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import CsvParseRules from '.';
 import { getCreatedStore } from '../../../../../store';
@@ -9,33 +9,37 @@ import { getCreatedStore } from '../../../../../store';
 const initialStore = getCreatedStore();
 
 function initCsvParseRules(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    previewStatus: props.status,
-    insertStubKey: 'preSavePage',
-    rule: {
-      code: 'custom code',
-      entryFunction: 'preSavePage',
-      scriptId: '5b3c75dd5d3c125c88b5cc00',
-      trimSpaces: true,
-      keyColumns: props.keyColumns,
-      ignoreSortAndGroup: true,
-      hasHeaderRow: true,
-      rowDelimiter: '\n',
-      columnDelimiter: '*',
-    },
-  },
-  };
-  initialStore.getState().session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { value: 'demoValue',
-    fields: {
-      'file.csv': {
-        disabled: props.disabled,
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      previewStatus: props.status,
+      insertStubKey: 'preSavePage',
+      rule: {
+        code: 'custom code',
+        entryFunction: 'preSavePage',
+        scriptId: '5b3c75dd5d3c125c88b5cc00',
+        trimSpaces: true,
+        keyColumns: props.keyColumns,
+        ignoreSortAndGroup: true,
+        hasHeaderRow: true,
+        rowDelimiter: '\n',
+        columnDelimiter: '*',
       },
     },
-  }};
+    };
+    draft.session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { value: 'demoValue',
+      fields: {
+        'file.csv': {
+          disabled: props.disabled,
+        },
+      },
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<CsvParseRules {...props} />, {initialStore});
 }

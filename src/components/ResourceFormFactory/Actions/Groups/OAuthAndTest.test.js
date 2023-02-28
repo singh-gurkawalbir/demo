@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import OAuthAndTest from './OAuthAndTest';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
@@ -49,13 +49,16 @@ describe('test suite for OAuthAndTest', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.asyncTask[KEY] = {
-      status: 'loading',
-    };
-    initialStore.getState().comms.ping[resourceId] = {
-      status: 'complete',
-      message: 'A message',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.asyncTask[KEY] = {
+        status: 'loading',
+      };
+      draft.comms.ping[resourceId] = {
+        status: 'complete',
+        message: 'A message',
+      };
+    });
+
     await initOAuthAndTest({resourceType, resourceId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Authorizing...'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
@@ -71,10 +74,13 @@ describe('test suite for OAuthAndTest', () => {
     const resourceId = '23hgk8';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().comms.ping[resourceId] = {
-      status: 'loading',
-      message: 'A message',
-    };
+    mutateStore(initialStore, draft => {
+      draft.comms.ping[resourceId] = {
+        status: 'loading',
+        message: 'A message',
+      };
+    });
+
     await initOAuthAndTest({onCancel, resourceId}, initialStore);
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
@@ -99,12 +105,15 @@ describe('test suite for OAuthAndTest', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initOAuthAndTest({resourceType, resourceId, flowId, integrationId, formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save & authorize'});
 
@@ -121,22 +130,25 @@ describe('test suite for OAuthAndTest', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      value: {
-        '/http/_iClientId': 'ic-123',
-        '/http/auth/type': 'oauth',
-      },
-      fields: {
-        tempField: { touched: true },
-      },
-    };
-    initialStore.getState().data.resources.iClients = [{
-      _id: 'ic-123',
-      oauth2: {
-        grantType: 'clientcredentials',
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        value: {
+          '/http/_iClientId': 'ic-123',
+          '/http/auth/type': 'oauth',
+        },
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+      draft.data.resources.iClients = [{
+        _id: 'ic-123',
+        oauth2: {
+          grantType: 'clientcredentials',
+        },
+      }];
+    });
+
     await initOAuthAndTest({isHTTPForm: true, formKey}, initialStore);
 
     expect(screen.queryByText('Save & authorize')).not.toBeInTheDocument();

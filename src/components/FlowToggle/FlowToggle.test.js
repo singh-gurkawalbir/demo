@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import actions from '../../actions';
 import FlowToggle from '.';
 
@@ -96,9 +96,11 @@ const demoFlows = [
 const initialStore = reduxStore;
 
 async function flowTog(props = {}) {
-  initialStore.getState().data.resources.flows = demoFlows;
-  demoFlows[0].disabled = props.disabled;
-  initialStore.getState().data.resources.integrations = props.integ;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.flows = demoFlows;
+    draft.data.resources.flows[0].disabled = props.disabled;
+    draft.data.resources.integrations = props.integ;
+  });
   const ui = (
 
     <ConfirmDialogProvider>

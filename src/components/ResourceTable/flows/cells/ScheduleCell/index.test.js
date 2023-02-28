@@ -2,24 +2,26 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import ScheduleCell from '.';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.flows = [
-  {
-    _id: 'someflowId',
-    name: 'demo flow',
-    disabled: false,
-    _integrationId: 'integration_id',
-    pageGenerators: [{setupInProgress: true}],
-    pageProcessors: [{
-      type: 'import',
-      _importId: 'resource_id',
-    }],
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.flows = [
+    {
+      _id: 'someflowId',
+      name: 'demo flow',
+      disabled: false,
+      _integrationId: 'integration_id',
+      pageGenerators: [{setupInProgress: true}],
+      pageProcessors: [{
+        type: 'import',
+        _importId: 'resource_id',
+      }],
+    },
+  ];
+});
 
 function initScheduleCell(actionProps = {}, initialStore = null, schedule = '') {
   const ui = (

@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
-import { cloneDeep, uniq, uniqBy } from 'lodash';
+import { uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
 import { generateId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
+import customCloneDeep from '../customCloneDeep';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
@@ -246,7 +247,7 @@ export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {
 
 export const initializeFlowForReactFlow = flowDoc => {
   if (!flowDoc) return flowDoc;
-  const flow = cloneDeep(flowDoc);
+  const flow = customCloneDeep(flowDoc);
 
   if (!flow.pageGenerators?.length) {
     flow.pageGenerators = [{setupInProgress: true}];
@@ -834,11 +835,11 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
     processorArray = [];
     nextRouterId = flow.routers[0].id;
   } else {
-    processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
+    processorArray = customCloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
     nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
   }
 
-  const flowClone = cloneDeep(originalFlow) || {};
+  const flowClone = customCloneDeep(originalFlow) || {};
   const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
 
   let routerIndex = originalFlow?.routers?.length || 0;
@@ -856,7 +857,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
 
   if (!flowClone.routers) {
     if (!isVirtual || (isVirtual && insertionIndex !== 0)) {
-      flowClone.routers = cloneDeep(flow.routers);
+      flowClone.routers = customCloneDeep(flow.routers);
     }
     delete flowClone.pageProcessors;
   }

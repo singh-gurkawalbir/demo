@@ -1,77 +1,76 @@
 
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import Panel from './Panel';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../../test/test-utils';
 import actions from '../../../actions';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initPanel({props = {}, adaptorType = 'SalesforceImport', initialStore, searchLayoutable = true } = {}) {
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: props.importId,
-      _connectionId: 'connection_id_1',
-      _integrationId: '_integration_id',
-      adaptorType,
-      mappings: {
-        fields: [{
-          generate: 'generate_1',
-        }, {
-          generate: 'generate_2',
-          lookupName: 'lookup_name',
-        }],
-        lists: [{
-          generate: 'item',
-          fields: [],
-        }],
-      },
-      salesforce: {
-        sObjectType: 'sObjectType',
-      },
-    }],
-    connections: [{
-      _id: 'connection_id_1',
-      http: {
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [{
+        _id: props.importId,
+        _connectionId: 'connection_id_1',
+        _integrationId: '_integration_id',
+        adaptorType,
+        mappings: {
+          fields: [{
+            generate: 'generate_1',
+          }, {
+            generate: 'generate_2',
+            lookupName: 'lookup_name',
+          }],
+          lists: [{
+            generate: 'item',
+            fields: [],
+          }],
+        },
+        salesforce: {
+          sObjectType: 'sObjectType',
+        },
+      }],
+      connections: [{
+        _id: 'connection_id_1',
+        http: {
 
-      },
-    }],
-  };
-  if (adaptorType !== 'RDBMSImport') {
-    // eslint-disable-next-line no-param-reassign
-    initialStore.getState().data.resources.imports[0].http = {
-      requestMediaType: 'xml',
-      body: ['GET'],
+        },
+      }],
     };
-  }
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().session.metadata = {
-    application: {
-      connection_id_1: {
-        'salesforce/metadata/connections/connection_id_1/sObjectTypes/sObjectType': {
-          changeIdentifier: 1,
-          data: {
-            fields: {},
-            recordTypeInfos: [
-              {
-                recordTypeId: 'record_type_id',
-              },
-            ],
-            searchLayoutable,
+    if (adaptorType !== 'RDBMSImport') {
+      draft.data.resources.imports[0].http = {
+        requestMediaType: 'xml',
+        body: ['GET'],
+      };
+    }
+    draft.session.metadata = {
+      application: {
+        connection_id_1: {
+          'salesforce/metadata/connections/connection_id_1/sObjectTypes/sObjectType': {
+            changeIdentifier: 1,
+            data: {
+              fields: {},
+              recordTypeInfos: [
+                {
+                  recordTypeId: 'record_type_id',
+                },
+              ],
+              searchLayoutable,
+            },
+            status: 'received',
           },
-          status: 'received',
-        },
-        'netsuite/metadata/suitescript/connections/connection_id_1/recordTypes': {
-          status: 'received',
-          data: [],
+          'netsuite/metadata/suitescript/connections/connection_id_1/recordTypes': {
+            status: 'received',
+            data: [],
+          },
         },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <Panel {...props} />
@@ -146,7 +145,7 @@ describe('Panel component test cases', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
