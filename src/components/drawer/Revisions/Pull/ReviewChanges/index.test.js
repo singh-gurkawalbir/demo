@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import ReviewChangesDrawer from '.';
 import actions from '../../../../../actions';
 
@@ -14,20 +14,22 @@ const mockHistoryReplace = jest.fn();
 async function initReviewChangesDrawer(props = {}, isCreatedRevId = false, creationInProgress = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resource = {
-    _revisionId: isCreatedRevId ? '_revisionId' : undefined,
-  };
-  initialStore.getState().session.lifeCycleManagement = {
-    revision: {
-      _integrationId: {
-        _revisionId: { status: creationInProgress ? 'creating' : 'created'},
+  mutateStore(initialStore, draft => {
+    draft.session.resource = {
+      _revisionId: isCreatedRevId ? '_revisionId' : undefined,
+    };
+    draft.session.lifeCycleManagement = {
+      revision: {
+        _integrationId: {
+          _revisionId: { status: creationInProgress ? 'creating' : 'created'},
+        },
       },
-    },
-    compare: {
-      _integrationId: { status: 'received',
+      compare: {
+        _integrationId: { status: 'received',
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: 'pull/_revisionId/review'}]}>
       <ReviewChangesDrawer {...props} />

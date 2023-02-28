@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import WarningGridItem from '.';
 import { getCreatedStore } from '../../../../../store';
 
@@ -15,10 +15,14 @@ jest.mock('../../panels/Code', () => ({
 }));
 
 function initWarningGridItem(props = {}) {
-  initialStore.getState().session.editors = {'file.csv': {
-    sampleDataStatus: props.status,
-    result: { warning: props.warning},
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {'file.csv': {
+      sampleDataStatus: props.status,
+      result: { warning: props.warning},
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<WarningGridItem {...props} />, {initialStore});
 }

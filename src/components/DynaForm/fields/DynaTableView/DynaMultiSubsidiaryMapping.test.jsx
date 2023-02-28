@@ -5,7 +5,7 @@ import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaMultiSubsidiaryMapping from './DynaMultiSubsidiaryMapping';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
 const mockDispatchFn = jest.fn();
@@ -51,16 +51,19 @@ const genralProps = {
   _integrationId: 'someintegrationId',
 };
 
-initialStore.getState().session.connectors = {
-  someintegrationId: {
-    someid: {
-      isLoading: {export: false, import: false},
-      shouldReset: false,
-      data: {optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}, {id: 'subsidiary', label: 'Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}],
+mutateStore(initialStore, draft => {
+  draft.session.connectors = {
+    someintegrationId: {
+      someid: {
+        isLoading: {export: false, import: false},
+        shouldReset: false,
+        data: {optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}, {id: 'subsidiary', label: 'Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}],
+        },
+        fieldType: 'somefieldtype',
       },
-      fieldType: 'somefieldtype',
     },
-  }};
+  };
+});
 describe('dynaMultiSubsidiaryMapping UI test cases', () => {
   test('should populate the saved values and refreshing the fields of exports', () => {
     initDynaMultiSubsidiaryMapping(genralProps);
@@ -112,16 +115,18 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
       _integrationId: 'someintegrationId',
     };
 
-    initialStore.getState().session.connectors = {
-      someintegrationId: {
-        someid: {
-          isLoading: {export: false, import: false},
-          shouldReset: false,
-          data: {},
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someintegrationId: {
+          someid: {
+            isLoading: {export: false, import: false},
+            shouldReset: false,
+            data: {},
+          },
+          fieldType: 'somefieldtype',
         },
-        fieldType: 'somefieldtype',
-      },
-    };
+      };
+    });
     initDynaMultiSubsidiaryMapping(genralProps);
     expect(screen.getByText('Export field value')).toBeInTheDocument();
     expect(screen.getByText('Import field value')).toBeInTheDocument();

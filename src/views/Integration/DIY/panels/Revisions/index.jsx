@@ -26,6 +26,7 @@ import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/Cre
 import LoadResources from '../../../../../components/LoadResources';
 import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions/hooks/useOpenRevisionWhenValid';
 import infoText from '../infoText';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -100,7 +101,7 @@ const RevisionsList = ({ integrationId }) => {
       <CeligoTable
         {...revisionsMetadata}
         filterKey={getRevisionFilterKey(integrationId)}
-        data={filteredRevisions}
+        data={customCloneDeep(filteredRevisions)}
       />
       <NoRevisionsInfo />
     </>

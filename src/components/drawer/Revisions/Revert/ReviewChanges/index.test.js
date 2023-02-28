@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../../actions';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import ReviewRevertChangesDrawer from '.';
 
 const props = {integrationId: '_integrationId'};
@@ -14,29 +14,31 @@ const mockHistoryReplace = jest.fn();
 async function initReviewRevertChangesDrawer(props = {}, isCreatedRevId = false, creationInProgress = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resource = {
-    _revisionId: isCreatedRevId ? '_revisionId' : undefined,
-  };
-  initialStore.getState().session.lifeCycleManagement = {
-    revision: {
-      _integrationId: {
-        _revisionId: { status: creationInProgress ? 'creating' : 'created'},
+  mutateStore(initialStore, draft => {
+    draft.session.resource = {
+      _revisionId: isCreatedRevId ? '_revisionId' : undefined,
+    };
+    draft.session.lifeCycleManagement = {
+      revision: {
+        _integrationId: {
+          _revisionId: { status: creationInProgress ? 'creating' : 'created'},
+        },
       },
-    },
-    compare: {
-      _integrationId: {
-        status: 'received',
-        diff: {
-          reverted: {
-            flow: {_flowId: {name: 'RevertedName'}},
-          },
-          current: {
-            flow: {_flowId: {name: 'CurrentName'}},
+      compare: {
+        _integrationId: {
+          status: 'received',
+          diff: {
+            reverted: {
+              flow: {_flowId: {name: 'RevertedName'}},
+            },
+            current: {
+              flow: {_flowId: {name: 'CurrentName'}},
+            },
           },
         },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: 'revert/_revisionId/review'}]}>
       <ReviewRevertChangesDrawer {...props} />

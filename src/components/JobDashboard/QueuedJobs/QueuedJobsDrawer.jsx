@@ -15,6 +15,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const metadata = {
   useColumns: () => [
@@ -149,7 +150,7 @@ function QueuedJobs({ connectionId }) {
       </div>
       <div className={classes.info}>
         {connectionJobs && connectionJobs.length > 0 ? (
-          <CeligoTable data={connectionJobs} {...metadata} />
+          <CeligoTable data={customCloneDeep(connectionJobs)} {...metadata} />
         ) : (
           <Typography variant="body1">{message.JOBS.NO_PENDING_QUEUED_JOBS}</Typography>
         )}

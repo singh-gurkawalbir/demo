@@ -3,23 +3,25 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import IntegrationUserName from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
 function initIntegrationUserName(userId, integrationId, profileData) {
-  initialStore.getState().user = {
-    profile: profileData,
-    preferences: { defaultAShareId: 'own' },
-    org: {
-      accounts: [
-        {
-          _id: 'own',
-          accessLevel: 'owner',
-        },
-      ],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.user = {
+      profile: profileData,
+      preferences: { defaultAShareId: 'own' },
+      org: {
+        accounts: [
+          {
+            _id: 'own',
+            accessLevel: 'owner',
+          },
+        ],
+      },
+    };
+  });
   const ui = (
     <IntegrationUserName userId={userId} integrationId={integrationId} />
   );

@@ -3,7 +3,7 @@ import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 import * as mockEnqueSnackbar from '../../../hooks/enqueueSnackbar';
 
@@ -51,10 +51,12 @@ jest.mock('../../CodeEditor', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.exports = [{
-  _id: 'someresourceId',
-  sampleData: {sample: 'sampleData'},
-}];
+mutateStore(initialStore, draft => {
+  draft.data.resources.exports = [{
+    _id: 'someresourceId',
+    sampleData: {sample: 'sampleData'},
+  }];
+});
 
 function initDynaWebHookSampleData(props = {}) {
   const ui = (

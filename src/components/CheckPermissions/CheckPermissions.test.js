@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
-import {renderWithProviders, mockGetRequestOnce} from '../../test/test-utils';
+import {renderWithProviders, mockGetRequestOnce, mutateStore} from '../../test/test-utils';
 import CheckPermissions from '.';
 import { runServer } from '../../test/api/server';
 import actions from '../../actions';
@@ -70,7 +70,9 @@ describe('checkPermissions UI tests', () => {
     store.dispatch(actions.user.preferences.request());
     store.dispatch(actions.user.org.accounts.requestCollection());
     store.dispatch(actions.user.profile.request());
-    store.getState().auth = {authenticated: true, defaultAccountSet: true};
+    mutateStore(store, draft => {
+      draft.auth = {authenticated: true, defaultAccountSet: true};
+    });
     await waitFor(() => expect(store?.getState()?.user?.profile?._id).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.environment).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan(1));

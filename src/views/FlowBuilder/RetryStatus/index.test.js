@@ -3,7 +3,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
-import {reduxStore, renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../test/test-utils';
 import RetryStatus from '.';
 
 const initialStore = reduxStore;
@@ -76,29 +76,31 @@ function initRetryStatus(props) {
     _connectionId: 'c4',
   }];
 
-  initialStore.getState().data.resources = {
-    flows,
-    exports,
-    imports,
-  };
-  initialStore.getState().session.errorManagement.retryData.retryStatus = {
-    f1: {},
-    f2: {
-      e1: 'inProgress',
-      e2: 'requested',
-    },
-    f3: {
-      e1: 'inProgress',
-      i1: 'completed',
-    },
-    f4: {
-      e1: 'completed',
-      i1: 'completed',
-    },
-    f5: {
-      e1: 'completed',
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows,
+      exports,
+      imports,
+    };
+    draft.session.errorManagement.retryData.retryStatus = {
+      f1: {},
+      f2: {
+        e1: 'inProgress',
+        e2: 'requested',
+      },
+      f3: {
+        e1: 'inProgress',
+        i1: 'completed',
+      },
+      f4: {
+        e1: 'completed',
+        i1: 'completed',
+      },
+      f5: {
+        e1: 'completed',
+      },
+    };
+  });
 
   return renderWithProviders(<MemoryRouter><RetryStatus {...props} /></MemoryRouter>, {initialStore});
 }

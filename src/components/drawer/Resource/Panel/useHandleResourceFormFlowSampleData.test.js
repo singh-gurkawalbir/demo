@@ -2,7 +2,7 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { waitFor } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import actions from '../../../../actions';
 import {
@@ -27,21 +27,23 @@ async function inituseHandleResourceFormFlowSampleData(resourceType = 'imports',
 
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    formKey: { parentContext: {initComplete: true, skipCommit: false, resourceType, flowId: '_flowId', resourceId}},
-  };
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: '_id',
-        isLookup: true,
-      },
-      {
-        _id: '_id2',
-        isLookup: false,
-      },
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      formKey: { parentContext: {initComplete: true, skipCommit: false, resourceType, flowId: '_flowId', resourceId}},
+    };
+    draft.data.resources = {
+      exports: [
+        {
+          _id: '_id',
+          isLookup: true,
+        },
+        {
+          _id: '_id2',
+          isLookup: false,
+        },
+      ],
+    };
+  });
 
   await renderWithProviders(<DummyComponent />, {initialStore});
 }

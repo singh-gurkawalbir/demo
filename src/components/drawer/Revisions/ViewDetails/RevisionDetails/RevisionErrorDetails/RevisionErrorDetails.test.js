@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../test/test-utils';
 import RevisionErrorDetails from '.';
 import { getCreatedStore } from '../../../../../../store';
 import actions from '../../../../../../actions';
@@ -13,14 +13,16 @@ const props = {integrationId: '_integrationId', revisionId: '_revisionId'};
 async function initRevisionErrorDetails(props = {}, status = undefined) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().session.lifeCycleManagement.revision._integrationId = {
-    _revisionId: {
-      errors: {
-        data: [],
-        status,
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement.revision._integrationId = {
+      _revisionId: {
+        errors: {
+          data: [],
+          status,
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <RevisionErrorDetails {...props} />
   );

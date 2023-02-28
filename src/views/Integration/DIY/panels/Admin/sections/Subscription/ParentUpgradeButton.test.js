@@ -5,22 +5,24 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ParentUpgradeButton from './ParentUpgradeButton';
-import { renderWithProviders } from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../../test/test-utils';
 import actions from '../../../../../../../actions';
 import { getCreatedStore } from '../../../../../../../store';
 
 let initialStore = {};
 
 async function initParentUpgradeButton(props) {
-  initialStore.getState().session.integrationApps.upgrade = {
-    122: {
-      status: 'hold',
-      showWizard: true,
-    },
-    253: {
-      status: 'inProgress',
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.upgrade = {
+      122: {
+        status: 'hold',
+        showWizard: true,
+      },
+      253: {
+        status: 'inProgress',
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ParentUpgradeButton {...props} />
