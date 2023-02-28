@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import {getCreatedStore} from '../../../../store';
 import TabRedirection from '.';
 
@@ -39,25 +39,27 @@ describe('TabRedirection(DIY) UI tests', () => {
   function initStore(mode) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: '5ff579d745ceef7dcd797c15',
-      mode,
-      initChild: {function: true},
-      description: 'description',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      _connectorId: 'connectorId',
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5cd51efd3607fe7d8eda9c97',
-        '5ff57a8345ceef7dcd797c21',
-      ],
-      installSteps: ['just some mock string'],
-      uninstallSteps: ['just some mock string'],
-      flowGroupings: [],
-      createdAt: '2021-01-06T08:50:31.935Z',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: '5ff579d745ceef7dcd797c15',
+        mode,
+        initChild: {function: true},
+        description: 'description',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        _connectorId: 'connectorId',
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5cd51efd3607fe7d8eda9c97',
+          '5ff57a8345ceef7dcd797c21',
+        ],
+        installSteps: ['just some mock string'],
+        uninstallSteps: ['just some mock string'],
+        flowGroupings: [],
+        createdAt: '2021-01-06T08:50:31.935Z',
+      }];
+    });
 
     return initialStore;
   }
@@ -88,38 +90,40 @@ describe('TabRedirection(DIY) UI tests', () => {
   test('should redirect when no template is provided from params but integration has templateID', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [
-      {
-        _id: '5ff579d745ceef7dcd797c15',
-        _templateId: '6013fcd90f0ac62d08bb6dae',
-        initChild: {function: true},
-        description: 'description',
-        lastModified: '2021-01-19T06:34:17.222Z',
-        _connectorId: 'connectorId',
-        name: " AFE 2.0 refactoring for DB's",
-        install: [],
-        sandbox: false,
-        _registeredConnectionIds: [
-          '5cd51efd3607fe7d8eda9c97',
-          '5ff57a8345ceef7dcd797c21',
-        ],
-        installSteps: ['just some mock string'],
-        uninstallSteps: ['just some mock string'],
-        flowGroupings: [],
-        createdAt: '2021-01-06T08:50:31.935Z',
-      },
-    ];
-    initialStore.getState().data.resources.marketplacetemplates = [
-      {
-        _id: '6013fcd90f0ac62d08bb6dae',
-        name: 'concur',
-        lastModified: '2021-01-29T12:17:29.248Z',
-        applications: [
-          'concurexpense',
-        ],
-        free: false,
-      },
-    ];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [
+        {
+          _id: '5ff579d745ceef7dcd797c15',
+          _templateId: '6013fcd90f0ac62d08bb6dae',
+          initChild: {function: true},
+          description: 'description',
+          lastModified: '2021-01-19T06:34:17.222Z',
+          _connectorId: 'connectorId',
+          name: " AFE 2.0 refactoring for DB's",
+          install: [],
+          sandbox: false,
+          _registeredConnectionIds: [
+            '5cd51efd3607fe7d8eda9c97',
+            '5ff57a8345ceef7dcd797c21',
+          ],
+          installSteps: ['just some mock string'],
+          uninstallSteps: ['just some mock string'],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+        },
+      ];
+      draft.data.resources.marketplacetemplates = [
+        {
+          _id: '6013fcd90f0ac62d08bb6dae',
+          name: 'concur',
+          lastModified: '2021-01-29T12:17:29.248Z',
+          applications: [
+            'concurexpense',
+          ],
+          free: false,
+        },
+      ];
+    });
 
     renderFunction(
       initialStore,
@@ -166,7 +170,9 @@ describe('TabRedirection(DIY) UI tests', () => {
   test('should redirect to provided URL', async () => {
     const initialStore = initStore();
 
-    initialStore.getState().session.integrations['5ff579d745ceef7dcd797c15'] = {redirectTo: 'someURL'};
+    mutateStore(initialStore, draft => {
+      draft.session.integrations['5ff579d745ceef7dcd797c15'] = {redirectTo: 'someURL'};
+    });
 
     renderFunction(
       initialStore,
@@ -190,7 +196,9 @@ describe('TabRedirection(DIY) UI tests', () => {
   test('should redirect to home', async () => {
     const initialStore = initStore();
 
-    initialStore.getState().session.integrations['5ff579d745ceef7dcd797c15'] = {redirectTo: '/home'};
+    mutateStore(initialStore, draft => {
+      draft.session.integrations['5ff579d745ceef7dcd797c15'] = {redirectTo: '/home'};
+    });
 
     renderFunction(
       initialStore,
@@ -202,47 +210,49 @@ describe('TabRedirection(DIY) UI tests', () => {
   test('should redirect to uninstall the child', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [
-      {
-        _id: '5ff579d745ceef7dcd797c15',
-        mode: 'install',
-        initChild: {function: true},
-        description: 'description',
-        lastModified: '2021-01-19T06:34:17.222Z',
-        _connectorId: 'connectorId',
-        name: " AFE 2.0 refactoring for DB's",
-        install: [],
-        sandbox: false,
-        _registeredConnectionIds: [
-          '5cd51efd3607fe7d8eda9c97',
-          '5ff57a8345ceef7dcd797c21',
-        ],
-        installSteps: ['just some mock string'],
-        uninstallSteps: ['2'],
-        flowGroupings: [],
-        createdAt: '2021-01-06T08:50:31.935Z',
-      },
-      {
-        _id: '5ff579d745ceef7dcd797c16',
-        mode: 'uninstall',
-        initChild: {function: true},
-        description: 'description',
-        lastModified: '2021-01-19T06:34:17.222Z',
-        _connectorId: 'connectorId',
-        name: ' AFE 2.0 2',
-        install: [],
-        sandbox: false,
-        _registeredConnectionIds: [
-          '5cd51efd3607fe7d8eda9c97',
-          '5ff57a8345ceef7dcd797c21',
-        ],
-        installSteps: [],
-        uninstallSteps: [],
-        flowGroupings: [],
-        createdAt: '2021-01-06T08:50:31.935Z',
-        _parentId: '5ff579d745ceef7dcd797c15',
-      },
-    ];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [
+        {
+          _id: '5ff579d745ceef7dcd797c15',
+          mode: 'install',
+          initChild: {function: true},
+          description: 'description',
+          lastModified: '2021-01-19T06:34:17.222Z',
+          _connectorId: 'connectorId',
+          name: " AFE 2.0 refactoring for DB's",
+          install: [],
+          sandbox: false,
+          _registeredConnectionIds: [
+            '5cd51efd3607fe7d8eda9c97',
+            '5ff57a8345ceef7dcd797c21',
+          ],
+          installSteps: ['just some mock string'],
+          uninstallSteps: ['2'],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+        },
+        {
+          _id: '5ff579d745ceef7dcd797c16',
+          mode: 'uninstall',
+          initChild: {function: true},
+          description: 'description',
+          lastModified: '2021-01-19T06:34:17.222Z',
+          _connectorId: 'connectorId',
+          name: ' AFE 2.0 2',
+          install: [],
+          sandbox: false,
+          _registeredConnectionIds: [
+            '5cd51efd3607fe7d8eda9c97',
+            '5ff57a8345ceef7dcd797c21',
+          ],
+          installSteps: [],
+          uninstallSteps: [],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+          _parentId: '5ff579d745ceef7dcd797c15',
+        },
+      ];
+    });
 
     renderFunction(
       initialStore,
@@ -255,50 +265,52 @@ describe('TabRedirection(DIY) UI tests', () => {
   test('should redirect to setup of child', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [
-      {
-        _id: '5ff579d745ceef7dcd797c15',
-        mode: 'install',
-        initChild: {function: true},
-        description: 'description',
-        lastModified: '2021-01-19T06:34:17.222Z',
-        _connectorId: 'connectorId',
-        name: " AFE 2.0 refactoring for DB's",
-        install: [],
-        sandbox: false,
-        _registeredConnectionIds: [
-          '5cd51efd3607fe7d8eda9c97',
-          '5ff57a8345ceef7dcd797c21',
-        ],
-        installSteps: ['just some mock string'],
-        uninstallSteps: ['2'],
-        flowGroupings: [],
-        createdAt: '2021-01-06T08:50:31.935Z',
-      },
-      {
-        _id: '5ff579d745ceef7dcd797c16',
-        mode: 'install',
-        initChild: {function: true},
-        description: 'description',
-        lastModified: '2021-01-19T06:34:17.222Z',
-        _connectorId: 'connectorId',
-        name: ' AFE 2.0 2',
-        install: [],
-        sandbox: false,
-        _registeredConnectionIds: [
-          '5cd51efd3607fe7d8eda9c97',
-          '5ff57a8345ceef7dcd797c21',
-        ],
-        installSteps: [],
-        uninstallSteps: [],
-        flowGroupings: [],
-        createdAt: '2021-01-06T08:50:31.935Z',
-        _parentId: '5ff579d745ceef7dcd797c15',
-      },
-    ];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [
+        {
+          _id: '5ff579d745ceef7dcd797c15',
+          mode: 'install',
+          initChild: {function: true},
+          description: 'description',
+          lastModified: '2021-01-19T06:34:17.222Z',
+          _connectorId: 'connectorId',
+          name: " AFE 2.0 refactoring for DB's",
+          install: [],
+          sandbox: false,
+          _registeredConnectionIds: [
+            '5cd51efd3607fe7d8eda9c97',
+            '5ff57a8345ceef7dcd797c21',
+          ],
+          installSteps: ['just some mock string'],
+          uninstallSteps: ['2'],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+        },
+        {
+          _id: '5ff579d745ceef7dcd797c16',
+          mode: 'install',
+          initChild: {function: true},
+          description: 'description',
+          lastModified: '2021-01-19T06:34:17.222Z',
+          _connectorId: 'connectorId',
+          name: ' AFE 2.0 2',
+          install: [],
+          sandbox: false,
+          _registeredConnectionIds: [
+            '5cd51efd3607fe7d8eda9c97',
+            '5ff57a8345ceef7dcd797c21',
+          ],
+          installSteps: [],
+          uninstallSteps: [],
+          flowGroupings: [],
+          createdAt: '2021-01-06T08:50:31.935Z',
+          _parentId: '5ff579d745ceef7dcd797c15',
+        },
+      ];
 
-    initialStore.getState().session.resource = {parentChildMap: []};
-    initialStore.getState().session.resource.parentChildMap['5ff579d745ceef7dcd797c15'] = '5ff579d745ceef7dcd797c16';
+      draft.session.resource = {parentChildMap: []};
+      draft.session.resource.parentChildMap['5ff579d745ceef7dcd797c15'] = '5ff579d745ceef7dcd797c16';
+    });
 
     renderFunction(
       initialStore,
@@ -311,16 +323,18 @@ describe('TabRedirection(DIY) UI tests', () => {
   test('should test the dispatch calls', async () => {
     const initialStore = initStore();
 
-    initialStore.getState().user.preferences = {
-      environment: 'sandbox',
-      dateFormat: 'MM/DD/YYYY',
-      timeFormat: 'h:mm:ss a',
-      expand: 'Resources',
-      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-      showReactSneakPeekFromDate: '2019-11-05',
-      showReactBetaFromDate: '2019-12-26',
-      defaultAShareId: 'own',
-    };
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {
+        environment: 'sandbox',
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: 'h:mm:ss a',
+        expand: 'Resources',
+        scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+        showReactSneakPeekFromDate: '2019-11-05',
+        showReactBetaFromDate: '2019-12-26',
+        defaultAShareId: 'own',
+      };
+    });
 
     renderFunction(
       initialStore,

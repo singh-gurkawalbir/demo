@@ -2,24 +2,26 @@
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import DynaMFASecretKey from '.';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaMFASecretKey(props = {}) {
-  initialStore.getState().session.mfa = {
-    codes: {
-      mobileCode: {
-        status: props.status,
+  mutateStore(initialStore, draft => {
+    draft.session.mfa = {
+      codes: {
+        mobileCode: {
+          status: props.status,
+        },
+        showSecretCode: props.showcode,
+        secretCode: {
+          secret: props.code,
+        },
       },
-      showSecretCode: props.showcode,
-      secretCode: {
-        secret: props.code,
-      },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<DynaMFASecretKey {...props} />, {initialStore});
 }

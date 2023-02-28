@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import metadata from '../openErrors/metadata';
 import CeligoTable from '../../../CeligoTable';
 import actions from '../../../../actions';
@@ -20,10 +20,12 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.exports = [{
-  _id: '6439276e7uybwe78292878',
-  adaptorType: 'NetSuiteExport',
-}];
+mutateStore(initialStore, draft => {
+  draft.data.resources.exports = [{
+    _id: '6439276e7uybwe78292878',
+    adaptorType: 'NetSuiteExport',
+  }];
+});
 
 function renderFuntion(actionProps, data) {
   renderWithProviders(

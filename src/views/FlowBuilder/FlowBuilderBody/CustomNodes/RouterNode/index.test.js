@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import RouterNode from '.';
 import { getCreatedStore } from '../../../../../store';
 
@@ -84,7 +84,10 @@ describe('Testsuite for RouterNode', () => {
   test('should not be able to open branching settings while flow saving is in progress', () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.asyncTask['flow-123-flow_save_async_key'] = { status: 'loading' };
+    mutateStore(initialStore, draft => {
+      draft.session.asyncTask['flow-123-flow_save_async_key'] = { status: 'loading' };
+    });
+
     renderWithProviders(<RouterNode id="123" data={{routeRecordsTo: 'test'}} />, {initialStore});
     expect(screen.getByRole('button', { name: 'Edit branching' })).toBeDisabled();
   });

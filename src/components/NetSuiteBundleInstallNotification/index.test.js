@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import NetSuiteBundleInstallNotification from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 
 async function initNetSuiteBundleInstallNotification({
   props = {
@@ -27,8 +27,10 @@ async function initNetSuiteBundleInstallNotification({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resourceForm = resourceForm;
-  initialStore.getState().data.resources = resources;
+  mutateStore(initialStore, draft => {
+    draft.session.resourceForm = resourceForm;
+    draft.data.resources = resources;
+  });
 
   const ui = (
     <MemoryRouter>

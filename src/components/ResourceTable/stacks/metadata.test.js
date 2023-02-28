@@ -6,11 +6,13 @@ import userEvent from '@testing-library/user-event';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own'};
+});
 
 const resource = {
   _id: '5e7068331c056a75e6df19b2',

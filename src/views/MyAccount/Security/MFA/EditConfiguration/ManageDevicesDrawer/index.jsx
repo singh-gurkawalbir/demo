@@ -8,6 +8,7 @@ import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader
 import { drawerPaths } from '../../../../../../utils/rightDrawer';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/trustedDevices/metadata';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(() => ({
   errorTable: {
@@ -27,7 +28,7 @@ function ManageDevicesDrawerContent({ parentUrl }) {
   }
 
   return (
-    <CeligoTable {...metadata} data={trustedDevices} className={classes.errorTable} />
+    <CeligoTable {...metadata} data={customCloneDeep(trustedDevices)} className={classes.errorTable} />
   );
 }
 

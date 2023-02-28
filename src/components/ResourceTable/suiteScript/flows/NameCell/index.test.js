@@ -2,21 +2,23 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import NameCell from './index';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.suiteScript = {ssLinkedConnectionId: {integrations: [
-  {
-    _id: 'inetgrationId',
-    _connectorId: '_connectorId',
-    urlName: 'someurlName',
-  },
-  {
-    _id: '2inetgrationId',
-  },
-]}};
+mutateStore(initialStore, draft => {
+  draft.data.suiteScript = {ssLinkedConnectionId: {integrations: [
+    {
+      _id: 'inetgrationId',
+      _connectorId: '_connectorId',
+      urlName: 'someurlName',
+    },
+    {
+      _id: '2inetgrationId',
+    },
+  ]}};
+});
 
 describe('suite script Name Cell ui test', () => {
   test('should show unamed as name when no name is provided', () => {

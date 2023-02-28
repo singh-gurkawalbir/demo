@@ -18,6 +18,7 @@ import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import infoText from '../infoText';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -176,7 +177,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
 
       <LoadResources required integrationId={integrationId} resources="connections">
         <CeligoTable
-          data={connections}
+          data={customCloneDeep(connections)}
           filterKey={filterKey}
           {...metadata}
           actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner,

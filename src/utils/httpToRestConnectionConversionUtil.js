@@ -1,3 +1,5 @@
+import customCloneDeep from './customCloneDeep';
+
 const _ = require('lodash');
 
 /**
@@ -8,7 +10,7 @@ const _ = require('lodash');
  * @param {object} conn - connection plain json object
  * @returns {object} - connection plain json object
  */
-function convertConnJSONObjHTTPtoREST(conn) {
+export function convertConnJSONObjHTTPtoREST(conn) {
   if (!_.isEmpty(conn.http)) {
     /* eslint-disable no-param-reassign */
     /* eslint-disable no-use-before-define */
@@ -108,7 +110,7 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
   // need to handle media-types
 
   handleAssistantsHTTPtoREST(httpDoc, restDoc, assistantName);
-  restDoc = _.cloneDeep(restDoc);
+  restDoc = customCloneDeep(restDoc);
   replaceHTTPHandlebarExpression(restDoc);
 
   return restDoc;
@@ -246,5 +248,3 @@ function replaceHTTPrefWithCorrespondingREST(str) {
 
   return str;
 }
-
-exports.convertConnJSONObjHTTPtoREST = convertConnJSONObjHTTPtoREST;

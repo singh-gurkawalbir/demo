@@ -2,29 +2,31 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import FormView from '.';
 import actions from '../../../../../actions';
 
 describe('formView tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().session = {
-    customSettings: {
-      _impId1: {meta: { fieldMap: {_key1: 'k1', _key2: 'k2'} }},
-      _impId3: {meta: { }, error: 'invalid meta'},
-    },
-    form: {
-      'settingsForm-_impId1': {
-        fieldMeta: {layout: {}, fieldMap: {}},
+  mutateStore(initialStore, draft => {
+    draft.session = {
+      customSettings: {
+        _impId1: {meta: { fieldMap: {_key1: 'k1', _key2: 'k2'} }},
+        _impId3: {meta: { }, error: 'invalid meta'},
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: '_impId1',
-    }],
-  };
+      form: {
+        'settingsForm-_impId1': {
+          fieldMeta: {layout: {}, fieldMap: {}},
+        },
+      },
+    };
+    draft.data.resources = {
+      imports: [{
+        _id: '_impId1',
+      }],
+    };
+  });
 
   let mockDispatchFn;
   let useDispatchSpy;

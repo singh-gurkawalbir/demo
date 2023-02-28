@@ -1,6 +1,6 @@
 import React from 'react';
 import {useEditRetryConfirmDialog } from './useEditRetryConfirmDialog';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { getCreatedStore } from '../../../../store';
 
@@ -27,58 +27,60 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-initialStore.getState().session.filters = {
-  openErrors: {
-    activeErrorId: '5666371243',
-  },
-};
-initialStore.getState().session.errorManagement = {
-  openErrors: {
-    '63ab65842009e066e35e8af3': {
-      data: {
-        '63ab657ebc20f510012c130e': {
-          _expOrImpId: '63ab657ebc20f510012c130e',
-          numError: 1,
-          lastErrorAt: '2022-12-28T06:39:54.065Z',
-        },
-      },
+mutateStore(initialStore, draft => {
+  draft.session.filters = {
+    openErrors: {
+      activeErrorId: '5666371243',
     },
-  },
-  errorDetails: {
-    '63ab65842009e066e35e8af3': {
-      '63ab657ebc20f510012c130e': {
-        resolved: {
-          status: 'received',
-          errors: [
-            {
-              resolvedBy: 'auto',
-              oIndex: '1',
-              errorId: '5666371243',
-              retryDataKey: '24e6afe09f6e41f19e6871482c52407d',
-            },
-          ],
-        },
-      },
-    },
-  },
-  retryData: {
-    retryObjects: {
-      '24e6afe09f6e41f19e6871482c52407d': {
-        status: 'received',
-        userData: {
-          id: 1,
-          data: 'sometext',
-        },
+  };
+  draft.session.errorManagement = {
+    openErrors: {
+      '63ab65842009e066e35e8af3': {
         data: {
-          data: {
-            orderid: 1,
-            customerid: 100,
+          '63ab657ebc20f510012c130e': {
+            _expOrImpId: '63ab657ebc20f510012c130e',
+            numError: 1,
+            lastErrorAt: '2022-12-28T06:39:54.065Z',
           },
         },
       },
     },
-  },
-};
+    errorDetails: {
+      '63ab65842009e066e35e8af3': {
+        '63ab657ebc20f510012c130e': {
+          resolved: {
+            status: 'received',
+            errors: [
+              {
+                resolvedBy: 'auto',
+                oIndex: '1',
+                errorId: '5666371243',
+                retryDataKey: '24e6afe09f6e41f19e6871482c52407d',
+              },
+            ],
+          },
+        },
+      },
+    },
+    retryData: {
+      retryObjects: {
+        '24e6afe09f6e41f19e6871482c52407d': {
+          status: 'received',
+          userData: {
+            id: 1,
+            data: 'sometext',
+          },
+          data: {
+            data: {
+              orderid: 1,
+              customerid: 100,
+            },
+          },
+        },
+      },
+    },
+  };
+});
 async function inituseEditRetryConfirmDialog(props = {}) {
   let returnData;
   const DummyComponent = () => {

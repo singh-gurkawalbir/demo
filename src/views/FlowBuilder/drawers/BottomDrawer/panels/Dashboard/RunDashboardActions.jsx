@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
     margin: theme.spacing(0, 1),
   },
+  cancelButton: {
+    whiteSpace: 'nowrap',
+  },
 }));
 const emptySet = [];
 
@@ -151,7 +154,8 @@ export default function RunDashboardActions({ flowId }) {
         <TextButton
           onClick={handleCancel}
           disabled={!validDashboardActions?.includes('cancel')}
-          startIcon={<CancelIcon />}>
+          startIcon={<CancelIcon />}
+          className={classes.cancelButton}>
           Cancel run
         </TextButton>
         <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} label="More" />

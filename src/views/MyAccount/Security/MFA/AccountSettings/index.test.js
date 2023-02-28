@@ -7,20 +7,22 @@ import userEvent from '@testing-library/user-event';
 import AccountSettings from '.';
 import { getCreatedStore } from '../../../../../store';
 import { runServer } from '../../../../../test/api/server';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 
 let initialStore;
 const asycTaskkey = 'MFA_ACCOUNT_SETTINGS_ASYNC_KEY';
 
 async function initAccountSettings({asyncStatus, accountSettingsStatus = 'received'} = {}) {
-  initialStore.getState().data.mfa = {
-    status: {
-      accountSettings: accountSettingsStatus,
-    },
-  };
-  if (asyncStatus) {
-    initialStore.getState().session.asyncTask[asycTaskkey] = {status: asyncStatus};
-  }
+  mutateStore(initialStore, draft => {
+    draft.data.mfa = {
+      status: {
+        accountSettings: accountSettingsStatus,
+      },
+    };
+    if (asyncStatus) {
+      draft.session.asyncTask[asycTaskkey] = {status: asyncStatus};
+    }
+  });
   const ui = (
     <MemoryRouter>
       <AccountSettings />

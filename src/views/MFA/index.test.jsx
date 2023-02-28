@@ -3,7 +3,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import MfaVerify from '.';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
@@ -12,8 +12,10 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function store(auth, mfa) {
-  initialStore.getState().auth = auth;
-  initialStore.getState().session.mfa.sessionInfo = mfa;
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
+    draft.session.mfa.sessionInfo = mfa;
+  });
 }
 
 async function initMFAVerify() {

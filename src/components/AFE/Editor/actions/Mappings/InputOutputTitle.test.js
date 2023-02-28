@@ -1,6 +1,6 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 import InputOutputTitle from './InputOutputTitle';
@@ -8,13 +8,17 @@ import InputOutputTitle from './InputOutputTitle';
 const initialStore = getCreatedStore();
 
 function initInputOutputTitle(props = {}) {
-  initialStore.getState().session.mapping = {
-    mapping: {
-      version: props.version,
-      isGroupedSampleData: props.sample,
-      isGroupedOutput: props.output,
-    },
+  const mustateState = draft => {
+    draft.session.mapping = {
+      mapping: {
+        version: props.version,
+        isGroupedSampleData: props.sample,
+        isGroupedOutput: props.output,
+      },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<InputOutputTitle {...props} />, {initialStore});
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithProviders, reduxStore, mockGetRequestOnce} from '../../test/test-utils';
+import {renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore} from '../../test/test-utils';
 import AuditLogDialog from './AuditLogDialog';
 import { runServer } from '../../test/api/server';
 
@@ -8,18 +8,20 @@ const resourceType = 'flows';
 const resourceId = 'flow_id';
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.flows = [
-  {
-    _id: 'flow_id',
-    name: 'demo flow',
-    disabled: false,
-    _integrationId: 'integration_id',
-    pageProcessors: [{
-      type: 'import',
-      _importId: 'resource_id',
-    }],
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.flows = [
+    {
+      _id: 'flow_id',
+      name: 'demo flow',
+      disabled: false,
+      _integrationId: 'integration_id',
+      pageProcessors: [{
+        type: 'import',
+        _importId: 'resource_id',
+      }],
+    },
+  ];
+});
 describe('uI test cases for audit log dialog box', () => {
   runServer();
   afterAll(async () => {

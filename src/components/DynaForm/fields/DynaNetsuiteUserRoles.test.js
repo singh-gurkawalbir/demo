@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaNetsuiteUserRoles from './DynaNetsuiteUserRoles';
 import { getCreatedStore } from '../../../store';
 
@@ -34,26 +34,28 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.netsuiteUserRole = {
-      connection123: {
-        hideNotificationMessage: true,
-        userRoles: {
-          production: {
-            success: true,
-            accounts: [],
+    mutateStore(initialStore, draft => {
+      draft.session.netsuiteUserRole = {
+        connection123: {
+          hideNotificationMessage: true,
+          userRoles: {
+            production: {
+              success: true,
+              accounts: [],
+            },
+            beta: {
+              success: true,
+              accounts: [],
+            },
+            sandbox: {
+              success: true,
+              accounts: [],
+            },
           },
-          beta: {
-            success: true,
-            accounts: [],
-          },
-          sandbox: {
-            success: true,
-            accounts: [],
-          },
+          status: 'success',
         },
-        status: 'success',
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
     const label = document.querySelector('label');
@@ -95,22 +97,24 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.netsuiteUserRole = {
-      connection123: {
-        hideNotificationMessage: true,
-        userRoles: {
-          beta: {
-            success: true,
-            accounts: [],
+    mutateStore(initialStore, draft => {
+      draft.session.netsuiteUserRole = {
+        connection123: {
+          hideNotificationMessage: true,
+          userRoles: {
+            beta: {
+              success: true,
+              accounts: [],
+            },
+            sandbox: {
+              success: true,
+              accounts: [],
+            },
           },
-          sandbox: {
-            success: true,
-            accounts: [],
-          },
+          status: 'success',
         },
-        status: 'success',
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
@@ -140,18 +144,20 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.netsuiteUserRole = {
-      connection123: {
-        hideNotificationMessage: true,
-        userRoles: {
-          production: {
-            success: true,
-            accounts: [],
+    mutateStore(initialStore, draft => {
+      draft.session.netsuiteUserRole = {
+        connection123: {
+          hideNotificationMessage: true,
+          userRoles: {
+            production: {
+              success: true,
+              accounts: [],
+            },
           },
+          status: 'success',
         },
-        status: 'success',
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
@@ -184,26 +190,28 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.netsuiteUserRole = {
-      connection123: {
-        hideNotificationMessage: true,
-        userRoles: {
-          production: {
-            success: true,
-            accounts: [
-              {
-                account: {
-                  internalId: 'TSTDRV12345',
-                  name: 'Celigo Epicenter',
-                  type: 'PRODUCTION',
+    mutateStore(initialStore, draft => {
+      draft.session.netsuiteUserRole = {
+        connection123: {
+          hideNotificationMessage: true,
+          userRoles: {
+            production: {
+              success: true,
+              accounts: [
+                {
+                  account: {
+                    internalId: 'TSTDRV12345',
+                    name: 'Celigo Epicenter',
+                    type: 'PRODUCTION',
+                  },
                 },
-              },
-            ],
+              ],
+            },
           },
+          status: 'success',
         },
-        status: 'success',
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
@@ -236,30 +244,32 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.netsuiteUserRole = {
-      connection123: {
-        hideNotificationMessage: true,
-        userRoles: {
-          production: {
-            success: true,
-            accounts: [
-              {
-                account: {
-                  internalId: 'TSTDRV12345',
-                  name: 'Celigo Epicenter',
-                  type: 'PRODUCTION',
+    mutateStore(initialStore, draft => {
+      draft.session.netsuiteUserRole = {
+        connection123: {
+          hideNotificationMessage: true,
+          userRoles: {
+            production: {
+              success: true,
+              accounts: [
+                {
+                  account: {
+                    internalId: 'TSTDRV12345',
+                    name: 'Celigo Epicenter',
+                    type: 'PRODUCTION',
+                  },
+                  role: {
+                    internalId: 1074,
+                    name: 'Administrator',
+                  },
                 },
-                role: {
-                  internalId: 1074,
-                  name: 'Administrator',
-                },
-              },
-            ],
+              ],
+            },
           },
+          status: 'success',
         },
-        status: 'success',
-      },
-    };
+      };
+    });
 
     renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
 
