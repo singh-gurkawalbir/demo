@@ -5,18 +5,21 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import OnOffCell from '.';
 import { ConfirmDialogProvider } from '../../../../ConfirmDialog';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import actions from '../../../../../actions';
 
 let initialStore;
 
 function initOnOffCell(props, publishedStatusData) {
-  initialStore.getState().session.templates = {
-    [props.templateId]: {
-      publishStatus: publishedStatusData,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.templates = {
+      [props.templateId]: {
+        publishStatus: publishedStatusData,
+      },
+    };
+  });
+
   const ui = (
     <ConfirmDialogProvider>
       <OnOffCell {...props} />

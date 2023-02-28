@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSelectResource from './DynaSelectResource';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import * as Resource from '../../../utils/resource';
 import actions from '../../../actions';
@@ -18,12 +18,14 @@ const mockGetItemInfo = jest.fn();
 const mockHistoryPush = jest.fn();
 
 function initDynaSelectResource({props, loadResources, resourcesData}) {
-  initialStore.getState().session.loadResources = loadResources;
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().data.resources = resourcesData;
+  mutateStore(initialStore, draft => {
+    draft.session.loadResources = loadResources;
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.data.resources = resourcesData;
+  });
   const ui = (
     <MemoryRouter>
       <Route>

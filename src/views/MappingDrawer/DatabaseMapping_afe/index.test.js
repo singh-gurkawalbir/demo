@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import DatabaseMapping from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initDatabaseMapping({
   props = {
@@ -14,42 +14,44 @@ async function initDatabaseMapping({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        adaptorType: 'RDBMSImport',
-      },
-      {
-        _id: 'import_id_1',
-        adaptorType: 'DynamodbImport',
-        dynamodb: {
-          method: 'putItem',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          adaptorType: 'RDBMSImport',
         },
-      },
-      {
-        _id: 'import_id_2',
-        adaptorType: 'DynamodbImport',
-        dynamodb: {
-          method: 'postItem',
+        {
+          _id: 'import_id_1',
+          adaptorType: 'DynamodbImport',
+          dynamodb: {
+            method: 'putItem',
+          },
         },
-      },
-      {
-        _id: 'import_id_3',
-        adaptorType: 'MongodbImport',
-        mongodb: {
-          method: 'insertMany',
+        {
+          _id: 'import_id_2',
+          adaptorType: 'DynamodbImport',
+          dynamodb: {
+            method: 'postItem',
+          },
         },
-      },
-      {
-        _id: 'import_id_4',
-        adaptorType: 'MongodbImport',
-        mongodb: {
-          method: 'insertOne',
+        {
+          _id: 'import_id_3',
+          adaptorType: 'MongodbImport',
+          mongodb: {
+            method: 'insertMany',
+          },
         },
-      },
-    ],
-  };
+        {
+          _id: 'import_id_4',
+          adaptorType: 'MongodbImport',
+          mongodb: {
+            method: 'insertOne',
+          },
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter

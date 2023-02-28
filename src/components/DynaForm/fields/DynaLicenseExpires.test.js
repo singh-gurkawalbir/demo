@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import DynaLicenseExpires from './DynaLicenseExpires';
 
@@ -47,10 +47,12 @@ describe('test suite for DynaLicenseExpires field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connectors = [{
-      _id: props.connectorId,
-      trialEnabled: false,
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connectors = [{
+        _id: props.connectorId,
+        trialEnabled: false,
+      }];
+    });
     renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
   });
@@ -69,10 +71,12 @@ describe('test suite for DynaLicenseExpires field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connectors = [{
-      _id: props.connectorId,
-      trialEnabled: true,
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connectors = [{
+        _id: props.connectorId,
+        trialEnabled: true,
+      }];
+    });
 
     renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
@@ -93,7 +97,9 @@ describe('test suite for DynaLicenseExpires field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.dateFormat = 'MM/DD/YYYY';
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.dateFormat = 'MM/DD/YYYY';
+    });
 
     renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
     expect(document.querySelector('label')).toHaveTextContent(`${props.label} *`);
@@ -114,11 +120,13 @@ describe('test suite for DynaLicenseExpires field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.dateFormat = 'MM/DD/YYYY';
-    initialStore.getState().data.resources.connectors = [{
-      _id: props.connectorId,
-      trialEnabled: true,
-    }];
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.dateFormat = 'MM/DD/YYYY';
+      draft.data.resources.connectors = [{
+        _id: props.connectorId,
+        trialEnabled: true,
+      }];
+    });
 
     renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
     expect(document.querySelector('label')).toHaveTextContent(`${props.label} *`);

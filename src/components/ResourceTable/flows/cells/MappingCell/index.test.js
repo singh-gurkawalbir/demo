@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import MappingCell from '.';
 
 const mockHistoryPush = jest.fn();
@@ -19,42 +19,44 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.integrations = [{
-  _id: '62662cc4e06ff462c3db470e',
-  lastModified: '2022-04-29T12:23:16.887Z',
-  _connectorId: 'qrf',
-  settings: {supportsMultiStore: true, sections: [{id: 'someChildId', sections: [{flows: [{_id: '5ea16c600e2fab71928a6153', showUtilityMapping: true, showMapping: true}]}]}]},
-  name: 'Production',
-}];
-initialStore.getState().data.resources.flows = [
-  {
-    _id: '5ea16c600e2fab71928a6152',
-    _integrationId: '62662cc4e06ff462c3db470e',
-    pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
-  },
-  {
-    _id: '600ec2928a6152fab5ea1671',
-    _integrationId: '62662cc4e06ff462c3db470e',
-    pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
-  },
-  {
-    _id: '5ea16c600e2fab71928a6153',
+mutateStore(initialStore, draft => {
+  draft.data.resources.integrations = [{
+    _id: '62662cc4e06ff462c3db470e',
+    lastModified: '2022-04-29T12:23:16.887Z',
     _connectorId: 'qrf',
-    _integrationId: '62662cc4e06ff462c3db470e',
-  },
-];
-initialStore.getState().data.resources.imports = [
-  {
-    _id: 'import-id-1',
-    mappings: [
-      {extract: '$.name', generate: 'name'},
-      {extract: '$.age', generate: 'age'},
-    ],
-  },
-  {
-    _id: 'import-id-2',
-  },
-];
+    settings: {supportsMultiStore: true, sections: [{id: 'someChildId', sections: [{flows: [{_id: '5ea16c600e2fab71928a6153', showUtilityMapping: true, showMapping: true}]}]}]},
+    name: 'Production',
+  }];
+  draft.data.resources.flows = [
+    {
+      _id: '5ea16c600e2fab71928a6152',
+      _integrationId: '62662cc4e06ff462c3db470e',
+      pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+    },
+    {
+      _id: '600ec2928a6152fab5ea1671',
+      _integrationId: '62662cc4e06ff462c3db470e',
+      pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
+    },
+    {
+      _id: '5ea16c600e2fab71928a6153',
+      _connectorId: 'qrf',
+      _integrationId: '62662cc4e06ff462c3db470e',
+    },
+  ];
+  draft.data.resources.imports = [
+    {
+      _id: 'import-id-1',
+      mappings: [
+        {extract: '$.name', generate: 'name'},
+        {extract: '$.age', generate: 'age'},
+      ],
+    },
+    {
+      _id: 'import-id-2',
+    },
+  ];
+});
 
 async function initMappingPage(props) {
   const ui = (

@@ -6,7 +6,7 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaConnectorNColumnMap from './DynaConnectorNColumnMap';
 import actions from '../../../../actions';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 
 const mockDispatchFn = jest.fn();
 
@@ -37,16 +37,19 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
       fieldType: 'somefieldtype',
     };
 
-    initialStore.getState().session.connectors = {
-      someintegrationId: {
-        someid: {
-          isLoading: {connectorexport: false, connectorimport: false},
-          shouldReset: false,
-          data: {optionsMap: [{id: 'connectorexport', label: 'Connector Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'connectorimport', label: 'Connector Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someintegrationId: {
+          someid: {
+            isLoading: {connectorexport: false, connectorimport: false},
+            shouldReset: false,
+            data: {optionsMap: [{id: 'connectorexport', label: 'Connector Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'connectorimport', label: 'Connector Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
+            },
+            fieldType: 'somefieldtype',
           },
-          fieldType: 'somefieldtype',
         },
-      }};
+      };
+    });
 
     initDynaConnectorNColumnMap(genralProps);
     expect(screen.getByText('Connector Export field value')).toBeInTheDocument();

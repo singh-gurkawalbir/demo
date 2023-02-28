@@ -2,10 +2,11 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import CeligoTable from '../../../CeligoTable';
 import metadata from './orgUsers';
 import { getCreatedStore } from '../../../../store';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const integrationId = '62eca1efe386b563f638451e';
 const user = {
@@ -88,22 +89,24 @@ describe('test suite for orgUsers', () => {
     }];
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources = {
-      notifications: [{
-        subscribedByUser: user,
-        type: 'connection',
-        _connectionId: 'conn123',
-        _id: 'notification123',
-      }],
-      connections: [{
-        _id: 'conn123',
-        name: 'The Connection',
-      }],
-      integrations: [{
-        _id: integrationId,
-        _registeredConnectionIds: ['conn123'],
-      }],
-    };
+    mutateStore(initialStore, draft => {
+      draft.data.resources = {
+        notifications: [{
+          subscribedByUser: user,
+          type: 'connection',
+          _connectionId: 'conn123',
+          _id: 'notification123',
+        }],
+        connections: [{
+          _id: 'conn123',
+          name: 'The Connection',
+        }],
+        integrations: [{
+          _id: integrationId,
+          _registeredConnectionIds: ['conn123'],
+        }],
+      };
+    });
 
     initOrgUsers(data, initialStore);
     const addNotificationsButton = screen.getByRole('link');
@@ -113,30 +116,34 @@ describe('test suite for orgUsers', () => {
   });
 
   test('should allow only to view notifications if user is not allowed to manage notifications', () => {
-    user._id = 'userid123';
+    const cloneUser = customCloneDeep(user);
+
+    cloneUser._id = 'userid123';
     const data = [{
-      sharedWithUser: user,
+      sharedWithUser: cloneUser,
       accessLevel: 'monitor',
       accepted: true,
     }];
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources = {
-      notifications: [{
-        subscribedByUser: user,
-        type: 'connection',
-        _connectionId: 'conn123',
-        _id: 'notification123',
-      }],
-      connections: [{
-        _id: 'conn123',
-        name: 'The Connection',
-      }],
-      integrations: [{
-        _id: integrationId,
-        _registeredConnectionIds: ['conn123'],
-      }],
-    };
+    mutateStore(initialStore, draft => {
+      draft.data.resources = {
+        notifications: [{
+          subscribedByUser: cloneUser,
+          type: 'connection',
+          _connectionId: 'conn123',
+          _id: 'notification123',
+        }],
+        connections: [{
+          _id: 'conn123',
+          name: 'The Connection',
+        }],
+        integrations: [{
+          _id: integrationId,
+          _registeredConnectionIds: ['conn123'],
+        }],
+      };
+    });
 
     initOrgUsers(data, initialStore);
     const addNotificationsButton = screen.getByRole('link');

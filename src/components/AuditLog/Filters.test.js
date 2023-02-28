@@ -3,49 +3,51 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import Filters from './Filters';
-import {renderWithProviders, reduxStore} from '../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.audit = {
-  integrations: {
-    '6253af74cddb8a1ba550a010': [
-      {
-        _id: '62c6f1aea2f4a703c3dee3fd',
-        resourceType: 'flow',
-        _resourceId: '62c6f122a2f4a703c3dee3d0',
-        source: 'ui',
-        fieldChanges: [
-          {
-            oldValue: true,
-            newValue: false,
-            fieldPath: 'disabled',
+mutateStore(initialStore, draft => {
+  draft.data.audit = {
+    integrations: {
+      '6253af74cddb8a1ba550a010': [
+        {
+          _id: '62c6f1aea2f4a703c3dee3fd',
+          resourceType: 'flow',
+          _resourceId: '62c6f122a2f4a703c3dee3d0',
+          source: 'ui',
+          fieldChanges: [
+            {
+              oldValue: true,
+              newValue: false,
+              fieldPath: 'disabled',
+            },
+          ],
+          event: 'update',
+          time: '2022-07-07T14:46:06.187Z',
+          byUser: {
+            _id: '62386a5fed961b5e22e992c7',
+            email: 'testUser@celigo.com',
+            name: 'test user',
           },
-        ],
-        event: 'update',
-        time: '2022-07-07T14:46:06.187Z',
-        byUser: {
-          _id: '62386a5fed961b5e22e992c7',
-          email: 'testUser@celigo.com',
-          name: 'test user',
         },
-      },
-    ],
-  },
-};
-initialStore.getState().session.filters = {
-  'integrations-6253af74cddb8a1ba550a010-auditLogs': {
-    paging: {
-      rowsPerPage: 50,
-      currPage: 0,
+      ],
     },
-    byUser: 'all',
-    event: 'all',
-    resourceType: 'all',
-    source: 'all',
-    _resourceId: 'all',
-  },
-};
+  };
+  draft.session.filters = {
+    'integrations-6253af74cddb8a1ba550a010-auditLogs': {
+      paging: {
+        rowsPerPage: 50,
+        currPage: 0,
+      },
+      byUser: 'all',
+      event: 'all',
+      resourceType: 'all',
+      source: 'all',
+      _resourceId: 'all',
+    },
+  };
+});
 const propsObj = {
   resourceDetails: {
     ssoclients: {},
@@ -214,44 +216,46 @@ describe('filters test cases', () => {
   test('should display the user emailId under select users tab when name is not present', () => {
     const tempStore = reduxStore;
 
-    tempStore.getState().data.audit = {
-      integrations: {
-        '6253af74cddb8a1ba550a010': [
-          {
-            _id: '62c6f1aea2f4a703c3dee3fd',
-            resourceType: 'flow',
-            _resourceId: '62c6f122a2f4a703c3dee3d0',
-            source: 'ui',
-            fieldChanges: [
-              {
-                oldValue: true,
-                newValue: false,
-                fieldPath: 'disabled',
+    mutateStore(tempStore, draft => {
+      draft.data.audit = {
+        integrations: {
+          '6253af74cddb8a1ba550a010': [
+            {
+              _id: '62c6f1aea2f4a703c3dee3fd',
+              resourceType: 'flow',
+              _resourceId: '62c6f122a2f4a703c3dee3d0',
+              source: 'ui',
+              fieldChanges: [
+                {
+                  oldValue: true,
+                  newValue: false,
+                  fieldPath: 'disabled',
+                },
+              ],
+              event: 'update',
+              time: '2022-07-07T14:46:06.187Z',
+              byUser: {
+                _id: '62386a5fed961b5e22e992c7',
+                email: 'testUser@celigo.com',
               },
-            ],
-            event: 'update',
-            time: '2022-07-07T14:46:06.187Z',
-            byUser: {
-              _id: '62386a5fed961b5e22e992c7',
-              email: 'testUser@celigo.com',
             },
-          },
-        ],
-      },
-    };
-    tempStore.getState().session.filters = {
-      'integrations-6253af74cddb8a1ba550a010-auditLogs': {
-        paging: {
-          rowsPerPage: 50,
-          currPage: 0,
+          ],
         },
-        byUser: 'all',
-        event: 'all',
-        resourceType: 'all',
-        source: 'all',
-        _resourceId: 'all',
-      },
-    };
+      };
+      draft.session.filters = {
+        'integrations-6253af74cddb8a1ba550a010-auditLogs': {
+          paging: {
+            rowsPerPage: 50,
+            currPage: 0,
+          },
+          byUser: 'all',
+          event: 'all',
+          resourceType: 'all',
+          source: 'all',
+          _resourceId: 'all',
+        },
+      };
+    });
     renderWithProviders(<Filters {...propsObj} />, {initialStore: tempStore});
     userEvent.click(screen.getByText(/Select user/i));
     waitFor(() => expect(screen.getByText(/testUser@celigo.com/i)).toBeInTheDocument());

@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
 import SaveFileDefinitions from './SaveFileDefinitions';
@@ -52,7 +52,10 @@ describe('test suite for SaveFileDefinitions', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resourceForm[KEY] = { formSaveStatus: 'loading' };
+    mutateStore(initialStore, draft => {
+      draft.session.resourceForm[KEY] = { formSaveStatus: 'loading' };
+    });
+
     await initSaveFileDefinitions({resourceType, resourceId}, initialStore);
     expect(screen.getByRole('button', {name: 'Close'})).toBeDisabled();
     expect(screen.getByRole('button', {name: 'Saving...'})).toBeDisabled();
@@ -62,13 +65,16 @@ describe('test suite for SaveFileDefinitions', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      value: 'Value as a String.',
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        value: 'Value as a String.',
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveFileDefinitions({formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
@@ -87,15 +93,18 @@ describe('test suite for SaveFileDefinitions', () => {
     });
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      value: {
-        '/file/filedefinition/rules': definitionRules,
-      },
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        value: {
+          '/file/filedefinition/rules': definitionRules,
+        },
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveFileDefinitions({formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 

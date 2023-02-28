@@ -5,14 +5,16 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import ErrorMessage from './ErrorMessage';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.errorManagement.errorDetails = {
-  '5ea16c600e2fab71928a6152': { '621ce7db7988314f51662c09': { open: {errors: [{name: 'exports', errorId: '68399487hnfi093i839209', selected: true}]},
+mutateStore(initialStore, draft => {
+  draft.session.errorManagement.errorDetails = {
+    '5ea16c600e2fab71928a6152': { '621ce7db7988314f51662c09': { open: {errors: [{name: 'exports', errorId: '68399487hnfi093i839209', selected: true}]},
 
-  }} };
+    }} };
+});
 
 describe('uI test cases for errormessage', () => {
   test('should test view export record link and view import record links are working fine when valid urls are provided', () => {

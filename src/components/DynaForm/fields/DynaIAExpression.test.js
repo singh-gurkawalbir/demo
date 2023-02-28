@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import DynaIAExpression from './DynaIAExpression';
 
@@ -64,16 +64,18 @@ describe('test suite for DynaIAExpression field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.imports = [{
-      _id: props.properties._importId,
-      name: 'NS Import',
-      _connectionId: connectionId,
-      netsuite_da: { recordType: 'customer' },
-    }];
-    initialStore.getState().data.resources.connections = [{
-      _id: connectionId,
-      type: 'netsuite',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.imports = [{
+        _id: props.properties._importId,
+        name: 'NS Import',
+        _connectionId: connectionId,
+        netsuite_da: { recordType: 'customer' },
+      }];
+      draft.data.resources.connections = [{
+        _id: connectionId,
+        type: 'netsuite',
+      }];
+    });
 
     renderWithProviders(<DynaIAExpression {...props} />, {initialStore});
     expect(screen.getByTestId('dynaNSlookup')).toBeInTheDocument();
@@ -95,22 +97,24 @@ describe('test suite for DynaIAExpression field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = [{
-      _id: props.flowId,
-      pageProcessors: [{
-        _importId: importId,
-      }],
-    }];
-    initialStore.getState().data.resources.imports = [{
-      _id: importId,
-      name: 'SF Import',
-      _connectionId: connectionId,
-      salesforce: { sObjectType: 'Opportunity' },
-    }];
-    initialStore.getState().data.resources.connections = [{
-      _id: connectionId,
-      type: 'salesforce',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [{
+        _id: props.flowId,
+        pageProcessors: [{
+          _importId: importId,
+        }],
+      }];
+      draft.data.resources.imports = [{
+        _id: importId,
+        name: 'SF Import',
+        _connectionId: connectionId,
+        salesforce: { sObjectType: 'Opportunity' },
+      }];
+      draft.data.resources.connections = [{
+        _id: connectionId,
+        type: 'salesforce',
+      }];
+    });
 
     renderWithProviders(<DynaIAExpression {...props} />, {initialStore});
     expect(screen.getByTestId('dynaSFlookup')).toBeInTheDocument();
@@ -133,22 +137,24 @@ describe('test suite for DynaIAExpression field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = [{
-      _id: props.flowId,
-      pageGenerators: [{
-        _exportId: exportId,
-      }],
-    }];
-    initialStore.getState().data.resources.exports = [{
-      _id: exportId,
-      name: 'SF Export',
-      _connectionId: connectionId,
-      salesforce: { sObjectType: 'Opportunity' },
-    }];
-    initialStore.getState().data.resources.connections = [{
-      _id: connectionId,
-      type: 'salesforce',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [{
+        _id: props.flowId,
+        pageGenerators: [{
+          _exportId: exportId,
+        }],
+      }];
+      draft.data.resources.exports = [{
+        _id: exportId,
+        name: 'SF Export',
+        _connectionId: connectionId,
+        salesforce: { sObjectType: 'Opportunity' },
+      }];
+      draft.data.resources.connections = [{
+        _id: connectionId,
+        type: 'salesforce',
+      }];
+    });
 
     renderWithProviders(<DynaIAExpression {...props} />, {initialStore});
     expect(screen.getByTestId('dynaSFqualifier')).toBeInTheDocument();
@@ -171,18 +177,20 @@ describe('test suite for DynaIAExpression field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = [{
-      _id: props.properties._exportId,
-      name: 'NS Export',
-      _connectionId: connectionId,
-      netsuite: {
-        distributed: { recordType: 'customer' },
-      },
-    }];
-    initialStore.getState().data.resources.connections = [{
-      _id: connectionId,
-      type: 'netsuite',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = [{
+        _id: props.properties._exportId,
+        name: 'NS Export',
+        _connectionId: connectionId,
+        netsuite: {
+          distributed: { recordType: 'customer' },
+        },
+      }];
+      draft.data.resources.connections = [{
+        _id: connectionId,
+        type: 'netsuite',
+      }];
+    });
 
     renderWithProviders(<DynaIAExpression {...props} />, {initialStore});
     expect(screen.getByTestId('dynaNSqualifier')).toBeInTheDocument();
@@ -204,11 +212,13 @@ describe('test suite for DynaIAExpression field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: connectionId,
-      type: 'netsuite',
-      _integrationId: integrationId,
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: connectionId,
+        type: 'netsuite',
+        _integrationId: integrationId,
+      }];
+    });
 
     renderWithProviders(<DynaIAExpression {...props} />, {initialStore});
     expect(screen.getByTestId('dynaNSlookup')).toBeInTheDocument();

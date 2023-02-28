@@ -5,18 +5,20 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 import metadata from '../metadata';
 import CeligoTable from '../../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources = {
-  flows: [{
-    _id: '6287678bdh893338hdn3',
-    name: 'flow name 1',
-    _integrationId: '6287678493nff8e93873',
-  }]};
+mutateStore(initialStore, draft => {
+  draft.data.resources = {
+    flows: [{
+      _id: '6287678bdh893338hdn3',
+      name: 'flow name 1',
+      _integrationId: '6287678493nff8e93873',
+    }]};
+});
 
 const mockHistoryPush = jest.fn();
 

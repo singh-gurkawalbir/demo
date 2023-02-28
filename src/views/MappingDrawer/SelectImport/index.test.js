@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import SelectImport from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initSelectImport({
   importId = 'import_id',
@@ -12,89 +12,91 @@ async function initSelectImport({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        name: 'import name',
-        adaptorType: 'RDBMSImport',
-        rdbms: {
-          queryType: [
-            'UPDATE',
-            'INSERT',
-          ],
-        },
-      },
-      {
-        _id: 'import_id_1',
-        adaptorType: 'DynamodbImport',
-        dynamodb: {
-          method: 'putItem',
-        },
-      },
-      {
-        _id: 'import_id_5',
-        adaptorType: 'NetSuiteImport',
-        netsuite_da: {
-          mapping: {
-            fields: [{
-              generate: 'item[*].id',
-              subRecordMapping: {
-                recordType: 'recordType',
-                jsonPath: 'jsonPath',
-              },
-            }, {
-              generate: 'generate_1[*].id',
-              subRecordMapping: {
-                recordType: 'recordType 1',
-                jsonPath: 'jsonPath 1',
-              },
-            }],
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          name: 'import name',
+          adaptorType: 'RDBMSImport',
+          rdbms: {
+            queryType: [
+              'UPDATE',
+              'INSERT',
+            ],
           },
         },
-      },
-      {
-        _id: 'import_id_6',
-        adaptorType: 'NetSuiteImport',
-        netsuite_da: {
-          mapping: {
-            fields: [{
-              generate: 'generate',
-              subRecordMapping: {
-                recordType: 'recordType',
-                jsonPath: 'jsonPath',
-              },
-            }],
+        {
+          _id: 'import_id_1',
+          adaptorType: 'DynamodbImport',
+          dynamodb: {
+            method: 'putItem',
           },
         },
-      },
-    ],
-    flows: [{
-      _id: 'flow_id_1',
-      pageProcessors: [
         {
-          type: 'import',
-          _importId: 'import_id',
+          _id: 'import_id_5',
+          adaptorType: 'NetSuiteImport',
+          netsuite_da: {
+            mapping: {
+              fields: [{
+                generate: 'item[*].id',
+                subRecordMapping: {
+                  recordType: 'recordType',
+                  jsonPath: 'jsonPath',
+                },
+              }, {
+                generate: 'generate_1[*].id',
+                subRecordMapping: {
+                  recordType: 'recordType 1',
+                  jsonPath: 'jsonPath 1',
+                },
+              }],
+            },
+          },
         },
         {
-          type: 'import',
-          _importId: 'import_id_1',
-        },
-        {
-          type: 'import',
-          _importId: 'import_id_5',
-        },
-        {
-          type: 'import',
-          _importId: 'import_id_6',
+          _id: 'import_id_6',
+          adaptorType: 'NetSuiteImport',
+          netsuite_da: {
+            mapping: {
+              fields: [{
+                generate: 'generate',
+                subRecordMapping: {
+                  recordType: 'recordType',
+                  jsonPath: 'jsonPath',
+                },
+              }],
+            },
+          },
         },
       ],
-    }, {
-      _id: 'flow_id_2',
-      name: 'flow name 2',
-      pageProcessors: [],
-    }],
-  };
+      flows: [{
+        _id: 'flow_id_1',
+        pageProcessors: [
+          {
+            type: 'import',
+            _importId: 'import_id',
+          },
+          {
+            type: 'import',
+            _importId: 'import_id_1',
+          },
+          {
+            type: 'import',
+            _importId: 'import_id_5',
+          },
+          {
+            type: 'import',
+            _importId: 'import_id_6',
+          },
+        ],
+      }, {
+        _id: 'flow_id_2',
+        name: 'flow name 2',
+        pageProcessors: [],
+      }],
+    };
+  });
 
   const ui = (
     <MemoryRouter

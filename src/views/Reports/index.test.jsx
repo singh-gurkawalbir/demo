@@ -3,7 +3,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 import Reports from '.';
 import actions from '../../actions';
@@ -14,63 +14,65 @@ const mockHistoryPush = jest.fn();
 const mockHistoryReplace = jest.fn();
 
 function store(eventReports) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '5ffad3d1f08d35214ed200g7',
-    lastModified: '2021-01-22T08:40:45.731Z',
-    name: 'concur expense',
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '5cd51efd3607fe7d8eda9c88',
-      '5feafe6bf415e15f455dbc89',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2021-01-10T10:15:45.184Z',
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '60db46af9433830f8f0e0fe7',
-    lastModified: '2022-07-27T18:04:57.044Z',
-    name: 'concurexpense - FTP',
-    description: 'Testing Flow',
-    disabled: false,
-    _integrationId: '5ffad3d1f08d35214ed200g7',
-    skipRetries: false,
-    pageProcessors: [
-      {
-        responseMapping: {
-          fields: [],
-          lists: [],
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '5ffad3d1f08d35214ed200g7',
+      lastModified: '2021-01-22T08:40:45.731Z',
+      name: 'concur expense',
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c88',
+        '5feafe6bf415e15f455dbc89',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-10T10:15:45.184Z',
+    }];
+    draft.data.resources.flows = [{
+      _id: '60db46af9433830f8f0e0fe7',
+      lastModified: '2022-07-27T18:04:57.044Z',
+      name: 'concurexpense - FTP',
+      description: 'Testing Flow',
+      disabled: false,
+      _integrationId: '5ffad3d1f08d35214ed200g7',
+      skipRetries: false,
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '605b30767904202f31742092',
         },
-        type: 'import',
-        _importId: '605b30767904202f31742092',
+      ],
+      pageGenerators: [
+        {
+          _exportId: '60dbc5a8a706701ed4a148ac',
+          skipRetries: false,
+        },
+      ],
+      createdAt: '2021-06-29T16:13:35.071Z',
+      lastExecutedAt: '2021-06-30T01:55:17.721Z',
+      autoResolveMatchingTraceKeys: true,
+    }];
+    draft.data.resources.eventreports = eventReports;
+    draft.session.filters = {
+      eventreports: {
+        sort: {
+          order: 'desc',
+          orderBy: 'createdAt',
+        },
+        paging: {
+          rowsPerPage: 1,
+          currPage: 0,
+        },
+        type: 'eventreports',
       },
-    ],
-    pageGenerators: [
-      {
-        _exportId: '60dbc5a8a706701ed4a148ac',
-        skipRetries: false,
-      },
-    ],
-    createdAt: '2021-06-29T16:13:35.071Z',
-    lastExecutedAt: '2021-06-30T01:55:17.721Z',
-    autoResolveMatchingTraceKeys: true,
-  }];
-  initialStore.getState().data.resources.eventreports = eventReports;
-  initialStore.getState().session.filters = {
-    eventreports: {
-      sort: {
-        order: 'desc',
-        orderBy: 'createdAt',
-      },
-      paging: {
-        rowsPerPage: 1,
-        currPage: 0,
-      },
-      type: 'eventreports',
-    },
-  };
+    };
+  });
 }
 
 async function initReports(params) {
