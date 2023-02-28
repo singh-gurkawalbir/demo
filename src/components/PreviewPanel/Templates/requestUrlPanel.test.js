@@ -2,53 +2,55 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import RequestUrlPanel from './requestUrlPanel';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 async function initRequestUrlPanel({props} = {}) {
-  initialStore.getState().session.resourceFormSampleData[props.resourceId] = {
-    preview: {
-      status: 'received',
-      data: [{id: '12345', name: 'Test name'}],
-      recordSize: 10,
-    },
-  };
-  initialStore.getState().data.resources.exports = [
-    {_id: '12345',
-      name: 'Test name',
-      _integrationId: '78965',
-      _connectionId: '965432',
-      adaptorType: 'RESTExport',
-    },
-  ];
-  initialStore.getState().data.resources.flows = [
-    {_id: '98765', name: 'Test name', pageProcessors: [{_importId: '23456'}], pageGenerators: [{_exportId: '12345'}], _integrationId: '78965'},
-  ];
-  initialStore.getState().data.resources.integrations = [
-    {
-      _id: '78965',
-      name: 'Test Integration Name',
-      _registeredConnectionIds: [
-        '965432',
-        '631097',
-      ],
-    },
-  ];
-  initialStore.getState().data.resources.connections = [
-    {
-      _id: '965432',
-      name: 'Test Connection',
-      assistant: '3plcentral',
-      type: 'http',
-      http: {
-        baseURI: 'https://test.com/',
-        formType: 'assistant',
+  mutateStore(initialStore, draft => {
+    draft.session.resourceFormSampleData[props.resourceId] = {
+      preview: {
+        status: 'received',
+        data: [{id: '12345', name: 'Test name'}],
+        recordSize: 10,
       },
-    },
-  ];
+    };
+    draft.data.resources.exports = [
+      {_id: '12345',
+        name: 'Test name',
+        _integrationId: '78965',
+        _connectionId: '965432',
+        adaptorType: 'RESTExport',
+      },
+    ];
+    draft.data.resources.flows = [
+      {_id: '98765', name: 'Test name', pageProcessors: [{_importId: '23456'}], pageGenerators: [{_exportId: '12345'}], _integrationId: '78965'},
+    ];
+    draft.data.resources.integrations = [
+      {
+        _id: '78965',
+        name: 'Test Integration Name',
+        _registeredConnectionIds: [
+          '965432',
+          '631097',
+        ],
+      },
+    ];
+    draft.data.resources.connections = [
+      {
+        _id: '965432',
+        name: 'Test Connection',
+        assistant: '3plcentral',
+        type: 'http',
+        http: {
+          baseURI: 'https://test.com/',
+          formType: 'assistant',
+        },
+      },
+    ];
+  });
   const ui = (
     <MemoryRouter>
       <RequestUrlPanel {...props} />
@@ -113,7 +115,9 @@ describe('testsuite for Request Url Panel', () => {
       showEmptyPanel: true,
     };
 
-    initialStore.getState().data.resources = {};
+    mutateStore(initialStore, draft => {
+      draft.data.resources = {};
+    });
 
     const { utils } = await initRequestUrlPanel({props});
 

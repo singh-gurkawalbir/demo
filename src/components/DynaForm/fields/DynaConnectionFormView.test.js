@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import FormView from './DynaConnectionFormView';
 import actions from '../../../actions';
 
@@ -16,25 +16,27 @@ jest.mock('../../../constants/applications', () => ({
 describe('formView tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '_connectionId',
-      type: 'http',
-      name: 'HTTP connections',
-      _httpConnectorId: '_httpConnectorId',
-      http: { formType: 'assistant', mediaType: 'json' },
-    }],
-  };
-  initialStore.getState().session.form = {
-    'connections-_connectionId': {
-      fieldMeta: {},
-      fields: {
-        a: {touched: true, id: 'a', value: 'a'},
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connections: [{
+        _id: '_connectionId',
+        type: 'http',
+        name: 'HTTP connections',
+        _httpConnectorId: '_httpConnectorId',
+        http: { formType: 'assistant', mediaType: 'json' },
+      }],
+    };
+    draft.session.form = {
+      'connections-_connectionId': {
+        fieldMeta: {},
+        fields: {
+          a: {touched: true, id: 'a', value: 'a'},
+        },
+        value: {},
       },
-      value: {},
-    },
-  };
-  initialStore.getState().user = {};
+    };
+    draft.user = {};
+  });
 
   let mockDispatchFn;
   let useDispatchSpy;

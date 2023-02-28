@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import useHandleRemountAfterSave from './useHandleRemountAfterSave';
 import { getCreatedStore } from '../../../../../store';
 
@@ -14,8 +14,9 @@ async function initUseHandleRemountAfterSave(props = {}, initialStore) {
 
     const onClick = () => {
       if (initialStore && initialStore.getState().session.asyncTask[formKey]?.status) {
-        // eslint-disable-next-line no-param-reassign
-        initialStore.getState().session.asyncTask[formKey].status = 'complete';
+        mutateStore(initialStore, draft => {
+          draft.session.asyncTask[formKey].status = 'complete';
+        });
       }
       cb();
     };
@@ -46,15 +47,18 @@ describe('test suite for useHandleRemountAfterSave hook', () => {
     const remountAfterSaveFn = jest.fn();
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.asyncTask[formKey] = {
-      status: 'loading',
-    };
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.asyncTask[formKey] = {
+        status: 'loading',
+      };
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initUseHandleRemountAfterSave({formKey, onSave, remountAfterSaveFn}, initialStore);
     userEvent.click(screen.getByRole('button', {name: 'Click Here'}));
     expect(onSave).toBeCalled();

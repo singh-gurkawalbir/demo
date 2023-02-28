@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import { REVISION_TYPES } from '../../../../../../constants';
 import ResourceDiffError from '.';
 
@@ -11,11 +11,13 @@ const props = {integrationId: '_integrationId', type: REVISION_TYPES.SNAPSHOT, p
 async function initResourceDiffError(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement = {
-    compare: {
-      _integrationId: {error: 'sample error', status: 'received'},
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      compare: {
+        _integrationId: {error: 'sample error', status: 'received'},
+      },
+    };
+  });
 
   return renderWithProviders(<MemoryRouter><ResourceDiffError {...props} /> </MemoryRouter>, {initialStore});
 }

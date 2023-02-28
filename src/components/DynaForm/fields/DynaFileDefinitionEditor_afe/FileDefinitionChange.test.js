@@ -6,51 +6,53 @@ import {
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
 import FileDefinitionChange from './FileDefinitionChange';
-import { renderWithProviders} from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import {getCreatedStore} from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 async function initFileDefinitionChange(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    id: props.id,
-    fieldId: 'fieldId',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    rule: {
-      customHeaderRows: 'custom value',
-      columnDelimiter: 'Comma (,)',
-      rowDelimiter: 'LF (\\n)',
-      includeHeader: false,
-      truncateLastRowDelimiter: false,
-      wrapWithQuotes: false,
-      replaceTabWithSpace: false,
-      replaceNewlineWithSpace: false,
-    },
-  },
-  };
-
-  initialStore.getState().data.fileDefinitions = {preBuiltFileDefinitions: {data: {format: [{value: 'definitionId',
-    template: {
-      generate: {sampleData: '{}'},
-      parse: {sampleData: {
-
-      }} }}]}}};
-
-  initialStore.getState().session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
-    fieldId: {
-      options: {
-        format: 'format',
-        definitionId: 'definitionId',
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {filecsv: {
+      id: props.id,
+      fieldId: 'fieldId',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      rule: {
+        customHeaderRows: 'custom value',
+        columnDelimiter: 'Comma (,)',
+        rowDelimiter: 'LF (\\n)',
+        includeHeader: false,
+        truncateLastRowDelimiter: false,
+        wrapWithQuotes: false,
+        replaceTabWithSpace: false,
+        replaceNewlineWithSpace: false,
       },
-      value: 'value',
-      userDefinitionId: 'definition',
-      fileDefinitionResourcePath: 'respurcePath',
-      disabled: props.disabled,
     },
-  },
-  }};
+    };
+
+    draft.data.fileDefinitions = {preBuiltFileDefinitions: {data: {format: [{value: 'definitionId',
+      template: {
+        generate: {sampleData: '{}'},
+        parse: {sampleData: {
+
+        }} }}]}}};
+
+    draft.session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
+      fieldId: {
+        options: {
+          format: 'format',
+          definitionId: 'definitionId',
+        },
+        value: 'value',
+        userDefinitionId: 'definition',
+        fileDefinitionResourcePath: 'respurcePath',
+        disabled: props.disabled,
+      },
+    },
+    }};
+  });
 
   return renderWithProviders(<FileDefinitionChange {...props} />, {initialStore});
 }

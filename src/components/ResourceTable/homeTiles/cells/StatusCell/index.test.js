@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import StatusCell from './index';
 import { getCreatedStore } from '../../../../../store';
@@ -25,7 +25,9 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own'};
+});
 
 function initStatusCell(tileData = null, initialStore = null) {
   const ui = (
@@ -90,9 +92,12 @@ describe("home Tile's Status cell ui tests", () => {
   test('should redirect to setUp page on cliking connection down for 2.0 user', () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile = {
-      useErrMgtTwoDotZero: true,
-    };
+    mutateStore(initialStore, draft => {
+      draft.user.profile = {
+        useErrMgtTwoDotZero: true,
+      };
+    });
+
     initStatusCell({status: 'is_pending_setup', name: 'someName', _connectorId: 'some_connectorId', _integrationId: '2_integrationId', offlineConnections: [1], _templateId: '6013fcd90f0ac62d08bb6dae'}, initialStore);
     const setUpbutton = screen.getByText('Continue setup', {exact: false});
 

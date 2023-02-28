@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import RunCell from './index';
 
 const mockHistoryPush = jest.fn();
@@ -30,13 +30,15 @@ jest.mock('../../../../SuiteScript/RunFlowButton', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.suiteScript = {ssLinkedConnectionId: {integrations: [
-  {
-    _id: 'integrationId',
-    urlName: 'someurl',
-  }],
-},
-};
+mutateStore(initialStore, draft => {
+  draft.data.suiteScript = {ssLinkedConnectionId: {integrations: [
+    {
+      _id: 'integrationId',
+      urlName: 'someurl',
+    }],
+  },
+  };
+});
 
 describe('suite script ScheduleCell ui test', () => {
   afterEach(() => {

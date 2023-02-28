@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import useHandleInvalidRevision from './useHandleInvalidRevision';
 
 const mockHistoryReplace = jest.fn();
@@ -15,11 +15,13 @@ const MockComponent = props => {
 async function inituseHandleInvalidRevision(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: props.revisionId ? [{_id: '_revId'}] : [],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.revisions = {
+      _integrationId: {
+        data: props.revisionId ? [{_id: '_revId'}] : [],
+      },
+    };
+  });
 
   return renderWithProviders(<MockComponent {...props} />, {initialStore});
 }

@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ConnectionLogs from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import actions from '../../actions';
 
 async function initConnectionLogs({
@@ -16,25 +16,27 @@ async function initConnectionLogs({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: 'connection_id',
-      type: 'mock type',
-    }, {
-      _id: 'connection_id_1',
-      type: 'mongodb',
-    }],
-    flows: [{
-      _id: 'flow_id_1',
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connections: [{
+        _id: 'connection_id',
+        type: 'mock type',
+      }, {
+        _id: 'connection_id_1',
+        type: 'mongodb',
+      }],
+      flows: [{
+        _id: 'flow_id_1',
+      }],
+    };
+    draft.session.logs.connections = {
+      connection_id: {
+        logs: 'mock logs',
+        status: 'success', // loading
+      },
+    };
+  });
 
-  initialStore.getState().session.logs.connections = {
-    connection_id: {
-      logs: 'mock logs',
-      status: 'success', // loading
-    },
-  };
   const ui = (
     <MemoryRouter>
       <ConnectionLogs {...props} />

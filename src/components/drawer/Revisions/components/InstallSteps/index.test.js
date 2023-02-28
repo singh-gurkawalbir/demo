@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import InstallSteps from '.';
 import actions from '../../../../../actions';
 
@@ -30,112 +30,114 @@ jest.mock('react-router-dom', () => ({
 const initialStore = reduxStore;
 
 async function initInstallSteps(props = {}, type = 'revert') {
-  initialStore.getState().session.lifeCycleManagement = {
-    installStep: {
-      _revId: {
-        openOauthConnection: true,
-        oAuthConnectionId: 'oAuthConnectionId',
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      installStep: {
+        _revId: {
+          openOauthConnection: true,
+          oAuthConnectionId: 'oAuthConnectionId',
+        },
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    connections: [
-      {
-        _id: 'oAuthConnectionId',
-      },
-      {
-        _id: 'connectionId',
-      },
-    ],
-  };
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: [
+    };
+    draft.data.resources = {
+      connections: [
         {
-          _id: '_revId',
-          type,
-          installSteps: [{
+          _id: 'oAuthConnectionId',
+        },
+        {
+          _id: 'connectionId',
+        },
+      ],
+    };
+    draft.data.revisions = {
+      _integrationId: {
+        data: [
+          {
+            _id: '_revId',
             type,
-            description: 'Installing',
-            name: 'Install your changes',
-            completed: true,
-          }],
-        },
-      ],
-    },
-    _integrationId2: {
-      data: [
-        {
-          _id: '_revId2',
-          type,
-          installSteps: [
-            {
-              type: 'connection',
-              name: 'Install your connection',
-              completed: false,
-            },
-          ],
-        },
-        {
-          _id: '_revId3',
-          type,
-          installSteps: [
-            {
-              type: 'url',
-              name: 'Install your url',
-              completed: false,
-            },
-          ],
-        },
-        {
-          _id: '_revId4',
-          type,
-          installSteps: [
-            {
+            installSteps: [{
               type,
-              name: 'Install your step',
-              completed: false,
-            },
-          ],
-        },
-        {
-          _id: '_revId5',
-          installSteps: [
-            {
-              type: 'url',
-              name: 'demo triggered',
-              completed: false,
-              isTriggered: true,
-              connectionId: 'connectionId',
-            },
-          ],
-        },
-        {
-          _id: '_revId6',
-          installSteps: [
-            {
-              type: 'url',
-              name: 'demo verifying',
-              completed: false,
-              isTriggered: true,
-              verifying: true,
-            },
-          ],
-        },
-        {
-          _id: '_revId7',
-          installSteps: [
-            {
-              type: 'connection',
-              name: 'demo connection',
-              completed: false,
-              isTriggered: true,
-            },
-          ],
-        },
-      ],
-    },
-  };
+              description: 'Installing',
+              name: 'Install your changes',
+              completed: true,
+            }],
+          },
+        ],
+      },
+      _integrationId2: {
+        data: [
+          {
+            _id: '_revId2',
+            type,
+            installSteps: [
+              {
+                type: 'connection',
+                name: 'Install your connection',
+                completed: false,
+              },
+            ],
+          },
+          {
+            _id: '_revId3',
+            type,
+            installSteps: [
+              {
+                type: 'url',
+                name: 'Install your url',
+                completed: false,
+              },
+            ],
+          },
+          {
+            _id: '_revId4',
+            type,
+            installSteps: [
+              {
+                type,
+                name: 'Install your step',
+                completed: false,
+              },
+            ],
+          },
+          {
+            _id: '_revId5',
+            installSteps: [
+              {
+                type: 'url',
+                name: 'demo triggered',
+                completed: false,
+                isTriggered: true,
+                connectionId: 'connectionId',
+              },
+            ],
+          },
+          {
+            _id: '_revId6',
+            installSteps: [
+              {
+                type: 'url',
+                name: 'demo verifying',
+                completed: false,
+                isTriggered: true,
+                verifying: true,
+              },
+            ],
+          },
+          {
+            _id: '_revId7',
+            installSteps: [
+              {
+                type: 'connection',
+                name: 'demo connection',
+                completed: false,
+                isTriggered: true,
+              },
+            ],
+          },
+        ],
+      },
+    };
+  });
   const ui = (<MemoryRouter><InstallSteps {...props} /> </MemoryRouter>);
 
   return renderWithProviders(ui, {initialStore});

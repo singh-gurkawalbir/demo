@@ -8,170 +8,172 @@ import * as reactRedux from 'react-redux';
 import {MemoryRouter, Route} from 'react-router-dom';
 import actions from '../../../../actions';
 import DynaNetSuiteSubRecords from './index';
-import { renderWithProviders} from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
 
 const initialStore = getCreatedStore();
 
 function initDynaNetSuiteSubRecords(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'netsuite/metadata/suitescript/connections/5efd8663a56953365bd28541/recordTypes': {
-      data: [{
-        name: 'test',
-        scriptId: 'customer',
-        url: 'test url',
-        value: 'customer',
-        hasSubRecord: props.hasRecord,
-        subRecordConfig: [],
-        doesNotSupportUpdate: true,
-        doesNotSupportCreate: true,
-        doesNotSupportSearch: true,
-        doesNotSupportDelete: true,
-      }],
-      status: 'success',
-      errorMessage: 'Test Error Message',
-    },
-  },
-
-  }};
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: '633dc83108cc753ca5688d34',
-      createdAt: '2022-10-05T18:08:49.284Z',
-      lastModified: '2022-10-05T18:09:48.433Z',
-      name: 'NETSUITE IMPORT',
-      _connectionId: '62f4e3b40f2ee6482b133e00',
-      distributed: true,
-      apiIdentifier: 'i819b78e2a',
-      ignoreExisting: false,
-      ignoreMissing: false,
-      oneToMany: false,
-      lookups: [],
-      netsuite_da: {
-        useSS2Restlets: false,
-        operation: 'addupdate',
-        recordType: 'customer',
-        subrecords: props.subrecords,
-        internalIdLookup: {
-          expression: '["email","is","{{{email}}}"]',
-        },
-        lookups: [],
-        mapping: {
-          fields: [
-            {
-              generate: 'isperson',
-              discardIfEmpty: false,
-              immutable: false,
-              hardCodedValue: 'true',
-              internalId: false,
-            },
-            {
-              generate: 'firstname',
-              extract: 'first_name',
-              internalId: false,
-            },
-            {
-              generate: 'lastname',
-              extract: 'last_name',
-              internalId: false,
-            },
-            {
-              generate: 'phone',
-              extract: 'phone',
-              internalId: false,
-            },
-            {
-              generate: 'mobilephone',
-              extract: 'phone',
-              internalId: false,
-            },
-            {
-              generate: 'email',
-              extract: 'email',
-              internalId: false,
-            },
-            {
-              generate: 'companyname',
-              extract: 'addresses[*].company',
-              internalId: false,
-            },
-            {
-              generate: 'celigo_replaceAllLines_addressbook',
-              discardIfEmpty: false,
-              immutable: false,
-              hardCodedValue: 'true',
-              internalId: false,
-            },
-            {
-              generate: 'subsidiary',
-              discardIfEmpty: false,
-              immutable: false,
-              hardCodedValue: '4',
-              internalId: true,
-            },
-            {
-              generate: 'entityid',
-              extract: 'id',
-              internalId: false,
-            },
-          ],
-          lists: [
-            {
-              generate: 'addressbook',
-              fields: [
-                {
-                  generate: 'addr1',
-                  extract: 'addresses[*].address1',
-                  internalId: false,
-                },
-                {
-                  generate: 'addr2',
-                  extract: 'addresses[*].address2',
-                  internalId: false,
-                },
-                {
-                  generate: 'state',
-                  extract: 'addresses[*].province',
-                  internalId: false,
-                },
-                {
-                  generate: 'country',
-                  extract: 'addresses[*].country_code',
-                  internalId: true,
-                },
-                {
-                  generate: 'addrphone',
-                  extract: 'addresses[*].phone',
-                  internalId: false,
-                },
-                {
-                  generate: 'zip',
-                  extract: 'addresses[*].zip',
-                  internalId: false,
-                },
-                {
-                  generate: 'addressee',
-                  extract: 'addresses[*].name',
-                  internalId: false,
-                },
-                {
-                  generate: 'city',
-                  extract: 'addresses[*].city',
-                  internalId: false,
-                },
-              ],
-            },
-          ],
-        },
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'netsuite/metadata/suitescript/connections/5efd8663a56953365bd28541/recordTypes': {
+        data: [{
+          name: 'test',
+          scriptId: 'customer',
+          url: 'test url',
+          value: 'customer',
+          hasSubRecord: props.hasRecord,
+          subRecordConfig: [],
+          doesNotSupportUpdate: true,
+          doesNotSupportCreate: true,
+          doesNotSupportSearch: true,
+          doesNotSupportDelete: true,
+        }],
+        status: 'success',
+        errorMessage: 'Test Error Message',
       },
-      adaptorType: 'NetSuiteDistributedImport',
-    }, {
-      _id: '633dc83108cc753ca5688d45',
-      name: 'import1',
-      _connectionId: '533dc83108cc753ca5688d45',
-    }],
-  };
+    },
+
+    }};
+    draft.data.resources = {
+      imports: [{
+        _id: '633dc83108cc753ca5688d34',
+        createdAt: '2022-10-05T18:08:49.284Z',
+        lastModified: '2022-10-05T18:09:48.433Z',
+        name: 'NETSUITE IMPORT',
+        _connectionId: '62f4e3b40f2ee6482b133e00',
+        distributed: true,
+        apiIdentifier: 'i819b78e2a',
+        ignoreExisting: false,
+        ignoreMissing: false,
+        oneToMany: false,
+        lookups: [],
+        netsuite_da: {
+          useSS2Restlets: false,
+          operation: 'addupdate',
+          recordType: 'customer',
+          subrecords: props.subrecords,
+          internalIdLookup: {
+            expression: '["email","is","{{{email}}}"]',
+          },
+          lookups: [],
+          mapping: {
+            fields: [
+              {
+                generate: 'isperson',
+                discardIfEmpty: false,
+                immutable: false,
+                hardCodedValue: 'true',
+                internalId: false,
+              },
+              {
+                generate: 'firstname',
+                extract: 'first_name',
+                internalId: false,
+              },
+              {
+                generate: 'lastname',
+                extract: 'last_name',
+                internalId: false,
+              },
+              {
+                generate: 'phone',
+                extract: 'phone',
+                internalId: false,
+              },
+              {
+                generate: 'mobilephone',
+                extract: 'phone',
+                internalId: false,
+              },
+              {
+                generate: 'email',
+                extract: 'email',
+                internalId: false,
+              },
+              {
+                generate: 'companyname',
+                extract: 'addresses[*].company',
+                internalId: false,
+              },
+              {
+                generate: 'celigo_replaceAllLines_addressbook',
+                discardIfEmpty: false,
+                immutable: false,
+                hardCodedValue: 'true',
+                internalId: false,
+              },
+              {
+                generate: 'subsidiary',
+                discardIfEmpty: false,
+                immutable: false,
+                hardCodedValue: '4',
+                internalId: true,
+              },
+              {
+                generate: 'entityid',
+                extract: 'id',
+                internalId: false,
+              },
+            ],
+            lists: [
+              {
+                generate: 'addressbook',
+                fields: [
+                  {
+                    generate: 'addr1',
+                    extract: 'addresses[*].address1',
+                    internalId: false,
+                  },
+                  {
+                    generate: 'addr2',
+                    extract: 'addresses[*].address2',
+                    internalId: false,
+                  },
+                  {
+                    generate: 'state',
+                    extract: 'addresses[*].province',
+                    internalId: false,
+                  },
+                  {
+                    generate: 'country',
+                    extract: 'addresses[*].country_code',
+                    internalId: true,
+                  },
+                  {
+                    generate: 'addrphone',
+                    extract: 'addresses[*].phone',
+                    internalId: false,
+                  },
+                  {
+                    generate: 'zip',
+                    extract: 'addresses[*].zip',
+                    internalId: false,
+                  },
+                  {
+                    generate: 'addressee',
+                    extract: 'addresses[*].name',
+                    internalId: false,
+                  },
+                  {
+                    generate: 'city',
+                    extract: 'addresses[*].city',
+                    internalId: false,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        adaptorType: 'NetSuiteDistributedImport',
+      }, {
+        _id: '633dc83108cc753ca5688d45',
+        name: 'import1',
+        _connectionId: '533dc83108cc753ca5688d45',
+      }],
+    };
+  });
 
   return renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: '/imports/edit/imports/61fa113a69aaa8558e083607/subrecords'}]}>

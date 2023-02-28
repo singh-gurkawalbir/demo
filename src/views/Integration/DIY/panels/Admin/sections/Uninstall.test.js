@@ -4,28 +4,30 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route} from 'react-router-dom';
 import UninstallSection from './Uninstall';
-import {reduxStore, renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { ConfirmDialogProvider } from '../../../../../../components/ConfirmDialog';
 
 const initialStore = reduxStore;
 
 async function initUninstallSection(props = {}) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '5ff579d745ceef7dcd797c15',
-    lastModified: '2021-01-19T06:34:17.222Z',
-    name: " AFE 2.0 refactoring for DB's",
-    install: [],
-    sandbox: false,
-    settings: props.settings,
-    _registeredConnectionIds: [
-      '5cd51efd3607fe7d8eda9c97',
-      '5ff57a8345ceef7dcd797c21',
-    ],
-    installSteps: props.steps,
-    // uninstallSteps: [{name: 'uninstallStep1'}, {name: 'uninstallStep2'}, {name: 'uninstallStep3'}],
-    flowGroupings: [],
-    createdAt: '2021-01-06T08:50:31.935Z',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '5ff579d745ceef7dcd797c15',
+      lastModified: '2021-01-19T06:34:17.222Z',
+      name: " AFE 2.0 refactoring for DB's",
+      install: [],
+      sandbox: false,
+      settings: props.settings,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c97',
+        '5ff57a8345ceef7dcd797c21',
+      ],
+      installSteps: props.steps,
+      // uninstallSteps: [{name: 'uninstallStep1'}, {name: 'uninstallStep2'}, {name: 'uninstallStep3'}],
+      flowGroupings: [],
+      createdAt: '2021-01-06T08:50:31.935Z',
+    }];
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/integrations/5ff579d745ceef7dcd797c15/${props.child}/admin/readme`}]}>
       <Route path={`/integrations/5ff579d745ceef7dcd797c15/${props.child}/admin/readme`}>

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
 import RefreshableTreeComponent from './RefreshableTreeComponent';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
@@ -22,27 +22,29 @@ jest.mock('../../../Spinner', () => ({
 }));
 
 function initRefreshableTreeComponent(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-      data: {
-        fields:
-        [
-          {label: 'label1', referenceTo: ['ref1', 'ref2', 'ref3'], relationshipName: 'parent'},
-          {label: 'label2', referenceTo: ['ref11', 'ref22', 'ref33'], relationshipName: 'parent1'},
-          {label: 'label3', referenceTo: ['ref111', 'ref222', 'ref333'], relationshipName: 'parent2'},
-          {label: 'label4', relationshipName: 'parent3'},
-          {label: 'label5', relationshipName: 'parent4'},
-          {label: 'label6', relationshipName: 'parent5'},
-        ],
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+        data: {
+          fields:
+          [
+            {label: 'label1', referenceTo: ['ref1', 'ref2', 'ref3'], relationshipName: 'parent'},
+            {label: 'label2', referenceTo: ['ref11', 'ref22', 'ref33'], relationshipName: 'parent1'},
+            {label: 'label3', referenceTo: ['ref111', 'ref222', 'ref333'], relationshipName: 'parent2'},
+            {label: 'label4', relationshipName: 'parent3'},
+            {label: 'label5', relationshipName: 'parent4'},
+            {label: 'label6', relationshipName: 'parent5'},
+          ],
+        },
+        status: props.status,
       },
-      status: props.status,
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/newone': {
+        status: 'requested',
+      },
     },
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/newone': {
-      status: 'requested',
     },
-  },
-  },
-  };
+    };
+  });
 
   return renderWithProviders(<RefreshableTreeComponent {...props} />, {initialStore});
 }
