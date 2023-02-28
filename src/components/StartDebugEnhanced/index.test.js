@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 import StartDebugEnhanced from '.';
 
 const mockStartHandler = jest.fn();
@@ -12,36 +12,39 @@ const mockStopHandler = jest.fn();
 function DebugEnhanced(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.connections = [{
-    _id: '5f084bff6da99c0abdacb731',
-    createdAt: '2020-07-10T11:07:43.161Z',
-    lastModified: '2020-12-14T05:24:10.236Z',
-    type: 'ftp',
-    name: 'FTP-Test',
-    offline: true,
-    debugDate: '2022-06-28T06:48:13.930Z',
-    debugUntil: props.date,
-    sandbox: false,
-    ftp: {
-      type: 'sftp',
-      hostURI: 'celigo.brickftp.com',
-      username: 'kalyan.chakravarthi@celigo.com',
-      password: '******',
-      port: 22,
-      usePassiveMode: true,
-      userDirectoryIsRoot: false,
-      useImplicitFtps: false,
-      requireSocketReUse: false,
-    },
-    queueSize: 0,
-  }];
-  initialStore.getState().data.resources.scripts = [{
-    _id: '5f06cc4cd665e84937f94837',
-    lastModified: '2020-07-09T07:50:36.209Z',
-    createdAt: '2020-07-09T07:50:36.209Z',
-    name: 'BigCommerce IA Cloning',
-    debugUntil: '2023-06-28T09:56:31.079Z',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.connections = [{
+      _id: '5f084bff6da99c0abdacb731',
+      createdAt: '2020-07-10T11:07:43.161Z',
+      lastModified: '2020-12-14T05:24:10.236Z',
+      type: 'ftp',
+      name: 'FTP-Test',
+      offline: true,
+      debugDate: '2022-06-28T06:48:13.930Z',
+      debugUntil: props.date,
+      sandbox: false,
+      ftp: {
+        type: 'sftp',
+        hostURI: 'celigo.brickftp.com',
+        username: 'kalyan.chakravarthi@celigo.com',
+        password: '******',
+        port: 22,
+        usePassiveMode: true,
+        userDirectoryIsRoot: false,
+        useImplicitFtps: false,
+        requireSocketReUse: false,
+      },
+      queueSize: 0,
+    }];
+    draft.data.resources.scripts = [{
+      _id: '5f06cc4cd665e84937f94837',
+      lastModified: '2020-07-09T07:50:36.209Z',
+      createdAt: '2020-07-09T07:50:36.209Z',
+      name: 'BigCommerce IA Cloning',
+      debugUntil: '2023-06-28T09:56:31.079Z',
+    }];
+  });
+
   const ui = (<div> ScreenSpace<MemoryRouter><StartDebugEnhanced {...props} /></MemoryRouter></div>);
 
   return renderWithProviders(ui, {initialStore});

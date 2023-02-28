@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaLicenseEdition from './DynaLicenseEdition';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
@@ -60,24 +60,26 @@ describe('test suite for DynaLicenseEdition field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connectors = [{
-      _id: props.connectorId,
-      twoDotZero: {
-        editions: [
-          {
-            _id: 'id_standard',
-            displayName: 'Standard',
-          },
-          {
-            _id: 'id_premium',
-            displayName: 'Premium',
-          },
-          {
-            _id: 'id_starter',
-          },
-        ],
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connectors = [{
+        _id: props.connectorId,
+        twoDotZero: {
+          editions: [
+            {
+              _id: 'id_standard',
+              displayName: 'Standard',
+            },
+            {
+              _id: 'id_premium',
+              displayName: 'Premium',
+            },
+            {
+              _id: 'id_starter',
+            },
+          ],
+        },
+      }];
+    });
 
     const {utils: {unmount}} = renderWithProviders(<DynaLicenseEdition {...props} />, {initialStore});
 

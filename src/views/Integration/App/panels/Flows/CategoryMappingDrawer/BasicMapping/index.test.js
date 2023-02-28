@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders} from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import MappingWrapper from '.';
 
@@ -20,7 +20,10 @@ describe('MappingWrapper UI tests', () => {
   function initStoreAndRender(mappings) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['4321-1234'] = {mappings};
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['4321-1234'] = {mappings};
+    });
+
     renderWithProviders(<MemoryRouter><MappingWrapper integrationId="1234" flowId="4321" id="id" /></MemoryRouter>, {initialStore});
   }
 

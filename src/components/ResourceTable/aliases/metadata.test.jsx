@@ -5,27 +5,29 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.imports = [{
-  _id: '5ffad3d1f08d35214ed200g7',
-  lastModified: '2021-01-22T08:40:45.731Z',
-  name: 'concur expense',
-  install: [],
-  sandbox: false,
-  _registeredConnectionIds: [
-    '5cd51efd3607fe7d8eda9c88',
-    '5feafe6bf415e15f455dbc89',
-  ],
-  installSteps: [],
-  uninstallSteps: [],
-  flowGroupings: [],
-  createdAt: '2021-01-10T10:15:45.184Z',
-}];
+mutateStore(initialStore, draft => {
+  draft.data.resources.imports = [{
+    _id: '5ffad3d1f08d35214ed200g7',
+    lastModified: '2021-01-22T08:40:45.731Z',
+    name: 'concur expense',
+    install: [],
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5cd51efd3607fe7d8eda9c88',
+      '5feafe6bf415e15f455dbc89',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [],
+    createdAt: '2021-01-10T10:15:45.184Z',
+  }];
+});
 
 function initImports(actionProps, data = []) {
   const ui = (

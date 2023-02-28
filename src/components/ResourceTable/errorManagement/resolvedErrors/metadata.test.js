@@ -4,7 +4,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../../CeligoTable';
 import { message } from '../../../../utils/messageStore';
@@ -41,12 +41,14 @@ function initFunction(data = {}, actionProps, initialStore = null) {
 const initialStore = reduxStore;
 const resourceId = '5e5f495a3a9b335b1a007b43';
 
-initialStore.getState().user.profile = { timezone: 'Asia/Calcutta' };
+mutateStore(initialStore, draft => {
+  draft.user.profile = { timezone: 'Asia/Calcutta' };
 
-initialStore.getState().data.resources.exports = [{
-  _id: resourceId,
-  adaptorType: 'NetSuiteExport',
-}];
+  draft.data.resources.exports = [{
+    _id: resourceId,
+    adaptorType: 'NetSuiteExport',
+  }];
+});
 
 function indexOfCell(text, role) {
   const cells = screen.getAllByRole(role);

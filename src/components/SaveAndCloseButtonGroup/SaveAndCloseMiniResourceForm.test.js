@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../store';
-import { reduxStore, renderWithProviders } from '../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../test/test-utils';
 import SaveAndCloseMiniResourceForm from './SaveAndCloseMiniResourceForm';
 import { FORM_SAVE_STATUS } from '../../constants/resourceForm';
 
@@ -32,12 +32,15 @@ describe('test cases for SaveAndCloseMiniResourceForm', () => {
     const handleCancel = jest.fn();
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: false },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: false },
+        },
+      };
+    });
+
     await initSaveAndCloseMiniResourceForm({
       formKey,
       forceIsDirty: true,

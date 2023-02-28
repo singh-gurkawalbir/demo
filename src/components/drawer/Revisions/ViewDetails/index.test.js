@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {DrawerProvider} from '../../Right/DrawerContext/index';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import ViewRevisionDetails from '.';
 import { getCreatedStore } from '../../../../store';
 
@@ -30,62 +30,64 @@ jest.mock('../../Right', () => ({
 async function initViewRevisionDetails(props = {}, mode = 'details', revisionId = '_revisionId') {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().session.lifeCycleManagement.revision._integrationId = {
-    _revisionId: { errors: {status: 'completed'}},
-  };
-  initialStore.getState().user = {
-    profile: {
-      _id: '_userId',
-      name: '_userName',
-      email: '_userEmail',
-    },
-    preferences: {
-      defaultAShareId: 'aSharedId',
-      accounts: {aSharedId: {}}},
-    org: {
-      accounts: [
-        {
-          _id: 'aSharedId',
-          accepted: true,
-          accessLevel: 'manage',
-        },
-      ],
-    },
-  };
-  initialStore.getState().data.integrationAShares = {
-    _integrationId: [{
-      _id: 'aSharedId',
-      accepted: true,
-      accessLevel: 'manage',
-      sharedWithUser: {
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement.revision._integrationId = {
+      _revisionId: { errors: {status: 'completed'}},
+    };
+    draft.user = {
+      profile: {
         _id: '_userId',
+        name: '_userName',
+        email: '_userEmail',
       },
-    }],
-  };
+      preferences: {
+        defaultAShareId: 'aSharedId',
+        accounts: {aSharedId: {}}},
+      org: {
+        accounts: [
+          {
+            _id: 'aSharedId',
+            accepted: true,
+            accessLevel: 'manage',
+          },
+        ],
+      },
+    };
+    draft.data.integrationAShares = {
+      _integrationId: [{
+        _id: 'aSharedId',
+        accepted: true,
+        accessLevel: 'manage',
+        sharedWithUser: {
+          _id: '_userId',
+        },
+      }],
+    };
 
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: [
-        {
-          _id: '_revisionId',
-          description: 'Snapshot for testing',
-          type: 'snapshot',
-          _createdByUserId: '_userId',
-          _integrationId: '_integrationId',
-          status: 'completed',
-        },
-        {
-          _id: '_revertRevId',
-          description: 'Reverting to previous Snapshot',
-          type: 'revert',
-          _createdByUserId: '_userId',
-          _integrationId: '_integrationId',
-          _revertToRevisionId: '_revisionId',
-          status: 'completed',
-        },
-      ],
-    },
-  };
+    draft.data.revisions = {
+      _integrationId: {
+        data: [
+          {
+            _id: '_revisionId',
+            description: 'Snapshot for testing',
+            type: 'snapshot',
+            _createdByUserId: '_userId',
+            _integrationId: '_integrationId',
+            status: 'completed',
+          },
+          {
+            _id: '_revertRevId',
+            description: 'Reverting to previous Snapshot',
+            type: 'revert',
+            _createdByUserId: '_userId',
+            _integrationId: '_integrationId',
+            _revertToRevisionId: '_revisionId',
+            status: 'completed',
+          },
+        ],
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `parentURL/view/${revisionId}/mode/${mode}`}]}>

@@ -8,21 +8,25 @@ import * as reactRedux from 'react-redux';
 import actions from '../../../actions';
 import EditorDrawer from './index';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
 function initEditorDrawer(props = {}) {
-  initialStore.getState().session.editors = {httprelativeURI: {
-    fieldId: 'file.csv',
-    layout: 'compact',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    editorType: props.type,
-    hidePreview: true,
-  },
+  const mustateState = draft => {
+    draft.session.editors = {httprelativeURI: {
+      fieldId: 'file.csv',
+      layout: 'compact',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      editorType: props.type,
+      hidePreview: true,
+    },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: '/editor/httprelativeURI'}]}>

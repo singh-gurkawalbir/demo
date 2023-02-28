@@ -5,7 +5,7 @@ import { Route, Router } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import { act } from 'react-dom/test-utils';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {renderWithProviders, mutateStore} from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import {getCreatedStore} from '../../../../store';
 import TabRedirection from '.';
@@ -44,63 +44,65 @@ describe('TabRedirectiion(App) UI tests', () => {
   function initStore(children, mode) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: '5ff579d745ceef7dcd797c15',
-      initChild: {function: true},
-      description: 'description',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      _connectorId: 'connectorId',
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5cd51efd3607fe7d8eda9c97',
-        '5ff57a8345ceef7dcd797c21',
-      ],
-      installSteps: ['just some mock string'],
-      uninstallSteps: ['just some mock string'],
-      flowGroupings: [],
-      children,
-      mode,
-      createdAt: '2021-01-06T08:50:31.935Z',
-    }, {
-      _id: 'integration_id_1',
-      settings: {
-        sections: [
-          {
-            title: 'Title 1',
-            id: 'id_1',
-            sections: [],
-          },
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: '5ff579d745ceef7dcd797c15',
+        initChild: {function: true},
+        description: 'description',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        _connectorId: 'connectorId',
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5cd51efd3607fe7d8eda9c97',
+          '5ff57a8345ceef7dcd797c21',
         ],
-        supportsMultiStore: true,
-      },
-    }, {
-      _id: 'integration_id_2',
-      settings: {
-        sections: [
-          {
-            title: 'Title 1',
-            id: 'id_1',
-            sections: [],
-          },
-          {
-            title: 'Title 2',
-            id: 'id_2',
-            sections: [],
-          },
-        ],
-        supportsMultiStore: true,
-      },
-    }];
-    initialStore.getState().session.integrations = {
-      integration_id_1: {
-        isTileClick: true,
-      },
-      integration_id_2: {
-        isTileClick: true,
-      },
-    };
+        installSteps: ['just some mock string'],
+        uninstallSteps: ['just some mock string'],
+        flowGroupings: [],
+        children,
+        mode,
+        createdAt: '2021-01-06T08:50:31.935Z',
+      }, {
+        _id: 'integration_id_1',
+        settings: {
+          sections: [
+            {
+              title: 'Title 1',
+              id: 'id_1',
+              sections: [],
+            },
+          ],
+          supportsMultiStore: true,
+        },
+      }, {
+        _id: 'integration_id_2',
+        settings: {
+          sections: [
+            {
+              title: 'Title 1',
+              id: 'id_1',
+              sections: [],
+            },
+            {
+              title: 'Title 2',
+              id: 'id_2',
+              sections: [],
+            },
+          ],
+          supportsMultiStore: true,
+        },
+      }];
+      draft.session.integrations = {
+        integration_id_1: {
+          isTileClick: true,
+        },
+        integration_id_2: {
+          isTileClick: true,
+        },
+      };
+    });
 
     return initialStore;
   }
@@ -150,86 +152,88 @@ describe('TabRedirectiion(App) UI tests', () => {
   test('should redirect to required URL when no childId is provided and search param has flowJobId', () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: '5ff579d745ceef7dcd797c15',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      _connectorId: 'connectorId',
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5cd51efd3607fe7d8eda9c97',
-        '5ff57a8345ceef7dcd797c21',
-      ],
-      installSteps: [],
-      uninstallSteps: [],
-      mode: 'install',
-      flowGroupings: [],
-      createdAt: '2021-01-06T08:50:31.935Z',
-      settings: {supportsMultiStore: true,
-        sections: [
-          {id: '1111111',
-            label: '11',
-            title: 'title1',
-            sections: [{id: 'someID',
-              title: 'somesectionId',
-              flows: [
-                {
-                  _id: '5ea16c600e2fab71928a6152',
-                  lastModified: '2021-08-13T08:02:49.712Z',
-                  name: ' Bulk insert with harcode and mulfield mapping settings',
-                  disabled: true,
-                  _integrationId: '5ff579d745ceef7dcd797c15',
-                  skipRetries: false,
-                  pageProcessors: [
-                    {
-                      responseMapping: {
-                        fields: [],
-                        lists: [],
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: '5ff579d745ceef7dcd797c15',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        _connectorId: 'connectorId',
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5cd51efd3607fe7d8eda9c97',
+          '5ff57a8345ceef7dcd797c21',
+        ],
+        installSteps: [],
+        uninstallSteps: [],
+        mode: 'install',
+        flowGroupings: [],
+        createdAt: '2021-01-06T08:50:31.935Z',
+        settings: {supportsMultiStore: true,
+          sections: [
+            {id: '1111111',
+              label: '11',
+              title: 'title1',
+              sections: [{id: 'someID',
+                title: 'somesectionId',
+                flows: [
+                  {
+                    _id: '5ea16c600e2fab71928a6152',
+                    lastModified: '2021-08-13T08:02:49.712Z',
+                    name: ' Bulk insert with harcode and mulfield mapping settings',
+                    disabled: true,
+                    _integrationId: '5ff579d745ceef7dcd797c15',
+                    skipRetries: false,
+                    pageProcessors: [
+                      {
+                        responseMapping: {
+                          fields: [],
+                          lists: [],
+                        },
+                        type: 'import',
+                        _importId: '5ea16cd30e2fab71928a6166',
                       },
-                      type: 'import',
-                      _importId: '5ea16cd30e2fab71928a6166',
-                    },
-                  ],
-                  pageGenerators: [
-                    {
-                      _exportId: '5d00b9f0bcd64414811b2396',
-                    },
-                  ],
-                  createdAt: '2020-04-23T10:22:24.290Z',
-                  lastExecutedAt: '2020-04-23T11:08:41.093Z',
-                  autoResolveMatchingTraceKeys: true,
-                },
-              ],
-            }]},
-          {id: '2', label: '22', title: 'title2'}]},
-    }];
-    initialStore.getState().data.resources.flows = [{
-      _id: '5ea16c600e2fab71928a6152',
-      lastModified: '2021-08-13T08:02:49.712Z',
-      name: ' Bulk insert with harcode and mulfield mapping settings',
-      disabled: true,
-      _integrationId: '5ff579d745ceef7dcd797c15',
-      skipRetries: false,
-      pageProcessors: [
-        {
-          responseMapping: {
-            fields: [],
-            lists: [],
+                    ],
+                    pageGenerators: [
+                      {
+                        _exportId: '5d00b9f0bcd64414811b2396',
+                      },
+                    ],
+                    createdAt: '2020-04-23T10:22:24.290Z',
+                    lastExecutedAt: '2020-04-23T11:08:41.093Z',
+                    autoResolveMatchingTraceKeys: true,
+                  },
+                ],
+              }]},
+            {id: '2', label: '22', title: 'title2'}]},
+      }];
+      draft.data.resources.flows = [{
+        _id: '5ea16c600e2fab71928a6152',
+        lastModified: '2021-08-13T08:02:49.712Z',
+        name: ' Bulk insert with harcode and mulfield mapping settings',
+        disabled: true,
+        _integrationId: '5ff579d745ceef7dcd797c15',
+        skipRetries: false,
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            type: 'import',
+            _importId: '5ea16cd30e2fab71928a6166',
           },
-          type: 'import',
-          _importId: '5ea16cd30e2fab71928a6166',
-        },
-      ],
-      pageGenerators: [
-        {
-          _exportId: '5d00b9f0bcd64414811b2396',
-        },
-      ],
-      createdAt: '2020-04-23T10:22:24.290Z',
-      lastExecutedAt: '2020-04-23T11:08:41.093Z',
-      autoResolveMatchingTraceKeys: true,
-    }];
+        ],
+        pageGenerators: [
+          {
+            _exportId: '5d00b9f0bcd64414811b2396',
+          },
+        ],
+        createdAt: '2020-04-23T10:22:24.290Z',
+        lastExecutedAt: '2020-04-23T11:08:41.093Z',
+        autoResolveMatchingTraceKeys: true,
+      }];
+    });
 
     const history = createMemoryHistory({initialEntries: ['/5ff579d745ceef7dcd797c15/profile']});
 
@@ -243,7 +247,9 @@ describe('TabRedirectiion(App) UI tests', () => {
   test('should redirect to the provided URL', () => {
     const initialStore = initStore();
 
-    initialStore.getState().session.integrations['5ff579d745ceef7dcd797c15'] = {redirectTo: 'someURL'};
+    mutateStore(initialStore, draft => {
+      draft.session.integrations['5ff579d745ceef7dcd797c15'] = {redirectTo: 'someURL'};
+    });
 
     renderFunction(initialStore, '/5ff579d745ceef7dcd797c15/profile', '/:integrationId/:tab');
     expect(mockHistoryPush).toHaveBeenCalledWith('/5ff579d745ceef7dcd797c15/someURL');

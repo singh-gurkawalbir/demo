@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
 import { getCreatedStore } from '../../../store';
@@ -48,10 +48,12 @@ describe('access Tokens test suite', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'ACCESSTOKEN_DISPLAY': {
-          globalStore.getState().session.apiAccessTokens = [{
-            _id: 'token123',
-            token: 'TOKEN_VALUE',
-          }];
+          mutateStore(globalStore, draft => {
+            draft.session.apiAccessTokens = [{
+              _id: 'token123',
+              token: 'TOKEN_VALUE',
+            }];
+          });
           break;
         }
         default:

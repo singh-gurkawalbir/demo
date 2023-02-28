@@ -1,13 +1,13 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MappingRow from './MappingRow';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initMappingRow({
   props = {
@@ -24,74 +24,76 @@ async function initMappingRow({
   validationErrMsg = null,
   startKey,
 } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.mapping = {
-    mapping: {
-      flowId: 'flow_id',
-      status: 'mappingStatus',
-      mappings: [{
-        generate: 'generate_1',
-        extract: 'extract_1',
-        key: 'key_1',
-      }, {
-        generate: 'generate_2',
-        key: 'key_2',
-      }, {
-        extract: 'extract_3',
-        key: 'key_3',
-      }, {
-        generate: 'generate_4',
-        hardCodedValue: 'hardCodedValue_4',
-        key: 'key_4',
-      }, {
-        generate: 'generate_5',
-        lookupName: 'lookupName',
-        key: 'key_5',
-      }, {
-        generate: 'generate_6',
-        extract: '{{extract_6}}',
-        key: 'key_6',
-      }, {
-        generate: 'generate_7',
-        extract: 'extract_7',
-        key: 'key_7',
-        isNotEditable: true,
-        isRequired: true,
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = {
+      mapping: {
+        flowId: 'flow_id',
+        status: 'mappingStatus',
+        mappings: [{
+          generate: 'generate_1',
+          extract: 'extract_1',
+          key: 'key_1',
+        }, {
+          generate: 'generate_2',
+          key: 'key_2',
+        }, {
+          extract: 'extract_3',
+          key: 'key_3',
+        }, {
+          generate: 'generate_4',
+          hardCodedValue: 'hardCodedValue_4',
+          key: 'key_4',
+        }, {
+          generate: 'generate_5',
+          lookupName: 'lookupName',
+          key: 'key_5',
+        }, {
+          generate: 'generate_6',
+          extract: '{{extract_6}}',
+          key: 'key_6',
+        }, {
+          generate: 'generate_7',
+          extract: 'extract_7',
+          key: 'key_7',
+          isNotEditable: true,
+          isRequired: true,
+        }],
+        validationErrMsg,
+        mappingsCopy: [],
+        subRecordMappingId: props.subRecordMappingId,
+        autoMapper: {
+          startKey,
+        },
+      },
+    };
+    draft.data.resources = {
+      imports: [{
+        _id: props.importId,
+        adaptorType,
+        http: {
+          requestMediaType: 'xml',
+        },
+        sampleData: {
+          name: 'name',
+        },
       }],
-      validationErrMsg,
-      mappingsCopy: [],
-      subRecordMappingId: props.subRecordMappingId,
-      autoMapper: {
-        startKey,
-      },
-    },
-  };
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: props.importId,
-      adaptorType,
-      http: {
-        requestMediaType: 'xml',
-      },
-      sampleData: {
-        name: 'name',
-      },
-    }],
-    flows: [{
-      _id: 'flow_id',
-      pageGenerators: [{
-        _exportId: exportId,
+      flows: [{
+        _id: 'flow_id',
+        pageGenerators: [{
+          _exportId: exportId,
+        }],
       }],
-    }],
-    exports: [{
-      _id: 'export_id',
-      adaptorType: 'HTTPExport',
-      sampleData: {
-        name: 'name',
-      },
-    }],
-  };
+      exports: [{
+        _id: 'export_id',
+        adaptorType: 'HTTPExport',
+        sampleData: {
+          name: 'name',
+        },
+      }],
+    };
+  });
 
   const ui = (
     <MemoryRouter>

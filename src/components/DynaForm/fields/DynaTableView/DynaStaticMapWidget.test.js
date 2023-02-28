@@ -2,7 +2,7 @@ import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaStaticMapWidget from './DynaStaticMapWidget';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
 const mockDispatchFn = jest.fn();
@@ -47,16 +47,19 @@ describe('DynaStaticMapWidget UI test cases', () => {
     jest.clearAllMocks();
   });
   test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup', async () => {
-    initialStore.getState().session.connectors = {
-      someIntegrationId: {
-        someId: {
-          isLoading: {extracts: false, generates: false},
-          shouldReset: false,
-          data: {optionsMap: [{id: 'extracts', label: 'extract header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'generates', label: 'generate header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someIntegrationId: {
+          someId: {
+            isLoading: {extracts: false, generates: false},
+            shouldReset: false,
+            data: {optionsMap: [{id: 'extracts', label: 'extract header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'generates', label: 'generate header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
+            },
+            fieldType: 'somefieldtype',
           },
-          fieldType: 'somefieldtype',
         },
-      }};
+      };
+    });
     const props = {
       id: 'someId',
       _integrationId: 'someIntegrationId',
@@ -106,15 +109,18 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.clearMetadata('someId', 'someIntegrationId'));
   });
   test('should test static mapping refresh buttons and selecting use null as default value radio button in action to take if unique match not found radio options', async () => {
-    initialStore.getState().session.connectors = {
-      someIntegrationId: {
-        someId: {
-          isLoading: {extracts: false, generates: false},
-          shouldReset: false,
-          data: {generates: [{id: 'extracts', text: 'extract header'}], extracts: [{id: 'generates', label: 'generate header'}]},
-          fieldType: 'somefieldtype',
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someIntegrationId: {
+          someId: {
+            isLoading: {extracts: false, generates: false},
+            shouldReset: false,
+            data: {generates: [{id: 'extracts', text: 'extract header'}], extracts: [{id: 'generates', label: 'generate header'}]},
+            fieldType: 'somefieldtype',
+          },
         },
-      }};
+      };
+    });
     const props = {
       id: 'someId',
       _integrationId: 'someIntegrationId',
@@ -147,15 +153,18 @@ describe('DynaStaticMapWidget UI test cases', () => {
   });
 
   test('should test static mapping refresh buttons and selecting empty string as default value radio button in action to take if unique match not found radio options', async () => {
-    initialStore.getState().session.connectors = {
-      someIntegrationId: {
-        someId: {
-          isLoading: {extracts: false, generates: false},
-          shouldReset: false,
-          data: {},
-          fieldType: 'somefieldtype',
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someIntegrationId: {
+          someId: {
+            isLoading: {extracts: false, generates: false},
+            shouldReset: false,
+            data: {},
+            fieldType: 'somefieldtype',
+          },
         },
-      }};
+      };
+    });
     const props = {
       id: 'someId',
       _integrationId: 'someIntegrationId',
@@ -199,16 +208,19 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.clearMetadata('someId', 'someIntegrationId'));
   });
   test('should test perform mapping dropdown', async () => {
-    initialStore.getState().session.connectors = {
-      someIntegrationId: {
-        someId: {
-          isLoading: {extracts: false, generates: false},
-          shouldReset: false,
-          data: {generates: [{text: 'exportop1', id: 'op1'}, {text: 'exportop2', id: 'op2'}],
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someIntegrationId: {
+          someId: {
+            isLoading: {extracts: false, generates: false},
+            shouldReset: false,
+            data: {generates: [{text: 'exportop1', id: 'op1'}, {text: 'exportop2', id: 'op2'}],
+            },
+            fieldType: 'somefieldtype',
           },
-          fieldType: 'somefieldtype',
         },
-      }};
+      };
+    });
     const props = {
       id: 'someId',
       _integrationId: 'someIntegrationId',

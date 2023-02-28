@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import SettingsDrawer from '.';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 function initSettingsDrawer({
   props = {
@@ -21,79 +21,81 @@ function initSettingsDrawer({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {
-        _id: 'flow_id',
-        name: 'name',
-        _integrationId: 'integration_id',
-        settings: {
-          setting1: 'value1',
-        },
-      },
-      {
-        _id: 'flow_id_1',
-        name: 'name 1',
-        _connectorId: 'connector_id_1',
-        settings: '{"setting1":"value1"}',
-
-      },
-      {
-        _id: 'flow_id_2',
-        name: 'name 2',
-        settings: 'djfnj',
-      },
-    ],
-    integrations: [
-      {
-        _id: 'integration_id',
-      },
-      {
-        _id: 'integration_id_1',
-        _connectorId: 'connector_id_1',
-      },
-    ],
-    notifications: [
-      {
-        _id: 'notification_1',
-        type: 'flow',
-        _flowId: 'flow_id_3',
-        subscribedByUser: {},
-      },
-    ],
-  };
-  initialStore.getState().user.preferences = {
-    defaultAShareId: accountId,
-  };
-  initialStore.getState().user.profile = {
-    useErrMgtTwoDotZero,
-  };
-  initialStore.getState().user.org = {
-    accounts: [
-      {
-        accessLevel,
-        _id: 'own',
-        ownerUser: {},
-      },
-      {
-        accessLevel: 'monitor',
-        _id: 'account_id_1',
-        ownerUser: {},
-      },
-      {
-        accepted: true,
-        _id: 'account_id_2',
-        ownerUser: {},
-        integrationAccessLevel: [
-          {
-            accessLevel: 'monitor',
-            _integrationId: 'integration_id_1',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {
+          _id: 'flow_id',
+          name: 'name',
+          _integrationId: 'integration_id',
+          settings: {
+            setting1: 'value1',
           },
-        ],
-      },
-    ],
-  };
-  initialStore.getState().session.loadResources.notifications = 'received';
+        },
+        {
+          _id: 'flow_id_1',
+          name: 'name 1',
+          _connectorId: 'connector_id_1',
+          settings: '{"setting1":"value1"}',
+
+        },
+        {
+          _id: 'flow_id_2',
+          name: 'name 2',
+          settings: 'djfnj',
+        },
+      ],
+      integrations: [
+        {
+          _id: 'integration_id',
+        },
+        {
+          _id: 'integration_id_1',
+          _connectorId: 'connector_id_1',
+        },
+      ],
+      notifications: [
+        {
+          _id: 'notification_1',
+          type: 'flow',
+          _flowId: 'flow_id_3',
+          subscribedByUser: {},
+        },
+      ],
+    };
+    draft.user.preferences = {
+      defaultAShareId: accountId,
+    };
+    draft.user.profile = {
+      useErrMgtTwoDotZero,
+    };
+    draft.user.org = {
+      accounts: [
+        {
+          accessLevel,
+          _id: 'own',
+          ownerUser: {},
+        },
+        {
+          accessLevel: 'monitor',
+          _id: 'account_id_1',
+          ownerUser: {},
+        },
+        {
+          accepted: true,
+          _id: 'account_id_2',
+          ownerUser: {},
+          integrationAccessLevel: [
+            {
+              accessLevel: 'monitor',
+              _integrationId: 'integration_id_1',
+            },
+          ],
+        },
+      ],
+    };
+    draft.session.loadResources.notifications = 'received';
+  });
 
   const ui = (
     <MemoryRouter

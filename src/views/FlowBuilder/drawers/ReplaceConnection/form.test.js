@@ -8,7 +8,7 @@ import ReplaceConnection from './form';
 import actions from '../../../../actions';
 import { ConfirmDialogProvider } from '../../../../components/ConfirmDialog';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initReplaceConnection({
   props = {
@@ -20,36 +20,38 @@ async function initReplaceConnection({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    connections: [
-      {
-        _id: 'connection_id',
-        name: 'connection name',
-        type: 'rdbms',
-        rdbms: {
-          type: 'snowflake',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connections: [
+        {
+          _id: 'connection_id',
+          name: 'connection name',
+          type: 'rdbms',
+          rdbms: {
+            type: 'snowflake',
+          },
         },
-      },
-      {
-        _id: 'connection_id_1',
-        name: 'connection name 1',
-        type: 'rdbms',
-        rdbms: {
-          type: 'snowflake',
+        {
+          _id: 'connection_id_1',
+          name: 'connection name 1',
+          type: 'rdbms',
+          rdbms: {
+            type: 'snowflake',
+          },
         },
-      },
-    ],
-    flows: [
-      {
-        _id: 'flow_id',
-      },
-    ],
-    integrations: [
-      {
-        _id: 'integration_id',
-      },
-    ],
-  };
+      ],
+      flows: [
+        {
+          _id: 'flow_id',
+        },
+      ],
+      integrations: [
+        {
+          _id: 'integration_id',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter

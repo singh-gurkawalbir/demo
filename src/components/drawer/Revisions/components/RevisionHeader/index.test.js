@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import RevisionHeader from '.';
 import actions from '../../../../../actions';
 import {ConfirmDialogProvider} from '../../../../ConfirmDialog';
@@ -14,28 +14,30 @@ const props = {integrationId: '_integrationId', revisionId: '_revisionId', mode:
 async function initRevisionHeader(props = {}, status = 'recieved', type = 'revert') {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement = {
-    compare: {
-      _integrationId: {
-        status,
-      },
-    },
-    revision: {
-      _integrationId: {
-        _revisionId: {
-          type,
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      compare: {
+        _integrationId: {
+          status,
         },
       },
-    },
-  };
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: [{
-        _id: '_revisionId',
-        type,
-      }],
-    },
-  };
+      revision: {
+        _integrationId: {
+          _revisionId: {
+            type,
+          },
+        },
+      },
+    };
+    draft.data.revisions = {
+      _integrationId: {
+        data: [{
+          _id: '_revisionId',
+          type,
+        }],
+      },
+    };
+  });
 
   return renderWithProviders(<ConfirmDialogProvider> <RevisionHeader {...props} /> </ConfirmDialogProvider>, {initialStore});
 }

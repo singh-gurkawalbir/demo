@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import metadata from '../../../metadata';
 import CeligoTable from '../../../../../CeligoTable';
 
@@ -18,13 +18,15 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.integrations = [
-  {
-    _id: '2_integrationId',
-    name: 'shopify',
-    _connectorId: '5656f5e3bebf89c03f5dd77e',
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.integrations = [
+    {
+      _id: '2_integrationId',
+      name: 'shopify',
+      _connectorId: '5656f5e3bebf89c03f5dd77e',
+    },
+  ];
+});
 
 function initHomeTiles(data = {}, initialStore = null) {
   const ui = (

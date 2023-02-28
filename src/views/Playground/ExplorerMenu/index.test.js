@@ -5,57 +5,59 @@ import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ExplorerMenu from '.';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 
 let initialStore;
 const mockHistoryPush = jest.fn();
 
 async function initExplorerMenu({onEditorChange = jest.fn()} = {}) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '12345',
-    name: 'Test integration name',
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '67890',
-    name: 'Test flow name 1',
-    _integrationId: '12345',
-    pageProcessors: [
-      {
-        type: 'import',
-        _importId: 'nxksnn',
-      },
-    ],
-    pageGenerators: [
-      {
-        _exportId: 'xsjxks',
-      },
-    ],
-  }, {
-    _id: '098765',
-    name: 'Test flow name 2',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.connections = [{
-    _id: 'abcde',
-    name: 'Test connection 1',
-    _integrationId: '12345',
-  }, {
-    _id: 'fghijk',
-    name: 'Test connection 2',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.exports = [{
-    _id: 'xsjxks',
-    name: 'Test export',
-    _connectionId: 'abcde',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.imports = [{
-    _id: 'nxksnn',
-    name: 'Test import',
-    _connectionId: 'fghijk',
-    _integrationId: '12345',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '12345',
+      name: 'Test integration name',
+    }];
+    draft.data.resources.flows = [{
+      _id: '67890',
+      name: 'Test flow name 1',
+      _integrationId: '12345',
+      pageProcessors: [
+        {
+          type: 'import',
+          _importId: 'nxksnn',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: 'xsjxks',
+        },
+      ],
+    }, {
+      _id: '098765',
+      name: 'Test flow name 2',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.connections = [{
+      _id: 'abcde',
+      name: 'Test connection 1',
+      _integrationId: '12345',
+    }, {
+      _id: 'fghijk',
+      name: 'Test connection 2',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.exports = [{
+      _id: 'xsjxks',
+      name: 'Test export',
+      _connectionId: 'abcde',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.imports = [{
+      _id: 'nxksnn',
+      name: 'Test import',
+      _connectionId: 'fghijk',
+      _integrationId: '12345',
+    }];
+  });
   const ui = (
     <MemoryRouter>
       <ExplorerMenu onEditorChange={onEditorChange} />
@@ -134,7 +136,9 @@ describe('explorerMenu test suite', () => {
   });
   test('should able to click on an integration and it should verify no flows text by expanding', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
-    initialStore.getState().data.resources.flows = [];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [];
+    });
 
     expect(screen.getByRole('treeitem', {name: /Test integration name/i})).toBeInTheDocument();
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
@@ -146,26 +150,28 @@ describe('explorerMenu test suite', () => {
   });
   test('should able to click on an integration and verify the flow and exports tree id when there is no name for flows and export', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
-    initialStore.getState().data.resources.flows = [{
-      _id: '67890',
-      _integrationId: '12345',
-      pageProcessors: [
-        {
-          type: 'import',
-          _importId: 'nxksnn',
-        },
-      ],
-      pageGenerators: [
-        {
-          _exportId: 'xsjxks',
-        },
-      ],
-    }];
-    initialStore.getState().data.resources.exports = [{
-      _id: 'xsjxks',
-      _connectionId: 'abcde',
-      _integrationId: '12345',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [{
+        _id: '67890',
+        _integrationId: '12345',
+        pageProcessors: [
+          {
+            type: 'import',
+            _importId: 'nxksnn',
+          },
+        ],
+        pageGenerators: [
+          {
+            _exportId: 'xsjxks',
+          },
+        ],
+      }];
+      draft.data.resources.exports = [{
+        _id: 'xsjxks',
+        _connectionId: 'abcde',
+        _integrationId: '12345',
+      }];
+    });
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
 
     expect(integrationNameSvgNode).toBeInTheDocument();

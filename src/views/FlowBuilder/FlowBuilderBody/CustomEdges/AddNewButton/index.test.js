@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import * as mockContext from '../../Context';
 import AddNewButton from '.';
 import * as mockLib from '../../lib';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 let initialStore;
@@ -13,9 +13,11 @@ const mockUseHandleAddNode = jest.fn();
 const mockUseHandleAddNewRouter = jest.fn();
 
 function initAddNewButton({edgeId, disabled, disableFlowBranchingData}) {
-  initialStore.getState().user.profile = {
-    disableFlowBranching: disableFlowBranchingData,
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.profile = {
+      disableFlowBranching: disableFlowBranchingData,
+    };
+  });
   const ui = (
     <AddNewButton edgeId={edgeId} disabled={disabled} />
   );

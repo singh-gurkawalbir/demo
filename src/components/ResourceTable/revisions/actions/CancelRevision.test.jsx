@@ -5,58 +5,59 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
 import metadata from '../metadata';
 import CeligoTable from '../../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user = {
-  preferences: {
-    defaultAShareId: 'own',
-  },
-  profile: {
-    _id: '5cadc8b42b10347a2708bf29',
-    name: 'Nametest',
-    email: 'test@celigo.com',
-  },
-  org: {
-    users: [
-      {
-        _id: '5f7011605b2e3244837309f9',
-        accepted: true,
-        accessLevel: 'monitor',
-        integrationAccessLevel: [
-          {
-            _integrationId: '5e44efa28015c9464272256f',
-            accessLevel: 'manage',
-          },
-        ],
-        sharedWithUser: {
+mutateStore(initialStore, draft => {
+  draft.user = {
+    preferences: {
+      defaultAShareId: 'own',
+    },
+    profile: {
+      _id: '5cadc8b42b10347a2708bf29',
+      name: 'Nametest',
+      email: 'test@celigo.com',
+    },
+    org: {
+      users: [
+        {
           _id: '5f7011605b2e3244837309f9',
-          email: 'test+3@celigo.com',
-          name: 'Nametest2',
+          accepted: true,
+          accessLevel: 'monitor',
+          integrationAccessLevel: [
+            {
+              _integrationId: '5e44efa28015c9464272256f',
+              accessLevel: 'manage',
+            },
+          ],
+          sharedWithUser: {
+            _id: '5f7011605b2e3244837309f9',
+            email: 'test+3@celigo.com',
+            name: 'Nametest2',
+          },
         },
-      },
-    ],
+      ],
+      accounts: [
+        {
+          _id: 'own',
+          accessLevel: 'owner',
+        },
+      ],
+    },
+  };
 
-    accounts: [
-      {
-        _id: 'own',
-        accessLevel: 'owner',
-      },
-    ],
-  },
-};
-
-initialStore.getState().data.revisions = {
-  '5e44ee816fb284424f693b43': {
-    data: [{
-      _id: '5cadc8b42b1034709483790',
-      type: 'pull',
-    }],
-  }};
+  draft.data.revisions = {
+    '5e44ee816fb284424f693b43': {
+      data: [{
+        _id: '5cadc8b42b1034709483790',
+        type: 'pull',
+      }],
+    }};
+});
 
 const mockDispatchFn = jest.fn();
 

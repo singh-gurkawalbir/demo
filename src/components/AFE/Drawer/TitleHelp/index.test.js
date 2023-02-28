@@ -4,18 +4,22 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import TitleHelp from '.';
 
 let initialStore;
 
 async function initTitleHelp(editorId, label) {
-  initialStore.getState().session.editors = {
-    '231c3': {
-      editorType: 'mappings',
-      resourceType: 'mappings',
-    },
+  const mustateState = draft => {
+    draft.session.editors = {
+      '231c3': {
+        editorType: 'mappings',
+        resourceType: 'mappings',
+      },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
   const ui = (
     <MemoryRouter>
       <TitleHelp editorId={editorId} label={label} />

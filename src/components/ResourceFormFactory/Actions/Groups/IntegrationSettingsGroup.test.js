@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import IntegrationSettings from './IntegrationSettingsGroup';
 import { getCreatedStore } from '../../../../store';
 
@@ -45,14 +45,17 @@ describe('test suite for IntegrationSettings', () => {
     const KEY = getStateKey(integrationId, flowId, sectionId);
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      fields: {
-        tempField: { touched: true },
-      },
-    };
-    initialStore.getState().session.integrationApps.settings[KEY] = {
-      formSaveStatus: 'loading',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+      draft.session.integrationApps.settings[KEY] = {
+        formSaveStatus: 'loading',
+      };
+    });
+
     await initIntegrationSettings({integrationId, flowId, sectionId, formKey, disabled: true}, initialStore);
     expect(screen.getByRole('button', {name: 'Saving...'})).toBeDisabled();
     expect(screen.getByRole('button', {name: 'Close'})).toBeDisabled();
@@ -63,11 +66,13 @@ describe('test suite for IntegrationSettings', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      fields: {
-        tempField: { touched: false },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        fields: {
+          tempField: { touched: false },
+        },
+      };
+    });
     await initIntegrationSettings({formKey, onCancel}, initialStore);
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
@@ -80,11 +85,13 @@ describe('test suite for IntegrationSettings', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
     await initIntegrationSettings({formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const closeButton = screen.getByRole('button', {name: 'Close'});

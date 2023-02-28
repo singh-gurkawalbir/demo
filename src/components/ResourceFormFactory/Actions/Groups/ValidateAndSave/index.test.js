@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import ValidateAndSave from '.';
 
@@ -38,15 +38,18 @@ describe('test suite for ValidateAndSave', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.asyncTask[props.formKey] = {
-      status: 'loading',
-    };
-    initialStore.getState().session.form[props.formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.asyncTask[props.formKey] = {
+        status: 'loading',
+      };
+      draft.session.form[props.formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initValidateAndSave(props, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const closeButton = screen.getByRole('button', {name: 'Close'});

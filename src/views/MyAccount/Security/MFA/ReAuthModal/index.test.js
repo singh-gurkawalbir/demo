@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ReAuthModal from '.';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { runServer } from '../../../../../test/api/server';
 import { getCreatedStore } from '../../../../../store';
 import { ConfirmDialogProvider } from '../../../../../components/ConfirmDialog';
@@ -13,7 +13,9 @@ import { ConfirmDialogProvider } from '../../../../../components/ConfirmDialog';
 let initialStore;
 
 async function initReAuthModal({mfaValues, onClose, isQRCode} = {}) {
-  initialStore.getState().session.mfa = mfaValues;
+  mutateStore(initialStore, draft => {
+    draft.session.mfa = mfaValues;
+  });
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>

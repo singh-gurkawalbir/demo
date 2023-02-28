@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
-import { renderWithProviders } from '../../test/test-utils';
+import { renderWithProviders, mutateStore } from '../../test/test-utils';
 import ResourceFormWithStatusPanel from '.';
 import actions from '../../actions';
 import {getCreatedStore} from '../../store';
@@ -137,9 +137,11 @@ describe('resourceFormWithStatusPanel UI test', () => {
   async function readyStore() {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.imports = imports;
-    initialStore.getState().data.resources.exports = exports;
-    initialStore.getState().data.resources.connections = connections;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.imports = imports;
+      draft.data.resources.exports = exports;
+      draft.data.resources.connections = connections;
+    });
 
     return {store: initialStore};
   }

@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 
@@ -26,17 +26,19 @@ async function inituseHandleSubmitCompleteFn(resourceType, operation = 'add', id
 
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resource = {
-    'new-integration': 'new-integration',
-  };
-  initialStore.getState().session.resourceForm = {
-    'scripts-new-script': {
-      skipClose: true,
-    },
-    'exports-_exportId': {
-      skipClose: true,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.resource = {
+      'new-integration': 'new-integration',
+    };
+    draft.session.resourceForm = {
+      'scripts-new-script': {
+        skipClose: true,
+      },
+      'exports-_exportId': {
+        skipClose: true,
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/${operation}/${resourceType}/${id}`}]}>

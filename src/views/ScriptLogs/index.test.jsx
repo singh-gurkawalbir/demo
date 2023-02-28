@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import moment from 'moment';
 import ScriptLogs from '.';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
@@ -282,12 +282,14 @@ const profile = {
 };
 
 function store(sessionLogs) {
-  initialStore.getState().data.resources.integrations = integrations;
-  initialStore.getState().data.resources.flows = flows;
-  initialStore.getState().data.resources.scripts = scripts;
-  initialStore.getState().data.resources.exports = exports;
-  initialStore.getState().session.logs = sessionLogs;
-  initialStore.getState().user.profile = profile;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = integrations;
+    draft.data.resources.flows = flows;
+    draft.data.resources.scripts = scripts;
+    draft.data.resources.exports = exports;
+    draft.session.logs = sessionLogs;
+    draft.user.profile = profile;
+  });
 }
 
 async function initScriptLogs(props) {

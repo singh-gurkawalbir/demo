@@ -3,7 +3,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { ConfirmDialogProvider } from '../../../components/ConfirmDialog';
 import useHandleDelete from './useHandleDelete';
 import messageStore, { message } from '../../../utils/messageStore';
@@ -114,12 +114,15 @@ describe('test suite for useHandleDelete hook', () => {
       const _integrationId = '123integration';
       const initialStore = getCreatedStore();
 
-      initialStore.getState().session.resource.references = {
-        connectors: [{
-          id: '123connector',
-          name: 'Connector 1',
-        }],
-      };
+      mutateStore(initialStore, draft => {
+        draft.session.resource.references = {
+          connectors: [{
+            id: '123connector',
+            name: 'Connector 1',
+          }],
+        };
+      });
+
       await initUseHandleDelete({_integrationId}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
@@ -138,12 +141,15 @@ describe('test suite for useHandleDelete hook', () => {
       const _integrationId = '123integration';
       const initialStore = getCreatedStore();
 
-      initialStore.getState().session.resource.references = {
-        flows: [{
-          id: '123flow',
-          name: 'Flow 1',
-        }],
-      };
+      mutateStore(initialStore, draft => {
+        draft.session.resource.references = {
+          flows: [{
+            id: '123flow',
+            name: 'Flow 1',
+          }],
+        };
+      });
+
       await initUseHandleDelete({_integrationId}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
@@ -164,11 +170,13 @@ describe('test suite for useHandleDelete hook', () => {
     const userId = '123abcdef';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.defaultAShareId = userId;
-    initialStore.getState().user.org.accounts = [{
-      _id: userId,
-      accessLevel: 'administrator',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.defaultAShareId = userId;
+      draft.user.org.accounts = [{
+        _id: userId,
+        accessLevel: 'administrator',
+      }];
+    });
 
     await initUseHandleDelete({_integrationId, ops: {_connectorId: '123conn'}}, initialStore);
     const deleteButton = screen.getByRole('button', {name: 'Remove'});
@@ -201,11 +209,13 @@ describe('test suite for useHandleDelete hook', () => {
       const userId = '123abcdef';
       const initialStore = getCreatedStore();
 
-      initialStore.getState().user.preferences.defaultAShareId = userId;
-      initialStore.getState().user.org.accounts = [{
-        _id: userId,
-        accessLevel: 'manage',
-      }];
+      mutateStore(initialStore, draft => {
+        draft.user.preferences.defaultAShareId = userId;
+        draft.user.org.accounts = [{
+          _id: userId,
+          accessLevel: 'manage',
+        }];
+      });
 
       await initUseHandleDelete({_integrationId, ops: {_connectorId: '123conn'}}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
@@ -220,11 +230,13 @@ describe('test suite for useHandleDelete hook', () => {
       const userId = '123abcdef';
       const initialStore = getCreatedStore();
 
-      initialStore.getState().user.preferences.defaultAShareId = userId;
-      initialStore.getState().user.org.accounts = [{
-        _id: userId,
-        accessLevel: 'owner',
-      }];
+      mutateStore(initialStore, draft => {
+        draft.user.preferences.defaultAShareId = userId;
+        draft.user.org.accounts = [{
+          _id: userId,
+          accessLevel: 'owner',
+        }];
+      });
 
       await initUseHandleDelete({_integrationId, ops: {_connectorId: '123conn', supportsMultiStore: true, name: 'Connector'}}, initialStore);
       const deleteButton = screen.getByRole('button', {name: 'Remove'});

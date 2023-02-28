@@ -7,7 +7,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import DynaFlowsTiedToIntegration from './index';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
@@ -18,75 +18,77 @@ jest.mock('../../../../LoadResources', () => ({
 }));
 
 function initDynaFlowsTiedToIntegration(props = {}) {
-  initialStore.getState().session.form = {
-    formKey: {
-      fields: {
-        integration: {
-          value: '5b3c75dd5d3c125c88b5dd20',
-          touched: true,
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      formKey: {
+        fields: {
+          integration: {
+            value: '5b3c75dd5d3c125c88b5dd20',
+            touched: true,
+          },
+          childIntegrations: {
+            value: ['5c3c75dd5d3c125c88b5dd20', '5b3c75dd5d3c125b88b5dd20', '5b3c75dd5d3c125b88b5dd21'],
+          },
         },
-        childIntegrations: {
-          value: ['5c3c75dd5d3c125c88b5dd20', '5b3c75dd5d3c125b88b5dd20', '5b3c75dd5d3c125b88b5dd21'],
+      },
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '5b3c75dd5d3c125c88b5dd20',
+          name: 'integration1',
+          installSteps: [{id: 'no lie'}],
+          initChild: props.child,
+          _connectionId: '5b3c75dd5d3c125c88b5dd21',
         },
-      },
-    },
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '5b3c75dd5d3c125c88b5dd20',
-        name: 'integration1',
-        installSteps: [{id: 'no lie'}],
-        initChild: props.child,
-        _connectionId: '5b3c75dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '5c3c75dd5d3c125c88b5dd20',
-        _parentId: '5b3c75dd5d3c125c88b5dd20',
-        name: 'integration2',
-        _connectionId: '5b2c75dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '5b3c75dd5d3c125b88b5dd20',
-        name: 'integration3',
-        _parentId: '5b3c75dd5d3c125c88b5dd20',
-        _connectionId: '5b3c75dd5d3c225c88b5dd21',
-      },
-      {
-        _id: '5b3c75dd5d3c125b88b5dd21',
-        name: 'integration4',
-        _parentId: '5b3c75dd5d3c125c88b5dd20',
-        _connectionId: '5b3c75dd5d3c225c88b5dd21',
-      },
-    ],
-    flows: [
-      {
-        _id: '6b3c75dd5d3c125c88b5dd20',
-        name: 'flow1',
-        installSteps: [{id: 'no lie'}],
-        initChild: props.child,
-        _connectionId: '5b3c75dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '6c3c75dd5d3c125c88b5dd20',
-        _integrationId: '5b3c75dd5d3c125c88b5dd20',
-        name: 'flow2',
-        _connectionId: '5b2c75dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '6b3c75dd5d3c125b88b5dd20',
-        name: 'flow3',
-        _integrationId: '5b3c75dd5d3c125c88b5dd20',
-        _connectionId: '5b3c75dd5d3c225c88b5dd21',
-      },
-      {
-        _id: '6b3c75dd5d3c125b88b5dd21',
-        name: 'flow4',
-        _integrationId: '5b3c75dd5d3c125c88b5dd20',
-        _connectionId: '5b3c75dd5d3c225c88b5dd21',
-      },
-    ],
-  };
+        {
+          _id: '5c3c75dd5d3c125c88b5dd20',
+          _parentId: '5b3c75dd5d3c125c88b5dd20',
+          name: 'integration2',
+          _connectionId: '5b2c75dd5d3c125c88b5dd21',
+        },
+        {
+          _id: '5b3c75dd5d3c125b88b5dd20',
+          name: 'integration3',
+          _parentId: '5b3c75dd5d3c125c88b5dd20',
+          _connectionId: '5b3c75dd5d3c225c88b5dd21',
+        },
+        {
+          _id: '5b3c75dd5d3c125b88b5dd21',
+          name: 'integration4',
+          _parentId: '5b3c75dd5d3c125c88b5dd20',
+          _connectionId: '5b3c75dd5d3c225c88b5dd21',
+        },
+      ],
+      flows: [
+        {
+          _id: '6b3c75dd5d3c125c88b5dd20',
+          name: 'flow1',
+          installSteps: [{id: 'no lie'}],
+          initChild: props.child,
+          _connectionId: '5b3c75dd5d3c125c88b5dd21',
+        },
+        {
+          _id: '6c3c75dd5d3c125c88b5dd20',
+          _integrationId: '5b3c75dd5d3c125c88b5dd20',
+          name: 'flow2',
+          _connectionId: '5b2c75dd5d3c125c88b5dd21',
+        },
+        {
+          _id: '6b3c75dd5d3c125b88b5dd20',
+          name: 'flow3',
+          _integrationId: '5b3c75dd5d3c125c88b5dd20',
+          _connectionId: '5b3c75dd5d3c225c88b5dd21',
+        },
+        {
+          _id: '6b3c75dd5d3c125b88b5dd21',
+          name: 'flow4',
+          _integrationId: '5b3c75dd5d3c125c88b5dd20',
+          _connectionId: '5b3c75dd5d3c225c88b5dd21',
+        },
+      ],
+    };
+  });
 
   return renderWithProviders(<DynaFlowsTiedToIntegration {...props} />, {initialStore});
 }

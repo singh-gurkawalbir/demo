@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import useCancelRevision from './useCancelRevision';
 import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
@@ -34,11 +34,13 @@ const MockComponent = props => {
 async function inituseCancelRevision(props = {}, type = 'pull') {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: [{_id: '_revId', type}],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.revisions = {
+      _integrationId: {
+        data: [{_id: '_revId', type}],
+      },
+    };
+  });
 
   return renderWithProviders(<ConfirmDialogProvider><MockComponent {...props} /></ConfirmDialogProvider>, {initialStore});
 }

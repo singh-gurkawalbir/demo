@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import Filters from './Filters';
 
@@ -33,7 +33,10 @@ describe('Filters UI tests', () => {
   test('should set the required option as false', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['1234-4321'] = {filters: {attributes: {required: true}}};
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['1234-4321'] = {filters: {attributes: {required: true}}};
+    });
+
     renderWithProviders(<MemoryRouter><Filters integrationId="4321" flowId="1234" uiAssistant="uiAssistant" /></MemoryRouter>, {initialStore});
     await userEvent.click(screen.getByRole('button'));
 

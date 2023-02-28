@@ -5,43 +5,45 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import ErrorCell from './ErrorCell';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 function initErrorCell({job, disabled}) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '12345',
-    name: 'Test integration name',
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '67890',
-    name: 'Test flow name 1',
-    _integrationId: '12345',
-    disabled: false,
-    pageProcessors: [
-      {
-        type: 'import',
-        _importId: 'nxksnn',
-      },
-    ],
-    pageGenerators: [
-      {
-        _exportId: 'xsjxks',
-      },
-    ],
-  }];
-  initialStore.getState().data.resources.exports = [{
-    _id: 'xsjxks',
-    name: 'Test export',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.imports = [{
-    _id: 'nxksnn',
-    name: 'Test import',
-    _integrationId: '12345',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '12345',
+      name: 'Test integration name',
+    }];
+    draft.data.resources.flows = [{
+      _id: '67890',
+      name: 'Test flow name 1',
+      _integrationId: '12345',
+      disabled: false,
+      pageProcessors: [
+        {
+          type: 'import',
+          _importId: 'nxksnn',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: 'xsjxks',
+        },
+      ],
+    }];
+    draft.data.resources.exports = [{
+      _id: 'xsjxks',
+      name: 'Test export',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.imports = [{
+      _id: 'nxksnn',
+      name: 'Test import',
+      _integrationId: '12345',
+    }];
+  });
   const ui = (
     <MemoryRouter>
       <ErrorCell job={job} disabled={disabled} />

@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import actions from '../../../actions';
 
@@ -28,12 +28,14 @@ jest.mock('react-truncate-markup', () => ({
 describe('dynaFieldExpressionSelect tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors = {
-    helperFunctions: {
-      abs: '{{abs field}}',
-      timestamp: '{{timestamp format timezone}}',
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {
+      helperFunctions: {
+        abs: '{{abs field}}',
+        timestamp: '{{timestamp format timezone}}',
+      },
+    };
+  });
 
   let mockDispatchFn;
   let useDispatchSpy;

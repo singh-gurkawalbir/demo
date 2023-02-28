@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import PreviewButtonGroup from '.';
 import actions from '../../../../../actions';
 import {
+  mutateStore,
   reduxStore,
   renderWithProviders,
 } from '../../../../../test/test-utils';
@@ -30,23 +31,27 @@ describe('PreviewButtonGroup UI tests', () => {
     jest.clearAllMocks();
   });
   test('should test preview button', async () => {
-    initialStore.getState().session.editors = {
-      'mappings-632950280dbc53086e899759': {
-        editorType: 'mappings',
-        flowId: '63a54e63d9e20c15d94da0f1',
-        resourceId: '632950280dbc53086e899759',
-        resourceType: 'imports',
-        stage: 'importMappingExtract',
-        data: 'somedata',
-        editorTitle: 'Edit mapping: Test ZD Import',
-        fieldId: '',
-        layout: 'compact2',
-        autoEvaluate: false,
-        sampleDataStatus: 'received',
-        lastValidData: 'somelastvaliddata',
-        saveStatus: 'received',
-      },
+    const mustateState = draft => {
+      draft.session.editors = {
+        'mappings-632950280dbc53086e899759': {
+          editorType: 'mappings',
+          flowId: '63a54e63d9e20c15d94da0f1',
+          resourceId: '632950280dbc53086e899759',
+          resourceType: 'imports',
+          stage: 'importMappingExtract',
+          data: 'somedata',
+          editorTitle: 'Edit mapping: Test ZD Import',
+          fieldId: '',
+          layout: 'compact2',
+          autoEvaluate: false,
+          sampleDataStatus: 'received',
+          lastValidData: 'somelastvaliddata',
+          saveStatus: 'received',
+        },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
     initPreviewButtonGroup({
       editorId: 'mappings-632950280dbc53086e899759',
     });
@@ -66,23 +71,27 @@ describe('PreviewButtonGroup UI tests', () => {
     );
   });
   test('should test autopreview checkbox', async () => {
-    initialStore.getState().session.editors = {
-      'mappings-632950280dbc53086e899759': {
-        editorType: 'mappings',
-        flowId: '63a54e63d9e20c15d94da0f1',
-        resourceId: '632950280dbc53086e899759',
-        resourceType: 'imports',
-        stage: 'importMappingExtract',
-        data: 'somedata',
-        editorTitle: 'Edit mapping: Test ZD Import',
-        fieldId: '',
-        layout: 'compact2',
-        autoEvaluate: true,
-        sampleDataStatus: 'received',
-        lastValidData: 'somelastvaliddata',
-        saveStatus: 'disabled',
-      },
+    const mustateState = draft => {
+      draft.session.editors = {
+        'mappings-632950280dbc53086e899759': {
+          editorType: 'mappings',
+          flowId: '63a54e63d9e20c15d94da0f1',
+          resourceId: '632950280dbc53086e899759',
+          resourceType: 'imports',
+          stage: 'importMappingExtract',
+          data: 'somedata',
+          editorTitle: 'Edit mapping: Test ZD Import',
+          fieldId: '',
+          layout: 'compact2',
+          autoEvaluate: true,
+          sampleDataStatus: 'received',
+          lastValidData: 'somelastvaliddata',
+          saveStatus: 'disabled',
+        },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
     initPreviewButtonGroup({
       editorId: 'mappings-632950280dbc53086e899759',
     });
@@ -95,23 +104,27 @@ describe('PreviewButtonGroup UI tests', () => {
     );
   });
   test('should test preview when save status is set to requested', () => {
-    initialStore.getState().session.editors = {
-      'mappings-632950280dbc53086e899759': {
-        editorType: 'mappings',
-        flowId: '63a54e63d9e20c15d94da0f1',
-        resourceId: '632950280dbc53086e899759',
-        resourceType: 'imports',
-        stage: 'importMappingExtract',
-        data: 'somedata',
-        editorTitle: 'Edit mapping: Test ZD Import',
-        fieldId: '',
-        layout: 'compact2',
-        autoEvaluate: false,
-        sampleDataStatus: 'received',
-        lastValidData: 'somelastvaliddata',
-        saveStatus: 'requested',
-      },
+    const mustateState = draft => {
+      draft.session.editors = {
+        'mappings-632950280dbc53086e899759': {
+          editorType: 'mappings',
+          flowId: '63a54e63d9e20c15d94da0f1',
+          resourceId: '632950280dbc53086e899759',
+          resourceType: 'imports',
+          stage: 'importMappingExtract',
+          data: 'somedata',
+          editorTitle: 'Edit mapping: Test ZD Import',
+          fieldId: '',
+          layout: 'compact2',
+          autoEvaluate: false,
+          sampleDataStatus: 'received',
+          lastValidData: 'somelastvaliddata',
+          saveStatus: 'requested',
+        },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
     initPreviewButtonGroup({
       editorId: 'mappings-632950280dbc53086e899759',
     });

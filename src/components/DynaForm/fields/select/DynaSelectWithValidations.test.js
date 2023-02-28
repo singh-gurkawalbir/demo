@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaSelectWithValidations from './DynaSelectWithValidations';
 
 const props = {formKey: '_formKey', value: '/file/name', options: [{items: [{value: '/file/name', fieldsToValidate: ['_field1'], description: '_description', regex: {test: k => !!k}}]}]};
@@ -28,13 +28,15 @@ jest.mock('react-truncate-markup', () => ({
 async function initDynaSelectWithValidations(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      fields: {
-        _field1: {value: 'something'},
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        fields: {
+          _field1: {value: 'something'},
+        },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<DynaSelectWithValidations {...props} />, { initialStore });
 }

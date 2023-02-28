@@ -2,7 +2,7 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import useOpenRevisionWhenValid from './useOpenRevisionWhenValid';
 
 const mockHistoryReplace = jest.fn();
@@ -18,11 +18,13 @@ const MockComponent = props => {
 async function inituseOpenRevisionWhenValid(props = {}, revisionInProgress = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: [{_id: '_revId', status: revisionInProgress ? 'inprogress' : 'completed'}],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.revisions = {
+      _integrationId: {
+        data: [{_id: '_revId', status: revisionInProgress ? 'inprogress' : 'completed'}],
+      },
+    };
+  });
 
   return renderWithProviders(<MockComponent {...props} />, {initialStore});
 }

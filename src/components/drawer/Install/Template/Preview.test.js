@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import TemplatePreview from './Preview';
 import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
@@ -23,32 +23,33 @@ jest.mock('react-router-dom', () => ({
 async function initTemplatePreview(template, data = {}, status = 'success', isCloned = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session = {
-    templates: {
-      _templateId:
-        {
-          preview: {
-            status,
-            components: {
-              objects: data.model ? [data] : [],
-              stackRequired: false,
+  mutateStore(initialStore, draft => {
+    draft.session = {
+      templates: {
+        _templateId:
+          {
+            preview: {
+              status,
+              components: {
+                objects: data.model ? [data] : [],
+                stackRequired: false,
+              },
             },
+            runKey: '_templateId',
           },
-          runKey: '_templateId',
-        },
-    },
-    integrationApps: {
-      clone: {
-        _templateId: {isCloned, integrationId: '_integrationId'},
       },
-    },
-  };
-
-  initialStore.getState().data = {
-    marketplace: {
-      templates: [template],
-    },
-  };
+      integrationApps: {
+        clone: {
+          _templateId: {isCloned, integrationId: '_integrationId'},
+        },
+      },
+    };
+    draft.data = {
+      marketplace: {
+        templates: [template],
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: 'installTemplate/preview/_templateId'}]}>

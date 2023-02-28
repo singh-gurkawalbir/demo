@@ -5,18 +5,40 @@ import { cleanup, waitFor, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import { reduxStore, renderWithProviders, mockPutRequestOnce } from '../../../../test/test-utils';
+import { reduxStore, renderWithProviders, mockPutRequestOnce, mutateStore } from '../../../../test/test-utils';
 import ManagePermissionsDrawer from '.';
 import { runServer } from '../../../../test/api/server';
 
 function initManagePermission(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.integrationAShares = {
-    '5fc5e0e66cfe5b44bb95de70': [
+  mutateStore(initialStore, draft => {
+    draft.data.integrationAShares = {
+      '5fc5e0e66cfe5b44bb95de70': [
+        {
+          _id: '62c946f8bb1658456e9cbd4d',
+          accepted: true,
+          accountSSORequired: false,
+          sharedWithUser: {
+            _id: '6040b91267059b24eb522db6',
+            email: 'testuser+1@celigo.com',
+            name: 'Test user',
+            accountSSOLinked: 'not_linked',
+          },
+          accessLevel: 'manage',
+        },
+      ],
+    };
+    draft.user.org.users = [
       {
         _id: '62c946f8bb1658456e9cbd4d',
         accepted: true,
+        integrationAccessLevel: [
+          {
+            _integrationId: '5fc5e0e66cfe5b44bb95de70',
+            accessLevel: 'manage',
+          },
+        ],
         accountSSORequired: false,
         sharedWithUser: {
           _id: '6040b91267059b24eb522db6',
@@ -24,63 +46,43 @@ function initManagePermission(props = {}) {
           name: 'Test user',
           accountSSOLinked: 'not_linked',
         },
-        accessLevel: 'manage',
-      },
-    ],
-  };
-  initialStore.getState().user.org.users = [
-    {
-      _id: '62c946f8bb1658456e9cbd4d',
-      accepted: true,
-      integrationAccessLevel: [
-        {
-          _integrationId: '5fc5e0e66cfe5b44bb95de70',
-          accessLevel: 'manage',
-        },
-      ],
-      accountSSORequired: false,
-      sharedWithUser: {
-        _id: '6040b91267059b24eb522db6',
         email: 'testuser+1@celigo.com',
-        name: 'Test user',
-        accountSSOLinked: 'not_linked',
       },
-      email: 'testuser+1@celigo.com',
-    },
-  ];
-  initialStore.getState().session.loadResources = [
-    {
-      integrations: 'received',
-      'transfers/invited': 'failed',
-      ashares: 'received',
-      'shared/ashares': 'received',
-      'ui/assistants': 'received',
-      httpconnectors: 'failed',
-      licenses: 'received',
-      transfers: 'received',
-      ssoclients: 'received',
-      'shared/sshares': 'received',
-      tiles: 'received',
-      published: 'received',
-      connections: 'received',
-      marketplacetemplates: 'received',
-      '5fc5e0e66cfe5b44bb95de70': {
-        flows: 'received',
-        exports: 'received',
-        imports: 'received',
+    ];
+    draft.session.loadResources = [
+      {
+        integrations: 'received',
+        'transfers/invited': 'failed',
+        ashares: 'received',
+        'shared/ashares': 'received',
+        'ui/assistants': 'received',
+        httpconnectors: 'failed',
+        licenses: 'received',
+        transfers: 'received',
+        ssoclients: 'received',
+        'shared/sshares': 'received',
+        tiles: 'received',
+        published: 'received',
+        connections: 'received',
+        marketplacetemplates: 'received',
+        '5fc5e0e66cfe5b44bb95de70': {
+          flows: 'received',
+          exports: 'received',
+          imports: 'received',
+        },
+        notifications: 'received',
+        'integrations/5fc5e0e66cfe5b44bb95de70/ashares': 'received',
       },
-      notifications: 'received',
-      'integrations/5fc5e0e66cfe5b44bb95de70/ashares': 'received',
-    },
-  ];
-  initialStore.getState().comms.networkComms = {
-    'PUT:/ashares/62c946f8bb1658456e9cbd4d': {
-      status: 'success',
-      hidden: false,
-      refresh: false,
-      method: 'PUT',
-    },
-  };
+    ];
+    draft.comms.networkComms = {
+      'PUT:/ashares/62c946f8bb1658456e9cbd4d': {
+        status: 'success',
+        hidden: false,
+        refresh: false,
+        method: 'PUT',
+      },
+    };
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{ pathname: '/integrations/5fc5e0e66cfe5b44bb95de70/users/ui-drawer/edit/62c946f8bb1658456e9cbd4d' }]}

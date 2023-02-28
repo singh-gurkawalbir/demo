@@ -6,139 +6,140 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SelectSource from './SelectSource';
 import actions from '../../../../actions';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.errorManagement.metadata.data = {
-  source: ['Connection', 'HTTP', 'Import filter'] };
-initialStore.getState().data.resources = {
-  exports: [{
-    _id: '621ce7db7988314f51662c09',
-    createdAt: '2022-02-28T15:18:51.954Z',
-    lastModified: '2022-02-28T15:18:52.009Z',
-    name: '123',
-    _connectionId: '59e06b30c147fc42676175c0',
-    apiIdentifier: 'e27e85646b',
-    asynchronous: true,
-    type: 'delta',
-    oneToMany: false,
-    sandbox: false,
-    parsers: [],
-    http: {
-      relativeURI: 'abc/{{lastExportDateTime}}',
-      method: 'GET',
-      formType: 'http',
-    },
-    delta: {
-      dateFormat: 'D/M/YY',
-    },
-    adaptorType: 'HTTPExport',
-  }],
-  connections:
-    [{
-      _id: '59e06b30c147fc42676175c0',
-      lastModified: '2017-07-14T12:00:40.973Z',
-      type: 'rest',
-      name: '3D Cart SANDBOX',
-      assistant: 'googledrive',
-      debugDate: '2017-04-20T08:42:59.904Z',
-      sandbox: true,
-      isHTTP: true,
+mutateStore(initialStore, draft => {
+  draft.session.errorManagement.metadata.data = {
+    source: ['Connection', 'HTTP', 'Import filter'] };
+  draft.data.resources = {
+    exports: [{
+      _id: '621ce7db7988314f51662c09',
+      createdAt: '2022-02-28T15:18:51.954Z',
+      lastModified: '2022-02-28T15:18:52.009Z',
+      name: '123',
+      _connectionId: '59e06b30c147fc42676175c0',
+      apiIdentifier: 'e27e85646b',
+      asynchronous: true,
+      type: 'delta',
+      oneToMany: false,
+      sandbox: false,
+      parsers: [],
       http: {
-        formType: 'assistant',
-        mediaType: 'json',
-        baseURI: 'https://apirest.googledrive.com',
-        ping: {
-          relativeURI: '/3dCartWebAPI/v1/Customers',
-          method: 'GET',
-        },
-        headers: [
-          {
-            name: 'SecureUrl',
-            value: 'https://sandbox-integrator-io.3dcartstores.com',
-          },
-          {
-            name: 'PrivateKey',
-            value: '{{{connection.http.encrypted.PrivateKey}}}',
-          },
-          {
-            name: 'content-type',
-            value: 'application/json',
-          },
-        ],
-        encrypted: '******',
-        encryptedFields: [],
-        auth: {
-          type: 'token',
-          oauth: {
-            scope: [],
-          },
-          token: {
-            token: '******',
-            location: 'header',
-            headerName: 'Token',
-            scheme: ' ',
-            refreshMethod: 'POST',
-            refreshMediaType: 'urlencoded',
-          },
-        },
+        relativeURI: 'abc/{{lastExportDateTime}}',
+        method: 'GET',
+        formType: 'http',
       },
-      rest: {
-        baseURI: 'https://apirest.3dcart.com',
-        isHTTPProxy: true,
-        bearerToken: '******',
-        tokenLocation: 'header',
-        mediaType: 'json',
-        authType: 'token',
-        authHeader: 'Token',
-        authScheme: ' ',
-        headers: [
-          {
-            name: 'SecureUrl',
-            value: 'https://sandbox-integrator-io.3dcartstores.com',
-          },
-          {
-            name: 'PrivateKey',
-            value: '{{{connection.rest.encrypted.PrivateKey}}}',
-          },
-        ],
-        encrypted: '******',
-        encryptedFields: [],
-        unencryptedFields: [],
-        scope: [],
-        pingRelativeURI: '/3dCartWebAPI/v1/Customers',
+      delta: {
+        dateFormat: 'D/M/YY',
       },
+      adaptorType: 'HTTPExport',
     }],
-  flows: [{
-
-    _id: '5ea16c600e2fab71928a6152',
-    lastModified: '2021-08-13T08:02:49.712Z',
-    name: ' Bulk insert with harcode and mulfield mapping settings',
-    disabled: true,
-    _integrationId: '5e9bf6c9edd8fa3230149fbd',
-    skipRetries: false,
-    pageProcessors: [
-      {
-        responseMapping: {
-          fields: [],
-          lists: [],
+    connections:
+      [{
+        _id: '59e06b30c147fc42676175c0',
+        lastModified: '2017-07-14T12:00:40.973Z',
+        type: 'rest',
+        name: '3D Cart SANDBOX',
+        assistant: 'googledrive',
+        debugDate: '2017-04-20T08:42:59.904Z',
+        sandbox: true,
+        isHTTP: true,
+        http: {
+          formType: 'assistant',
+          mediaType: 'json',
+          baseURI: 'https://apirest.googledrive.com',
+          ping: {
+            relativeURI: '/3dCartWebAPI/v1/Customers',
+            method: 'GET',
+          },
+          headers: [
+            {
+              name: 'SecureUrl',
+              value: 'https://sandbox-integrator-io.3dcartstores.com',
+            },
+            {
+              name: 'PrivateKey',
+              value: '{{{connection.http.encrypted.PrivateKey}}}',
+            },
+            {
+              name: 'content-type',
+              value: 'application/json',
+            },
+          ],
+          encrypted: '******',
+          encryptedFields: [],
+          auth: {
+            type: 'token',
+            oauth: {
+              scope: [],
+            },
+            token: {
+              token: '******',
+              location: 'header',
+              headerName: 'Token',
+              scheme: ' ',
+              refreshMethod: 'POST',
+              refreshMediaType: 'urlencoded',
+            },
+          },
         },
-        type: 'import',
-        _importId: '5ea16cd30e2fab71928a6166',
-      },
-    ],
-    pageGenerators: [
-      {
-        _exportId: '5d00b9f0bcd64414811b2396',
-      },
-    ],
-    createdAt: '2020-04-23T10:22:24.290Z',
-    lastExecutedAt: '2020-04-23T11:08:41.093Z',
-    autoResolveMatchingTraceKeys: true,
+        rest: {
+          baseURI: 'https://apirest.3dcart.com',
+          isHTTPProxy: true,
+          bearerToken: '******',
+          tokenLocation: 'header',
+          mediaType: 'json',
+          authType: 'token',
+          authHeader: 'Token',
+          authScheme: ' ',
+          headers: [
+            {
+              name: 'SecureUrl',
+              value: 'https://sandbox-integrator-io.3dcartstores.com',
+            },
+            {
+              name: 'PrivateKey',
+              value: '{{{connection.rest.encrypted.PrivateKey}}}',
+            },
+          ],
+          encrypted: '******',
+          encryptedFields: [],
+          unencryptedFields: [],
+          scope: [],
+          pingRelativeURI: '/3dCartWebAPI/v1/Customers',
+        },
+      }],
+    flows: [{
+      _id: '5ea16c600e2fab71928a6152',
+      lastModified: '2021-08-13T08:02:49.712Z',
+      name: ' Bulk insert with harcode and mulfield mapping settings',
+      disabled: true,
+      _integrationId: '5e9bf6c9edd8fa3230149fbd',
+      skipRetries: false,
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '5ea16cd30e2fab71928a6166',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: '5d00b9f0bcd64414811b2396',
+        },
+      ],
+      createdAt: '2020-04-23T10:22:24.290Z',
+      lastExecutedAt: '2020-04-23T11:08:41.093Z',
+      autoResolveMatchingTraceKeys: true,
+    }],
+  };
+});
 
-  }],
-};
 const mockDispatch = jest.fn(actions => {
   initialStore.dispatch(actions);
 });

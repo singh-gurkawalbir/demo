@@ -10,7 +10,7 @@ import actions from '../../../../actions';
 import DynaFlowGroupName from './DynaFlowGroupName';
 import { getCreatedStore } from '../../../../store';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 jest.mock('../../../LoadResources', () => ({
   __esModule: true,
@@ -21,45 +21,47 @@ jest.mock('../../../LoadResources', () => ({
 const initialStore = getCreatedStore();
 
 function initDynaFlowGroupName(props = {}) {
-  initialStore.getState().session.form = {
-    formKey: {
-      value: {
-        integration: '5b3c75dd5d3c125c88b5dd20',
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      formKey: {
+        value: {
+          integration: '5b3c75dd5d3c125c88b5dd20',
+        },
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '5b3c75dd5d3c125c88b5dd20',
-        name: 'integration1',
-        installSteps: [{id: 'no lie'}],
-        initChild: props.child,
-        flowGroupings: [{_id: 'id1', name: 'random'}, {_id: 'id2', name: 'group2'}, {_id: 'id3', name: 'group3'}],
-        _connectionId: '5b3c75dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '5c3c75dd5d3c125c88b5dd20',
-        name: 'integration2',
-        _connectionId: '5b2c75dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '5b3c75dd5d3c125b88b5dd20',
-        name: 'integration3',
-        _connectionId: '5b3c75dd5d3c225c88b5dd21',
-      },
-      {
-        _id: '5b3c75dd5d3c125b88b5dd20',
-        name: 'integration4',
-        _connectionId: '5b3c65dd5d3c125c88b5dd21',
-      },
-      {
-        _id: '5b3c75dd5d3c125c88b5cd20',
-        name: 'integration5',
-        _connectionId: '5b3c75dd5d3c125c88b5dd22',
-      },
-    ],
-  };
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '5b3c75dd5d3c125c88b5dd20',
+          name: 'integration1',
+          installSteps: [{id: 'no lie'}],
+          initChild: props.child,
+          flowGroupings: [{_id: 'id1', name: 'random'}, {_id: 'id2', name: 'group2'}, {_id: 'id3', name: 'group3'}],
+          _connectionId: '5b3c75dd5d3c125c88b5dd21',
+        },
+        {
+          _id: '5c3c75dd5d3c125c88b5dd20',
+          name: 'integration2',
+          _connectionId: '5b2c75dd5d3c125c88b5dd21',
+        },
+        {
+          _id: '5b3c75dd5d3c125b88b5dd20',
+          name: 'integration3',
+          _connectionId: '5b3c75dd5d3c225c88b5dd21',
+        },
+        {
+          _id: '5b3c75dd5d3c125b88b5dd20',
+          name: 'integration4',
+          _connectionId: '5b3c65dd5d3c125c88b5dd21',
+        },
+        {
+          _id: '5b3c75dd5d3c125c88b5cd20',
+          name: 'integration5',
+          _connectionId: '5b3c75dd5d3c125c88b5dd22',
+        },
+      ],
+    };
+  });
 
   return renderWithProviders(
     <MemoryRouter>

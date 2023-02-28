@@ -5,66 +5,68 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import RunHistory from './index';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod, defaultAShareId}) {
-  initialStore.getState().session.errorManagement = {
-    runHistory: {
-      [flowId]: runHistoryData,
-    },
-  };
-  initialStore.getState().session.filters = {
-    runHistory: filterData,
-  };
-  initialStore.getState().data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
-  initialStore.getState().user.preferences.defaultAShareId = defaultAShareId || 'own';
-  initialStore.getState().user.org.accounts = [
-    {
-      accessLevel: 'owner',
-      _id: 'own',
-      ownerUser: {
-        licenses: [
-          {
-            endpoint: {
-              production: {},
-              sandbox: {},
-              apiManagement: true,
-            },
-            maxAllowedDataRetention: 180,
-            supportTier: 'preferred',
-            tier: 'enterprise',
-            type: 'endpoint',
-            _id: 'user1',
-          },
-        ],
+  mutateStore(initialStore, draft => {
+    draft.session.errorManagement = {
+      runHistory: {
+        [flowId]: runHistoryData,
       },
-    },
-    {
-      accessLevel: 'manage',
-      _id: 'user1',
-      accepted: true,
-      ownerUser: {
-        licenses: [
-          {
-            endpoint: {
-              production: {},
-              sandbox: {},
-              apiManagement: true,
+    };
+    draft.session.filters = {
+      runHistory: filterData,
+    };
+    draft.data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
+    draft.user.preferences.defaultAShareId = defaultAShareId || 'own';
+    draft.user.org.accounts = [
+      {
+        accessLevel: 'owner',
+        _id: 'own',
+        ownerUser: {
+          licenses: [
+            {
+              endpoint: {
+                production: {},
+                sandbox: {},
+                apiManagement: true,
+              },
+              maxAllowedDataRetention: 180,
+              supportTier: 'preferred',
+              tier: 'enterprise',
+              type: 'endpoint',
+              _id: 'user1',
             },
-            maxAllowedDataRetention: 180,
-            supportTier: 'preferred',
-            tier: 'enterprise',
-            type: 'endpoint',
-            _id: 'license2',
-          },
-        ],
-        dataRetentionPeriod: 60,
+          ],
+        },
       },
-    },
-  ];
+      {
+        accessLevel: 'manage',
+        _id: 'user1',
+        accepted: true,
+        ownerUser: {
+          licenses: [
+            {
+              endpoint: {
+                production: {},
+                sandbox: {},
+                apiManagement: true,
+              },
+              maxAllowedDataRetention: 180,
+              supportTier: 'preferred',
+              tier: 'enterprise',
+              type: 'endpoint',
+              _id: 'license2',
+            },
+          ],
+          dataRetentionPeriod: 60,
+        },
+      },
+    ];
+  });
   const ui = (
     <RunHistory flowId={flowId} />
   );

@@ -8,6 +8,7 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import { camelCase } from '../../../../../../utils/string';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 // view only component
 
@@ -50,7 +51,7 @@ export default function DynaSalesUser(props) {
         label="Select Salesforce Profile" />
       )}
       <CeligoTable
-        data={filteredResults}
+        data={customCloneDeep(filteredResults)}
         {...metadata}
     />
     </>

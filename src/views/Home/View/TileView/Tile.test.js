@@ -7,7 +7,7 @@ import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import Tile from './Tile';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
 
@@ -34,71 +34,73 @@ jest.mock('react-truncate-markup', () => ({
 function initTile(props = {}) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    drawerOpened: true,
-    expand: 'Resources',
-    scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-    showReactSneakPeekFromDate: '2019-11-05',
-    showReactBetaFromDate: '2019-12-26',
-    defaultAShareId: 'own',
-    dashboard: {
-      view: 'tile',
-      tilesOrder: [
-        '62bedcdca0f5f21448171ea2',
-        '62be9cf14a6daf23ece8ed33',
-        '62beb29aa0f5f2144816f80c',
-        '6253af74cddb8a1ba550a010',
-      ],
-    },
-  };
-  initialStore.getState().user.profile = {
-    _id: '62386a5fed961b5e22e992c7',
-    name: 'Prashanth Kumar Nesa',
-    email: 'prashanthkumar.nesa@celigo.com',
-    role: 'engineering intern',
-    company: 'celigo',
-    phone: '7995045186',
-    auth_type_google: {},
-    timezone: 'Asia/Calcutta',
-    developer: true,
-    allowedToPublish: true,
-    agreeTOSAndPP: true,
-    createdAt: '2022-03-21T12:06:55.685Z',
-    useErrMgtTwoDotZero: props.errmgt,
-    authTypeSSO: null,
-    emailHash: '087e41a1843139c27bce730b99664a84',
-  };
-  initialStore.getState().user.org = {accounts: [{_id: 'own',
-    accessLevel: 'owner',
-    ownerUser: {licenses: [{
-      _id: '5a6ec1bae9aaa11c9bc86106',
-      created: '2018-01-29T06:39:54.268Z',
-      lastModified: '2022-06-27T07:52:09.014Z',
-      expires: '2022-05-05T00:00:00.000Z',
-      type: 'connector',
-      _connectorId: '5829bce6069ccb4460cdb34e',
-      opts: {
-        connectorEdition: 'premium',
-        addonLicenses: [
-          {
-            type: 'store',
-            licenses: [
-              {
-                addOnEdition: 'premium',
-              },
-              {
-                addOnEdition: 'premium',
-              },
-            ],
-          },
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      drawerOpened: true,
+      expand: 'Resources',
+      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+      showReactSneakPeekFromDate: '2019-11-05',
+      showReactBetaFromDate: '2019-12-26',
+      defaultAShareId: 'own',
+      dashboard: {
+        view: 'tile',
+        tilesOrder: [
+          '62bedcdca0f5f21448171ea2',
+          '62be9cf14a6daf23ece8ed33',
+          '62beb29aa0f5f2144816f80c',
+          '6253af74cddb8a1ba550a010',
         ],
       },
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      resumable: false,
-    }]}}]};
+    };
+    draft.user.profile = {
+      _id: '62386a5fed961b5e22e992c7',
+      name: 'Prashanth Kumar Nesa',
+      email: 'prashanthkumar.nesa@celigo.com',
+      role: 'engineering intern',
+      company: 'celigo',
+      phone: '7995045186',
+      auth_type_google: {},
+      timezone: 'Asia/Calcutta',
+      developer: true,
+      allowedToPublish: true,
+      agreeTOSAndPP: true,
+      createdAt: '2022-03-21T12:06:55.685Z',
+      useErrMgtTwoDotZero: props.errmgt,
+      authTypeSSO: null,
+      emailHash: '087e41a1843139c27bce730b99664a84',
+    };
+    draft.user.org = {accounts: [{_id: 'own',
+      accessLevel: 'owner',
+      ownerUser: {licenses: [{
+        _id: '5a6ec1bae9aaa11c9bc86106',
+        created: '2018-01-29T06:39:54.268Z',
+        lastModified: '2022-06-27T07:52:09.014Z',
+        expires: '2022-05-05T00:00:00.000Z',
+        type: 'connector',
+        _connectorId: '5829bce6069ccb4460cdb34e',
+        opts: {
+          connectorEdition: 'premium',
+          addonLicenses: [
+            {
+              type: 'store',
+              licenses: [
+                {
+                  addOnEdition: 'premium',
+                },
+                {
+                  addOnEdition: 'premium',
+                },
+              ],
+            },
+          ],
+        },
+        _integrationId: '62bedcdca0f5f21448171ea2',
+        resumable: false,
+      }]}}]};
+  });
 
   return renderWithProviders(<Router history={history}><Tile {...props} /></Router>, {initialStore});
 }

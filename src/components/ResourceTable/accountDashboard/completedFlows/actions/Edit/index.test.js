@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import CeligoTable from '../../../../../CeligoTable';
 import metadata from '../../metadata';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 
 const mockHistoryPush = jest.fn();
 
@@ -19,18 +19,20 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.flows = [
-  {
-    _id: 'flow_id',
-    name: 'demo flow',
-    disabled: false,
-    _integrationId: 'integration_id',
-    pageProcessors: [{
-      type: 'import',
-      _importId: 'resource_id',
-    }],
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.flows = [
+    {
+      _id: 'flow_id',
+      name: 'demo flow',
+      disabled: false,
+      _integrationId: 'integration_id',
+      pageProcessors: [{
+        type: 'import',
+        _importId: 'resource_id',
+      }],
+    },
+  ];
+});
 
 async function renderFunction() {
   renderWithProviders(

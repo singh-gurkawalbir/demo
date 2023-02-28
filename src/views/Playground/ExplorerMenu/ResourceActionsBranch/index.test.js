@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import ResourceItemsBranch from '.';
 import { getCreatedStore } from '../../../../store';
 
@@ -12,51 +12,53 @@ const mockOnEditorChange = jest.fn();
 const mockHistoryPush = jest.fn();
 
 function initResourceItemsBranch({onEditorChange, flowId, resourceId}) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '12345',
-    name: 'Test integration name',
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '67890',
-    name: 'Test flow name 1',
-    _integrationId: '12345',
-    pageProcessors: [
-      {
-        type: 'import',
-        _importId: 'nxksnn',
-      },
-    ],
-    pageGenerators: [
-      {
-        _exportId: 'xsjxks',
-      },
-    ],
-  }, {
-    _id: '098765',
-    name: 'Test flow name 2',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.connections = [{
-    _id: 'abcde',
-    name: 'Test connection 1',
-    _integrationId: '12345',
-  }, {
-    _id: 'fghijk',
-    name: 'Test connection 2',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.exports = [{
-    _id: 'xsjxks',
-    name: 'Test export',
-    _connectionId: 'abcde',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.imports = [{
-    _id: 'nxksnn',
-    name: 'Test import',
-    _connectionId: 'fghijk',
-    _integrationId: '12345',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '12345',
+      name: 'Test integration name',
+    }];
+    draft.data.resources.flows = [{
+      _id: '67890',
+      name: 'Test flow name 1',
+      _integrationId: '12345',
+      pageProcessors: [
+        {
+          type: 'import',
+          _importId: 'nxksnn',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: 'xsjxks',
+        },
+      ],
+    }, {
+      _id: '098765',
+      name: 'Test flow name 2',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.connections = [{
+      _id: 'abcde',
+      name: 'Test connection 1',
+      _integrationId: '12345',
+    }, {
+      _id: 'fghijk',
+      name: 'Test connection 2',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.exports = [{
+      _id: 'xsjxks',
+      name: 'Test export',
+      _connectionId: 'abcde',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.imports = [{
+      _id: 'nxksnn',
+      name: 'Test import',
+      _connectionId: 'fghijk',
+      _integrationId: '12345',
+    }];
+  });
   const ui = (
     <MemoryRouter>
       <Route>

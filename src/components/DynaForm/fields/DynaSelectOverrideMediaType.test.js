@@ -3,11 +3,13 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSelectOverrideMediaType from './DynaSelectOverrideMediaType';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form.someformKey = {value: {fieldForMediaType: 'json'}};
+mutateStore(initialStore, draft => {
+  draft.session.form.someformKey = {value: {fieldForMediaType: 'json'}};
+});
 
 const genProps = {
   id: 'http.requestMediaType',

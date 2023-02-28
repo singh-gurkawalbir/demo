@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactredux from 'react-redux';
 import { createMemoryHistory } from 'history';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import { runServer } from '../../../../../test/api/server';
 import actions from '../../../../../actions';
@@ -86,11 +86,16 @@ describe('SettingsForm UI tests', () => {
 
     jest.spyOn(reactredux, 'useDispatch').mockReturnValue(mockDispatch);
 
-    initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+    });
+
     await addInteration(initialStore);
 
-    initialStore.getState().session.customSettings['61dedf725c907e4eac13af03'] = customSettings;
-    initialStore.getState().session.customSettings['61dedf725c907e4eac13af04'] = customSettings;
+    mutateStore(initialStore, draft => {
+      draft.session.customSettings['61dedf725c907e4eac13af03'] = customSettings;
+      draft.session.customSettings['61dedf725c907e4eac13af04'] = customSettings;
+    });
 
     const { utils } = renderWithProviders(
       <MemoryRouter initialEntries={[{pathname}]}>
@@ -187,11 +192,14 @@ describe('SettingsForm UI tests', () => {
     });
 
     jest.spyOn(reactredux, 'useDispatch').mockReturnValue(mockDispatch);
-
-    initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+    });
 
     await addInteration(initialStore);
-    initialStore.getState().session.customSettings['61dedf725c907e4eac13af03'] = customSettings;
+    mutateStore(initialStore, draft => {
+      draft.session.customSettings['61dedf725c907e4eac13af03'] = customSettings;
+    });
     renderWithProviders(
       <Router history={history}>
         <Route path="/:sectionId">

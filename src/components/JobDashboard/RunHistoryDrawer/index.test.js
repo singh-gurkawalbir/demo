@@ -6,7 +6,7 @@ import * as reactRedux from 'react-redux';
 import moment from 'moment';
 import userEvent from '@testing-library/user-event';
 import RunHistoryDrawer from '.';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
 import { getCreatedStore } from '../../../store';
 
@@ -15,9 +15,11 @@ const mockHistoryPush = jest.fn();
 
 function initRunHistoryDrawer({range, filterKey, flowId}, renderFun, store) {
   if (store) { initialStore = store; } else {
-    initialStore.getState().session.filters = {
-      [filterKey]: range,
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {
+        [filterKey]: range,
+      };
+    });
   }
   const ui = (
     <MemoryRouter
@@ -96,7 +98,9 @@ describe('testsuite for Run History Drawer', () => {
       endDate: moment(new Date()).endOf('day').toDate(),
     }}));
     utils.unmount();
-    store.getState().session.filters.completedFlows = {range: ''};
+    mutateStore(store, draft => {
+      draft.session.filters.completedFlows = {range: ''};
+    });
     initRunHistoryDrawer({range: '', flowId: '234'}, utils.rerender, store);
     expect(screen.getByRole('heading', { name: /run history: 234/i })).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter('runHistory', {range: {

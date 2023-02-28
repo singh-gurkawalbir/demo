@@ -8,67 +8,69 @@ import moment from 'moment';
 import { runServer } from '../../../../test/api/server';
 import Filters from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
 async function initFilters({filterKey = 'completedFlows', completedJobs, dataRetentionPeriod, defaultAShareId}) {
-  initialStore.getState().data.resources.integrations = [
-    {
-      _id: 'integration1',
-      name: 'Integration',
-      install: [{
-        isClone: true,
-      }],
-    },
-  ];
-  initialStore.getState().data.completedJobs = completedJobs;
-  initialStore.getState().data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
-  initialStore.getState().user.preferences.defaultAShareId = defaultAShareId || 'own';
-  initialStore.getState().user.org.accounts = [
-    {
-      accessLevel: 'owner',
-      _id: 'own',
-      ownerUser: {
-        licenses: [
-          {
-            endpoint: {
-              production: {},
-              sandbox: {},
-              apiManagement: true,
-            },
-            maxAllowedDataRetention: 180,
-            supportTier: 'preferred',
-            tier: 'enterprise',
-            type: 'endpoint',
-            _id: 'license1',
-          },
-        ],
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [
+      {
+        _id: 'integration1',
+        name: 'Integration',
+        install: [{
+          isClone: true,
+        }],
       },
-    },
-    {
-      accessLevel: 'manage',
-      _id: 'user1',
-      accepted: true,
-      ownerUser: {
-        licenses: [
-          {
-            endpoint: {
-              production: {},
-              sandbox: {},
-              apiManagement: true,
+    ];
+    draft.data.completedJobs = completedJobs;
+    draft.data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
+    draft.user.preferences.defaultAShareId = defaultAShareId || 'own';
+    draft.user.org.accounts = [
+      {
+        accessLevel: 'owner',
+        _id: 'own',
+        ownerUser: {
+          licenses: [
+            {
+              endpoint: {
+                production: {},
+                sandbox: {},
+                apiManagement: true,
+              },
+              maxAllowedDataRetention: 180,
+              supportTier: 'preferred',
+              tier: 'enterprise',
+              type: 'endpoint',
+              _id: 'license1',
             },
-            maxAllowedDataRetention: 180,
-            supportTier: 'preferred',
-            tier: 'enterprise',
-            type: 'endpoint',
-            _id: 'license2',
-          },
-        ],
-        dataRetentionPeriod: 60,
+          ],
+        },
       },
-    },
-  ];
+      {
+        accessLevel: 'manage',
+        _id: 'user1',
+        accepted: true,
+        ownerUser: {
+          licenses: [
+            {
+              endpoint: {
+                production: {},
+                sandbox: {},
+                apiManagement: true,
+              },
+              maxAllowedDataRetention: 180,
+              supportTier: 'preferred',
+              tier: 'enterprise',
+              type: 'endpoint',
+              _id: 'license2',
+            },
+          ],
+          dataRetentionPeriod: 60,
+        },
+      },
+    ];
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/dashboard/${filterKey}`}]}

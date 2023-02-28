@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import NextAndCancel from './NextAndCancel';
 
@@ -52,12 +52,14 @@ describe('test suite for NextAndCancel', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
 
     await initNextAndCancel({submitButtonLabel,
       closeAfterSave: true,
@@ -78,9 +80,11 @@ describe('test suite for NextAndCancel', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resourceForm[KEY] = {
-      formSaveStatus: 'loading',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resourceForm[KEY] = {
+        formSaveStatus: 'loading',
+      };
+    });
     await initNextAndCancel({resourceType, resourceId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Saving...'});
     const closeButton = screen.getByRole('button', {name: 'Close'});

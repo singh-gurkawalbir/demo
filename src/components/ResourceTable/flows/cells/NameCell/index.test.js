@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import NameCell from '.';
 import actions from '../../../../../actions';
 
@@ -26,38 +26,40 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.connections = [{
-  _id: '62bd43c87b94d20de64e9ab3',
-  offline: true,
-  type: 'http',
-  name: 'demo',
-}];
-initialStore.getState().data.resources.flows = [
-  {
-    _id: '5ea16c600e2fab71928a6152',
-    _integrationId: '5e9bf6c9edd8fa3230149fbd',
-    pageProcessors: [
-      {
-        _importId: '5ea16cd30e2fab71928a6166',
-      },
-    ],
-    pageGenerators: [
-      {
-        _exportId: '5d00b9f0bcd64414811b2396',
-      },
-    ],
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.connections = [{
+    _id: '62bd43c87b94d20de64e9ab3',
+    offline: true,
+    type: 'http',
+    name: 'demo',
+  }];
+  draft.data.resources.flows = [
+    {
+      _id: '5ea16c600e2fab71928a6152',
+      _integrationId: '5e9bf6c9edd8fa3230149fbd',
+      pageProcessors: [
+        {
+          _importId: '5ea16cd30e2fab71928a6166',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: '5d00b9f0bcd64414811b2396',
+        },
+      ],
+    },
+  ];
 
-initialStore.getState().data.resources.imports = [
-  {
-    _id: '5ea16cd30e2fab71928a6166',
-    lastModified: '2022-06-12T06:54:25.628Z',
-    name: 'Rest import',
-    _connectionId: '62bd43c87b94d20de64e9ab3',
-    adaptorType: 'HTTPImport',
-  },
-];
+  draft.data.resources.imports = [
+    {
+      _id: '5ea16cd30e2fab71928a6166',
+      lastModified: '2022-06-12T06:54:25.628Z',
+      name: 'Rest import',
+      _connectionId: '62bd43c87b94d20de64e9ab3',
+      adaptorType: 'HTTPImport',
+    },
+  ];
+});
 
 function initNameCell(props = {}, initialStore = null) {
   const ui = (

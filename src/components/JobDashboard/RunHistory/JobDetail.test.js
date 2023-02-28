@@ -5,15 +5,18 @@ import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import JobDetail from './JobDetail';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 function initJobDetail({ job, flowData }) {
-  initialStore.getState().data.resources.flows = [
-    flowData,
-  ];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.flows = [
+      flowData,
+    ];
+  });
+
   const ui = (
     <MemoryRouter>
       <JobDetail job={job} />

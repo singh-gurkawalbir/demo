@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaFileTypeSelect from './DynaFileTypeSelect';
 
 const onFieldChange = jest.fn();
@@ -29,27 +29,29 @@ jest.mock('react-truncate-markup', () => ({
 async function initDynaFileTypeSelect(props = {}, fileType) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data = {
-    resources: {
-      filedefinitions: [
-        {
-          _id: '_userDefinitionId',
-          format: 'delimited',
-        },
-        {
-          _id: '_userDefinitionId1',
-          format: 'fixedWidth',
-        },
-      ],
-    },
-  };
-  initialStore.getState().session.form = {
-    'imports-_importId': {
-      value: {
-        '/file/type': fileType,
+  mutateStore(initialStore, draft => {
+    draft.data = {
+      resources: {
+        filedefinitions: [
+          {
+            _id: '_userDefinitionId',
+            format: 'delimited',
+          },
+          {
+            _id: '_userDefinitionId1',
+            format: 'fixedWidth',
+          },
+        ],
       },
-    },
-  };
+    };
+    draft.session.form = {
+      'imports-_importId': {
+        value: {
+          '/file/type': fileType,
+        },
+      },
+    };
+  });
 
   return renderWithProviders(<DynaFileTypeSelect {...props} />, { initialStore });
 }

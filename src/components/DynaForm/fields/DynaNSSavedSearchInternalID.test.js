@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 import { getCreatedStore } from '../../../store';
 
@@ -32,9 +32,11 @@ describe('test suite for saved search internal id field', () => {
     const value = '1234567';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+      }];
+    });
 
     await renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
     expect(document.querySelector('label')).toHaveTextContent('Search internal ID *');
@@ -72,14 +74,16 @@ describe('test suite for saved search internal id field', () => {
     const url = `${domain}/app/common/search/search.nl?id=${props.value}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: connectionId,
-      netsuite: {
-        dataCenterURLs: {
-          systemDomain: domain,
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: connectionId,
+        netsuite: {
+          dataCenterURLs: {
+            systemDomain: domain,
+          },
         },
-      },
-    }];
+      }];
+    });
     await renderWithProviders(<DynaNSSavedSearchInternalID {...props} />, {initialStore});
     const openSavedSearchBtn = document.querySelector('[data-test="openResource"]');
 

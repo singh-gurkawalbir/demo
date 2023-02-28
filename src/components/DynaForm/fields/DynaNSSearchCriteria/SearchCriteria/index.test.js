@@ -7,54 +7,56 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';
 import SearchCriteriaEditor from './index';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initSearchCriteriaEditor(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-      data: [
-        {
-          label: 'Audience Description',
-          value: 'audience',
-          type: 'select',
-        },
-        {
-          label: 'Base Cost',
-          value: 'basecost',
-          type: 'currency',
-        },
-        {
-          label: 'Campaign Event',
-          value: 'event',
-          type: 'text',
-        },
-      ],
-      errorMessage: 'Test Error Message',
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+        data: [
+          {
+            label: 'Audience Description',
+            value: 'audience',
+            type: 'select',
+          },
+          {
+            label: 'Base Cost',
+            value: 'basecost',
+            type: 'currency',
+          },
+          {
+            label: 'Campaign Event',
+            value: 'event',
+            type: 'text',
+          },
+        ],
+        errorMessage: 'Test Error Message',
+      },
     },
-  },
-  }};
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '5efd8663a56953365bd28541',
-      offline: props.offline,
-    }],
-  };
-  initialStore.getState().session.searchCriteriaReducer = {
-    filecsv1: {
-      searchCriteria: [{
-        field: 'audience',
-        key: '0c9Nx2kTQ',
-        operator: 'noneof',
-        searchValue: '1,2,3',
-        searchValue2Enabled: false,
-        showFormulaField: false,
-        width: '80vw',
-        height: '50vh',
-      }] },
-  };
+    }};
+    draft.data.resources = {
+      connections: [{
+        _id: '5efd8663a56953365bd28541',
+        offline: props.offline,
+      }],
+    };
+    draft.session.searchCriteriaReducer = {
+      filecsv1: {
+        searchCriteria: [{
+          field: 'audience',
+          key: '0c9Nx2kTQ',
+          operator: 'noneof',
+          searchValue: '1,2,3',
+          searchValue2Enabled: false,
+          showFormulaField: false,
+          width: '80vw',
+          height: '50vh',
+        }] },
+    };
+  });
 
   return renderWithProviders(<SearchCriteriaEditor {...props} />, {initialStore});
 }

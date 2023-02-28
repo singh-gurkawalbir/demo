@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import RefreshableIntegrationAppSetting from './RefreshableIntegrationAppSetting';
 import { getCreatedStore } from '../../../../store';
 
@@ -28,31 +28,33 @@ jest.mock('react-truncate-markup', () => ({
 }));
 
 function initRefreshableIntegrationAppSetting(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-      data: props.data,
-      status: 'success',
-      errorMessage: 'Test Error Message',
-    },
-  },
-  }};
-  initialStore.getState().session.connectors = {
-    '6ced8663a56953365bd28541': {
-      'demo fieldname': {
-        data: {
-          value: 'value1',
-          options: [['value1', 'label1'], ['value2', 'label2'], ['value3', 'label3']],
-        },
-        isLoading: false,
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+        data: props.data,
+        status: 'success',
+        errorMessage: 'Test Error Message',
       },
     },
-  };
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '5efd8663a56953365bd28541',
-      offline: props.offline,
-    }],
-  };
+    }};
+    draft.session.connectors = {
+      '6ced8663a56953365bd28541': {
+        'demo fieldname': {
+          data: {
+            value: 'value1',
+            options: [['value1', 'label1'], ['value2', 'label2'], ['value3', 'label3']],
+          },
+          isLoading: false,
+        },
+      },
+    };
+    draft.data.resources = {
+      connections: [{
+        _id: '5efd8663a56953365bd28541',
+        offline: props.offline,
+      }],
+    };
+  });
 
   return renderWithProviders(<RefreshableIntegrationAppSetting {...props} />, {initialStore});
 }

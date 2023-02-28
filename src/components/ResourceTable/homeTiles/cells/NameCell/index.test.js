@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import NameCell from './index';
 import actions from '../../../../../actions';
 
@@ -21,18 +21,20 @@ const end = new Date();
 
 end.setMonth(end.getMonth() - 2);
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own'};
 
-initialStore.getState().user.org.accounts = [
-  {_id: 'own',
-    ownerUser: {licenses: [
-      {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: end},
-    ]}}];
+  draft.user.org.accounts = [
+    {_id: 'own',
+      ownerUser: {licenses: [
+        {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: end},
+      ]}}];
 
-initialStore.getState().data.resources.connections = [{
-  _id: 'ssLinkedConnectionId2',
-  netsuite: {account: 'accountName'},
-}];
+  draft.data.resources.connections = [{
+    _id: 'ssLinkedConnectionId2',
+    netsuite: {account: 'accountName'},
+  }];
+});
 
 function initNameCell(tileData = null, initialStore = null) {
   const ui = (

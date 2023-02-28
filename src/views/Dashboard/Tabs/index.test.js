@@ -4,7 +4,7 @@ import {screen} from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import DashboardTabs from '.';
 
 async function initDashboardTabs(param) {
@@ -19,50 +19,52 @@ async function initDashboardTabs(param) {
     </MemoryRouter>
   );
 
-  initialStore.getState().data.completedJobs = {
-    completedJobs: [
-      {
-        numPages: 0,
-        avgRuntime: 8941.5,
-        lastExecutedAt: '2022-07-07T14:46:36.382Z',
-        numRuns: 2,
-        _flowId: '62c6f122a2f4a703c3dee3d0',
-        numError: 2,
-        numSuccess: 0,
-        numIgnore: 0,
-        numResolvedByAuto: 1,
-        numResolvedByUser: 0,
-        numOpenError: 1,
-        lastErrorAt: '2022-07-07T14:46:36.382Z',
-        _integrationId: '6253af74cddb8a1ba550a010',
+  mutateStore(initialStore, draft => {
+    draft.data.completedJobs = {
+      completedJobs: [
+        {
+          numPages: 0,
+          avgRuntime: 8941.5,
+          lastExecutedAt: '2022-07-07T14:46:36.382Z',
+          numRuns: 2,
+          _flowId: '62c6f122a2f4a703c3dee3d0',
+          numError: 2,
+          numSuccess: 0,
+          numIgnore: 0,
+          numResolvedByAuto: 1,
+          numResolvedByUser: 0,
+          numOpenError: 1,
+          lastErrorAt: '2022-07-07T14:46:36.382Z',
+          _integrationId: '6253af74cddb8a1ba550a010',
+        },
+      ],
+    };
+
+    draft.session.filters['6253af74cddb8a1ba550a010completedFlows'] = {
+      sort: {
+        order: 'desc',
+        orderBy: 'lastExecutedAt',
       },
-    ],
-  };
+      paging: {
+        rowsPerPage: 50,
+        currPage: 0,
+      },
+      range: {
+        startDate: '2022-06-25T18:30:00.000Z',
+        endDate: '2022-07-25T05:32:02.695Z',
+        preset: 'last30days',
+      },
+    };
 
-  initialStore.getState().session.filters['6253af74cddb8a1ba550a010completedFlows'] = {
-    sort: {
-      order: 'desc',
-      orderBy: 'lastExecutedAt',
-    },
-    paging: {
-      rowsPerPage: 50,
-      currPage: 0,
-    },
-    range: {
-      startDate: '2022-06-25T18:30:00.000Z',
-      endDate: '2022-07-25T05:32:02.695Z',
-      preset: 'last30days',
-    },
-  };
-
-  initialStore.getState().session.filters.completedFlows = {
-    sort: {
-      order: 'desc',
-      orderBy: 'lastModified',
-    },
-    selected: {},
-    isAllSelected: false,
-  };
+    draft.session.filters.completedFlows = {
+      sort: {
+        order: 'desc',
+        orderBy: 'lastModified',
+      },
+      selected: {},
+      isAllSelected: false,
+    };
+  });
 
   return renderWithProviders(ui, {initialStore});
 }

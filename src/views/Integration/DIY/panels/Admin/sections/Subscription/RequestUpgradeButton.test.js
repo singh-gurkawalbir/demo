@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import RequestUpgradeButton from './RequestUpgradeButton';
-import { renderWithProviders } from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../../test/test-utils';
 import actions from '../../../../../../../actions';
 import { getCreatedStore } from '../../../../../../../store';
 
@@ -45,11 +45,13 @@ describe('RequestUpgradeButton Unit tests', () => {
   });
 
   test('Should render Request Upgrade button', async () => {
-    initialStore.getState().session.integrationApps.upgrade = {
-      122: {
-        status: 'hold',
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.upgrade = {
+        122: {
+          status: 'hold',
+        },
+      };
+    });
     const handleUpgrade = jest.fn();
     const handleUpgradeEdition = jest.fn();
     const props = {
@@ -79,11 +81,13 @@ describe('RequestUpgradeButton Unit tests', () => {
     expect(handleUpgrade).toBeCalled();
   });
   test('Should render disabled Request Upgrade Button in case upgrade text is empty', async () => {
-    initialStore.getState().session.integrationApps.upgrade = {
-      122: {
-        status: 'hold',
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.upgrade = {
+        122: {
+          status: 'hold',
+        },
+      };
+    });
     const props = {
       id: '122',
       className: 'button',
@@ -107,12 +111,14 @@ describe('RequestUpgradeButton Unit tests', () => {
     expect(upgrade).toBeDisabled();
   });
   test('Should call actions as required for error status', async () => {
-    initialStore.getState().session.integrationApps.upgrade = {
-      231: {
-        status: 'error',
-        errMessage: 'error in step 3',
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.upgrade = {
+        231: {
+          status: 'error',
+          errMessage: 'error in step 3',
+        },
+      };
+    });
     const props = {
       id: '231',
       className: 'button',
@@ -133,11 +139,13 @@ describe('RequestUpgradeButton Unit tests', () => {
     }));
   });
   test('Should call actions as required for done status', async () => {
-    initialStore.getState().session.integrationApps.upgrade = {
-      231: {
-        status: 'done',
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.upgrade = {
+        231: {
+          status: 'done',
+        },
+      };
+    });
     const props = {
       id: '231',
       className: 'button',
@@ -160,14 +168,16 @@ describe('RequestUpgradeButton Unit tests', () => {
     expect(success).toHaveTextContent('You’ve successfuly upgraded to a standard plan. Additional plansare available for request from the admin tab if you need it later on.');
   });
   test('Should call actions as required for showFinalMessage status is true', async () => {
-    initialStore.getState().session.integrationApps.upgrade = {
-      231: {
-        status: 'done',
-      },
-      successMessageFlags: {
-        showFinalMessage: true,
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.upgrade = {
+        231: {
+          status: 'done',
+        },
+        successMessageFlags: {
+          showFinalMessage: true,
+        },
+      };
+    });
     const props = {
       id: '231',
       className: 'button',

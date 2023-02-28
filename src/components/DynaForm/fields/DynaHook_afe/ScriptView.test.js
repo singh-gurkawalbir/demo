@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import {MemoryRouter} from 'react-router-dom';
 import ScriptView from './ScriptView';
-import { renderWithProviders} from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
@@ -41,25 +41,27 @@ jest.mock('react-truncate-markup', () => ({
 }));
 
 function initScriptView(props = {}) {
-  initialStore.getState().data.resources = {scripts: [{
-    _id: '63342b57bb74b66e32a93e5d',
-    lastModified: '2022-10-09T23:07:36.439Z',
-    createdAt: '2022-09-28T11:09:11.773Z',
-    name: 'AmazonS3PreSavePageDND',
-  },
-  {
-    _id: '631b5521798cc1729e88a76d',
-    lastModified: '2022-10-10T08:08:55.632Z',
-    createdAt: '2022-09-09T15:00:49.149Z',
-    name: 'Branching Script',
-  },
-  {
-    _id: '634664b80eeae84271ab534e',
-    lastModified: '2022-10-12T07:09:20.908Z',
-    createdAt: '2022-10-12T06:54:48.727Z',
-    name: 'DND_47506',
-  },
-  ]};
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {scripts: [{
+      _id: '63342b57bb74b66e32a93e5d',
+      lastModified: '2022-10-09T23:07:36.439Z',
+      createdAt: '2022-09-28T11:09:11.773Z',
+      name: 'AmazonS3PreSavePageDND',
+    },
+    {
+      _id: '631b5521798cc1729e88a76d',
+      lastModified: '2022-10-10T08:08:55.632Z',
+      createdAt: '2022-09-09T15:00:49.149Z',
+      name: 'Branching Script',
+    },
+    {
+      _id: '634664b80eeae84271ab534e',
+      lastModified: '2022-10-12T07:09:20.908Z',
+      createdAt: '2022-10-12T06:54:48.727Z',
+      name: 'DND_47506',
+    },
+    ]};
+  });
   const ui = (
     <MemoryRouter>
       <ScriptView {...props} />

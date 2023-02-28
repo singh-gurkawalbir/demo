@@ -8,6 +8,7 @@ import { selectors } from '../../../../../reducers/index';
 import DynaAction from '../../../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../../../reducers/comms/ping';
 import { getParentResourceContext } from '../../../../../utils/connections';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const emptyObj = {};
 
@@ -51,7 +52,7 @@ export default function TestButton(props) {
 
   const handleTestConnection = useCallback(
     () => {
-      const newValues = { ...values };
+      const newValues = customCloneDeep({...values});
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

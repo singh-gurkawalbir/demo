@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import MockOutputEditorField from '.';
 import actions from '../../../../actions';
@@ -72,42 +72,44 @@ jest.mock('react-router-dom', () => ({
 }));
 
 function initMockOutputEditorField(inputProps) {
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: resourceId,
-        adaptorType: 'HTTPExport',
-      },
-    ],
-  };
-  initialStore.getState().session.form = {
-    [formKey]: {
-      fields: {
-        mockOutput: {
-          label: 'Mock output',
-          helpKey: 'mockOutput',
-          type: 'mockoutput',
-          fieldId,
-          name: '/mockOutput',
-          defaultValue: '',
-          touched: false,
-          visible: true,
-          required: false,
-          disabled: false,
-          options: {},
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
-          id,
-          formKey,
-          resourceType,
-          resourceId,
-          flowId,
-          value,
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      exports: [
+        {
+          _id: resourceId,
+          adaptorType: 'HTTPExport',
+        },
+      ],
+    };
+    draft.session.form = {
+      [formKey]: {
+        fields: {
+          mockOutput: {
+            label: 'Mock output',
+            helpKey: 'mockOutput',
+            type: 'mockoutput',
+            fieldId,
+            name: '/mockOutput',
+            defaultValue: '',
+            touched: false,
+            visible: true,
+            required: false,
+            disabled: false,
+            options: {},
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
+            id,
+            formKey,
+            resourceType,
+            resourceId,
+            flowId,
+            value,
+          },
         },
       },
-    },
-  };
+    };
+  });
   const props = {
     id,
     formKey,

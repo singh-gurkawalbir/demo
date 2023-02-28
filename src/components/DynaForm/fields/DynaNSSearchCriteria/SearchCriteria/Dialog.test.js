@@ -5,7 +5,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchCriteriaDialog from './Dialog';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 const initialStore = getCreatedStore();
@@ -19,34 +19,40 @@ jest.mock('../../../../icons/FullScreenCloseIcon', () => ({
 }));
 
 function initSearchCriteriaDialog(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-      data: props.data,
-      status: 'success',
-      errorMessage: 'Test Error Message',
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+        data: props.data,
+        status: 'success',
+        errorMessage: 'Test Error Message',
+      },
     },
-  },
-  }};
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '5efd8663a56953365bd28541',
-      offline: props.offline,
-    }],
-  };
-  initialStore.getState().session.searchCriteriaReducer = {searchCriteria: {
-    'searchCriteria-netsuite.restlet.criteria-635061c6009e486cb5b16e91': {
+    }};
+    draft.data.resources = {
+      connections: [{
+        _id: '5efd8663a56953365bd28541',
+        offline: props.offline,
+      }],
+    };
+    draft.session.searchCriteriaReducer = {
       searchCriteria: {
-        demoId: [{
-          field: 'audience',
-          key: '0c9Nx2kTQ',
-          operator: 'noneof',
-          searchValue: '1,2,3',
-          searchValue2Enabled: false,
-          showFormulaField: false,
-          width: '80vw',
-          height: '50vh',
-        }],
-      }}}};
+        'searchCriteria-netsuite.restlet.criteria-635061c6009e486cb5b16e91': {
+          searchCriteria: {
+            demoId: [{
+              field: 'audience',
+              key: '0c9Nx2kTQ',
+              operator: 'noneof',
+              searchValue: '1,2,3',
+              searchValue2Enabled: false,
+              showFormulaField: false,
+              width: '80vw',
+              height: '50vh',
+            }],
+          },
+        },
+      },
+    };
+  });
 
   return renderWithProviders(<SearchCriteriaDialog {...props} />, {initialStore});
 }

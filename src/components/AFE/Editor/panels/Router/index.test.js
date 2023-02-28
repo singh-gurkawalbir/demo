@@ -4,38 +4,36 @@ import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import RouterPanel from '.';
 
 const initRouterPanel = (maxLimit = false, loading = false, props = {editorId: 'router-abcd'}) => {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors['router-abcd'] = {
-    editorType: 'router',
-    flowId: '_flowId',
-    fieldId: 'router',
-    resourceId: 'abcd',
-    resourceType: 'flows',
-    router: {},
-    routerIndex: 0,
-    editorTitle: 'Edit branching',
-    branchNamingIndex: 1,
-    sampleDataStatus: !loading ? 'received' : 'requested',
-    rule: {routeRecordsUsing: 'input_filters', id: 'abcd', branches: [{name: 'R1B1'}, {name: 'R1B2'}]},
-    layout: 'jsonFormBuilder',
-    data: {filter: '', javascript: ''},
-    isInvalid: false,
-    originalRule: {},
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors['router-abcd'] = {
+      editorType: 'router',
+      flowId: '_flowId',
+      fieldId: 'router',
+      resourceId: 'abcd',
+      resourceType: 'flows',
+      router: {},
+      routerIndex: 0,
+      editorTitle: 'Edit branching',
+      branchNamingIndex: 1,
+      sampleDataStatus: !loading ? 'received' : 'requested',
+      rule: {routeRecordsUsing: 'input_filters', id: 'abcd', branches: [{name: 'R1B1'}, {name: 'R1B2'}]},
+      layout: 'jsonFormBuilder',
+      data: {filter: '', javascript: ''},
+      isInvalid: false,
+      originalRule: {},
+    };
+    if (maxLimit) {
+      const newArr = Array.from(Array(30), () => ({}));
 
-  if (maxLimit) {
-    let newArr = [{}];
-    let iter = 4;
-
-    // exponential empty objects insertion
-    while (iter) { newArr = newArr.concat(newArr.reduce((item, _, i, newArr) => newArr.push(item), newArr)); iter -= 1; }
-    initialStore.getState().session.editors['router-abcd'].rule.branches = newArr;
-  }
+      draft.session.editors['router-abcd'].rule.branches = newArr;
+    }
+  });
 
   return renderWithProviders(<MemoryRouter><RouterPanel {...props} /></MemoryRouter>, { initialStore });
 };

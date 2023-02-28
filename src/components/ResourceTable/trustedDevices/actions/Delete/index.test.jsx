@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { ConfirmDialogProvider } from '../../../../ConfirmDialog';
-import { reduxStore, renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../../test/test-utils';
 import metadata from '../../metadata';
 import CeligoTable from '../../../../CeligoTable';
 
@@ -20,10 +20,12 @@ jest.mock('react-redux', () => ({
 const initialStore = reduxStore;
 const asyncTaskKey = 'MFA_DELETE_DEVICE_ASYNC_KEY';
 
-initialStore.getState().session.asyncTask[asyncTaskKey] =
-{
-  status: 'complete',
-};
+mutateStore(initialStore, draft => {
+  draft.session.asyncTask[asyncTaskKey] =
+  {
+    status: 'complete',
+  };
+});
 
 async function renderFuntion(data) {
   renderWithProviders(

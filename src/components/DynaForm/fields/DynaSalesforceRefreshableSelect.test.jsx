@@ -5,7 +5,7 @@ import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaSalesforceSelectOptionsGenerator from './DynaSalesforceRefreshableSelect';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const initialStore = reduxStore;
@@ -64,27 +64,29 @@ describe('dynaRefreshable UI test cases', () => {
     };
     const commMetaPath = 'salesforce/metadata/connections/62f10f423dde9221e47c7a8b/sObjectTypes/someentityname';
 
-    initialStore.getState().session.form.someformkey = {
-      fields: {
-        _connectionId: { touched: false, value: '123'},
-      },
-      value: {
-        '/salesforce/soql': {
-          entityName: 'someentityname',
+    mutateStore(initialStore, draft => {
+      draft.session.form.someformkey = {
+        fields: {
+          _connectionId: { touched: false, value: '123'},
         },
-      },
-    };
-    initialStore.getState().session.metadata.application['62f10f423dde9221e47c7a8b'] = {};
-    initialStore.getState().session.metadata.application['62f10f423dde9221e47c7a8b'][commMetaPath] = {
-      status: 'refreshed',
-      data: [{
-        label: 'Once Export',
-        custom: false,
-        triggerable: false,
-        name: 'Once Export',
-      }],
-      filterKey: 'salesforce-recordType',
-    };
+        value: {
+          '/salesforce/soql': {
+            entityName: 'someentityname',
+          },
+        },
+      };
+      draft.session.metadata.application['62f10f423dde9221e47c7a8b'] = {};
+      draft.session.metadata.application['62f10f423dde9221e47c7a8b'][commMetaPath] = {
+        status: 'refreshed',
+        data: [{
+          label: 'Once Export',
+          custom: false,
+          triggerable: false,
+          name: 'Once Export',
+        }],
+        filterKey: 'salesforce-recordType',
+      };
+    });
     initDynaSalesforceRefreshableSelect(data);
     const selectButton = screen.getByText('Please select');
 
@@ -110,24 +112,26 @@ describe('dynaRefreshable UI test cases', () => {
       disableOptionsLoad: true};
     const commMetaPath = 'salesforce/metadata/connections/62f10f423dde9221e47c7a8b/sObjectTypes/someentityname';
 
-    initialStore.getState().session.form.someformkey = {
-      fields: {
-        _connectionId: { touched: false, value: '123'},
-      },
-      value: {
-        '/salesforce/soql': {
-          entityName: 'someentityname',
+    mutateStore(initialStore, draft => {
+      draft.session.form.someformkey = {
+        fields: {
+          _connectionId: { touched: false, value: '123'},
         },
-      },
-    };
-    initialStore.getState().session.metadata.application['62f10f423dde9221e47c7a8b'] = {};
-    initialStore.getState().session.metadata.application['62f10f423dde9221e47c7a8b'][commMetaPath] = {
-      status: 'refreshed',
-      data: [],
-      errorMessage: 'A value must be provided',
-      filterKey: 'salesforce-recordType',
+        value: {
+          '/salesforce/soql': {
+            entityName: 'someentityname',
+          },
+        },
+      };
+      draft.session.metadata.application['62f10f423dde9221e47c7a8b'] = {};
+      draft.session.metadata.application['62f10f423dde9221e47c7a8b'][commMetaPath] = {
+        status: 'refreshed',
+        data: [],
+        errorMessage: 'A value must be provided',
+        filterKey: 'salesforce-recordType',
 
-    };
+      };
+    });
     initDynaSalesforceRefreshableSelect(data);
 
     const selectButton = screen.getByText('Please select');
@@ -146,26 +150,28 @@ describe('dynaRefreshable UI test cases', () => {
       disableOptionsLoad: true};
     const commMetaPath = 'salesforce/metadata/connections/62f10f423dde9221e47c7a8b/sObjectTypes';
 
-    initialStore.getState().session.form.someformkey = {
-      fields: {
-        _connectionId: { touched: false, value: '123'},
-      },
-      value: {
-        '/salesforce/soql': {
+    mutateStore(initialStore, draft => {
+      draft.session.form.someformkey = {
+        fields: {
+          _connectionId: { touched: false, value: '123'},
         },
-      },
-    };
-    initialStore.getState().session.metadata.application['62f10f423dde9221e47c7a8b'] = {};
-    initialStore.getState().session.metadata.application['62f10f423dde9221e47c7a8b'][commMetaPath] = {
-      status: 'refreshed',
-      data: [{
-        label: 'Once Export',
-        custom: false,
-        triggerable: false,
-        name: 'Once Export',
-      }],
-      filterKey: 'salesforce-recordType',
-    };
+        value: {
+          '/salesforce/soql': {
+          },
+        },
+      };
+      draft.session.metadata.application['62f10f423dde9221e47c7a8b'] = {};
+      draft.session.metadata.application['62f10f423dde9221e47c7a8b'][commMetaPath] = {
+        status: 'refreshed',
+        data: [{
+          label: 'Once Export',
+          custom: false,
+          triggerable: false,
+          name: 'Once Export',
+        }],
+        filterKey: 'salesforce-recordType',
+      };
+    });
     initDynaSalesforceRefreshableSelect(data);
     const selectButton = screen.getByText('Please select');
 

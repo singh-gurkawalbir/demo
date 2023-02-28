@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import MockInput from '.';
 import { getCreatedStore } from '../../../store';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import actionTypes from '../../../actions/types';
 import { MOCK_INPUT_STATUS } from '../../../constants';
 import { DrawerProvider } from '../../drawer/Right/DrawerContext';
@@ -31,11 +31,13 @@ const defaultData = {
 };
 
 function initMockInput({ resourceType = 'imports', status, data, userData } = {}) {
-  initialStore.getState().session.mockInput[resourceId] = {
-    status,
-    data,
-    userData,
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.mockInput[resourceId] = {
+      status,
+      data,
+      userData,
+    };
+  });
   const drawerProviderProps = {
     onClose: jest.fn(),
     height: 'short',

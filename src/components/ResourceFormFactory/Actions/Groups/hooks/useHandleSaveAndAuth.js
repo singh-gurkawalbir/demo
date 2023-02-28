@@ -8,6 +8,7 @@ import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { emptyObject } from '../../../../../constants';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 export default function useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext}) {
   const resource = useSelectorMemo(
@@ -28,7 +29,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
   });
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
-      const newValues = { ...values };
+      const newValues = customCloneDeep({...values});
 
       if (
         resource._connectorId &&

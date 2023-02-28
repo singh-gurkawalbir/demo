@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../actions';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import SaveAndContinueGroup from './SaveAndContinueGroup';
 import { getCreatedStore } from '../../../../store';
 
@@ -62,9 +62,12 @@ describe('test suite for SaveAndContinueGroup', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.asyncTask[KEY] = {
-      status: 'loading',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.asyncTask[KEY] = {
+        status: 'loading',
+      };
+    });
+
     await initSaveAndContinueGroup({resourceType, resourceId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Saving...'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
@@ -89,15 +92,18 @@ describe('test suite for SaveAndContinueGroup', () => {
     const resourceId = '123asd';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      value: {
-        '/_borrowConcurrencyFromConnectionId': false,
-      },
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        value: {
+          '/_borrowConcurrencyFromConnectionId': false,
+        },
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveAndContinueGroup({formKey, resourceType, resourceId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save & continue'});
 
@@ -112,22 +118,25 @@ describe('test suite for SaveAndContinueGroup', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      value: {
-        '/http/_iClientId': 'ic-123',
-        '/http/auth/type': 'oauth',
-      },
-      fields: {
-        tempField: { touched: true },
-      },
-    };
-    initialStore.getState().data.resources.iClients = [{
-      _id: 'ic-123',
-      oauth2: {
-        grantType: '',
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        value: {
+          '/http/_iClientId': 'ic-123',
+          '/http/auth/type': 'oauth',
+        },
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+      draft.data.resources.iClients = [{
+        _id: 'ic-123',
+        oauth2: {
+          grantType: '',
+        },
+      }];
+    });
+
     await initSaveAndContinueGroup({isHTTPForm: true, formKey}, initialStore);
 
     expect(screen.queryByText('Save & continue')).not.toBeInTheDocument();

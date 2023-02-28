@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, render} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../../test/test-utils';
 import Mapper2ExtractsTypeableSelect, {TooltipTitle} from './Mapper2ExtractsTypeableSelect';
 import actions from '../../../../../../../actions';
 
@@ -16,77 +16,79 @@ jest.mock('../../../../../../icons/ArrowDownIcon', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.mapping = { mapping: {
-  v2TreeData: [
-    {
-      key: 'FqGvhEBdGWeHAGUgYL3Mu',
-      title: '',
-      disabled: false,
-      jsonPath: '',
-      isRequired: false,
-      dataType: 'objectarray',
-      status: 'Draft',
-      buildArrayHelper: [
-        {
-          sourceDataType: 'string',
-          mappings: [
-            {
-              extract: 'erfrfer',
-              generate: 'qrf',
-              dataType: 'string',
-              conditional: {
-                when: 'extract_not_empty',
+mutateStore(initialStore, draft => {
+  draft.session.mapping = { mapping: {
+    v2TreeData: [
+      {
+        key: 'FqGvhEBdGWeHAGUgYL3Mu',
+        title: '',
+        disabled: false,
+        jsonPath: '',
+        isRequired: false,
+        dataType: 'objectarray',
+        status: 'Draft',
+        buildArrayHelper: [
+          {
+            sourceDataType: 'string',
+            mappings: [
+              {
+                extract: 'erfrfer',
+                generate: 'qrf',
+                dataType: 'string',
+                conditional: {
+                  when: 'extract_not_empty',
+                },
+                description: 'qwewqecf',
+                status: 'Active',
+                sourceDataType: 'string',
               },
-              description: 'qwewqecf',
-              status: 'Active',
-              sourceDataType: 'string',
-            },
-          ],
-        },
-      ],
-      extractsArrayHelper: [],
-      children: [
-        {
-          key: 'ahYENcMLnar21Vj9D5ZaX',
-          title: '',
-          parentKey: 'FqGvhEBdGWeHAGUgYL3Mu',
-          parentExtract: '',
-          disabled: false,
-          jsonPath: 'qrf',
-          isRequired: false,
-          extract: 'erfrfer',
-          generate: 'qrf',
-          dataType: 'string',
-          conditional: {
-            when: 'extract_not_empty',
+            ],
           },
-          description: 'qwewqecf',
-          status: 'Active',
-          sourceDataType: 'string',
-        },
-      ],
-      generateDisabled: true,
-    },
-  ],
-  extractsTree: [
-    {
-      key: 'qlrqNeQd2w0tRxf6wi-FC',
-      title: '',
-      dataType: '[object]',
-      propName: '$',
-      children: [
-        {
-          key: 'BvbVNA8mHa87KFS-kZxyQ',
-          parentKey: 'qlrqNeQd2w0tRxf6wi-FC',
-          title: '',
-          jsonPath: 'name',
-          propName: 'name',
-          dataType: 'string',
-        },
-      ],
-    },
-  ],
-}};
+        ],
+        extractsArrayHelper: [],
+        children: [
+          {
+            key: 'ahYENcMLnar21Vj9D5ZaX',
+            title: '',
+            parentKey: 'FqGvhEBdGWeHAGUgYL3Mu',
+            parentExtract: '',
+            disabled: false,
+            jsonPath: 'qrf',
+            isRequired: false,
+            extract: 'erfrfer',
+            generate: 'qrf',
+            dataType: 'string',
+            conditional: {
+              when: 'extract_not_empty',
+            },
+            description: 'qwewqecf',
+            status: 'Active',
+            sourceDataType: 'string',
+          },
+        ],
+        generateDisabled: true,
+      },
+    ],
+    extractsTree: [
+      {
+        key: 'qlrqNeQd2w0tRxf6wi-FC',
+        title: '',
+        dataType: '[object]',
+        propName: '$',
+        children: [
+          {
+            key: 'BvbVNA8mHa87KFS-kZxyQ',
+            parentKey: 'qlrqNeQd2w0tRxf6wi-FC',
+            title: '',
+            jsonPath: 'name',
+            propName: 'name',
+            dataType: 'string',
+          },
+        ],
+      },
+    ],
+  }};
+});
 const onBlur = jest.fn();
 const mockDispatch = jest.fn();
 

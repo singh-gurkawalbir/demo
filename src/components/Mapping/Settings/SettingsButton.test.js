@@ -1,75 +1,78 @@
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import MappingSettingsButton from './SettingsButton';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initMappingSettingsButton({
   props = {},
   key = 'mapping_key',
   lookupName = 'lookup_name_1',
 } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.mapping = {
-    mapping: {
-      importId: props.importId,
-      flowId: props.flowId,
-      mappings: [{
-        generate: 'generate',
-        key,
-        lookupName,
-      }],
-      lookups: [
-        {
-          name: 'lookup_name_1',
-          map: { 0: {} },
-          allowFailures: true,
-          useDefaultOnMultipleMatches: true,
-          default: undefined,
-        },
-        {
-          name: 'lookup_name_2',
-          map: [{}],
-          allowFailures: true,
-          useDefaultOnMultipleMatches: true,
-        },
-      ],
-    },
-  };
-
-  initialStore.getState().session.integrationApps.settings = {
-    'flow_id-integration_id': {
-      status: 'mappingStatus',
-      mappings: {
-        editor_id: {
-          mappings: [{
-            key,
-            generate: 'generate_2',
-            lookupName,
-          }],
-          lookups: [
-            {
-              name: 'lookup_name_1',
-              allowFailures: true,
-              useDefaultOnMultipleMatches: true,
-              map: [],
-            },
-            {
-              name: 'lookup_name_2',
-              allowFailures: true,
-              useDefaultOnMultipleMatches: true,
-              map: [{}],
-            },
-          ],
-        },
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = {
+      mapping: {
+        importId: props.importId,
+        flowId: props.flowId,
+        mappings: [{
+          generate: 'generate',
+          key,
+          lookupName,
+        }],
+        lookups: [
+          {
+            name: 'lookup_name_1',
+            map: { 0: {} },
+            allowFailures: true,
+            useDefaultOnMultipleMatches: true,
+            default: undefined,
+          },
+          {
+            name: 'lookup_name_2',
+            map: [{}],
+            allowFailures: true,
+            useDefaultOnMultipleMatches: true,
+          },
+        ],
       },
-      subRecordMappingId: props.subRecordMappingId,
-    },
-  };
+    };
+
+    draft.session.integrationApps.settings = {
+      'flow_id-integration_id': {
+        status: 'mappingStatus',
+        mappings: {
+          editor_id: {
+            mappings: [{
+              key,
+              generate: 'generate_2',
+              lookupName,
+            }],
+            lookups: [
+              {
+                name: 'lookup_name_1',
+                allowFailures: true,
+                useDefaultOnMultipleMatches: true,
+                map: [],
+              },
+              {
+                name: 'lookup_name_2',
+                allowFailures: true,
+                useDefaultOnMultipleMatches: true,
+                map: [{}],
+              },
+            ],
+          },
+        },
+        subRecordMappingId: props.subRecordMappingId,
+      },
+    };
+  });
+
   const ui = (
     <MemoryRouter>
       <MappingSettingsButton {...props} />

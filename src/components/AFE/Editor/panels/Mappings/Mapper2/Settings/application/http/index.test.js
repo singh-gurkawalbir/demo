@@ -3,7 +3,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import MappingsSettingsV2Wrapper from '../../index';
-import { renderWithProviders, reduxStore} from '../../../../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
@@ -25,40 +25,42 @@ jest.mock('react-truncate-markup', () => ({
   },
 }));
 
-initialStore.getState().session.mapping = {mapping: {
-  flowId: '62f0bdfaf8b63672312bbe36',
-  importId: '638c33d9720bb0629a05f723',
-  isGroupedSampleData: 'false',
-}};
+mutateStore(initialStore, draft => {
+  draft.session.mapping = {mapping: {
+    flowId: '62f0bdfaf8b63672312bbe36',
+    importId: '638c33d9720bb0629a05f723',
+    isGroupedSampleData: 'false',
+  }};
 
-initialStore.getState().data.resources.imports = [
-  {
-    _id: '638c33d9720bb0629a05f723',
-    createdAt: '2022-12-04T05:44:57.559Z',
-    lastModified: '2022-12-04T05:44:57.638Z',
-    name: 'ufc',
-    description: 'bk',
-    _connectionId: '629f0d8accb94d35de6f4363',
-    apiIdentifier: 'ia4ae5d3b0',
-    ignoreExisting: false,
-    ignoreMissing: false,
-    oneToMany: false,
-    sandbox: false,
-    http: {
-      relativeURI: [
-        '/kjb',
-      ],
-      method: [
-        'POST',
-      ],
-      body: [],
-      batchSize: 1,
-      sendPostMappedData: true,
-      formType: 'http',
+  draft.data.resources.imports = [
+    {
+      _id: '638c33d9720bb0629a05f723',
+      createdAt: '2022-12-04T05:44:57.559Z',
+      lastModified: '2022-12-04T05:44:57.638Z',
+      name: 'ufc',
+      description: 'bk',
+      _connectionId: '629f0d8accb94d35de6f4363',
+      apiIdentifier: 'ia4ae5d3b0',
+      ignoreExisting: false,
+      ignoreMissing: false,
+      oneToMany: false,
+      sandbox: false,
+      http: {
+        relativeURI: [
+          '/kjb',
+        ],
+        method: [
+          'POST',
+        ],
+        body: [],
+        batchSize: 1,
+        sendPostMappedData: true,
+        formType: 'http',
+      },
+      adaptorType: 'HTTPImport',
     },
-    adaptorType: 'HTTPImport',
-  },
-];
+  ];
+});
 
 jest.mock('../../../../../../../../LoadResources', () => ({
   __esModule: true,

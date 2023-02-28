@@ -3,7 +3,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TextFieldWithClipboardSupport from './DynaText';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import * as mockEnqueSnackbar from '../../../hooks/enqueueSnackbar';
 import { getCreatedStore } from '../../../store';
 
@@ -12,7 +12,9 @@ const enqueueSnackbar = jest.fn();
 const mockOnFieldChange = jest.fn();
 
 function initTextFieldWithClipboardSupport({props, resourcesData, resourceType, id}) {
-  initialStore.getState().data.resources = resourcesData;
+  mutateStore(initialStore, draft => {
+    draft.data.resources = resourcesData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/test/${resourceType}/${id}`}]}

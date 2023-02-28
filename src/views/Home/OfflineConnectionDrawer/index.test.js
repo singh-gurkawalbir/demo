@@ -2,7 +2,7 @@ import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
-import {renderWithProviders, reduxStore} from '../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import OfflineConnectionDrawer from '.';
 
 const mockHistoryReplace = jest.fn();
@@ -34,53 +34,55 @@ jest.mock('../../../components/ResourceFormFactory', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.tiles = [
-  {
-    _integrationId: '5d2c5f22c6f53438803dd3b7',
-    offlineConnections: [
-      '5d53a5cdfb8d224f46042989',
-      '5d53a5cdfb8d224f46042990',
-    ],
-  },
-  {
-    _integrationId: '5d2c5f22c6f53438803dd3b8',
-    offlineConnections: [],
-  },
-  {
-    _integrationId: '5d2c5f22c6f53438803dd3b9',
-    offlineConnections: ['5d53a5cdfb8d224f46042991'],
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.tiles = [
+    {
+      _integrationId: '5d2c5f22c6f53438803dd3b7',
+      offlineConnections: [
+        '5d53a5cdfb8d224f46042989',
+        '5d53a5cdfb8d224f46042990',
+      ],
+    },
+    {
+      _integrationId: '5d2c5f22c6f53438803dd3b8',
+      offlineConnections: [],
+    },
+    {
+      _integrationId: '5d2c5f22c6f53438803dd3b9',
+      offlineConnections: ['5d53a5cdfb8d224f46042991'],
+    },
+  ];
 
-initialStore.getState().data.resources.connections = [
-  {
-    _id: '5d53a5cdfb8d224f46042989',
-    name: 'First Connection',
-  },
-  {
-    _id: '5d53a5cdfb8d224f46042990',
-    name: 'Second Connection',
-  },
-  {
-    _id: '5d53a5cdfb8d224f46042991',
-  },
-];
+  draft.data.resources.connections = [
+    {
+      _id: '5d53a5cdfb8d224f46042989',
+      name: 'First Connection',
+    },
+    {
+      _id: '5d53a5cdfb8d224f46042990',
+      name: 'Second Connection',
+    },
+    {
+      _id: '5d53a5cdfb8d224f46042991',
+    },
+  ];
 
-initialStore.getState().data.resources.integrations = [
-  {
-    _id: '5d2c5f22c6f53438803dd3b7',
-    _registeredConnectionIds: [
-      '5d53a5cdfb8d224f46042989',
-      '5d53a5cdfb8d224f46042990',
-    ],
-  },
-  {
-    _id: '5d2c5f22c6f53438803dd3b9',
-    _registeredConnectionIds: [
-      '5d53a5cdfb8d224f46042991',
-    ],
-  },
-];
+  draft.data.resources.integrations = [
+    {
+      _id: '5d2c5f22c6f53438803dd3b7',
+      _registeredConnectionIds: [
+        '5d53a5cdfb8d224f46042989',
+        '5d53a5cdfb8d224f46042990',
+      ],
+    },
+    {
+      _id: '5d2c5f22c6f53438803dd3b9',
+      _registeredConnectionIds: [
+        '5d53a5cdfb8d224f46042991',
+      ],
+    },
+  ];
+});
 
 function initOfflineConnectionDrawer(connectionId, integrationId = '5d2c5f22c6f53438803dd3b7') {
   const ui = (

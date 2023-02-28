@@ -1,55 +1,57 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
 import TabbedRow from './TabbedRow';
 import actions from '../../../../../../actions';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.mapping = { mapping: {
-  v2TreeData: [
-    {
-      key: 'ZH_4fXPjHcI0-gZhL8c4U',
-      children: [
-        {
-          key: 'qruRI-RD35w_UbFrJz_m5',
-          title: '',
-          dataType: 'objectarray',
-          disabled: false,
-          parentExtract: '',
-          parentKey: 'ZH_4fXPjHcI0-gZhL8c4U',
-          extractsWithoutMappings: '$[*].name4',
-          extractsArrayHelper: [
-            {
-              extract: '$[*].name1',
-              sourceDataType: 'string',
-            },
-            {
-              extract: '$[*].name2',
-              sourceDataType: 'string',
-            },
-            {
-              extract: '$[*].name3',
-              sourceDataType: 'string',
-              copySource: 'yes',
-            },
-            {
-              extract: '$[*].name4',
-              sourceDataType: 'string',
-              disabled: true,
-              disabledInfo: 'this tab is disbaled',
-            },
-          ],
-          sourceDataType: 'objectarray',
-          activeTab: 0,
-        },
-      ],
-      generateDisabled: true,
-      sourceDataType: 'objectarray',
-    },
-  ],
-}};
+mutateStore(initialStore, draft => {
+  draft.session.mapping = { mapping: {
+    v2TreeData: [
+      {
+        key: 'ZH_4fXPjHcI0-gZhL8c4U',
+        children: [
+          {
+            key: 'qruRI-RD35w_UbFrJz_m5',
+            title: '',
+            dataType: 'objectarray',
+            disabled: false,
+            parentExtract: '',
+            parentKey: 'ZH_4fXPjHcI0-gZhL8c4U',
+            extractsWithoutMappings: '$[*].name4',
+            extractsArrayHelper: [
+              {
+                extract: '$[*].name1',
+                sourceDataType: 'string',
+              },
+              {
+                extract: '$[*].name2',
+                sourceDataType: 'string',
+              },
+              {
+                extract: '$[*].name3',
+                sourceDataType: 'string',
+                copySource: 'yes',
+              },
+              {
+                extract: '$[*].name4',
+                sourceDataType: 'string',
+                disabled: true,
+                disabledInfo: 'this tab is disbaled',
+              },
+            ],
+            sourceDataType: 'objectarray',
+            activeTab: 0,
+          },
+        ],
+        generateDisabled: true,
+        sourceDataType: 'objectarray',
+      },
+    ],
+  }};
+});
 
 const mockDispatch = jest.fn();
 

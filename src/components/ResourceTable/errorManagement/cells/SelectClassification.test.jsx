@@ -6,11 +6,14 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SelectClassification from './SelectClassification';
 import actions from '../../../../actions';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.errorManagement.metadata.data = {classification: ['Connection', 'Duplicate', 'Governance', 'Intermittent', 'Missing', 'Parse', 'Value']};
+mutateStore(initialStore, draft => {
+  draft.session.errorManagement.metadata.data = {classification: ['Connection', 'Duplicate', 'Governance', 'Intermittent', 'Missing', 'Parse', 'Value']};
+});
+
 const mockDispatch = jest.fn(actions => {
   switch (actions.type) {
     default: initialStore.dispatch(actions);

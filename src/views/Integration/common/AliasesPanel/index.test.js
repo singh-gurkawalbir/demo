@@ -4,17 +4,19 @@ import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Aliases from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
 let initialStore;
 const mockHistoryPush = jest.fn();
 
 function initAliases({integrationId, childId, integrationsData, preferencesData, aliasesStatusData, accountsData}) {
-  initialStore.getState().data.resources.integrations = integrationsData;
-  initialStore.getState().user.preferences = preferencesData;
-  initialStore.getState().user.org.accounts = accountsData;
-  initialStore.getState().session.aliases = aliasesStatusData;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = integrationsData;
+    draft.user.preferences = preferencesData;
+    draft.user.org.accounts = accountsData;
+    draft.session.aliases = aliasesStatusData;
+  });
   const ui = (
     <Aliases integrationId={integrationId} childId={childId} />
   );

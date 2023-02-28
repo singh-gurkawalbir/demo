@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import LookupDrawer from '.';
 
 const mockHistoryGoBack = jest.fn();
@@ -43,21 +43,23 @@ jest.mock('react-truncate-markup', () => ({
 async function initLookupDrawer(props = {}, pathname = manageLookupURL, renderFun) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    LOOKUP_DRAWER_FORM_KEY: {
-      disabled: false,
-      isValid: true,
-      fields: {_mode: {touched: true}},
-      value: {
-        _mode: 'dynamic',
-        _relativeURI: '/',
-        _method: 'GET',
-        _extract: 'data[0].id',
-        _failRecord: 'disallowFailure',
-        _name: 'lookupName',
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      LOOKUP_DRAWER_FORM_KEY: {
+        disabled: false,
+        isValid: true,
+        fields: {_mode: {touched: true}},
+        value: {
+          _mode: 'dynamic',
+          _relativeURI: '/',
+          _method: 'GET',
+          _extract: 'data[0].id',
+          _failRecord: 'disallowFailure',
+          _name: 'lookupName',
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname}]}>
       <Route path="/parentURL">

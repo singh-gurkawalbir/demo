@@ -3,7 +3,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import MappingsSettingsV2Wrapper from '../../index';
-import { renderWithProviders, reduxStore} from '../../../../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
@@ -25,43 +25,45 @@ jest.mock('react-truncate-markup', () => ({
   },
 }));
 
-initialStore.getState().session.mapping = {mapping: {
-  flowId: '62f0bdfaf8b63672312bbe36',
-  importId: '62e6897976ce554057c0f28f',
-  isGroupedSampleData: 'false',
-}};
+mutateStore(initialStore, draft => {
+  draft.session.mapping = {mapping: {
+    flowId: '62f0bdfaf8b63672312bbe36',
+    importId: '62e6897976ce554057c0f28f',
+    isGroupedSampleData: 'false',
+  }};
 
-initialStore.getState().data.resources.imports = [
-  {
-    _id: '62e6897976ce554057c0f28f',
-    createdAt: '2022-07-31T13:54:01.216Z',
-    lastModified: '2022-07-31T13:54:01.275Z',
-    name: 'sample',
-    parsers: [],
-    _connectionId: '629f0cb2d5391a2e79b99d99',
-    apiIdentifier: 'if8efa1e5d',
-    oneToMany: false,
-    sandbox: false,
-    file: {
-      fileName: 'file-{{timestamp}}.csv',
-      type: 'csv',
-      csv: {
-        rowDelimiter: '\n',
-        columnDelimiter: ',',
-        includeHeader: true,
-        wrapWithQuotes: false,
-        replaceTabWithSpace: false,
-        replaceNewlineWithSpace: false,
-        truncateLastRowDelimiter: false,
+  draft.data.resources.imports = [
+    {
+      _id: '62e6897976ce554057c0f28f',
+      createdAt: '2022-07-31T13:54:01.216Z',
+      lastModified: '2022-07-31T13:54:01.275Z',
+      name: 'sample',
+      parsers: [],
+      _connectionId: '629f0cb2d5391a2e79b99d99',
+      apiIdentifier: 'if8efa1e5d',
+      oneToMany: false,
+      sandbox: false,
+      file: {
+        fileName: 'file-{{timestamp}}.csv',
+        type: 'csv',
+        csv: {
+          rowDelimiter: '\n',
+          columnDelimiter: ',',
+          includeHeader: true,
+          wrapWithQuotes: false,
+          replaceTabWithSpace: false,
+          replaceNewlineWithSpace: false,
+          truncateLastRowDelimiter: false,
+        },
       },
+      ftp: {
+        directoryPath: '/',
+        fileName: 'file-{{timestamp}}.csv',
+      },
+      adaptorType: 'FTPImport',
     },
-    ftp: {
-      directoryPath: '/',
-      fileName: 'file-{{timestamp}}.csv',
-    },
-    adaptorType: 'FTPImport',
-  },
-];
+  ];
+});
 
 jest.mock('../../../../../../../../LoadResources', () => ({
   __esModule: true,

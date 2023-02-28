@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import actions from '../../../actions';
 import ShowMore from '.';
 
@@ -17,11 +17,13 @@ const props = {
 async function initShowMore(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.filters = {
-    _filterKey: {
-      _take: 100,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.filters = {
+      _filterKey: {
+        _take: 100,
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ShowMore {...props} />

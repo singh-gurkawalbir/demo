@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import RevisionDetails from '.';
 
@@ -12,73 +12,74 @@ const props = {integrationId: '_integrationId', revisionId: '_revisionId'};
 async function initRevisionDetails(props = {}, status = 'completed', fromIntegrationIsSandbox) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().session.lifeCycleManagement.revision._integrationId = {
-    _revisionId: { errors: {status}},
-  };
-  initialStore.getState().user = {
-    profile: {
-      _id: '_userId',
-      name: '_userName',
-      email: '_userEmail',
-    },
-    preferences: {
-      defaultAShareId: 'aSharedId',
-      accounts: {aSharedId: {}}},
-    org: {
-      accounts: [
-        {
-          _id: 'aSharedId',
-          accepted: true,
-          accessLevel: 'manage',
-        },
-      ],
-    },
-  };
-  initialStore.getState().data.integrationAShares = {
-    _integrationId: [{
-      _id: 'aSharedId',
-      accepted: true,
-      accessLevel: 'manage',
-      sharedWithUser: {
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement.revision._integrationId = {
+      _revisionId: { errors: {status}},
+    };
+    draft.user = {
+      profile: {
         _id: '_userId',
-        email: status === 'failed' ? undefined : '_userEmail',
+        name: '_userName',
+        email: '_userEmail',
       },
-    }],
-  };
-
-  initialStore.getState().data.revisions = {
-    _integrationId: {
-      data: [
-        {
-          _id: '_revisionId',
-          description: 'Snapshot for testing',
-          type: 'snapshot',
-          _createdByUserId: '_userId',
-          _integrationId: '_integrationId',
-          status,
+      preferences: {
+        defaultAShareId: 'aSharedId',
+        accounts: {aSharedId: {}}},
+      org: {
+        accounts: [
+          {
+            _id: 'aSharedId',
+            accepted: true,
+            accessLevel: 'manage',
+          },
+        ],
+      },
+    };
+    draft.data.integrationAShares = {
+      _integrationId: [{
+        _id: 'aSharedId',
+        accepted: true,
+        accessLevel: 'manage',
+        sharedWithUser: {
+          _id: '_userId',
+          email: status === 'failed' ? undefined : '_userEmail',
         },
-        {
-          _id: '_revertRevId',
-          description: 'Reverting to previous Snapshot',
-          type: 'revert',
-          _createdByUserId: '_userId',
-          _integrationId: '_integrationId',
-          _revertToRevisionId: '_revisionId',
-          status,
-        },
-        {
-          _id: '_pullRevId',
-          description: 'Reverting to Pulled',
-          type: 'pull',
-          _createdByUserId: '_userId2',
-          _integrationId: '_integrationId',
-          fromIntegrationName: 'LenderIntegration',
-          fromIntegrationIsSandbox,
-          status,
-        },
-      ],
-    },
-  };
+      }],
+    };
+    draft.data.revisions = {
+      _integrationId: {
+        data: [
+          {
+            _id: '_revisionId',
+            description: 'Snapshot for testing',
+            type: 'snapshot',
+            _createdByUserId: '_userId',
+            _integrationId: '_integrationId',
+            status,
+          },
+          {
+            _id: '_revertRevId',
+            description: 'Reverting to previous Snapshot',
+            type: 'revert',
+            _createdByUserId: '_userId',
+            _integrationId: '_integrationId',
+            _revertToRevisionId: '_revisionId',
+            status,
+          },
+          {
+            _id: '_pullRevId',
+            description: 'Reverting to Pulled',
+            type: 'pull',
+            _createdByUserId: '_userId2',
+            _integrationId: '_integrationId',
+            fromIntegrationName: 'LenderIntegration',
+            fromIntegrationIsSandbox,
+            status,
+          },
+        ],
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter>

@@ -7,16 +7,18 @@ import ResetAuthorizationModal from '.';
 import { ConfirmDialogProvider } from '../../../../../../components/ConfirmDialog';
 import { getCreatedStore } from '../../../../../../store';
 import { runServer } from '../../../../../../test/api/server';
-import { renderWithProviders } from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../test/test-utils';
 
 let initialStore;
 const asyncTaskKey = 'MFA_RESET_ASYNC_KEY';
 
 async function initMFAResetAuthorization({onClose = '', asyncStatus} = {}) {
-  initialStore.getState().session.asyncTask[asyncTaskKey] =
-    {
-      status: asyncStatus,
-    };
+  mutateStore(initialStore, draft => {
+    draft.session.asyncTask[asyncTaskKey] =
+      {
+        status: asyncStatus,
+      };
+  });
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>

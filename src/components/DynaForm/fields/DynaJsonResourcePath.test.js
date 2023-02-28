@@ -1,6 +1,6 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
 import { getCreatedStore } from '../../../store';
 
@@ -20,14 +20,16 @@ describe('test suite for DynaJsonResourcePath field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = [{
-      _id: props.resourceId,
-      file: {type: 'json'},
-      sampleData: [
-        {_id: 'id123', name: 'name 1'},
-        {_id: 'id456', name: 'name 2'},
-      ],
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = [{
+        _id: props.resourceId,
+        file: {type: 'json'},
+        sampleData: [
+          {_id: 'id123', name: 'name 1'},
+          {_id: 'id456', name: 'name 2'},
+        ],
+      }];
+    });
 
     renderWithProviders(<DynaJsonResourcePath {...props} />, {initialStore});
     expect(document.querySelector('label')).toHaveTextContent(props.label);
@@ -54,16 +56,18 @@ describe('test suite for DynaJsonResourcePath field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = [{
-      _id: props.resourceId,
-      file: {type: 'json'},
-      sampleData: {
-        items: [
-          {_id: 'id123', name: 'name 1'},
-          {_id: 'id456', name: 'name 2'},
-        ],
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = [{
+        _id: props.resourceId,
+        file: {type: 'json'},
+        sampleData: {
+          items: [
+            {_id: 'id123', name: 'name 1'},
+            {_id: 'id456', name: 'name 2'},
+          ],
+        },
+      }];
+    });
 
     renderWithProviders(<DynaJsonResourcePath {...props} />, {initialStore});
     expect(onFieldChange).toBeCalledWith(props.id, {resourcePathToShow: '', resourcePathToSave: ''}, true);
@@ -91,14 +95,16 @@ describe('test suite for DynaJsonResourcePath field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = [{
-      _id: props.resourceId,
-      file: {type: 'json'},
-      sampleData: { items: [
-        {_id: 'id123', name: 'name 1'},
-        {_id: 'id456', name: 'name 2'},
-      ]},
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = [{
+        _id: props.resourceId,
+        file: {type: 'json'},
+        sampleData: { items: [
+          {_id: 'id123', name: 'name 1'},
+          {_id: 'id456', name: 'name 2'},
+        ]},
+      }];
+    });
 
     renderWithProviders(<DynaJsonResourcePath {...props} />, {initialStore});
     expect(onFieldChange).toBeCalledWith(props.id, {resourcePathToShow: 'items', resourcePathToSave: 'items.*'}, true);
@@ -119,14 +125,16 @@ describe('test suite for DynaJsonResourcePath field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = [{
-      _id: props.resourceId,
-      file: {type: 'json'},
-      sampleData: [
-        {_id: 'id123', name: 'name 1'},
-        {_id: 'id456', name: 'name 2'},
-      ],
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = [{
+        _id: props.resourceId,
+        file: {type: 'json'},
+        sampleData: [
+          {_id: 'id123', name: 'name 1'},
+          {_id: 'id456', name: 'name 2'},
+        ],
+      }];
+    });
     renderWithProviders(<DynaJsonResourcePath {...props} />, {initialStore});
     expect(onFieldChange).toBeCalledWith(props.id, {
       resourcePathToShow: 'items',

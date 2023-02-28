@@ -2,18 +2,21 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSelectScopes from './DynaSelectScopes';
-import {renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 const mockOnFieldChange = jest.fn();
 
 function initDynaSelectScopes({props, resourcesData}) {
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().data.resources = resourcesData;
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.data.resources = resourcesData;
+  });
+
   const ui = (
     <DynaSelectScopes {...props} />
   );

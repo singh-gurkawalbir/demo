@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import HooksForm from './HooksForm';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initHooksForm({
   props = {
@@ -20,74 +20,76 @@ async function initHooksForm({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {
-        _id: 'flow_id',
-        _connectorId: 'connector_id',
-      },
-    ],
-    integrations: [
-      {
-        _id: 'integration_id',
-      },
-    ],
-    exports: [
-      {
-        _id: 'export_id',
-        hooks: {
-          preSavePage: {
-            function: 'preSavePageFunction',
-            _scriptId: 'script_id',
-          },
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {
+          _id: 'flow_id',
+          _connectorId: 'connector_id',
         },
-        adaptorType: 'HTTPExport',
-      },
-      {
-        _id: 'export_id_1',
-        netsuite: {
-          type: 'distributed',
-          distributed: {
-            hooks: {
-              preSend: {
-                function: 'preSendFunction',
+      ],
+      integrations: [
+        {
+          _id: 'integration_id',
+        },
+      ],
+      exports: [
+        {
+          _id: 'export_id',
+          hooks: {
+            preSavePage: {
+              function: 'preSavePageFunction',
+              _scriptId: 'script_id',
+            },
+          },
+          adaptorType: 'HTTPExport',
+        },
+        {
+          _id: 'export_id_1',
+          netsuite: {
+            type: 'distributed',
+            distributed: {
+              hooks: {
+                preSend: {
+                  function: 'preSendFunction',
+                },
               },
             },
           },
+          adaptorType: 'NetSuiteExport',
         },
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    imports: [
-      {
-        _id: 'import_id_1',
-        hooks: {
-          preMap: {
-            function: 'preMapFunction',
-          },
-        },
-        adaptorType: 'NetSuiteImport',
-      },
-      {
-        _id: 'import_id_2',
-        netsuite_da: {
+      ],
+      imports: [
+        {
+          _id: 'import_id_1',
           hooks: {
             preMap: {
               function: 'preMapFunction',
-              fileInternalId: 'internal_id',
             },
           },
+          adaptorType: 'NetSuiteImport',
         },
-        adaptorType: 'NetSuiteImport',
-      },
-    ],
-    scripts: [
-      {
-        _id: 'script_id',
-        name: 'script 1',
-      },
-    ],
-  };
+        {
+          _id: 'import_id_2',
+          netsuite_da: {
+            hooks: {
+              preMap: {
+                function: 'preMapFunction',
+                fileInternalId: 'internal_id',
+              },
+            },
+          },
+          adaptorType: 'NetSuiteImport',
+        },
+      ],
+      scripts: [
+        {
+          _id: 'script_id',
+          name: 'script 1',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter

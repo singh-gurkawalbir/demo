@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import metadata from './metadata';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import CeligoTable from '../../../CeligoTable';
 
 const mockDispatch = jest.fn();
@@ -17,37 +17,37 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.integrations = [{
-  _id: '5ff579d745ceef7dcd797c15',
-  _connectorId: 'connectorId',
-  name: " AFE 2.0 refactoring for DB's",
-  settings: {supportsMultiStore: false,
-    sections: [
-      {
-        id: '1111111',
-        label: '11',
-        title: 'title1',
-        flows: [{_id: 'flow_id1'}] },
-    ]},
-}];
-
-initialStore.getState().data.resources.flows = [
-  {
-    _id: 'flow_id1',
-    name: 'demo flow',
-    disabled: false,
-    _integrationId: '5ff579d745ceef7dcd797c15',
-    pageProcessors: [{
-      type: 'import',
-      _importId: 'resource_id',
-    }],
-    _flowGroupingId: 'grouping1Id',
-  },
-];
-
-initialStore.getState().user.profile = {
-  timezone: 'Asia/Calcutta',
-};
+mutateStore(initialStore, draft => {
+  draft.data.resources.integrations = [{
+    _id: '5ff579d745ceef7dcd797c15',
+    _connectorId: 'connectorId',
+    name: " AFE 2.0 refactoring for DB's",
+    settings: {supportsMultiStore: false,
+      sections: [
+        {
+          id: '1111111',
+          label: '11',
+          title: 'title1',
+          flows: [{_id: 'flow_id1'}] },
+      ]},
+  }];
+  draft.data.resources.flows = [
+    {
+      _id: 'flow_id1',
+      name: 'demo flow',
+      disabled: false,
+      _integrationId: '5ff579d745ceef7dcd797c15',
+      pageProcessors: [{
+        type: 'import',
+        _importId: 'resource_id',
+      }],
+      _flowGroupingId: 'grouping1Id',
+    },
+  ];
+  draft.user.profile = {
+    timezone: 'Asia/Calcutta',
+  };
+});
 
 function renderFunction(data = {}) {
   renderWithProviders(

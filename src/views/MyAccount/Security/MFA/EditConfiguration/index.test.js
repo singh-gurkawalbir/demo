@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import EditMFAConfiguration from '.';
 import { ConfirmDialogProvider } from '../../../../../components/ConfirmDialog';
 import { runServer } from '../../../../../test/api/server';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 let initialStore;
@@ -31,11 +31,13 @@ jest.mock('react-truncate-markup', () => ({
 }));
 
 async function initEditMFAConfiguration({defaultAShareIdValue, accountsValue, mfaValues} = {}) {
-  initialStore.getState().user.preferences = {defaultAShareId: defaultAShareIdValue};
-  initialStore.getState().user.org = {
-    accounts: accountsValue,
-  };
-  initialStore.getState().data.mfa = mfaValues;
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {defaultAShareId: defaultAShareIdValue};
+    draft.user.org = {
+      accounts: accountsValue,
+    };
+    draft.data.mfa = mfaValues;
+  });
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter
@@ -235,11 +237,13 @@ describe('Testsuite for Edit MFA Configuration', () => {
     expect(closeButtonNode).not.toBeInTheDocument();
   });
   test('should test the viewed QR code', async () => {
-    initialStore.getState().session.mfa = {
-      codes: {
-        showQrCode: true,
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.mfa = {
+        codes: {
+          showQrCode: true,
+        },
+      };
+    });
     await initEditMFAConfiguration({
       defaultAShareIdValue: 'own',
       accountsValue: [{

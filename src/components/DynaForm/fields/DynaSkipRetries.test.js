@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import DynaSkipRetries from './DynaSkipRetries';
 
@@ -27,13 +27,15 @@ describe('test suite for skipRetries field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = [{
-      _id: props.flowId,
-      pageGenerators: [{
-        type: 'export',
-        _exportId: props.resourceId,
-      }],
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [{
+        _id: props.flowId,
+        pageGenerators: [{
+          type: 'export',
+          _exportId: props.resourceId,
+        }],
+      }];
+    });
     renderWithProviders(<DynaSkipRetries {...props} />, {initialStore});
     const checkBox = screen.getByRole('checkbox');
 
@@ -56,14 +58,16 @@ describe('test suite for skipRetries field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = [{
-      _id: props.flowId,
-      pageGenerators: [{
-        type: 'export',
-        _exportId: props.resourceId,
-        skipRetries: true,
-      }],
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [{
+        _id: props.flowId,
+        pageGenerators: [{
+          type: 'export',
+          _exportId: props.resourceId,
+          skipRetries: true,
+        }],
+      }];
+    });
     renderWithProviders(<DynaSkipRetries {...props} />, {initialStore});
     expect(screen.getByRole('checkbox')).toBeChecked();
   });

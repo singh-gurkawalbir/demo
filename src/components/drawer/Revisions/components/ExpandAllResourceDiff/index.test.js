@@ -3,18 +3,20 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import ExpandAllResourceDiff from '.';
 
 async function initExpandAllResourceDiff(props = {}, expandAll) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement = {
-    compare: {
-      _integrationId: {expandAll, status: 'received'},
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      compare: {
+        _integrationId: {expandAll, status: 'received'},
+      },
+    };
+  });
 
   return renderWithProviders(<ExpandAllResourceDiff {...props} />, {initialStore});
 }
