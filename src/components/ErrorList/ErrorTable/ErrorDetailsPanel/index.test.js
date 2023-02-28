@@ -210,9 +210,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       })
     );
     await userEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
-      })
+      screen.getByTitle('Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.')
     );
     await userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
     expect(
@@ -307,9 +305,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       )
     ).toBeInTheDocument();
     await userEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
-      })
+      screen.getByTitle('Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.')
     );
     await userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
     expect(
