@@ -3,31 +3,33 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
 import SelectedLabelImp from './index';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources = {
-  flows: [
-    {
-      _id: '634b79db0cbd27707a2d5080',
-      name: 'flownametest',
-      _integrationId: 456,
-      _flowGroupingId: 6748392,
-    },
-  ],
-  integrations: [{
-    _id: 456,
+mutateStore(initialStore, draft => {
+  draft.data.resources = {
+    flows: [
+      {
+        _id: '634b79db0cbd27707a2d5080',
+        name: 'flownametest',
+        _integrationId: 456,
+        _flowGroupingId: 6748392,
+      },
+    ],
+    integrations: [{
+      _id: 456,
+      flowGroupings: [{
+        _id: 6748392,
+        name: 'flownametest2'}],
+      name: 'p154',
+    }],
     flowGroupings: [{
       _id: 6748392,
-      name: 'flownametest2'}],
-    name: 'p154',
-  }],
-  flowGroupings: [{
-    _id: 6748392,
-    name: 'flownametest2',
-  }],
-};
+      name: 'flownametest2',
+    }],
+  };
+});
 
 describe('uI test cases for selectedmultiselectfilterlabel', () => {
   test('should display name when there are no flowgroupings', () => {

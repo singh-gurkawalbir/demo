@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaSelectResourceType from './DynaSelectResourceType';
 
 const onFieldChange = jest.fn();
@@ -11,24 +11,26 @@ const props = {mode: 'destination', flowId: '_flowId1', onFieldChange, id: 'reso
 async function initDynaSelectResourceType(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data = {
-    resources: {
-      flows: [
-        {
-          _id: '_flowId1',
-          pageGenerators: [{_exportId: '_exp1'}],
-        },
-        {
-          _id: '_flowId2',
-          _exportId: '_exp2',
-        },
-      ],
-      exports: [{
-        _id: '_exp2',
-        type: 'simple',
-      }],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.data = {
+      resources: {
+        flows: [
+          {
+            _id: '_flowId1',
+            pageGenerators: [{_exportId: '_exp1'}],
+          },
+          {
+            _id: '_flowId2',
+            _exportId: '_exp2',
+          },
+        ],
+        exports: [{
+          _id: '_exp2',
+          type: 'simple',
+        }],
+      },
+    };
+  });
 
   return renderWithProviders(<DynaSelectResourceType {...props} />, { initialStore });
 }

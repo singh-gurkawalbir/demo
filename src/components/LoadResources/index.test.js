@@ -3,21 +3,22 @@ import React from 'react';
 import {
   screen,
 } from '@testing-library/react';
-import cloneDeep from 'lodash/cloneDeep';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import LoadResources from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import actions from '../../actions';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initLoadResources({resources = 'resources', props = {}, children = '', initialStore = reduxStore, defaultAShareId = 'own'} = {}) {
-  /* eslint no-param-reassign: "error" */
-  initialStore.getState().user = {
-    preferences: {
-      defaultAShareId,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.user = {
+      preferences: {
+        defaultAShareId,
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <LoadResources resources={resources} {...props}>
@@ -36,12 +37,15 @@ describe('loadResources component', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'RESOURCE_REQUEST_COLLECTION':
-          initialStore.getState().data.resources[action.resourceType] = 'resources';
+          mutateStore(initialStore, draft => {
+            draft.data.resources[action.resourceType] = 'resources';
+          });
+
           break;
         default:
       }
@@ -163,7 +167,11 @@ describe('loadResources component', () => {
     });
 
     test('should pass the initial render childer when resource != lazyResources and ready', async () => {
-      initialStore.getState().session.loadResources.resources = 'received';
+      const mustateState = draft => {
+        draft.session.loadResources.resources = 'received';
+      };
+
+      mutateStore(initialStore, mustateState);
       await initLoadResources({initialStore,
         children: 'Test Child',
         props: {

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import EditorDrawerCloseIconButton from '.';
 import { FormOnCancelProvider } from '../../../FormOnCancelContext';
 
@@ -13,11 +13,15 @@ const mockOnClose = jest.fn();
 const mockSetCancelTriggered = jest.fn();
 
 async function initEditorDrawerCloseIconButton(editorId, onClose, hideSave, saveStatus) {
-  initialStore.getState().session.editors = {
-    '231c3': {
-      saveStatus,
-    },
+  const mustateState = draft => {
+    draft.session.editors = {
+      '231c3': {
+        saveStatus,
+      },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
   const ui = (
     <MemoryRouter>
       <FormOnCancelProvider>

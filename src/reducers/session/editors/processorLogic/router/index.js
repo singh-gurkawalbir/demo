@@ -1,4 +1,5 @@
-import { cloneDeep, isEqual, pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import { generateId, safeParse } from '../../../../../utils/string';
 import filter from '../filter';
@@ -44,7 +45,7 @@ export default {
     const editorTitle = isEdit ? 'Edit branching' : 'Add branching';
 
     const { routeRecordsUsing, script = {} } = router;
-    const routerObj = cloneDeep(router);
+    const routerObj = customCloneDeep(router);
 
     (routerObj.branches || []).forEach((branch, index) => {
       if (!branch.name) {
@@ -226,7 +227,7 @@ export default {
         pageProcessors: [{setupInProgress: true}],
       }];
     } else if (!shouldReplace) {
-      Object.assign(draft.rule, cloneDeep(rulePatch));
+      Object.assign(draft.rule, customCloneDeep(rulePatch));
     } else {
       draft.rule = rulePatch;
     }

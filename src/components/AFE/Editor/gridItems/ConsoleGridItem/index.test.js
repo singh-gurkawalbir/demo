@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import ConsoleGridItem from '.';
 import { getCreatedStore } from '../../../../../store';
 
@@ -15,9 +15,13 @@ jest.mock('../../panels/Code', () => ({
 }));
 
 function initConsoleGridItem(props = {}) {
-  initialStore.getState().session.editors = {'file.csv': {
-    result: { logs: ['result1']},
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {'file.csv': {
+      result: { logs: ['result1']},
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<ConsoleGridItem {...props} />, {initialStore});
 }

@@ -4,7 +4,7 @@ import {screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../../../actions';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import { ConfirmDialogProvider } from '../../../../../ConfirmDialog';
 
@@ -13,15 +13,19 @@ import MoreActions from './MoreActions';
 const initialStore = getCreatedStore();
 
 function initMoreActions(props = {}) {
-  initialStore.getState().session.mapping = {
-    mapping: {
-      version: 2,
-      importSampleData: {},
-      importId: '5ea16cd30e2fab71928a6166',
-      v2TreeData: props.tree,
-    },
+  const mustateState = draft => {
+    draft.session.mapping = {
+      mapping: {
+        version: 2,
+        importSampleData: {},
+        importId: '5ea16cd30e2fab71928a6166',
+        v2TreeData: props.tree,
+      },
+    };
+    draft.data.resources = {imports: [{_id: '5ea16cd30e2fab71928a6166', name: 'import1' }]};
   };
-  initialStore.getState().data.resources = {imports: [{_id: '5ea16cd30e2fab71928a6166', name: 'import1' }]};
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<ConfirmDialogProvider><MoreActions {...props} /></ConfirmDialogProvider>, {initialStore});
 }

@@ -3,29 +3,31 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ViewReportDetails from './index';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 let initialStore;
 const mockGoBackFn = jest.fn();
 
 function store(eventReports, flows) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '5ffad3d1f08d35214ed200g7',
-    lastModified: '2021-01-22T08:40:45.731Z',
-    name: 'concur expense',
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '5cd51efd3607fe7d8eda9c88',
-      '5feafe6bf415e15f455dbc89',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2021-01-10T10:15:45.184Z',
-  }];
-  initialStore.getState().data.resources.flows = flows;
-  initialStore.getState().data.resources.eventreports = eventReports;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '5ffad3d1f08d35214ed200g7',
+      lastModified: '2021-01-22T08:40:45.731Z',
+      name: 'concur expense',
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c88',
+        '5feafe6bf415e15f455dbc89',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-10T10:15:45.184Z',
+    }];
+    draft.data.resources.flows = flows;
+    draft.data.resources.eventreports = eventReports;
+  });
 }
 
 async function initViewReportDetails(params) {

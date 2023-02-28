@@ -2,7 +2,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import { getCreatedStore } from '../../../../../store';
 import JavaScriptPanel from '.';
@@ -28,77 +28,81 @@ jest.mock('../Code', () => ({
 const initialStore = getCreatedStore();
 
 function initJavaScriptPanel(props = {}) {
-  initialStore.getState().session.editors = {
-    filecsv: {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      previewStatus: props.status,
-      insertStubKey: 'preSavePage',
-      rule: {
-        code: 'custom code',
-        entryFunction: 'preSavePage',
-        scriptId: '5b3c75dd5d3c125c88b5cc00',
-      },
-    },
-    '6b3c75dd5d3c125c88b5dd02': {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      previewStatus: props.status,
-      insertStubKey: 'preSavePage',
-      rule: {
-        code: 'custom code',
-        entryFunction: 'preSavePage',
-        scriptId: '7b3c75dd5d3c125c88b5cc01',
-      },
-    },
-    'router-XZ7DSFgUTF2': {
-      editorType: 'router',
-      flowId: '629f0dcfccb94d35de6f436b',
-      resourceType: 'flows',
-      stage: 'router',
-      integrationId: '629f0dcfccb94d35de6f43w',
-      rule: {
-        name: '',
-        routeRecordsUsing: 'script',
-        id: 'XZ7DSFgUTF2',
-        script: {
-          _scriptId: '63daad2814f7cd246798635e',
-          function: 'branching',
+  const mustateState = draft => {
+    draft.session.editors = {
+      filecsv: {
+        fieldId: 'file.csv',
+        formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+        resourceId: '5b3c75dd5d3c125c88b5dd20',
+        resourceType: 'imports',
+        previewStatus: props.status,
+        insertStubKey: 'preSavePage',
+        rule: {
+          code: 'custom code',
+          entryFunction: 'preSavePage',
+          scriptId: '5b3c75dd5d3c125c88b5cc00',
         },
-        scriptId: '63daad2814f7cd246798635e',
-        entryFunction: 'branching',
       },
-      sampleDataStatus: 'received',
-      dataVersion: 2,
+      '6b3c75dd5d3c125c88b5dd02': {
+        fieldId: 'file.csv',
+        formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+        resourceId: '5b3c75dd5d3c125c88b5dd20',
+        resourceType: 'imports',
+        previewStatus: props.status,
+        insertStubKey: 'preSavePage',
+        rule: {
+          code: 'custom code',
+          entryFunction: 'preSavePage',
+          scriptId: '7b3c75dd5d3c125c88b5cc01',
+        },
+      },
+      'router-XZ7DSFgUTF2': {
+        editorType: 'router',
+        flowId: '629f0dcfccb94d35de6f436b',
+        resourceType: 'flows',
+        stage: 'router',
+        integrationId: '629f0dcfccb94d35de6f43w',
+        rule: {
+          name: '',
+          routeRecordsUsing: 'script',
+          id: 'XZ7DSFgUTF2',
+          script: {
+            _scriptId: '63daad2814f7cd246798635e',
+            function: 'branching',
+          },
+          scriptId: '63daad2814f7cd246798635e',
+          entryFunction: 'branching',
+        },
+        sampleDataStatus: 'received',
+        dataVersion: 2,
+      },
+    };
+    draft.session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
+      'file.csv': {
+        disabled: props.disabled,
+      },
     },
+    }};
+    draft.data.resources.flows = [{
+      _id: '629f0dcfccb94d35de6f436b',
+      _connectorId: '_connectorId',
+    }];
+    draft.data.resources.scripts = [{
+      _id: '5b3c75dd5d3c125c88b5cc00',
+      name: 'script 1',
+      content: 'demo script content',
+    }, {
+      _id: '5b3c75dd5d3c125c88b5cc01',
+      name: 'script 2',
+      content: 'demo script content',
+    }, {
+      _id: '5b3c75dd5d3c125c88b5cc02',
+      name: 'script 3',
+      content: 'demo script content',
+    }];
   };
-  initialStore.getState().session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
-    'file.csv': {
-      disabled: props.disabled,
-    },
-  },
-  }};
-  initialStore.getState().data.resources.flows = [{
-    _id: '629f0dcfccb94d35de6f436b',
-    _connectorId: '_connectorId',
-  }];
-  initialStore.getState().data.resources.scripts = [{
-    _id: '5b3c75dd5d3c125c88b5cc00',
-    name: 'script 1',
-    content: 'demo script content',
-  }, {
-    _id: '5b3c75dd5d3c125c88b5cc01',
-    name: 'script 2',
-    content: 'demo script content',
-  }, {
-    _id: '5b3c75dd5d3c125c88b5cc02',
-    name: 'script 3',
-    content: 'demo script content',
-  }];
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<JavaScriptPanel {...props} />, {initialStore});
 }

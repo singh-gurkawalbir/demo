@@ -9,7 +9,7 @@ import actions from '../../../../actions';
 // import fieldMeta from './testutil';
 import DynaXmlParse from './index';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let mockSave = jest.fn();
 
@@ -30,81 +30,83 @@ jest.mock('react-redux', () => ({
 }));
 
 function initDynaXmlParse(props = {}) {
-  initialStore.getState().session.connectionToken = {
-    '5b3c75dd5d3c125c88b5dd20': {
-      fieldsToBeSetWithValues: {
-        field1: 1,
-        field2: 2,
-      },
-      status: props.status,
-      message: props.message,
-    },
-  };
-  initialStore.getState().session.form = {
-    formKey: {
-      fieldMeta: {
-        layout: {
-          containers: [
-            {
-              type: 'collapse',
-              containers: [
-                {
-                  collapsed: true,
-                  label: 'General',
-                  fields: [
-                    'name',
-                    'description',
-                    '_connectionId',
-                    'outputMode',
-                  ],
-                },
-              ],
-            },
-            {
-              fields: [
-                'settings',
-              ],
-            },
-          ],
+  mutateStore(initialStore, draft => {
+    draft.session.connectionToken = {
+      '5b3c75dd5d3c125c88b5dd20': {
+        fieldsToBeSetWithValues: {
+          field1: 1,
+          field2: 2,
         },
-        fieldMap: {
-          name: {
-            resourceId: '634eee1c24bd9e5acce44d2b',
-            resourceType: 'exports',
-            isLoggable: true,
-            type: 'text',
-            label: 'Name',
-            required: true,
-            fieldId: 'name',
-            id: 'name',
-            name: '/name',
-            defaultValue: 'SFTP export',
-            helpKey: 'export.name',
-          },
-          description: {
-            resourceId: '634eee1c24bd9e5acce44d2b',
-            resourceType: 'exports',
-            isLoggable: true,
-            type: 'text',
-            label: 'Description',
-            fieldId: 'description',
-            id: 'description',
-            name: '/description',
-            defaultValue: '',
-            helpKey: 'export.description',
-          } },
+        status: props.status,
+        message: props.message,
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    exports: [{
-      _id: '5b3c75dd5d3c125c88b5dd20',
-      adatptorType: 'FTPExport',
-      _integrationId: '6b3c75dd5d3c125c88b5dd20',
-      assistant: 'googledrive',
+    };
+    draft.session.form = {
+      formKey: {
+        fieldMeta: {
+          layout: {
+            containers: [
+              {
+                type: 'collapse',
+                containers: [
+                  {
+                    collapsed: true,
+                    label: 'General',
+                    fields: [
+                      'name',
+                      'description',
+                      '_connectionId',
+                      'outputMode',
+                    ],
+                  },
+                ],
+              },
+              {
+                fields: [
+                  'settings',
+                ],
+              },
+            ],
+          },
+          fieldMap: {
+            name: {
+              resourceId: '634eee1c24bd9e5acce44d2b',
+              resourceType: 'exports',
+              isLoggable: true,
+              type: 'text',
+              label: 'Name',
+              required: true,
+              fieldId: 'name',
+              id: 'name',
+              name: '/name',
+              defaultValue: 'SFTP export',
+              helpKey: 'export.name',
+            },
+            description: {
+              resourceId: '634eee1c24bd9e5acce44d2b',
+              resourceType: 'exports',
+              isLoggable: true,
+              type: 'text',
+              label: 'Description',
+              fieldId: 'description',
+              id: 'description',
+              name: '/description',
+              defaultValue: '',
+              helpKey: 'export.description',
+            } },
+        },
+      },
+    };
+    draft.data.resources = {
+      exports: [{
+        _id: '5b3c75dd5d3c125c88b5dd20',
+        adatptorType: 'FTPExport',
+        _integrationId: '6b3c75dd5d3c125c88b5dd20',
+        assistant: 'googledrive',
 
-    }],
-  };
+      }],
+    };
+  });
 
   return renderWithProviders(
     <MemoryRouter>

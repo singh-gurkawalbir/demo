@@ -4,26 +4,28 @@ import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
 import DynaAliasId from './DynaAliasId';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaAliasId(props = {}) {
-  initialStore.getState().session.asyncTask = {'integration-alias': props.status};
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '63368c92bb74b66e32ab05ee',
-        aliases: [
-          {
-            alias: 'test',
-            _connectionId: '63368ce9bb74b66e32ab060c',
-          },
-        ],
-      },
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.asyncTask = {'integration-alias': props.status};
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '63368c92bb74b66e32ab05ee',
+          aliases: [
+            {
+              alias: 'test',
+              _connectionId: '63368ce9bb74b66e32ab060c',
+            },
+          ],
+        },
+      ],
+    };
+  });
 
   return renderWithProviders(<DynaAliasId {...props} />, {initialStore});
 }

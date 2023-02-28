@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import IntegrationAppUninstallation from '.';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 
 let initialStore;
 
@@ -32,8 +32,10 @@ jest.mock('./Uninstall1.0', () => ({
 }));
 
 function initIntegrationAppUninstallation({match, integrationsData, uninstaller2Data}) {
-  initialStore.getState().data.resources.integrations = integrationsData;
-  initialStore.getState().session.integrationApps.uninstaller2 = uninstaller2Data;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = integrationsData;
+    draft.session.integrationApps.uninstaller2 = uninstaller2Data;
+  });
   const ui = (
     <IntegrationAppUninstallation match={match} />
   );

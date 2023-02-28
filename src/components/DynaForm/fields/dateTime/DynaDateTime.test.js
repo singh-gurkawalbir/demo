@@ -4,22 +4,24 @@ import React from 'react';
 import { fireEvent, screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DynaDateTime from './DynaDateTime';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaDateTime(props = {}) {
-  initialStore.getState().data.resources = {integrations: [{_id: '5ff579d745ceef7dcd797c15', name: 'integration1'}, {_id: '5ff579d745ceef7dcd797c16', _connectorId: '6ff579d745ceef7dcd797c16', name: 'integration2'}]};
-  initialStore.getState().user.preferences = {
-    dateFormat: 'MM/DD/YYYY',
-    ssConnectionIds: props.connections,
-  };
-  initialStore.getState().user.profile = {
-    timezone: 'Asia/Calcutta',
-    _connectorId: '6aa579d745ceef7dcd797c15',
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {integrations: [{_id: '5ff579d745ceef7dcd797c15', name: 'integration1'}, {_id: '5ff579d745ceef7dcd797c16', _connectorId: '6ff579d745ceef7dcd797c16', name: 'integration2'}]};
+    draft.user.preferences = {
+      dateFormat: 'MM/DD/YYYY',
+      ssConnectionIds: props.connections,
+    };
+    draft.user.profile = {
+      timezone: 'Asia/Calcutta',
+      _connectorId: '6aa579d745ceef7dcd797c15',
+    };
+  });
 
   return renderWithProviders(<DynaDateTime {...props} />, {initialStore});
 }

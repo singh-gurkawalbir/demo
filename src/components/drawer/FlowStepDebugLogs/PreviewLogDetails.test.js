@@ -4,44 +4,44 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import cloneDeep from 'lodash/cloneDeep';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import PreviewLogDetails from './PreviewLogDetails';
 import actions from '../../../actions';
-import actionTypes from '../../../actions/types';
 
 const props = {
   flowId: 'random_mock_flowId',
   resourceId: 'random_resource_id_mock',
 };
 
+const initialStore = reduxStore;
+
 async function initPreviewLogDetails({props = {},
   logsStatus = 'recieved',
   error = {},
   activeLogKey = '',
 }) {
-  const initialStore = reduxStore;
-
-  initialStore.getState().session.logs.flowStep = {
-    random_resource_id_mock: {
-      logsStatus,
-      logsSummary: [{
-        key: 'randomActiveLogKey',
-        stage: 'import',
-      }],
-      loadMoreStatus: 'received',
-      hasNewLogs: false,
-      fetchStatus: 'completed',
-      activeLogKey,
-      logsDetails: {randomActiveLogKey: {
-        status: logsStatus,
-        request: {},
-        response: {},
-      }},
-      nextPageURL: '/v1(api)/flows/:_flowId',
-      error,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.logs.flowStep = {
+      random_resource_id_mock: {
+        logsStatus,
+        logsSummary: [{
+          key: 'randomActiveLogKey',
+          stage: 'import',
+        }],
+        loadMoreStatus: 'received',
+        hasNewLogs: false,
+        fetchStatus: 'completed',
+        activeLogKey,
+        logsDetails: {randomActiveLogKey: {
+          status: logsStatus,
+          request: {},
+          response: {},
+        }},
+        nextPageURL: '/v1(api)/flows/:_flowId',
+        error,
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <PreviewLogDetails {...props} />
@@ -59,21 +59,10 @@ async function initPreviewLogDetails({props = {},
 describe('PreviewLogDetails tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
-  let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      const {logKey: key, resourceId, type} = action;
-
-      switch (type) {
-        case actionTypes.LOGS.FLOWSTEP.LOG.REQUEST:
-          initialStore.getState().session.logs.flowStep[resourceId].logsDetails[key] = 'requested';
-          break;
-        default:
-      }
-    });
+    mockDispatchFn = jest.fn();
     useDispatchSpy.mockReturnValue(mockDispatchFn);
   });
 

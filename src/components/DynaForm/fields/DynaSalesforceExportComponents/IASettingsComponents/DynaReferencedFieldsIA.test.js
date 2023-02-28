@@ -2,7 +2,7 @@
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import DynaReferencedFieldsIA from './DynaReferencedFieldsIA';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 const mockDynaReferencedFields = jest.fn();
@@ -23,13 +23,15 @@ describe('dynaReferencedFieldsIA UI tests', () => {
     const fieldMetaProps = {resource: {}, properties: {_exportId: '5efd8663a56953365bd28541'}};
     const props = fieldMetaProps;
 
-    initialStore.getState().data.resources = {exports: [{
-      _id: '5efd8663a56953365bd28541',
-      _connectionId: '6afd8663a56953365bd28541',
-      salesforce: {
-        sObjectType: 'Quote',
-      },
-    }]};
+    mutateStore(initialStore, draft => {
+      draft.data.resources = {exports: [{
+        _id: '5efd8663a56953365bd28541',
+        _connectionId: '6afd8663a56953365bd28541',
+        salesforce: {
+          sObjectType: 'Quote',
+        },
+      }]};
+    });
 
     renderWithProviders(<DynaReferencedFieldsIA {...props} />, {initialStore});
     await waitFor(() => expect(mockDynaReferencedFields).toHaveBeenCalledWith({...fieldMetaProps, options: 'Quote', connectionId: '6afd8663a56953365bd28541'}));

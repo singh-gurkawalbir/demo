@@ -7,7 +7,7 @@ import Licenses from '.';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initMarketplace({
   props = {
@@ -22,35 +22,38 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.loadResources = {
-    connectorLicenses: 'received',
-    integrations: 'received',
-  };
-  initialStore.getState().data.resources = {
-    connectorLicenses,
-    connectors: [
-      {
-        name: 'Mock Connector 1',
-        _id: 'connector_id_1',
-        framework: 'twoDotZero',
-      },
-      {
-        name: 'Mock Connector 2',
-        _id: 'connector_id_2',
-      },
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.loadResources = {
+      connectorLicenses: 'received',
+      integrations: 'received',
+    };
+    draft.data.resources = {
+      connectorLicenses,
+      connectors: [
+        {
+          name: 'Mock Connector 1',
+          _id: 'connector_id_1',
+          framework: 'twoDotZero',
+        },
+        {
+          name: 'Mock Connector 2',
+          _id: 'connector_id_2',
+        },
+      ],
+    };
 
-  initialStore.getState().session.filters = {
-    connectorLicenses: {
-      keyword,
-      take: 100,
-    },
-  };
-  initialStore.getState().comms.networkComms[`GET:/connectors/${props.match.params.connectorId}/licenses`] = {
-    method: 'GET',
-    status: 'success',
-  };
+    draft.session.filters = {
+      connectorLicenses: {
+        keyword,
+        take: 100,
+      },
+    };
+    draft.comms.networkComms[`GET:/connectors/${props.match.params.connectorId}/licenses`] = {
+      method: 'GET',
+      status: 'success',
+    };
+  });
+
   const ui = (
     <MemoryRouter>
       <Licenses {...props} />

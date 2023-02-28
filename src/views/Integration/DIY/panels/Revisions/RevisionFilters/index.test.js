@@ -3,15 +3,17 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import RevisionFilters from '.';
-import { renderWithProviders } from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import actions from '../../../../../../actions';
 
 let initialStore;
 
 function initRevisionFilters({revisionsData, revisionsFilterData}) {
-  initialStore.getState().data.revisions = revisionsData;
-  initialStore.getState().session.filters = revisionsFilterData;
+  mutateStore(initialStore, draft => {
+    draft.data.revisions = revisionsData;
+    draft.session.filters = revisionsFilterData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test/12345'}]}

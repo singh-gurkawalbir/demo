@@ -1,5 +1,4 @@
 import { select, call } from 'redux-saga/effects';
-import deepClone from 'lodash/cloneDeep';
 import jsonPatch from 'fast-json-patch';
 import { selectors } from '../../../reducers';
 import { getFlowUpdatePatchesForNewPGorPP } from '../../resourceForm';
@@ -15,6 +14,7 @@ import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 import { generateMongoDBId } from '../../../utils/string';
+import customCloneDeep from '../../../utils/customCloneDeep';
 import { getUnionObject } from '../../../utils/jsonPaths';
 
 export function* pageProcessorPreview({
@@ -38,7 +38,7 @@ export function* pageProcessorPreview({
   const { merged } = yield select(selectors.resourceData, 'flows', flowId);
   const { prePatches } = yield select(selectors.editor, editorId);
 
-  let flowClone = deepClone(merged);
+  let flowClone = customCloneDeep(merged);
 
   if (prePatches?.length) {
     flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(prePatches)).newDocument;
@@ -227,7 +227,7 @@ export function* exportPreview({
     resourceType: 'exports',
     formKey,
   });
-  let body = deepClone(resource);
+  let body = customCloneDeep(resource);
 
   // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
   // Example: type: once should not be sent while previewing
