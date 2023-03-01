@@ -4,15 +4,17 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 import ResourceLink from '.';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.preferences = {
-  environment: 'production',
-  defaultAShareId: 'own',
-};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {
+    environment: 'production',
+    defaultAShareId: 'own',
+  };
+});
 
 jest.mock('../LoadResources', () => ({
   __esModule: true,

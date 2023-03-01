@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ConditionalLookup from '.';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 let initialStore;
@@ -11,7 +11,9 @@ const mockOnSave = jest.fn();
 const mockHistoryGoBack = jest.fn();
 
 function initConditionalLookup({onSave, disabled, importId, flowId, props, paramsData, pathData, pathnameData, mappingData}) {
-  initialStore.getState().session.mapping = mappingData;
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = mappingData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: pathnameData}]}

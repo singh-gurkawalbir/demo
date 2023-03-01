@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 import { getCreatedStore } from '../../../store';
 
@@ -43,38 +43,40 @@ describe('test suite for netsuite sub-record JSON path field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.flowData[props.flowId] = {
-      pageGeneratorsMap: {},
-      pageProcessorsMap: {
-        [props.resourceId]: {
-          preMap: {
-            status: 'received',
-            data,
-          },
-          processedFlowInput: {
-            status: 'received',
-            data,
-          },
-          inputFilter: {
-            status: 'received',
-            data,
-          },
-          flowInput: {
-            status: 'received',
-            data,
+    mutateStore(initialStore, draft => {
+      draft.session.flowData[props.flowId] = {
+        pageGeneratorsMap: {},
+        pageProcessorsMap: {
+          [props.resourceId]: {
+            preMap: {
+              status: 'received',
+              data,
+            },
+            processedFlowInput: {
+              status: 'received',
+              data,
+            },
+            inputFilter: {
+              status: 'received',
+              data,
+            },
+            flowInput: {
+              status: 'received',
+              data,
+            },
           },
         },
-      },
-      pageProcessors: [
-        {
-          type: 'import',
-          _importId: props.resourceId,
-        },
-      ],
-      routers: [],
-      refresh: false,
-      formKey: 'imports-8lOvKF',
-    };
+        pageProcessors: [
+          {
+            type: 'import',
+            _importId: props.resourceId,
+          },
+        ],
+        routers: [],
+        refresh: false,
+        formKey: 'imports-8lOvKF',
+      };
+    });
 
     renderWithProviders(<DynaNetSuiteSubRecordJsonPath {...props} />, { initialStore });
     expect(document.querySelector('label')).toHaveTextContent(props.label);

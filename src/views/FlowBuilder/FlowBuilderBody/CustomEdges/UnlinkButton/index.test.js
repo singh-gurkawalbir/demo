@@ -40,7 +40,7 @@ describe('Testsuite for Unlink Button', () => {
   test('should test unlink merge button by passing edge id in the props', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({flowId: '234'});
 
-    renderWithProviders(
+    await renderWithProviders(
       <UnlinkButton edgeId="123" />, initialStore
     );
     expect(screen.getByText(/mock unlink icon/i)).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe('Testsuite for Unlink Button', () => {
   test('should test unlink merge button when no edge id passed in the props', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({flowId: '234'});
 
-    renderWithProviders(
+    await renderWithProviders(
       <UnlinkButton edgeId="" />, initialStore
     );
     expect(screen.getByText(/mock unlink icon/i)).toBeInTheDocument();
@@ -70,7 +70,7 @@ describe('Testsuite for Unlink Button', () => {
   test('should test unlink merge button when no edge id passed in the props and no flow id from flow context', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({flowId: ''});
 
-    renderWithProviders(
+    await renderWithProviders(
       <UnlinkButton edgeId="" />, initialStore
     );
     expect(screen.getByText(/mock unlink icon/i)).toBeInTheDocument();

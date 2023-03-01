@@ -3,13 +3,15 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.profile = { timezone: 'Asia/Calcutta' };
+mutateStore(initialStore, draft => {
+  draft.user.profile = { timezone: 'Asia/Calcutta' };
+});
 
 const resource = {
   _id: '5e7068331c056a75e6df19b2',

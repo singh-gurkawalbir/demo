@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import { ConfirmDialogProvider } from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
 import OnOffCell from './index';
@@ -31,9 +31,11 @@ jest.mock('@material-ui/core/IconButton', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.preferences = {
-  defaultAShareId: 'own',
-};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {
+    defaultAShareId: 'own',
+  };
+});
 
 describe('on/Off cell UI tests', () => {
   afterEach(() => {

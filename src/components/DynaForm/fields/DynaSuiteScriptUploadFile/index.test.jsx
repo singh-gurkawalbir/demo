@@ -6,7 +6,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSuiteScriptUploadFile from './index';
 import actions from '../../../../actions';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 const initialStore = reduxStore;
 const mockDispatch = jest.fn();
@@ -28,14 +28,16 @@ function initDynaSuiteScriptUploadFile(props = {}) {
 
 describe('dynaSuiteScriptUploadFile UI test cases', () => {
   test('should make dispatch calls when status is set to received and persistData is set to false and reset with no files and uploaded a file', async () => {
-    initialStore.getState().session.fileUpload = {
-      '6386915c8dab534c4614b941-uploadFile': { status: 'received',
-        file: {
-          fileName: 'fileA.csv',
-          type: 'csv',
-        },
-        name: 'fileA' },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '6386915c8dab534c4614b941-uploadFile': { status: 'received',
+          file: {
+            fileName: 'fileA.csv',
+            type: 'csv',
+          },
+          name: 'fileA' },
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '4 KB',
@@ -75,16 +77,18 @@ describe('dynaSuiteScriptUploadFile UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile({fileId: '6386915c8dab534c4614b941-uploadFile', fileType: 'csv', fileProps: {maxSize: '4 KB'}, file}));
   });
   test('should make dispatch calls when status is set to received and upload the file', async () => {
-    initialStore.getState().session.fileUpload = {
-      '6386915c8dab534c4614b941-uploadFile': {
-        status: 'received',
-        file: 'User,Id ,2 ,3 ,4 ,5 ',
-        name: 'fileA.csv',
-        size: 20,
-        fileType: 'csv',
-        rawFile: {},
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '6386915c8dab534c4614b941-uploadFile': {
+          status: 'received',
+          file: 'User,Id ,2 ,3 ,4 ,5 ',
+          name: 'fileA.csv',
+          size: 20,
+          fileType: 'csv',
+          rawFile: {},
+        },
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '4 KB',
@@ -127,7 +131,9 @@ describe('dynaSuiteScriptUploadFile UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile({fileId: '6386915c8dab534c4614b941-uploadFile', fileType: 'csv', fileProps: {maxSize: '4 KB'}, file}));
   });
   test('should make dispatch calls when uploaded file is empty and reset files and uploaded no file', async () => {
-    initialStore.getState().session.fileUpload = {};
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {};
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '4 KB',

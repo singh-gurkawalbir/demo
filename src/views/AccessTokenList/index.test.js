@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import AccessTokenList from '.';
 import { runServer } from '../../test/api/server';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../constants';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 
 async function initAccessTokenList({
   props = {
@@ -20,22 +20,25 @@ async function initAccessTokenList({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    defaultAShareId,
-  };
-  initialStore.getState().user.org = {
-    accounts: [{
-      _id: defaultAShareId,
-      accessLevel: defaultAShareId === 'own' ? 'owner' : null,
-    }],
-  };
-  initialStore.getState().data.resources = resources;
-  initialStore.getState().session.filters = filters;
-  initialStore.getState().auth = {
-    defaultAccountSet: true,
-    authenticated: true,
-  };
-  initialStore.getState().session.loadResources = {}; // have to clone store somehow or else it using the same store
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      defaultAShareId,
+    };
+    draft.user.org = {
+      accounts: [{
+        _id: defaultAShareId,
+        accessLevel: defaultAShareId === 'own' ? 'owner' : null,
+      }],
+    };
+    draft.data.resources = resources;
+    draft.session.filters = filters;
+    draft.auth = {
+      defaultAccountSet: true,
+      authenticated: true,
+    };
+    draft.session.loadResources = {};
+  });
+
   const ui = (
     <MemoryRouter>
       <AccessTokenList {...props} />
@@ -85,7 +88,7 @@ describe('AccessTokenList test cases', () => {
     const searchInput = screen.getByRole('textbox', {name: /Search/i});
 
     expect(searchInput).toBeInTheDocument();
-    userEvent.type(searchInput, 'typ');
+    await userEvent.type(searchInput, 'typ');
     await waitFor(() => expect(screen.queryByText(NO_RESULT_SEARCH_MESSAGE)).toBeInTheDocument());
   });
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter} from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import CeligoTable from '../../../../CeligoTable';
 import actions from '../../../../../actions';
 import metadata from '../../metadata';
@@ -38,9 +38,11 @@ const actionProps = {
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.preferences = {
-  defaultAShareId: 'own',
-};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {
+    defaultAShareId: 'own',
+  };
+});
 
 async function initflowTable(actionProps = {}, res = resource, initialStore = null) {
   const ui = (

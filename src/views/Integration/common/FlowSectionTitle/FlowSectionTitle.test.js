@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders} from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import FlowSectionTitle from '.';
 
@@ -27,7 +27,10 @@ describe('FlowSectionTile UI tests', () => {
   function initialStoreAndRender(useErrMgtTwoDotZero, groupHasNoFlows, errorCount) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile = {useErrMgtTwoDotZero};
+    mutateStore(initialStore, draft => {
+      draft.user.profile = {useErrMgtTwoDotZero};
+    });
+
     renderWithProviders(
       <MemoryRouter>
         <FlowSectionTitle

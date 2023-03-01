@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import SaveButtonGroup from './SaveButtonGroup';
 
 const mockClose = jest.fn();
@@ -22,39 +22,40 @@ const HTTPlookupObj = {
 async function initSaveButtonGroup(props = {}, makeFormDirty = false, _mode = 'static', _failRecord = 'disallowFailure') {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: '_importId1',
-        adaptorType: 'NetSuiteDistributedImport',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: '_importId1',
+          adaptorType: 'NetSuiteDistributedImport',
+        },
+        {
+          _id: '_importId2',
+          adaptorType: 'SalesforceImport',
+        },
+        {
+          _id: '_importId3',
+          adaptorType: 'HTTPImport',
+        },
+      ],
+    };
+    draft.session.form = {
+      _formKey: {
+        disabled: false,
+        isValid: true,
+        fields: makeFormDirty ? {_mode: {touched: true}} : {},
+        value: {
+          _mode,
+          _name: 'lookupName',
+          _failRecord,
+          _mapList: [
+            {export: 'exp', import: 'imp'},
+            {},
+          ],
+        },
       },
-      {
-        _id: '_importId2',
-        adaptorType: 'SalesforceImport',
-      },
-      {
-        _id: '_importId3',
-        adaptorType: 'HTTPImport',
-      },
-    ],
-  };
-
-  initialStore.getState().session.form = {
-    _formKey: {
-      disabled: false,
-      isValid: true,
-      fields: makeFormDirty ? {_mode: {touched: true}} : {},
-      value: {
-        _mode,
-        _name: 'lookupName',
-        _failRecord,
-        _mapList: [
-          {export: 'exp', import: 'imp'},
-          {},
-        ],
-      },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<SaveButtonGroup {...props} />, {initialStore});
 }

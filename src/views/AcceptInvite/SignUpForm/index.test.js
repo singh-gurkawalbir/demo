@@ -4,7 +4,7 @@ import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import SignUp from '.';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
 
 let initialStore;
@@ -12,7 +12,9 @@ const mockGetFieldMeta = jest.fn();
 const mockUseFormInitWithPermissions = jest.fn();
 
 function initSignUp({acceptInviteData}) {
-  initialStore.getState().auth.acceptInvite = acceptInviteData;
+  mutateStore(initialStore, draft => {
+    draft.auth.acceptInvite = acceptInviteData;
+  });
   const ui = (
     <SignUp />
   );

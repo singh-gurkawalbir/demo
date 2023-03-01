@@ -1,7 +1,7 @@
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
 import MappingRow from './MappingRow';
 import actions from '../../../../../../actions';
 
@@ -23,51 +23,53 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.responseMapping = { mapping: {
-  mappings: [
-    {
-      extract: 'i',
-      generate: 'responseID',
-      key: '54eajgANHf',
-    },
-  ],
-  flowId: '62f0bdfaf8b63672312bbe36',
-  resourceId: '62e6897976ce554057c0f28f',
-  resourceType: 'imports',
-  status: 'received',
-  mappingsCopy: [
-    {
-      extract: 'i',
-      generate: 'responseID',
-      key: '54eajgANHf',
-    },
-  ],
-}};
-initialStore.getState().data.resources.flows = [
-  {
-    _id: '62f0bdfaf8b63672312bbe36',
-    pageProcessors: [
+mutateStore(initialStore, draft => {
+  draft.session.responseMapping = { mapping: {
+    mappings: [
       {
-        responseMapping: {
-          fields: [
-            {
-              extract: 'id',
-              generate: 'responseID',
-            },
-          ],
-          lists: [],
-        },
-        type: 'import',
-        _importId: '62e6897976ce554057c0f28f',
+        extract: 'i',
+        generate: 'responseID',
+        key: '54eajgANHf',
       },
     ],
-  },
-];
-initialStore.getState().data.resources.imports = [
-  {
-    _id: '62e6897976ce554057c0f28f',
-  },
-];
+    flowId: '62f0bdfaf8b63672312bbe36',
+    resourceId: '62e6897976ce554057c0f28f',
+    resourceType: 'imports',
+    status: 'received',
+    mappingsCopy: [
+      {
+        extract: 'i',
+        generate: 'responseID',
+        key: '54eajgANHf',
+      },
+    ],
+  }};
+  draft.data.resources.flows = [
+    {
+      _id: '62f0bdfaf8b63672312bbe36',
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [
+              {
+                extract: 'id',
+                generate: 'responseID',
+              },
+            ],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '62e6897976ce554057c0f28f',
+        },
+      ],
+    },
+  ];
+  draft.data.resources.imports = [
+    {
+      _id: '62e6897976ce554057c0f28f',
+    },
+  ];
+});
 describe('response Mapping MappingRow test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();

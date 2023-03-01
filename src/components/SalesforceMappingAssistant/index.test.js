@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import SalesforceMappingAssistant from '.';
 import { getCreatedStore } from '../../store';
 import actions from '../../actions';
@@ -316,15 +316,17 @@ describe('test suite for SalesforceMappingAssistant', () => {
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata.application[connectionId] = {};
-    initialStore.getState().session.metadata.application[connectionId][commMetaPath] = {
-      status: 'requested',
-      data: [{
-        name: 'asd',
-        scriptId: 'xyz',
-        url: 'https:://sampleURL.com',
-      }],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[connectionId] = {};
+      draft.session.metadata.application[connectionId][commMetaPath] = {
+        status: 'requested',
+        data: [{
+          name: 'asd',
+          scriptId: 'xyz',
+          url: 'https:://sampleURL.com',
+        }],
+      };
+    });
 
     await initSalesforceMappingAssistant({connectionId, sObjectType, layoutId}, initialStore);
     expect(screen.getByText('Spinner')).toBeInTheDocument();
@@ -341,11 +343,13 @@ describe('test suite for SalesforceMappingAssistant', () => {
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata.application[connectionId] = {};
-    initialStore.getState().session.metadata.application[connectionId][commMetaPath] = {
-      status: 'complete',
-      data: LAYOUT,
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[connectionId] = {};
+      draft.session.metadata.application[connectionId][commMetaPath] = {
+        status: 'complete',
+        data: LAYOUT,
+      };
+    });
 
     await initSalesforceMappingAssistant({connectionId, sObjectType, layoutId, onFieldClick}, initialStore);
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
 
@@ -31,9 +31,11 @@ describe('test suite for IntegrationSettingsSaveButton', () => {
     const KEY = `${integrationId}-${flowId}-${sectionId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings[KEY] = {
-      formSaveStatus: 'loading',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings[KEY] = {
+        formSaveStatus: 'loading',
+      };
+    });
     await initIntegrationSettingsSaveButton({integrationId, flowId, sectionId}, initialStore);
     expect(screen.getByRole('button', {name: 'Saving...'})).toBeInTheDocument();
   });
@@ -43,12 +45,14 @@ describe('test suite for IntegrationSettingsSaveButton', () => {
     const initialStore = getCreatedStore();
     const postProcessValuesFn = jest.fn(() => ({}));
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: {touched: true},
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: {touched: true},
+        },
+      };
+    });
 
     await initIntegrationSettingsSaveButton({formKey, postProcessValuesFn}, initialStore);
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaSettings from '.';
 
 const onFieldChange = jest.fn();
@@ -11,37 +11,39 @@ const onFieldChange = jest.fn();
 describe('dynaSettings tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {
-        _id: 'flow1',
-        _integrationId: '_integrationId1',
-        settingsForm: { form: { fieldMap: {} }, init: { _scriptId: '123' } },
-        settings: {},
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {
+          _id: 'flow1',
+          _integrationId: '_integrationId1',
+          settingsForm: { form: { fieldMap: {} }, init: { _scriptId: '123' } },
+          settings: {},
+        },
+        {
+          _id: 'flow3',
+          _integrationId: '_integrationId1',
+          settingsForm: { form: { fieldMap: {} }, init: { _scriptId: '123' } },
+          settings: {},
+        },
+      ],
+      integrations: [{
+        _id: '_integrationId1',
+      }],
+    };
+    draft.user = {
+      profile: {
+        developer: true,
+        allowedToPublish: false,
       },
-      {
-        _id: 'flow3',
-        _integrationId: '_integrationId1',
-        settingsForm: { form: { fieldMap: {} }, init: { _scriptId: '123' } },
-        settings: {},
-      },
-    ],
-    integrations: [{
-      _id: '_integrationId1',
-    }],
-  };
-  initialStore.getState().user = {
-    profile: {
-      developer: true,
-      allowedToPublish: false,
-    },
-  };
-  initialStore.getState().session.form = {
-    'settingsForm-flow3': {isValid: false},
-  };
-  initialStore.getState().session.editors = {
-    'settings-flow3-general': {saveStatus: 'success'},
-  };
+    };
+    draft.session.form = {
+      'settingsForm-flow3': {isValid: false},
+    };
+    draft.session.editors = {
+      'settings-flow3-general': {saveStatus: 'success'},
+    };
+  });
 
   test('should able to test DynaSettings without user having settingsForm [non-devs]', async () => {
     const props = {
@@ -63,7 +65,9 @@ describe('dynaSettings tests', () => {
     expect(onFieldChange).toHaveBeenCalledWith(undefined, {}, true);
   });
   test('should able to test DynaSettings with allowFormEdit: false', async () => {
-    initialStore.getState().user.profile.developer = false;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.developer = false;
+    });
     const props = {
       resourceContext: {resourceType: 'flows', resourceId: 'flow2'}, onFieldChange,
     };

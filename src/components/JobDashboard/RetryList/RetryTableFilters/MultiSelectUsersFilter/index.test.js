@@ -3,7 +3,7 @@ import React from 'react';
 import { screen} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { reduxStore, renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders} from '../../../../../test/test-utils';
 import MultiSelectUsersFilter from '.';
 import { FILTER_KEYS } from '../../../../../utils/errorManagement';
 import { JOB_STATUS, JOB_TYPES } from '../../../../../constants';
@@ -14,155 +14,157 @@ function initMultiSelectUsersFilter({
   props = {},
   filters,
 } = {}) {
-  initialStore.getState().session.filters = filters;
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.profile = {
-    _id: '5cadc8b42b10347a2708bf29',
-    name: 'Owner name',
-    email: 'owner@celigo.com',
-    allowedToPublish: true,
-    developer: true,
-  };
-  initialStore.getState().user.org = {
-    users: [
-      {
-        _id: '5f7011605b2e3244837309f9',
-        accepted: true,
-        accessLevel: 'monitor',
-        integrationAccessLevel: [
-          {
-            _integrationId: '5e44efa28015c9464272256f',
-            accessLevel: 'manage',
+  mutateStore(initialStore, draft => {
+    draft.session.filters = filters;
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.profile = {
+      _id: '5cadc8b42b10347a2708bf29',
+      name: 'Owner name',
+      email: 'owner@celigo.com',
+      allowedToPublish: true,
+      developer: true,
+    };
+    draft.user.org = {
+      users: [
+        {
+          _id: '5f7011605b2e3244837309f9',
+          accepted: true,
+          accessLevel: 'monitor',
+          integrationAccessLevel: [
+            {
+              _integrationId: '5e44efa28015c9464272256f',
+              accessLevel: 'manage',
+            },
+          ],
+          sharedWithUser: {
+            _id: '5f6882679daecd32740e2c38',
+            email: 'sharedUser1@celigo.com',
+            name: 'Shared user 1',
           },
-        ],
-        sharedWithUser: {
-          _id: '5f6882679daecd32740e2c38',
-          email: 'sharedUser1@celigo.com',
-          name: 'Shared user 1',
         },
-      },
-      {
-        _id: '5f72fae75b2e32448373575e',
-        accepted: true,
-        accessLevel: 'monitor',
-        integrationAccessLevel: [
-          {
-            _integrationId: '5e44ee816fb284424f693b43',
-            accessLevel: 'manage',
+        {
+          _id: '5f72fae75b2e32448373575e',
+          accepted: true,
+          accessLevel: 'monitor',
+          integrationAccessLevel: [
+            {
+              _integrationId: '5e44ee816fb284424f693b43',
+              accessLevel: 'manage',
+            },
+          ],
+          sharedWithUser: {
+            _id: '5f686ef49daecd32740e2710',
+            email: 'shareduser2@celigo.com',
+            name: 'Shared user 2',
           },
-        ],
-        sharedWithUser: {
-          _id: '5f686ef49daecd32740e2710',
-          email: 'shareduser2@celigo.com',
-          name: 'Shared user 2',
         },
-      },
-      {
-        _id: '5f770d4b96ae3b4bf0fdd8f1',
-        accepted: true,
-        accessLevel: 'monitor',
-        integrationAccessLevel: [],
-        sharedWithUser: {
-          _id: '5f770d4b96ae3b4bf0fdd8ee',
-          email: 'shareduser3@celigo.com',
-          name: 'Shared user 3',
-        },
-      },
-    ],
-    accounts: [
-      {
-        _id: 'own',
-        accessLevel: 'owner',
-      },
-    ],
-  };
-  initialStore.getState().data.resources.flow = [{
-    _id: 'flow1',
-    _integrationId: '5e44ee816fb284424f693b43',
-    name: 'test flow',
-  }];
-  initialStore.getState().data.integrationAShares = {
-    '5e44ee816fb284424f693b43': [
-      {
-        _id: '5f7011605b2e3244837309f9',
-        accepted: true,
-        accessLevel: 'monitor',
-        sharedWithUser: {
-          _id: '5f6882679daecd32740e2c38',
-          email: 'sharedUser1@celigo.com',
-          name: 'Shared user 1',
-        },
-      },
-      {
-        _id: '5f72fae75b2e32448373575e',
-        accepted: true,
-        sharedWithUser: {
-          _id: '5f686ef49daecd32740e2710',
-          email: 'shareduser2@celigo.com',
-          name: 'Shared user 2',
-        },
-        accessLevel: 'monitor',
-      },
-      {
-        _id: '5f770d4b96ae3b4bf0fdd8f1',
-        accepted: true,
-        accessLevel: 'monitor',
-        sharedWithUser: {
-          _id: '5f770d4b96ae3b4bf0fdd8ee',
-          email: 'shareduser3@celigo.com',
-          name: 'Shared user 3',
-        },
-      },
-    ],
-  };
-  initialStore.getState().session.errorManagement.retries = {
-    flow1: {
-      res1: {
-        status: 'received',
-        data: [
-          {
-            _id: 'j1',
-            type: JOB_TYPES.RETRY,
-            status: JOB_STATUS.COMPLETED,
-            startedAt: '2019-08-11T10:50:00.000Z',
-            numError: 1,
-            numIgnore: 2,
-            numPagesGenerated: 10,
-            numResolved: 0,
-            numSuccess: 20,
-            triggeredBy: '5f6882679daecd32740e2c38',
+        {
+          _id: '5f770d4b96ae3b4bf0fdd8f1',
+          accepted: true,
+          accessLevel: 'monitor',
+          integrationAccessLevel: [],
+          sharedWithUser: {
+            _id: '5f770d4b96ae3b4bf0fdd8ee',
+            email: 'shareduser3@celigo.com',
+            name: 'Shared user 3',
           },
-          {
-            _id: 'j2',
-            type: JOB_TYPES.RETRY,
-            status: JOB_STATUS.RUNNING,
-            startedAt: '2019-08-11T10:50:00.000Z',
-            numError: 1,
-            numIgnore: 2,
-            numPagesGenerated: 10,
-            numResolved: 0,
-            numSuccess: 20,
-            triggeredBy: '5f686ef49daecd32740e2710',
+        },
+      ],
+      accounts: [
+        {
+          _id: 'own',
+          accessLevel: 'owner',
+        },
+      ],
+    };
+    draft.data.resources.flow = [{
+      _id: 'flow1',
+      _integrationId: '5e44ee816fb284424f693b43',
+      name: 'test flow',
+    }];
+    draft.data.integrationAShares = {
+      '5e44ee816fb284424f693b43': [
+        {
+          _id: '5f7011605b2e3244837309f9',
+          accepted: true,
+          accessLevel: 'monitor',
+          sharedWithUser: {
+            _id: '5f6882679daecd32740e2c38',
+            email: 'sharedUser1@celigo.com',
+            name: 'Shared user 1',
           },
-          {
-            _id: 'j3',
-            type: JOB_TYPES.RETRY,
-            status: JOB_STATUS.CANCELED,
-            startedAt: '2019-08-11T10:50:00.000Z',
-            numError: 1,
-            numIgnore: 2,
-            numPagesGenerated: 10,
-            numResolved: 0,
-            numSuccess: 20,
-            triggeredBy: '5f770d4b96ae3b4bf0fdd8ee',
+        },
+        {
+          _id: '5f72fae75b2e32448373575e',
+          accepted: true,
+          sharedWithUser: {
+            _id: '5f686ef49daecd32740e2710',
+            email: 'shareduser2@celigo.com',
+            name: 'Shared user 2',
           },
-        ],
+          accessLevel: 'monitor',
+        },
+        {
+          _id: '5f770d4b96ae3b4bf0fdd8f1',
+          accepted: true,
+          accessLevel: 'monitor',
+          sharedWithUser: {
+            _id: '5f770d4b96ae3b4bf0fdd8ee',
+            email: 'shareduser3@celigo.com',
+            name: 'Shared user 3',
+          },
+        },
+      ],
+    };
+    draft.session.errorManagement.retries = {
+      flow1: {
+        res1: {
+          status: 'received',
+          data: [
+            {
+              _id: 'j1',
+              type: JOB_TYPES.RETRY,
+              status: JOB_STATUS.COMPLETED,
+              startedAt: '2019-08-11T10:50:00.000Z',
+              numError: 1,
+              numIgnore: 2,
+              numPagesGenerated: 10,
+              numResolved: 0,
+              numSuccess: 20,
+              triggeredBy: '5f6882679daecd32740e2c38',
+            },
+            {
+              _id: 'j2',
+              type: JOB_TYPES.RETRY,
+              status: JOB_STATUS.RUNNING,
+              startedAt: '2019-08-11T10:50:00.000Z',
+              numError: 1,
+              numIgnore: 2,
+              numPagesGenerated: 10,
+              numResolved: 0,
+              numSuccess: 20,
+              triggeredBy: '5f686ef49daecd32740e2710',
+            },
+            {
+              _id: 'j3',
+              type: JOB_TYPES.RETRY,
+              status: JOB_STATUS.CANCELED,
+              startedAt: '2019-08-11T10:50:00.000Z',
+              numError: 1,
+              numIgnore: 2,
+              numPagesGenerated: 10,
+              numResolved: 0,
+              numSuccess: 20,
+              triggeredBy: '5f770d4b96ae3b4bf0fdd8ee',
+            },
+          ],
+        },
       },
-    },
-  };
+    };
+  });
 
   const ui = (
     <MemoryRouter>

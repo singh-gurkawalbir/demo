@@ -3,13 +3,15 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-  data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {somePath: {
+    data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
+  }}}};
+});
 
 jest.mock('react-truncate-markup', () => ({
   __esModule: true,

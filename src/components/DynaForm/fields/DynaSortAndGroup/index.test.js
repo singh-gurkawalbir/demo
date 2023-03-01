@@ -4,7 +4,7 @@ import React from 'react';
 import * as reactRedux from 'react-redux';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../test/test-utils';
 import DynaSortAndGroup from './index';
 import actions from '../../../../actions';
 
@@ -14,28 +14,30 @@ const value = ['selectedValue'];
 const enableSorting = true;
 const initialStore = reduxStore;
 
-initialStore.getState().session.resourceFormSampleData = {
-  'export-id': {
-    typeOfSampleData: 'preview',
-    preview: {
-      data: {
-        parse: [{
-          id: 'userID',
-          name: 'user name',
-          randomString: 'randomValue',
-          randomObject: {
-            key: 'value',
-          },
-          boolean: true,
-        }]},
+mutateStore(initialStore, draft => {
+  draft.session.resourceFormSampleData = {
+    'export-id': {
+      typeOfSampleData: 'preview',
+      preview: {
+        data: {
+          parse: [{
+            id: 'userID',
+            name: 'user name',
+            randomString: 'randomValue',
+            randomObject: {
+              key: 'value',
+            },
+            boolean: true,
+          }]},
+      },
+      status: 'received',
     },
-    status: 'received',
-  },
-  'export-id-2': {
-    typeOfSampleData: 'preview',
-    status: undefined,
-  },
-};
+    'export-id-2': {
+      typeOfSampleData: 'preview',
+      status: undefined,
+    },
+  };
+});
 
 describe('uI test cases for DynaSortAndGroup', () => {
   let mockDispatchFn;

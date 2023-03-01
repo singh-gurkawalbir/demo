@@ -4,7 +4,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import FormView from './DynaFormView';
 
 const onFieldChange = jest.fn();
@@ -32,52 +32,54 @@ const props = { resourceType: 'imports', id: 'id', label: 'FieldLabel', resource
 async function initFormView(props) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      value: {},
-      fields: {
-        a: {touched: true, id: 'a', value: 'a'},
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        value: {},
+        fields: {
+          a: {touched: true, id: 'a', value: 'a'},
+        },
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'imp1',
-        _connectionId: 'conn1',
-        adapterType: 'HTTPImport',
-        assistant: 'zendesk',
-        http: { mediaType: 'json', type: 'GET' },
-      },
-      {
-        _id: 'imp2',
-        _connectionId: 'conn2',
-        assistant: 'graphql',
-      },
-      {
-        _id: 'imp3',
-        _connectionId: 'conn3',
-        assistant: 'acumaticaecommerce',
-      },
-    ],
-    connections: [
-      {
-        _id: 'conn1',
-        http: { _httpConnectorId: 'httpConn1' },
-        assistant: 'googledrive',
-      },
-      {
-        _id: 'conn2',
-        http: { formType: 'graph_ql' },
-        assistant: 'graphql',
-      },
-      {
-        _id: 'conn3',
-        http: { _httpConnectorId: 'httpConn1' },
-        assistant: 'acumaticaecommerce',
-      },
-    ],
-  };
+    };
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'imp1',
+          _connectionId: 'conn1',
+          adapterType: 'HTTPImport',
+          assistant: 'zendesk',
+          http: { mediaType: 'json', type: 'GET' },
+        },
+        {
+          _id: 'imp2',
+          _connectionId: 'conn2',
+          assistant: 'graphql',
+        },
+        {
+          _id: 'imp3',
+          _connectionId: 'conn3',
+          assistant: 'acumaticaecommerce',
+        },
+      ],
+      connections: [
+        {
+          _id: 'conn1',
+          http: { _httpConnectorId: 'httpConn1' },
+          assistant: 'googledrive',
+        },
+        {
+          _id: 'conn2',
+          http: { formType: 'graph_ql' },
+          assistant: 'graphql',
+        },
+        {
+          _id: 'conn3',
+          http: { _httpConnectorId: 'httpConn1' },
+          assistant: 'acumaticaecommerce',
+        },
+      ],
+    };
+  });
 
   return renderWithProviders(<FormView {...props} />, { initialStore });
 }

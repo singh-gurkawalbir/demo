@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import WrappedContextConsumer from './DynaHFAssistantOptions';
 import { getCreatedStore } from '../../../../store';
 
@@ -66,97 +66,138 @@ const versions = [
 ];
 
 function initDynaHFAssistantOptions(props = {}, extraFields = {}) {
-  initialStore.getState().session.form = {
-    'exports-_exportId': {
-      fields: {
-        ...extraFields,
-        'assistantMetadata.adaptorType': {
-          id: 'assistantMetadata.adaptorType',
-          value: 'rest',
-        },
-        'assistantMetadata.assistant': {
-          id: 'assistantMetadata.assistant',
-          value: 'zendesk',
-        },
-        'assistantMetadata.version': {
-          id: 'assistantMetadata.version',
-          value: 'v2',
-        },
-        'assistantMetadata.resource': {
-          id: 'assistantMetadata.resource',
-          touched: props.touched,
-          value: 'user_api',
-        },
-        'assistantMetadata.operation': {
-          id: 'assistantMetadata.operation',
-          value: 'create',
-        },
-        demofield: {
-          id: 'demoId',
-          touched: true,
-          value: '',
-        },
-        'assistantMetadata.demoField': {
-          id: 'assistantMetadata.demoField',
-          touched: true,
-          type: 'assistantoptions',
-          value: '',
-        },
-      },
-    },
-  };
-  initialStore.getState().session.resourceForm = {
-    'imports-_importId': {
-      initData: [{ id: 'id1', value: 'v1' }],
-    },
-  };
-  initialStore.getState().data.resources = {
-    exports: [
-      { _id: '_exportId', _connectionId: '_connId', assistant: 'http', name: 'export1' },
-    ],
-    imports: [
-      { _id: '_importId', _connectionId: '_connId', assistant: 'http', name: 'import1' },
-    ],
-    connections: [{ _id: '_connId', name: 'connection1', assistant: 'zendesk', http: { _httpConnectorId: 'ConnectorId', _httpConnectorVersionId: 'ConnectorVersionId', _httpConnectorApiId: 'ConnectorApiId' } }],
-  };
-  initialStore.getState().data.httpConnectors = {
-    httpConnectorMetadata: {
-      ConnectorIdConnectorVersionIdConnectorApiId: {
-        export: {
-          config: {},
-          endpoints,
-          versions,
-          resources: [
-            {
-              id: 'user_api',
-              operations,
-              endpoints,
-              name: 'resource1',
-              hidden: false,
-              versions,
-            },
-          ],
-        },
-        import: {
-          versions: [
-            {
-              label: 'V2',
-              version: 'v2',
-            },
-          ],
-          resources: [
-            {
-              id: 'user_api',
-              operations,
-              endpoints,
-              name: 'resource1',
-              hidden: false,
-            },
-          ],
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      'exports-_exportId': {
+        fields: {
+          ...extraFields,
+          'assistantMetadata.adaptorType': {
+            id: 'assistantMetadata.adaptorType',
+            value: 'rest',
+          },
+          'assistantMetadata.assistant': {
+            id: 'assistantMetadata.assistant',
+            value: 'zendesk',
+          },
+          'assistantMetadata.version': {
+            id: 'assistantMetadata.version',
+            value: 'v2',
+          },
+          'assistantMetadata.resource': {
+            id: 'assistantMetadata.resource',
+            touched: props.touched,
+            value: 'user_api',
+          },
+          'assistantMetadata.operation': {
+            id: 'assistantMetadata.operation',
+            value: 'create',
+          },
+          demofield: {
+            id: 'demoId',
+            touched: true,
+            value: '',
+          },
+          'assistantMetadata.demoField': {
+            id: 'assistantMetadata.demoField',
+            touched: true,
+            type: 'assistantoptions',
+            value: '',
+          },
         },
       },
-    },
-  };
+    };
+    draft.session.form = {
+      'exports-_exportId': {
+        fields: {
+          ...extraFields,
+          'assistantMetadata.adaptorType': {
+            id: 'assistantMetadata.adaptorType',
+            value: 'rest',
+          },
+          'assistantMetadata.assistant': {
+            id: 'assistantMetadata.assistant',
+            value: 'zendesk',
+          },
+          'assistantMetadata.version': {
+            id: 'assistantMetadata.version',
+            value: 'v2',
+          },
+          'assistantMetadata.resource': {
+            id: 'assistantMetadata.resource',
+            touched: props.touched,
+            value: 'user_api',
+          },
+          'assistantMetadata.operation': {
+            id: 'assistantMetadata.operation',
+            value: 'create',
+          },
+          demofield: {
+            id: 'demoId',
+            touched: true,
+            value: '',
+          },
+          'assistantMetadata.demoField': {
+            id: 'assistantMetadata.demoField',
+            touched: true,
+            type: 'assistantoptions',
+            value: '',
+          },
+        },
+      },
+    };
+    draft.session.resourceForm = {
+      'imports-_importId': {
+        initData: [{ id: 'id1', value: 'v1' }],
+      },
+    };
+    draft.data.resources = {
+      exports: [
+        { _id: '_exportId', _connectionId: '_connId', assistant: 'http', name: 'export1' },
+      ],
+      imports: [
+        { _id: '_importId', _connectionId: '_connId', assistant: 'http', name: 'import1' },
+      ],
+      connections: [{ _id: '_connId', name: 'connection1', assistant: 'zendesk', http: { _httpConnectorId: 'ConnectorId', _httpConnectorVersionId: 'ConnectorVersionId', _httpConnectorApiId: 'ConnectorApiId' } }],
+    };
+    draft.data.httpConnectors = {
+      httpConnectorMetadata: {
+        ConnectorIdConnectorVersionIdConnectorApiId: {
+          export: {
+            config: {},
+            endpoints,
+            versions,
+            resources: [
+              {
+                id: 'user_api',
+                operations,
+                endpoints,
+                name: 'resource1',
+                hidden: false,
+                versions,
+              },
+            ],
+          },
+          import: {
+            versions: [
+              {
+                label: 'V2',
+                version: 'v2',
+              },
+            ],
+            resources: [
+              {
+                id: 'user_api',
+                operations,
+                endpoints,
+                name: 'resource1',
+                hidden: false,
+              },
+            ],
+          },
+        },
+      },
+    };
+  });
   renderWithProviders(<WrappedContextConsumer {...props} />, { initialStore });
 }
 

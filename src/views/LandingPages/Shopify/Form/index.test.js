@@ -5,7 +5,7 @@ import {MemoryRouter} from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import AddOrSelectForm from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
 let initialStore;
@@ -24,483 +24,485 @@ function initAddOrSelectForm({
   urlExtenstionData = undefined,
   connectionData,
 }) {
-  initialStore.getState().session.resourceForm = {
-    'connections-12345': {
-      initData: null,
-      isNew: false,
-      skipCommit: false,
-      initComplete: true,
-      fieldMeta: {
-        layout: {
-          containers: [
-            {
-              type: 'box',
-              containers: [
-                {
-                  fields: [
-                    'name',
-                    'http.unencrypted.version',
-                    'http.storeName',
-                    'http.auth.type',
-                    'http.auth.oauth.scope',
-                  ],
-                },
-              ],
+  mutateStore(initialStore, draft => {
+    draft.session.resourceForm = {
+      'connections-12345': {
+        initData: null,
+        isNew: false,
+        skipCommit: false,
+        initComplete: true,
+        fieldMeta: {
+          layout: {
+            containers: [
+              {
+                type: 'box',
+                containers: [
+                  {
+                    fields: [
+                      'name',
+                      'http.unencrypted.version',
+                      'http.storeName',
+                      'http.auth.type',
+                      'http.auth.oauth.scope',
+                    ],
+                  },
+                ],
+              },
+              {
+                type: 'collapse',
+                containers: [
+                  {
+                    collapsed: true,
+                    label: 'Advanced',
+                    fields: [
+                      '_borrowConcurrencyFromConnectionId',
+                      'http.concurrencyLevel',
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          fieldMap: {
+            name: {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: 'name',
+              name: '/name',
+              label: 'Name your connection',
+              helpKey: 'connection.name',
+              required: true,
+              type: 'text',
+              placeholder: 'e.g., Shopify connection',
+              visible: true,
+              defaultValue: '',
             },
-            {
-              type: 'collapse',
-              containers: [
+            'http.unencrypted.version': {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: 'http.unencrypted.version',
+              name: '/http/unencrypted/version',
+              type: 'select',
+              label: 'API version',
+              required: true,
+              helpKey: 'shopify.connection.http.unencrypted.version',
+              defaultValue: '2022-10',
+              options: [
                 {
-                  collapsed: true,
-                  label: 'Advanced',
-                  fields: [
-                    '_borrowConcurrencyFromConnectionId',
-                    'http.concurrencyLevel',
+                  items: [
+                    {
+                      label: '2022-04',
+                      value: '2022-04',
+                    },
+                    {
+                      label: '2022-07',
+                      value: '2022-07',
+                    },
+                    {
+                      label: '2022-10',
+                      value: '2022-10',
+                    },
                   ],
                 },
               ],
+              visible: true,
+            },
+            'http.storeName': {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: 'http.storeName',
+              name: '/http/storeName',
+              type: 'shopifystorename',
+              label: 'Store name',
+              helpKey: 'shopify.connection.http.storeURL',
+              required: true,
+              validWhen: {
+                matchesRegEx: {
+                  pattern: '^[a-zA-Z0-9][a-zA-Z0-9-]*',
+                  message: 'not a valid Store name.',
+                },
+              },
+              defaultDisabled: true,
+              visible: true,
+            },
+            'http.auth.type': {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: 'http.auth.type',
+              name: '/http/auth/type',
+              type: 'select',
+              label: 'Auth type',
+              required: true,
+              helpKey: 'shopify.connection.http.auth.type',
+              options: [
+                {
+                  items: [
+                    {
+                      label: 'Basic',
+                      value: 'basic',
+                    },
+                    {
+                      label: 'OAuth 2.0',
+                      value: 'oauth',
+                    },
+                  ],
+                },
+              ],
+              defaultValue: 'oauth',
+              defaultDisabled: true,
+              visible: true,
+            },
+            'http.auth.oauth.scope': {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: 'http.auth.oauth.scope',
+              name: '/http/auth/oauth/scope',
+              type: 'selectscopes',
+              label: 'Configure scopes',
+              scopes: [
+                {
+                  subHeader: 'Shopify scopes',
+                  scopes: [
+                    'read_content',
+                    'write_content',
+                    'read_themes',
+                    'write_themes',
+                    'read_products',
+                    'write_products',
+                    'read_product_listings',
+                    'read_customers',
+                    'write_customers',
+                    'read_orders',
+                    'write_orders',
+                    'read_all_orders',
+                    'read_draft_orders',
+                    'write_draft_orders',
+                    'read_inventory',
+                    'write_inventory',
+                    'read_locations',
+                    'read_script_tags',
+                    'write_script_tags',
+                    'read_fulfillments',
+                    'write_fulfillments',
+                    'read_shipping',
+                    'write_shipping',
+                    'read_analytics',
+                    'read_checkouts',
+                    'write_checkouts',
+                    'read_reports',
+                    'write_reports',
+                    'read_price_rules',
+                    'write_price_rules',
+                    'read_marketing_events',
+                    'write_marketing_events',
+                    'read_resource_feedbacks',
+                    'write_resource_feedbacks',
+                    'read_shopify_payments_payouts',
+                    'unauthenticated_read_product_listings',
+                    'unauthenticated_write_checkouts',
+                    'unauthenticated_write_customers',
+                    'unauthenticated_read_content',
+                    'read_assigned_fulfillment_orders',
+                    'write_assigned_fulfillment_orders',
+                    'read_merchant_managed_fulfillment_orders',
+                    'write_merchant_managed_fulfillment_orders',
+                    'read_third_party_fulfillment_orders',
+                    'write_third_party_fulfillment_orders',
+                  ],
+                },
+                {
+                  subHeader: 'Shopify Plus scopes',
+                  scopes: [
+                    'read_users',
+                    'write_users',
+                    'read_gift_cards',
+                    'write_gift_cards',
+                  ],
+                },
+              ],
+              helpKey: 'connection.http.auth.oauth.scope',
+              required: true,
+              defaultValue: [
+                'read_content',
+                'write_content',
+                'read_themes',
+                'write_themes',
+                'read_products',
+                'write_products',
+                'read_product_listings',
+                'read_customers',
+                'write_customers',
+                'read_orders',
+                'write_orders',
+                'read_all_orders',
+                'read_draft_orders',
+                'write_draft_orders',
+                'read_inventory',
+                'write_inventory',
+                'read_locations',
+                'read_script_tags',
+                'write_script_tags',
+                'read_fulfillments',
+                'write_fulfillments',
+                'read_shipping',
+                'write_shipping',
+                'read_analytics',
+                'read_checkouts',
+                'write_checkouts',
+                'read_reports',
+                'write_reports',
+                'read_price_rules',
+                'write_price_rules',
+                'read_marketing_events',
+                'write_marketing_events',
+                'read_resource_feedbacks',
+                'write_resource_feedbacks',
+                'read_shopify_payments_payouts',
+                'unauthenticated_read_product_listings',
+                'unauthenticated_write_checkouts',
+                'unauthenticated_write_customers',
+                'unauthenticated_read_content',
+                'read_assigned_fulfillment_orders',
+                'write_assigned_fulfillment_orders',
+                'read_merchant_managed_fulfillment_orders',
+                'write_merchant_managed_fulfillment_orders',
+                'read_third_party_fulfillment_orders',
+                'write_third_party_fulfillment_orders',
+              ],
+              pathToScopeField: 'http.auth.oauth.scope',
+              refreshOptionsOnChangesTo: [
+                'resourceId',
+              ],
+              visible: false,
+            },
+            _borrowConcurrencyFromConnectionId: {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: '_borrowConcurrencyFromConnectionId',
+              isLoggable: true,
+              filter: {
+                $and: [
+                  {
+                    _id: {
+                      $ne: 'new-BbFj855u2d8',
+                    },
+                  },
+                  {},
+                ],
+              },
+              type: 'selectresource',
+              label: 'Borrow concurrency from',
+              name: '/_borrowConcurrencyFromConnectionId',
+              visible: true,
+              defaultValue: '',
+              helpKey: 'connection._borrowConcurrencyFromConnectionId',
+            },
+            'http.concurrencyLevel': {
+              resourceId: 'new-BbFj855u2d8',
+              resourceType: 'connections',
+              id: 'http.concurrencyLevel',
+              isLoggable: true,
+              label: 'Concurrency level',
+              type: 'select',
+              options: [
+                {
+                  items: [
+                    {
+                      label: '1',
+                      value: 1,
+                    },
+                    {
+                      label: '2',
+                      value: 2,
+                    },
+                    {
+                      label: '3',
+                      value: 3,
+                    },
+                    {
+                      label: '4',
+                      value: 4,
+                    },
+                    {
+                      label: '5',
+                      value: 5,
+                    },
+                    {
+                      label: '6',
+                      value: 6,
+                    },
+                    {
+                      label: '7',
+                      value: 7,
+                    },
+                    {
+                      label: '8',
+                      value: 8,
+                    },
+                    {
+                      label: '9',
+                      value: 9,
+                    },
+                    {
+                      label: '10',
+                      value: 10,
+                    },
+                    {
+                      label: '11',
+                      value: 11,
+                    },
+                    {
+                      label: '12',
+                      value: 12,
+                    },
+                    {
+                      label: '13',
+                      value: 13,
+                    },
+                    {
+                      label: '14',
+                      value: 14,
+                    },
+                    {
+                      label: '15',
+                      value: 15,
+                    },
+                    {
+                      label: '16',
+                      value: 16,
+                    },
+                    {
+                      label: '17',
+                      value: 17,
+                    },
+                    {
+                      label: '18',
+                      value: 18,
+                    },
+                    {
+                      label: '19',
+                      value: 19,
+                    },
+                    {
+                      label: '20',
+                      value: 20,
+                    },
+                    {
+                      label: '21',
+                      value: 21,
+                    },
+                    {
+                      label: '22',
+                      value: 22,
+                    },
+                    {
+                      label: '23',
+                      value: 23,
+                    },
+                    {
+                      label: '24',
+                      value: 24,
+                    },
+                    {
+                      label: '25',
+                      value: 25,
+                    },
+                  ],
+                },
+              ],
+              visibleWhen: [
+                {
+                  field: '_borrowConcurrencyFromConnectionId',
+                  is: [
+                    '',
+                  ],
+                },
+              ],
+              name: '/http/concurrencyLevel',
+              visible: true,
+              defaultValue: '',
+              helpKey: 'connection.http.concurrencyLevel',
+            },
+          },
+          actions: [
+            {
+              id: 'oauthandcancel',
             },
           ],
         },
-        fieldMap: {
-          name: {
-            resourceId: 'new-BbFj855u2d8',
+        showValidationBeforeTouched: false,
+      },
+    };
+    draft.data.resources.connections = connectionData || null;
+    draft.session.form = formData || {
+      'connections-12345': {
+        parentContext: {},
+        disabled: false,
+        showValidationBeforeTouched: false,
+        conditionalUpdate: false,
+        remountKey: 1,
+        formIsDisabled: false,
+        resetTouchedState: false,
+        fields: {
+          resourceId: {
+            id: 'resourceId',
+            name: '/resourceId',
+            type: 'shopifyconnectionselect',
+            placeholder: 'Select',
             resourceType: 'connections',
-            id: 'name',
-            name: '/name',
-            label: 'Name your connection',
-            helpKey: 'connection.name',
             required: true,
-            type: 'text',
-            placeholder: 'e.g., Shopify connection',
-            visible: true,
-            defaultValue: '',
-          },
-          'http.unencrypted.version': {
-            resourceId: 'new-BbFj855u2d8',
-            resourceType: 'connections',
-            id: 'http.unencrypted.version',
-            name: '/http/unencrypted/version',
-            type: 'select',
-            label: 'API version',
-            required: true,
-            helpKey: 'shopify.connection.http.unencrypted.version',
-            defaultValue: '2022-10',
-            options: [
-              {
-                items: [
+            label: 'Connection',
+            options: {
+              filter: {
+                $and: [
                   {
-                    label: '2022-04',
-                    value: '2022-04',
+                    $or: [
+                      {
+                        type: 'rest',
+                      },
+                      {
+                        type: 'http',
+                      },
+                    ],
                   },
                   {
-                    label: '2022-07',
-                    value: '2022-07',
+                    _connectorId: {
+                      $exists: false,
+                    },
                   },
                   {
-                    label: '2022-10',
-                    value: '2022-10',
+                    assistant: 'shopify',
                   },
                 ],
               },
-            ],
-            visible: true,
-          },
-          'http.storeName': {
-            resourceId: 'new-BbFj855u2d8',
-            resourceType: 'connections',
-            id: 'http.storeName',
-            name: '/http/storeName',
-            type: 'shopifystorename',
-            label: 'Store name',
-            helpKey: 'shopify.connection.http.storeURL',
-            required: true,
-            validWhen: {
-              matchesRegEx: {
-                pattern: '^[a-zA-Z0-9][a-zA-Z0-9-]*',
-                message: 'not a valid Store name.',
-              },
+              appType: 'shopify',
             },
-            defaultDisabled: true,
-            visible: true,
-          },
-          'http.auth.type': {
-            resourceId: 'new-BbFj855u2d8',
-            resourceType: 'connections',
-            id: 'http.auth.type',
-            name: '/http/auth/type',
-            type: 'select',
-            label: 'Auth type',
-            required: true,
-            helpKey: 'shopify.connection.http.auth.type',
-            options: [
-              {
-                items: [
-                  {
-                    label: 'Basic',
-                    value: 'basic',
-                  },
-                  {
-                    label: 'OAuth 2.0',
-                    value: 'oauth',
-                  },
-                ],
-              },
-            ],
-            defaultValue: 'oauth',
-            defaultDisabled: true,
-            visible: true,
-          },
-          'http.auth.oauth.scope': {
-            resourceId: 'new-BbFj855u2d8',
-            resourceType: 'connections',
-            id: 'http.auth.oauth.scope',
-            name: '/http/auth/oauth/scope',
-            type: 'selectscopes',
-            label: 'Configure scopes',
-            scopes: [
-              {
-                subHeader: 'Shopify scopes',
-                scopes: [
-                  'read_content',
-                  'write_content',
-                  'read_themes',
-                  'write_themes',
-                  'read_products',
-                  'write_products',
-                  'read_product_listings',
-                  'read_customers',
-                  'write_customers',
-                  'read_orders',
-                  'write_orders',
-                  'read_all_orders',
-                  'read_draft_orders',
-                  'write_draft_orders',
-                  'read_inventory',
-                  'write_inventory',
-                  'read_locations',
-                  'read_script_tags',
-                  'write_script_tags',
-                  'read_fulfillments',
-                  'write_fulfillments',
-                  'read_shipping',
-                  'write_shipping',
-                  'read_analytics',
-                  'read_checkouts',
-                  'write_checkouts',
-                  'read_reports',
-                  'write_reports',
-                  'read_price_rules',
-                  'write_price_rules',
-                  'read_marketing_events',
-                  'write_marketing_events',
-                  'read_resource_feedbacks',
-                  'write_resource_feedbacks',
-                  'read_shopify_payments_payouts',
-                  'unauthenticated_read_product_listings',
-                  'unauthenticated_write_checkouts',
-                  'unauthenticated_write_customers',
-                  'unauthenticated_read_content',
-                  'read_assigned_fulfillment_orders',
-                  'write_assigned_fulfillment_orders',
-                  'read_merchant_managed_fulfillment_orders',
-                  'write_merchant_managed_fulfillment_orders',
-                  'read_third_party_fulfillment_orders',
-                  'write_third_party_fulfillment_orders',
-                ],
-              },
-              {
-                subHeader: 'Shopify Plus scopes',
-                scopes: [
-                  'read_users',
-                  'write_users',
-                  'read_gift_cards',
-                  'write_gift_cards',
-                ],
-              },
-            ],
-            helpKey: 'connection.http.auth.oauth.scope',
-            required: true,
-            defaultValue: [
-              'read_content',
-              'write_content',
-              'read_themes',
-              'write_themes',
-              'read_products',
-              'write_products',
-              'read_product_listings',
-              'read_customers',
-              'write_customers',
-              'read_orders',
-              'write_orders',
-              'read_all_orders',
-              'read_draft_orders',
-              'write_draft_orders',
-              'read_inventory',
-              'write_inventory',
-              'read_locations',
-              'read_script_tags',
-              'write_script_tags',
-              'read_fulfillments',
-              'write_fulfillments',
-              'read_shipping',
-              'write_shipping',
-              'read_analytics',
-              'read_checkouts',
-              'write_checkouts',
-              'read_reports',
-              'write_reports',
-              'read_price_rules',
-              'write_price_rules',
-              'read_marketing_events',
-              'write_marketing_events',
-              'read_resource_feedbacks',
-              'write_resource_feedbacks',
-              'read_shopify_payments_payouts',
-              'unauthenticated_read_product_listings',
-              'unauthenticated_write_checkouts',
-              'unauthenticated_write_customers',
-              'unauthenticated_read_content',
-              'read_assigned_fulfillment_orders',
-              'write_assigned_fulfillment_orders',
-              'read_merchant_managed_fulfillment_orders',
-              'write_merchant_managed_fulfillment_orders',
-              'read_third_party_fulfillment_orders',
-              'write_third_party_fulfillment_orders',
-            ],
-            pathToScopeField: 'http.auth.oauth.scope',
-            refreshOptionsOnChangesTo: [
-              'resourceId',
-            ],
-            visible: false,
-          },
-          _borrowConcurrencyFromConnectionId: {
-            resourceId: 'new-BbFj855u2d8',
-            resourceType: 'connections',
-            id: '_borrowConcurrencyFromConnectionId',
-            isLoggable: true,
-            filter: {
-              $and: [
-                {
-                  _id: {
-                    $ne: 'new-BbFj855u2d8',
-                  },
-                },
-                {},
-              ],
-            },
-            type: 'selectresource',
-            label: 'Borrow concurrency from',
-            name: '/_borrowConcurrencyFromConnectionId',
-            visible: true,
+            isValueValid: true,
             defaultValue: '',
-            helpKey: 'connection._borrowConcurrencyFromConnectionId',
-          },
-          'http.concurrencyLevel': {
-            resourceId: 'new-BbFj855u2d8',
-            resourceType: 'connections',
-            id: 'http.concurrencyLevel',
-            isLoggable: true,
-            label: 'Concurrency level',
-            type: 'select',
-            options: [
-              {
-                items: [
-                  {
-                    label: '1',
-                    value: 1,
-                  },
-                  {
-                    label: '2',
-                    value: 2,
-                  },
-                  {
-                    label: '3',
-                    value: 3,
-                  },
-                  {
-                    label: '4',
-                    value: 4,
-                  },
-                  {
-                    label: '5',
-                    value: 5,
-                  },
-                  {
-                    label: '6',
-                    value: 6,
-                  },
-                  {
-                    label: '7',
-                    value: 7,
-                  },
-                  {
-                    label: '8',
-                    value: 8,
-                  },
-                  {
-                    label: '9',
-                    value: 9,
-                  },
-                  {
-                    label: '10',
-                    value: 10,
-                  },
-                  {
-                    label: '11',
-                    value: 11,
-                  },
-                  {
-                    label: '12',
-                    value: 12,
-                  },
-                  {
-                    label: '13',
-                    value: 13,
-                  },
-                  {
-                    label: '14',
-                    value: 14,
-                  },
-                  {
-                    label: '15',
-                    value: 15,
-                  },
-                  {
-                    label: '16',
-                    value: 16,
-                  },
-                  {
-                    label: '17',
-                    value: 17,
-                  },
-                  {
-                    label: '18',
-                    value: 18,
-                  },
-                  {
-                    label: '19',
-                    value: 19,
-                  },
-                  {
-                    label: '20',
-                    value: 20,
-                  },
-                  {
-                    label: '21',
-                    value: 21,
-                  },
-                  {
-                    label: '22',
-                    value: 22,
-                  },
-                  {
-                    label: '23',
-                    value: 23,
-                  },
-                  {
-                    label: '24',
-                    value: 24,
-                  },
-                  {
-                    label: '25',
-                    value: 25,
-                  },
-                ],
-              },
-            ],
-            visibleWhen: [
-              {
-                field: '_borrowConcurrencyFromConnectionId',
-                is: [
-                  '',
-                ],
-              },
-            ],
-            name: '/http/concurrencyLevel',
+            appTypeIsStatic: true,
+            removeHelperText: true,
             visible: true,
-            defaultValue: '',
-            helpKey: 'connection.http.concurrencyLevel',
+            defaultVisible: true,
+            defaultRequired: true,
+            value: '61ae1dce782aab51339b59cb',
+            touched: true,
+            disabled: false,
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
           },
         },
-        actions: [
-          {
-            id: 'oauthandcancel',
-          },
-        ],
-      },
-      showValidationBeforeTouched: false,
-    },
-  };
-  initialStore.getState().data.resources.connections = connectionData || null;
-  initialStore.getState().session.form = formData || {
-    'connections-12345': {
-      parentContext: {},
-      disabled: false,
-      showValidationBeforeTouched: false,
-      conditionalUpdate: false,
-      remountKey: 1,
-      formIsDisabled: false,
-      resetTouchedState: false,
-      fields: {
-        resourceId: {
-          id: 'resourceId',
-          name: '/resourceId',
-          type: 'shopifyconnectionselect',
-          placeholder: 'Select',
-          resourceType: 'connections',
-          required: true,
-          label: 'Connection',
-          options: {
-            filter: {
-              $and: [
-                {
-                  $or: [
-                    {
-                      type: 'rest',
-                    },
-                    {
-                      type: 'http',
-                    },
-                  ],
-                },
-                {
-                  _connectorId: {
-                    $exists: false,
-                  },
-                },
-                {
-                  assistant: 'shopify',
-                },
-              ],
-            },
-            appType: 'shopify',
-          },
-          isValueValid: true,
-          defaultValue: '',
-          appTypeIsStatic: true,
-          removeHelperText: true,
-          visible: true,
-          defaultVisible: true,
-          defaultRequired: true,
-          value: '61ae1dce782aab51339b59cb',
-          touched: true,
-          disabled: false,
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
+        value: {
+          '/resourceId': '61ae1dce782aab51339b59cb',
+          '/http/unencrypted/version': '2022-10',
+          '/http/auth/type': 'oauth',
         },
+        isValid: true,
+        lastFieldUpdated: 'resourceId',
       },
-      value: {
-        '/resourceId': '61ae1dce782aab51339b59cb',
-        '/http/unencrypted/version': '2022-10',
-        '/http/auth/type': 'oauth',
-      },
-      isValid: true,
-      lastFieldUpdated: 'resourceId',
-    },
-  };
-  initialStore.getState().session.asyncTask = asyncTaskData || null;
+    };
+    draft.session.asyncTask = asyncTaskData || null;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[urlExtenstionData]}

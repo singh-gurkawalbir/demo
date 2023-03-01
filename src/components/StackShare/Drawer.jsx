@@ -27,7 +27,11 @@ export default function StackShareDrawer() {
   });
 
   const handleRefreshClick = useCallback(
-    () => dispatch(actions.resource.requestCollection('sshares')),
+    () => {
+      console.log('***********************************inside callback');
+
+      return dispatch(actions.resource.requestCollection('sshares'));
+    },
     [dispatch]
   );
   const handleInviteClick = useCallback(() => {

@@ -74,14 +74,14 @@ describe('dynaKeyValue UI tests', () => {
     renderWithProviders(<DynaKeyValue {...newprops} />);
     const fields = screen.getAllByRole('textbox');
 
-    userEvent.type(fields[0], 'a');
+    await userEvent.type(fields[0], 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should call the handleValueUpdate and handleUpdate functions when a value field is edited', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     const fields = screen.getAllByRole('textbox');
 
-    userEvent.type(fields[1], 'a');
+    await userEvent.type(fields[1], 'a');
 
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });

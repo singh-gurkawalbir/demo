@@ -1,6 +1,6 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 
 import OutputPanel from '.';
@@ -15,14 +15,18 @@ jest.mock('../../Code', () => ({
 const initialStore = getCreatedStore();
 
 function initOutputPanel(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    previewStatus: props.status,
-    resourceType: 'imports',
-    formOutput: props.data,
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      previewStatus: props.status,
+      resourceType: 'imports',
+      formOutput: props.data,
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<OutputPanel {...props} />, {initialStore});
 }

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaMarketplaceId from './DynaMarketplaceId';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
@@ -56,12 +56,14 @@ describe('test suite for DynaMarketplaceId field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resource.references = {
-      exports: [{
-        id: 'export-123',
-        name: 'Export X',
-      }],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resource.references = {
+        exports: [{
+          id: 'export-123',
+          name: 'Export X',
+        }],
+      };
+    });
     renderWithProviders(<DynaMarketplaceId {...props} />, {initialStore});
     expect(document.querySelector('input')).toHaveValue(props.value);
     expect(screen.getByRole('button', {name: 'ATVPDKIKX0DER (US)'})).toHaveAttribute('aria-disabled', 'true');

@@ -3,17 +3,19 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FormButton from './DynaSubmit';
-import { renderWithProviders, reduxStore} from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 import actions from '../../actions';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form = {
-  firstformKey: {fields: 'someFields'},
-  secondformKey: {fields: {}, value: 'someValue'},
-  thisrdformKey: {fields: {defaultVisible: false}, value: 'someValue'},
+mutateStore(initialStore, draft => {
+  draft.session.form = {
+    firstformKey: {fields: 'someFields'},
+    secondformKey: {fields: {}, value: 'someValue'},
+    thisrdformKey: {fields: {defaultVisible: false}, value: 'someValue'},
 
-};
+  };
+});
 
 const mockDispatch = jest.fn();
 

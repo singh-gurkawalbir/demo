@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
 
 const props = {
@@ -15,25 +15,27 @@ const mockHistoryGoBack = jest.fn();
 async function initViewAliasDetailsDrawer({props = {}, path = 'viewdetails/_aliasId'}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '_integrationId',
-        name: 'mockIntegration',
-        aliases: [{alias: '_aliasId', _connectionId: '_connId', description: 'some description'}],
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '_integrationId',
+          name: 'mockIntegration',
+          aliases: [{alias: '_aliasId', _connectionId: '_connId', description: 'some description'}],
+        }],
+      connections: [{
+        _id: '_connId',
+        name: '_mockConnection',
       }],
-    connections: [{
-      _id: '_connId',
-      name: '_mockConnection',
-    }],
 
-    flows: [
-      {
-        _id: '_flowId1',
-        name: 'mockFlow1',
-      },
-    ],
-  };
+      flows: [
+        {
+          _id: '_flowId1',
+          name: 'mockFlow1',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: path}]}>

@@ -4,24 +4,26 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {reduxStore, renderWithProviders} from '../../../../../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import actions from '../../../../../../../actions';
 import ReadmeSection from '.';
 
 async function initReadme(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.integrations = [{_id: '678901234567890', readme: 'Demo HTML content'}];
-  initialStore.getState().user.preferences.defaultAShareId = 'own';
-  initialStore.getState().user.org.accounts = [
-    {
-      _id: 'own',
-      accessLevel: 'owner',
-      ownerUser: {
-        licenses: [],
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{_id: '678901234567890', readme: 'Demo HTML content'}];
+    draft.user.preferences.defaultAShareId = 'own';
+    draft.user.org.accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [],
+        },
       },
-    },
-  ];
+    ];
+  });
 
   return renderWithProviders(<MemoryRouter initialEntries={[{pathname: '/integrations/678901234567890/admin/readme'}]}><Route path="/integrations/678901234567890/admin/readme"><ReadmeSection {...props} /></Route></MemoryRouter>, {initialStore});
 }

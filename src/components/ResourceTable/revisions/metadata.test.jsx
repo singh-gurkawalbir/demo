@@ -3,49 +3,50 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { reduxStore, renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user = {
-  preferences: {
-    defaultAShareId: 'own',
-  },
-  profile: {
-    _id: '5cadc8b42b10347a2708bf29',
-    name: 'Nametest',
-    email: 'test@celigo.com',
-  },
-  org: {
-    users: [
-      {
-        _id: '5f7011605b2e3244837309f9',
-        accepted: true,
-        accessLevel: 'monitor',
-        integrationAccessLevel: [
-          {
-            _integrationId: '5e44efa28015c9464272256f',
-            accessLevel: 'manage',
-          },
-        ],
-        sharedWithUser: {
+mutateStore(initialStore, draft => {
+  draft.user = {
+    preferences: {
+      defaultAShareId: 'own',
+    },
+    profile: {
+      _id: '5cadc8b42b10347a2708bf29',
+      name: 'Nametest',
+      email: 'test@celigo.com',
+    },
+    org: {
+      users: [
+        {
           _id: '5f7011605b2e3244837309f9',
-          email: 'test+3@celigo.com',
-          name: 'Nametest2',
+          accepted: true,
+          accessLevel: 'monitor',
+          integrationAccessLevel: [
+            {
+              _integrationId: '5e44efa28015c9464272256f',
+              accessLevel: 'manage',
+            },
+          ],
+          sharedWithUser: {
+            _id: '5f7011605b2e3244837309f9',
+            email: 'test+3@celigo.com',
+            name: 'Nametest2',
+          },
         },
-      },
-    ],
-
-    accounts: [
-      {
-        _id: 'own',
-        accessLevel: 'owner',
-      },
-    ],
-  },
-};
+      ],
+      accounts: [
+        {
+          _id: 'own',
+          accessLevel: 'owner',
+        },
+      ],
+    },
+  };
+});
 
 jest.mock('../../CeligoTimeAgo', () => ({
   __esModule: true,
@@ -213,43 +214,44 @@ describe('test suite for revisions metadata', () => {
   });
 
   test('should render the table accordingly for rowactions when status is completed and type is not snapshot', async () => {
-    initialStore.getState().user = {
-      preferences: {
-        defaultAShareId: '5f7011605b2e3244837309f9',
-      },
-      profile: {
-        _id: '5cadc8b42b10347a2708bf29',
-        name: 'Nametest',
-        email: 'test@celigo.com',
-      },
-      org: {
-        users: [
-          {
-            _id: '5f7011605b2e3244837309f9',
-            accepted: true,
-            accessLevel: 'monitor',
-            integrationAccessLevel: [
-              {
-                _integrationId: '5e44efa28015c9464272256f',
-                accessLevel: 'manage',
-              },
-            ],
-            sharedWithUser: {
+    mutateStore(initialStore, draft => {
+      draft.user = {
+        preferences: {
+          defaultAShareId: '5f7011605b2e3244837309f9',
+        },
+        profile: {
+          _id: '5cadc8b42b10347a2708bf29',
+          name: 'Nametest',
+          email: 'test@celigo.com',
+        },
+        org: {
+          users: [
+            {
               _id: '5f7011605b2e3244837309f9',
-              email: 'test+3@celigo.com',
-              name: 'Nametest2',
+              accepted: true,
+              accessLevel: 'monitor',
+              integrationAccessLevel: [
+                {
+                  _integrationId: '5e44efa28015c9464272256f',
+                  accessLevel: 'manage',
+                },
+              ],
+              sharedWithUser: {
+                _id: '5f7011605b2e3244837309f9',
+                email: 'test+3@celigo.com',
+                name: 'Nametest2',
+              },
             },
-          },
-        ],
-
-        accounts: [
-          {
-            _id: '5f7011605b2e3244837309f9',
-            accessLevel: 'monitor',
-          },
-        ],
-      },
-    };
+          ],
+          accounts: [
+            {
+              _id: '5f7011605b2e3244837309f9',
+              accessLevel: 'monitor',
+            },
+          ],
+        },
+      };
+    });
 
     initImports({
       _id: 'someid',
@@ -273,43 +275,44 @@ describe('test suite for revisions metadata', () => {
     ]);
   });
   test('should render the table accordingly for rowactions when status is completed and type is snapshot duplicate', async () => {
-    initialStore.getState().user = {
-      preferences: {
-        defaultAShareId: '5f7011605b2e3244837309f9',
-      },
-      profile: {
-        _id: '5cadc8b42b10347a2708bf29',
-        name: 'Nametest',
-        email: 'test@celigo.com',
-      },
-      org: {
-        users: [
-          {
-            _id: '5f7011605b2e3244837309f9',
-            accepted: true,
-            accessLevel: 'monitor',
-            integrationAccessLevel: [
-              {
-                _integrationId: '5e44efa28015c9464272256f',
-                accessLevel: 'manage',
-              },
-            ],
-            sharedWithUser: {
+    mutateStore(initialStore, draft => {
+      draft.user = {
+        preferences: {
+          defaultAShareId: '5f7011605b2e3244837309f9',
+        },
+        profile: {
+          _id: '5cadc8b42b10347a2708bf29',
+          name: 'Nametest',
+          email: 'test@celigo.com',
+        },
+        org: {
+          users: [
+            {
               _id: '5f7011605b2e3244837309f9',
-              email: 'test+3@celigo.com',
-              name: 'Nametest2',
+              accepted: true,
+              accessLevel: 'monitor',
+              integrationAccessLevel: [
+                {
+                  _integrationId: '5e44efa28015c9464272256f',
+                  accessLevel: 'manage',
+                },
+              ],
+              sharedWithUser: {
+                _id: '5f7011605b2e3244837309f9',
+                email: 'test+3@celigo.com',
+                name: 'Nametest2',
+              },
             },
-          },
-        ],
-
-        accounts: [
-          {
-            _id: '5f7011605b2e3244837309f9',
-            accessLevel: 'monitor',
-          },
-        ],
-      },
-    };
+          ],
+          accounts: [
+            {
+              _id: '5f7011605b2e3244837309f9',
+              accessLevel: 'monitor',
+            },
+          ],
+        },
+      };
+    });
 
     initImports({
       _id: 'someid',

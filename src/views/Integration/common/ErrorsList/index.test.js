@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import ErrorsListDrawer from './index';
 
@@ -204,37 +204,39 @@ describe('ErrorsListDrawer UI tests', () => {
   function iniStoreAndRender(count, noIntegration, isUserInErrMgtTwoDotZero) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources._integrations = integrations;
+    mutateStore(initialStore, draft => {
+      draft.data.resources._integrations = integrations;
 
-    initialStore.getState().data.resources.flows = flows;
-    initialStore.getState().data.resources.imports = imports;
-    initialStore.getState().session.errorManagement.openErrors = {
-      '60c9b4a7a4004f2e4cfe72b6': {
-        status: 'received',
-        data: {
-          '60c9b551a4004f2e4cfe730e': {
-            _flowId: '60c9b551a4004f2e4cfe730e',
-            numError: count,
-            lastErrorAt: '2022-08-04T11:09:35.048Z',
+      draft.data.resources.flows = flows;
+      draft.data.resources.imports = imports;
+      draft.session.errorManagement.openErrors = {
+        '60c9b4a7a4004f2e4cfe72b6': {
+          status: 'received',
+          data: {
+            '60c9b551a4004f2e4cfe730e': {
+              _flowId: '60c9b551a4004f2e4cfe730e',
+              numError: count,
+              lastErrorAt: '2022-08-04T11:09:35.048Z',
+            },
           },
         },
-      },
-      '60c9b551a4004f2e4cfe730e': {
-        status: 'received',
-        data: {
-          '60c9b550a4004f2e4cfe72fc': {
-            _expOrImpId: '60c9b550a4004f2e4cfe72fc',
-            numError: count,
-            lastErrorAt: '2022-08-04T11:09:35.048Z',
+        '60c9b551a4004f2e4cfe730e': {
+          status: 'received',
+          data: {
+            '60c9b550a4004f2e4cfe72fc': {
+              _expOrImpId: '60c9b550a4004f2e4cfe72fc',
+              numError: count,
+              lastErrorAt: '2022-08-04T11:09:35.048Z',
+            },
           },
         },
-      },
-    };
+      };
 
-    initialStore.getState().user.profile = {
-      useErrMgtTwoDotZero: isUserInErrMgtTwoDotZero,
-      timezone: 'Asia/Calcutta',
-    };
+      draft.user.profile = {
+        useErrMgtTwoDotZero: isUserInErrMgtTwoDotZero,
+        timezone: 'Asia/Calcutta',
+      };
+    });
 
     return renderWithProviders(
       <MemoryRouter initialEntries={['/initialURL/60c9b551a4004f2e4cfe730e/errorsList']}>
@@ -338,38 +340,40 @@ describe('ErrorsListDrawer UI tests', () => {
   test('should test when flow is dataloader', () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources._integrations = integrations;
+    mutateStore(initialStore, draft => {
+      draft.data.resources._integrations = integrations;
 
-    initialStore.getState().data.resources.flows = flows;
-    initialStore.getState().data.resources.imports = imports;
-    initialStore.getState().data.resources.exports = exports;
-    initialStore.getState().session.errorManagement.openErrors = {
-      '60c9b4a7a4004f2e4cfe72b6': {
-        status: 'received',
-        data: {
-          '60c9b551a4004f2e4cfe730e': {
-            _flowId: '60c9b551a4004f2e4cfe730e',
-            numError: 0,
-            lastErrorAt: '2022-08-04T11:09:35.048Z',
+      draft.data.resources.flows = flows;
+      draft.data.resources.imports = imports;
+      draft.data.resources.exports = exports;
+      draft.session.errorManagement.openErrors = {
+        '60c9b4a7a4004f2e4cfe72b6': {
+          status: 'received',
+          data: {
+            '60c9b551a4004f2e4cfe730e': {
+              _flowId: '60c9b551a4004f2e4cfe730e',
+              numError: 0,
+              lastErrorAt: '2022-08-04T11:09:35.048Z',
+            },
           },
         },
-      },
-      '60c9b551a4004f2e4cfe730e': {
-        status: 'received',
-        data: {
-          '60c9b550a4004f2e4cfe72fc': {
-            _expOrImpId: '60c9b550a4004f2e4cfe72fc',
-            numError: 0,
-            lastErrorAt: '2022-08-04T11:09:35.048Z',
+        '60c9b551a4004f2e4cfe730e': {
+          status: 'received',
+          data: {
+            '60c9b550a4004f2e4cfe72fc': {
+              _expOrImpId: '60c9b550a4004f2e4cfe72fc',
+              numError: 0,
+              lastErrorAt: '2022-08-04T11:09:35.048Z',
+            },
           },
         },
-      },
-    };
+      };
 
-    initialStore.getState().user.profile = {
-      useErrMgtTwoDotZero: false,
-      timezone: 'Asia/Calcutta',
-    };
+      draft.user.profile = {
+        useErrMgtTwoDotZero: false,
+        timezone: 'Asia/Calcutta',
+      };
+    });
 
     renderWithProviders(
       <MemoryRouter initialEntries={['/initialURL/60c9b551a4004f2e4cfe730e/errorsList']}>

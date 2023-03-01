@@ -4,12 +4,14 @@ import ShopifyLandingPage from '.';
 import { getCreatedStore } from '../../../store';
 import { KBDocumentation } from '../../../utils/connections';
 import * as ApplicationList from '../../../constants/applications';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 
 let initialStore;
 
 function initShopifyLandingPage({accountData}) {
-  initialStore.getState().user.org.accounts = accountData;
+  mutateStore(initialStore, draft => {
+    draft.user.org.accounts = accountData;
+  });
   const ui = (
     <ShopifyLandingPage />
   );

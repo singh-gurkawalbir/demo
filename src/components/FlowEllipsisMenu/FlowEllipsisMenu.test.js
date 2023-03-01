@@ -5,7 +5,7 @@ import { Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { createMemoryHistory } from 'history';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import FlowEllipsisMenu from '.';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import actions from '../../actions';
@@ -15,118 +15,120 @@ const history = createMemoryHistory();
 async function FlowMenu(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.flows = [
-    {
-      _id: '62677c19737f015ed4aff4fd',
-      lastModified: '2022-05-28T05:45:51.473Z',
-      name: 'New flow',
-      disabled: true,
-      _integrationId: '62662cc4e06ff462c3db470e',
-      skipRetries: false,
-      pageProcessors: [
-        {
-          responseMapping: {
-            fields: [],
-            lists: [],
+  mutateStore(initialStore, draft => {
+    draft.data.resources.flows = [
+      {
+        _id: '62677c19737f015ed4aff4fd',
+        lastModified: '2022-05-28T05:45:51.473Z',
+        name: 'New flow',
+        disabled: true,
+        _integrationId: '62662cc4e06ff462c3db470e',
+        skipRetries: false,
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            _importId: '62677c50563089236fed72a1',
+            type: 'import',
           },
-          _importId: '62677c50563089236fed72a1',
-          type: 'import',
-        },
-      ],
-      pageGenerators: [
-        {
-          _exportId: '62677c18563089236fed7295',
-          skipRetries: false,
-        },
-      ],
-      createdAt: '2022-04-26T04:59:05.445Z',
-      lastExecutedAt: '2022-04-26T05:03:02.115Z',
-      autoResolveMatchingTraceKeys: true,
-    },
-  ];
-  initialStore.getState().data.resources.integrations = [{
-    _id: '62662cc4e06ff462c3db470e',
-    lastModified: '2022-04-29T12:23:16.887Z',
-    name: 'Production',
-    _templateId: '5d9eb2c7224c6042d7a2fc98',
-    description: 'demo integration',
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '62677b90737f015ed4aff4e8',
-      '626a251fb940193d088f3e72',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2022-04-25T05:08:20.172Z',
-  }];
-  initialStore.getState().user = {
-    preferences: {
-      environment: 'production',
-      dateFormat: 'MM/DD/YYYY',
-      timeFormat: 'h:mm:ss a',
-      expand: 'Resources',
-      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-      showReactSneakPeekFromDate: '2019-11-05',
-      showReactBetaFromDate: '2019-12-26',
-      defaultAShareId: 'own',
-      dashboard: {
-        view: 'tile',
-        pinnedIntegrations: [],
+        ],
+        pageGenerators: [
+          {
+            _exportId: '62677c18563089236fed7295',
+            skipRetries: false,
+          },
+        ],
+        createdAt: '2022-04-26T04:59:05.445Z',
+        lastExecutedAt: '2022-04-26T05:03:02.115Z',
+        autoResolveMatchingTraceKeys: true,
       },
-      drawerOpened: false,
-    },
-    profile: {
-      _id: '625e84b4a2bca9036eb61252',
-      name: 'demo user',
-      email: 'demoUser@celigo.com',
-      role: 'CEO',
-      company: 'celigo',
-      createdAt: '2022-04-19T09:45:25.111Z',
-      useErrMgtTwoDotZero: true,
-      authTypeSSO: null,
-    },
-    notifications: {
-      accounts: [],
-      stacks: [],
-      transfers: [],
-    },
-    org: {
-      users: [],
-      accounts: [
-        {
-          _id: 'own',
-          accessLevel: 'owner',
-          ownerUser: {
-            licenses: [
-              {
-                _id: '625e84b5a2bca9036eb61253',
-                created: '2022-04-19T09:45:25.125Z',
-                lastModified: '2022-04-28T05:05:45.751Z',
-                type: 'endpoint',
-                tier: 'free',
-                trialEndDate: '2022-05-28T05:05:45.740Z',
-                supportTier: 'essential',
-                sandbox: false,
-                resumable: false,
-              },
-            ],
-          },
-        },
+    ];
+    draft.data.resources.integrations = [{
+      _id: '62662cc4e06ff462c3db470e',
+      lastModified: '2022-04-29T12:23:16.887Z',
+      name: 'Production',
+      _templateId: '5d9eb2c7224c6042d7a2fc98',
+      description: 'demo integration',
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '62677b90737f015ed4aff4e8',
+        '626a251fb940193d088f3e72',
       ],
-    },
-    debug: false,
-  };
-  initialStore.getState().data.resources.marketplacetemplates = [{
-    _id: '5d9eb2c7224c6042d7a2fc98',
-    name: '135',
-    user: {
-      name: 'swarna suvarchala 123',
-      company: 'celigo',
-    },
-    lastModified: '2019-10-18T06:59:48.542Z',
-  }];
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2022-04-25T05:08:20.172Z',
+    }];
+    draft.user = {
+      preferences: {
+        environment: 'production',
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: 'h:mm:ss a',
+        expand: 'Resources',
+        scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+        showReactSneakPeekFromDate: '2019-11-05',
+        showReactBetaFromDate: '2019-12-26',
+        defaultAShareId: 'own',
+        dashboard: {
+          view: 'tile',
+          pinnedIntegrations: [],
+        },
+        drawerOpened: false,
+      },
+      profile: {
+        _id: '625e84b4a2bca9036eb61252',
+        name: 'demo user',
+        email: 'demoUser@celigo.com',
+        role: 'CEO',
+        company: 'celigo',
+        createdAt: '2022-04-19T09:45:25.111Z',
+        useErrMgtTwoDotZero: true,
+        authTypeSSO: null,
+      },
+      notifications: {
+        accounts: [],
+        stacks: [],
+        transfers: [],
+      },
+      org: {
+        users: [],
+        accounts: [
+          {
+            _id: 'own',
+            accessLevel: 'owner',
+            ownerUser: {
+              licenses: [
+                {
+                  _id: '625e84b5a2bca9036eb61253',
+                  created: '2022-04-19T09:45:25.125Z',
+                  lastModified: '2022-04-28T05:05:45.751Z',
+                  type: 'endpoint',
+                  tier: 'free',
+                  trialEndDate: '2022-05-28T05:05:45.740Z',
+                  supportTier: 'essential',
+                  sandbox: false,
+                  resumable: false,
+                },
+              ],
+            },
+          },
+        ],
+      },
+      debug: false,
+    };
+    draft.data.resources.marketplacetemplates = [{
+      _id: '5d9eb2c7224c6042d7a2fc98',
+      name: '135',
+      user: {
+        name: 'swarna suvarchala 123',
+        company: 'celigo',
+      },
+      lastModified: '2019-10-18T06:59:48.542Z',
+    }];
+  });
   const ui = (
     <Router history={history}>
       <ConfirmDialogProvider>

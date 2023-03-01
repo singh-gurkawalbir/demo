@@ -4,7 +4,7 @@ import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import WrappedContextConsumer from './DynaAssistantOptions';
 import { getCreatedStore } from '../../../../store';
 
@@ -29,95 +29,97 @@ jest.mock('react-truncate-markup', () => ({
 }));
 
 function initDynaDate(props = {}) {
-  initialStore.getState().session.form = {'imports-5bf18b09294767270c62fad9': {
-    fields: {
-      'assistantMetadata.queryParams': {
-        paramMeta: {fields: [{fieldId: 'value'}]},
-        value: {id: 'fieldId'},
+  mutateStore(initialStore, draft => {
+    draft.session.form = {'imports-5bf18b09294767270c62fad9': {
+      fields: {
+        'assistantMetadata.queryParams': {
+          paramMeta: {fields: [{fieldId: 'value'}]},
+          value: {id: 'fieldId'},
+        },
+        'assistantMetadata.adaptorType': {
+          id: 'assistantMetadata.adaptorType',
+          value: 'rest',
+        },
+        'assistantMetadata.assistant': {
+          id: 'assistantMetadata.assistant',
+          value: 'zendesk',
+        },
+        'assistantMetadata.version': {
+          id: 'assistantMetadata.version',
+          value: 'v2',
+        },
+        'assistantMetadata.resource': {
+          id: 'assistantMetadata.resource',
+          touched: props.touched,
+          value: 'user_api',
+        },
+        'assistantMetadata.operation': {
+          id: 'assistantMetadata.operation',
+          value: '',
+        },
+        demofield: {
+          id: 'demoId',
+          touched: true,
+          value: '',
+        },
+        'assistantMetadata.demoField': {
+          id: 'assistantMetadata.demoField',
+          touched: true,
+          type: 'assistantoptions',
+          value: '',
+        },
       },
-      'assistantMetadata.adaptorType': {
-        id: 'assistantMetadata.adaptorType',
-        value: 'rest',
-      },
-      'assistantMetadata.assistant': {
-        id: 'assistantMetadata.assistant',
-        value: 'zendesk',
-      },
-      'assistantMetadata.version': {
-        id: 'assistantMetadata.version',
-        value: 'v2',
-      },
-      'assistantMetadata.resource': {
-        id: 'assistantMetadata.resource',
-        touched: props.touched,
-        value: 'user_api',
-      },
-      'assistantMetadata.operation': {
-        id: 'assistantMetadata.operation',
-        value: '',
-      },
-      demofield: {
-        id: 'demoId',
-        touched: true,
-        value: '',
-      },
-      'assistantMetadata.demoField': {
-        id: 'assistantMetadata.demoField',
-        touched: true,
-        type: 'assistantoptions',
-        value: '',
-      },
-    },
-  }};
-  initialStore.getState().data.resources = {integrations: [{_id: '5ff579d745ceef7dcd797c15', name: 'integration1'}]};
-  initialStore.getState().user.preferences = {
-    dateFormat: 'MM/DD/YYYY',
-    ssConnectionIds: props.connections,
-  };
-  initialStore.getState().user.profile = {
-    timezone: 'Asia/Calcutta',
-    _connectorId: '6aa579d745ceef7dcd797c15',
-  };
-  initialStore.getState().session.metadata = {
-    assistants: {
-      rest: {
-        zendesk: {
-          export: {
-            versions: [{
-              resources: [
-                {
-                  id: 'user_api',
-                  operations: [{id: 'delta', name: 'option1'}, {id: 'create_automations', name: 'Create'},
-                    {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
-                  ],
-                  endpoints: [{id: 'operation1', name: 'increment ticket'},
-                    {id: 'operation2', name: 'increment user access'},
-                    {id: 'operation3', name: 'increment ticket count'}],
-                  name: 'resource1',
-                },
-                { id: 'id2',
-                  name: 'resource2',
-                },
-              ],
+    }};
+    draft.data.resources = {integrations: [{_id: '5ff579d745ceef7dcd797c15', name: 'integration1'}]};
+    draft.user.preferences = {
+      dateFormat: 'MM/DD/YYYY',
+      ssConnectionIds: props.connections,
+    };
+    draft.user.profile = {
+      timezone: 'Asia/Calcutta',
+      _connectorId: '6aa579d745ceef7dcd797c15',
+    };
+    draft.session.metadata = {
+      assistants: {
+        rest: {
+          zendesk: {
+            export: {
+              versions: [{
+                resources: [
+                  {
+                    id: 'user_api',
+                    operations: [{id: 'delta', name: 'option1'}, {id: 'create_automations', name: 'Create'},
+                      {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
+                    ],
+                    endpoints: [{id: 'operation1', name: 'increment ticket'},
+                      {id: 'operation2', name: 'increment user access'},
+                      {id: 'operation3', name: 'increment ticket count'}],
+                    name: 'resource1',
+                  },
+                  { id: 'id2',
+                    name: 'resource2',
+                  },
+                ],
+                version: 'v2',
+              }, {
+                resources: [],
+                version: 'v3',
+              }],
+            },
+            import: {versions: [{
+              resources: [{id: 'user_api',
+                operations: [{id: 'deltaaaa', name: 'option0'}, {id: 'delta', name: 'option1'}, {id: 'create_automations', name: 'Create'},
+                  {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
+                ],
+                name: 'resource11'}, {id: 'id22', name: 'resource22'}],
               version: 'v2',
-            }, {
-              resources: [],
-              version: 'v3',
             }],
-          },
-          import: {versions: [{
-            resources: [{id: 'user_api',
-              operations: [{id: 'deltaaaa', name: 'option0'}, {id: 'delta', name: 'option1'}, {id: 'create_automations', name: 'Create'},
-                {id: 'update_automations', name: 'Update'}, {id: 'delete_automations', name: 'Delete'},
-              ],
-              name: 'resource11'}, {id: 'id22', name: 'resource22'}],
-            version: 'v2',
-          }],
+            },
           },
         },
       },
-    },
-  };
+    };
+  });
 
   renderWithProviders(<WrappedContextConsumer {...props} />, {initialStore});
 }

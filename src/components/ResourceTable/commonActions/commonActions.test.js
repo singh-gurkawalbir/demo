@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
@@ -90,7 +90,10 @@ describe('test suite for common actions', () => {
       name: 'Zendesk HTTP connection',
     };
 
-    initialStore.getState().data.resources.connections = [connection];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [connection];
+    });
+
     await initCommonActions([{_id: connection._id}]);
     const viewAuditLogsButton = screen.getByRole('menuitem', {name: 'View audit log'});
 
@@ -157,7 +160,10 @@ describe('test suite for common actions', () => {
         _integrationId: 'int123',
       }];
 
-      initialStore.getState().user.preferences.defaultAShareId = 'own';
+      mutateStore(initialStore, draft => {
+        draft.user.preferences.defaultAShareId = 'own';
+      });
+
       await initCommonActions(data);
 
       expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument();
@@ -225,21 +231,24 @@ describe('test suite for common actions', () => {
       _connectionId: 'conn123',
     }];
 
-    initialStore.getState().session.resource = {
-      references: {
-        flows: [
-          {
-            id: 'flow123',
-            name: 'Netsuite flow',
-            dependencyIds: {
-              export: [
-                'export123',
-              ],
+    mutateStore(initialStore, draft => {
+      draft.session.resource = {
+        references: {
+          flows: [
+            {
+              id: 'flow123',
+              name: 'Netsuite flow',
+              dependencyIds: {
+                export: [
+                  'export123',
+                ],
+              },
             },
-          },
-        ],
-      },
-    };
+          ],
+        },
+      };
+    });
+
     await initCommonActions(data);
     const deleteButton = screen.getByRole('menuitem', {name: 'Delete export'});
 
@@ -341,21 +350,25 @@ describe('test suite for common actions', () => {
 
   test('should be able to view references of a resource', async () => {
     mockTableContext.resourceType = 'exports';
-    initialStore.getState().session.resource = {
-      references: {
-        flows: [
-          {
-            id: 'flow123',
-            name: 'Netsuite flow',
-            dependencyIds: {
-              export: [
-                'export123',
-              ],
+
+    mutateStore(initialStore, draft => {
+      draft.session.resource = {
+        references: {
+          flows: [
+            {
+              id: 'flow123',
+              name: 'Netsuite flow',
+              dependencyIds: {
+                export: [
+                  'export123',
+                ],
+              },
             },
-          },
-        ],
-      },
-    };
+          ],
+        },
+      };
+    });
+
     await initCommonActions([{
       _id: 'export123',
       name: 'Netsuite Export',

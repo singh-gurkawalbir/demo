@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
-import deepClone from 'lodash/cloneDeep';
 import jsonUtil from '../json';
 import { isFileAdaptor, isBlobTypeResource } from '../resource';
 import { extractMappingFieldsFromCsv } from '../mapping';
@@ -12,6 +11,7 @@ import {
 } from '../metadata';
 import { getUnionObject, getTransformPaths } from '../jsonPaths';
 import { isFileMetaExpectedForResource } from '../flowData';
+import customCloneDeep from '../customCloneDeep';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
@@ -22,7 +22,7 @@ export default function getFormattedSampleData({
   wrapInArray = false,
 }) {
   // create deep copy
-  const _connection = deepClone(connection);
+  const _connection = customCloneDeep(connection);
   const data = {
     connection: {},
   };

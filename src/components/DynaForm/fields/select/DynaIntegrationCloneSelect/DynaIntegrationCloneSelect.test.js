@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import DynaIntegrationCloneSelect from '.';
 
 const onFieldChange = jest.fn();
@@ -11,40 +11,42 @@ const props = {integrationId: '_integrationId', isValid: true, onFieldChange, id
 async function initDynaIntegrationCloneSelect(props = {}, defaultAShareId = 'ashare1') {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement = {
-    cloneFamily: {
-      _integrationId: {
-        cloneFamily: [
-          {name: '_name1', _id: '_id1', sandbox: true},
-          {name: '_name2', _id: '_id2'},
-        ],
-        status: 'completed',
-      },
-      _integrationId1: {
-        status: 'requested',
-      },
-    },
-  };
-  initialStore.getState().user = {
-    profile: {
-      developer: true,
-    },
-    preferences: { defaultAShareId, environment: 'sandbox' },
-    org: {
-      accounts: [
-        {
-          _id: 'ashare1',
-          accepted: true,
-          ownerUser: {
-            company: 'Company One',
-            licenses: [
-              { _id: 'license1', type: 'integrator', sandbox: true, tier: 'standard', sso: true },
-            ],
-          },
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      cloneFamily: {
+        _integrationId: {
+          cloneFamily: [
+            {name: '_name1', _id: '_id1', sandbox: true},
+            {name: '_name2', _id: '_id2'},
+          ],
+          status: 'completed',
         },
-      ],
-    },
-  };
+        _integrationId1: {
+          status: 'requested',
+        },
+      },
+    };
+    draft.user = {
+      profile: {
+        developer: true,
+      },
+      preferences: { defaultAShareId, environment: 'sandbox' },
+      org: {
+        accounts: [
+          {
+            _id: 'ashare1',
+            accepted: true,
+            ownerUser: {
+              company: 'Company One',
+              licenses: [
+                { _id: 'license1', type: 'integrator', sandbox: true, tier: 'standard', sso: true },
+              ],
+            },
+          },
+        ],
+      },
+    };
+  });
 
   return renderWithProviders(<DynaIntegrationCloneSelect {...props} />, { initialStore });
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaNetSuiteLookupFiltersafe from './DynaNetSuiteLookupFilters_afe';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockDispatch = jest.fn();
@@ -33,9 +33,11 @@ jest.mock('../../AFE/Editor/panels/NetSuiteLookupFilter', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-  data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {somePath: {
+    data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
+  }}}};
+});
 
 const mockOnFieldChange = jest.fn();
 
@@ -100,7 +102,9 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
     );
   });
   test('should call onFieldChangeButton function when editor is initialised', async () => {
-    initialStore.getState().session.editors = {'ns-mappingLookupFilter': {fieldId: 'someFieldID'}};
+    mutateStore(initialStore, draft => {
+      draft.session.editors = {'ns-mappingLookupFilter': {fieldId: 'someFieldID'}};
+    });
     initDynaNetSuiteLookupFiltersafe(true, initialStore);
     expect(screen.getByText('id: someID')).toBeInTheDocument();
     expect(screen.getByText('editorId: ns-mappingLookupFilter')).toBeInTheDocument();

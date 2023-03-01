@@ -1,10 +1,9 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import UploadFile from './UploadFile';
 import actions from '../../../../actions';
 
@@ -13,19 +12,21 @@ const mockHistoryPush = jest.fn();
 async function initUploadFile(isInstallIntegration = false, isFailed = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.templates = {
-    _templateId:
-        { isInstallIntegration,
-          preview: {
-            status: isFailed ? 'failure' : 'success',
-            components: {
-              objects: [],
-              stackRequired: false,
+  mutateStore(initialStore, draft => {
+    draft.session.templates = {
+      _templateId:
+          { isInstallIntegration,
+            preview: {
+              status: isFailed ? 'failure' : 'success',
+              components: {
+                objects: [],
+                stackRequired: false,
+              },
             },
+            runKey: '_templateId',
           },
-          runKey: '_templateId',
-        },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <UploadFile />
@@ -67,7 +68,7 @@ describe('UploadFile tests', () => {
     const input = screen.getByLabelText(/Choose file/i);
     const file = new File([new ArrayBuffer(1)], 'mockUpload.zip', {type: 'application/zip'});
 
-    await userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
     await waitFor(() => expect(input.files[0]).toEqual(file));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.previewZip(file)));

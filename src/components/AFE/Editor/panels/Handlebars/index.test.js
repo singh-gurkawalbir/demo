@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import actions from '../../../../../actions';
 import HandlebarsPanel from '.';
@@ -18,14 +18,18 @@ jest.mock('../Code', () => ({
 const initialStore = getCreatedStore();
 
 function initHandlebarsPanel(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    rule: 'initial feature value',
-    editorType: 'jsonParser',
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      rule: 'initial feature value',
+      editorType: 'jsonParser',
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<HandlebarsPanel {...props} />, {initialStore});
 }

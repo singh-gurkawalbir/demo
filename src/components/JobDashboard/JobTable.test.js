@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { Checkbox, TableCell, TableRow } from '@material-ui/core';
 import { createMemoryHistory } from 'history';
 import JobTable from './JobTable';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import actions from '../../actions';
 
@@ -61,7 +61,10 @@ function initJobTable({
   flowJobsData,
   history,
 }) {
-  initialStore.getState().data.jobs = flowJobsData;
+  mutateStore(initialStore, draft => {
+    draft.data.jobs = flowJobsData;
+  });
+
   const ui = (
     <Router history={history}>
       <Route

@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import errorMessageStore from '../../../utils/errorStore';
@@ -65,42 +65,44 @@ jest.mock('react-router-dom', () => ({
 }));
 
 function initmockResponseEditorField(inputProps) {
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: resourceId,
-        adaptorType: 'HTTPExport',
-      },
-    ],
-  };
-  initialStore.getState().session.form = {
-    [formKey]: {
-      fields: {
-        mockResponse: {
-          label: 'Mock response',
-          helpKey: 'mockResponse',
-          type: 'mockResponse',
-          fieldId,
-          name: '/mockResponse',
-          defaultValue: '',
-          touched: false,
-          visible: true,
-          required: false,
-          disabled: false,
-          options: {},
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
-          id,
-          formKey,
-          resourceType,
-          resourceId,
-          flowId,
-          value,
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      exports: [
+        {
+          _id: resourceId,
+          adaptorType: 'HTTPExport',
+        },
+      ],
+    };
+    draft.session.form = {
+      [formKey]: {
+        fields: {
+          mockResponse: {
+            label: 'Mock response',
+            helpKey: 'mockResponse',
+            type: 'mockResponse',
+            fieldId,
+            name: '/mockResponse',
+            defaultValue: '',
+            touched: false,
+            visible: true,
+            required: false,
+            disabled: false,
+            options: {},
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
+            id,
+            formKey,
+            resourceType,
+            resourceId,
+            flowId,
+            value,
+          },
         },
       },
-    },
-  };
+    };
+  });
   const props = {
     id,
     formKey,

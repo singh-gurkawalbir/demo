@@ -3,11 +3,13 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSelectOverrideMediaType from './DynaSelectOverrideMediaType';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form.someformKey = {value: {fieldForMediaType: 'json'}};
+mutateStore(initialStore, draft => {
+  draft.session.form.someformKey = {value: {fieldForMediaType: 'json'}};
+});
 
 const genProps = {
   id: 'http.requestMediaType',
@@ -27,6 +29,24 @@ async function initDynaSelectOverrideMediaType(props = {}) {
   return renderWithProviders(ui);
 }
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
   test('should show empty dom when no props provided', () => {
     renderWithProviders(<DynaSelectOverrideMediaType />);
@@ -41,12 +61,12 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'CSV...',
-        'JSON...',
-        'Multipart / form-data...',
-        'URL encoded...',
-        'XML...',
+        'Please select',
+        'CSV',
+        'JSON',
+        'Multipart / form-data',
+        'URL encoded',
+        'XML',
       ]
     );
   });
@@ -62,11 +82,11 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'CSV...',
-        'Multipart / form-data...',
-        'URL encoded...',
-        'XML...',
+        'Please select',
+        'CSV',
+        'Multipart / form-data',
+        'URL encoded',
+        'XML',
       ]
     );
   });
@@ -78,8 +98,8 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'someLabel...',
+        'Please select',
+        'someLabel',
       ]
     );
   });

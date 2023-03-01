@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import moment from 'moment';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import LogsDrawerActions from './LogsDrawerActions';
 import actions from '../../../actions';
 
@@ -47,40 +47,41 @@ async function initLogsDrawerActions({props,
   time = {}}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.logs.flowStep = {
-    random_resource_id_mock: {
-      logsStatus,
-      logsSummary,
-      loadMoreStatus: 'received',
-      hasNewLogs,
-      fetchStatus: 'completed',
-      currQueryTime: mockDate.getTime(),
-      activeLogKey: 'randomActiveLogKey',
-      nextPageURL: '/v1(api)/flows/:_flowId',
-    },
-  };
-
-  initialStore.getState().session.filters = {
-    flowStepLogs: { paging: {currPage: 1},
-      codes: [
-        'not_all',
-      ],
-      time,
-    },
-  };
-
-  initialStore.getState().user = {
-    preferences: {
-      defaultAShareId: '_Id',
-      accounts: { shareMockId: {}},
-    },
-    org: {accounts: [
-      { _id: '_Id',
-        accepted: true,
-        accessLevel: 'manage',
-        integrationAccessLevel: [],
-      }],
-    }};
+  mutateStore(initialStore, draft => {
+    draft.session.logs.flowStep = {
+      random_resource_id_mock: {
+        logsStatus,
+        logsSummary,
+        loadMoreStatus: 'received',
+        hasNewLogs,
+        fetchStatus: 'completed',
+        currQueryTime: mockDate.getTime(),
+        activeLogKey: 'randomActiveLogKey',
+        nextPageURL: '/v1(api)/flows/:_flowId',
+      },
+    };
+    draft.session.filters = {
+      flowStepLogs: { paging: {currPage: 1},
+        codes: [
+          'not_all',
+        ],
+        time,
+      },
+    };
+    draft.user = {
+      preferences: {
+        defaultAShareId: '_Id',
+        accounts: { shareMockId: {}},
+      },
+      org: {accounts: [
+        { _id: '_Id',
+          accepted: true,
+          accessLevel: 'manage',
+          integrationAccessLevel: [],
+        }],
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter>

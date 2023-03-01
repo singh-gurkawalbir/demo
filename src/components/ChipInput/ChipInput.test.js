@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen} from '@testing-library/react';
+import { fireEvent, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import ChipInput from '.';
@@ -9,7 +9,7 @@ describe('chipInput testing', () => {
   test('should test to store some value', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} />);
+    await renderWithProviders(<ChipInput onChange={onchange} />);
     const tag = screen.getByText('tag');
 
     await userEvent.click(tag);
@@ -20,10 +20,10 @@ describe('chipInput testing', () => {
     await textbox.blur();
     expect(onchange).toHaveBeenCalled();
   });
-  test('should test while disable', () => {
+  test('should test while disable', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} disabled />);
+    await renderWithProviders(<ChipInput onChange={onchange} disabled />);
     const tag = screen.getByText('tag');
 
     expect(tag).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('chipInput testing', () => {
   test('should test again with same value', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} />);
+    await renderWithProviders(<ChipInput onChange={onchange} />);
     const tag = screen.getByText('tag');
 
     await userEvent.click(tag);
@@ -60,7 +60,7 @@ describe('chipInput testing', () => {
   test('should test while sending null', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} value={null} />);
+    await renderWithProviders(<ChipInput onChange={onchange} value={null} />);
     const tag = screen.getByText('tag');
 
     expect(tag).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe('chipInput testing', () => {
 
     const textbox = screen.getByRole('textbox');
 
-    await userEvent.type(screen.getByRole('textbox'), null);
+    await fireEvent.change(screen.getByRole('textbox'), null);
     await textbox.blur();
     expect(onchange).not.toHaveBeenCalled();
   });

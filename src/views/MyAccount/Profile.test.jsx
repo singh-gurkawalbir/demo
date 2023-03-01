@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, waitFor, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, mockPostRequestOnce, mockPutRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, mockPostRequestOnce, mockPutRequestOnce, mutateStore } from '../../test/test-utils';
 import ProfilePanel from './Profile';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
@@ -11,22 +11,24 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function store() {
-  initialStore.getState().user.profile = {
-    _id: '5d4010e14cd24a7c773122ef',
-    name: 'test user',
-    email: 'testuser@testo.com',
-    role: '',
-    company: 'test',
-    phone: '1234567890',
-    auth_type_google: {},
-    timezone: 'Asia/Calcutta',
-    developer: true,
-    agreeTOSAndPP: true,
-    createdAt: '2019-07-30T09:41:54.435Z',
-    useErrMgtTwoDotZero: false,
-    authTypeSSO: null,
-    emailHash: '8a859a6cc8996b65d364a1ce1e7a3890',
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.profile = {
+      _id: '5d4010e14cd24a7c773122ef',
+      name: 'test user',
+      email: 'testuser@testo.com',
+      role: '',
+      company: 'test',
+      phone: '1234567890',
+      auth_type_google: {},
+      timezone: 'Asia/Calcutta',
+      developer: true,
+      agreeTOSAndPP: true,
+      createdAt: '2019-07-30T09:41:54.435Z',
+      useErrMgtTwoDotZero: false,
+      authTypeSSO: null,
+      emailHash: '8a859a6cc8996b65d364a1ce1e7a3890',
+    };
+  });
 }
 
 async function initProfile() {

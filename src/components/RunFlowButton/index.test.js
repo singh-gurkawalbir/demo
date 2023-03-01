@@ -4,7 +4,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as redux from 'react-redux';
 import RunFlowButton from '.';
-import {renderWithProviders, mockGetRequestOnce} from '../../test/test-utils';
+import {renderWithProviders, mockGetRequestOnce, mutateStore} from '../../test/test-utils';
 import {getCreatedStore} from '../../store';
 
 const flows = [
@@ -126,8 +126,10 @@ describe('runflowComponent UI testing', () => {
   async function renderWithProps(props) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = flows;
-    initialStore.getState().data.resources.exports = exports;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = flows;
+      draft.data.resources.exports = exports;
+    });
 
     const {store} = renderWithProviders(<RunFlowButton {...props} />, {initialStore});
 
@@ -137,11 +139,15 @@ describe('runflowComponent UI testing', () => {
     async function renderFunction(props, status) {
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.exports = deltaExports;
-      initialStore.getState().data.resources.flows = deltaFlow;
+      mutateStore(initialStore, draft => {
+        draft.data.resources.exports = deltaExports;
+        draft.data.resources.flows = deltaFlow;
+      });
 
       if (status) {
-        initialStore.getState().session.flows['5f1535beef4fb87bc5e5fb3e'] = { lastExportDateTime: { status } };
+        mutateStore(initialStore, draft => {
+          draft.session.flows['5f1535beef4fb87bc5e5fb3e'] = { lastExportDateTime: { status } };
+        });
       }
 
       const {store} = renderWithProviders(<RunFlowButton {...props} />, {initialStore});

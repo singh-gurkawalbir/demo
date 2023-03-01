@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import ImportMapping from './Mappings';
 
@@ -23,17 +23,20 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
   function initStoreAndRender(isRequired) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
-      mappings: [{key: 'someKey', generate: 'sometext'}],
-      response: [
-        {operation: 'extractsMetaData', data: [{name: 'sometext2', id: 'sometext2', filterType: 'field'}]},
-      ],
-      generatesMetadata: [{
-        id: 'categoryId',
-        fields: [{name: 'sometext2', id: 'sometext2', filterType: 'field'}],
-      }]};
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'].mappings.editorId = {
-      mappings: [{key: 'someKey', generate: 'sometext', isRequired}]};
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
+        mappings: [{key: 'someKey', generate: 'sometext'}],
+        response: [
+          {operation: 'extractsMetaData', data: [{name: 'sometext2', id: 'sometext2', filterType: 'field'}]},
+        ],
+        generatesMetadata: [{
+          id: 'categoryId',
+          fields: [{name: 'sometext2', id: 'sometext2', filterType: 'field'}],
+        }]};
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'].mappings.editorId = {
+        mappings: [{key: 'someKey', generate: 'sometext', isRequired}]};
+    });
+
     renderWithProviders(
       <MemoryRouter><ImportMapping
         integrationId="5ff579d745ceef7dcd797c15" flowId="5ea16c600e2fab71928a6152"

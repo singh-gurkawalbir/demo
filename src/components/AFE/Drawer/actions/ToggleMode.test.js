@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import ToggleMode from './ToggleMode';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 const mockDispatch = jest.fn();
@@ -16,56 +16,60 @@ jest.mock('react-redux', () => ({
 }));
 
 function initToggleMode(props = {}) {
-  initialStore.getState().session.editors = {
-    'tx-63a55e08d9e20c15d94daca9': {
-      editorType: 'flowTransform',
-      flowId: '63a54e63d9e20c15d94da0f1',
-      resourceId: '63a55e08d9e20c15d94daca9',
-      resourceType: 'exports',
-      stage: 'transform',
-      rule: {
-        javascript: {
-          fetchScriptContent: true,
-          entryFunction: 'transform',
+  const mustateState = draft => {
+    draft.session.editors = {
+      'tx-63a55e08d9e20c15d94daca9': {
+        editorType: 'flowTransform',
+        flowId: '63a54e63d9e20c15d94da0f1',
+        resourceId: '63a55e08d9e20c15d94daca9',
+        resourceType: 'exports',
+        stage: 'transform',
+        rule: {
+          javascript: {
+            fetchScriptContent: true,
+            entryFunction: 'transform',
+          },
+        },
+        activeProcessor: 'filter',
+      },
+      'tx-6': {
+        editorType: 'flowTransform',
+        flowId: '63a54e63d9e20c15d94da0f1',
+        resourceId: '63a55e08d9e20c15d94daca9',
+        resourceType: 'exports',
+        stage: 'transform',
+        rule: {
+          javascript: {
+            fetchScriptContent: true,
+            entryFunction: 'transform',
+          },
+        },
+        activeProcessor: 'json',
+        context: {
+          type: 'hook',
+          container: 'integration',
+          _integrationId: '63433f87ba338228f2401609',
+          _flowId: '63a54e63d9e20c15d94da0f1',
         },
       },
-      activeProcessor: 'filter',
-    },
-    'tx-6': {
-      editorType: 'flowTransform',
-      flowId: '63a54e63d9e20c15d94da0f1',
-      resourceId: '63a55e08d9e20c15d94daca9',
-      resourceType: 'exports',
-      stage: 'transform',
-      rule: {
-        javascript: {
-          fetchScriptContent: true,
-          entryFunction: 'transform',
+      'tx-61': {
+        editorType: 'flowTransform',
+        flowId: '63a54e63d9e20c15d94da0f1',
+        resourceId: '63a55e08d9e20c15d94daca9',
+        resourceType: 'exports',
+        stage: 'transform',
+        rule: {
+          javascript: {
+            fetchScriptContent: true,
+            entryFunction: 'transform',
+          },
         },
+        activeProcessor: 'javascript',
       },
-      activeProcessor: 'json',
-      context: {
-        type: 'hook',
-        container: 'integration',
-        _integrationId: '63433f87ba338228f2401609',
-        _flowId: '63a54e63d9e20c15d94da0f1',
-      },
-    },
-    'tx-61': {
-      editorType: 'flowTransform',
-      flowId: '63a54e63d9e20c15d94da0f1',
-      resourceId: '63a55e08d9e20c15d94daca9',
-      resourceType: 'exports',
-      stage: 'transform',
-      rule: {
-        javascript: {
-          fetchScriptContent: true,
-          entryFunction: 'transform',
-        },
-      },
-      activeProcessor: 'javascript',
-    },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<ToggleMode {...props} />, {initialStore});
 }

@@ -5,20 +5,22 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Invite from '.';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
 async function initInvite({props = {}, transfer = {}} = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    integrations: [{
-      _id: 'id_1',
-      name: 'name 1',
-      tag: 'tag 1',
-    }],
-  };
-  initialStore.getState().session.transfers = transfer;
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      integrations: [{
+        _id: 'id_1',
+        name: 'name 1',
+        tag: 'tag 1',
+      }],
+    };
+    draft.session.transfers = transfer;
+  });
   const ui = (
     <MemoryRouter>
       <Invite {...props} />

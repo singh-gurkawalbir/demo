@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import CeligoTable from '../../../../CeligoTable';
 import metadata from '../../metadata';
 
@@ -38,21 +38,23 @@ const actionProps = {
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.integrations = [{
-  _id: 'someIntegrationID',
-  name: 'Production',
-  _connectorId: 'some_connectorId',
-}];
-initialStore.getState().data.resources.flows = [{
-  _id: '5d95f7d1795b356dfcb5d6c4',
-  _integrationId: '5e9bf6c9edd8fa3230149fbd',
-  _exportId: '5ea16cd30e2fab71928a6166',
-}];
+mutateStore(initialStore, draft => {
+  draft.data.resources.integrations = [{
+    _id: 'someIntegrationID',
+    name: 'Production',
+    _connectorId: 'some_connectorId',
+  }];
+  draft.data.resources.flows = [{
+    _id: '5d95f7d1795b356dfcb5d6c4',
+    _integrationId: '5e9bf6c9edd8fa3230149fbd',
+    _exportId: '5ea16cd30e2fab71928a6166',
+  }];
 
-initialStore.getState().data.resources.exports = [{
-  _id: '5ea16cd30e2fab71928a6166',
-  type: 'simple',
-}];
+  draft.data.resources.exports = [{
+    _id: '5ea16cd30e2fab71928a6166',
+    type: 'simple',
+  }];
+});
 
 async function initflowTable(actionProps = {}, res = resource, initialStore = null) {
   const ui = (

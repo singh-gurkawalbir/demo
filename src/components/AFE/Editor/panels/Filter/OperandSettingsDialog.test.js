@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
@@ -21,16 +21,38 @@ jest.mock('@material-ui/core/IconButton', () => ({
   },
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initSettingsDialog(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    sampleDataStatus: props.status,
-    data: 'initial feature value',
-    editorType: 'jsonParser',
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      sampleDataStatus: props.status,
+      data: 'initial feature value',
+      editorType: 'jsonParser',
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<OperandSettingsDialog {...props} />, {initialStore});
 }

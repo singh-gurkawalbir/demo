@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 
 jest.mock('react-truncate-markup', () => ({
@@ -27,26 +27,28 @@ jest.mock('react-truncate-markup', () => ({
 describe('dynaChangeLicenseEdition tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    connectors: [{
-      _id: '_connectorId',
-      twoDotZero: {
-        editions: [
-          {
-            _id: '_editionId1',
-            order: 3,
-          },
-          {
-            _id: '_editionId2',
-            order: 4,
-          },
-          {
-            _id: '_editionId3',
-            order: 5,
-          },
-        ]},
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connectors: [{
+        _id: '_connectorId',
+        twoDotZero: {
+          editions: [
+            {
+              _id: '_editionId1',
+              order: 3,
+            },
+            {
+              _id: '_editionId2',
+              order: 4,
+            },
+            {
+              _id: '_editionId3',
+              order: 5,
+            },
+          ]},
+      }],
+    };
+  });
   let mockDispatchFn;
   let useDispatchSpy;
 

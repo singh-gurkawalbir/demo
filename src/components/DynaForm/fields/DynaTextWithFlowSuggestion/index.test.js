@@ -36,11 +36,9 @@ describe('dynaTextWithFlowSuggestion UI tests', () => {
     const mockOnFieldChange = jest.fn();
 
     renderWithProviders(<DynaTextWithFlowSuggestion onFieldChange={mockOnFieldChange} />);
-    const textfield = screen.getByRole('textbox');
+    screen.getByRole('textbox').focus();
 
-    await waitFor(async () => {
-      await userEvent.paste(textfield, '{{"data"}}');
-      expect(mockOnFieldChange).toHaveBeenCalledWith(undefined, "{{'data'}}");
-    });
+    await userEvent.paste('{{"data"}}');
+    expect(mockOnFieldChange).toHaveBeenCalledWith(undefined, "{{'data'}}");
   });
 });

@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import FlowNameWithFlowGroupCell from '.';
-import { reduxStore, renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../../test/test-utils';
 
 const integrations = [
   {
@@ -113,8 +113,10 @@ const flows = [
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.integrations = integrations;
-initialStore.getState().data.resources.flows = flows;
+mutateStore(initialStore, draft => {
+  draft.data.resources.integrations = integrations;
+  draft.data.resources.flows = flows;
+});
 
 describe('flowNameWithFlowGroupCell UI Tests', () => {
   test('should render link with no text when no props are provided', () => {

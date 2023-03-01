@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaTextUpdateDomain from './DynaTextUpdateDomain';
 
 const mockChange = jest.fn();
@@ -11,13 +11,15 @@ const props = {formKey: '_formKey', id: '_id', onFieldChange: mockChange};
 async function initDynaTextUpdateDomain(props, value = 'sandbox', touched = true) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      fields: {
-        environment: touched ? {value, touched} : undefined,
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        fields: {
+          environment: touched ? {value, touched} : undefined,
+        },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<DynaTextUpdateDomain {...props} />, { initialStore });
 }

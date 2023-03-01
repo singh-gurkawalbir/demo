@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRouterDom from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, mockPutRequestOnce } from '../../../../test/test-utils';
+import { renderWithProviders, mockPutRequestOnce, mutateStore } from '../../../../test/test-utils';
 import ManageNotificationsDrawer from '.';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
@@ -17,146 +17,148 @@ import { getCreatedStore } from '../../../../store';
 let initialStore;
 
 function store(notifications) {
-  initialStore.getState().data.resources.connections = [{
-    _id: '606aca53ba723015469f04aa',
-    type: 'ftp',
-    name: 'Test Connection',
-    offline: false,
-    _connectorId: '57c8199e8489cc1a298cc6ea',
-    _integrationId: '602aac4c53b612272ca1f54b',
-  }];
-  initialStore.getState().data.resources.flows = [
-    {
-      _id: '5aabd0fdc69b4508218f832b',
-      name: 'FTP to FTP Quoted CSV',
-      disabled: true,
-      timezone: 'Asia/Calcutta',
+  mutateStore(initialStore, draft => {
+    draft.data.resources.connections = [{
+      _id: '606aca53ba723015469f04aa',
+      type: 'ftp',
+      name: 'Test Connection',
+      offline: false,
+      _connectorId: '57c8199e8489cc1a298cc6ea',
       _integrationId: '602aac4c53b612272ca1f54b',
-    },
-    {
-      _id: '5aaba8b53f358a48a041aa34',
-      lastModified: '2021-03-10T06:46:31.998Z',
-      name: 'Sample1',
-      disabled: true,
-      _integrationId: '602aac4c53b612272ca1f54b',
-    },
-  ];
-  initialStore.getState().data.integrationAShares = {
-    '602aac4c53b612272ca1f54b': [{
-      _id: '5ea6afa9cc041b3effb87105',
-      accepted: true,
-      accessLevel: 'administrator',
-      sharedWithUser: {
-        _id: '5d036cb0bb88170e9e00e6ac',
-        email: 'testuser+1@celigo.com',
-        name: 'Test User',
-        accountSSOLinked: 'not_linked',
+    }];
+    draft.data.resources.flows = [
+      {
+        _id: '5aabd0fdc69b4508218f832b',
+        name: 'FTP to FTP Quoted CSV',
+        disabled: true,
+        timezone: 'Asia/Calcutta',
+        _integrationId: '602aac4c53b612272ca1f54b',
       },
-    }],
-  };
-  initialStore.getState().session.loadResources = [{
-    'transfers/invited': 'received',
-    ashares: 'failed',
-    'shared/ashares': 'received',
-    'ui/assistants': 'received',
-    httpconnectors: 'failed',
-    tiles: 'received',
-    published: 'received',
-    connections: 'received',
-    marketplacetemplates: 'received',
-    integrations: 'received',
-    '5aaba5e93f358a48a041aa09': {
-      flows: 'received',
-      exports: 'received',
-      imports: 'received',
-    },
-    notifications: 'received',
-    'integrations/602aac4c53b612272ca1f54b/ashares': 'received',
-  }];
-  initialStore.getState().user.profile = {
-    _id: '5e215a82416fd0310ba1191f',
-    name: 'UI Devs',
-    email: 'ui-devs@celigo.com',
-    role: 'Developer',
-    company: 'cccc celigoooo 1',
-    phone: '9898989897',
-    timezone: 'Asia/Calcutta',
-    developer: true,
-    emailHash: 'a05d538c141fb4987d925d8426be895d',
-  };
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    expand: 'Resources',
-    scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-    showReactSneakPeekFromDate: '2019-11-05',
-    showReactBetaFromDate: '2019-12-26',
-    defaultAShareId: '5ea6aef9dedba94094c71d15',
-    accounts: {
-      '5e27eb7fe2f22b579b581228': {
-        expand: 'Resources',
-        drawerOpened: true,
-        fbBottomDrawerHeight: 441,
+      {
+        _id: '5aaba8b53f358a48a041aa34',
+        lastModified: '2021-03-10T06:46:31.998Z',
+        name: 'Sample1',
+        disabled: true,
+        _integrationId: '602aac4c53b612272ca1f54b',
       },
-      '5f87f1c030acea7b58fd8316': {
-        expand: 'Help',
-        drawerOpened: true,
-        fbBottomDrawerHeight: 441,
-        dashboard: {
-          view: 'tile',
+    ];
+    draft.data.integrationAShares = {
+      '602aac4c53b612272ca1f54b': [{
+        _id: '5ea6afa9cc041b3effb87105',
+        accepted: true,
+        accessLevel: 'administrator',
+        sharedWithUser: {
+          _id: '5d036cb0bb88170e9e00e6ac',
+          email: 'testuser+1@celigo.com',
+          name: 'Test User',
+          accountSSOLinked: 'not_linked',
         },
+      }],
+    };
+    draft.session.loadResources = [{
+      'transfers/invited': 'received',
+      ashares: 'failed',
+      'shared/ashares': 'received',
+      'ui/assistants': 'received',
+      httpconnectors: 'failed',
+      tiles: 'received',
+      published: 'received',
+      connections: 'received',
+      marketplacetemplates: 'received',
+      integrations: 'received',
+      '5aaba5e93f358a48a041aa09': {
+        flows: 'received',
+        exports: 'received',
+        imports: 'received',
       },
-      '5fd347abc35d3b3b9d1dcabf': {
-        fbBottomDrawerHeight: 681,
-        expand: 'Tools',
-      },
-      '5ea6aef9dedba94094c71d15': {
-        drawerOpened: true,
-        expand: 'Tools',
-      },
-      '5f0c685ec4f5396909523154': {
-        expand: 'Tools',
-      },
-      '6089288ff45b454e157d2fb8': {
-        linegraphs: {
-          '62307e31b7484c6c73568813': {
-            range: {
-              startDate: '2021-07-03T18:30:00.000Z',
-              endDate: '2022-07-04T04:39:59.444Z',
-              preset: 'lastyear',
-            },
-            resource: [
-              '62307e31b7484c6c73568813',
-            ],
+      notifications: 'received',
+      'integrations/602aac4c53b612272ca1f54b/ashares': 'received',
+    }];
+    draft.user.profile = {
+      _id: '5e215a82416fd0310ba1191f',
+      name: 'UI Devs',
+      email: 'ui-devs@celigo.com',
+      role: 'Developer',
+      company: 'cccc celigoooo 1',
+      phone: '9898989897',
+      timezone: 'Asia/Calcutta',
+      developer: true,
+      emailHash: 'a05d538c141fb4987d925d8426be895d',
+    };
+    draft.user.preferences = {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      expand: 'Resources',
+      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+      showReactSneakPeekFromDate: '2019-11-05',
+      showReactBetaFromDate: '2019-12-26',
+      defaultAShareId: '5ea6aef9dedba94094c71d15',
+      accounts: {
+        '5e27eb7fe2f22b579b581228': {
+          expand: 'Resources',
+          drawerOpened: true,
+          fbBottomDrawerHeight: 441,
+        },
+        '5f87f1c030acea7b58fd8316': {
+          expand: 'Help',
+          drawerOpened: true,
+          fbBottomDrawerHeight: 441,
+          dashboard: {
+            view: 'tile',
           },
         },
-        fbBottomDrawerHeight: 479,
+        '5fd347abc35d3b3b9d1dcabf': {
+          fbBottomDrawerHeight: 681,
+          expand: 'Tools',
+        },
+        '5ea6aef9dedba94094c71d15': {
+          drawerOpened: true,
+          expand: 'Tools',
+        },
+        '5f0c685ec4f5396909523154': {
+          expand: 'Tools',
+        },
+        '6089288ff45b454e157d2fb8': {
+          linegraphs: {
+            '62307e31b7484c6c73568813': {
+              range: {
+                startDate: '2021-07-03T18:30:00.000Z',
+                endDate: '2022-07-04T04:39:59.444Z',
+                preset: 'lastyear',
+              },
+              resource: [
+                '62307e31b7484c6c73568813',
+              ],
+            },
+          },
+          fbBottomDrawerHeight: 479,
+        },
+        '5ffc8fdd8ff7642582e5e528': {
+          expand: null,
+        },
       },
-      '5ffc8fdd8ff7642582e5e528': {
-        expand: null,
+    };
+    draft.data.resources.integrations = [{
+      _id: '602aac4c53b612272ca1f54b',
+      lastModified: '2018-07-03T12:08:00.302Z',
+      name: 'Dummy1',
+      description: 'Add this',
+      sandbox: false,
+      _registeredConnectionIds: [
+        '606aca53ba723015469f04aa',
+      ],
+    }];
+    draft.comms.networkComms = {
+      'put:/notifications': {
+        status: 'success',
+        hidden: false,
+        refresh: false,
+        method: 'put',
       },
-    },
-  };
-  initialStore.getState().data.resources.integrations = [{
-    _id: '602aac4c53b612272ca1f54b',
-    lastModified: '2018-07-03T12:08:00.302Z',
-    name: 'Dummy1',
-    description: 'Add this',
-    sandbox: false,
-    _registeredConnectionIds: [
-      '606aca53ba723015469f04aa',
-    ],
-  }];
-  initialStore.getState().comms.networkComms = {
-    'put:/notifications': {
-      status: 'success',
-      hidden: false,
-      refresh: false,
-      method: 'put',
-    },
-  };
-  initialStore.getState().data.resources.notifications = notifications;
+    };
+    draft.data.resources.notifications = notifications;
+  });
 }
 
 function initManageNotification(props = {}) {
@@ -471,21 +473,24 @@ describe('Manage Notifications', () => {
     jest.spyOn(reactRouterDom, 'useHistory').mockReturnValueOnce(history);
     store();
 
-    initialStore.getState().data.integrationAShares = {
-      '602aac4c53b612272ca1f54b': [{
-        _id: '5ea6afa9cc041b3effb87105',
-        accepted: true,
-        accessLevel: 'administrator',
-        sharedWithUser: {
-          _id: '5d036cb0bb88170e9e00e6ac',
-          email: 'testuser+2@celigo.com',
-          name: 'Test User',
-          accountSSOLinked: 'not_linked',
-        },
-      }],
-    };
-    initialStore.getState().comms.networkComms = {
-    };
+    mutateStore(initialStore, draft => {
+      draft.data.integrationAShares = {
+        '602aac4c53b612272ca1f54b': [{
+          _id: '5ea6afa9cc041b3effb87105',
+          accepted: true,
+          accessLevel: 'administrator',
+          sharedWithUser: {
+            _id: '5d036cb0bb88170e9e00e6ac',
+            email: 'testuser+2@celigo.com',
+            name: 'Test User',
+            accountSSOLinked: 'not_linked',
+          },
+        }],
+      };
+      draft.comms.networkComms = {
+      };
+    });
+
     await initManageNotification({
       integrationId: '602aac4c53b612272ca1f54b',
     });

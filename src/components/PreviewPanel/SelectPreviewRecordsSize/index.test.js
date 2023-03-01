@@ -6,24 +6,26 @@ import * as reactRedux from 'react-redux';
 import SelectPreviewRecordsSize from '.';
 import { getCreatedStore } from '../../../store';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 
 let initialStore;
 const mocksetIsValidRecordSize = jest.fn();
 
 async function initSelectPreviewRecordsSize({resourceId = '123', isValidRecordSize = true, setIsValidRecordSize = mocksetIsValidRecordSize} = {}) {
-  initialStore.getState().session.resourceFormSampleData[resourceId] = {
-    preview: {
-      data: {
-        parse: [
-          {
-            id: 123,
-            name: 'Testing',
-          },
-        ],
+  mutateStore(initialStore, draft => {
+    draft.session.resourceFormSampleData[resourceId] = {
+      preview: {
+        data: {
+          parse: [
+            {
+              id: 123,
+              name: 'Testing',
+            },
+          ],
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <SelectPreviewRecordsSize isValidRecordSize={isValidRecordSize} resourceId={resourceId} setIsValidRecordSize={setIsValidRecordSize} />

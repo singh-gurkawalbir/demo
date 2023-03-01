@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import DynaSelectConditionalLookup from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import * as ConditionalLookupDrawer from './ConditionalLookup/Drawer';
 import actions from '../../../../actions';
 
@@ -14,7 +14,9 @@ const mockOnFieldChange = jest.fn();
 const mockHistoryPush = jest.fn();
 
 function initDynaSelectConditionalLookup({props, mappingData}) {
-  initialStore.getState().session.mapping = mappingData;
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = mappingData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test'}]}

@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore, mockPatchRequestOnce } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mockPatchRequestOnce, mutateStore } from '../../../test/test-utils';
 import ConfigConnectionDebugger from '.';
 import { DrawerProvider } from '../Right/DrawerContext/index';
 import { runServer } from '../../../test/api/server';
@@ -19,38 +19,40 @@ async function initConfigConnectionDebugger({debugTime = 0}) {
     mockDate = new Date(new Date().getTime() + debugTime * 60 * 1000);
   }
 
-  initialStore.getState().data.resources = {
-    connections: [
-      {
-        _id: '_connectionId',
-        debugDate: mockDate,
-        debugUntil: mockDate,
-      },
-    ],
-  };
-  initialStore.getState().session = {
-    form: {
-      'config-conn-debug':
-      {
-        isValid: true,
-        value: {
-          debugDate: 0,
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connections: [
+        {
+          _id: '_connectionId',
+          debugDate: mockDate,
+          debugUntil: mockDate,
         },
-        fields: {
-          debugDate: {
-            id: 'debugDate',
-            touched: true},
+      ],
+    };
+    draft.session = {
+      form: {
+        'config-conn-debug':
+        {
+          isValid: true,
+          value: {
+            debugDate: 0,
+          },
+          fields: {
+            debugDate: {
+              id: 'debugDate',
+              touched: true},
+          },
+          tempField: { touched: true },
+          lastFieldUpdated: 'debugDate',
         },
-        tempField: { touched: true },
-        lastFieldUpdated: 'debugDate',
       },
-    },
-    asyncTask: {
-      'config-conn-debug': {
-        status: 'complete',
+      asyncTask: {
+        'config-conn-debug': {
+          status: 'complete',
+        },
       },
-    },
-  };
+    };
+  });
 
   const ui = (
     <MemoryRouter

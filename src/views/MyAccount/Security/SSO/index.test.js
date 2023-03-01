@@ -6,15 +6,17 @@ import { MemoryRouter } from 'react-router-dom';
 import Security from '.';
 import { getCreatedStore } from '../../../../store';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
 async function initSecurity({defaultAShareIdValue, accountsValue} = {}) {
-  initialStore.getState().user.preferences = {defaultAShareId: defaultAShareIdValue};
-  initialStore.getState().user.org = {
-    accounts: accountsValue,
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {defaultAShareId: defaultAShareIdValue};
+    draft.user.org = {
+      accounts: accountsValue,
+    };
+  });
   const ui = (
     <MemoryRouter>
       <Security />

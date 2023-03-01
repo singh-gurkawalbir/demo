@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import DynaIclient from './DynaIclient';
@@ -74,12 +74,14 @@ describe('test suite for DynaIclient field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.connections.iClients = {
-      [props.connectionId]: [
-        {name: 'Client 1', _id: 'client1'},
-        {_id: 'client2'},
-      ],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.connections.iClients = {
+        [props.connectionId]: [
+          {name: 'Client 1', _id: 'client1'},
+          {_id: 'client2'},
+        ],
+      };
+    });
 
     renderWithProviders(<DynaIclient {...props} />, {initialStore});
     expect(mockDispatchFn).not.toHaveBeenCalled();

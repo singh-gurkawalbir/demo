@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import ResourceDiffContainer from '.';
 import { getCreatedStore } from '../../../store';
 
@@ -187,37 +187,39 @@ describe('Test suite for ResourceDiffContainer component', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resource.references = {
-      flows: [
-        {
-          id: 'flow123',
-          name: 'Parent Flow',
-          dependencyIds: {
-            export: [
-              'exp123',
-            ],
+    mutateStore(initialStore, draft => {
+      draft.session.resource.references = {
+        flows: [
+          {
+            id: 'flow123',
+            name: 'Parent Flow',
+            dependencyIds: {
+              export: [
+                'exp123',
+              ],
+            },
           },
-        },
-      ],
-      integrations: [
-        {
-          id: 'int123',
-          name: 'Clone - Aliases Test',
-          dependencyIds: {
-            flow: [
-              'flow123',
-            ],
+        ],
+        integrations: [
+          {
+            id: 'int123',
+            name: 'Clone - Aliases Test',
+            dependencyIds: {
+              flow: [
+                'flow123',
+              ],
+            },
           },
-        },
-      ],
-    };
+        ],
+      };
 
-    initialStore.getState().data.resources.flows = [
-      {
-        _id: 'flow123',
-        _integrationId: 'int123',
-      },
-    ];
+      draft.data.resources.flows = [
+        {
+          _id: 'flow123',
+          _integrationId: 'int123',
+        },
+      ];
+    });
 
     initResourceDiffContainer(props, initialStore);
 
@@ -318,9 +320,11 @@ describe('Test suite for ResourceDiffContainer component', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resource.references = {
-      integrations: [],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resource.references = {
+        integrations: [],
+      };
+    });
 
     initResourceDiffContainer(props, initialStore);
     const openReferences = screen.getByText('References');

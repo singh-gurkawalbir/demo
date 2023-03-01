@@ -4,7 +4,7 @@ import { screen, cleanup, waitForElementToBeRemoved, waitFor, fireEvent } from '
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ClonePreview from './Preview';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
@@ -29,169 +29,171 @@ jest.mock('react-truncate-markup', () => ({
 }));
 
 function initStore(integrationSession) {
-  initialStore.getState().data.resources.integrations = [
-    {
-      _id: '5fc5e0e66cfe5b44bb95de70',
-      lastModified: '2022-07-27T11:14:41.700Z',
-      name: '3PL Central',
-      description: 'Testing Integration description',
-    },
-    {
-      _id: '6294909fd5391a2e79b38eff',
-      lastModified: '2022-06-01T10:21:47.332Z',
-      name: 'Salesforce - NetSuite',
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-    },
-  ];
-  initialStore.getState().data.resources.flows = [
-    {
-      _id: '60db46af9433830f8f0e0fe7',
-      lastModified: '2021-06-30T02:36:49.734Z',
-      name: '3PL Central - FTP',
-      description: 'Testing Flows Description',
-      disabled: false,
-      _integrationId: '5fc5e0e66cfe5b44bb95de70',
-    },
-    {
-      _id: '6294aa3dccb94d35de69481e',
-      lastModified: '2022-05-30T11:27:58.128Z',
-      name: 'NetSuite Contact to Salesforce Contact Add/Update',
-      description: 'Syncs records present in NetSuite Contacts as Salesforce Contacts in real-time. This flow triggers when an update is made to a contact or a new contact is created for a customer that has Salesforce ID present in it. When a new contact is created in NetSuite and is synced successfully to Salesforce, the flow writes back its Salesforce ID to NetSuite contact.',
-      disabled: true,
-      _integrationId: '6294909fd5391a2e79b38eff',
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-    },
-  ];
-  initialStore.getState().data.resources.exports = [
-    {
-      _id: '60dbc5a8a706701ed4a148ac',
-      createdAt: '2021-06-30T01:15:20.177Z',
-      lastModified: '2021-06-30T02:36:51.936Z',
-      name: 'Test 3pl central export',
-      description: 'Test 3PL central export description',
-      _connectionId: '5fc5e4a46cfe5b44bb95df44',
-      apiIdentifier: 'ec742bc9b0',
-      asynchronous: true,
-      assistant: '3plcentral',
-      sandbox: false,
-      adaptorType: 'HTTPExport',
-    },
-    {
-      _id: '6294aa2eccb94d35de6947d2',
-      createdAt: '2022-05-30T11:27:42.954Z',
-      lastModified: '2022-05-30T11:27:44.488Z',
-      name: 'Get Contacts From NetSuite',
-      _connectionId: '6294909fccb94d35de693596',
-      _integrationId: '6294909fd5391a2e79b38eff',
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-      externalId: 'netsuite_contact_to_salesforce_contact_export',
-      apiIdentifier: 'e158f37624',
-      asynchronous: true,
-      type: 'distributed',
-      adaptorType: 'NetSuiteExport',
-    },
-  ];
-  initialStore.getState().data.resources.imports = [
-    {
-      _id: '605b30767904202f31742092',
-      createdAt: '2021-03-24T12:28:38.813Z',
-      lastModified: '2021-04-29T15:37:16.667Z',
-      name: 'FTP Import 1',
-      description: 'Test FTP import description',
-      _connectionId: '5d529bfbdb0c7b14a6011a57',
-      distributed: false,
-      sandbox: false,
-      adaptorType: 'FTPImport',
-    },
-    {
-      _id: '6294aa3cccb94d35de694808',
-      createdAt: '2022-05-30T11:27:56.745Z',
-      lastModified: '2022-05-30T11:27:57.238Z',
-      name: 'Salesforce Contact Id Write Back to NetSuite',
-      _connectionId: '6294909fccb94d35de693596',
-      _integrationId: '6294909fd5391a2e79b38eff',
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-      externalId: 'netsuite_contact_to_salesforce_contact_import_idwriteback',
-      distributed: true,
-      apiIdentifier: 'ia26181de1',
-      adaptorType: 'NetSuiteDistributedImport',
-    },
-    {
-      _id: '6294aa2fd5391a2e79b3a0b8',
-      createdAt: '2022-05-30T11:27:43.058Z',
-      lastModified: '2022-05-30T11:27:44.870Z',
-      name: 'Post Contacts to Salesforce',
-      _connectionId: '629490a0ccb94d35de693598',
-      _integrationId: '6294909fd5391a2e79b38eff',
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-      idLockTemplate: '{{{id}}}',
-      adaptorType: 'SalesforceImport',
-    },
-  ];
-  initialStore.getState().data.resources.connections = [
-    {
-      _id: '5d529bfbdb0c7b14a6011a57',
-      createdAt: '2019-08-13T11:16:11.951Z',
-      lastModified: '2022-06-24T11:44:40.123Z',
-      type: 'ftp',
-      name: 'FTP Connection',
-      offline: true,
-    },
-    {
-      _id: '5fc5e4a46cfe5b44bb95df44',
-      createdAt: '2020-12-01T06:37:24.341Z',
-      lastModified: '2022-07-27T18:02:24.948Z',
-      type: 'http',
-      name: '3PL Central Connection',
-      assistant: '3plcentral',
-    },
-    {
-      _id: '6294909fccb94d35de693596',
-      createdAt: '2022-05-30T09:38:39.897Z',
-      lastModified: '2022-05-30T11:18:48.232Z',
-      type: 'netsuite',
-      name: 'NetSuite Connection [Salesforce - NetSuite (IO)]',
-      offline: false,
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-      _integrationId: '6294909fd5391a2e79b38eff',
-    },
-    {
-      _id: '629490a0ccb94d35de693598',
-      createdAt: '2022-05-30T09:38:40.303Z',
-      lastModified: '2022-07-28T10:55:31.583Z',
-      type: 'salesforce',
-      name: 'Salesforce Connection [Salesforce - NetSuite (IO)]',
-      offline: false,
-      _connectorId: '5b61ae4aeb538642c26bdbe6',
-      _integrationId: '6294909fd5391a2e79b38eff',
-    },
-  ];
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    drawerOpened: true,
-    expand: 'Resources',
-    scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-    showReactSneakPeekFromDate: '2019-11-05',
-    showReactBetaFromDate: '2019-12-26',
-    defaultAShareId: 'own',
-    fbBottomDrawerHeight: 301,
-    lastLoginAt: '2022-01-25T07:36:20.829Z',
-    dashboard: {
-      tilesOrder: [
-        '5fc5e0e66cfe5b44bb95de70',
-      ],
-      view: 'tile',
-    },
-    recentActivity: {
-      production: {
-        integration: '5fc5e0e66cfe5b44bb95de70',
-        flow: '60db46af9433830f8f0e0fe7',
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [
+      {
+        _id: '5fc5e0e66cfe5b44bb95de70',
+        lastModified: '2022-07-27T11:14:41.700Z',
+        name: '3PL Central',
+        description: 'Testing Integration description',
       },
-    },
-  };
-  initialStore.getState().session.templates = integrationSession;
+      {
+        _id: '6294909fd5391a2e79b38eff',
+        lastModified: '2022-06-01T10:21:47.332Z',
+        name: 'Salesforce - NetSuite',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+      },
+    ];
+    draft.data.resources.flows = [
+      {
+        _id: '60db46af9433830f8f0e0fe7',
+        lastModified: '2021-06-30T02:36:49.734Z',
+        name: '3PL Central - FTP',
+        description: 'Testing Flows Description',
+        disabled: false,
+        _integrationId: '5fc5e0e66cfe5b44bb95de70',
+      },
+      {
+        _id: '6294aa3dccb94d35de69481e',
+        lastModified: '2022-05-30T11:27:58.128Z',
+        name: 'NetSuite Contact to Salesforce Contact Add/Update',
+        description: 'Syncs records present in NetSuite Contacts as Salesforce Contacts in real-time. This flow triggers when an update is made to a contact or a new contact is created for a customer that has Salesforce ID present in it. When a new contact is created in NetSuite and is synced successfully to Salesforce, the flow writes back its Salesforce ID to NetSuite contact.',
+        disabled: true,
+        _integrationId: '6294909fd5391a2e79b38eff',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+      },
+    ];
+    draft.data.resources.exports = [
+      {
+        _id: '60dbc5a8a706701ed4a148ac',
+        createdAt: '2021-06-30T01:15:20.177Z',
+        lastModified: '2021-06-30T02:36:51.936Z',
+        name: 'Test 3pl central export',
+        description: 'Test 3PL central export description',
+        _connectionId: '5fc5e4a46cfe5b44bb95df44',
+        apiIdentifier: 'ec742bc9b0',
+        asynchronous: true,
+        assistant: '3plcentral',
+        sandbox: false,
+        adaptorType: 'HTTPExport',
+      },
+      {
+        _id: '6294aa2eccb94d35de6947d2',
+        createdAt: '2022-05-30T11:27:42.954Z',
+        lastModified: '2022-05-30T11:27:44.488Z',
+        name: 'Get Contacts From NetSuite',
+        _connectionId: '6294909fccb94d35de693596',
+        _integrationId: '6294909fd5391a2e79b38eff',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        externalId: 'netsuite_contact_to_salesforce_contact_export',
+        apiIdentifier: 'e158f37624',
+        asynchronous: true,
+        type: 'distributed',
+        adaptorType: 'NetSuiteExport',
+      },
+    ];
+    draft.data.resources.imports = [
+      {
+        _id: '605b30767904202f31742092',
+        createdAt: '2021-03-24T12:28:38.813Z',
+        lastModified: '2021-04-29T15:37:16.667Z',
+        name: 'FTP Import 1',
+        description: 'Test FTP import description',
+        _connectionId: '5d529bfbdb0c7b14a6011a57',
+        distributed: false,
+        sandbox: false,
+        adaptorType: 'FTPImport',
+      },
+      {
+        _id: '6294aa3cccb94d35de694808',
+        createdAt: '2022-05-30T11:27:56.745Z',
+        lastModified: '2022-05-30T11:27:57.238Z',
+        name: 'Salesforce Contact Id Write Back to NetSuite',
+        _connectionId: '6294909fccb94d35de693596',
+        _integrationId: '6294909fd5391a2e79b38eff',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        externalId: 'netsuite_contact_to_salesforce_contact_import_idwriteback',
+        distributed: true,
+        apiIdentifier: 'ia26181de1',
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      {
+        _id: '6294aa2fd5391a2e79b3a0b8',
+        createdAt: '2022-05-30T11:27:43.058Z',
+        lastModified: '2022-05-30T11:27:44.870Z',
+        name: 'Post Contacts to Salesforce',
+        _connectionId: '629490a0ccb94d35de693598',
+        _integrationId: '6294909fd5391a2e79b38eff',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        idLockTemplate: '{{{id}}}',
+        adaptorType: 'SalesforceImport',
+      },
+    ];
+    draft.data.resources.connections = [
+      {
+        _id: '5d529bfbdb0c7b14a6011a57',
+        createdAt: '2019-08-13T11:16:11.951Z',
+        lastModified: '2022-06-24T11:44:40.123Z',
+        type: 'ftp',
+        name: 'FTP Connection',
+        offline: true,
+      },
+      {
+        _id: '5fc5e4a46cfe5b44bb95df44',
+        createdAt: '2020-12-01T06:37:24.341Z',
+        lastModified: '2022-07-27T18:02:24.948Z',
+        type: 'http',
+        name: '3PL Central Connection',
+        assistant: '3plcentral',
+      },
+      {
+        _id: '6294909fccb94d35de693596',
+        createdAt: '2022-05-30T09:38:39.897Z',
+        lastModified: '2022-05-30T11:18:48.232Z',
+        type: 'netsuite',
+        name: 'NetSuite Connection [Salesforce - NetSuite (IO)]',
+        offline: false,
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        _integrationId: '6294909fd5391a2e79b38eff',
+      },
+      {
+        _id: '629490a0ccb94d35de693598',
+        createdAt: '2022-05-30T09:38:40.303Z',
+        lastModified: '2022-07-28T10:55:31.583Z',
+        type: 'salesforce',
+        name: 'Salesforce Connection [Salesforce - NetSuite (IO)]',
+        offline: false,
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        _integrationId: '6294909fd5391a2e79b38eff',
+      },
+    ];
+    draft.user.preferences = {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      drawerOpened: true,
+      expand: 'Resources',
+      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+      showReactSneakPeekFromDate: '2019-11-05',
+      showReactBetaFromDate: '2019-12-26',
+      defaultAShareId: 'own',
+      fbBottomDrawerHeight: 301,
+      lastLoginAt: '2022-01-25T07:36:20.829Z',
+      dashboard: {
+        tilesOrder: [
+          '5fc5e0e66cfe5b44bb95de70',
+        ],
+        view: 'tile',
+      },
+      recentActivity: {
+        production: {
+          integration: '5fc5e0e66cfe5b44bb95de70',
+          flow: '60db46af9433830f8f0e0fe7',
+        },
+      },
+    };
+    draft.session.templates = integrationSession;
+  });
 }
 
 async function initClonePreview(props) {
@@ -485,7 +487,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -846,7 +848,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
@@ -1025,7 +1027,7 @@ describe('Clone Preview', () => {
 
     expect(flowButtonNode).toBeInTheDocument();
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await userEvent.click(flowButtonNode);
+    await fireEvent.click(flowButtonNode);
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 

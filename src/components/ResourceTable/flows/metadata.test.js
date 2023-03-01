@@ -4,7 +4,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 
@@ -64,13 +64,15 @@ function expectFunction(header, cell) {
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.profile = {
-  timezone: 'Asia/Calcutta',
-};
+mutateStore(initialStore, draft => {
+  draft.user.profile = {
+    timezone: 'Asia/Calcutta',
+  };
 
-initialStore.getState().user.preferences = {
-  defaultAShareId: 'own',
-};
+  draft.user.preferences = {
+    defaultAShareId: 'own',
+  };
+});
 
 const resource = {
   _id: '5d95f7d1795b356dfcb5d6c4',

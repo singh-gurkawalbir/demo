@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import { FORM_SAVE_STATUS } from '../../constants/resourceForm';
 import SaveAndCloseButtonGroupForm from './SaveAndCloseButtonGroupForm';
@@ -32,15 +32,17 @@ let status = FORM_SAVE_STATUS.COMPLETE;
 
 async function initSaveAndCloseButtonGroupForm(props = {formKey: 'blank'}) {
   const initialStore = getCreatedStore();
-  const { form, asyncTask } = initialStore.getState().session;
   const { formKey } = props;
 
-  form[formKey] = {
-    fields: {
-      tempField: { touched },
-    },
-  };
-  asyncTask[formKey] = { status };
+  mutateStore(initialStore, draft => {
+    draft.session.form[formKey] = {
+      fields: {
+        tempField: { touched },
+      },
+    };
+
+    draft.session.asyncTask[formKey] = { status };
+  });
 
   const ui = (
     <MemoryRouter>

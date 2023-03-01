@@ -5,7 +5,7 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, mockPostRequestOnce } from '../../../../test/test-utils';
+import { renderWithProviders, mockPostRequestOnce, mutateStore } from '../../../../test/test-utils';
 import InviteUserDrawer from '.';
 import reduxStore from '../../../../store';
 import { runServer } from '../../../../test/api/server';
@@ -13,55 +13,57 @@ import { runServer } from '../../../../test/api/server';
 function initInviteUserForm() {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.integrations = [{
-    _id: '62bedcdca0f5f21448171ea2',
-    lastModified: '2022-06-30T07:03:15.558Z',
-    name: 'Clone - demoint',
-    description: 'demo integration',
-    install: [],
-    mode: 'install',
-    sandbox: false,
-    _connectionid: '62bd43c87b94d20de64e9ab3',
-    _registeredConnectionIds: [],
-    installSteps: [
-      {
-        name: 'demo',
-        completed: false,
-        isCurrentStep: true,
-        isTriggered: true,
-        type: 'connection',
-        sourceConnection: {
-          _id: '62bd43c87b94d20de64e9ab3',
-          type: 'http',
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '62bedcdca0f5f21448171ea2',
+      lastModified: '2022-06-30T07:03:15.558Z',
+      name: 'Clone - demoint',
+      description: 'demo integration',
+      install: [],
+      mode: 'install',
+      sandbox: false,
+      _connectionid: '62bd43c87b94d20de64e9ab3',
+      _registeredConnectionIds: [],
+      installSteps: [
+        {
           name: 'demo',
-          http: {
-            formType: 'rest',
+          completed: false,
+          isCurrentStep: true,
+          isTriggered: true,
+          type: 'connection',
+          sourceConnection: {
+            _id: '62bd43c87b94d20de64e9ab3',
+            type: 'http',
+            name: 'demo',
+            http: {
+              formType: 'rest',
+            },
           },
         },
-      },
-      {
-        name: 'demo sales',
-        completed: false,
-        type: 'connection',
-        sourceConnection: {
-          _id: '62bd452420ecb90e02f2a6f0',
-          type: 'salesforce',
+        {
           name: 'demo sales',
+          completed: false,
+          type: 'connection',
+          sourceConnection: {
+            _id: '62bd452420ecb90e02f2a6f0',
+            type: 'salesforce',
+            name: 'demo sales',
+          },
         },
-      },
-      {
-        name: 'Copy resources now from template zip',
-        completed: false,
-        type: 'template_zip',
-        templateZip: true,
-        isClone: true,
-      },
-    ],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2022-06-30T07:03:15.558Z',
-    _sourceId: '6253af74cddb8a1ba550a010',
-  }];
+        {
+          name: 'Copy resources now from template zip',
+          completed: false,
+          type: 'template_zip',
+          templateZip: true,
+          isClone: true,
+        },
+      ],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2022-06-30T07:03:15.558Z',
+      _sourceId: '6253af74cddb8a1ba550a010',
+    }];
+  });
 
   const ui = (
     <MemoryRouter

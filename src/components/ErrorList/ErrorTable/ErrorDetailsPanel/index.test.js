@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ErrorDetailsPanel from './index';
 import { DrawerProvider } from '../../../drawer/Right/DrawerContext';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
 
@@ -58,105 +58,106 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = getCreatedStore();
 
-initialStore.getState().session.filters = {
-  openErrors: {
-    activeErrorId: '5556857034',
-  },
-};
-
-initialStore.getState().data.resources.flows = [
-  {
-    _id: '63234cd2514d5b0bf7b3c2f9',
-    name: 'Flow 1',
-  },
-  {
-    _id: '63234cd2514d5b0bf7cfvdfef',
-    name: 'Flow 2',
-    disabled: true,
-  },
-];
-initialStore.getState().session.errorManagement = {
-  openErrors: {
-    '63234cd2514d5b0bf7b3c2f9': {
-      status: 'received',
+mutateStore(initialStore, draft => {
+  draft.session.filters = {
+    openErrors: {
+      activeErrorId: '5556857034',
     },
-    '63234cd2514d5b0bf7cfvdfef': {
-      status: 'received',
+  };
+  draft.data.resources.flows = [
+    {
+      _id: '63234cd2514d5b0bf7b3c2f9',
+      name: 'Flow 1',
     },
-  },
-  errorDetails: {
-    '63234cd2514d5b0bf7b3c2f9': {
-      '63234d05514d5b0bf7b3c315': {
-        open: {
-          status: 'received',
-          errors: [
-            {
-              errorId: '5646501091',
-              _flowJobId: '63ab70dfbc20f510012c6b9d',
-              retryDataKey: 1,
-              reqAndResKey: 'somereqandres1',
-            },
-            {
-              errorId: '5556857034',
-              _flowJobId: '63a0e6894c1d6d062af90b9c',
-              retryDataKey: 2,
-              reqAndResKey: 'somereqandres2',
-            },
-            {
-              errorId: '5556824990',
-              _flowJobId: '639f80023d732c393149668d',
-              retryDataKey: 3,
-              reqAndResKey: 'somereqandres3',
-            },
-          ],
-        },
-      },
+    {
+      _id: '63234cd2514d5b0bf7cfvdfef',
+      name: 'Flow 2',
+      disabled: true,
     },
-    '63234cd2514d5b0bf7cfvdfef': {
-      '63234d05514d5b0bfxsfrgvddv': {
-        open: {
-          status: 'received',
-          errors: [
-            {
-              errorId: '5646501091',
-              _flowJobId: '63ab70dfbc20f510012c6b9d',
-              retryDataKey: 1,
-              reqAndResKey: 'somereqandres1',
-              isResourceNetsuite: true,
-            },
-            {
-              errorId: '5556857034',
-              _flowJobId: '63a0e6894c1d6d062af90b9c',
-              retryDataKey: 2,
-              reqAndResKey: 'somereqandres2',
-              isResourceNetsuite: true,
-            },
-            {
-              errorId: '5556824990',
-              _flowJobId: '639f80023d732c393149668d',
-              retryDataKey: 3,
-              reqAndResKey: 'somereqandres3',
-              isResourceNetsuite: true,
-            },
-          ],
-        },
-      },
-    },
-  },
-  retryData: {
-    retryObjects: {
-      2: {
+  ];
+  draft.session.errorManagement = {
+    openErrors: {
+      '63234cd2514d5b0bf7b3c2f9': {
         status: 'received',
-        data: {
-          data: {
-            orderid: 1,
-            customerid: 100,
+      },
+      '63234cd2514d5b0bf7cfvdfef': {
+        status: 'received',
+      },
+    },
+    errorDetails: {
+      '63234cd2514d5b0bf7b3c2f9': {
+        '63234d05514d5b0bf7b3c315': {
+          open: {
+            status: 'received',
+            errors: [
+              {
+                errorId: '5646501091',
+                _flowJobId: '63ab70dfbc20f510012c6b9d',
+                retryDataKey: 1,
+                reqAndResKey: 'somereqandres1',
+              },
+              {
+                errorId: '5556857034',
+                _flowJobId: '63a0e6894c1d6d062af90b9c',
+                retryDataKey: 2,
+                reqAndResKey: 'somereqandres2',
+              },
+              {
+                errorId: '5556824990',
+                _flowJobId: '639f80023d732c393149668d',
+                retryDataKey: 3,
+                reqAndResKey: 'somereqandres3',
+              },
+            ],
+          },
+        },
+      },
+      '63234cd2514d5b0bf7cfvdfef': {
+        '63234d05514d5b0bfxsfrgvddv': {
+          open: {
+            status: 'received',
+            errors: [
+              {
+                errorId: '5646501091',
+                _flowJobId: '63ab70dfbc20f510012c6b9d',
+                retryDataKey: 1,
+                reqAndResKey: 'somereqandres1',
+                isResourceNetsuite: true,
+              },
+              {
+                errorId: '5556857034',
+                _flowJobId: '63a0e6894c1d6d062af90b9c',
+                retryDataKey: 2,
+                reqAndResKey: 'somereqandres2',
+                isResourceNetsuite: true,
+              },
+              {
+                errorId: '5556824990',
+                _flowJobId: '639f80023d732c393149668d',
+                retryDataKey: 3,
+                reqAndResKey: 'somereqandres3',
+                isResourceNetsuite: true,
+              },
+            ],
           },
         },
       },
     },
-  },
-};
+    retryData: {
+      retryObjects: {
+        2: {
+          status: 'received',
+          data: {
+            data: {
+              orderid: 1,
+              customerid: 100,
+            },
+          },
+        },
+      },
+    },
+  };
+});
 
 describe('ErrorDetailsPanel UI test cases', () => {
   test('should make a dispatch call on changing retry data', async () => {
@@ -209,9 +210,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       })
     );
     await userEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
-      })
+      screen.getByTitle('Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.')
     );
     await userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
     expect(
@@ -258,15 +257,17 @@ describe('ErrorDetailsPanel UI test cases', () => {
     ).toBeInTheDocument();
   });
   test('should push view response and view request tabs when reqAndResKey is provided and adatptor type for resource is netsuite', async () => {
-    initialStore.getState().data.resources.exports = [
-      {
-        _id: '63234d05514d5b0bfxsfrgvddv',
-        name: 'SF Export',
-        _connectionId: 'connectionId',
-        adaptorType: 'NetSuiteExport',
-        salesforce: { sObjectType: 'Opportunity' },
-      },
-    ];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = [
+        {
+          _id: '63234d05514d5b0bfxsfrgvddv',
+          name: 'SF Export',
+          _connectionId: 'connectionId',
+          adaptorType: 'NetSuiteExport',
+          salesforce: { sObjectType: 'Opportunity' },
+        },
+      ];
+    });
     const props = {
       errorsInCurrPage: [
         { errorId: '5646501091' },
@@ -304,9 +305,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       )
     ).toBeInTheDocument();
     await userEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
-      })
+      screen.getByTitle('Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.')
     );
     await userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
     expect(
@@ -316,18 +315,20 @@ describe('ErrorDetailsPanel UI test cases', () => {
     ).toBeInTheDocument();
   });
   test('should return empty error details when active error id is not provided', async () => {
-    initialStore.getState().session.filters = {
-      openErrors: {},
-    };
-    initialStore.getState().data.resources.exports = [
-      {
-        _id: '63234d05514d5b0bfxsfrgvddv',
-        name: 'SF Export',
-        _connectionId: 'connectionId',
-        adaptorType: 'NetSuiteExport',
-        salesforce: { sObjectType: 'Opportunity' },
-      },
-    ];
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {
+        openErrors: {},
+      };
+      draft.data.resources.exports = [
+        {
+          _id: '63234d05514d5b0bfxsfrgvddv',
+          name: 'SF Export',
+          _connectionId: 'connectionId',
+          adaptorType: 'NetSuiteExport',
+          salesforce: { sObjectType: 'Opportunity' },
+        },
+      ];
+    });
     const props = {
       errorsInCurrPage: [
         { errorId: '5646501091' },

@@ -8,7 +8,7 @@ import * as reactRedux from 'react-redux';
 import {MemoryRouter, Route} from 'react-router-dom';
 import actions from '../../../../../actions';
 import SubRecordDrawer from './index';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import { ConfirmDialogProvider } from '../../../../ConfirmDialog';
 
@@ -111,79 +111,81 @@ jest.mock('./util', () => ({
 }));
 
 function initSubRecordDrawer(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'netsuite/metadata/suitescript/connections/5efd8663a56953365bd28541/recordTypes': {
-      data: [{
-        name: 'test',
-        scriptId: 'customer',
-        url: 'test url',
-        value: 'customer',
-        hasSubRecord: props.hasRecord,
-        subRecordConfig: [{id: 'item[*].celigo_inventorydetail', name: 'test name'}],
-        doesNotSupportUpdate: true,
-        doesNotSupportCreate: true,
-        doesNotSupportSearch: true,
-        doesNotSupportDelete: true,
-      }],
-      status: 'success',
-      errorMessage: 'Test Error Message',
-    },
-  },
-
-  }};
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: '633dc83108cc753ca5688d34',
-      createdAt: '2022-10-05T18:08:49.284Z',
-      lastModified: '2022-10-05T18:09:48.433Z',
-      name: 'NETSUITE IMPORT',
-      _connectionId: '62f4e3b40f2ee6482b133e00',
-      distributed: true,
-      apiIdentifier: 'i819b78e2a',
-      ignoreExisting: false,
-      ignoreMissing: false,
-      oneToMany: false,
-      lookups: [],
-      netsuite_da: {
-        useSS2Restlets: false,
-        operation: 'addupdate',
-        recordType: 'customer',
-        subrecords: [{fieldId: 'fieldId1', name: 'subrecord1'}, {fieldId: 'fieldId2', name: 'subrecord2'}],
-        internalIdLookup: {
-          expression: '["email","is","{{{email}}}"]',
-        },
-        lookups: [],
-        mapping: {
-          fields: [
-            {
-              generate: 'isperson',
-              discardIfEmpty: false,
-              immutable: false,
-              hardCodedValue: 'true',
-              internalId: false,
-            },
-          ],
-          lists: [
-            {
-              generate: 'addressbook',
-              fields: [
-                {
-                  generate: 'addr1',
-                  extract: 'addresses[*].address1',
-                  internalId: false,
-                },
-              ],
-            },
-          ],
-        },
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'netsuite/metadata/suitescript/connections/5efd8663a56953365bd28541/recordTypes': {
+        data: [{
+          name: 'test',
+          scriptId: 'customer',
+          url: 'test url',
+          value: 'customer',
+          hasSubRecord: props.hasRecord,
+          subRecordConfig: [{id: 'item[*].celigo_inventorydetail', name: 'test name'}],
+          doesNotSupportUpdate: true,
+          doesNotSupportCreate: true,
+          doesNotSupportSearch: true,
+          doesNotSupportDelete: true,
+        }],
+        status: 'success',
+        errorMessage: 'Test Error Message',
       },
-      adaptorType: 'NetSuiteDistributedImport',
-    }, {
-      _id: '633dc83108cc753ca5688d45',
-      name: 'import1',
-      _connectionId: '533dc83108cc753ca5688d45',
-    }],
-  };
+    },
+
+    }};
+    draft.data.resources = {
+      imports: [{
+        _id: '633dc83108cc753ca5688d34',
+        createdAt: '2022-10-05T18:08:49.284Z',
+        lastModified: '2022-10-05T18:09:48.433Z',
+        name: 'NETSUITE IMPORT',
+        _connectionId: '62f4e3b40f2ee6482b133e00',
+        distributed: true,
+        apiIdentifier: 'i819b78e2a',
+        ignoreExisting: false,
+        ignoreMissing: false,
+        oneToMany: false,
+        lookups: [],
+        netsuite_da: {
+          useSS2Restlets: false,
+          operation: 'addupdate',
+          recordType: 'customer',
+          subrecords: [{fieldId: 'fieldId1', name: 'subrecord1'}, {fieldId: 'fieldId2', name: 'subrecord2'}],
+          internalIdLookup: {
+            expression: '["email","is","{{{email}}}"]',
+          },
+          lookups: [],
+          mapping: {
+            fields: [
+              {
+                generate: 'isperson',
+                discardIfEmpty: false,
+                immutable: false,
+                hardCodedValue: 'true',
+                internalId: false,
+              },
+            ],
+            lists: [
+              {
+                generate: 'addressbook',
+                fields: [
+                  {
+                    generate: 'addr1',
+                    extract: 'addresses[*].address1',
+                    internalId: false,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        adaptorType: 'NetSuiteDistributedImport',
+      }, {
+        _id: '633dc83108cc753ca5688d45',
+        name: 'import1',
+        _connectionId: '533dc83108cc753ca5688d45',
+      }],
+    };
+  });
 
   return renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: '/imports/edit/imports/61fa113a69aaa8558e083607/subrecords'}]}>

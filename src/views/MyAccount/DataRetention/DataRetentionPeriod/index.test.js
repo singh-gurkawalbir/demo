@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DataRetentionPeriod from '.';
 import { getCreatedStore } from '../../../../store';
 import { ConfirmDialogProvider } from '../../../../components/ConfirmDialog';
@@ -18,29 +18,31 @@ async function initDataRetentionPeriod(
     dataRetentionPeriod,
   } = {}
 ) {
-  initialStore.getState().user.preferences = {
-    defaultAShareId: 'own',
-    environment: 'production',
-    dateFormat: 'DD MMMM, YYYY',
-  };
-  initialStore.getState().data.accountSettings = {
-    dataRetentionPeriod,
-  };
-  initialStore.getState().user.org = {
-    accounts: [{
-      _id: 'own',
-      accessLevel: 'owner',
-      ownerUser: {
-        licenses: [{
-          type: 'endpoint',
-          tier: 'free',
-          sandbox: true,
-          trialEndDate: '2019-03-09T06:02:00.255Z',
-          ...rest,
-        }],
-      },
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      defaultAShareId: 'own',
+      environment: 'production',
+      dateFormat: 'DD MMMM, YYYY',
+    };
+    draft.data.accountSettings = {
+      dataRetentionPeriod,
+    };
+    draft.user.org = {
+      accounts: [{
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [{
+            type: 'endpoint',
+            tier: 'free',
+            sandbox: true,
+            trialEndDate: '2019-03-09T06:02:00.255Z',
+            ...rest,
+          }],
+        },
+      }],
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ConfirmDialogProvider>

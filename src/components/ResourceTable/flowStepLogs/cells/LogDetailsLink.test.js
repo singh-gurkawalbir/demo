@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import LogDetailsLink from './LogDetailsLink';
 
@@ -24,7 +24,9 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.logs.flowStep = {someresourceId: {activeLogKey: 'somelogKey'}};
+mutateStore(initialStore, draft => {
+  draft.session.logs.flowStep = {someresourceId: {activeLogKey: 'somelogKey'}};
+});
 
 describe('logDetailsLink UI tests', () => {
   test('should make dispatch call to set active log when clicked on time', async () => {

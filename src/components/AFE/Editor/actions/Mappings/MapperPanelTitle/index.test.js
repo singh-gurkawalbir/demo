@@ -4,7 +4,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../../actions';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 
 import MapperPanelTitle from './index';
@@ -12,15 +12,19 @@ import MapperPanelTitle from './index';
 const initialStore = getCreatedStore();
 
 function initMapperPanelTitle(props = {}) {
-  initialStore.getState().session.mapping = {
-    mapping: {
-      version: 2,
-      flowId: '5ea16c600e2fab71928a6152',
-      importId: '5ea16cd30e2fab71928a6166',
-    },
+  const mustateState = draft => {
+    draft.session.mapping = {
+      mapping: {
+        version: 2,
+        flowId: '5ea16c600e2fab71928a6152',
+        importId: '5ea16cd30e2fab71928a6166',
+      },
+    };
+
+    draft.session.flowData = {'5ea16c600e2fab71928a6152': {pageProcessorsMap: {'5ea16cd30e2fab71928a6166': {preMap: {status: 'sreehasa'}}}}};
   };
 
-  initialStore.getState().session.flowData = {'5ea16c600e2fab71928a6152': {pageProcessorsMap: {'5ea16cd30e2fab71928a6166': {preMap: {status: 'sreehasa'}}}}};
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<MapperPanelTitle {...props} />, {initialStore});
 }
