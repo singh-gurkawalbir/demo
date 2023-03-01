@@ -3,7 +3,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import InstallBase from '.';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
@@ -12,20 +12,22 @@ import actions from '../../../actions';
 let initialStore;
 
 function store(connectors, connectorInstallBase, connectorLicenses) {
-  initialStore.getState().data.resources.connectors = [
-    {
-      _id: '12345',
-      name: connectors.name,
-      contactEmail: 'testuser@celigo.com',
-      _integrationId: connectors._integrationId,
-    },
-  ];
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-  };
-  initialStore.getState().data.resources.connectorInstallBase = connectorInstallBase;
-  initialStore.getState().data.resources.connectorLicenses = connectorLicenses;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.connectors = [
+      {
+        _id: '12345',
+        name: connectors.name,
+        contactEmail: 'testuser@celigo.com',
+        _integrationId: connectors._integrationId,
+      },
+    ];
+    draft.user.preferences = {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+    };
+    draft.data.resources.connectorInstallBase = connectorInstallBase;
+    draft.data.resources.connectorLicenses = connectorLicenses;
+  });
 }
 
 async function initInstallBase(props) {
@@ -133,9 +135,9 @@ describe('install Base', () => {
     };
 
     store(connectors);
-    const { utils } = await initInstallBase(props);
+    await initInstallBase(props);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should able to test the Install Base search option', async () => {
     const props = {

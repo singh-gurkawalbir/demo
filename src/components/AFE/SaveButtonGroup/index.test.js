@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import SaveButtonGroup from '.';
 
 const mockClose = jest.fn();
@@ -11,18 +11,20 @@ const mockClose = jest.fn();
 async function initSaveButtonGroup(props = {editorId: 'responseMappings', onClose: mockClose}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors = {
-    inputFilter: {
-      editorType: 'inputFilter',
-      activeProcessor: 'javascript',
-      data: {javascript: '{}'},
-      rule: {javascript: {_init_code: 'something'}},
-      originalRule: {javascript: {}},
-    },
-    responseMappings: {
-      editorType: 'responseMappings',
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {
+      inputFilter: {
+        editorType: 'inputFilter',
+        activeProcessor: 'javascript',
+        data: {javascript: '{}'},
+        rule: {javascript: {_init_code: 'something'}},
+        originalRule: {javascript: {}},
+      },
+      responseMappings: {
+        editorType: 'responseMappings',
+      },
+    };
+  });
 
   return renderWithProviders(<MemoryRouter><SaveButtonGroup {...props} /></MemoryRouter>, { initialStore });
 }

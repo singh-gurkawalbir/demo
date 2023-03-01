@@ -1,10 +1,11 @@
-import { values, keyBy, cloneDeep } from 'lodash';
+import { values, keyBy } from 'lodash';
 import parseLinkHeader from 'parse-link-header';
 import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import { message } from './messageStore';
+import customCloneDeep from './customCloneDeep';
 
 export const UI_FIELDS = ['mockOutput', 'mockResponse'];
 export const RESOURCES_WITH_UI_FIELDS = ['exports', 'imports'];
@@ -761,9 +762,9 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
   mappingOriginal,
   subrecords
 ) => {
-  let mapping = cloneDeep(mappingOriginal);
+  let mapping = customCloneDeep(mappingOriginal);
 
-  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
+  const subrecordsMap = customCloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {

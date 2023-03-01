@@ -14,6 +14,7 @@ import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOp
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { UNASSIGNED_SECTION_NAME } from '../../../../../constants';
 import infoText from '../infoText';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -78,8 +79,8 @@ export default function NotificationsSection({ integrationId, childId }) {
   const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId: _integrationId, flows, connections });
 
   // TODO: Remove below hashing logic once mkIntegrationNotificationResources is optimised.
-  const flowHash = flowValues.sort().join('');
-  const connHash = connectionValues.sort().join('');
+  const flowHash = customCloneDeep(flowValues).sort().join('');
+  const connHash = customCloneDeep(connectionValues).sort().join('');
   const connOptionsHash = map(connectionOps, 'value').join('');
   const flowOptionsHash = map(flowOps, 'value').join('');
 

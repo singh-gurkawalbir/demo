@@ -70,14 +70,14 @@ describe('IntegrationApp UI testing', () => {
   }
 
   test('should test when no integration id is provided', () => {
-    const {utils} = renderWithProviders(<MemoryRouter><IntegrationApp /></MemoryRouter>);
+    renderWithProviders(<MemoryRouter><IntegrationApp /></MemoryRouter>);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should test when resources are not loaded', () => {
-    const {utils} = renderWithProviders(<MemoryRouter><IntegrationApp integrationId="someId" /></MemoryRouter>);
+    renderWithProviders(<MemoryRouter><IntegrationApp integrationId="someId" /></MemoryRouter>);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should test the components which are rendered', async () => {
     await renderWithStore('5ff579d745ceef7dcd797c15');

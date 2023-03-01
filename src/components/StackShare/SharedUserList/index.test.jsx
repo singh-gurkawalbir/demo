@@ -6,39 +6,41 @@ import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import SharedUserList from '.';
-import { mockGetRequestOnce, mockPutRequestOnce, renderWithProviders } from '../../../test/test-utils';
+import { mockGetRequestOnce, mockPutRequestOnce, mutateStore, renderWithProviders } from '../../../test/test-utils';
 import reduxStore from '../../../store';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
 import { runServer } from '../../../test/api/server';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.sshares = [
-  {
-    _id: '62d4100770b1915aa17b6614',
-    _stackId: '62d2ef8aa7777017e5a8081a',
-    accepted: true,
-    sharedWithUser: {
-      _id: '6040b91267059b24eb522db6',
-      email: 'testuser+1@celigo.com',
-      authTypeSSO: null,
+mutateStore(initialStore, draft => {
+  draft.data.resources.sshares = [
+    {
+      _id: '62d4100770b1915aa17b6614',
+      _stackId: '62d2ef8aa7777017e5a8081a',
+      accepted: true,
+      sharedWithUser: {
+        _id: '6040b91267059b24eb522db6',
+        email: 'testuser+1@celigo.com',
+        authTypeSSO: null,
+      },
+      disabled: true,
     },
-    disabled: true,
-  },
-];
+  ];
 
-initialStore.getState().data.resources.stacks = [{
-  _id: '62d2ef8aa7777017e5a8081a',
-  name: 'test',
-  type: 'server',
-  lastModified: '2022-07-16T17:04:10.875Z',
-  createdAt: '2022-07-16T17:04:10.835Z',
-  server: {
-    systemToken: '******',
-    hostURI: 'https://integrator.io',
-    ipRanges: [],
-  },
-}];
+  draft.data.resources.stacks = [{
+    _id: '62d2ef8aa7777017e5a8081a',
+    name: 'test',
+    type: 'server',
+    lastModified: '2022-07-16T17:04:10.875Z',
+    createdAt: '2022-07-16T17:04:10.835Z',
+    server: {
+      systemToken: '******',
+      hostURI: 'https://integrator.io',
+      ipRanges: [],
+    },
+  }];
+});
 
 function initSharedUserList() {
   const ui = (

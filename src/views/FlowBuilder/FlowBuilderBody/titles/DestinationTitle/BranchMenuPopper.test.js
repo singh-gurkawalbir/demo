@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import BranchMenuPopper from './BranchMenuPopper';
 import { getCreatedStore } from '../../../../../store';
 import actions from '../../../../../actions';
@@ -17,30 +17,32 @@ const mockhandleClose = jest.fn();
 const mockHistoryPush = jest.fn();
 
 function initBranchMenuPopper(flowData, anchorEl, handleClose) {
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    exports: [
-      {
-        _id: 'export_id_1',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    connections: [
-      {
-        _id: 'connection_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    flows: flowData,
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      exports: [
+        {
+          _id: 'export_id_1',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      connections: [
+        {
+          _id: 'connection_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      flows: flowData,
+    };
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test'}]}

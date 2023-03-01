@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import metadata from '../resolvedErrors/metadata';
 import CeligoTable from '../../../CeligoTable';
 
@@ -24,10 +24,12 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.exports = [{
-  _id: 'resourceId',
-  adaptorType: 'NetSuiteExport',
-}];
+mutateStore(initialStore, draft => {
+  draft.data.resources.exports = [{
+    _id: 'resourceId',
+    adaptorType: 'NetSuiteExport',
+  }];
+});
 
 async function renderFuntion(actionProps, data, errorType) {
   await renderWithProviders(

@@ -23,6 +23,7 @@ import OutlinedButton from '../Buttons/OutlinedButton';
 import { getTextAfterCount } from '../../utils/string';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import { message } from '../../utils/messageStore';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -533,7 +534,7 @@ export default function JobErrorTable({
 
               <CeligoTable
                 className={classes.celigoTableWrapper}
-                data={jobErrorsData}
+                data={customCloneDeep(jobErrorsData)}
                 selectableRows={
                   !isJobInProgress && hasUnresolvedErrorsInCurrentPage
                 }

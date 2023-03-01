@@ -36,6 +36,7 @@ export default function IntegrationAppUninstallation({ match }) {
       install: childSettings.install,
       installSteps: childSettings.installSteps,
       uninstallSteps: childSettings.uninstallSteps,
+      _parentId: childSettings._parentId,
     }
     : emptyobj,
   [childSettings]);

@@ -4,7 +4,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import RefreshableHeading from '.';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import commKeyGen from '../../../../utils/commKeyGenerator';
 import actions from '../../../../actions';
 import { getCreatedStore } from '../../../../store';
@@ -12,11 +12,13 @@ import { getCreatedStore } from '../../../../store';
 let initialStore;
 
 function initRefreshableHeading(label, resourceType, status) {
-  initialStore.getState().comms.networkComms = {
-    [commKeyGen(`/${resourceType}`, 'GET')]: {
-      status,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.comms.networkComms = {
+      [commKeyGen(`/${resourceType}`, 'GET')]: {
+        status,
+      },
+    };
+  });
   const ui = (
     <RefreshableHeading label={label} resourceType={resourceType} />
   );

@@ -4,14 +4,17 @@ import {screen, waitFor} from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import DashboardPanel from '.';
 import actions from '../../../../../actions';
 
 function initDashboardPanel(props) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.profile.useErrMgtTwoDotZero = props.error;
+  mutateStore(initialStore, draft => {
+    draft.user.profile.useErrMgtTwoDotZero = props.error;
+  });
+
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/integrations/6253af74cddb8a1ba550a010/dashboard/${props.param}`}]} >
       <Route

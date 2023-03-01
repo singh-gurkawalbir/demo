@@ -3,14 +3,16 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MFACodeGeneration from './MFACodeGeneration';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
 
 let initialStore;
 
 async function initMFACodeGeneration({mfaValues} = {}) {
-  initialStore.getState().session.mfa = mfaValues;
+  mutateStore(initialStore, draft => {
+    draft.session.mfa = mfaValues;
+  });
   const ui = (
     <MemoryRouter>
       <MFACodeGeneration />

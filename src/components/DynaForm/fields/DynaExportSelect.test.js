@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaExportSelect from './DynaExportSelect';
 import actions from '../../../actions';
 
@@ -19,13 +19,15 @@ jest.mock('react-router-dom', () => ({
 describe('dynaExportSelect tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    integrations: [{
-      _id: '_integrationId',
-      _connectionId: '_connectionId',
-      _connectorId: '_connectorId',
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      integrations: [{
+        _id: '_integrationId',
+        _connectionId: '_connectionId',
+        _connectorId: '_connectorId',
+      }],
+    };
+  });
   let mockDispatchFn;
   let useDispatchSpy;
 

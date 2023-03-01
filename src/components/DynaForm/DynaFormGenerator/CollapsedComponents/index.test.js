@@ -2,19 +2,21 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import CollapsedComponents from '.';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initCollapsedComponent(props = {}) {
-  initialStore.getState().data.resources = {scripts: [{
-    _id: '5ff687fa4f59bb348d41b332',
-    lastModified: '2022-10-06T16:26:46.934Z',
-    createdAt: '2021-01-07T04:03:06.229Z',
-    name: 'test',
-  }]};
-  initialStore.getState().session.form = {'scripts-5ff687fa4f59bb348d41b332': {fields: props.formfields, validationOnSaveIdentifier: true}};
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {scripts: [{
+      _id: '5ff687fa4f59bb348d41b332',
+      lastModified: '2022-10-06T16:26:46.934Z',
+      createdAt: '2021-01-07T04:03:06.229Z',
+      name: 'test',
+    }]};
+    draft.session.form = {'scripts-5ff687fa4f59bb348d41b332': {fields: props.formfields, validationOnSaveIdentifier: true}};
+  });
 
   return renderWithProviders(<CollapsedComponents {...props} />, {initialStore});
 }

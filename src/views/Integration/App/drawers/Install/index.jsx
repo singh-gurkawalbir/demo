@@ -266,6 +266,7 @@ export default function ConnectorInstallation() {
             getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
           );
         } else if (parentId) {
+          dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, parentId));
           history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
           );
@@ -298,7 +299,9 @@ export default function ConnectorInstallation() {
     integrationChildAppName,
     initChild,
     parentId,
-    integrationInstallSteps]);
+    integrationInstallSteps,
+    isFrameWork2,
+  ]);
 
   if (!installSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
