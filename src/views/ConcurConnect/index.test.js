@@ -4,7 +4,7 @@ import * as RouteMatch from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ConcurConnect from '.';
-import { renderWithProviders } from '../../test/test-utils';
+import { renderWithProviders, mutateStore } from '../../test/test-utils';
 import * as UseQuery from '../../hooks/useQuery';
 import { getCreatedStore } from '../../store';
 import actions from '../../actions';
@@ -15,11 +15,20 @@ const mockWindowClose = jest.fn();
 
 window.close = mockWindowClose;
 
-function initConcurConnect({isLoadingStatus, errorStatus}) {
-  initialStore.getState().session.concur = {
-    isLoading: isLoadingStatus,
-    error: errorStatus,
+function initConcurConnect({isLoadingStatus, errorStatus, mockModule}) {
+  jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
+    params: {
+      module: mockModule,
+    },
+  });
+  const mutateState = draft => {
+    draft.session.concur = {
+      isLoading: isLoadingStatus,
+      error: errorStatus,
+    };
   };
+
+  mutateStore(initialStore, mutateState);
   const ui = (
     <ConcurConnect />
   );
@@ -90,6 +99,17 @@ describe('Testsuite for ConcurConnect', () => {
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
+    jest.spyOn(UseQuery, 'default').mockReturnValue(
+      {
+        get: jest.fn(props => {
+          if (props === 'id') {
+            return 'test_id';
+          }
+
+          return 'test_request_token';
+        }),
+      }
+    );
   });
 
   afterEach(() => {
@@ -100,45 +120,13 @@ describe('Testsuite for ConcurConnect', () => {
   });
 
   test('should test the spinner when the concur data is in loading state', () => {
-    jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
-      params: {
-        module: 'expense',
-      },
-    });
-    jest.spyOn(UseQuery, 'default').mockReturnValue(
-      {
-        get: jest.fn(props => {
-          if (props === 'id') {
-            return 'test_id';
-          }
-
-          return 'test_request_token';
-        }),
-      }
-    );
-    initConcurConnect({isLoadingStatus: true});
+    initConcurConnect({isLoadingStatus: true, mockModule: 'expense'});
     expect(screen.getByText(/mocked loader/i)).toBeInTheDocument();
     expect(screen.getByText(/mocked spinner/i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'expense', id: 'test_id', requestToken: 'test_request_token'}));
   });
   test('should test the ConcurConnect when there are no errors and module is equal to expense', () => {
-    jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
-      params: {
-        module: 'expense',
-      },
-    });
-    jest.spyOn(UseQuery, 'default').mockReturnValue(
-      {
-        get: jest.fn(props => {
-          if (props === 'id') {
-            return 'test_id';
-          }
-
-          return 'test_request_token';
-        }),
-      }
-    );
-    initConcurConnect({isLoadingStatus: false});
+    initConcurConnect({isLoadingStatus: false, mockModule: 'expense'});
     expect(screen.getByText(/congratulations - you're linked!/i)).toBeInTheDocument();
     expect(screen.getByText(/mock expense reports message store/i)).toBeInTheDocument();
     const startIntegratingButton = screen.getByRole('button', {
@@ -151,23 +139,7 @@ describe('Testsuite for ConcurConnect', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'expense', id: 'test_id', requestToken: 'test_request_token'}));
   });
   test('should test the ConcurConnect when there are no errors and module is equal to invoice', () => {
-    jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
-      params: {
-        module: 'invoice',
-      },
-    });
-    jest.spyOn(UseQuery, 'default').mockReturnValue(
-      {
-        get: jest.fn(props => {
-          if (props === 'id') {
-            return 'test_id';
-          }
-
-          return 'test_request_token';
-        }),
-      }
-    );
-    initConcurConnect({isLoadingStatus: false});
+    initConcurConnect({isLoadingStatus: false, mockModule: 'invoice'});
     expect(screen.getByText(/congratulations - you're linked!/i)).toBeInTheDocument();
     expect(screen.getByText(/mock expense invoices message store/i)).toBeInTheDocument();
     const startIntegratingButton = screen.getByRole('button', {
@@ -180,23 +152,7 @@ describe('Testsuite for ConcurConnect', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
   });
   test('should test the ConcurConnect when there are errors', () => {
-    jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
-      params: {
-        module: 'invoice',
-      },
-    });
-    jest.spyOn(UseQuery, 'default').mockReturnValue(
-      {
-        get: jest.fn(props => {
-          if (props === 'id') {
-            return 'test_id';
-          }
-
-          return 'test_request_token';
-        }),
-      }
-    );
-    initConcurConnect({isLoadingStatus: false, errorStatus: ['testing error message']});
+    initConcurConnect({isLoadingStatus: false, errorStatus: ['testing error message'], mockModule: 'invoice'});
     expect(screen.getByText(/testing error message/i)).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {
       name: /close/i,
@@ -208,23 +164,7 @@ describe('Testsuite for ConcurConnect', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
   });
   test('should test the ConcurConnect when there are no errors and no module', () => {
-    jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
-      params: {
-        module: '',
-      },
-    });
-    jest.spyOn(UseQuery, 'default').mockReturnValue(
-      {
-        get: jest.fn(props => {
-          if (props === 'id') {
-            return 'test_id';
-          }
-
-          return 'test_request_token';
-        }),
-      }
-    );
-    initConcurConnect({isLoadingStatus: false});
+    initConcurConnect({isLoadingStatus: false, mockModule: ''});
     expect(screen.getByText(/congratulations - you're linked!/i)).toBeInTheDocument();
     expect(screen.queryByText(/mock expense invoices message store/i)).not.toBeInTheDocument();
     const startIntegratingButton = screen.getByRole('button', {
@@ -237,23 +177,7 @@ describe('Testsuite for ConcurConnect', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: '', id: 'test_id', requestToken: 'test_request_token'}));
   });
   test('should test the ConcurConnect when there are errors with no error message', () => {
-    jest.spyOn(RouteMatch, 'useRouteMatch').mockReturnValue({
-      params: {
-        module: 'invoice',
-      },
-    });
-    jest.spyOn(UseQuery, 'default').mockReturnValue(
-      {
-        get: jest.fn(props => {
-          if (props === 'id') {
-            return 'test_id';
-          }
-
-          return 'test_request_token';
-        }),
-      }
-    );
-    initConcurConnect({isLoadingStatus: false, errorStatus: ['']});
+    initConcurConnect({isLoadingStatus: false, errorStatus: [''], mockModule: 'invoice'});
     expect(screen.queryByText(/testing error message/i)).not.toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {
       name: /close/i,
