@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import CategoryList from './CategoryList';
 
@@ -11,18 +11,20 @@ describe('CategoryList UI tests', () => {
   function initStoreAndRender(recordMappings) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['1234-4321'] = {
-      response: [
-        { operation: 'mappingData',
-          data: {
-            mappingData: {
-              basicMappings: {
-                recordMappings,
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['1234-4321'] = {
+        response: [
+          { operation: 'mappingData',
+            data: {
+              mappingData: {
+                basicMappings: {
+                  recordMappings,
+                },
               },
             },
-          },
-        }],
-    };
+          }],
+      };
+    });
 
     return renderWithProviders(<MemoryRouter><CategoryList integrationId="4321" flowId="1234" /></MemoryRouter>, {initialStore});
   }

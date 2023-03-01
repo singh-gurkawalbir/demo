@@ -6,6 +6,7 @@ import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import TestButton from './TestAndSave/TestButton';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 export default function SaveAndContinueGroup(props) {
   const {
@@ -40,7 +41,7 @@ export default function SaveAndContinueGroup(props) {
 
   const handleSaveAndContinue = useCallback(
     () => {
-      const newValues = {...values};
+      const newValues = customCloneDeep({...values});
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

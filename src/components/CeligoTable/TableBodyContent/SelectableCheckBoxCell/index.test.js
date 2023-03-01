@@ -1,23 +1,25 @@
 
 import React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import SelectableCheckBoxCell from '.';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import customCloneDeep from '../../../../utils/customCloneDeep';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initSelectableCheckBoxCell({ props = {}, rowData = {} } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.filters = {
-    filter_key: {
-      selected: {
-        resource_id: true,
+  mutateStore(initialStore, draft => {
+    draft.session.filters = {
+      filter_key: {
+        selected: {
+          resource_id: true,
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <table>

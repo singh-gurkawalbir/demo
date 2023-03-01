@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import ToggleAFEButton from './ToggleAFEButton';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 const mockDispatch = jest.fn();
@@ -16,44 +16,48 @@ jest.mock('react-redux', () => ({
 }));
 
 function initToggleAFEButton(props = {}) {
-  initialStore.getState().session.editors = {
-    httprelativeURI: {
-      editorType: 'handlebars',
-      formKey: 'imports-632950280dbc53086e899759',
-      flowId: '63a54e63d9e20c15d94da0f1',
-      resourceId: '632950280dbc53086e899759',
-      resourceType: 'imports',
-      fieldId: 'http.relativeURI',
-      stage: 'importMappingExtract',
-      rule: '/organizations',
-      editorSupportsV1V2data: true,
-      resultMode: 'text',
-      editorTitle: 'Build relative URI',
-      v1Rule: '/organizations',
-      v2Rule: '/organizations',
-      autoEvaluate: false,
-      strict: false,
-      layout: 'compact',
-      originalRule: '/organizations',
-      sampleDataStatus: 'received',
-      data: '{\n  "record": {\n    "thirdpartyacct": "thirdpartyacct",\n    "thirdpartycarrier": {\n      "internalid": "thirdpartycarrier.internalid",\n      "name": "thirdpartycarrier.name"\n    },\n    "thirdpartycountry": {\n      "internalid": "thirdpartycountry.internalid",\n      "name": "thirdpartycountry.name"\n    },\n  "flowGrouping": {},\n    "connection": {},\n    "import": {}\n  }\n}',
-      dataVersion: 2,
-      saveStatus: 'received',
-    },
+  const mustateState = draft => {
+    draft.session.editors = {
+      httprelativeURI: {
+        editorType: 'handlebars',
+        formKey: 'imports-632950280dbc53086e899759',
+        flowId: '63a54e63d9e20c15d94da0f1',
+        resourceId: '632950280dbc53086e899759',
+        resourceType: 'imports',
+        fieldId: 'http.relativeURI',
+        stage: 'importMappingExtract',
+        rule: '/organizations',
+        editorSupportsV1V2data: true,
+        resultMode: 'text',
+        editorTitle: 'Build relative URI',
+        v1Rule: '/organizations',
+        v2Rule: '/organizations',
+        autoEvaluate: false,
+        strict: false,
+        layout: 'compact',
+        originalRule: '/organizations',
+        sampleDataStatus: 'received',
+        data: '{\n  "record": {\n    "thirdpartyacct": "thirdpartyacct",\n    "thirdpartycarrier": {\n      "internalid": "thirdpartycarrier.internalid",\n      "name": "thirdpartycarrier.name"\n    },\n    "thirdpartycountry": {\n      "internalid": "thirdpartycountry.internalid",\n      "name": "thirdpartycountry.name"\n    },\n  "flowGrouping": {},\n    "connection": {},\n    "import": {}\n  }\n}',
+        dataVersion: 2,
+        saveStatus: 'received',
+      },
 
+    };
+    draft.session.stage = {
+      '632950280dbc53086e899759': {
+        patch: [
+          {
+            op: 'add',
+            path: '/assistantMetadata',
+            value: {},
+            timestamp: 1672134765451,
+          },
+        ],
+      },
+    };
   };
-  initialStore.getState().session.stage = {
-    '632950280dbc53086e899759': {
-      patch: [
-        {
-          op: 'add',
-          path: '/assistantMetadata',
-          value: {},
-          timestamp: 1672134765451,
-        },
-      ],
-    },
-  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<ToggleAFEButton {...props} />, {initialStore});
 }

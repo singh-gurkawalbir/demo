@@ -3,29 +3,32 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route} from 'react-router-dom';
 import UninstallSection from './Uninstall';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import { ConfirmDialogProvider } from '../../../../../../components/ConfirmDialog';
 
 async function initUninstallSection(props = {}) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().data.resources.integrations = [{
-    _id: '5ff579d745ceef7dcd797c15',
-    lastModified: '2021-01-19T06:34:17.222Z',
-    name: 'Amazon - NetSuite',
-    install: [],
-    sandbox: false,
-    settings: {storeLabel: 'Amazon Account', supportsMultiStore: !!props.supportsMultiStore},
-    _connectorId: '58777a2b1008fb325e6c0953',
-    _registeredConnectionIds: [
-      '5cd51efd3607fe7d8eda9c97',
-      '5ff57a8345ceef7dcd797c21',
-    ],
-    installSteps: [],
-    flowGroupings: [],
-    createdAt: '2021-01-06T08:50:31.935Z',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{
+      _id: '5ff579d745ceef7dcd797c15',
+      lastModified: '2021-01-19T06:34:17.222Z',
+      name: 'Amazon - NetSuite',
+      install: [],
+      sandbox: false,
+      settings: {storeLabel: 'Amazon Account', supportsMultiStore: !!props.supportsMultiStore},
+      _connectorId: '58777a2b1008fb325e6c0953',
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c97',
+        '5ff57a8345ceef7dcd797c21',
+      ],
+      installSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-06T08:50:31.935Z',
+    }];
+  });
+
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/integrations/5ff579d745ceef7dcd797c15/${props.child}/admin/readme`}]}>
       <Route path={`/integrations/5ff579d745ceef7dcd797c15/${props.child}/admin/readme`}>

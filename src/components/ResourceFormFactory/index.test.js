@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import ResourceFormFactory from '.';
 import actions from '../../actions';
@@ -106,9 +106,11 @@ describe('test suite for ResourceFormFactory', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resourceForm[KEY] = {
-      initComplete: true,
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resourceForm[KEY] = {
+        initComplete: true,
+      };
+    });
     await initResourceFormFactory({resourceId, resourceType, isNew: 'error'}, initialStore);
     expect(mockInitPermitFn).toHaveBeenCalledTimes(2);
     expect(screen.getByRole('button', {name: 'Initialize Form'})).toBeInTheDocument();
@@ -124,11 +126,13 @@ describe('test suite for ResourceFormFactory', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.resourceForm[KEY] = {
-      initComplete: true,
-      skipClose: true,
-      formSaveStatus: 'complete',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resourceForm[KEY] = {
+        initComplete: true,
+        skipClose: true,
+        formSaveStatus: 'complete',
+      };
+    });
 
     await initResourceFormFactory({resourceType, resourceId, onSubmitComplete, isNew}, initialStore);
     expect(mockInitPermitFn).toHaveBeenCalledTimes(2);

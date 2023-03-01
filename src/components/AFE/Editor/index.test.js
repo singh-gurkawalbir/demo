@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import Editor from '.';
 
 jest.mock('react-resize-detector', () => ({
@@ -12,36 +12,40 @@ jest.mock('react-resize-detector', () => ({
 async function initEditor(props = {editorId: 'mappings'}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data = {
-    resources: {
-      imports: [{
-        _id: 'imp-123',
-        adaptorType: 'HTTPImport',
-        mappings: [{extract: 'abc', generate: 'def', dataType: 'string'}],
-        mapping: {fields: [{extract: 'abc', generate: 'def', dataType: 'string'}], lists: []},
-      }],
-    },
+  const mustateState = draft => {
+    draft.data = {
+      resources: {
+        imports: [{
+          _id: 'imp-123',
+          adaptorType: 'HTTPImport',
+          mappings: [{extract: 'abc', generate: 'def', dataType: 'string'}],
+          mapping: {fields: [{extract: 'abc', generate: 'def', dataType: 'string'}], lists: []},
+        }],
+      },
+    };
+    draft.session =
+    {
+      editors: {
+        mappings: {
+          resourceId: 'imp-123',
+          resourceType: 'imports',
+          editorType: 'mappings',
+          layout: 'compact',
+          error: 'some error',
+        },
+        sql: {
+          resourceId: 'imp-123',
+          resourceType: 'imports',
+          editorType: 'sql',
+          layout: 'assistantRight',
+          supportsDefaultData: true,
+          saveMessage: 'Correct some Field before save.',
+        },
+      },
+    };
   };
-  initialStore.getState().session =
-   {
-     editors: {
-       mappings: {
-         resourceId: 'imp-123',
-         resourceType: 'imports',
-         editorType: 'mappings',
-         layout: 'compact',
-         error: 'some error',
-       },
-       sql: {
-         resourceId: 'imp-123',
-         resourceType: 'imports',
-         editorType: 'sql',
-         layout: 'assistantRight',
-         supportsDefaultData: true,
-         saveMessage: 'Correct some Field before save.',
-       },
-     },
-   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<Editor {...props} />, { initialStore });
 }

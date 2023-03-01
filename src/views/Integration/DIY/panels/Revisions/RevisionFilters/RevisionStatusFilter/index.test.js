@@ -5,14 +5,16 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RevisionStatusFilter from '.';
 import { getCreatedStore } from '../../../../../../../store';
-import { renderWithProviders } from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../../test/test-utils';
 import actions from '../../../../../../../actions';
 
 let initialStore;
 
 function initRevisionStatusFilter({revisionsData, revisionsFilterData}) {
-  initialStore.getState().data.revisions = revisionsData;
-  initialStore.getState().session.filters = revisionsFilterData;
+  mutateStore(initialStore, draft => {
+    draft.data.revisions = revisionsData;
+    draft.session.filters = revisionsFilterData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test/12345'}]}

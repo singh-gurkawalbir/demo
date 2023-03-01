@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import { getCreatedStore } from '../../../../../store';
 import DataPanel from '.';
@@ -21,42 +21,46 @@ jest.mock('../Code', () => ({
 let initialStore = getCreatedStore();
 
 function initDataPanel(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    data: 'custom data',
-    editorType: 'jsonParser',
-  }};
-  initialStore.getState().session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
-    'file.csv': {
-      disabled: props.disabled,
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      data: 'custom data',
+      editorType: 'jsonParser',
+    }};
+    draft.session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
+      'file.csv': {
+        disabled: props.disabled,
+      },
     },
-  },
-  }};
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: '5b3c75dd5d3c125c88b5dd20',
-      _connectionId: 'connection_id_1',
-      adaptorType: 'HTTPImport',
-      mappings: {
-        fields: [{
-          generate: 'generate_1',
-        }, {
-          generate: 'generate_2',
-          lookupName: 'lookup_name',
-        }],
-        lists: [{
-          generate: 'item',
-          fields: [],
-        }],
-      },
-      http: {
-        requestMediaType: 'xml',
-      },
-    }],
+    }};
+    draft.data.resources = {
+      imports: [{
+        _id: '5b3c75dd5d3c125c88b5dd20',
+        _connectionId: 'connection_id_1',
+        adaptorType: 'HTTPImport',
+        mappings: {
+          fields: [{
+            generate: 'generate_1',
+          }, {
+            generate: 'generate_2',
+            lookupName: 'lookup_name',
+          }],
+          lists: [{
+            generate: 'item',
+            fields: [],
+          }],
+        },
+        http: {
+          requestMediaType: 'xml',
+        },
+      }],
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<DataPanel {...props} />, {initialStore});
 }

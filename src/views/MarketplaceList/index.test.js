@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Marketplace from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import { ConfirmDialogProvider } from '../../components/ConfirmDialog';
 import actions from '../../actions';
 
@@ -15,113 +15,116 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.org = {
-    accounts: [
-      {
-        accessLevel: 'owner',
-        _id: 'own',
-        ownerUser: {
-          licenses: [{
-            type: 'endpoint',
-          }, {
-            _id: 'license_id_1',
-            _connectorId: 'connector_id_1',
-            type: 'integrationApp',
-            expires: Date.now() + 36000000,
-          }, {
-            _id: 'license_id_2',
-            _connectorId: 'connector_id_5',
-            type: 'connector',
-            expires: Date.now() + 36000000,
-          }, {
-            _id: 'license_id_3',
-            _connectorId: 'connector_id_7',
-            type: 'integrationApp',
-            trialEndDate: Date.now(),
-          }],
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.org = {
+      accounts: [
+        {
+          accessLevel: 'owner',
+          _id: 'own',
+          ownerUser: {
+            licenses: [{
+              type: 'endpoint',
+            }, {
+              _id: 'license_id_1',
+              _connectorId: 'connector_id_1',
+              type: 'integrationApp',
+              expires: Date.now() + 36000000,
+            }, {
+              _id: 'license_id_2',
+              _connectorId: 'connector_id_5',
+              type: 'connector',
+              expires: Date.now() + 36000000,
+            }, {
+              _id: 'license_id_3',
+              _connectorId: 'connector_id_7',
+              type: 'integrationApp',
+              trialEndDate: Date.now(),
+            }],
+          },
         },
-      },
-    ],
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: 'id_1',
-        name: 'name 1',
-      },
-    ],
-  };
-  initialStore.getState().data.marketplace = {
-    templates: [
-      {
-        _id: 'template_id_1',
-        name: 'name 1',
-        applications: ['netsuite'],
-      },
-    ],
-    connectors: [
-      {
-        _id: 'suitescript-salesforce-netsuite',
-        ssName: 'Salesforce Connector',
-        name: 'Salesforce - NetSuite Connector (V2)',
-        canInstall: true,
-        urlName: 'sfns',
-        applications: ['salesforce'],
-      },
-      {
-        _id: 'connector_id_1',
-        name: 'name 1',
-        applications: ['netsuite'],
-        framework: 'twoDotZero',
-        trialEnabled: true,
-      },
-      {
-        _id: 'connector_id_5',
-        name: 'name 5',
-        applications: ['netsuite'],
-        trialEnabled: true,
-      },
-      {
-        _id: 'connector_id_6',
-        name: 'name 6',
-        applications: ['netsuite'],
-        framework: 'twoDotZero',
-        trialEnabled: true,
-      },
-      {
-        _id: 'connector_id_7',
-        name: 'name 7',
-        applications: ['netsuite'],
-        framework: 'twoDotZero',
-        trialEnabled: true,
-      },
-      {
-        _id: 'id_2',
-        name: 'mame 2',
-        applications: ['netsuite'],
-      },
-      {
-        _id: 'id_4',
-        name: 'mame 4',
-        applications: ['dummyname'],
-        framework: 'twoDotZero',
-      },
-    ],
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: 'integration_id_1',
-        _connectorId: 'connector_id_5',
-        name: 'name 5',
-      },
-    ],
-  };
-  initialStore.getState().session.loadResources.integrations = 'received';
+      ],
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: 'id_1',
+          name: 'name 1',
+        },
+      ],
+    };
+    draft.data.marketplace = {
+      templates: [
+        {
+          _id: 'template_id_1',
+          name: 'name 1',
+          applications: ['netsuite'],
+        },
+      ],
+      connectors: [
+        {
+          _id: 'suitescript-salesforce-netsuite',
+          ssName: 'Salesforce Connector',
+          name: 'Salesforce - NetSuite Connector (V2)',
+          canInstall: true,
+          urlName: 'sfns',
+          applications: ['salesforce'],
+        },
+        {
+          _id: 'connector_id_1',
+          name: 'name 1',
+          applications: ['netsuite'],
+          framework: 'twoDotZero',
+          trialEnabled: true,
+        },
+        {
+          _id: 'connector_id_5',
+          name: 'name 5',
+          applications: ['netsuite'],
+          trialEnabled: true,
+        },
+        {
+          _id: 'connector_id_6',
+          name: 'name 6',
+          applications: ['netsuite'],
+          framework: 'twoDotZero',
+          trialEnabled: true,
+        },
+        {
+          _id: 'connector_id_7',
+          name: 'name 7',
+          applications: ['netsuite'],
+          framework: 'twoDotZero',
+          trialEnabled: true,
+        },
+        {
+          _id: 'id_2',
+          name: 'mame 2',
+          applications: ['netsuite'],
+        },
+        {
+          _id: 'id_4',
+          name: 'mame 4',
+          applications: ['dummyname'],
+          framework: 'twoDotZero',
+        },
+      ],
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: 'integration_id_1',
+          _connectorId: 'connector_id_5',
+          name: 'name 5',
+        },
+      ],
+    };
+    draft.session.loadResources.integrations = 'received';
+  });
+
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/marketplace/${application}`}]}

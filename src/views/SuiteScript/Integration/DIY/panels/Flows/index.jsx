@@ -8,6 +8,7 @@ import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/suiteScript/flows/metadata';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,7 +43,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
         resources="flows"
       >
         <CeligoTable
-          data={flows}
+          data={customCloneDeep(flows)}
           {...metadata}
           actionProps={{ ssLinkedConnectionId, integrationId }}
         />

@@ -9,7 +9,7 @@ import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resour
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
-import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
+import { convertConnJSONObjHTTPtoREST } from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
 import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
@@ -209,7 +209,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
     merged.assistant && !getHttpConnector(merged?.http?._httpConnectorId) &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
-    merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+    merged = convertConnJSONObjHTTPtoREST(merged);
   }
 
   // Forimports convert the lookup structure and rest placeholders to support http structure

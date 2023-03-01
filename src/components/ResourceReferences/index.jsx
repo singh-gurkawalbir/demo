@@ -11,6 +11,7 @@ import metadata from './metadata';
 import Loader from '../Loader';
 import { TextButton } from '../Buttons';
 import messageStore, { message } from '../../utils/messageStore';
+import customCloneDeep from '../../utils/customCloneDeep';
 import LoadResources from '../LoadResources';
 
 const useStyles = makeStyles(theme => ({
@@ -75,7 +76,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
               messageStore('RESOURCE.DELETED', {resourceTypeLabel})}
             </Typography>
             <LoadResources resources={resourcesToBeLoaded} >
-              <CeligoTable actionProps={{ onClose }} data={resourceReferences} {...metadata} />
+              <CeligoTable actionProps={{ onClose }} data={customCloneDeep(resourceReferences)} {...metadata} />
             </LoadResources>
           </div>
         </ModalDialog>

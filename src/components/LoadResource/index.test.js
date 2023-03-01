@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import LoadResource from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import actions from '../../actions';
 
 async function initLoadResource({resourceType = 'resources', props = {}, children = '', initialStore = reduxStore} = {}) {
@@ -35,7 +35,9 @@ describe('loadResource component', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'RESOURCE_REQUEST_COLLECTION':
-          initialStore.getState().data.resources[action.resourceType] = 'resources';
+          mutateStore(initialStore, draft => {
+            draft.data.resources[action.resourceType] = 'resources';
+          });
           break;
         default:
       }
@@ -81,8 +83,10 @@ describe('loadResource component', () => {
     });
 
     test('should pass the initial render childer when resource present in the state', async () => {
-      initialStore.getState().session.loadResources.resources = 'received';
-      initialStore.getState().data.resources.resources = [{ _id: 'resource_id_1'}];
+      mutateStore(initialStore, draft => {
+        draft.session.loadResources.resources = 'received';
+        draft.data.resources.resources = [{ _id: 'resource_id_1'}];
+      });
       await initLoadResource({initialStore,
         children: 'Test Child',
         props: {
@@ -94,8 +98,10 @@ describe('loadResource component', () => {
     });
 
     test('should pass the initial render no childer when resource present in the state but no children', async () => {
-      initialStore.getState().session.loadResources.resources = 'received';
-      initialStore.getState().data.resources.resources = [{ _id: 'resource_id_1'}];
+      mutateStore(initialStore, draft => {
+        draft.session.loadResources.resources = 'received';
+        draft.data.resources.resources = [{ _id: 'resource_id_1'}];
+      });
       await initLoadResource({initialStore,
         props: {
           resourceId: 'resource_id_1',

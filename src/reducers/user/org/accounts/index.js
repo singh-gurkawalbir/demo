@@ -1,6 +1,5 @@
 import moment from 'moment';
 import produce from 'immer';
-import { cloneDeep } from 'lodash';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
@@ -10,6 +9,7 @@ import {
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
 } from '../../../../constants';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const emptyList = [];
 
@@ -120,7 +120,7 @@ selectors.platformLicense = (state, accountId) => {
     return null;
   }
 
-  const ioLicense = cloneDeep(account.ownerUser.licenses.find(
+  const ioLicense = customCloneDeep(account.ownerUser.licenses.find(
     l => (['integrator', 'endpoint', 'diy'].includes(l.type))
   ));
 
