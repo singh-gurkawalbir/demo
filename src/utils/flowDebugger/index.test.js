@@ -46,6 +46,20 @@ describe('flowdebugger -', () => {
 
       expect(validateMockOutputField(mockOutput)).toBeUndefined();
     });
+    test('should not return error if mock output has length prop', () => {
+      const mockOutput = {
+        page_of_records: [
+          {
+            record: {
+              id: '1',
+              length: 13,
+            },
+          },
+        ],
+      };
+
+      expect(validateMockOutputField(mockOutput)).toBeUndefined();
+    });
   });
   describe('validateMockResponseField util test cases', () => {
     afterEach(() => {

@@ -110,7 +110,9 @@ export default function PopulateWithPreviewData({
       // get first 10 records from preview data
       const previewData = getParsedData(resourceType, previewStageDataList, DEFAULT_RECORD_SIZE);
 
-      if (updateMockDataContent) {
+      // updateMockDataContent updates the content of mock data drawer
+      // when populate with preview data is requested
+      if (typeof updateMockDataContent === 'function') {
         updateMockDataContent(previewData);
       } else {
         dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));

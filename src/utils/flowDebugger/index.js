@@ -24,7 +24,9 @@ export const validateMockOutputField = value => {
   }
 
   // more than 10 records
-  if (unwrapExportFileSampleData(jsonValue)?.length > 10) {
+  const unwrappedSampleData = unwrapExportFileSampleData(jsonValue);
+
+  if (Array.isArray(unwrappedSampleData) && unwrappedSampleData.length > 10) {
     return errorMessageStore('MOCK_OUTPUT_NUM_RECORDS_EXCEED');
   }
 };
