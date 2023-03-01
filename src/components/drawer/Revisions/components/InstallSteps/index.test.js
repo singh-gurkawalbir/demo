@@ -47,6 +47,32 @@ async function initInstallSteps(props = {}, type = 'revert') {
         {
           _id: 'connectionId',
         },
+        {
+          _id: '_revId8',
+          type,
+          status: 'failed',
+          installSteps: [
+            {
+              type: 'connection',
+              name: 'demo connection',
+              completed: true,
+              isTriggered: true,
+            },
+          ],
+        },
+        {
+          _id: '_revId9',
+          type,
+          status: 'failed',
+          installSteps: [
+            {
+              type: 'connection',
+              name: 'demo connection',
+              completed: true,
+              isTriggered: true,
+            },
+          ],
+        },
       ],
     };
     draft.data.revisions = {
@@ -130,6 +156,32 @@ async function initInstallSteps(props = {}, type = 'revert') {
                 type: 'connection',
                 name: 'demo connection',
                 completed: false,
+                isTriggered: true,
+              },
+            ],
+          },
+          {
+            _id: '_revId8',
+            type,
+            status: 'failed',
+            installSteps: [
+              {
+                type: 'connection',
+                name: 'demo connection',
+                completed: true,
+                isTriggered: true,
+              },
+            ],
+          },
+          {
+            _id: '_revId9',
+            type,
+            status: 'failed',
+            installSteps: [
+              {
+                type: 'connection',
+                name: 'demo connection',
+                completed: true,
                 isTriggered: true,
               },
             ],
@@ -230,6 +282,20 @@ describe('InstallSteps tests', () => {
     expect(screen.getByText('Configured')).toBeInTheDocument();
     expect(screen.getByText('You\'ve successfully merged your pull.')).toBeInTheDocument();
     await userEvent.click(screen.getByText('Configured'));
+    expect(mockClose).toHaveBeenCalled();
+  });
+  test('Should able to test the error message when the installation steps is completed but when the revision status is failed and type is pull', async () => {
+    await initInstallSteps({...props, revisionId: '_revId8', integrationId: '_integrationId2'}, 'pull');
+    expect(screen.getByText('Complete the steps below to merge your changes.')).toBeInTheDocument();
+    expect(screen.getByText('The merging of your pull request was unsuccessful.')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Configured'));
+    expect(mockClose).toHaveBeenCalled();
+  });
+  test('Should able to test the error message when the installation steps is completed but when the revision status is failed and type is revert', async () => {
+    await initInstallSteps({...props, revisionId: '_revId9', integrationId: '_integrationId2'});
+    expect(screen.getByText('Complete the steps below to revert your changes.')).toBeInTheDocument();
+    expect(screen.getByText('You were unable to revert your changes successfully.')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Configured'));
     expect(mockClose).toHaveBeenCalled();
   });
   test('Should able to test InstallSteps with invalid revisionId', async () => {
