@@ -51,6 +51,7 @@ describe('Invite Users UI tests', () => {
     const mockPostResolverFunction = jest.fn();
 
     mockGetRequestOnce('/api/sshares', (req, res, ctx) => {
+      console.log('####################################### inside mock request');
       mockResolverFunction();
 
       return res(ctx.json([]));

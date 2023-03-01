@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { MenuItem } from '@material-ui/core';
 import userEvent from '@testing-library/user-event';
 import CeligoSelect from '.';
@@ -56,7 +56,7 @@ describe('celigoSelect UI Test', () => {
     const japan = screen.getByText('Japan');
     const unitedstates = screen.getByText('United States');
 
-    await userEvent.click(japan);
+    await fireEvent.click(japan);
     expect(button.textContent).toBe('Japan');
     const brazil = screen.getByText('Brazil');
 
@@ -76,7 +76,7 @@ describe('celigoSelect UI Test', () => {
     await userEvent.click(unitedstates);
     const donebutton = screen.getByText('Done');
 
-    await userEvent.click(donebutton);
+    await fireEvent.click(donebutton);
     expect(button.textContent).toBe('Brazil, United States');
 
     const japan = screen.getByText('Japan');
