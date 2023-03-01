@@ -2,12 +2,16 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import Signin from '.';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, mutateStore } from '../../../test/test-utils';
 
 let initialStore;
 
 function initConcurSignIn(props, {authData}) {
-  initialStore.getState().auth = authData;
+  const mutateState = draft => {
+    draft.auth = authData;
+  };
+
+  mutateStore(initialStore, mutateState);
   const ui = (
     <Signin {...props} />
   );
