@@ -5,13 +5,17 @@ import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ConcurForgotPassword from '.';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, mutateStore } from '../../../test/test-utils';
 import actions from '../../../actions';
 
 let initialStore;
 
 function initConcurForgotPassword(props, {authState}) {
-  initialStore.getState().auth = authState;
+  const mutateState = draft => {
+    draft.auth = authState;
+  };
+
+  mutateStore(initialStore, mutateState);
   const ui = (
     <MemoryRouter>
       <ConcurForgotPassword props={props} />
