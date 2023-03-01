@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ForgotPassword from './ForgotPasswordForm';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, mutateStore } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 
@@ -16,7 +16,11 @@ function initForgotPassword({
   className,
   authState,
 }) {
-  initialStore.getState().auth = authState;
+  const mutateState = draft => {
+    draft.auth = authState;
+  };
+
+  mutateStore(initialStore, mutateState);
 
   const ui = (
     <ForgotPassword
