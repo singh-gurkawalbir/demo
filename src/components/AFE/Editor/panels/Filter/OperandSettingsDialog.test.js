@@ -1,88 +1,202 @@
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import OperandSettingsDialog from './OperandSettingsDialog';
-import { getCreatedStore } from '../../../../../store';
-import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
+import * as DynaSubmit from '../../../../DynaForm/DynaSubmit';
+import * as FormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
-const initialStore = getCreatedStore();
+const mockOnClose = jest.fn();
+const mockOnSubmit = jest.fn();
+let mockOptionsHandler = jest.fn();
 
-function initSettingsDialog(props = {}) {
-  const mustateState = draft => {
-    draft.session.editors = {filecsv: {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      sampleDataStatus: props.status,
-      data: 'initial feature value',
-      editorType: 'jsonParser',
-    }};
-  };
+function initOperandSettingsDialog({
+  ruleData,
+  onClose,
+  onSubmit,
+  disabled,
+  mockDynaSubmitData,
+  optionHandlerData,
+}) {
+  jest.spyOn(DynaSubmit, 'default').mockImplementationOnce(
+    props => (
+      <>
+        <div>Mocking Dyna Submit</div>
+        <div>formKey = {props.formKey}</div>
+        <button
+          type="button" data-test={props['data-test']} onClick={() => props.onClick(mockDynaSubmitData)}
+        >
+          {props.children}
+        </button>
+      </>
+    )
+  );
 
-  mutateStore(initialStore, mustateState);
+  jest.spyOn(FormInitWithPermissions, 'default').mockImplementationOnce(
+    props => {
+      mockOptionsHandler = props.optionsHandler(...optionHandlerData);
 
-  return renderWithProviders(<OperandSettingsDialog {...props} />, {initialStore});
+      return 'mockFormKey';
+    }
+  );
+  const ui = (
+    <OperandSettingsDialog ruleData={ruleData} onClose={onClose} onSubmit={onSubmit} disabled={disabled} />
+  );
+
+  return render(ui);
 }
 
-describe('operandSettingsDialog UI tests', () => {
-  test('should pass the initial render', () => {
-    initSettingsDialog({disabled: false, onClose: jest.fn()});
-    expect(screen.getByRole('radio', {name: 'Value'})).toBeInTheDocument();
-    expect(screen.getByRole('radio', {name: 'Field'})).toBeInTheDocument();
-    expect(screen.getByRole('radio', {name: 'Expression'})).toBeInTheDocument();
+// Mocking ModalDialog as part of unit testing
+jest.mock('../../../../ModalDialog', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../../ModalDialog'),
+  default: props => (
+    <>
+      <div>Mocking Modal Dialog Box</div>
+      <div>show = {props.show}</div>
+      <button type="button" onClick={() => props.onClick}>Close</button>
+      <div>{props.children}</div>
+    </>
+  ),
+}));
 
-    expect(screen.getByText('String')).toBeInTheDocument();
+// Mocking DynaForm as part of unit testing
+jest.mock('../../../../DynaForm', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../../DynaForm'),
+  default: props => (
+    <>
+      <div>Mocking Dyna Form</div>
+      <div>formKey = {JSON.stringify(props.formKey)}</div>
+    </>
+  ),
+}));
+
+// Mocking Action Group as part of unit testing
+jest.mock('../../../../ActionGroup', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../../ActionGroup'),
+  default: props => (
+    <>
+      <div>Mocking Action Group</div>
+      <div>{props.children}</div>
+    </>
+  ),
+}));
+
+describe('Testsuite for OperandSettingsDialog', () => {
+  afterEach(() => {
+    mockOnClose.mockClear();
+    mockOnSubmit.mockClear();
   });
-  test('should render the Datatype dropdown when operand type is value', () => {
-    initSettingsDialog({disabled: false, onClose: jest.fn()});
-    expect(screen.queryByText('Boolean')).toBeNull();
-    expect(screen.queryByText('Date Time')).toBeNull();
-    expect(screen.queryByText('Number')).toBeNull();
-    expect(screen.getByText('String')).toBeInTheDocument();
-    userEvent.click(screen.getByText('String'));
-    expect(screen.getByText('Boolean')).toBeInTheDocument();
-    expect(screen.getByText('Date Time')).toBeInTheDocument();
-    expect(screen.getByText('Number')).toBeInTheDocument();
+  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues doesn\'t have transformations and no data types', () => {
+    initOperandSettingsDialog({
+      onClose: mockOnClose,
+      onSubmit: mockOnSubmit,
+      mockDynaSubmitData: {
+        transformations: undefined,
+      },
+      optionHandlerData: '',
+    });
+    expect(screen.getByText(/mocking modal dialog box/i)).toBeInTheDocument();
+    expect(screen.getByText(/show =/i)).toBeInTheDocument();
+    const closeButtonNode = screen.getByRole('button', {
+      name: /close/i,
+    });
+
+    expect(closeButtonNode).toBeInTheDocument();
+    expect(screen.getByText(/operand settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna form/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking action group/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
+    expect(mockOptionsHandler).toBeNull();
+    const saveButtonNode = screen.getByRole('button', {
+      name: /save/i,
+    });
+
+    expect(saveButtonNode).toBeInTheDocument();
+    userEvent.click(saveButtonNode);
+    expect(mockOnSubmit).toHaveBeenCalledWith({dataType: undefined, transformations: [], type: undefined});
   });
-  test('should render both dataType and Apply Functions dropdown when Operand type is field', async () => {
-    initSettingsDialog({disabled: false, ruleData: {dataType: 'string'}, onClose: jest.fn()});
-    userEvent.click(screen.getByRole('radio', {name: 'Field'}));
-    await waitFor(() => expect(screen.getByRole('radio', {name: 'Field'})).toBeChecked());
+  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues has transformations and of data type string', () => {
+    initOperandSettingsDialog({
+      onClose: mockOnClose,
+      onSubmit: mockOnSubmit,
+      mockDynaSubmitData: {
+        type: 'test_type',
+        transformations: ['lowercase', 'uppercase'],
+        dataType: 'string',
+      },
+      optionHandlerData: ['transformations', [{id: 'dataType', value: 'string'}]],
+    });
+    expect(screen.getByText(/mocking modal dialog box/i)).toBeInTheDocument();
+    expect(screen.getByText(/show =/i)).toBeInTheDocument();
+    const closeButtonNode = screen.getByRole('button', {
+      name: /close/i,
+    });
 
-    expect(screen.queryByText('Boolean')).toBeNull();
-    expect(screen.queryByText('Date Time')).toBeNull();
-    expect(screen.queryByText('Number')).toBeNull();
-    expect(screen.getByText('String')).toBeInTheDocument();
-    userEvent.click(screen.getByText('String'));
-    expect(screen.getByText('Boolean')).toBeInTheDocument();
-    expect(screen.getByText('Date Time')).toBeInTheDocument();
-    expect(screen.getByText('Number')).toBeInTheDocument();
-    const selectButtons = screen.getAllByText('Please select');
+    expect(closeButtonNode).toBeInTheDocument();
+    expect(screen.getByText(/operand settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna form/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking action group/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
+    expect(mockOptionsHandler).toEqual([{items: [{label: 'Lowercase', value: 'lowercase'}, {label: 'Uppercase', value: 'uppercase'}]}]);
+    const saveButtonNode = screen.getByRole('button', {
+      name: /save/i,
+    });
 
-    expect(screen.queryByText('Lowercase')).toBeNull();
-    expect(screen.queryByText('Uppercase')).toBeNull();
-
-    userEvent.click(selectButtons[0]);
-    await waitFor(() => expect(screen.getByText('Lowercase')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('Uppercase')).toBeInTheDocument());
+    expect(saveButtonNode).toBeInTheDocument();
+    userEvent.click(saveButtonNode);
+    expect(mockOnSubmit).toHaveBeenCalledWith({dataType: 'string', transformations: ['lowercase', 'uppercase'], type: 'test_type'});
   });
-  test('should render a different dropdown for ApplyFunctions field when dataType is number', async () => {
-    const mockOnClose = jest.fn();
+  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues has transformations and of data type number', () => {
+    initOperandSettingsDialog({
+      onClose: mockOnClose,
+      onSubmit: mockOnSubmit,
+      mockDynaSubmitData: {
+        type: 'expression',
+        transformations: ['ceiling', 'floor', 'abs'],
+        dataType: 'number',
+      },
+      optionHandlerData: ['transformations', [{id: 'dataType', value: 'number'}]],
+    });
+    expect(screen.getByText(/mocking modal dialog box/i)).toBeInTheDocument();
+    expect(screen.getByText(/show =/i)).toBeInTheDocument();
+    const closeButtonNode = screen.getByRole('button', {
+      name: /close/i,
+    });
 
-    initSettingsDialog({disabled: false, ruleData: {dataType: 'number'}, onClose: mockOnClose});
-    userEvent.click(screen.getByRole('radio', {name: 'Field'}));
-    await waitFor(() => expect(screen.getByRole('radio', {name: 'Field'})).toBeChecked());
-    const selectButtons = screen.getAllByText('Please select');
+    expect(closeButtonNode).toBeInTheDocument();
+    expect(screen.getByText(/operand settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna form/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking action group/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
+    const saveButtonNode = screen.getByRole('button', {
+      name: /save/i,
+    });
 
-    expect(screen.queryByText('Ceiling')).toBeNull();
-    expect(screen.queryByText('Floor')).toBeNull();
-    expect(screen.queryByText('Absolute')).toBeNull();
+    expect(mockOptionsHandler).toEqual([{items: [{label: 'Ceiling', value: 'ceiling'}, {label: 'Floor', value: 'floor'}, {label: 'Absolute', value: 'abs'}]}]);
 
-    userEvent.click(selectButtons[0]);
-    await waitFor(() => expect(screen.getByText('Ceiling')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('Floor')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('Absolute')).toBeInTheDocument());
+    expect(saveButtonNode).toBeInTheDocument();
+    userEvent.click(saveButtonNode);
+    expect(mockOnSubmit).toHaveBeenCalledWith({dataType: '', transformations: ['ceiling', 'floor', 'abs'], type: 'expression'});
+  });
+  test('should test operand settings dialog and test the cancel button', () => {
+    initOperandSettingsDialog({
+      onClose: mockOnClose,
+      onSubmit: mockOnSubmit,
+      mockDynaSubmitData: {
+        transformations: undefined,
+      },
+      optionHandlerData: ['transformations', [{id: 'dataType', value: 'test'}]],
+    });
+    const cancelButtonNode = screen.getByRole('button', {
+      name: /cancel/i,
+    });
+
+    expect(cancelButtonNode).toBeInTheDocument();
+    userEvent.click(cancelButtonNode);
+    expect(mockOptionsHandler).toEqual([{items: []}]);
+    expect(mockOnClose).toHaveBeenCalled();
   });
 });
 
