@@ -237,6 +237,9 @@ describe('onFlowUpdate saga', () => {
     const addLinearNodePatch2 = [
       {op: 'add', path: '/pageProcessors/1', value: {type: 'export', _exportId: 'e1'}},
     ];
+    const replaceLinearNodePatch3 = [
+      {op: 'add', path: '/pageGenerators/1/_exportId', value: 'e1'},
+    ];
     const addLinearNodeMiddlePatch = [
       {op: 'remove', path: '/pageProcessors/1/_exportId'},
       {op: 'replace', path: '/pageProcessors/1/type', value: 'import'},
@@ -289,8 +292,16 @@ describe('onFlowUpdate saga', () => {
       .call.fn(loadResourceUIFields)
       .put(actions.uiFields.updateFlowResources(resourceId, resourceIds))
       .run();
+    const test5 = expectSaga(onFlowUpdate, { resourceId, resourceType, patch: replaceLinearNodePatch3 })
+      .provide([
+        [select(selectors.flowResourceIds, resourceId), resourceIds],
+        [select(selectors.resourceUIFields, exportId), {}],
+      ])
+      .call.fn(loadResourceUIFields)
+      .put(actions.uiFields.updateFlowResources(resourceId, resourceIds))
+      .run();
 
-    return test1 && test2 && test3 && test4;
+    return test1 && test2 && test3 && test4 && test5;
   });
   test('should call loadResourceUIFields and also dispatch updateFlowResources when the patches for the Branched flow has PG or PP added', () => {
     const ppPatch = [ // add node in branching

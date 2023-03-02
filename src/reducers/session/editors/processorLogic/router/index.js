@@ -160,6 +160,7 @@ export default {
     const patches = {
       foregroundPatches: undefined,
       backgroundPatches: [],
+      options: {revertChangesOnFailure: true},
     };
     const {
       rule,
