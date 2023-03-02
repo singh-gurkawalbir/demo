@@ -96,14 +96,16 @@ describe('test suite for PreviewButtonGroup', () => {
   });
   test('Preview button should be disabled if disablePreview is true on editor and hover text should be displayed on hover', async () => {
     await initPreviewButtonGroup('2');
-    const button = screen.getByRole('button', {
-      name: /preview/i,
-    });
+    waitFor(async () => {
+      const button = screen.getByRole('button', {
+        name: /preview/i,
+      });
 
-    expect(button).toBeInTheDocument();
-    expect(button).toBeDisabled();
-    fireEvent.mouseOver(button);
-    await waitFor(() => screen.getByTitle(messageStore('EDITOR_PREVIEW_DISABLED')));
+      expect(button).toBeInTheDocument();
+      expect(button).toBeDisabled();
+      fireEvent.mouseOver(button);
+      await waitFor(() => screen.getByTitle(messageStore('EDITOR_PREVIEW_DISABLED')));
+    });
   });
   test('Preview button should be disabled if save is in progress', async () => {
     await initPreviewButtonGroup('3');
