@@ -12,37 +12,37 @@ export default function ErrorNotifications() {
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
+  const isOnline = navigator.onLine;
 
   useEffect(() => {
     if (!errors) return;
 
-    Object.keys(errors).forEach(commKey => {
-      const message = errors[commKey];
+    if (isOnline) {
+      Object.keys(errors).forEach(commKey => {
+        const message = errors[commKey];
 
-      enqueueSnackbar({
-        message: <ErrorContent error={message} />,
-        variant: 'error',
-        persist: true,
-        key: commKey,
+        enqueueSnackbar({
+          message: <ErrorContent error={message} />,
+          variant: 'error',
+          persist: true,
+          key: commKey,
+        });
       });
-    });
+      dispatch(actions.api.clearComms());
+    }
+  }, [dispatch, enqueueSnackbar, errors, isOnline]);
 
-    dispatch(actions.api.clearComms());
-  }, [dispatch, enqueueSnackbar, errors]);
-
-  // Commented out the intermittent network issues warning snackbar
-  // TODO: Surya enable it after december MR
-  /*
   useEffect(() => {
-    if (hasWarning) {
+    if (!isOnline) {
       enqueueSnackbar({
-        message: <ErrorContent error="You seem to be experiencing intermittent network connectivity, so may want to check your internet connection." />,
+        message: <ErrorContent error="It seems that your internet connection may be offline. Check your connection, then reload. If you continue to have problems after verifying that your connection is working, try signing out and signing back in to integrator.io." />,
         variant: 'warning',
         persist: true,
-        preventDuplicate: true,
+        key: 'offline',
       });
     }
-  }, [enqueueSnackbar, hasWarning]);
-*/
+    dispatch(actions.api.clearComms());
+  }, [dispatch, enqueueSnackbar, isOnline]);
+
   return null;
 }

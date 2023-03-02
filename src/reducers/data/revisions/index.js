@@ -78,6 +78,12 @@ selectors.uniqueUserIdsFromRevisions = createSelector(
 );
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
 
+selectors.revisionStatus = (state = defaultState, integrationId, revisionId) => {
+  const revision = selectors.revision(state, integrationId, revisionId);
+
+  return revision?.status;
+};
+
 selectors.revisionInstallSteps = createSelector(
   selectors.revision,
   revision => {

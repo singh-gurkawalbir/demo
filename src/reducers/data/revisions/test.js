@@ -186,6 +186,23 @@ describe('revisions selectors', () => {
       name: 'rev3',
       _createdByUserId: 'user2',
     },
+    {
+      _id: 'rev-4',
+      name: 'rev4',
+      _createdByUserId: 'user2',
+      type: 'pull',
+      status: 'failed',
+      installSteps: [
+        {
+          type: 'connection',
+          _connectionId: 'con-1234',
+
+        },
+        {
+          type: 'merge',
+        },
+      ],
+    },
   ];
   const state = {
     [integrationId]: {
@@ -244,6 +261,30 @@ describe('revisions selectors', () => {
       expect(selectors.revisionsFetchStatus(state, integrationId)).toBe('received');
       expect(selectors.revisionsFetchStatus(state1, integrationId)).toBe('requested');
       expect(selectors.revisionsFetchStatus(state2, integrationId)).toBeUndefined();
+    });
+  });
+  describe('revisionStatus selector', () => {
+    test('should return undefined incase of invalid params', () => {
+      expect(selectors.revisionStatus()).toBeUndefined();
+      expect(selectors.revisionStatus({})).toBeUndefined();
+      expect(selectors.revisionStatus({}, 'i-23', 'r-23')).toBeUndefined();
+    });
+    test('should return the revision status from the state for the passed integrationId and revision id', () => {
+      const state1 = {
+        [integrationId]: {
+          status: 'failed',
+          data: revisionsList,
+        },
+      };
+      const state2 = {
+        [integrationId]: {
+          data: revisionsList,
+        },
+      };
+
+      expect(selectors.revisionStatus(state, integrationId, 'rev-1')).toBe('completed');
+      expect(selectors.revisionStatus(state1, integrationId, 'rev-4')).toBe('failed');
+      expect(selectors.revisionStatus(state2, integrationId, 'rev-3')).toBeUndefined();
     });
   });
   describe('revisionInstallSteps selector', () => {
