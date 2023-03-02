@@ -1,7 +1,7 @@
 
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import CodeEditor from './editor';
 import { renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
@@ -192,7 +192,8 @@ describe('Should test Code Editor', () => {
     const textAreaNode = screen.getByRole('textbox');
 
     expect(textAreaNode).toBeInTheDocument();
-    await userEvent.clear(textAreaNode);
+    // await userEvent.clear(textAreaNode);
+    await fireEvent.change(textAreaNode, {target: {value: ''}});
     textAreaNode.focus();
     await userEvent.paste('test');
     await userEvent.paste('test1');
@@ -226,7 +227,8 @@ describe('Should test Code Editor', () => {
     const textAreaNode = screen.getByRole('textbox');
 
     expect(textAreaNode).toBeInTheDocument();
-    await userEvent.clear(textAreaNode);
+    // await userEvent.clear(textAreaNode);
+    await fireEvent.change(textAreaNode, {target: {value: ''}});
     textAreaNode.focus();
     await userEvent.paste('test');
     expect(mockOnChange).toBeCalled();
