@@ -10,6 +10,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import {FilledButton, TextButton} from '../Buttons';
 import { UNASSIGNED_SECTION_ID } from '../../constants';
 import ActionGroup from '../ActionGroup';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 const flowsFilterConfig = { type: 'flows' };
 
@@ -93,7 +94,7 @@ export default function AttachFlows({ integrationId, flowGroupingId }) {
               required
               resources="flows,connections,exports,imports">
               <CeligoTable
-                data={flows}
+                data={customCloneDeep(flows)}
                 onSelectChange={handleSelectChange}
                 {...metadata}
                 selectableRows

@@ -4,7 +4,7 @@ import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import { createMemoryHistory } from 'history';
 import getRoutePath from '../../utils/routePaths';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import ChangeEmail from '.';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
@@ -12,7 +12,9 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function store(auth) {
-  initialStore.getState().auth = auth;
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
+  });
 }
 
 async function initChangeEmail(props) {

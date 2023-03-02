@@ -7,101 +7,105 @@ import { JOB_STATUS } from '../../../../../constants';
 import {
   renderWithProviders,
   reduxStore,
+  mutateStore,
 } from '../../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.exports = [
-  {
-    _id: '634b79db0cbd27707a2d5080',
-    name: 'Exportname1',
-  },
-  {
-    _id: '634b79db0cbd27707a2d5081',
-    name: 'Exportname2',
-    _connectionId: '5e7068331c056a75e6df19b2',
-  },
-];
-initialStore.getState().data.resources.connections = [
-  {
-    _id: '5e7068331c056a75e6df19b2',
-    createdAt: '2020-03-17T06:03:31.798Z',
-    lastModified: '2020-03-19T23:47:55.181Z',
-    type: 'rest',
-    name: '3D Cart Staging delete',
-    assistant: '3dcart',
-    offline: true,
-    sandbox: false,
-    isHTTP: true,
-    http: {
-      formType: 'assistant',
-      mediaType: 'json',
-      baseURI: 'https://apirest.3dcart.com',
-      concurrencyLevel: 11,
-      ping: {
-        relativeURI: '/3dCartWebAPI/v1/Customers',
-        method: 'GET',
+mutateStore(initialStore, draft => {
+  draft.data.resources.exports = [
+    {
+      _id: '634b79db0cbd27707a2d5080',
+      name: 'Exportname1',
+    },
+    {
+      _id: '634b79db0cbd27707a2d5081',
+      name: 'Exportname2',
+      _connectionId: '5e7068331c056a75e6df19b2',
+    },
+  ];
+  draft.data.resources.connections = [
+    {
+      _id: '5e7068331c056a75e6df19b2',
+      createdAt: '2020-03-17T06:03:31.798Z',
+      lastModified: '2020-03-19T23:47:55.181Z',
+      type: 'rest',
+      name: '3D Cart Staging delete',
+      assistant: '3dcart',
+      offline: true,
+      sandbox: false,
+      isHTTP: true,
+      http: {
+        formType: 'assistant',
+        mediaType: 'json',
+        baseURI: 'https://apirest.3dcart.com',
+        concurrencyLevel: 11,
+        ping: {
+          relativeURI: '/3dCartWebAPI/v1/Customers',
+          method: 'GET',
+        },
+        headers: [
+          {
+            name: 'SecureUrl',
+            value: 'https://celigoc1.com',
+          },
+          {
+            name: 'PrivateKey',
+            value: '{{{connection.http.encrypted.PrivateKey}}}',
+          },
+          {
+            name: 'content-type',
+            value: 'application/json',
+          },
+        ],
+        encrypted: '******',
+        encryptedFields: [],
+        auth: {
+          type: 'token',
+          oauth: {
+            scope: [],
+          },
+          token: {
+            token: '******',
+            location: 'header',
+            headerName: 'Token',
+            scheme: ' ',
+            refreshMethod: 'POST',
+            refreshMediaType: 'urlencoded',
+          },
+        },
       },
-      headers: [
-        {
-          name: 'SecureUrl',
-          value: 'https://celigoc1.com',
-        },
-        {
-          name: 'PrivateKey',
-          value: '{{{connection.http.encrypted.PrivateKey}}}',
-        },
-        {
-          name: 'content-type',
-          value: 'application/json',
-        },
-      ],
-      encrypted: '******',
-      encryptedFields: [],
-      auth: {
-        type: 'token',
-        oauth: {
-          scope: [],
-        },
-        token: {
-          token: '******',
-          location: 'header',
-          headerName: 'Token',
-          scheme: ' ',
-          refreshMethod: 'POST',
-          refreshMediaType: 'urlencoded',
-        },
+      rest: {
+        baseURI: 'https://apirest.3dcart.com',
+        bearerToken: '******',
+        tokenLocation: 'header',
+        mediaType: 'json',
+        authType: 'token',
+        authHeader: 'Token',
+        authScheme: ' ',
+        headers: [
+          {
+            name: 'SecureUrl',
+            value: 'https://celigoc1.com',
+          },
+          {
+            name: 'PrivateKey',
+            value: '{{{connection.rest.encrypted.PrivateKey}}}',
+          },
+        ],
+        encrypted: '******',
+        encryptedFields: [],
+        unencryptedFields: [],
+        scope: [],
+        pingRelativeURI: '/3dCartWebAPI/v1/Customers',
+        concurrencyLevel: 11,
+        refreshTokenHeaders: [],
       },
     },
-    rest: {
-      baseURI: 'https://apirest.3dcart.com',
-      bearerToken: '******',
-      tokenLocation: 'header',
-      mediaType: 'json',
-      authType: 'token',
-      authHeader: 'Token',
-      authScheme: ' ',
-      headers: [
-        {
-          name: 'SecureUrl',
-          value: 'https://celigoc1.com',
-        },
-        {
-          name: 'PrivateKey',
-          value: '{{{connection.rest.encrypted.PrivateKey}}}',
-        },
-      ],
-      encrypted: '******',
-      encryptedFields: [],
-      unencryptedFields: [],
-      scope: [],
-      pingRelativeURI: '/3dCartWebAPI/v1/Customers',
-      concurrencyLevel: 11,
-      refreshTokenHeaders: [],
-    },
-  },
-];
-initialStore.getState().session.data = {};
+  ];
+  draft.session.data = {};
+});
+
 const mockDispatch = jest.fn();
 
 jest.mock('react-redux', () => ({

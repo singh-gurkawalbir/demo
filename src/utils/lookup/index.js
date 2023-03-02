@@ -1,4 +1,4 @@
-import deepClone from 'lodash/cloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 export default {
   getLookupFromResource: (resourceObj = {}) => {
@@ -40,7 +40,7 @@ export default {
     }
 
     // returning deep cloned lookup object to avoid resource object manipulation
-    return deepClone(lookup);
+    return customCloneDeep(lookup);
   },
   getLookupPath: (adaptorType, isMapping) => {
     switch (adaptorType) {

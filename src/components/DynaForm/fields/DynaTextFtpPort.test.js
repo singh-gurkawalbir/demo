@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import DynaTextFtpPort from './DynaTextFtpPort';
 
@@ -31,16 +31,18 @@ describe('test suite for Port field in FTP connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        'ftp.type': {
-          resourceId: props.resourceId,
-          resourceType: props.resourceType,
-          id: 'ftp.type',
-          value: 'sftp',
+    mutateStore(initialStore, draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          'ftp.type': {
+            resourceId: props.resourceId,
+            resourceType: props.resourceType,
+            id: 'ftp.type',
+            value: 'sftp',
+          },
         },
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaTextFtpPort {...props} />, {initialStore});
     expect(screen.getByTestId('fieldHelp')).toBeInTheDocument();
 
@@ -71,16 +73,18 @@ describe('test suite for Port field in FTP connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        'ftp.type': {
-          resourceId: props.resourceId,
-          resourceType: props.resourceType,
-          id: 'ftp.type',
-          value: 'sftp',
+    mutateStore(initialStore, draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          'ftp.type': {
+            resourceId: props.resourceId,
+            resourceType: props.resourceType,
+            id: 'ftp.type',
+            value: 'sftp',
+          },
         },
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaTextFtpPort {...props} />, {initialStore});
     expect(onFieldChange).toHaveBeenCalledWith(props.id, props.options, true);
     const inputField = screen.getByRole('textbox');
@@ -115,16 +119,18 @@ describe('test suite for Port field in FTP connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        'ftp.type': {
-          resourceId: props.resourceId,
-          resourceType: props.resourceType,
-          id: 'ftp.type',
-          value: 'sftp',
+    mutateStore(initialStore, draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          'ftp.type': {
+            resourceId: props.resourceId,
+            resourceType: props.resourceType,
+            id: 'ftp.type',
+            value: 'sftp',
+          },
         },
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaTextFtpPort {...props} />, {initialStore});
 
     expect(onFieldChange).not.toHaveBeenCalled();
@@ -148,16 +154,18 @@ describe('test suite for Port field in FTP connection', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        'ftp.type': {
-          resourceId: props.resourceId,
-          resourceType: props.resourceType,
-          id: 'ftp.type',
-          value: 'sftp',
+    mutateStore(initialStore, draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          'ftp.type': {
+            resourceId: props.resourceId,
+            resourceType: props.resourceType,
+            id: 'ftp.type',
+            value: 'sftp',
+          },
         },
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaTextFtpPort {...props} />, {initialStore});
 
     const inputField = screen.getByRole('textbox');

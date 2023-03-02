@@ -1,7 +1,6 @@
 import produce from 'immer';
 import { groupBy } from 'lodash';
 import { createSelector } from 'reselect';
-import cloneDeep from 'lodash/cloneDeep';
 import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
 import {
@@ -17,6 +16,7 @@ import {
   getJobDuration,
   RETRY_OBJECT_TYPES,
 } from './util';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 function getParentJobIndex(jobs, jobId) {
   return jobs.findIndex(j => j._id === jobId);
@@ -684,7 +684,7 @@ selectors.flowJobs = createSelector(
       if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
         jobChildren = job.children.filter(cJob => !!cJob).map(childJob => {
-          const cJob = cloneDeep(childJob);
+          const cJob = customCloneDeep(childJob);
           const additionalChildProps = {
             uiStatus: cJob.status,
             duration: getJobDuration(cJob),

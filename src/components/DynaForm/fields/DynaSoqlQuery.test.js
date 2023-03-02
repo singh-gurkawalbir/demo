@@ -5,7 +5,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import DynaSoqlQuery from './DynaSoqlQuery';
 import * as useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockHistoryPush = jest.fn();
@@ -20,9 +20,11 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {'salesforce/metadata/connections/someconnectionId/query/columns': {
-  data: [{entityName: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {'salesforce/metadata/connections/someconnectionId/query/columns': {
+    data: [{entityName: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
+  }}}};
+});
 
 const mockOnFieldChange = jest.fn();
 

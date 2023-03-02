@@ -5,15 +5,17 @@ import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import UserFilter from '.';
 import { getCreatedStore } from '../../../../../../../store';
-import { renderWithProviders } from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../../test/test-utils';
 import actions from '../../../../../../../actions';
 
 let initialStore;
 
 function initUserFilter({userData, revisionsData, revisionsFilterData}) {
-  initialStore.getState().user = userData;
-  initialStore.getState().data.revisions = revisionsData;
-  initialStore.getState().session.filters = revisionsFilterData;
+  mutateStore(initialStore, draft => {
+    draft.user = userData;
+    draft.data.revisions = revisionsData;
+    draft.session.filters = revisionsFilterData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test/12345'}]}

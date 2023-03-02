@@ -2,7 +2,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import IntegrationTabsComponent from './IntegrationTabs';
 import { getCreatedStore } from '../../../store';
 
@@ -71,7 +71,10 @@ describe('test suite for useAvailableTabs hook', () => {
   test('should render analytics tab only for users in EM2.0', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
+
     await initUseAvailableTabs(initialStore);
     [
       ...commonTabs,
@@ -93,7 +96,9 @@ describe('test suite for useAvailableTabs hook', () => {
 
     mockMatch.params.integrationId = 'none';
     mockMatch.url = '/integrations/none/flows';
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
     await initUseAvailableTabs(initialStore);
     [
       ...commonTabs,
@@ -110,10 +115,13 @@ describe('test suite for useAvailableTabs hook', () => {
   test('should not render Aliases or Revisions tab for integration app', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: mockMatch.params.integrationId,
-      _connectorId: '123connector',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: mockMatch.params.integrationId,
+        _connectorId: '123connector',
+      }];
+    });
+
     await initUseAvailableTabs(initialStore);
     [
       ...commonTabs,
@@ -130,14 +138,17 @@ describe('test suite for useAvailableTabs hook', () => {
   test('should render settings form when integration has settings form or it is editable', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: mockMatch.params.integrationId,
-      settingsForm: { init: jest.fn() },
-    }];
-    initialStore.getState().user.profile = {
-      developer: true,
-      useErrMgtTwoDotZero: true,
-    };
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: mockMatch.params.integrationId,
+        settingsForm: { init: jest.fn() },
+      }];
+      draft.user.profile = {
+        developer: true,
+        useErrMgtTwoDotZero: true,
+      };
+    });
+
     await initUseAvailableTabs(initialStore);
     [
       ...commonTabs,

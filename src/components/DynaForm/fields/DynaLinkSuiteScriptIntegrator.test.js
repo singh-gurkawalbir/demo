@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
@@ -45,15 +45,17 @@ describe('test suite for DynaLinkSuiteScriptIntegrator field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences = {
-      defaultAShareId: 'own',
-      ssConnectionIds: [props.resourceContext.resourceId],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: props.resourceContext.resourceId,
-      netsuite: { account: 'ns-123' },
-    }];
-    initialStore.getState().session.suiteScript.account['NS-123'] = {hasIntegrations: true};
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {
+        defaultAShareId: 'own',
+        ssConnectionIds: [props.resourceContext.resourceId],
+      };
+      draft.data.resources.connections = [{
+        _id: props.resourceContext.resourceId,
+        netsuite: { account: 'ns-123' },
+      }];
+      draft.session.suiteScript.account['NS-123'] = {hasIntegrations: true};
+    });
     renderWithProviders(<DynaLinkSuiteScriptIntegrator {...props} />, {initialStore});
     expect(document.querySelector('label')).toHaveTextContent(props.label);
     const checkBox = screen.getByRole('checkbox');
@@ -75,14 +77,16 @@ describe('test suite for DynaLinkSuiteScriptIntegrator field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences = {
-      defaultAShareId: 'own',
-      ssConnectionIds: [props.resourceContext.resourceId],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: props.resourceContext.resourceId,
-      netsuite: {account: 'ns-123'},
-    }];
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {
+        defaultAShareId: 'own',
+        ssConnectionIds: [props.resourceContext.resourceId],
+      };
+      draft.data.resources.connections = [{
+        _id: props.resourceContext.resourceId,
+        netsuite: {account: 'ns-123'},
+      }];
+    });
     renderWithProviders(<DynaLinkSuiteScriptIntegrator {...props} />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.suiteScript.account.checkHasIntegrations(props.resourceContext.resourceId));
   });

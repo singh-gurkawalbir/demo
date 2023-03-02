@@ -8,48 +8,50 @@ import userEvent from '@testing-library/user-event';
 import ProceedOnFailure from './proceedOnFailure';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initProceedOnFailure({
   props = {},
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {
-        _id: 'flow_id',
-        _connectorId: 'connector_id_1',
-        pageProcessors: [
-          {
-            type: 'imports',
-            _importId: 'import_id',
-          },
-        ],
-      },
-      {
-        _id: 'flow_id_1',
-        _connectorId: 'connector_id_2',
-        routers: [
-          {
-            branches: [{
-              pageProcessors: [{
-                type: 'imports',
-                _importId: 'import_id',
-                proceedOnFailure: true,
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {
+          _id: 'flow_id',
+          _connectorId: 'connector_id_1',
+          pageProcessors: [
+            {
+              type: 'imports',
+              _importId: 'import_id',
+            },
+          ],
+        },
+        {
+          _id: 'flow_id_1',
+          _connectorId: 'connector_id_2',
+          routers: [
+            {
+              branches: [{
+                pageProcessors: [{
+                  type: 'imports',
+                  _importId: 'import_id',
+                  proceedOnFailure: true,
+                }],
               }],
-            }],
-          },
-        ],
-      },
-    ],
-    imports: [
-      {
-        _id: 'import_id',
-        name: 'import name 1',
-      },
-    ],
-  };
+            },
+          ],
+        },
+      ],
+      imports: [
+        {
+          _id: 'import_id',
+          name: 'import name 1',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter>

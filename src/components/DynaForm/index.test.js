@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import DynaForm from '.';
 
 jest.mock('./fields/DynaMode', () => ({
@@ -30,24 +30,26 @@ const fields = {
 function initDynaSubmit(props = {}, lfields = [], fieldMap) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      fields,
-      fieldMeta: {
-        layout: {
-          type: 'collapse',
-          containers: [
-            {
-              collapsed: true,
-              fields: ['a', 'b'],
-            },
-          ],
-          fields: lfields,
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        fields,
+        fieldMeta: {
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                fields: ['a', 'b'],
+              },
+            ],
+            fields: lfields,
+          },
+          fieldMap,
         },
-        fieldMap,
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<DynaForm {...props} />, { initialStore });
 }

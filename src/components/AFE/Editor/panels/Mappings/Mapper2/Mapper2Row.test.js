@@ -2,7 +2,7 @@ import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import {renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
 import actions from '../../../../../../actions';
 import Mapper2Row from './Mapper2Row';
 import { ConfirmDialogProvider } from '../../../../../ConfirmDialog';
@@ -186,7 +186,9 @@ describe('Mapper2Row UI test cases', () => {
   test('should show static Look UP icon when mapping is dynamic look up', () => {
     const nodeKey = 'somenodekey';
 
-    initialStore.getState().session.mapping = {mapping: {importId: 'someimportID', lookups: [{name: 'someLookUpName', map: []}]}};
+    mutateStore(initialStore, draft => {
+      draft.session.mapping = {mapping: {importId: 'someimportID', lookups: [{name: 'someLookUpName', map: []}]}};
+    });
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row lookupName="someLookUpName" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>, {initialStore});
 

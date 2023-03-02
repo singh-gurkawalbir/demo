@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import DynaNSWSSavedSearch from './DynaNSWSSavedSearch';
 
@@ -20,14 +20,16 @@ describe('test suite for DynaNSWSSavedSearch field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      netsuite: {
-        dataCenterURLs: {
-          systemDomain: domain,
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        netsuite: {
+          dataCenterURLs: {
+            systemDomain: domain,
+          },
         },
-      },
-    }];
+      }];
+    });
     renderWithProviders(<DynaNSWSSavedSearch {...props} />, {initialStore});
     expect(screen.getByTestId('savedSearchUrl')).toHaveTextContent(`${domain}/app/common/search/search.nl?id=${props.value}`);
   });
@@ -36,14 +38,16 @@ describe('test suite for DynaNSWSSavedSearch field', () => {
     const props = { connectionId: 'connection123' };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      netsuite: {
-        dataCenterURLs: {
-          systemDomain: 'https://tstdrv.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        netsuite: {
+          dataCenterURLs: {
+            systemDomain: 'https://tstdrv.app.netsuite.com',
+          },
         },
-      },
-    }];
+      }];
+    });
     renderWithProviders(<DynaNSWSSavedSearch {...props} />, {initialStore});
     expect(screen.getByTestId('savedSearchUrl')).toHaveTextContent('NULL');
   });
@@ -55,12 +59,14 @@ describe('test suite for DynaNSWSSavedSearch field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      netsuite: {
-        dataCenterURLs: {},
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        netsuite: {
+          dataCenterURLs: {},
+        },
+      }];
+    });
     renderWithProviders(<DynaNSWSSavedSearch {...props} />, {initialStore});
     expect(screen.getByTestId('savedSearchUrl')).toHaveTextContent('NULL');
   });

@@ -2,52 +2,54 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTimestampFileName from './DynaTimestampFileName';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 const mockOnFieldChange = jest.fn();
 
 function initDynaTimestampFileName({props}) {
-  initialStore.getState().user.profile = {
-    timezone: 'Asia/Calcutta',
-  };
-  initialStore.getState().session.flowData = {
-    [props.flowId]: {
-      pageGeneratorsMap: {},
-      pageProcessorsMap: {
-        [props.resourceId]: {
-          preMap: {
-            status: 'requested',
-          },
-          inputFilter: {},
-          processedFlowInput: {},
-          flowInput: {
-            status: 'requested',
+  mutateStore(initialStore, draft => {
+    draft.user.profile = {
+      timezone: 'Asia/Calcutta',
+    };
+    draft.session.flowData = {
+      [props.flowId]: {
+        pageGeneratorsMap: {},
+        pageProcessorsMap: {
+          [props.resourceId]: {
+            preMap: {
+              status: 'requested',
+            },
+            inputFilter: {},
+            processedFlowInput: {},
+            flowInput: {
+              status: 'requested',
+            },
           },
         },
+        routersMap: {},
+        pageGenerators: [
+          {
+            _exportId: 'export_id',
+          },
+        ],
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            type: 'import',
+            _importId: 'import_id',
+          },
+        ],
+        routers: [],
+        refresh: false,
+        formKey: 'imports-import_id',
       },
-      routersMap: {},
-      pageGenerators: [
-        {
-          _exportId: 'export_id',
-        },
-      ],
-      pageProcessors: [
-        {
-          responseMapping: {
-            fields: [],
-            lists: [],
-          },
-          type: 'import',
-          _importId: 'import_id',
-        },
-      ],
-      routers: [],
-      refresh: false,
-      formKey: 'imports-import_id',
-    },
-  };
+    };
+  });
   const ui = (
     <DynaTimestampFileName {...props} />
   );

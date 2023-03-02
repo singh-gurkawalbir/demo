@@ -4,7 +4,7 @@ import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import MockOutputDrawer from '.';
 import { DrawerProvider } from '../../../../drawer/Right/DrawerContext';
@@ -61,41 +61,43 @@ const mockOutput = {
 const mockOutputJson = JSON.stringify(mockOutput);
 
 function initMockOutputDrawer() {
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: 'export1',
-        adaptorType: 'HTTPExport',
-      },
-    ],
-  };
-  initialStore.getState().session.form = {
-    [formKey]: {
-      fields: {
-        mockOutput: {
-          resourceId: 'export1',
-          resourceType: 'exports',
-          flowId: 'flow1',
-          label: 'Mock output',
-          helpKey: 'mockOutput',
-          type: 'mockoutput',
-          fieldId: 'mockOutput',
-          id: 'mockOutput',
-          name: '/mockOutput',
-          defaultValue: '',
-          value: mockOutput,
-          touched: false,
-          visible: true,
-          required: false,
-          disabled: false,
-          options: {},
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      exports: [
+        {
+          _id: 'export1',
+          adaptorType: 'HTTPExport',
+        },
+      ],
+    };
+    draft.session.form = {
+      [formKey]: {
+        fields: {
+          mockOutput: {
+            resourceId: 'export1',
+            resourceType: 'exports',
+            flowId: 'flow1',
+            label: 'Mock output',
+            helpKey: 'mockOutput',
+            type: 'mockoutput',
+            fieldId: 'mockOutput',
+            id: 'mockOutput',
+            name: '/mockOutput',
+            defaultValue: '',
+            value: mockOutput,
+            touched: false,
+            visible: true,
+            required: false,
+            disabled: false,
+            options: {},
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
+          },
         },
       },
-    },
-  };
+    };
+  });
   const drawerProviderProps = {
     onClose: jest.fn(),
     height: 'short',
