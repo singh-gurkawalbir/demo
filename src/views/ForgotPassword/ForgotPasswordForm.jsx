@@ -12,6 +12,7 @@ import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
+import messageStore, { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -64,14 +65,14 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
-      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErrorMsg(messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Email'}));
       setShowErr(true);
     } else {
       if (validateEmail(email)) {
         setShowInvalidEmailError(false);
         handleAuthentication(email);
       } else {
-        setShowErrorMsg('INVALID_EMAIL');
+        setShowErrorMsg(message.USER_SIGN_IN.INVALID_EMAIL);
         setShowInvalidEmailError(true);
       }
       setShowErr(false);
