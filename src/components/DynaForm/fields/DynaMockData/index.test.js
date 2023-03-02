@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
 import errorMessageStore from '../../../../utils/errorStore';
@@ -128,19 +128,22 @@ jest.mock('react-router-dom', () => ({
 }));
 
 function initMockDataEditorField(inputProps = {}) {
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: resourceId,
-        adaptorType: 'HTTPExport',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      exports: [
+        {
+          _id: resourceId,
+          adaptorType: 'HTTPExport',
+        },
+      ],
+    };
+    draft.session.form = {
+      [formKey]: {
+        fields: inputProps.resourceType === 'imports' ? mockResponseField : mockOutputField,
       },
-    ],
-  };
-  initialStore.getState().session.form = {
-    [formKey]: {
-      fields: inputProps.resourceType === 'imports' ? mockResponseField : mockOutputField,
-    },
-  };
+    };
+  });
+
   let props = inputProps.resourceType === 'imports' ? mockResponseFieldProps : mockOutputFieldProps;
 
   props = {...props, ...inputProps};
