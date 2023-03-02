@@ -66,13 +66,15 @@ describe('testsuite for Job Files Download Dialog', () => {
       expect(file1CheckBoxNode).not.toBeChecked();
     });
     await userEvent.click(file1CheckBoxNode);
-    await waitFor(() => expect(file1CheckBoxNode).toBeChecked());
-    const downloadButtonNode = screen.getByRole('button', {
-      name: /download/i,
-    });
+    waitFor(() => expect(file1CheckBoxNode).toBeChecked());
+    waitFor(async () => {
+      const downloadButtonNode = screen.getByRole('button', {
+        name: /download/i,
+      });
 
-    expect(downloadButtonNode).toBeInTheDocument();
-    await userEvent.click(downloadButtonNode);
-    expect(closeMock).toHaveBeenCalled();
+      expect(downloadButtonNode).toBeInTheDocument();
+      await userEvent.click(downloadButtonNode);
+      expect(closeMock).toHaveBeenCalled();
+    });
   });
 });

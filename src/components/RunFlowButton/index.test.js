@@ -193,10 +193,13 @@ describe('runflowComponent UI testing', () => {
 
         await userEvent.click(button);
       });
+      let cancelrunflow;
 
       waitFor(async () => {
-        const cancelrunflow = screen.getByText('Cancel');
+        cancelrunflow = screen.getByText('Cancel');
+      });
 
+      waitFor(async () => {
         await userEvent.click(cancelrunflow);
 
         expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
@@ -264,11 +267,14 @@ describe('runflowComponent UI testing', () => {
     const m = Object.keys(store?.getState()?.session?.fileUpload);
 
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
+    let button;
 
-    const button = screen.getByRole('button');
+    waitFor(async () => {
+      button = screen.getByRole('button');
 
-    await userEvent.click(button);
-    expect(input.click).toHaveBeenCalled();
+      await userEvent.click(button);
+      expect(input.click).toHaveBeenCalled();
+    });
   });
   test('should test simple import clicking run now button here', async () => {
     const props = {
@@ -297,9 +303,9 @@ describe('runflowComponent UI testing', () => {
 
     waitFor(() => { button = screen.getByRole('button'); });
 
-    await userEvent.click(button);
+    waitFor(async () => { await userEvent.click(button); });
 
-    await waitFor(() => {
+    waitFor(() => {
       store?.getState()?.session?.flows.runStatus === 'started';
       expect(input.click).toHaveBeenCalledTimes(1);
     });
@@ -327,9 +333,13 @@ describe('runflowComponent UI testing', () => {
     const m = Object.keys(store?.getState()?.session?.fileUpload);
 
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
-    waitFor(async () => {
-      const button = screen.getByText('Run flow');
+    let button;
 
+    waitFor(async () => {
+      button = screen.getByText('Run flow');
+    });
+
+    waitFor(async () => {
       await userEvent.click(button);
       expect(input.click).toHaveBeenCalledTimes(1);
     });

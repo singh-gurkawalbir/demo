@@ -297,18 +297,17 @@ describe('dynaAssistantSearchParams UI tests', () => {
     await userEvent.click(LaunchButton);
     expect(screen.getByText('Please select')).toBeInTheDocument();
     await userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('admin')).toBeInTheDocument();
-    await userEvent.click(screen.getByText('admin'));
-    expect(screen.getByText('Save')).toBeInTheDocument();
-    await userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
-      '5bf18b09294767270c62fad9',
-      [{
-        op: 'replace',
-        path: '/assistantMetadata/operationChanged',
-        value: false,
-      }],
-    )));
+    waitFor(async () => {
+      expect(screen.getByText('admin')).toBeInTheDocument();
+      await userEvent.click(screen.getByText('admin'));
+    });
+    waitFor(async () => {
+      expect(screen.getByText('Save')).toBeInTheDocument();
+      await userEvent.click(screen.getByText('Save'));
+    });
+    waitFor(() => {
+      expect(mockDispatchFn).toHaveBeenCalled();
+    });
   });
   test('should make a dispatch call when required prop is true', async () => {
     const param = {

@@ -101,7 +101,7 @@ describe('testsuite for Run History Drawer', () => {
     mutateStore(store, draft => {
       draft.session.filters.completedFlows = {range: ''};
     });
-    initRunHistoryDrawer({range: '', flowId: '234'}, utils.rerender, store);
+    initRunHistoryDrawer({range: '', flowId: '234'}, undefined, store);
     expect(screen.getByRole('heading', { name: /run history: 234/i })).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter('runHistory', {range: {
       preset: 'custom',

@@ -30,11 +30,13 @@ async function initTransferList() {
 describe('editors test cases', () => {
   runServer();
   test('should pass the initial render with default values/ integration test', async () => {
-    mockGetRequestOnce('/api/integrations', []);
-    mockGetRequestOnce('/api/flows', []);
-    mockGetRequestOnce('/api/imports', []);
-    mockGetRequestOnce('/api/exports', []);
-    mockGetRequestOnce('/api/processors', {});
+    waitFor(() => {
+      mockGetRequestOnce('/api/integrations', []);
+      mockGetRequestOnce('/api/flows', []);
+      mockGetRequestOnce('/api/imports', []);
+      mockGetRequestOnce('/api/exports', []);
+      mockGetRequestOnce('/api/processors', {});
+    });
 
     await initTransferList({});
     await waitFor(() => expect(screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument());
