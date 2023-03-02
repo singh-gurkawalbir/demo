@@ -15,7 +15,7 @@ describe('KeyWordSearch UI tests', () => {
     const input = screen.getByDisplayValue('');
 
     expect(input).toBeInTheDocument();
-    userEvent.type(input, 'somtext');
+    await userEvent.type(input, 'somtext');
     await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe('somtext'));
   });
 
@@ -27,7 +27,7 @@ describe('KeyWordSearch UI tests', () => {
     const input = screen.getByDisplayValue('');
 
     expect(input).toBeInTheDocument();
-    userEvent.type(input, 'somtext');
+    await userEvent.type(input, 'somtext');
 
     await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe('somtext'));
   });

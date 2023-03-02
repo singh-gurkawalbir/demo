@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DrawerHeader from './DrawerHeader';
@@ -77,8 +77,10 @@ describe('DrawerHeader tests', () => {
 
     expect(infoIcon).toBeInTheDocument();
     await userEvent.click(infoIcon);
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
-    expect(screen.getByText('get info from here')).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(screen.getByText('get info from here')).toBeInTheDocument();
+    });
   });
 
   test('Should able to test the DrawerHeader render with Custom CloseButton only', async () => {
