@@ -31,17 +31,17 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({state: 'someState'}),
 }));
 
-jest.mock('../../components/icons/ShowContentIcon', () => ({
+jest.mock('../../../components/icons/ShowContentIcon', () => ({
   __esModule: true,
-  ...jest.requireActual('../../components/icons/ShowContentIcon'),
+  ...jest.requireActual('../../../components/icons/ShowContentIcon'),
   default: props => (
     <div onClick={props.onClick} onMouseDown={props.onMouseDown}>ShowContentIcon</div>
   ),
 }));
 
-jest.mock('../../components/icons/HideContentIcon', () => ({
+jest.mock('../../../components/icons/HideContentIcon', () => ({
   __esModule: true,
-  ...jest.requireActual('../../components/icons/HideContentIcon'),
+  ...jest.requireActual('../../../components/icons/HideContentIcon'),
   default: props => (
     <div onClick={props.onClick}>HideContentIcon</div>
   ),
