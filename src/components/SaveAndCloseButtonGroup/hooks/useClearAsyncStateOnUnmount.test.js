@@ -1,7 +1,7 @@
 /* eslint-disable jest/require-top-level-describe */
 
 import React from 'react';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import useClearAsyncStateOnUnmount from './useClearAsyncStateOnUnmount';
 
 const key = 'rdbms';
@@ -9,11 +9,14 @@ const key = 'rdbms';
 async function inituseClearAsyncStateOnUnmount() {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.asyncTask[key] = {
-    data: 'abc',
-    defaultData: 'def',
-    status: 'aborted',
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.asyncTask[key] = {
+      data: 'abc',
+      defaultData: 'def',
+      status: 'aborted',
+    };
+  });
+
   let returnData;
   const DummyComponent = () => {
     useClearAsyncStateOnUnmount(key);

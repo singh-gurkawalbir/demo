@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddOrSelect from './AddOrSelect';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 
 async function initAddOrSelect({
   props = {
@@ -15,69 +15,69 @@ async function initAddOrSelect({
   initialStore = reduxStore,
   renderFun,
 } = {}) {
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().session.stage = {
-    'new-O202icadl': {
-      patch: [
-        {
-          op: 'replace',
-          path: '/_id',
-          value: 'new-uwmt5Mi92',
-          timestamp: 1657615760352,
-        },
-        {
-          op: 'replace',
-          path: '/type',
-          value: 'netsuite',
-          timestamp: 1657615760352,
-        },
-        {
-          op: 'replace',
-          path: '/name',
-          value: 'NetSuite Connection',
-          timestamp: 1657615760352,
-        },
-        {
-          op: 'replace',
-          path: '/newIA',
-          value: true,
-          timestamp: 1657615760352,
-        },
-        {
-          op: 'replace',
-          path: '/_integrationId',
-          value: '62cd3575a7777017e5a4a44a',
-          timestamp: 1657615760352,
-        },
-        {
-          op: 'replace',
-          path: '/_connectorId',
-          timestamp: 1657615760352,
-        },
-        {
-          op: 'replace',
-          path: '/installStepConnection',
-          value: true,
-          timestamp: 1657615760352,
-        },
-      ],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.stage = {
+      'new-O202icadl': {
+        patch: [
+          {
+            op: 'replace',
+            path: '/_id',
+            value: 'new-uwmt5Mi92',
+            timestamp: 1657615760352,
+          },
+          {
+            op: 'replace',
+            path: '/type',
+            value: 'netsuite',
+            timestamp: 1657615760352,
+          },
+          {
+            op: 'replace',
+            path: '/name',
+            value: 'NetSuite Connection',
+            timestamp: 1657615760352,
+          },
+          {
+            op: 'replace',
+            path: '/newIA',
+            value: true,
+            timestamp: 1657615760352,
+          },
+          {
+            op: 'replace',
+            path: '/_integrationId',
+            value: '62cd3575a7777017e5a4a44a',
+            timestamp: 1657615760352,
+          },
+          {
+            op: 'replace',
+            path: '/_connectorId',
+            timestamp: 1657615760352,
+          },
+          {
+            op: 'replace',
+            path: '/installStepConnection',
+            value: true,
+            timestamp: 1657615760352,
+          },
+        ],
+      },
+    };
 
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: 'id_1',
-      name: 'Name 1',
-      offline: true,
-      netsuite: {},
-    }, {
-      _id: 'id_2',
-      name: 'Name 2',
-      offline: false,
-      netsuite: {},
-    }],
-  };
+    draft.data.resources = {
+      connections: [{
+        _id: 'id_1',
+        name: 'Name 1',
+        offline: true,
+        netsuite: {},
+      }, {
+        _id: 'id_2',
+        name: 'Name 2',
+        offline: false,
+        netsuite: {},
+      }],
+    };
+  });
 
   const ui = (
     <MemoryRouter>
@@ -145,9 +145,11 @@ describe('addOrSelect test cases', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'MOCK_DUMMY_STATE_UPDATE':
-          initialStore.getState().session.form['connections-new-O202icadl'].value = {
-            connection: 'id_1',
-          };
+          mutateStore(initialStore, draft => {
+            draft.session.form['connections-new-O202icadl'].value = {
+              connection: 'id_1',
+            };
+          });
           break;
         default: initialStore.dispatch(action);
       }

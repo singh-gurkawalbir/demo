@@ -324,8 +324,8 @@ const resource = {
       integrationId,
       isNextPageCollection,
     }),
-  clearCollection: resourceType =>
-    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
+  clearCollection: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType, integrationId }),
   patch: (resourceType, id, patchSet, asyncKey) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>

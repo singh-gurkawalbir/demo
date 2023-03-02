@@ -1,17 +1,19 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaTextWithFlowContext from './DynaTextWithFlowContext';
 
 async function initDynaTextWithFlowContext(props, _keepDeltaBehindFlowId) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {_id: '_flowId', _keepDeltaBehindFlowId},
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {_id: '_flowId', _keepDeltaBehindFlowId},
+      ],
+    };
+  });
 
   return renderWithProviders(<DynaTextWithFlowContext {...props} />, { initialStore });
 }

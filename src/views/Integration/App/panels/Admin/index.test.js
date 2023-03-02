@@ -2,20 +2,22 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import AdminPanel from '.';
 
 async function initAdminPanel(props = {}) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().user.preferences = {defaultAShareId: '1234567890'};
-  initialStore.getState().user.org = {accounts: [{
-    _id: '1234567890',
-    accessLevel: props.access,
-  },
-  ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {defaultAShareId: '1234567890'};
+    draft.user.org = {accounts: [{
+      _id: '1234567890',
+      accessLevel: props.access,
+    },
+    ],
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/integrations/5ff579d745ceef7dcd797c15/${props.child}/admin/readme`}]}>

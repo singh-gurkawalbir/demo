@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ConnectionPanel from './Connection';
 import { runServer } from '../../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 
 async function initMarketplace({
   props = {
@@ -14,34 +14,36 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.loadResources = {
-    connections: 'received',
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.loadResources = {
+      connections: 'received',
+    };
 
-  initialStore.getState().data.resources = {
-    connections: [{
-      name: 'connection 1',
-      _id: 'connection_id_1',
-    }],
-    exports: [{
-      _id: 'export_id_1',
-      _connectionId: 'connection_id_1',
-    }],
-    imports: [{
-      _id: 'import_id_1',
-      _connectionId: 'connection_id_1',
-    }],
-    flows: [{
-      _id: 'flow_id_1',
-      pageGenerators: [{
-        _exportId: 'export_id_1',
+    draft.data.resources = {
+      connections: [{
+        name: 'connection 1',
+        _id: 'connection_id_1',
       }],
-      pageProcessors: [{
-        type: 'import',
-        _importId: 'import_id_1',
+      exports: [{
+        _id: 'export_id_1',
+        _connectionId: 'connection_id_1',
       }],
-    }],
-  };
+      imports: [{
+        _id: 'import_id_1',
+        _connectionId: 'connection_id_1',
+      }],
+      flows: [{
+        _id: 'flow_id_1',
+        pageGenerators: [{
+          _exportId: 'export_id_1',
+        }],
+        pageProcessors: [{
+          type: 'import',
+          _importId: 'import_id_1',
+        }],
+      }],
+    };
+  });
 
   const ui = (
     <MemoryRouter>

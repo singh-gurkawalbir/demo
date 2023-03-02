@@ -6,6 +6,7 @@ import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/scripts/metadata';
 import { selectors } from '../../../../../../reducers';
 import { useSelectorMemo } from '../../../../../../hooks';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,7 +31,7 @@ export default function ScriptPanel({ flowId }) {
     <div className={classes.root}>
       <LoadResources required resources="scripts">
         <CeligoTable
-          data={flowScripts}
+          data={customCloneDeep(flowScripts)}
           filterKey={FILTER_KEY}
           {...metadata}
           actionProps={actionProps}

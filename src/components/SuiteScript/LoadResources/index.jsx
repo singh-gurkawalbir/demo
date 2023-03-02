@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 export default function LoadResources({
   children,
@@ -40,7 +41,7 @@ export default function LoadResources({
 
   useEffect(() => {
     if (!isAllDataReady) {
-      resourceStatus.forEach(resource => {
+      customCloneDeep(resourceStatus).forEach(resource => {
         if (!resource.hasData) {
           let path = `suitescript/connections/${ssLinkedConnectionId}/`;
 

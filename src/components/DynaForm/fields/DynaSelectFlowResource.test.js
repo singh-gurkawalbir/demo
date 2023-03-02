@@ -4,7 +4,7 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 jest.mock('../../LoadResources', () => ({
   __esModule: true,
@@ -16,70 +16,71 @@ jest.mock('../../LoadResources', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.flows = [
-  {
-    _id: '6377005b05853c7b611fceb3',
-    pageProcessors: [
-      {
-        type: 'import',
-        _exportId: '63247349dcbbee6d73184ac1',
-      },
-    ],
-  },
-  {
-    _id: '6377005b05853c7b611fceb4',
-    pageGenerators: [
-      {
-        type: 'export',
-        _exportId: '63247349dcbbee6d73184ac1',
-      },
-    ],
-  },
-  {
-    _id: '6377005b05853c7b611fceb5',
-    pageProcessors: [
-      {
-        type: 'import',
-        _importId: '63247349dcbbee6d73184ac1',
-      },
-    ],
-  },
-  {
-    _id: '6377005b05853c7b611fceb6',
-    routers: [{branches: [
-      { pageProcessors: [
+mutateStore(initialStore, draft => {
+  draft.data.resources.flows = [
+    {
+      _id: '6377005b05853c7b611fceb3',
+      pageProcessors: [
         {
           type: 'import',
-          _importId: '63247349dcbbee6d73184ac1',
+          _exportId: '63247349dcbbee6d73184ac1',
         },
-      ] },
-    ]}],
-  },
-  {
-    _id: '6377005b05853c7b611fceb7',
-    routers: [{branches: [
-      { pageProcessors: [
+      ],
+    },
+    {
+      _id: '6377005b05853c7b611fceb4',
+      pageGenerators: [
         {
           type: 'export',
           _exportId: '63247349dcbbee6d73184ac1',
         },
-      ] },
-    ]}],
-  },
-];
-
-initialStore.getState().data.resources.imports = [{
-  _id: 'nxksnn',
-  name: 'Test import',
-  _connectionId: '5bf18920294767270c62fa96',
-  _integrationId: '12345',
-}];
-initialStore.getState().data.resources.exports = [{
-  _id: 'nxksnn',
-  name: 'Test exports',
-  _connectionId: '5bf18920294767270c62fa96',
-  _integrationId: '12345',
-}];
+      ],
+    },
+    {
+      _id: '6377005b05853c7b611fceb5',
+      pageProcessors: [
+        {
+          type: 'import',
+          _importId: '63247349dcbbee6d73184ac1',
+        },
+      ],
+    },
+    {
+      _id: '6377005b05853c7b611fceb6',
+      routers: [{branches: [
+        { pageProcessors: [
+          {
+            type: 'import',
+            _importId: '63247349dcbbee6d73184ac1',
+          },
+        ] },
+      ]}],
+    },
+    {
+      _id: '6377005b05853c7b611fceb7',
+      routers: [{branches: [
+        { pageProcessors: [
+          {
+            type: 'export',
+            _exportId: '63247349dcbbee6d73184ac1',
+          },
+        ] },
+      ]}],
+    },
+  ];
+  draft.data.resources.imports = [{
+    _id: 'nxksnn',
+    name: 'Test import',
+    _connectionId: '5bf18920294767270c62fa96',
+    _integrationId: '12345',
+  }];
+  draft.data.resources.exports = [{
+    _id: 'nxksnn',
+    name: 'Test exports',
+    _connectionId: '5bf18920294767270c62fa96',
+    _integrationId: '12345',
+  }];
+});
 
 const props = {
   resourceId: 'new-xR72yI',

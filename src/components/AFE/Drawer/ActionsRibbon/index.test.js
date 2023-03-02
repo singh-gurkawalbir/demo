@@ -5,20 +5,24 @@ import {
 import { MemoryRouter } from 'react-router-dom';
 import ActionsRibbon from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
 function initActionsRibbon(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    editorType: 'handlebars',
-    hidePreview: true,
-  },
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      editorType: 'handlebars',
+      hidePreview: true,
+    },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<MemoryRouter><ActionsRibbon {...props} /></MemoryRouter>, {initialStore});
 }

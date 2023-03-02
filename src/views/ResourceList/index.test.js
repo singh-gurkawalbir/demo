@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ResourceList from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 
 jest.mock('../../components/LoadResources', () => ({
   __esModule: true,
@@ -20,56 +20,58 @@ async function initResourceList({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.profile = {
-    allowedToPublish: true,
-    developer: true,
-  };
-  initialStore.getState().user.org = {
-    accounts: [
-      {
-        accessLevel: 'owner',
-        _id: 'own',
-        ownerUser: {
-          licenses: [{
-            type: 'endpoint',
-            _id: 'license_id_1',
-            tier: 'premium',
-            endpoint: {
-              apiManagement: true,
-              production: {
-                numAddOnAgents: 2,
-                numAgents: 2,
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.profile = {
+      allowedToPublish: true,
+      developer: true,
+    };
+    draft.user.org = {
+      accounts: [
+        {
+          accessLevel: 'owner',
+          _id: 'own',
+          ownerUser: {
+            licenses: [{
+              type: 'endpoint',
+              _id: 'license_id_1',
+              tier: 'premium',
+              endpoint: {
+                apiManagement: true,
+                production: {
+                  numAddOnAgents: 2,
+                  numAgents: 2,
+                },
               },
-            },
-          }],
+            }],
+          },
         },
-      },
-    ],
-  };
+      ],
+    };
 
-  initialStore.getState().session.filters = filter;
-  initialStore.getState().session.loadResources = {
-    none: {
-      connections: 'received',
-      exports: 'received',
-    },
-  };
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: 'export_id_1',
-        name: 'export name 1',
+    draft.session.filters = filter;
+    draft.session.loadResources = {
+      none: {
+        connections: 'received',
+        exports: 'received',
       },
-    ],
-  };
-  initialStore.getState().auth = {
-    authenticated: true,
-    defaultAccountSet: true,
-  };
+    };
+    draft.data.resources = {
+      exports: [
+        {
+          _id: 'export_id_1',
+          name: 'export name 1',
+        },
+      ],
+    };
+    draft.auth = {
+      authenticated: true,
+      defaultAccountSet: true,
+    };
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/${resourceType}`}]}

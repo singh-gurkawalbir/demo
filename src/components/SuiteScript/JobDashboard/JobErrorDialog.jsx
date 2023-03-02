@@ -6,6 +6,7 @@ import { selectors } from '../../../reducers';
 import JobErrorTable from './JobErrorTable';
 import ModalDialog from '../../ModalDialog';
 import Help from '../../Help';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
@@ -116,9 +117,9 @@ export default function JobErrorDialog({
 
       <div>
         <JobErrorTable
-          jobErrors={jobErrors}
+          jobErrors={customCloneDeep(jobErrors)}
           errorCount={numError}
-          job={job}
+          job={customCloneDeep(job)}
           onCloseClick={onCloseClick}
           ssLinkedConnectionId={ssLinkedConnectionId}
           integrationId={integrationId}

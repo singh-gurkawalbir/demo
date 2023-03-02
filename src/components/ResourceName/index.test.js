@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ResourceName from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 
 async function initResourceName({
   props = {
@@ -19,7 +19,9 @@ async function initResourceName({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = resources;
+  mutateStore(initialStore, draft => {
+    draft.data.resources = resources;
+  });
 
   const ui = (
     <MemoryRouter>

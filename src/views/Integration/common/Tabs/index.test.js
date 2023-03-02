@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import IntegrationTabs from '.';
 import { getCreatedStore } from '../../../../store';
 import { runServer } from '../../../../test/api/server';
@@ -107,7 +107,10 @@ describe('test suite for IntegrationTabs', () => {
     mockMatch.params.subTab = 'runningFlows';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
+
     const { utils } = await initIntegrationTabs({tabs}, {initialStore});
     const connectionTab = screen.getByRole('tab', {name: /connections/i});
 
@@ -121,7 +124,10 @@ describe('test suite for IntegrationTabs', () => {
     mockMatch.params.subTab = 'completedFlows';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
+
     const { utils } = await initIntegrationTabs({tabs}, {initialStore});
     const connectionTab = screen.getByRole('tab', {name: /connections/i});
 

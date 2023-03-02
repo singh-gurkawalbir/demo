@@ -5,93 +5,94 @@ import { screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources = {
-  flows: [
-    {
-      _id: 'flow_id_1',
-      name: 'flownametest',
-      _integrationId: 456,
-      _flowGroupingId: 6748392,
-    },
-  ],
-  integrations: [{
-    _id: 456,
+mutateStore(initialStore, draft => {
+  draft.data.resources = {
+    flows: [
+      {
+        _id: 'flow_id_1',
+        name: 'flownametest',
+        _integrationId: 456,
+        _flowGroupingId: 6748392,
+      },
+    ],
+    integrations: [{
+      _id: 456,
+      flowGroupings: [{
+        _id: 6748392,
+        name: 'flownametest2',
+      }],
+      name: 'integrationTestName',
+    }],
     flowGroupings: [{
       _id: 6748392,
       name: 'flownametest2',
     }],
-    name: 'integrationTestName',
-  }],
-  flowGroupings: [{
-    _id: 6748392,
-    name: 'flownametest2',
-  }],
-};
-
-initialStore.getState().user = {
-  preferences: {
-    environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    expand: 'Resources',
-    scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-    showReactSneakPeekFromDate: '2019-11-05',
-    showReactBetaFromDate: '2019-12-26',
-    defaultAShareId: 'own',
-    dashboard: {
-      view: 'tile',
-      pinnedIntegrations: [],
-    },
-    drawerOpened: false,
-  },
-  profile: {
-    _id: '625e84b4a2bca9036eb61252',
-    name: 'demo user',
-    email: 'demoUser@celigo.com',
-    role: 'CEO',
-    company: 'celigo',
-    createdAt: '2022-04-19T09:45:25.111Z',
-    useErrMgtTwoDotZero: true,
-    authTypeSSO: null,
-    timezone: 'Asia/Kolkata',
-  },
-  notifications: {
-    accounts: [],
-    stacks: [],
-    transfers: [],
-  },
-  org: {
-    users: [],
-    accounts: [
-      {
-        _id: 'own',
-        accessLevel: 'owner',
-        ownerUser: {
-          licenses: [
-            {
-              _id: '625e84b5a2bca9036eb61253',
-              created: '2022-04-19T09:45:25.125Z',
-              lastModified: '2022-04-28T05:05:45.751Z',
-              type: 'endpoint',
-              tier: 'free',
-              trialEndDate: '2022-05-28T05:05:45.740Z',
-              supportTier: 'essential',
-              sandbox: false,
-              resumable: false,
-            },
-          ],
-        },
+  };
+  draft.user = {
+    preferences: {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      expand: 'Resources',
+      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+      showReactSneakPeekFromDate: '2019-11-05',
+      showReactBetaFromDate: '2019-12-26',
+      defaultAShareId: 'own',
+      dashboard: {
+        view: 'tile',
+        pinnedIntegrations: [],
       },
-    ],
-  },
-  debug: false,
-};
+      drawerOpened: false,
+    },
+    profile: {
+      _id: '625e84b4a2bca9036eb61252',
+      name: 'demo user',
+      email: 'demoUser@celigo.com',
+      role: 'CEO',
+      company: 'celigo',
+      createdAt: '2022-04-19T09:45:25.111Z',
+      useErrMgtTwoDotZero: true,
+      authTypeSSO: null,
+      timezone: 'Asia/Kolkata',
+    },
+    notifications: {
+      accounts: [],
+      stacks: [],
+      transfers: [],
+    },
+    org: {
+      users: [],
+      accounts: [
+        {
+          _id: 'own',
+          accessLevel: 'owner',
+          ownerUser: {
+            licenses: [
+              {
+                _id: '625e84b5a2bca9036eb61253',
+                created: '2022-04-19T09:45:25.125Z',
+                lastModified: '2022-04-28T05:05:45.751Z',
+                type: 'endpoint',
+                tier: 'free',
+                trialEndDate: '2022-05-28T05:05:45.740Z',
+                supportTier: 'essential',
+                sandbox: false,
+                resumable: false,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    debug: false,
+  };
+});
 
 jest.mock('../../CeligoTable/TableContext', () => ({
   __esModule: true,

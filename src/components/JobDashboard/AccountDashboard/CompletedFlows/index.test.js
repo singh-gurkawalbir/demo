@@ -3,12 +3,14 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import CompletedFlows from '.';
 import { getCreatedStore } from '../../../../store';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 
 let initialStore;
 
 async function initCompletedFlows(data) {
-  initialStore.getState().data.completedJobs = data;
+  mutateStore(initialStore, draft => {
+    draft.data.completedJobs = data;
+  });
   const ui = (
     <CompletedFlows />
   );
