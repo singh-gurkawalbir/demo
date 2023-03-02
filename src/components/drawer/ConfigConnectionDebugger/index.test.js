@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore, mockPatchRequestOnce, mutateStore } from '../../../test/test-utils';
 import ConfigConnectionDebugger from '.';
@@ -125,7 +125,7 @@ describe('ConfigConnectionDebugger tests', () => {
 
     expect(save).not.toBeEnabled();
     await userEvent.click(screen.getByRole('radio', {name: 'Next 15 mins'}));
-    await userEvent.click(save);
+    await fireEvent.click(save);
     await mockPatchRequestOnce('api/connections/_connectionId', []);
     await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 14 minutes./i)).toBeInTheDocument());
   });
@@ -137,7 +137,7 @@ describe('ConfigConnectionDebugger tests', () => {
     const saveAndClose = screen.getByRole('button', {name: 'Save & close'});
 
     expect(saveAndClose).toBeEnabled();
-    await userEvent.click(saveAndClose);
+    await fireEvent.click(saveAndClose);
     await mockPatchRequestOnce('api/connections/_connectionId', []);
     await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).not.toBeInTheDocument());
   });

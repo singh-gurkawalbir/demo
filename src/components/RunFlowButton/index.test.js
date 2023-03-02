@@ -162,15 +162,19 @@ describe('runflowComponent UI testing', () => {
 
       await renderFunction(props, true);
 
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      await userEvent.click(button);
+        await userEvent.click(button);
+      });
 
-      const runflow = screen.getByText('Run');
+      waitFor(async () => {
+        const runflow = screen.getByText('Run');
 
-      await userEvent.click(runflow);
+        await userEvent.click(runflow);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test the cancel run flow button for delta export', async () => {
       const props = {
@@ -184,15 +188,19 @@ describe('runflowComponent UI testing', () => {
 
       await renderFunction(props, 'received');
 
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      await userEvent.click(button);
+        await userEvent.click(button);
+      });
 
-      const cancelrunflow = screen.getByText('Cancel');
+      waitFor(async () => {
+        const cancelrunflow = screen.getByText('Cancel');
 
-      await userEvent.click(cancelrunflow);
+        await userEvent.click(cancelrunflow);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test for error api call', async () => {
       const props = {
@@ -285,12 +293,16 @@ describe('runflowComponent UI testing', () => {
     const m = Object.keys(store?.getState()?.session?.fileUpload);
 
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
-    const button = screen.getByRole('button');
+    let button;
+
+    waitFor(() => { button = screen.getByRole('button'); });
 
     await userEvent.click(button);
 
-    await waitFor(() => store?.getState()?.session?.flows.runStatus === 'started');
-    expect(input.click).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      store?.getState()?.session?.flows.runStatus === 'started';
+      expect(input.click).toHaveBeenCalledTimes(1);
+    });
   });
   test('should test simple import clicking Run flow button and different variant', async () => {
     const props = {
@@ -315,10 +327,12 @@ describe('runflowComponent UI testing', () => {
     const m = Object.keys(store?.getState()?.session?.fileUpload);
 
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
-    const button = screen.getByText('Run flow');
+    waitFor(async () => {
+      const button = screen.getByText('Run flow');
 
-    await userEvent.click(button);
-    expect(input.click).toHaveBeenCalledTimes(1);
+      await userEvent.click(button);
+      expect(input.click).toHaveBeenCalledTimes(1);
+    });
   });
   test('should do test for simple export with pagegenerator length = 0', async () => {
     const mockDispatch = jest.fn();

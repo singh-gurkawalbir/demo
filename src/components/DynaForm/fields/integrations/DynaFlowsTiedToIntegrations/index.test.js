@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+  fireEvent,
   screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -130,9 +131,9 @@ describe('dynaFlowsTiedToIntegration UI tests', () => {
 
     expect(dropdownField).toBeInTheDocument();
     try {
-      await userEvent.click(dropdownField);
+      await fireEvent.click(dropdownField);
     } catch (e) {
-      expect(e.message).toBe('unable to click element as it has or inherits pointer-events set to "none".');
+      expect(e.message).toBe('Unable to perform pointer interaction as the element inherits `pointer-events: none`:');
     }
   });
 });
