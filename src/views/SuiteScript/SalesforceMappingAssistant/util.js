@@ -1,8 +1,8 @@
-import { cloneDeep } from 'lodash';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 export function generateLayoutColumns(layoutSection) {
   return layoutSection.map(sec => {
-    const section = cloneDeep(sec);
+    const section = customCloneDeep(sec);
 
     if (['System Information', 'Custom Links'].indexOf(section.heading) > -1) {
       return section;

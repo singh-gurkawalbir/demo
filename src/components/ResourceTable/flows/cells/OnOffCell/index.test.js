@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import OnOffCell from '.';
 import actions from '../../../../../actions';
 import {ConfirmDialogProvider} from '../../../../ConfirmDialog';
@@ -23,34 +23,36 @@ const end = new Date();
 
 end.setMonth(end.getMonth() - 2);
 
-initialStore.getState().user.preferences = {defaultAShareId: '5e32a35e7380e67af84aa84e' };
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: '5e32a35e7380e67af84aa84e' };
 
-initialStore.getState().user.org.accounts = [
-  {
-    _id: '5e32a35e7380e67af84aa84e',
-    accepted: true,
-    integrationAccessLevel: [
-      {
-        _integrationId: '5a6ec243e9aaa11c9bc86107',
-        accessLevel: 'manage',
-      },
-    ],
-    ownerUser: {
-      _id: '57ba9c1dc3432f661abf4e67',
-      timezone: 'Asia/Calcutta',
-      licenses: [
+  draft.user.org.accounts = [
+    {
+      _id: '5e32a35e7380e67af84aa84e',
+      accepted: true,
+      integrationAccessLevel: [
         {
-          _id: '57ba9c1ec3432f661abf4e68',
-          type: 'diy',
-          hasSubscription: true,
-          expires: '2016-08-22T06:30:54.524Z',
-          usageTier: 'free',
-          resumable: false,
+          _integrationId: '5a6ec243e9aaa11c9bc86107',
+          accessLevel: 'manage',
         },
       ],
+      ownerUser: {
+        _id: '57ba9c1dc3432f661abf4e67',
+        timezone: 'Asia/Calcutta',
+        licenses: [
+          {
+            _id: '57ba9c1ec3432f661abf4e68',
+            type: 'diy',
+            hasSubscription: true,
+            expires: '2016-08-22T06:30:54.524Z',
+            usageTier: 'free',
+            resumable: false,
+          },
+        ],
+      },
     },
-  },
-];
+  ];
+});
 
 function initonoffCell(props = {}, initialStore = null) {
   const ui = (

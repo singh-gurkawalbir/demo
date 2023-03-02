@@ -4,26 +4,28 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ChildJobDetail from './ChildJobDetail';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 
 let initialStore;
 
 function initChildJobDetail({job}) {
-  initialStore.getState().data.resources.exports = [
-    {
-      _id: 12345,
-      name: 'Test Export',
-    },
-  ];
-  initialStore.getState().data.resources.imports = [
-    {
-      _id: 23456,
-      name: 'Test Import',
-    },
-    {
-      _id: 34567,
-    },
-  ];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.exports = [
+      {
+        _id: 12345,
+        name: 'Test Export',
+      },
+    ];
+    draft.data.resources.imports = [
+      {
+        _id: 23456,
+        name: 'Test Import',
+      },
+      {
+        _id: 34567,
+      },
+    ];
+  });
   const ui = (
     <MemoryRouter>
       <ChildJobDetail job={job} />

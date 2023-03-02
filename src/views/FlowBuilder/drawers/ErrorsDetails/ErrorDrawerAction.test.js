@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ErrorDrawerAction from './ErrorDrawerAction';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initErrorDrawerAction({
   props = {
@@ -14,11 +14,14 @@ async function initErrorDrawerAction({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.errorManagement.retryData.retryStatus = {
-    flow_id: {
-      export_id: retryStatus,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.errorManagement.retryData.retryStatus = {
+      flow_id: {
+        export_id: retryStatus,
+      },
+    };
+  });
+
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/errors/export_id/open'}]}

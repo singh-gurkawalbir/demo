@@ -1,6 +1,7 @@
 import React from 'react';
 import metadata from './metadata';
 import CeligoTable from '../CeligoTable';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 const noResources = [];
 
@@ -12,7 +13,7 @@ export default function ResourceTable({
 }) {
   return (
     <CeligoTable
-      data={resources}
+      data={customCloneDeep(resources)}
       filterKey={resourceType}
       {...metadata(resourceType)}
       {...rest}

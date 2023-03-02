@@ -20,7 +20,7 @@ import {
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
-import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
+import { convertConnJSONObjHTTPtoREST } from '../../../utils/httpToRestConnectionConversionUtil';
 import { emptyObject, REST_ASSISTANTS } from '../../../constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
@@ -60,7 +60,7 @@ export function* createPayload({ values, resourceId }) {
     returnData.assistant &&
     REST_ASSISTANTS.indexOf(returnData.assistant) > -1
   ) {
-    returnData = conversionUtil.convertConnJSONObjHTTPtoREST(returnData);
+    returnData = convertConnJSONObjHTTPtoREST(returnData);
   }
   if (getHttpConnector(returnData?._httpConnectorId || returnData?.http?._httpConnectorId)) {
     if (connectionResource?.master?.type === 'rest') {

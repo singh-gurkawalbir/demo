@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import LineGraphDrawer from '.';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initLineGraphDrawer({
   props = {
@@ -18,42 +18,44 @@ async function initLineGraphDrawer({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.errorManagement = {
-    latestIntegrationJobDetails: {
-      integration_id: {
-        status: 'received',
-        data: [{
-          _flowId: 'flow_id',
-          createdAt: new Date(Date.now() - 360000000),
-          endedAt: new Date(Date.now() - 36000000),
-        }],
+  mutateStore(initialStore, draft => {
+    draft.session.errorManagement = {
+      latestIntegrationJobDetails: {
+        integration_id: {
+          status: 'received',
+          data: [{
+            _flowId: 'flow_id',
+            createdAt: new Date(Date.now() - 360000000),
+            endedAt: new Date(Date.now() - 36000000),
+          }],
+        },
+        integration_id_1: {
+          data: [{
+            _flowId: 'flow_id',
+          }],
+        },
+        integration_id_3: {
+          data: [{
+            _flowId: 'flow_id_1',
+          }],
+        },
       },
-      integration_id_1: {
-        data: [{
-          _flowId: 'flow_id',
-        }],
-      },
-      integration_id_3: {
-        data: [{
-          _flowId: 'flow_id_1',
-        }],
-      },
-    },
-  };
+    };
 
-  initialStore.getState().user.org = {
-    accounts: [{
-      accessLevel: 'owner',
-      _id: 'own',
-      ownerUser: {
-        licenses: [],
-      },
-    }],
-  };
-  initialStore.getState().user.preferences = {
-    defaultAShareId: 'own',
-    ...linegraphData,
-  };
+    draft.user.org = {
+      accounts: [{
+        accessLevel: 'owner',
+        _id: 'own',
+        ownerUser: {
+          licenses: [],
+        },
+      }],
+    };
+    draft.user.preferences = {
+      defaultAShareId: 'own',
+      ...linegraphData,
+    };
+  });
 
   const ui = (
     <MemoryRouter

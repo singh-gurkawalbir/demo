@@ -2,7 +2,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 import ResourceFormActionsPanel, {ActionsFactory} from './ResourceFormActionsPanel';
 import consolidatedActions from '../../../ResourceFormFactory/Actions';
 
@@ -31,71 +31,71 @@ const fieldMeta = {
 function initStore(initComplete, insertMeta, addActions) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resourceForm = {
-    'exports-_exportId': {
-      fieldMeta: insertMeta ? fieldMeta : undefined,
-      flowId: '_flowId',
-      initComplete,
-    },
-    'connections-_OAuthConnectionId': {
-      fieldMeta,
-      flowId: '_flowId',
-      initComplete,
-    },
-    'connections-_connectionId': {
-      fieldMeta,
-      flowId: '_flowId',
-      initComplete,
-    },
-    'eventreports-_eventreportId': {
-      fieldMeta,
-      initComplete,
-    },
-    'scripts-_scriptId': {
-      fieldMeta,
-      initComplete,
-    },
-  };
-
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: '_exportId',
-        _connectionId: '_connectionId',
-        assistant: 'amazonmws',
-        http: {
-          relativeURI: ['/'],
-          method: ['GET'],
-          body: [],
-          formType: 'http',
-        },
-        adaptorType: 'HTTPExport',
+  mutateStore(initialStore, draft => {
+    draft.session.resourceForm = {
+      'exports-_exportId': {
+        fieldMeta: insertMeta ? fieldMeta : undefined,
+        flowId: '_flowId',
+        initComplete,
       },
-    ],
-    connections: [
-      { _id: '_connectionId',
-        type: 'http',
-        http: {
-          formType: 'http',
-          baseURI: '/mockURI',
-          mediaType: 'json',
-        },
+      'connections-_OAuthConnectionId': {
+        fieldMeta,
+        flowId: '_flowId',
+        initComplete,
       },
-      { _id: '_OAuthConnectionId',
-        type: 'rest',
-        assistant: 'acton',
-        http: {
-          formType: 'http',
-          baseURI: '/mockURI',
-          mediaType: 'json',
-        },
+      'connections-_connectionId': {
+        fieldMeta,
+        flowId: '_flowId',
+        initComplete,
       },
-    ],
-  };
-
-  if (insertMeta) {
-    initialStore.getState().session.resourceForm['exports-_exportId'].fieldMeta.actions = addActions ? [{id: 'testandsavegroup', mode: 'group'}] : null;
-  }
+      'eventreports-_eventreportId': {
+        fieldMeta,
+        initComplete,
+      },
+      'scripts-_scriptId': {
+        fieldMeta,
+        initComplete,
+      },
+    };
+    draft.data.resources = {
+      exports: [
+        {
+          _id: '_exportId',
+          _connectionId: '_connectionId',
+          assistant: 'amazonmws',
+          http: {
+            relativeURI: ['/'],
+            method: ['GET'],
+            body: [],
+            formType: 'http',
+          },
+          adaptorType: 'HTTPExport',
+        },
+      ],
+      connections: [
+        { _id: '_connectionId',
+          type: 'http',
+          http: {
+            formType: 'http',
+            baseURI: '/mockURI',
+            mediaType: 'json',
+          },
+        },
+        { _id: '_OAuthConnectionId',
+          type: 'rest',
+          assistant: 'acton',
+          http: {
+            formType: 'http',
+            baseURI: '/mockURI',
+            mediaType: 'json',
+          },
+        },
+      ],
+    };
+    if (insertMeta) {
+      draft.session.resourceForm['exports-_exportId'].fieldMeta = {actions: addActions ? [{id: 'testandsavegroup', mode: 'group'}] : null};
+    }
+  });
 
   return (initialStore);
 }

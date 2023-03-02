@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Uninstaller1 from './Uninstall1.0';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import actions from '../../../../../actions';
 
@@ -59,13 +59,13 @@ jest.mock('../../../../../components/Spinner', () => ({
 }));
 
 // Mocking LoadResources component Spinner as part of unit testing
-jest.mock('../../../../../components/LoadResources', () => ({
+jest.mock('../../../../../components/LoadResource', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../../components/LoadResources'),
+  ...jest.requireActual('../../../../../components/LoadResource'),
   default: props => (
     <>
       <div>Mocking LoadResources</div>
-      <div>resources = {props.resources}</div>
+      <div>resources = {props.resourceType}</div>
     </>
   ),
 }));
@@ -120,7 +120,9 @@ jest.mock('../../../../../utils/window', () => ({
 }));
 
 function initUninstaller1({ integration, integrationId, childId, uninstallerData }) {
-  initialStore.getState().session.integrationApps.uninstaller = uninstallerData;
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.uninstaller = uninstallerData;
+  });
   const ui = (
     <MemoryRouter>
       <Uninstaller1 integration={integration} integrationId={integrationId} childId={childId} />

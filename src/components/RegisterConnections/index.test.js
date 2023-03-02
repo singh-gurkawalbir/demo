@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import actions from '../../actions';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import RegisterConnections from '.';
 
 jest.mock('../LoadResources', () => ({
@@ -76,49 +76,51 @@ describe('test suite for RegisterConnections component', () => {
   test('should be able to register multiple connections', () => {
     const integrationId = '626int';
     const onClose = jest.fn();
-    const state = reduxStore.getState();
+    const initialStore = reduxStore;
 
-    state.session.filters.registerConnections = {
-      isAllSelected: false,
-      sort: {
-        order: 'asc',
-        orderBy: 'name',
-      },
-    };
-    state.user.preferences.environment = 'production';
-    state.user.preferences.defaultAShareId = 'id123';
-    state.user.org.accounts = [
-      {
-        _id: 'id123',
-        accessLevel: 'manage',
-      },
-    ];
-    state.data.resources.connections = [
-      {
-        _id: '627conn1',
-        name: 'Connection 1',
-        type: 'netsuite',
-        lastModified: '2022-08-24T10:24:52.046Z',
-      },
-      {
-        _id: '627conn2',
-        name: 'Connection 2',
-        type: 'http',
-        http: {
-          baseURI: 'https://http.com',
+    mutateStore(initialStore, draft => {
+      draft.session.filters.registerConnections = {
+        isAllSelected: false,
+        sort: {
+          order: 'asc',
+          orderBy: 'name',
         },
-        lastModified: '2022-08-25T08:14:18.288Z',
-      },
-      {
-        _id: '627conn3',
-        name: 'Connection 3',
-        offline: true,
-        type: 'rest',
-        rest: {
-          baseURI: 'https://rest.com',
+      };
+      draft.user.preferences.environment = 'production';
+      draft.user.preferences.defaultAShareId = 'id123';
+      draft.user.org.accounts = [
+        {
+          _id: 'id123',
+          accessLevel: 'manage',
         },
-        lastModified: '2022-08-25T08:14:18.288Z',
-      }];
+      ];
+      draft.data.resources.connections = [
+        {
+          _id: '627conn1',
+          name: 'Connection 1',
+          type: 'netsuite',
+          lastModified: '2022-08-24T10:24:52.046Z',
+        },
+        {
+          _id: '627conn2',
+          name: 'Connection 2',
+          type: 'http',
+          http: {
+            baseURI: 'https://http.com',
+          },
+          lastModified: '2022-08-25T08:14:18.288Z',
+        },
+        {
+          _id: '627conn3',
+          name: 'Connection 3',
+          offline: true,
+          type: 'rest',
+          rest: {
+            baseURI: 'https://rest.com',
+          },
+          lastModified: '2022-08-25T08:14:18.288Z',
+        }];
+    });
 
     initRegisterConnections({integrationId, onClose}, reduxStore);
 

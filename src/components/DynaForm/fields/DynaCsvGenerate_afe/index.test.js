@@ -4,7 +4,7 @@ import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DynaCsvGenerate from './index';
 import { getCreatedStore } from '../../../../store';
 
@@ -35,7 +35,9 @@ jest.mock('../../../../utils/resource', () => ({
 }));
 
 function initDynaCsvGenerate(props = {}) {
-  initialStore.getState().data.resources.imports = [{_id: '63515cc28eab567612a83249', name: 'import1', adaptorType: 'HTTPImport'}];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.imports = [{_id: '63515cc28eab567612a83249', name: 'import1', adaptorType: 'HTTPImport'}];
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: '/imports/edit/imports/63515cc28eab567612a83249/editor/filecsv'}]}>

@@ -3,36 +3,38 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import SourceTitle from '.';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 
 let initialStore;
 const mockUseHandleAddGenerator = jest.fn();
 
 function initSourceTitle(flowData) {
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    exports: [
-      {
-        _id: 'export_id_1',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    connections: [
-      {
-        _id: 'connection_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    flows: flowData,
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      exports: [
+        {
+          _id: 'export_id_1',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      connections: [
+        {
+          _id: 'connection_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      flows: flowData,
+    };
+  });
   const ui = (
     <SourceTitle />
   );

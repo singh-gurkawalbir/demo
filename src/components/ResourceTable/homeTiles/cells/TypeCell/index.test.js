@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import TypeCell from './index';
 
 const initialStore = reduxStore;
@@ -12,15 +12,17 @@ const notExpired = new Date();
 end.setDate(end.getDate() - 2);
 notExpired.setMonth(notExpired.getMonth() + 2);
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own'};
 
-initialStore.getState().user.org.accounts = [
-  {_id: 'own',
-    ownerUser: {licenses: [
-      {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: false, expires: end},
-      {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: end},
-      {_integrationId: '3_integrationId', _connectorId: 'some_connectorId', expires: notExpired},
-    ]}}];
+  draft.user.org.accounts = [
+    {_id: 'own',
+      ownerUser: {licenses: [
+        {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: false, expires: end},
+        {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: end},
+        {_integrationId: '3_integrationId', _connectorId: 'some_connectorId', expires: notExpired},
+      ]}}];
+});
 
 describe('typeCell UI tests', () => {
   test('should show custom message with 2 flow error', () => {

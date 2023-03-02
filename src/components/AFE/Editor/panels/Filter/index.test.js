@@ -2,14 +2,18 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import FilterPanelWrapper from '.';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
 function initFilterPanelWrapper(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    sampleDataStatus: props.status,
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      sampleDataStatus: props.status,
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<FilterPanelWrapper {...props} />, {initialStore});
 }

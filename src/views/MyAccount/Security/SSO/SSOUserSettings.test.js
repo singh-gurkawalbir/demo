@@ -4,34 +4,36 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import SSOUserSettings from './SSOUserSettings';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
 
 let initialStore;
 
 async function initSSOUserSettings() {
-  initialStore.getState().user.preferences = {
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    defaultAShareId: 'ashareId123',
-  };
-  initialStore.getState().user.profile = {
-    id: '123456789',
-    name: 'Test Profile',
-  };
-  initialStore.getState().user.org.accounts = [
-    {
-      _id: 'ashareId123',
-      accessLevel: 'administrator',
-      accountSSORequired: false,
-      ownerUser: {
-        _id: '12345',
-        _ssoClientId: 'client123',
-        company: 'Test Company',
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      defaultAShareId: 'ashareId123',
+    };
+    draft.user.profile = {
+      id: '123456789',
+      name: 'Test Profile',
+    };
+    draft.user.org.accounts = [
+      {
+        _id: 'ashareId123',
+        accessLevel: 'administrator',
+        accountSSORequired: false,
+        ownerUser: {
+          _id: '12345',
+          _ssoClientId: 'client123',
+          company: 'Test Company',
+        },
       },
-    },
-  ];
+    ];
+  });
   const ui = (
     <MemoryRouter>
       <SSOUserSettings />

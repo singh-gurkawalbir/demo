@@ -4,25 +4,27 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import DynaRelatedList from './index';
 import { getCreatedStore } from '../../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaRelatedList(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-      data: {childRelationships: [
-        {label: 'label1', name: 'name 1', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
-        {label: 'label2', name: 'name 2', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
-        {label: 'label3', name: 'name 3', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
-      ]},
-      status: props.status,
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+        data: {childRelationships: [
+          {label: 'label1', name: 'name 1', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
+          {label: 'label2', name: 'name 2', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
+          {label: 'label3', name: 'name 3', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
+        ]},
+        status: props.status,
+      },
     },
-  },
-  },
-  };
+    },
+    };
+  });
 
   return renderWithProviders(<DynaRelatedList {...props} />, {initialStore});
 }

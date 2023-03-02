@@ -6,7 +6,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import DynaAllIntegrations from './DynaAllIntegrations';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 jest.mock('../../../LoadResources', () => ({
   __esModule: true,
@@ -50,9 +50,11 @@ describe('dynaAllIntegrations UI tests', () => {
     expect(screen.getByText('Please select')).toBeInTheDocument();
   });
   test('should display integrations in the dropdown when clicked on please select option', () => {
-    initialStore.getState().data.resources = {
-      integrations,
-    };
+    mutateStore(initialStore, draft => {
+      draft.data.resources = {
+        integrations,
+      };
+    });
     renderWithProviders(<DynaAllIntegrations />, {initialStore});
     expect(screen.getByText('Please select')).toBeInTheDocument();
     userEvent.click(screen.getByText('Please select'));
