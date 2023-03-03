@@ -1,23 +1,12 @@
 /* eslint-disable valid-typeof */
 import sizeof from 'object-sizeof';
+import { MAX_MOCK_DATA_SIZE } from '../../constants';
 import errorMessageStore from '../errorStore';
-import { unwrapExportFileSampleData } from '../sampleData';
+import { isValidCanonicalFormForExportData, isValidCanonicalFormForImportResponse, unwrapExportFileSampleData } from '../sampleData';
 import { safeParse } from '../string';
 
-const MAX_SIZE_IN_BYTES = 1000000;
-
-const importResponseCannonicalFormatFieldTypes = {
-  id: 'string',
-  errors: 'object',
-  ignored: 'boolean',
-  statusCode: 'number',
-  dataURI: 'string',
-  _json: 'object',
-  _headers: 'object',
-};
-
 export const validateMockOutputField = value => {
-  if (value === '') return;
+  if (value === '' || !value) return;
 
   const jsonValue = safeParse(value);
 
@@ -25,25 +14,25 @@ export const validateMockOutputField = value => {
   if (!jsonValue) return errorMessageStore('MOCK_OUTPUT_INVALID_JSON');
 
   // size greater than 1MB
-  if (sizeof(jsonValue) > MAX_SIZE_IN_BYTES) {
+  if (sizeof(jsonValue) > MAX_MOCK_DATA_SIZE) {
     return errorMessageStore('MOCK_OUTPUT_SIZE_EXCEED');
   }
 
-  const unwrappedMockData = unwrapExportFileSampleData(jsonValue);
-
   // not in canonical format
-  if (!unwrappedMockData) {
+  if (!isValidCanonicalFormForExportData(jsonValue)) {
     return errorMessageStore('MOCK_OUTPUT_INVALID_FORMAT');
   }
 
   // more than 10 records
-  if (unwrappedMockData.length > 10) {
+  const unwrappedSampleData = unwrapExportFileSampleData(jsonValue);
+
+  if (Array.isArray(unwrappedSampleData) && unwrappedSampleData.length > 10) {
     return errorMessageStore('MOCK_OUTPUT_NUM_RECORDS_EXCEED');
   }
 };
 
 export const validateMockResponseField = value => {
-  if (value === '') return;
+  if (value === '' || !value) return;
 
   const jsonValue = safeParse(value);
 
@@ -51,28 +40,18 @@ export const validateMockResponseField = value => {
   if (!jsonValue) return errorMessageStore('MOCK_RESPONSE_INVALID_JSON');
 
   // size greater than 1MB
-  if (sizeof(jsonValue) > MAX_SIZE_IN_BYTES) {
+  if (sizeof(jsonValue) > MAX_MOCK_DATA_SIZE) {
     return errorMessageStore('MOCK_RESPONSE_SIZE_EXCEED');
   }
 
   // not in canonical format
-  if (!Array.isArray(jsonValue)) {
+  if (!isValidCanonicalFormForImportResponse(jsonValue)) {
     return errorMessageStore('MOCK_RESPONSE_INVALID_FORMAT');
   }
-
-  let error;
-
-  jsonValue.forEach(mockResponse => {
-    Object.keys(mockResponse).forEach(key => {
-      if (!importResponseCannonicalFormatFieldTypes[key] ||
-        typeof mockResponse[key] !== importResponseCannonicalFormatFieldTypes[key]) {
-        error = errorMessageStore('MOCK_RESPONSE_INVALID_FORMAT');
-      }
-    });
-  });
-
-  return error;
 };
+
+export const validateMockDataField = resourceType => value =>
+  resourceType === 'exports' ? validateMockOutputField(value) : validateMockResponseField(value);
 
 export const getMockOutputFromResource = resource => {
   const {mockOutput} = resource || {};

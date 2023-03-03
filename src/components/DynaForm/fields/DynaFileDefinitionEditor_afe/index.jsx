@@ -62,7 +62,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
       },
     ];
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+    dispatch(actions.resource.patchStaged(resourceId, patchSet));
 
     // It calls processor on final rules to parse file
     // @raghu this would also need to be removed once auto sample data update changes are done

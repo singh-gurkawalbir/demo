@@ -1,6 +1,7 @@
-import { cloneDeep, isEqual, pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
-import { safeParse } from '../../../../../utils/string';
+import { generateId, safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
 
@@ -37,14 +38,14 @@ function getBranchNameIndex(branches, routerNameIndex) {
 }
 
 export default {
-  init: ({ options }) => {
+  init: ({ options, scriptContext }) => {
     const activeProcessor = 'filter';
     const { router = {}, prePatches, branchNamingIndex } = options;
     const isEdit = !prePatches;
     const editorTitle = isEdit ? 'Edit branching' : 'Add branching';
 
     const { routeRecordsUsing, script = {} } = router;
-    const routerObj = cloneDeep(router);
+    const routerObj = customCloneDeep(router);
 
     (routerObj.branches || []).forEach((branch, index) => {
       if (!branch.name) {
@@ -54,6 +55,10 @@ export default {
       if (!branch.inputFilter) {
         // eslint-disable-next-line no-param-reassign
         branch.inputFilter = {rules: undefined};
+      }
+      if (!branch.id) {
+        // eslint-disable-next-line no-param-reassign
+        branch.id = generateId();
       }
     });
     const rule = {
@@ -76,12 +81,14 @@ export default {
       rule,
       editorTitle,
       isEdit,
+      context: scriptContext,
     };
   },
 
   processor: 'branchFilter',
 
   requestBody: editor => {
+    const {context} = editor;
     const { activeProcessor } = editor.rule;
     const editorData = editor.data[activeProcessor];
     const { rules, data, options } = filter.requestBody({
@@ -105,6 +112,7 @@ export default {
         record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
+      options: context,
     };
   },
   // No point performing parsing or validation when it is an object
@@ -113,6 +121,7 @@ export default {
       return filter.validate({
         data: editor.data?.filter,
         rule: editor.rule,
+        isInvalid: editor.isInvalid,
       });
     }
 
@@ -154,6 +163,7 @@ export default {
     const patches = {
       foregroundPatches: undefined,
       backgroundPatches: [],
+      options: {revertChangesOnFailure: true},
     };
     const {
       rule,
@@ -213,11 +223,12 @@ export default {
       const branchNameIndex = getBranchNameIndex(draft.rule.branches, draft.branchNamingIndex);
 
       draft.rule.branches = [...draft.rule.branches, {
+        id: generateId(),
         name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
         pageProcessors: [{setupInProgress: true}],
       }];
     } else if (!shouldReplace) {
-      Object.assign(draft.rule, cloneDeep(rulePatch));
+      Object.assign(draft.rule, customCloneDeep(rulePatch));
     } else {
       draft.rule = rulePatch;
     }

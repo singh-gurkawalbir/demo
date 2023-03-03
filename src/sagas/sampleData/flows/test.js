@@ -17,6 +17,7 @@ import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
+  _processResponseTransformData,
 } from '.';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
@@ -32,7 +33,6 @@ import {
   getFlowStageData,
 } from '../utils/flowDataUtils';
 import { getAllDependentSampleDataStages, getSampleDataStage, getBlobResourceSampleData, getSampleFileMeta } from '../../../utils/flowData';
-import { SCOPES } from '../../resourceForm';
 import getPreviewOptionsForResource, { _getUIDataForResource } from './pageProcessorPreviewOptions';
 
 describe('flow sample data sagas', () => {
@@ -48,13 +48,13 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
         ])
         .put(actions.flowData.init({...flow, refresh: false}))
         .run();
       expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports', refresh: true, formKey: 'form-123'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
         ])
         .put(actions.flowData.init({...flow, refresh: true, formKey: 'form-123'}))
         .run();
@@ -72,8 +72,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: newExportId, resourceType: 'exports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'exports', newExportId, SCOPES.VALUE), { merged: newExport }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+          [select(selectors.resourceData, 'exports', newExportId), { merged: newExport }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -91,8 +91,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: newExportId, resourceType: 'exports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'exports', newExportId, SCOPES.VALUE), { merged: newLookup }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+          [select(selectors.resourceData, 'exports', newExportId), { merged: newLookup }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -110,8 +110,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: newImportId, resourceType: 'imports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'imports', newImport, SCOPES.VALUE), { merged: newImport }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+          [select(selectors.resourceData, 'imports', newImport), { merged: newImport }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -132,8 +132,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId: newFlowId, resourceId: newImportId, resourceType: 'imports' })
         .provide([
-          [select(selectors.resourceData, 'flows', newFlowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'imports', newImport, SCOPES.VALUE), { merged: newImport }],
+          [select(selectors.resourceData, 'flows', newFlowId), { merged: flow }],
+          [select(selectors.resourceData, 'imports', newImport), { merged: newImport }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -455,6 +455,77 @@ describe('flow sample data sagas', () => {
         .run();
     });
   });
+  describe('_processResponseTransformData saga', () => {
+    const flowId = 'flow-123';
+    const resourceId = 'export-123';
+
+    test('should call evaluateExternalProcessor saga to fetch processor data and call updateStateForProcessorData saga with the response of processor data merged with mock response', () => {
+      const processorData = { editorType: 'transform', rules: [] };
+      const mockResponse = [{id: '123', _json: {somedata: {}}}];
+      const resource = { mockResponse };
+      const stage = 'responseTransform';
+      const transformedData = { data: {test: 5} };
+      const processedData = {
+        data: [
+          {
+            ...mockResponse[0],
+            _json: transformedData.data,
+          },
+        ],
+      };
+
+      expectSaga(_processResponseTransformData, {
+        flowId,
+        resourceId,
+        processorData,
+        stage,
+        hasNoRulesToProcess: false,
+        resource,
+      })
+        .provide([
+          [call(evaluateExternalProcessor, {
+            processorData,
+          }), transformedData],
+        ])
+        .call(updateStateForProcessorData, {
+          flowId,
+          resourceId,
+          stage,
+          processedData,
+          wrapInArrayProcessedData: undefined,
+          removeDataPropFromProcessedData: undefined,
+        })
+        .run();
+    });
+    test('should not call evaluateExternalProcessor saga if there are no rules to process and call updateStateForProcessorData saga with mock response', () => {
+      const processorData = { editorType: 'transform', rules: [] };
+      const mockResponse = [{id: '123', _json: {somedata: {}}}];
+      const resource = { mockResponse };
+      const stage = 'responseTransform';
+      const processedData = {
+        data: mockResponse,
+      };
+
+      expectSaga(_processResponseTransformData, {
+        flowId,
+        resourceId,
+        processorData,
+        stage,
+        hasNoRulesToProcess: true,
+        resource,
+      })
+        .not.call(evaluateExternalProcessor, {processorData })
+        .call(updateStateForProcessorData, {
+          flowId,
+          resourceId,
+          stage,
+          processedData,
+          wrapInArrayProcessedData: undefined,
+          removeDataPropFromProcessedData: undefined,
+        })
+        .run();
+    });
+  });
   describe('fetchPageProcessorPreview saga', () => {
     test('should do nothing incase of no flowId/_pageProcessorId', () => expectSaga(fetchPageProcessorPreview, {}).returns(undefined).run());
     test('should call pageProcessorPreview and the result is dispatched to receivedPreviewData action', () => {
@@ -583,7 +654,7 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: blobResource }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: blobResource }],
         ])
         .put(
           actions.flowData.receivedPreviewData(
@@ -613,8 +684,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: IAResource }],
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: IAResource }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
         ])
         .put(
           actions.flowData.receivedPreviewData(
@@ -640,7 +711,7 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: ftpResource }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: ftpResource }],
           [call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined }), fileSampleData],
         ])
         .call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined })
@@ -665,7 +736,7 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: netsuiteResource }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: netsuiteResource }],
           [call(requestRealTimeMetadata, { resource: netsuiteResource }), metadata],
         ])
         .call(requestRealTimeMetadata, { resource: netsuiteResource })
@@ -801,7 +872,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -857,7 +928,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -876,6 +947,60 @@ describe('flow sample data sagas', () => {
           flowId,
           resourceId,
           processorData,
+          stage,
+        })
+        .run();
+    });
+    test('should call _processResponseTransformData for transform processor when stage is responseTransform with preProcessedData', () => {
+      const restExport = {
+        _id: resourceId,
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+        responseTransform: {
+          type: 'expression',
+          expression: {
+            rules: [[{ extract: 'count', generate: 'total'}]],
+          },
+        },
+      };
+      const preProcessedSampleData = { count: 5 };
+      const preProcessedData = {
+        records: {
+          count: 5,
+        },
+        setting: {},
+      };
+      const stage = 'responseTransform';
+      const processorData = {
+        data: preProcessedSampleData,
+        rule: [{ extract: 'count', generate: 'total'}],
+        editorType: 'transform',
+      };
+      const responseTransformData = {};
+
+      expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
+          [matchers.call.fn(getFlowStageData), preProcessedData],
+          [matchers.call.fn(_processResponseTransformData), responseTransformData],
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: preProcessedSampleData}],
+        ])
+        .call(_processResponseTransformData, {
+          flowId,
+          resource: restExport,
+          resourceId,
+          processorData,
+          hasNoRulesToProcess: false,
           stage,
         })
         .run();
@@ -920,7 +1045,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -988,7 +1113,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1054,7 +1179,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restImport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restImport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1116,7 +1241,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restImport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restImport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1187,7 +1312,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1323,7 +1448,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1367,7 +1492,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,

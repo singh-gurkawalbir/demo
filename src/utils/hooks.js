@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-const externalScripts = ['transform', 'filter', 'handleRequest', 'router'];
+const externalScripts = ['transform', 'filter', 'handleRequest', 'router', 'formInit'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -45,6 +45,7 @@ export const hooksToFunctionNamesMap = {
   transform: 'transform',
   filter: 'filter',
   handleRequest: 'handleRequest',
+  formInit: 'formInit',
   router: 'branching',
 };
 
@@ -91,6 +92,7 @@ export function getSupportedHooksForResource(resource) {
       break;
     case 'ftp':
     case 'as2':
+    case 'van':
     case 's3':
       unSupportedHooks = [];
       break;

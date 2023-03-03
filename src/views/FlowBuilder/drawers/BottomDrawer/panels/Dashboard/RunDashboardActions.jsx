@@ -14,6 +14,7 @@ import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/Jo
 import { DRAGGABLE_SECTION_DIV_ID } from '../..';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -21,6 +22,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
     margin: theme.spacing(0, 1),
+  },
+  cancelButton: {
+    whiteSpace: 'nowrap',
   },
 }));
 const emptySet = [];
@@ -87,8 +91,7 @@ export default function RunDashboardActions({ flowId }) {
   const handleCancel = useCallback(() => {
     confirmDialog({
       title: 'Confirm cancel run',
-      message:
-          'You have unsaved changes that will be lost if you continue. Canceling this job will delete all associated data currently queued for processing.',
+      message: message.CONFIRM_CANCEL_RUN,
       buttons: [
         {
           label: 'Cancel run',
@@ -151,7 +154,8 @@ export default function RunDashboardActions({ flowId }) {
         <TextButton
           onClick={handleCancel}
           disabled={!validDashboardActions?.includes('cancel')}
-          startIcon={<CancelIcon />}>
+          startIcon={<CancelIcon />}
+          className={classes.cancelButton}>
           Cancel run
         </TextButton>
         <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} label="More" />

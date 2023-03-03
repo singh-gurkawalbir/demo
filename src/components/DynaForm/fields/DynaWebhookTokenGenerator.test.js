@@ -3,7 +3,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaWebhookTokenGenerator from './DynaWebhookTokenGenerator';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 import * as mockEnqueSnackbar from '../../../hooks/enqueueSnackbar';
 
@@ -37,12 +37,14 @@ jest.mock('../../icons/AddIcon', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form = {
-  firstformKey: {value: {'/webhook/verify': 'token', '/webhook/path': 'token'}},
-  thisrdformKey: {fields: {defaultVisible: false}, value: 'someValue'},
-};
+mutateStore(initialStore, draft => {
+  draft.session.form = {
+    firstformKey: {value: {'/webhook/verify': 'token', '/webhook/path': 'token'}},
+    thisrdformKey: {fields: {defaultVisible: false}, value: 'someValue'},
+  };
 
-initialStore.getState().session.resource = {someresourceId: 'finalResId'};
+  draft.session.resource = {someresourceId: 'finalResId'};
+});
 
 function initDynaWebhookTokenGenerator(props = {}, initialStore = null) {
   const ui = (
@@ -136,7 +138,7 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
       }, initialStore
     );
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.resource.patchStaged('finalResId', patchSet, 'value')
+      actions.resource.patchStaged('finalResId', patchSet)
     );
   });
 });

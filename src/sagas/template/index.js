@@ -5,7 +5,6 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
 import { commitStagedChanges, getResource } from '../resources';
-import { SCOPES } from '../resourceForm';
 
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
@@ -102,14 +101,16 @@ export function* verifyBundleOrPackageInstall({
   step,
   connection,
   templateId,
+  variant,
+  isManualVerification = true,
 }) {
-  const path = `/connections/${connection._id}/distributed`;
+  const path = variant ? `/connections/${connection._id}/distributed?type=${variant}` : `/connections/${connection._id}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: 'Verifying Bundle/Package Installation...',
+      message: variant ? `Verifying ${variant} Installation...` : 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(
@@ -133,6 +134,7 @@ export function* verifyBundleOrPackageInstall({
     if (
       response &&
       !response.success &&
+      isManualVerification &&
       (response.resBody || response.message)
     ) {
       yield put(
@@ -163,12 +165,11 @@ export function* publishStatus({ templateId, isPublished }) {
     },
   ];
 
-  yield put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(templateId, patchSet));
 
   const resp = yield call(commitStagedChanges, {
     resourceType: 'templates',
     id: templateId,
-    scope: SCOPES.VALUE,
   });
 
   if (resp?.error) {

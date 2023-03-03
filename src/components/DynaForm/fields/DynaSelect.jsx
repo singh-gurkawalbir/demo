@@ -185,7 +185,7 @@ const Row = ({ index, style, data }) => {
 
         setOpen(false);
       }}>
-      <CeligoTruncate isLoggable={isLoggable} placement="left" lines={2}>
+      <CeligoTruncate isLoggable={isLoggable} placement="left" lines={1}>
         {label}
       </CeligoTruncate>
       {value && itemInfo ? <div className={classes.textInfo}>| {itemInfo}</div> : null}

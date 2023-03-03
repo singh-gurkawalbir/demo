@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import { REVISION_TYPES } from '../../../../../constants';
 import ResourceDiffContent from '.';
 
@@ -23,15 +23,17 @@ async function initResourceDiffContent(props = {}, pushError = false, status = '
     },
   };
 
-  initialStore.getState().session.lifeCycleManagement = {
-    compare: {
-      _integrationId: {
-        error: pushError ? 'sample error' : undefined,
-        status,
-        diff: isValidDiff ? differ : null,
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      compare: {
+        _integrationId: {
+          error: pushError ? 'sample error' : undefined,
+          status,
+          diff: isValidDiff ? differ : null,
+        },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<ResourceDiffContent {...props} />, {initialStore});
 }

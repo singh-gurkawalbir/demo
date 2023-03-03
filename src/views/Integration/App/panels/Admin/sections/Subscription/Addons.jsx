@@ -10,6 +10,8 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import { message } from '../../../../../../../utils/messageStore';
+import customCloneDeep from '../../../../../../../utils/customCloneDeep';
 
 const metadata = {
   useColumns: () => {
@@ -24,7 +26,10 @@ const metadata = {
         Value: ({rowData: r}) => (
           <>
             {r?.name}
-            <InfoIconButton info={r.description} escapeUnsecuredDomains size="xs" />
+            <InfoIconButton
+              info={r.description} escapeUnsecuredDomains size="xs"
+              title={r?.name}
+            />
           </>
         ),
       },
@@ -148,8 +153,7 @@ export default function AddOns({integrationId, childId}) {
             Add-ons
           </Typography>
           <Typography className={classes.message}>
-            You don’t have any add-ons yet. Add-ons let you customize
-            subscription to meet your specific business requirements.
+            {message.ADDONS.NOT_EXIST}
           </Typography>
         </div>
         <div>
@@ -170,13 +174,11 @@ export default function AddOns({integrationId, childId}) {
             Add-ons
           </Typography>
           <Typography variant="body2">
-            Add-ons let you customize your subscription to meet your
-            specific business requirements. They will expire when your
-            Integration App subscription expires.
+            {message.ADDONS.CUSTOMIZE}
           </Typography>
         </div>
 
-        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
+        <CeligoTable data={customCloneDeep(subscribedAddOns)} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
       </>
       )}
     </>

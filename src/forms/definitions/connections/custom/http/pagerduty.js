@@ -49,6 +49,7 @@ export default {
       fieldId: 'http.auth.type',
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'pagerduty.connection.http.auth.type',
       options: [
         {

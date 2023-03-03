@@ -6,9 +6,8 @@ import userEvent from '@testing-library/user-event';
 import Licenses from '.';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initMarketplace({
   props = {
@@ -23,35 +22,38 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.loadResources = {
-    connectorLicenses: 'received',
-    integrations: 'received',
-  };
-  initialStore.getState().data.resources = {
-    connectorLicenses,
-    connectors: [
-      {
-        name: 'Mock Connector 1',
-        _id: 'connector_id_1',
-        framework: 'twoDotZero',
-      },
-      {
-        name: 'Mock Connector 2',
-        _id: 'connector_id_2',
-      },
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.loadResources = {
+      connectorLicenses: 'received',
+      integrations: 'received',
+    };
+    draft.data.resources = {
+      connectorLicenses,
+      connectors: [
+        {
+          name: 'Mock Connector 1',
+          _id: 'connector_id_1',
+          framework: 'twoDotZero',
+        },
+        {
+          name: 'Mock Connector 2',
+          _id: 'connector_id_2',
+        },
+      ],
+    };
 
-  initialStore.getState().session.filters = {
-    connectorLicenses: {
-      keyword,
-      take: 100,
-    },
-  };
-  initialStore.getState().comms.networkComms[`GET:/connectors/${props.match.params.connectorId}/licenses`] = {
-    method: 'GET',
-    status: 'success',
-  };
+    draft.session.filters = {
+      connectorLicenses: {
+        keyword,
+        take: 100,
+      },
+    };
+    draft.comms.networkComms[`GET:/connectors/${props.match.params.connectorId}/licenses`] = {
+      method: 'GET',
+      status: 'success',
+    };
+  });
+
   const ui = (
     <MemoryRouter>
       <Licenses {...props} />
@@ -93,9 +95,9 @@ describe('licenses test cases', () => {
   });
 
   test('should pass the initial render with default value/pass the wrong id', async () => {
-    const { utils } = await initMarketplace();
+    await initMarketplace();
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   test('should pass the initial render by creating new license with twoDotZero', async () => {
@@ -123,7 +125,7 @@ describe('licenses test cases', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_1' },
       { op: 'add', path: '/type', value: 'integrationApp' },
-    ], SCOPES.VALUE));
+    ]));
     expect(history).toEqual([
       buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
@@ -157,7 +159,7 @@ describe('licenses test cases', () => {
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_2' },
-    ], SCOPES.VALUE));
+    ]));
     expect(history).toEqual([
       buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,

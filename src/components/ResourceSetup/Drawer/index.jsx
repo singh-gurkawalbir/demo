@@ -18,7 +18,6 @@ import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
 import jsonUtil from '../../../utils/json';
-import { SCOPES } from '../../../sagas/resourceForm';
 
 const oAuthApplications = [
   ...resourceConstants.OAUTH_APPLICATIONS,
@@ -28,6 +27,19 @@ const oAuthApplications = [
   'hubspot-oauth',
   'amazonmws-oauth',
 ];
+
+const useResourceFormRedirectionToParentRoute = (resourceType, id, redirectFunction) => {
+  const history = useHistory();
+  const initFailed = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, id)?.initFailed
+  );
+
+  useEffect(() => {
+    if (initFailed) {
+      typeof redirectFunction === 'function' && redirectFunction();
+    }
+  }, [history, initFailed, redirectFunction]);
+};
 
 function ResourceSetupDrawerContent({
   integrationId,
@@ -125,7 +137,6 @@ function ResourceSetupDrawerContent({
             _integrationId: integrationId,
             installStepConnection: true,
           }),
-          SCOPES.VALUE
         )
       );
       if (typeof setIsResourceStaged === 'function') {
@@ -186,6 +197,7 @@ function ResourceSetupDrawerContent({
     }
   }, [resourceType, onClose, handleStackClose, goBackToParentUrl, mode]);
 
+  useResourceFormRedirectionToParentRoute(resourceType, resourceId, goBackToParentUrl);
   useEffect(() => {
     // This is for oAuth connections
     // When oAuth connections are saved and user logs in successfully, isAuthorized returns true

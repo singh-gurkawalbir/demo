@@ -1,9 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import LoadResources from '../../../../components/LoadResources';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getFlowGroup } from '../../../../utils/flows';
+import LoadResource from '../../../../components/LoadResource';
 
 export default function FlowGroupCrumb({ integrationId, childId, sectionId }) {
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, (childId || integrationId));
@@ -11,11 +10,10 @@ export default function FlowGroupCrumb({ integrationId, childId, sectionId }) {
   const sectionTitle = flowSections.find(s => s.titleId === sectionId)?.title || sectionId;
 
   const flowGroupName = flowGroupings.length ? getFlowGroup(flowGroupings, '', sectionId)?.name : sectionTitle;
-  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   return (
-    <LoadResources resources={isIntegrationAppV2 ? 'integrations' : ''}>
+    <LoadResource resourceType="integrations" resourceId={integrationId}>
       {flowGroupName || 'Flow group'}
-    </LoadResources>
+    </LoadResource>
   );
 }

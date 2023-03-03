@@ -45,7 +45,6 @@ export default function HooksForm({flowId, integrationId, formKey}) {
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId,
-    'value'
   );
 
   const defaultValue = useMemo(() => getDefaultValuesForHooks(resource), [
@@ -106,7 +105,7 @@ export default function HooksForm({flowId, integrationId, formKey}) {
       let isInvalidHook = false;
       const suiteScriptHooksList =
         // eslint-disable-next-line camelcase
-        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList(resource?.netsuite_da?.useSS2Restlets);
+        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList((resource?.netsuite_da?.restletVersion === 'suiteapp2.0' || resource?.netsuite_da?.useSS2Restlets));
 
       suiteScriptHooksList.forEach(suiteScriptHook => {
         const value = values[`suiteScript-${suiteScriptHook}`];
@@ -124,7 +123,7 @@ export default function HooksForm({flowId, integrationId, formKey}) {
 
       return { isInvalidHook, selectedHook };
     },
-    [resourceType, resource?.netsuite_da?.useSS2Restlets] // eslint-disable-line camelcase
+    [resourceType, resource?.netsuite_da?.restletVersion, resource?.netsuite_da?.useSS2Restlets] // eslint-disable-line camelcase
 
   );
   const [count, setCount] = useState(0);

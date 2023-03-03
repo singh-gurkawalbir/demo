@@ -9,9 +9,8 @@ import {
   cancel,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { keys, cloneDeep } from 'lodash';
+import { keys } from 'lodash';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
@@ -60,11 +59,13 @@ import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
 import { getMockOutputFromResource } from '../../../utils/flowDebugger';
+import customCloneDeep from '../../../utils/customCloneDeep';
+import { loadFlowResourceUIFields } from '../../uiFields';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
 
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
-  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId);
   const clonedFlow = deepClone(flow || {});
 
   if (isNewId(flowId)) {
@@ -77,7 +78,6 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh, form
       selectors.resourceData,
       resourceType,
       resourceId,
-      SCOPES.VALUE
     ))?.merged || emptyObject;
     const isPageGenerator = resourceType === 'exports' && !resource.isLookup;
     const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
@@ -128,6 +128,8 @@ export function* requestSampleData({
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
     yield call(_initFlowData, { flowId, resourceId, resourceType, refresh, formKey });
+    // loads the UI fields for the resource if not already loaded
+    yield call(loadFlowResourceUIFields, { flowId });
   }
 
   if (refresh) {
@@ -260,9 +262,8 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     selectors.resourceData,
     'connections',
     resource._connectionId,
-    SCOPES.VALUE
   );
-  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId);
 
   let previewData;
 
@@ -387,7 +388,7 @@ export function* _processResponseTransformData({ flowId, resourceId, resource, p
       data: [
         {
           ...mockResponse[0],
-          _json: transformedData.data[0] || transformedData.data,
+          _json: transformedData?.data[0] || transformedData?.data || transformedData,
         },
       ],
     } : transformedData;
@@ -450,7 +451,6 @@ export function* requestProcessorData({
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
   const isPageGeneratorExport = yield select(
     selectors.isPageGenerator,
@@ -639,7 +639,7 @@ export function* requestProcessorData({
     const options = {};
 
     if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
-      resourceMappings = {mappings: cloneDeep(resource.mappings), lookups};
+      resourceMappings = {mappings: customCloneDeep(resource.mappings), lookups};
 
       const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
       const flow = yield select(selectors.resource, 'flows', flowId);

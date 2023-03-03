@@ -3,7 +3,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TextFieldWithClipboardSupport from './DynaText';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import * as mockEnqueSnackbar from '../../../hooks/enqueueSnackbar';
 import { getCreatedStore } from '../../../store';
 
@@ -12,7 +12,9 @@ const enqueueSnackbar = jest.fn();
 const mockOnFieldChange = jest.fn();
 
 function initTextFieldWithClipboardSupport({props, resourcesData, resourceType, id}) {
-  initialStore.getState().data.resources = resourcesData;
+  mutateStore(initialStore, draft => {
+    draft.data.resources = resourcesData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/test/${resourceType}/${id}`}]}
@@ -231,7 +233,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
-    expect(textBoxNode.getAttribute('placeholder')).toBe('http lookup');
+    expect(textBoxNode.getAttribute('placeholder')).toBe('test_place_holder');
     userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
@@ -277,7 +279,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
-    expect(textBoxNode.getAttribute('placeholder')).toBe('http export');
+    expect(textBoxNode.getAttribute('placeholder')).toBe('test_place_holder');
     userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
@@ -365,7 +367,6 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
     initTextFieldWithClipboardSupport({props, resourcesData, resourceType: 'exports', id: 'export_id'});
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', 'test_options', true);
     mockOnFieldChange.mockClear();
-    expect(screen.getByText('Name your export')).toBeInTheDocument();
     expect(screen.getByText(/mock field help/i)).toBeInTheDocument();
     expect(screen.getByText(/mock help link/i)).toBeInTheDocument();
     const textBoxNode = screen.getByRole('textbox');

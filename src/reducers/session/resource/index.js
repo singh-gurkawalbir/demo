@@ -2,7 +2,7 @@ import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE } from '../../../constants';
-import messageStore from '../../../utils/messageStore';
+import {message as messageStore} from '../../../utils/messageStore';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
@@ -44,7 +44,7 @@ export default function reducer(state = {}, action) {
         // eslint-disable-next-line no-case-declarations
         const message = isTwoDotZero ? REQUEST_UPGRADE_SUCCESS_MESSAGE : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
 
-        draft.platformLicenseActionMessage = (feature === 'SSO' || feature === 'dataRetention') ? messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE') : message;
+        draft.platformLicenseActionMessage = (feature === 'SSO' || feature === 'dataRetention') ? messageStore.SUBSCRIPTION.FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE : message;
         break;
       case actionTypes.LICENSE.REACTIVATED:
         draft.platformLicenseActionMessage = LICENSE_REACTIVATED_MESSAGE;

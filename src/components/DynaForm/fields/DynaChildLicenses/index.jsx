@@ -9,10 +9,10 @@ import CeligoTable from '../../../CeligoTable';
 import metadata from './metadata';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { generateNewId } from '../../../../utils/resource';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import LoadResources from '../../../LoadResources';
 import { TextButton } from '../../../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -87,7 +87,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
       },
     ];
 
-    dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
+    dispatch(actions.resource.patchStaged(newId, patchSet));
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.ADD,
       baseUrl: match.url,
@@ -107,7 +107,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
       <div>
         <LoadResources required resources="integrations,connectors" >
           <CeligoTable
-            data={childLicenses}
+            data={customCloneDeep(childLicenses)}
             {...metadata}
             filterKey={sortFilterKey}
             actionProps={{

@@ -81,7 +81,7 @@ export default function DynaIANameSelect(props) {
       //   );
       // }
 
-      dispatch(actions.resource.patchStaged(options.connectionId, patch, 'value'));
+      dispatch(actions.resource.patchStaged(options.connectionId, patch));
     }
 
     return () => {
@@ -127,7 +127,7 @@ export default function DynaIANameSelect(props) {
           </TextButton>
         </div>
         <MessageWithLink
-          message={messageStore('IA_NAME_MESSAGE', {appLabel})}
+          message={messageStore('SHOPIFY_LANDING_PAGE.IA_NAME_MESSAGE', {appLabel})}
           link={link}
           linkText={`Browse ${appLabel} integration apps`}
           className={classes.integrationNameInfo}

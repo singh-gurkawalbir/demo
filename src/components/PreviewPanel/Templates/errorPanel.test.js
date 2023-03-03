@@ -2,14 +2,16 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ErrorPanel from './errorPanel';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 async function initErrorPanel({resourceId, data} = {}) {
-  initialStore.getState().session.resourceFormSampleData[resourceId] = data;
+  mutateStore(initialStore, draft => {
+    draft.session.resourceFormSampleData[resourceId] = data;
+  });
   const ui = (
     <MemoryRouter>
       <ErrorPanel resourceId={resourceId} />
@@ -33,17 +35,37 @@ describe('testsuite for Error Panel', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });
-  test('should test the error panel when there is no data', async () => {
+  test('Should test the error panel when there is response data and no parse data/error to show', async () => {
     await initErrorPanel({resourceId: '12345',
       data: {
         preview: {
           status: 'error',
-          error: [{
-            code: '403',
-            message: 'Testing error message',
-          }],
+          error: [
+            {
+              code: 404,
+              message: '{"error":"InvalidEndpoint","description":"Not found"}',
+            },
+          ],
+          data: {
+            request: [
+              {
+                headers: {
+                  accept: 'application/json',
+                },
+              },
+            ],
+            raw: [
+              {
+                headers: {
+                  'content-type': 'application/json; charset=utf-8',
+                },
+                body: '{"error":"InvalidEndpoint","description":"Not found"}',
+              },
+            ],
+          },
         },
-      }});
+      },
+    });
     expect(screen.getByText(/no data to show - application responded with an error/i)).toBeInTheDocument();
   });
   test('should test the error panel when there is data', async () => {

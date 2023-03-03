@@ -12,6 +12,7 @@ import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 import { LoadSettingsMetadata } from '../Settings';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,7 +67,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
         integrationId={integrationId} />
       <PanelHeader title={`${section?.title} flows`} />
       <CeligoTable
-        data={flows}
+        data={customCloneDeep(flows)}
         filterKey={filterKey}
         {...metadata}
         actionProps={{ ssLinkedConnectionId, integrationId, isConnector: true }}

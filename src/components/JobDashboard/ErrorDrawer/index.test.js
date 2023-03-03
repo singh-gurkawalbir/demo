@@ -6,7 +6,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import ErrorDrawer from '.';
 import { getCreatedStore } from '../../../store';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 
 let initialStore;
@@ -25,75 +25,77 @@ async function initErrorDrawer({
   jobErrors,
   jobRetryObjects,
 }) {
-  initialStore.getState().data.jobs = {
-    flowJobs: [
-      {
-        numError: 1,
-        numResolved: 0,
-        numSuccess: 0,
-        numIgnore: 0,
-        numPagesGenerated: 1,
-        numPagesProcessed: 0,
-        _id: '12345',
-        type: 'flow',
-        _integrationId: '09876',
-        _exportId: '67890',
-        _flowId: '54321',
-        startedAt: '2022-10-26T06:05:56.495Z',
-        endedAt: '2022-10-26T06:06:12.549Z',
-        lastExecutedAt: '2022-10-26T06:06:26.689Z',
-        status: 'completed',
-        numOpenError: 1,
-        numExport: 0,
-        doneExporting: true,
-        createdAt: '2022-10-26T06:05:54.535Z',
-        lastModified: '2022-10-26T06:06:26.691Z',
-        children: flowJobsChildrens,
+  mutateStore(initialStore, draft => {
+    draft.data.jobs = {
+      flowJobs: [
+        {
+          numError: 1,
+          numResolved: 0,
+          numSuccess: 0,
+          numIgnore: 0,
+          numPagesGenerated: 1,
+          numPagesProcessed: 0,
+          _id: '12345',
+          type: 'flow',
+          _integrationId: '09876',
+          _exportId: '67890',
+          _flowId: '54321',
+          startedAt: '2022-10-26T06:05:56.495Z',
+          endedAt: '2022-10-26T06:06:12.549Z',
+          lastExecutedAt: '2022-10-26T06:06:26.689Z',
+          status: 'completed',
+          numOpenError: 1,
+          numExport: 0,
+          doneExporting: true,
+          createdAt: '2022-10-26T06:05:54.535Z',
+          lastModified: '2022-10-26T06:06:26.691Z',
+          children: flowJobsChildrens,
+        },
+      ],
+      paging: {
+        rowsPerPage: 10,
+        currentPage: 0,
       },
-    ],
-    paging: {
-      rowsPerPage: 10,
-      currentPage: 0,
-    },
-    bulkRetryJobs: [
-      {
-        _id: '73573',
-        type: 'bulk_retry',
-        _integrationId: '09876',
-        _flowId: '54321',
-        endedAt: '2022-10-23T03:45:49.043Z',
-        lastExecutedAt: '2022-10-23T03:45:49.043Z',
-        status: 'completed',
-        numError: 0,
-        numResolved: 0,
-        numOpenError: 0,
-        numSuccess: 2,
-        numExport: 2,
-        numIgnore: 0,
-        numPagesGenerated: 0,
-        numPagesProcessed: 0,
-        createdAt: '2022-10-23T03:11:16.983Z',
-        lastModified: '2022-10-23T03:45:49.043Z',
-      },
-    ],
-    errors: jobErrors,
-    retryObjects: jobRetryObjects,
-  };
-  initialStore.getState().data.resources.exports = [{
-    _id: '67890',
-    name: 'Test exports',
-  }];
-  initialStore.getState().data.resources.imports = [{
-    _id: '45678',
-    name: 'Test imports',
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '54321',
-    name: 'Test flows',
-    _integrationId: '09876',
-    numImports: 1,
-    disabled: false,
-  }];
+      bulkRetryJobs: [
+        {
+          _id: '73573',
+          type: 'bulk_retry',
+          _integrationId: '09876',
+          _flowId: '54321',
+          endedAt: '2022-10-23T03:45:49.043Z',
+          lastExecutedAt: '2022-10-23T03:45:49.043Z',
+          status: 'completed',
+          numError: 0,
+          numResolved: 0,
+          numOpenError: 0,
+          numSuccess: 2,
+          numExport: 2,
+          numIgnore: 0,
+          numPagesGenerated: 0,
+          numPagesProcessed: 0,
+          createdAt: '2022-10-23T03:11:16.983Z',
+          lastModified: '2022-10-23T03:45:49.043Z',
+        },
+      ],
+      errors: jobErrors,
+      retryObjects: jobRetryObjects,
+    };
+    draft.data.resources.exports = [{
+      _id: '67890',
+      name: 'Test exports',
+    }];
+    draft.data.resources.imports = [{
+      _id: '45678',
+      name: 'Test imports',
+    }];
+    draft.data.resources.flows = [{
+      _id: '54321',
+      name: 'Test flows',
+      _integrationId: '09876',
+      numImports: 1,
+      disabled: false,
+    }];
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/integrations/09876/flowBuilder/54321/viewErrors'}]}

@@ -47,6 +47,7 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'pipedrive.connection.http.auth.type',
       options: [
         {

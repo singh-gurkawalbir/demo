@@ -3,7 +3,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import FlowsPanel from '.';
 
 const initialStore = reduxStore;
@@ -153,41 +153,42 @@ export const demoJobs = {
 };
 
 function initFlowsPanel(props = {}) {
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.org = {
-    users: [],
-    accounts: [
-      {
-        _id: 'own',
-        accessLevel: 'owner',
-        ownerUser: {
-          licenses: [],
-        },
-      },
-    ],
-  };
-  initialStore.getState().data.resources.exports = [{
-    _id: '5ac5e4d75b88ee52fd41d188',
-    createdAt: '2018-04-05T08:56:56.295Z',
-    lastModified: '2021-11-15T06:17:42.689Z',
-    name: '',
-    _connectionId: '5ac5e47106bd2615df9fba31',
-    _integrationId: '62d826bf5645756e8300beac',
-    _connectorId: '62712c1edd4afe56b5a10c3c',
-    apiIdentifier: 'ec7c805b8b',
-    asynchronous: true,
-  }];
-
   const integrations = demoIntegrations.map(integration => ({...integration, _connectorId: props.conn}));
 
-  initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
-  initialStore.getState().session.errorManagement.latestIntegrationJobDetails = demoJobs;
-  initialStore.getState().data.resources.flows = demoFlows;
-  initialStore.getState().session.errorManagement.openErrors = demoErrors;
-  initialStore.getState().data.resources.integrations = integrations;
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.org = {
+      users: [],
+      accounts: [
+        {
+          _id: 'own',
+          accessLevel: 'owner',
+          ownerUser: {
+            licenses: [],
+          },
+        },
+      ],
+    };
+    draft.data.resources.exports = [{
+      _id: '5ac5e4d75b88ee52fd41d188',
+      createdAt: '2018-04-05T08:56:56.295Z',
+      lastModified: '2021-11-15T06:17:42.689Z',
+      name: '',
+      _connectionId: '5ac5e47106bd2615df9fba31',
+      _integrationId: '62d826bf5645756e8300beac',
+      _connectorId: '62712c1edd4afe56b5a10c3c',
+      apiIdentifier: 'ec7c805b8b',
+      asynchronous: true,
+    }];
+    draft.user.profile.useErrMgtTwoDotZero = true;
+    draft.session.errorManagement.latestIntegrationJobDetails = demoJobs;
+    draft.data.resources.flows = demoFlows;
+    draft.session.errorManagement.openErrors = demoErrors;
+    draft.data.resources.integrations = integrations;
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/integrationapps/ShopifyMicrosoftDynamics365BusinessCentral/62d826bf5645756e8300beac/flows/sections/${props.sectionId}`}]}>
       <Route
@@ -281,7 +282,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Edit mappings"]');
+    const element = document.querySelector('[title="Add mapping"]');
 
     userEvent.click(element);
     expect(screen.getByText('Mapping Drawer')).toBeInTheDocument();       // mocked component//
@@ -290,7 +291,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Configure all steps to allow scheduling your flow"]');
+    const element = document.querySelector('[title="Remove or configure all unconfigured flow steps to edit the flow schedule"]');
 
     userEvent.click(element);
     expect(screen.getByText('Schedule Drawer')).toBeInTheDocument();       // mocked component//

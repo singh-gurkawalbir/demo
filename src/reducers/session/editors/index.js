@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import { original, produce } from 'immer';
 import { set } from 'lodash';
-import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
+import customCloneDeep from '../../../utils/customCloneDeep';
 import processorLogic from './processorLogic';
 import { toggleData } from './processorLogic/settingsForm';
 
@@ -117,9 +117,6 @@ export default function reducer(state = {}, action) {
         if (!draft[id]) break;
         // TODO: change evaluate to preview
         draft[id].autoEvaluate = autoPreview ?? !draft[id].autoEvaluate;
-        if (draft[id].autoEvaluate) {
-          draft[id].previewStatus = 'requested';
-        }
         break;
       }
 
@@ -138,7 +135,7 @@ export default function reducer(state = {}, action) {
         } else if (processorLogic.updateRule(draft[id])) {
           processorLogic.updateRule(draft[id])(draft[id], action, shouldReplace);
         } else if (!shouldReplace) {
-          Object.assign(draftRule, deepClone(rulePatch));
+          Object.assign(draftRule, customCloneDeep(rulePatch));
         } else if (ap) {
           draft[id].rule[ap] = rulePatch;
         } else {
@@ -215,7 +212,7 @@ export default function reducer(state = {}, action) {
         if (fileKeyPatchType === 'data') {
           draft[id].data = fileKeyPatch;
         } else if (fileKeyPatchType === 'rule') {
-          Object.assign(draft[id].rule, deepClone(fileKeyPatch));
+          Object.assign(draft[id].rule, customCloneDeep(fileKeyPatch));
         }
 
         if (draft[id].autoEvaluate) {
@@ -289,7 +286,7 @@ export default function reducer(state = {}, action) {
         let originalRule = editor.rule;
 
         if (typeof originalRule === 'object') {
-          originalRule = deepClone(editor.rule);
+          originalRule = customCloneDeep(editor.rule);
         }
         editor.originalRule = originalRule;
 
@@ -298,7 +295,7 @@ export default function reducer(state = {}, action) {
           let originalData = editor.data;
 
           if (typeof originalData === 'object') {
-            originalData = deepClone(editor.data);
+            originalData = customCloneDeep(editor.data);
           }
           editor.originalData = originalData;
         }

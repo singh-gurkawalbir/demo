@@ -1,5 +1,6 @@
 
 import processorLogic from './index';
+import * as GenerateMediumId from '../../../../../utils/string';
 
 const {
   init,
@@ -50,6 +51,7 @@ describe('router processor logic', () => {
       expect(init({options})).toEqual(expectedOutput);
     });
     test('should correctly return the rule along with options', () => {
+      jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('new_key');
       const options = {
         router: {id: 'r1', name: 'router1', branches: [{pageProcessors: [{id: 'p1'}]}, {pageProcessors: [{id: 'p2'}]}]},
         branchNamingIndex: 1,
@@ -82,6 +84,7 @@ describe('router processor logic', () => {
           activeProcessor: 'filter',
           branches: [
             {
+              id: 'new_key',
               inputFilter: {
                 rules: undefined,
               },
@@ -93,6 +96,7 @@ describe('router processor logic', () => {
               ],
             },
             {
+              id: 'new_key',
               inputFilter: {
                 rules: undefined,
               },
@@ -112,6 +116,85 @@ describe('router processor logic', () => {
       };
 
       expect(init({resource, options})).toEqual(expectedOutput);
+    });
+    test('should correctly return the rule and options along with script context', () => {
+      jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('new_key');
+      const options = {
+        router: {id: 'r1', name: 'router1', branches: [{pageProcessors: [{id: 'p1'}]}, {pageProcessors: [{id: 'p2'}]}]},
+        branchNamingIndex: 1,
+      };
+      const expectedOutput = {
+        branchNamingIndex: 1,
+        editorTitle: 'Edit branching',
+        isEdit: true,
+        router: {
+          branches: [
+            {
+              pageProcessors: [
+                {
+                  id: 'p1',
+                },
+              ],
+            },
+            {
+              pageProcessors: [
+                {
+                  id: 'p2',
+                },
+              ],
+            },
+          ],
+          id: 'r1',
+          name: 'router1',
+        },
+        rule: {
+          activeProcessor: 'filter',
+          branches: [
+            {
+              id: 'new_key',
+              inputFilter: {
+                rules: undefined,
+              },
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  id: 'p1',
+                },
+              ],
+            },
+            {
+              id: 'new_key',
+              inputFilter: {
+                rules: undefined,
+              },
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  id: 'p2',
+                },
+              ],
+            },
+          ],
+          entryFunction: 'branching',
+          fetchScriptContent: true,
+          id: 'r1',
+          name: 'router1',
+        },
+        context: {
+          _integrationId: 'inetgartionID',
+          _flowId: 'flowId',
+          container: 'inetgration',
+          type: 'hook',
+        },
+      };
+      const scriptContext = {
+        _integrationId: 'inetgartionID',
+        _flowId: 'flowId',
+        container: 'inetgration',
+        type: 'hook',
+      };
+
+      expect(init({resource, options, scriptContext})).toEqual(expectedOutput);
     });
   });
   describe('requestBody util', () => {
@@ -183,6 +266,51 @@ describe('router processor logic', () => {
         ],
       });
     });
+    test('should return correct request body for filter with scriptContext', () => {
+      const editor = {
+        rule: {
+          activeProcessor: 'javascript',
+        },
+        data: {
+          javascript: {a: 'b'},
+          input_filters: {c: 'd'},
+        },
+        context: {
+          _integrationId: 'inetgartionID',
+          _flowId: 'flowId',
+          container: 'inetgration',
+          type: 'hook',
+        },
+      };
+
+      expect(requestBody(editor)).toEqual({
+        data: [
+          {
+            options: {
+              contextData: {
+                a: 'b',
+              },
+              settings: undefined,
+            },
+            record: undefined,
+            router: {
+              routeRecordsUsing: 'script',
+              script: {
+                _scriptId: undefined,
+                code: undefined,
+                function: undefined,
+              },
+            },
+          },
+        ],
+        options: {
+          _integrationId: 'inetgartionID',
+          _flowId: 'flowId',
+          container: 'inetgration',
+          type: 'hook',
+        },
+      });
+    });
   });
   describe('patchSet util', () => {
     test('should add and return the backgroundPatches when a script is present', () => {
@@ -242,6 +370,7 @@ describe('router processor logic', () => {
             resourceType: 'flows',
           },
         ],
+        options: {revertChangesOnFailure: true},
       });
     });
     test('should not return the backgroundPatches for /content when no script is present', () => {
@@ -291,6 +420,7 @@ describe('router processor logic', () => {
             resourceType: 'flows',
           },
         ],
+        options: {revertChangesOnFailure: true},
       });
     });
   });
@@ -342,6 +472,7 @@ describe('router processor logic', () => {
               id: 3,
             },
             {
+              id: 'new_key',
               name: 'Branch 1.1',
               pageProcessors: [
                 {

@@ -45,12 +45,10 @@ export default function ChildUpgradeButton({ resource }) {
     }
 
     if (status === 'error') {
-      dispatch(actions.integrationApp.upgrade.setStatus(id, {
-        status: 'hold',
-      }));
+      dispatch(actions.integrationApp.upgrade.deleteStatus(id));
       enquesnackbar({
         message: <ErrorContent
-          error={messageStore('CHILD_UPGRADE_ERROR_MESSAGE',
+          error={messageStore('SUBSCRIPTION.CHILD_UPGRADE_ERROR_MESSAGE',
             {
               childName: name,
               errorMessage: errMessage,

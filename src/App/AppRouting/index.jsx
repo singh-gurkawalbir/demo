@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
-import loadable from '../../utils/loadable';
+import loadable, {flowBuilderLoading} from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
@@ -54,7 +54,7 @@ const Playground = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );
 const FlowBuilder = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder'))
+  retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder')), flowBuilderLoading,
 );
 const ResourceList = loadable(() =>
   retry(() => import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList'))
@@ -110,6 +110,10 @@ const ShopifyLandingPage = loadable(() =>
     /* webpackChunkName: 'ShopifyLandingPage' */ '../../views/LandingPages/Shopify'
   ))
 );
+const AgreeTOSAndPP = loadable(() =>
+  retry(() => import(
+  /* webpackChunkName: 'AgreeTOSAndPP' */ '../../views/AgreeTOSAndPP'
+  )));
 
 function ResourceListRouteCatcher(props) {
   const { match } = props;
@@ -159,6 +163,7 @@ export default function AppRouting() {
         exact
         component={UpgradeEM}
         />
+      <Route path={getRoutePath('/agreeTOSAndPP')} exact component={AgreeTOSAndPP} />
       <Route
         path={getRoutePath('/clone/:resourceType/:resourceId/preview')}
         component={ClonePreview}

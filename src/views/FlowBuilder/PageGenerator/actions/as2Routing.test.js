@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { runServer} from '../../../../test/api/server';
 import as2Routing from './as2Routing';
@@ -112,7 +112,9 @@ describe('ExportHooks UI tests', () => {
     const {Component} = as2Routing;
     const onClose = jest.fn();
 
-    initialStore.getState().session.form.as2Routing = {value: {contentBasedFlowRouter: {_scriptId: 'someScriptId', function: 'someFunction'}}};
+    mutateStore(initialStore, draft => {
+      draft.session.form.as2Routing = {value: {contentBasedFlowRouter: {_scriptId: 'someScriptId', function: 'someFunction'}}};
+    });
 
     renderWithProviders(
       <Component

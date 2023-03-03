@@ -1,8 +1,10 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import ActionGroup from '../../../../components/ActionGroup';
 import BackArrowIcon from '../../../../components/icons/BackArrowIcon';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
+import { SHOPIFY_APP_URL } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   landingPageHeader: {
@@ -16,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     paddingTop: 5,
+    cursor: 'pointer',
   },
   actionGroup: {
     '& > *': {
@@ -29,19 +32,24 @@ const useStyles = makeStyles(theme => ({
 
 export default function ShopifyLandingPageHeader() {
   const classes = useStyles();
+  const history = useHistory();
+  const handleBackClick = () => {
+    if (history.length > 2) {
+      history.goBack();
+    } else {
+      window.location.href = SHOPIFY_APP_URL;
+    }
+  };
 
   return (
     <div className={classes.landingPageHeader}>
       <ActionGroup className={classes.actionGroup}>
-        <a
-          href="https://apps.shopify.com"
-          rel="noreferrer"
-          alt="shopifyAppStore"
-          data-test="shopifyAppStore"
+        <div
+          onClick={handleBackClick}
           className={classes.link}
         >
           <BackArrowIcon />
-        </a>
+        </div>
         <span className={classes.linkText}>Back to</span>
         <ApplicationImg
           type="shopify"

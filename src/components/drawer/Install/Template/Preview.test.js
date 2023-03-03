@@ -4,11 +4,11 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import TemplatePreview from './Preview';
 import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 const mockHistoryPush = jest.fn();
 
@@ -23,32 +23,33 @@ jest.mock('react-router-dom', () => ({
 async function initTemplatePreview(template, data = {}, status = 'success', isCloned = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session = {
-    templates: {
-      _templateId:
-        {
-          preview: {
-            status,
-            components: {
-              objects: data.model ? [data] : [],
-              stackRequired: false,
+  mutateStore(initialStore, draft => {
+    draft.session = {
+      templates: {
+        _templateId:
+          {
+            preview: {
+              status,
+              components: {
+                objects: data.model ? [data] : [],
+                stackRequired: false,
+              },
             },
+            runKey: '_templateId',
           },
-          runKey: '_templateId',
-        },
-    },
-    integrationApps: {
-      clone: {
-        _templateId: {isCloned, integrationId: '_integrationId'},
       },
-    },
-  };
-
-  initialStore.getState().data = {
-    marketplace: {
-      templates: [template],
-    },
-  };
+      integrationApps: {
+        clone: {
+          _templateId: {isCloned, integrationId: '_integrationId'},
+        },
+      },
+    };
+    draft.data = {
+      marketplace: {
+        templates: [template],
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: 'installTemplate/preview/_templateId'}]}>
@@ -126,7 +127,7 @@ describe('TemplatePreview tests', () => {
     expect(installButton).toBeInTheDocument();
     userEvent.click(installButton);
     expect(screen.getByText('Disclaimer')).toBeInTheDocument();
-    expect(screen.getByText(messageStore('THIRD_PARTY_TEMPLATE_DISCLAIMER'))).toBeInTheDocument();
+    expect(screen.getByText(message.DISCLAIMER.THIRD_PARTY_TEMPLATE_DISCLAIMER)).toBeInTheDocument();
     const proceed = screen.getByRole('button', {name: 'Proceed'});
     const cancel = screen.getByRole('button', {name: 'Cancel'});
 
@@ -151,7 +152,7 @@ describe('TemplatePreview tests', () => {
 
     expect(installButton).toBeInTheDocument();
     userEvent.click(installButton);
-    expect(screen.getByText(messageStore('CELIGO_AUTHORED_TEMPLATE_DISCLAIMER'))).toBeInTheDocument();
+    expect(screen.getByText(message.DISCLAIMER.CELIGO_AUTHORED_TEMPLATE_DISCLAIMER)).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Proceed'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Cancel'})).toBeInTheDocument();
   });

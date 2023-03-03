@@ -8,6 +8,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../constants';
+import customCloneDeep from '../utils/customCloneDeep';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -5492,7 +5493,7 @@ describe('resource region selector testcases', () => {
     test('should return correct data if only resource is present', () => {
       const resource = { _id: 1, name: 'test X' };
 
-      expect(selectors.resourceDataModified(resource, null, 'exports', '1')).toEqual(
+      expect(selectors.resourceDataModified(resource, null, {}, 'exports', '1')).toEqual(
         {
           lastChange: undefined,
           master: { _id: 1, name: 'test X' },
@@ -5511,7 +5512,7 @@ describe('resource region selector testcases', () => {
         ],
       };
 
-      expect(selectors.resourceDataModified(null, stagedIdState, 'exports', 'new-0t575NHzJT')).toEqual(
+      expect(selectors.resourceDataModified(null, stagedIdState, {}, 'exports', 'new-0t575NHzJT')).toEqual(
         {
           lastChange: timestamp2,
           master: null,
@@ -5527,7 +5528,7 @@ describe('resource region selector testcases', () => {
         patch: [{ op: 'replace', path: '/name', value: 'patch X', timestamp}],
       };
 
-      expect(selectors.resourceDataModified(resource, stagedIdState, 'exports', '1')).toEqual(
+      expect(selectors.resourceDataModified(resource, stagedIdState, {}, 'exports', '1')).toEqual(
         {
           lastChange: timestamp,
           master: { _id: 1, name: 'test X' },
@@ -8191,9 +8192,11 @@ describe('selectors.isParserSupported test cases', () => {
     );
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-    state.session.form[formKey].value = { '/http/successMediaType': parser };
+    const cloneState = customCloneDeep(state);
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
+    cloneState.session.form[formKey].value = { '/http/successMediaType': parser };
+
+    expect(selectors.isParserSupported(cloneState, formKey, parser)).toBe(true);
   });
 
   test('should return false for HTTP export with overridden success media type different from parser', () => {
@@ -8215,9 +8218,12 @@ describe('selectors.isParserSupported test cases', () => {
     );
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-    state.session.form[formKey].value = { '/http/successMediaType': 'csv' };
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
+    const cloneState = customCloneDeep(state);
+
+    cloneState.session.form[formKey].value = { '/http/successMediaType': 'csv' };
+
+    expect(selectors.isParserSupported(cloneState, formKey, parser)).toBe(false);
   });
 
   test('should not rely on success media type of connection', () => {

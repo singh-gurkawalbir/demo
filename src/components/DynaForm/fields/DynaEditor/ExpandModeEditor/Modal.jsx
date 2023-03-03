@@ -30,13 +30,22 @@ export default function EditorModal(props) {
   }, [content, handleClose, handleUpdate]);
 
   useEffect(() => {
+    // if value of the field changes in the background (triggered by onFieldChange)
+    // overwrite the content of the modal
+    // used by mock response field in imports
+    if (value) {
+      setContent(value);
+    }
+  }, [value]);
+
+  useEffect(() => {
     if (id === 'settings') {
       if (content && typeof content === 'string' && !isJsonString(content)) {
         setErrorMessage('Settings must be a valid JSON');
       } else {
         setErrorMessage('');
       }
-    } else if (validateContent) {
+    } else if (typeof validateContent === 'function') {
       setErrorMessage(validateContent(content));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

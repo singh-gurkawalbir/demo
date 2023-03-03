@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import SSOAccountSettings from './SSOAccountSettings';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
 import * as dynaSubmitMock from '../../../../components/DynaForm/DynaSubmit';
@@ -13,12 +13,14 @@ import { ConfirmDialogProvider } from '../../../../components/ConfirmDialog';
 let initialStore;
 
 async function initSSOAccountSettings({defaultAShareIdValue, accountsValue, ssoClientsValues, commsURL, commsStatus} = {}) {
-  initialStore.getState().data.resources.ssoclients = ssoClientsValues;
-  initialStore.getState().user.preferences = {defaultAShareId: defaultAShareIdValue};
-  initialStore.getState().user.org = {
-    accounts: accountsValue,
-  };
-  initialStore.getState().comms.networkComms[commsURL] = commsStatus;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.ssoclients = ssoClientsValues;
+    draft.user.preferences = {defaultAShareId: defaultAShareIdValue};
+    draft.user.org = {
+      accounts: accountsValue,
+    };
+    draft.comms.networkComms[commsURL] = commsStatus;
+  });
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>
@@ -347,7 +349,6 @@ describe('testsuite for SSO Account Settings', () => {
         { op: 'replace', path: '/oidc/clientId', value: undefined },
         { op: 'replace', path: '/oidc/clientSecret', value: undefined },
       ],
-      scope: 'value',
       options: undefined,
       context: undefined,
       parentContext: undefined,
@@ -420,7 +421,6 @@ describe('testsuite for SSO Account Settings', () => {
         { op: 'add', path: '/oidc/clientId', value: 'sampleClientId' },
         { op: 'add', path: '/oidc/clientSecret', value: '******' },
       ],
-      scope: 'value',
       options: undefined,
       context: undefined,
       parentContext: undefined,
@@ -428,9 +428,11 @@ describe('testsuite for SSO Account Settings', () => {
     });
   });
   test('should test the SSO page when there is no license and click on request upgrade', async () => {
-    initialStore.getState().session.resource = {
-      ssoLicenseUpgradeRequested: false,
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resource = {
+        ssoLicenseUpgradeRequested: false,
+      };
+    });
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{
@@ -470,10 +472,12 @@ describe('testsuite for SSO Account Settings', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'SSO_LICENSE_UPGRADE_REQUESTED' });
   });
   test('should test the SSO page when licence is requested', async () => {
-    initialStore.getState().session.resource = {
-      platformLicenseActionMessage: 'Thanks for your request! We will be in touch soon.',
-      ssoLicenseUpgradeRequested: true,
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resource = {
+        platformLicenseActionMessage: 'Thanks for your request! We will be in touch soon.',
+        ssoLicenseUpgradeRequested: true,
+      };
+    });
     await initSSOAccountSettings({
       defaultAShareIdValue: 'own',
       accountsValue: [{

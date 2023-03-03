@@ -14,7 +14,7 @@ const props = {
   assistantFieldType: 'operation',
   id: 'formId',
   formKey: 'imports-5bf18b09294767270c62fad9',
-  value: { role: 'something' },
+  value: { status: 'HOLD', levels: '3' },
   resourceId: '5bf18b09294767270c62fad9',
   resourceType: 'exports',
   paramMeta: {
@@ -32,14 +32,26 @@ const props = {
         ],
       },
       {
-        id: 'role[]',
-        name: 'Multiple role selection',
-        type: 'array',
+        id: 'status',
+        name: 'status',
+        fieldType: 'array',
       },
       {
         id: 'permission_set',
         name: 'Permission set',
         required: true,
+        fieldType: 'input',
+      },
+      {
+        id: 'levels',
+        name: 'Levels',
+        fieldType: 'multiselect',
+        options: [
+          '1',
+          '2',
+          '3',
+          '5',
+        ],
       },
     ],
     isDeltaExport: false,
@@ -65,7 +77,7 @@ jest.mock('react-router-dom', () => ({
 function initDynaHFAssistantSearchParams(props = {}) {
   return renderWithProviders(<MemoryRouter><DynaHFAssistantSearchParams {...props} /></MemoryRouter>);
 }
-describe('dynaHFAssistantSearchParams UI tests', () => {
+describe('DynaHFAssistantSearchParams UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -98,14 +110,14 @@ describe('dynaHFAssistantSearchParams UI tests', () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, label: null });
     expect(screen.getByText('Query parameters')).toBeInTheDocument();
     userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {});
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: 'HOLD', levels: '3'});
   });
   test('should pass the initial render with key-value provided using props', () => {
-    initDynaHFAssistantSearchParams({ ...props, required: true, keyName: 'name', valueName: 'updated_permission_set', showDelete: true });
+    initDynaHFAssistantSearchParams({ ...props, required: true, keyName: 'name', valueName: 'value', showDelete: true });
     userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {});
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: 'HOLD', levels: '3'});
   });
-  test('should pass the initial render with paramLocation as "query"', () => {
+  test('should pass the initial render with paramLocation as "body"', () => {
     props.paramMeta.paramLocation = 'body';
     initDynaHFAssistantSearchParams({ ...props, label: null, value: {}, resourceType: 'imports' });
     expect(screen.getByText('Configure body parameters')).toBeInTheDocument();

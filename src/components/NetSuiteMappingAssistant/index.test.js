@@ -3,9 +3,9 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
-import messageStore from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import NetSuiteMappingAssistant from '.';
 import actions from '../../actions';
 
@@ -61,15 +61,18 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const initialStore = getCreatedStore();
     const netSuiteConnectionId = '173uww';
 
-    initialStore.getState().data.resources.connections = [{
-      _id: netSuiteConnectionId,
-      netsuite: {
-        account: 'ASDFGH123',
-        dataCenterURLs: {
-          systemDomain: 'https://asdfgh123.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: netSuiteConnectionId,
+        netsuite: {
+          account: 'ASDFGH123',
+          dataCenterURLs: {
+            systemDomain: 'https://asdfgh123.app.netsuite.com',
+          },
         },
-      },
-    }];
+      }];
+    });
+
     await initNetSuiteMappingAssistant({netSuiteConnectionId}, initialStore);
     expect(screen.getByText('Spinner')).toBeInTheDocument();
   });
@@ -80,24 +83,26 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const path = `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata.application[netSuiteConnectionId] = {};
-    initialStore.getState().session.metadata.application[netSuiteConnectionId][path] = {
-      status: 'requested',
-      data: [{
-        name: 'asd',
-        scriptId: 'inventorydetail',
-        url: 'https:://sampleURL.com',
-      }],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: netSuiteConnectionId,
-      netsuite: {
-        account: 'ASDFGH123',
-        dataCenterURLs: {
-          systemDomain: 'https://asdfgh123.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[netSuiteConnectionId] = {};
+      draft.session.metadata.application[netSuiteConnectionId][path] = {
+        status: 'requested',
+        data: [{
+          name: 'asd',
+          scriptId: 'inventorydetail',
+          url: 'https:://sampleURL.com',
+        }],
+      };
+      draft.data.resources.connections = [{
+        _id: netSuiteConnectionId,
+        netsuite: {
+          account: 'ASDFGH123',
+          dataCenterURLs: {
+            systemDomain: 'https://asdfgh123.app.netsuite.com',
+          },
         },
-      },
-    }];
+      }];
+    });
     const connection = initialStore.getState().data.resources.connections[0].netsuite;
 
     await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType}, initialStore);
@@ -130,24 +135,26 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const netSuiteRecordType = 'manualrecordtype';
     const path = `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`;
 
-    initialStore.getState().session.metadata.application[netSuiteConnectionId] = {};
-    initialStore.getState().session.metadata.application[netSuiteConnectionId][path] = {
-      status: 'requested',
-      data: [{
-        name: 'asd',
-        scriptId: netSuiteRecordType,
-        url: 'https:://sampleURL.com',
-      }],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: netSuiteConnectionId,
-      netsuite: {
-        account: 'ASDFGH123',
-        dataCenterURLs: {
-          systemDomain: 'https://asdfgh123.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[netSuiteConnectionId] = {};
+      draft.session.metadata.application[netSuiteConnectionId][path] = {
+        status: 'requested',
+        data: [{
+          name: 'asd',
+          scriptId: netSuiteRecordType,
+          url: 'https:://sampleURL.com',
+        }],
+      };
+      draft.data.resources.connections = [{
+        _id: netSuiteConnectionId,
+        netsuite: {
+          account: 'ASDFGH123',
+          dataCenterURLs: {
+            systemDomain: 'https://asdfgh123.app.netsuite.com',
+          },
         },
-      },
-    }];
+      }];
+    });
     await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType}, initialStore);
     const launchButton = screen.getByRole('button', {name: 'Launch NetSuite assistant'});
 
@@ -155,7 +162,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     userEvent.click(launchButton);
     const snackBar = screen.getByRole('alert');
 
-    expect(snackBar.textContent).toEqual(messageStore('NETSUITE_ASSISTANT_LAUNCH_ERROR'));
+    expect(snackBar.textContent).toEqual(message.NETSUITE_ASSISTANT_LAUNCH_ERROR);
   });
 
   test('should be able to successfully launch assistant', async () => {
@@ -164,24 +171,26 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const netSuiteRecordType = 'manualrecordtype';
     const path = `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`;
 
-    initialStore.getState().session.metadata.application[netSuiteConnectionId] = {};
-    initialStore.getState().session.metadata.application[netSuiteConnectionId][path] = {
-      status: 'requested',
-      data: [{
-        name: 'asd',
-        scriptId: netSuiteRecordType,
-        url: 'https:://sampleURL.com',
-      }],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: netSuiteConnectionId,
-      netsuite: {
-        account: 'ASDFGH123',
-        dataCenterURLs: {
-          systemDomain: 'https://asdfgh123.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[netSuiteConnectionId] = {};
+      draft.session.metadata.application[netSuiteConnectionId][path] = {
+        status: 'requested',
+        data: [{
+          name: 'asd',
+          scriptId: netSuiteRecordType,
+          url: 'https:://sampleURL.com',
+        }],
+      };
+      draft.data.resources.connections = [{
+        _id: netSuiteConnectionId,
+        netsuite: {
+          account: 'ASDFGH123',
+          dataCenterURLs: {
+            systemDomain: 'https://asdfgh123.app.netsuite.com',
+          },
         },
-      },
-    }];
+      }];
+    });
     await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType}, initialStore);
 
     const launchButton = screen.getByRole('button', {name: 'Launch NetSuite assistant'});
@@ -199,25 +208,27 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const netSuiteRecordType = 'manualrecordtype';
     const path = `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`;
 
-    initialStore.getState().session.metadata.application[netSuiteConnectionId] = {};
-    initialStore.getState().session.metadata.application[netSuiteConnectionId][path] = {
-      status: 'requested',
-      data: [{
-        name: 'asd',
-        scriptId: netSuiteRecordType,
-        url: 'https:://sampleURL.com',
-      }],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: netSuiteConnectionId,
-      netsuite: {
-        account: 'ASDFGH123',
-        dataCenterURLs: {
-          systemDomain: 'https://asdfgh123.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[netSuiteConnectionId] = {};
+      draft.session.metadata.application[netSuiteConnectionId][path] = {
+        status: 'requested',
+        data: [{
+          name: 'asd',
+          scriptId: netSuiteRecordType,
+          url: 'https:://sampleURL.com',
+        }],
+      };
+      draft.data.resources.connections = [{
+        _id: netSuiteConnectionId,
+        netsuite: {
+          account: 'ASDFGH123',
+          dataCenterURLs: {
+            systemDomain: 'https://asdfgh123.app.netsuite.com',
+          },
         },
-      },
-    }];
-    initialStore.getState().session.mapping.mapping = { isNSAssistantFormLoaded: true };
+      }];
+      draft.session.mapping.mapping = { isNSAssistantFormLoaded: true };
+    });
     const { utils: {unmount}} = await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType}, initialStore);
 
     unmount();
@@ -241,25 +252,27 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const netSuiteRecordType = 'manualrecordtype';
     const path = `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`;
 
-    initialStore.getState().session.metadata.application[netSuiteConnectionId] = {};
-    initialStore.getState().session.metadata.application[netSuiteConnectionId][path] = {
-      status: 'requested',
-      data: [{
-        name: 'asd',
-        scriptId: netSuiteRecordType,
-        url: 'https:://sampleURL.com',
-      }],
-    };
-    initialStore.getState().data.resources.connections = [{
-      _id: netSuiteConnectionId,
-      netsuite: {
-        account: 'ASDFGH123',
-        dataCenterURLs: {
-          systemDomain: 'https://asdfgh123.app.netsuite.com',
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[netSuiteConnectionId] = {};
+      draft.session.metadata.application[netSuiteConnectionId][path] = {
+        status: 'requested',
+        data: [{
+          name: 'asd',
+          scriptId: netSuiteRecordType,
+          url: 'https:://sampleURL.com',
+        }],
+      };
+      draft.data.resources.connections = [{
+        _id: netSuiteConnectionId,
+        netsuite: {
+          account: 'ASDFGH123',
+          dataCenterURLs: {
+            systemDomain: 'https://asdfgh123.app.netsuite.com',
+          },
         },
-      },
-    }];
-    initialStore.getState().session.mapping.mapping = { isNSAssistantFormLoaded: true };
+      }];
+      draft.session.mapping.mapping = { isNSAssistantFormLoaded: true };
+    });
     try {
       await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType, data}, initialStore);
     } catch (e) {

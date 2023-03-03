@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders} from '../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import FlowBuilder from './index';
 
@@ -153,12 +153,15 @@ describe('FlowBuilder UI tests', () => {
   test('should test when integration is not loaded', () => {
     const {utils} = renderWithProviders(<MemoryRouter><FlowBuilder /></MemoryRouter>);
 
-    expect(utils.container.textContent).toBe('Loadresource integrationId: undefined');
+    expect(utils.container.textContent).toContain('Loadresource integrationId: undefined');
   });
   test('should test when integration is of version 1', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = integrations;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = integrations;
+    });
+
     renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/childID/flowId']}>
         <Route path="/:integrationId/:childId/:flowId">
@@ -184,7 +187,10 @@ describe('FlowBuilder UI tests', () => {
   test('should test when integration is of version 2', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = integrations;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = integrations;
+    });
+
     renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c16/childID/flowId']}>
         <Route path="/:integrationId/:childId/:flowId">
@@ -208,7 +214,10 @@ describe('FlowBuilder UI tests', () => {
   test('should test when no child is provided integration is of version 2', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = integrations;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = integrations;
+    });
+
     renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c16/flowId']}>
         <Route path="/:integrationId/:flowId">

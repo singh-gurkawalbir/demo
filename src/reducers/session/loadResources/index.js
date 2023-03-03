@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 import { emptyList, INTEGRATION_DEPENDENT_RESOURCES } from '../../../constants';
 
 export default (state = {}, action) => {
-  const { type, integrationId, resourceType } = action;
+  const { type, integrationId, resourceType, refresh } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -13,10 +13,8 @@ export default (state = {}, action) => {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
           }
-          draft[integrationId][resourceType] = 'requested';
-        } else {
-          draft[resourceType] = 'requested';
-        }
+          if (!refresh) { draft[integrationId][resourceType] = 'requested'; }
+        } else if (!refresh) { draft[resourceType] = 'requested'; }
         break;
       case actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED:
         if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
@@ -37,6 +35,14 @@ export default (state = {}, action) => {
         } else {
           draft[resourceType] = 'failed';
         }
+        break;
+      case actionTypes.RESOURCE.CLEAR_COLLECTION:
+
+        delete draft[resourceType];
+        if (draft[integrationId]) {
+          delete draft[integrationId][resourceType];
+        }
+
         break;
       default:
         return state;

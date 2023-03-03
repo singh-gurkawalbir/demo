@@ -2,24 +2,26 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders, reduxStore} from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../test/test-utils';
 import ScheduleCell from '.';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.flows = [
-  {
-    _id: 'someflowId',
-    name: 'demo flow',
-    disabled: false,
-    _integrationId: 'integration_id',
-    pageGenerators: [{setupInProgress: true}],
-    pageProcessors: [{
-      type: 'import',
-      _importId: 'resource_id',
-    }],
-  },
-];
+mutateStore(initialStore, draft => {
+  draft.data.resources.flows = [
+    {
+      _id: 'someflowId',
+      name: 'demo flow',
+      disabled: false,
+      _integrationId: 'integration_id',
+      pageGenerators: [{setupInProgress: true}],
+      pageProcessors: [{
+        type: 'import',
+        _importId: 'resource_id',
+      }],
+    },
+  ];
+});
 
 function initScheduleCell(actionProps = {}, initialStore = null, schedule = '') {
   const ui = (
@@ -51,7 +53,7 @@ describe('shecdule cell UI test cases', () => {
   });
   test('should show tooltip for configure all steps', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}}, initialStore);
-    expect(screen.getByTitle('Configure all steps to allow scheduling your flow')).toBeInTheDocument();
+    expect(screen.getByTitle('Remove or configure all unconfigured flow steps to edit the flow schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('aria-disabled', 'true');
@@ -61,7 +63,7 @@ describe('shecdule cell UI test cases', () => {
   test('should show tooltip for configure schedule', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}});
 
-    expect(screen.getByTitle('Change schedule')).toBeInTheDocument();
+    expect(screen.getByTitle('Add schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');
@@ -69,11 +71,11 @@ describe('shecdule cell UI test cases', () => {
   test('should show icon indicator for scheduled flows', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null, 'some schedule');
 
-    expect(document.querySelector('div div div').className).toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).toBeInTheDocument();
   });
   test('should not show icon indicator for unscheduled flows', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null);
 
-    expect(document.querySelector('div div div').className).not.toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).not.toBeInTheDocument();
   });
 });

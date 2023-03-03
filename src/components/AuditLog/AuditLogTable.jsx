@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import ResourceTable from '../ResourceTable';
 import NoResultTypography from '../NoResultTypography';
 import { getAuditLogFilterKey } from '../../constants/auditLog';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles({
   root: {
@@ -46,7 +47,7 @@ export default function AuditLogTable({ resourceType, resourceId, childId, class
           />
         ) : (
           <NoResultTypography isBackground className={classes.noResultWrapper}>
-            You don&apos;t have any audit logs.
+            {messageStore('NO_RESULT', {message: 'audit logs'})}
           </NoResultTypography>
         )}
     </div>

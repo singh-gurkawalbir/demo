@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
   columnsWrapper: {
-    width: '95%',
+    width: `calc(100% - ${theme.spacing(4)}px)`,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   bodyElementsWrapper: {
     display: 'flex',
+    paddingRight: theme.spacing(1),
   },
   child: {
     '& + div': {

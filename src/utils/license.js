@@ -195,3 +195,24 @@ export function platformLicenseActionDetails(license) {
 
   return licenseActionDetails;
 }
+
+export function isNextTheHighestPlan(changeEditionId, isTwoDotZero, editions) {
+  let value = false;
+
+  if (!changeEditionId || !editions) return value;
+
+  if (isTwoDotZero) {
+    let highestOrder = 0;
+
+    editions?.length && editions.forEach(edition => {
+      highestOrder = highestOrder < edition?.order ? edition.order : highestOrder;
+    });
+    editions?.length && editions.forEach(edition => {
+      if (edition._id === changeEditionId) {
+        value = edition.order === highestOrder;
+      }
+    });
+  }
+
+  return value;
+}

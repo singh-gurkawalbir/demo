@@ -4,20 +4,89 @@ import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DynaAssistantSearchParams from './DynaAssistantSearchParams';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaDate(props = {}) {
-  initialStore.getState().session.form = {'new-formKey': {
-    parentContext: {},
-    disabled: false,
-    showValidationBeforeTouched: false,
-    conditionalUpdate: false,
-    fieldMeta: {
-      fieldMap: {
+  mutateStore(initialStore, draft => {
+    draft.session.form = {'new-formKey': {
+      parentContext: {},
+      disabled: false,
+      showValidationBeforeTouched: false,
+      conditionalUpdate: false,
+      fieldMeta: {
+        fieldMap: {
+          role: {
+            id: 'role',
+            name: 'role',
+            defaultValue: '',
+            helpText: 'Role of an user',
+            label: 'Role',
+            required: false,
+            type: 'select',
+            readOnly: false,
+            resourceId: '635107728eab567612a7db4e',
+            resourceType: 'exports',
+            options: [
+              {
+                items: [
+                  {
+                    label: 'end-user',
+                    value: 'end-user',
+                  },
+                  {
+                    label: 'agent',
+                    value: 'agent',
+                  },
+                  {
+                    label: 'admin',
+                    value: 'admin',
+                  },
+                ],
+              },
+            ],
+          },
+          'role*_**__*': {
+            id: 'role*_**__*',
+            name: 'role*_**__*',
+            defaultValue: '',
+            helpText: 'Role filters to apply. eg: end-user, admin, agent',
+            label: 'Multiple role selection',
+            required: false,
+            type: 'textwithflowsuggestion',
+            readOnly: false,
+            showLookup: false,
+            resourceId: '635107728eab567612a7db4e',
+            resourceType: 'exports',
+          },
+          permission_set: {
+            id: 'permission_set',
+            name: 'permission_set',
+            defaultValue: '',
+            helpText: 'Role_id of an user',
+            label: 'Permission set',
+            required: false,
+            type: 'textwithflowsuggestion',
+            readOnly: false,
+            showLookup: false,
+            resourceId: '635107728eab567612a7db4e',
+            resourceType: 'exports',
+          },
+        },
+        layout: {
+          fields: [
+            'role',
+            'role*_**__*',
+            'permission_set',
+          ],
+        },
+      },
+      formIsDisabled: false,
+      resetTouchedState: false,
+      fields: {
         role: {
           id: 'role',
           name: 'role',
@@ -47,6 +116,14 @@ function initDynaDate(props = {}) {
               ],
             },
           ],
+          defaultRequired: false,
+          value: '',
+          touched: false,
+          visible: true,
+          disabled: false,
+          isValid: true,
+          isDiscretelyInvalid: false,
+          errorMessages: '',
         },
         'role*_**__*': {
           id: 'role*_**__*',
@@ -60,6 +137,14 @@ function initDynaDate(props = {}) {
           showLookup: false,
           resourceId: '635107728eab567612a7db4e',
           resourceType: 'exports',
+          defaultRequired: false,
+          value: '',
+          touched: false,
+          visible: true,
+          disabled: false,
+          isValid: true,
+          isDiscretelyInvalid: false,
+          errorMessages: '',
         },
         permission_set: {
           id: 'permission_set',
@@ -73,107 +158,24 @@ function initDynaDate(props = {}) {
           showLookup: false,
           resourceId: '635107728eab567612a7db4e',
           resourceType: 'exports',
+          defaultRequired: false,
+          value: '',
+          touched: false,
+          visible: true,
+          disabled: false,
+          isValid: true,
+          isDiscretelyInvalid: false,
+          errorMessages: '',
         },
       },
-      layout: {
-        fields: [
-          'role',
-          'role*_**__*',
-          'permission_set',
-        ],
+      value: {
+        role: '',
+        'role*_**__*': '',
+        permission_set: '',
       },
-    },
-    formIsDisabled: false,
-    resetTouchedState: false,
-    fields: {
-      role: {
-        id: 'role',
-        name: 'role',
-        defaultValue: '',
-        helpText: 'Role of an user',
-        label: 'Role',
-        required: false,
-        type: 'select',
-        readOnly: false,
-        resourceId: '635107728eab567612a7db4e',
-        resourceType: 'exports',
-        options: [
-          {
-            items: [
-              {
-                label: 'end-user',
-                value: 'end-user',
-              },
-              {
-                label: 'agent',
-                value: 'agent',
-              },
-              {
-                label: 'admin',
-                value: 'admin',
-              },
-            ],
-          },
-        ],
-        defaultRequired: false,
-        value: '',
-        touched: false,
-        visible: true,
-        disabled: false,
-        isValid: true,
-        isDiscretelyInvalid: false,
-        errorMessages: '',
-      },
-      'role*_**__*': {
-        id: 'role*_**__*',
-        name: 'role*_**__*',
-        defaultValue: '',
-        helpText: 'Role filters to apply. eg: end-user, admin, agent',
-        label: 'Multiple role selection',
-        required: false,
-        type: 'textwithflowsuggestion',
-        readOnly: false,
-        showLookup: false,
-        resourceId: '635107728eab567612a7db4e',
-        resourceType: 'exports',
-        defaultRequired: false,
-        value: '',
-        touched: false,
-        visible: true,
-        disabled: false,
-        isValid: true,
-        isDiscretelyInvalid: false,
-        errorMessages: '',
-      },
-      permission_set: {
-        id: 'permission_set',
-        name: 'permission_set',
-        defaultValue: '',
-        helpText: 'Role_id of an user',
-        label: 'Permission set',
-        required: false,
-        type: 'textwithflowsuggestion',
-        readOnly: false,
-        showLookup: false,
-        resourceId: '635107728eab567612a7db4e',
-        resourceType: 'exports',
-        defaultRequired: false,
-        value: '',
-        touched: false,
-        visible: true,
-        disabled: false,
-        isValid: true,
-        isDiscretelyInvalid: false,
-        errorMessages: '',
-      },
-    },
-    value: {
-      role: '',
-      'role*_**__*': '',
-      permission_set: '',
-    },
-    isValid: true,
-  }};
+      isValid: true,
+    }};
+  });
 
   return renderWithProviders(<DynaAssistantSearchParams {...props} />, {initialStore});
 }
@@ -304,7 +306,6 @@ describe('dynaAssistantSearchParams UI tests', () => {
         path: '/assistantMetadata/operationChanged',
         value: false,
       }],
-      'value'
     )));
   });
   test('should make a dispatch call when required prop is true', async () => {

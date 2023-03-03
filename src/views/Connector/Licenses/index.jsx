@@ -13,13 +13,14 @@ import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import ActionGroup from '../../../components/ActionGroup';
 import PageContent from '../../../components/PageContent';
+import messageStore from '../../../utils/messageStore';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
@@ -59,6 +60,22 @@ export default function Licenses(props) {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
   },
   [dispatch]);
+
+  useEffect(() => {
+    const urlFields = location ? location?.pathname.split('/') : [];
+
+    // strip the '/add...' suffix from the url
+    // this is used since when user reloads the page with create license drawer open
+    // we will need to close the drawer since it requires some context which we are setting
+    // in handleClick methode below
+    if (urlFields.indexOf('add') !== -1) {
+      const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('add')).join('/');
+
+      history.replace(redirectToParentRoute);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicensesFilterConfig
@@ -95,7 +112,7 @@ export default function Licenses(props) {
       });
     }
 
-    dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
+    dispatch(actions.resource.patchStaged(newId, patchSet));
 
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.ADD,
@@ -134,12 +151,13 @@ export default function Licenses(props) {
           {list.count === 0 ? (
             <div>
               {list.total === 0
-                ? <NoResultTypography>You don&apos;t have any licenses</NoResultTypography>
+
+                ? <NoResultTypography> {messageStore('NO_RESULT', {message: 'licenses'})}</NoResultTypography>
                 : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </div>
           ) : (
             <CeligoTable
-              data={list.resources}
+              data={customCloneDeep(list.resources)}
               {...metadata}
               filterKey={filterKey}
               actionProps={{

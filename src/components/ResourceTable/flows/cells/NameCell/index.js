@@ -83,7 +83,12 @@ export default function NameCell({
     <div className={classes.root}>
       <Link to={flowBuilderTo}>{flowName}</Link>
       <OfflineConnectionsIndicator flowBuilderTo={flowBuilderTo} flowId={flowId} />
-      <InfoIconButton info={description} escapeUnsecuredDomains size="xs" />
+      <InfoIconButton
+        info={description}
+        escapeUnsecuredDomains
+        size="xs"
+        title={flowName}
+      />
 
       {isFree && (
         <Chip

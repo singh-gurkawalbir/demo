@@ -6,256 +6,258 @@ import { screen, waitFor, cleanup, waitForElementToBeRemoved } from '@testing-li
 import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import MappingDrawerRoute from '.';
 import { runServer } from '../../test/api/server';
 import actions from '../../actions';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.resources.integrations = [{
-  _id: '60e2efb81797d0701d813755',
-  lastModified: '2021-07-09T13:36:01.738Z',
-  name: 'Test Integration',
-  sandbox: false,
-  _registeredConnectionIds: [
-    '5d529bfbdb0c7b14a6011a55',
-    '5d70b2d8b0cc4065d0982c55',
-  ],
-}];
-initialStore.getState().data.resources.flows = [[
-  {
-    _id: '60e8509f7d1015493bcabf55',
-    lastModified: '2021-07-09T13:43:25.939Z',
-    name: 'Test Flow 1 to Test Flow 2',
-    disabled: true,
-    _integrationId: '60e2efb81797d0701d813755',
-    skipRetries: false,
-    pageProcessors: [
-      {
-        responseMapping: {
-          fields: [],
-          lists: [],
+mutateStore(initialStore, draft => {
+  draft.data.resources.integrations = [{
+    _id: '60e2efb81797d0701d813755',
+    lastModified: '2021-07-09T13:36:01.738Z',
+    name: 'Test Integration',
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5d529bfbdb0c7b14a6011a55',
+      '5d70b2d8b0cc4065d0982c55',
+    ],
+  }];
+  draft.data.resources.flows = [[
+    {
+      _id: '60e8509f7d1015493bcabf55',
+      lastModified: '2021-07-09T13:43:25.939Z',
+      name: 'Test Flow 1 to Test Flow 2',
+      disabled: true,
+      _integrationId: '60e2efb81797d0701d813755',
+      skipRetries: false,
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '5fe2f66953d36d03e6210255',
         },
-        type: 'import',
-        _importId: '5fe2f66953d36d03e6210255',
+      ],
+      pageGenerators: [
+        {
+          _exportId: '601ab2f54f118265bb62ae55',
+        },
+      ],
+      createdAt: '2021-07-09T13:35:27.628Z',
+      lastExecutedAt: '2021-07-09T13:42:34.410Z',
+    },
+  ]];
+  draft.data.resources.exports = [{
+    _id: '601ab2f54f118265bb62ae55',
+    name: 'Test Export',
+    sampleData: {
+      amount: '10',
+      automatic: true,
+    },
+    ftp: {
+      directoryPath: '/ChaitanyaReddyMule',
+      fileNameStartsWith: 'test_json',
+    },
+    adaptorType: 'FTPExport',
+  }];
+  draft.data.resources.imports = [{
+    _id: '5fe2f66953d36d03e6210255',
+    name: 'Test Import',
+    _connectionId: '5d70b2d8b0cc4065d0982c55',
+    assistant: 'acumatica',
+    assistantMetadata: {
+      resource: 'payment',
+      version: 'v18.200.001',
+      operation: 'create_update_payment',
+      lookups: {},
+    },
+    mapping: {
+      fields: [
+        {
+          generate: 'Type.value',
+          hardCodedValue: 'test',
+        },
+        {
+          extract: '0',
+          generate: 'CustomerID.value',
+        },
+        {
+          extract: 'amount',
+          generate: 'CashAccount.value',
+        },
+        {
+          extract: 'automatic',
+          generate: 'PaymentAmount.value',
+        },
+      ],
+    },
+    adaptorType: 'RESTImport',
+  }];
+  draft.data.resources.connections = [{
+    _id: '5d529bfbdb0c7b14a6011a55',
+    type: 'ftp',
+    name: 'Test Connection 1',
+    offline: true,
+    ftp: {
+      type: 'sftp',
+      hostURI: 'celigo.files.com',
+      username: 'chaitanyareddy.mule@celigo.com',
+      password: '******',
+      port: 22,
+      usePassiveMode: true,
+      userDirectoryIsRoot: false,
+      useImplicitFtps: true,
+      requireSocketReUse: false,
+    },
+  },
+  {
+    _id: '5d70b2d8b0cc4065d0982c55',
+    type: 'rest',
+    name: 'Test Connection 2',
+    assistant: 'acumatica',
+    offline: true,
+    _integrationId: '5f8f000a6eb5c6461949c155',
+    isHTTP: false,
+    http: {
+      formType: 'assistant',
+      mediaType: 'json',
+      requestMediaType: 'xml',
+      baseURI: 'https://6d5eff63dc32.ngrok.io/acumaticadb2020r2/entity/Default/20.200.001',
+      concurrencyLevel: 1,
+      ping: {
+        relativeURI: '/FinancialPeriod',
+        method: 'GET',
+        successValues: [],
+        failValues: [],
       },
-    ],
-    pageGenerators: [
-      {
-        _exportId: '601ab2f54f118265bb62ae55',
+      headers: [
+        {
+          name: 'content-type',
+          value: 'application/json',
+        },
+      ],
+      unencrypted: {
+        endpointName: 'Default',
+        endpointVersion: '20.200.001',
+        username: 'admin',
+        company: '',
       },
-    ],
-    createdAt: '2021-07-09T13:35:27.628Z',
-    lastExecutedAt: '2021-07-09T13:42:34.410Z',
-  },
-]];
-initialStore.getState().data.resources.exports = [{
-  _id: '601ab2f54f118265bb62ae55',
-  name: 'Test Export',
-  sampleData: {
-    amount: '10',
-    automatic: true,
-  },
-  ftp: {
-    directoryPath: '/ChaitanyaReddyMule',
-    fileNameStartsWith: 'test_json',
-  },
-  adaptorType: 'FTPExport',
-}];
-initialStore.getState().data.resources.imports = [{
-  _id: '5fe2f66953d36d03e6210255',
-  name: 'Test Import',
-  _connectionId: '5d70b2d8b0cc4065d0982c55',
-  assistant: 'acumatica',
-  assistantMetadata: {
-    resource: 'payment',
-    version: 'v18.200.001',
-    operation: 'create_update_payment',
-    lookups: {},
-  },
-  mapping: {
-    fields: [
+      encrypted: '******',
+      encryptedFields: [],
+      auth: {
+        type: 'cookie',
+        oauth: {
+          scope: [],
+        },
+        token: {
+          refreshHeaders: [],
+        },
+        cookie: {
+          uri: 'https://6d5eff63dc32.ngrok.io/acumaticadb2020r2/entity/auth/login',
+          body: '{"name": "admin","password": "admin","company": ""}',
+          method: 'POST',
+          successStatusCode: 204,
+        },
+      },
+    },
+  }];
+  draft.session.mapping.mapping = {
+    mappings: [
       {
         generate: 'Type.value',
         hardCodedValue: 'test',
+        isRequired: true,
+        key: 'vS6-ynPit',
       },
       {
         extract: '0',
         generate: 'CustomerID.value',
+        isRequired: true,
+        key: 'o3n59YkmOg',
       },
       {
         extract: 'amount',
         generate: 'CashAccount.value',
+        isRequired: true,
+        key: 'dLTt6FeqL6',
       },
       {
         extract: 'automatic',
         generate: 'PaymentAmount.value',
+        isRequired: true,
+        key: 'Ox-3XikhBO',
       },
     ],
-  },
-  adaptorType: 'RESTImport',
-}];
-initialStore.getState().data.resources.connections = [{
-  _id: '5d529bfbdb0c7b14a6011a55',
-  type: 'ftp',
-  name: 'Test Connection 1',
-  offline: true,
-  ftp: {
-    type: 'sftp',
-    hostURI: 'celigo.files.com',
-    username: 'chaitanyareddy.mule@celigo.com',
-    password: '******',
-    port: 22,
-    usePassiveMode: true,
-    userDirectoryIsRoot: false,
-    useImplicitFtps: true,
-    requireSocketReUse: false,
-  },
-},
-{
-  _id: '5d70b2d8b0cc4065d0982c55',
-  type: 'rest',
-  name: 'Test Connection 2',
-  assistant: 'acumatica',
-  offline: true,
-  _integrationId: '5f8f000a6eb5c6461949c155',
-  isHTTP: false,
-  http: {
-    formType: 'assistant',
-    mediaType: 'json',
-    requestMediaType: 'xml',
-    baseURI: 'https://6d5eff63dc32.ngrok.io/acumaticadb2020r2/entity/Default/20.200.001',
-    concurrencyLevel: 1,
-    ping: {
-      relativeURI: '/FinancialPeriod',
-      method: 'GET',
-      successValues: [],
-      failValues: [],
-    },
-    headers: [
+    lookups: [],
+    v2TreeData: [
       {
-        name: 'content-type',
-        value: 'application/json',
+        key: 'ml-gFzRkzBkLtLpXcnt5I',
+        isEmptyRow: true,
+        title: '',
+        disabled: false,
+        dataType: 'string',
       },
     ],
-    unencrypted: {
-      endpointName: 'Default',
-      endpointVersion: '20.200.001',
-      username: 'admin',
-      company: '',
-    },
-    encrypted: '******',
-    encryptedFields: [],
-    auth: {
-      type: 'cookie',
-      oauth: {
-        scope: [],
+    expandedKeys: [],
+    flowId: '60e8509f7d1015493bcabf55',
+    importId: '5fe2f66953d36d03e6210255',
+    status: 'received',
+    isGroupedSampleData: false,
+    isMonitorLevelAccess: false,
+    version: 1,
+    requiredMappings: [
+      'Type.value',
+      'CustomerID.value',
+      'CashAccount.value',
+      'PaymentAmount.value',
+    ],
+    importSampleData: {
+      CashAccount: {
+        value: '10200',
       },
-      token: {
-        refreshHeaders: [],
+      CustomerID: {
+        value: 'JOHNGOOD',
       },
-      cookie: {
-        uri: 'https://6d5eff63dc32.ngrok.io/acumaticadb2020r2/entity/auth/login',
-        body: '{"name": "admin","password": "admin","company": ""}',
-        method: 'POST',
-        successStatusCode: 204,
+      PaymentAmount: {
+        value: 0,
+      },
+      Type: {
+        value: 'Payment',
       },
     },
-  },
-}];
-initialStore.getState().session.mapping.mapping = {
-  mappings: [
-    {
-      generate: 'Type.value',
-      hardCodedValue: 'test',
-      isRequired: true,
-      key: 'vS6-ynPit',
-    },
-    {
-      extract: '0',
-      generate: 'CustomerID.value',
-      isRequired: true,
-      key: 'o3n59YkmOg',
-    },
-    {
-      extract: 'amount',
-      generate: 'CashAccount.value',
-      isRequired: true,
-      key: 'dLTt6FeqL6',
-    },
-    {
-      extract: 'automatic',
-      generate: 'PaymentAmount.value',
-      isRequired: true,
-      key: 'Ox-3XikhBO',
-    },
-  ],
-  lookups: [],
-  v2TreeData: [
-    {
-      key: 'ml-gFzRkzBkLtLpXcnt5I',
-      isEmptyRow: true,
-      title: '',
-      disabled: false,
-      dataType: 'string',
-    },
-  ],
-  expandedKeys: [],
-  flowId: '60e8509f7d1015493bcabf55',
-  importId: '5fe2f66953d36d03e6210255',
-  status: 'received',
-  isGroupedSampleData: false,
-  isMonitorLevelAccess: false,
-  version: 1,
-  requiredMappings: [
-    'Type.value',
-    'CustomerID.value',
-    'CashAccount.value',
-    'PaymentAmount.value',
-  ],
-  importSampleData: {
-    CashAccount: {
-      value: '10200',
-    },
-    CustomerID: {
-      value: 'JOHNGOOD',
-    },
-    PaymentAmount: {
-      value: 0,
-    },
-    Type: {
-      value: 'Payment',
-    },
-  },
-  isGroupedOutput: false,
-  mappingsCopy: [
-    {
-      generate: 'Type.value',
-      hardCodedValue: 'test',
-      isRequired: true,
-      key: 'vS6-ynPit',
-    },
-    {
-      extract: '0',
-      generate: 'CustomerID.value',
-      isRequired: true,
-      key: 'o3n59YkmOg',
-    },
-    {
-      extract: 'amount',
-      generate: 'CashAccount.value',
-      isRequired: true,
-      key: 'dLTt6FeqL6',
-    },
-    {
-      extract: 'automatic',
-      generate: 'PaymentAmount.value',
-      isRequired: true,
-      key: 'Ox-3XikhBO',
-    },
-  ],
-};
+    isGroupedOutput: false,
+    mappingsCopy: [
+      {
+        generate: 'Type.value',
+        hardCodedValue: 'test',
+        isRequired: true,
+        key: 'vS6-ynPit',
+      },
+      {
+        extract: '0',
+        generate: 'CustomerID.value',
+        isRequired: true,
+        key: 'o3n59YkmOg',
+      },
+      {
+        extract: 'amount',
+        generate: 'CashAccount.value',
+        isRequired: true,
+        key: 'dLTt6FeqL6',
+      },
+      {
+        extract: 'automatic',
+        generate: 'PaymentAmount.value',
+        isRequired: true,
+        key: 'Ox-3XikhBO',
+      },
+    ],
+  };
+});
 
 async function initMappingDrawerRoute(props) {
   const ui = (

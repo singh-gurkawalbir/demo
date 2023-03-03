@@ -5,7 +5,7 @@ import { Typography, makeStyles, Divider } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
@@ -15,6 +15,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const metadata = {
   useColumns: () => [
@@ -149,9 +150,9 @@ function QueuedJobs({ connectionId }) {
       </div>
       <div className={classes.info}>
         {connectionJobs && connectionJobs.length > 0 ? (
-          <CeligoTable data={connectionJobs} {...metadata} />
+          <CeligoTable data={customCloneDeep(connectionJobs)} {...metadata} />
         ) : (
-          <Typography variant="body1">{messageStore('NO_PENDING_QUEUED_JOBS')}</Typography>
+          <Typography variant="body1">{message.JOBS.NO_PENDING_QUEUED_JOBS}</Typography>
         )}
       </div>
     </div>

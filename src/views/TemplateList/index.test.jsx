@@ -5,7 +5,7 @@ import { screen, cleanup, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import TemplateList from '.';
-import { reduxStore, renderWithProviders } from '../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 import * as utils from '../../utils/resource';
 import { ConfirmDialogProvider } from '../../components/ConfirmDialog';
@@ -13,22 +13,24 @@ import { ConfirmDialogProvider } from '../../components/ConfirmDialog';
 let initialStore;
 
 function store(templates) {
-  initialStore.getState().data.resources.templates = templates;
-  initialStore.getState().data.resources.integrations = [{
-    _id: '5ffad3d1f08d35214ed200g7',
-    lastModified: '2021-01-22T08:40:45.731Z',
-    name: 'concur expense',
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '5cd51efd3607fe7d8eda9c88',
-      '5feafe6bf415e15f455dbc89',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2021-01-10T10:15:45.184Z',
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.templates = templates;
+    draft.data.resources.integrations = [{
+      _id: '5ffad3d1f08d35214ed200g7',
+      lastModified: '2021-01-22T08:40:45.731Z',
+      name: 'concur expense',
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c88',
+        '5feafe6bf415e15f455dbc89',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-10T10:15:45.184Z',
+    }];
+  });
 }
 
 async function initTemplateList(props) {
@@ -99,7 +101,7 @@ describe('template List', () => {
     const headingNode = screen.getByRole('heading', {name: 'Templates'});
 
     expect(headingNode).toBeInTheDocument();
-    const noTemplatesTextNode = screen.getByText('You don\'t have any templates');
+    const noTemplatesTextNode = screen.getByText("You don't have any templates.");
 
     expect(noTemplatesTextNode).toBeInTheDocument();
   });

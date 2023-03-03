@@ -5,18 +5,20 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSelectWithInput from './DynaSelectWithInput';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form.someformKey = {value: {fieldForMediaType: 'json'}};
+mutateStore(initialStore, draft => {
+  draft.session.form.someformKey = {value: {fieldForMediaType: 'json'}};
 
-initialStore.getState().data.resources.connections = [{
-  _id: 'someconnectionId',
-  http: {
-    type: 'Amazon-Hybrid',
-  },
-}];
+  draft.data.resources.connections = [{
+    _id: 'someconnectionId',
+    http: {
+      type: 'Amazon-Hybrid',
+    },
+  }];
+});
 
 const mockOnFieldChange = jest.fn();
 

@@ -4,7 +4,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import DynaScriptContent from './DynaScriptContent';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import scriptHookStubs from '../../../utils/scriptHookStubs';
 import actions from '../../../actions';
 
@@ -66,30 +66,31 @@ describe('dynaScriptContent UI test cases', () => {
     jest.clearAllMocks();
   });
   test('script content should be displayed in the script drawer', () => {
-    initialStore.getState().session.stage = {
-      new638538b6c7d76c583e7593da: {
-        master: null,
-        patch: [
-          {
-            op: 'replace',
-            path: '/_id',
-            value: 'new-uwmt5Mi92',
-            timestamp: 1657615760352,
-            scope: 'value',
-          },
-        ],
-      },
-    };
-    initialStore.getState().data.resources.scripts = [{
-      _id: 'new638538b6c7d76c583e7593da',
-      data: 'somedata',
-      lastModified: '2022-03-29T10:32:37.093Z',
-      createdAt: '2022-03-29T10:32:36.916Z',
-      content: '123',
-      name: 'Snowflake Data Warehouse Script [v1.1.1]',
-      description: 'Used by Snowflake Data Warehouse template',
-      _sourceId: '611f3c33e3488c6cb37b8bd1',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.session.stage = {
+        new638538b6c7d76c583e7593da: {
+          master: null,
+          patch: [
+            {
+              op: 'replace',
+              path: '/_id',
+              value: 'new-uwmt5Mi92',
+              timestamp: 1657615760352,
+            },
+          ],
+        },
+      };
+      draft.data.resources.scripts = [{
+        _id: 'new638538b6c7d76c583e7593da',
+        data: 'somedata',
+        lastModified: '2022-03-29T10:32:37.093Z',
+        createdAt: '2022-03-29T10:32:36.916Z',
+        content: '123',
+        name: 'Snowflake Data Warehouse Script [v1.1.1]',
+        description: 'Used by Snowflake Data Warehouse template',
+        _sourceId: '611f3c33e3488c6cb37b8bd1',
+      }];
+    });
     const data =
     {id: 'content',
       onFieldChange: mockOnFieldChange,
@@ -104,30 +105,31 @@ describe('dynaScriptContent UI test cases', () => {
   });
 
   test('mock on field change should be called when the script content is updated', () => {
-    initialStore.getState().session.stage = {
-      new638538b6c7d76c583e7593da: {
-        master: null,
-        patch: [
-          {
-            op: 'replace',
-            path: '/_id',
-            value: 'new-uwmt5Mi92',
-            timestamp: 1657615760352,
-            scope: 'value',
-          },
-        ],
-      },
-    };
-    initialStore.getState().data.resources.scripts = [{
-      _id: 'new638538b6c7d76c583e7593da',
-      data: 'somedata',
-      lastModified: '2022-03-29T10:32:37.093Z',
-      createdAt: '2022-03-29T10:32:36.916Z',
-      content: '123',
-      name: 'Snowflake Data Warehouse Script [v1.1.1]',
-      description: 'Used by Snowflake Data Warehouse template',
-      _sourceId: '611f3c33e3488c6cb37b8bd1',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.session.stage = {
+        new638538b6c7d76c583e7593da: {
+          master: null,
+          patch: [
+            {
+              op: 'replace',
+              path: '/_id',
+              value: 'new-uwmt5Mi92',
+              timestamp: 1657615760352,
+            },
+          ],
+        },
+      };
+      draft.data.resources.scripts = [{
+        _id: 'new638538b6c7d76c583e7593da',
+        data: 'somedata',
+        lastModified: '2022-03-29T10:32:37.093Z',
+        createdAt: '2022-03-29T10:32:36.916Z',
+        content: '123',
+        name: 'Snowflake Data Warehouse Script [v1.1.1]',
+        description: 'Used by Snowflake Data Warehouse template',
+        _sourceId: '611f3c33e3488c6cb37b8bd1',
+      }];
+    });
     const data =
     {id: 'content',
       onFieldChange: mockOnFieldChange,
@@ -179,29 +181,30 @@ describe('dynaScriptContent UI test cases', () => {
   });
 
   test('mock on field change should be called when content is uppdated in the empty script', () => {
-    initialStore.getState().session.stage = {
-      new638538b6c7d76c583e7593da: {
-        master: null,
-        patch: [
-          {
-            op: 'replace',
-            path: '/_id',
-            value: 'new-uwmt5Mi92',
-            timestamp: 1657615760352,
-            scope: 'value',
-          },
-        ],
-      },
-    };
-    initialStore.getState().data.resources.scripts = [{
-      _id: 'new638538b6c7d76c583e7593da',
-      data: 'somedata',
-      lastModified: '2022-03-29T10:32:37.093Z',
-      createdAt: '2022-03-29T10:32:36.916Z',
-      name: 'Snowflake Data Warehouse Script [v1.1.1]',
-      description: 'Used by Snowflake Data Warehouse template',
-      _sourceId: '611f3c33e3488c6cb37b8bd1',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.session.stage = {
+        new638538b6c7d76c583e7593da: {
+          master: null,
+          patch: [
+            {
+              op: 'replace',
+              path: '/_id',
+              value: 'new-uwmt5Mi92',
+              timestamp: 1657615760352,
+            },
+          ],
+        },
+      };
+      draft.data.resources.scripts = [{
+        _id: 'new638538b6c7d76c583e7593da',
+        data: 'somedata',
+        lastModified: '2022-03-29T10:32:37.093Z',
+        createdAt: '2022-03-29T10:32:36.916Z',
+        name: 'Snowflake Data Warehouse Script [v1.1.1]',
+        description: 'Used by Snowflake Data Warehouse template',
+        _sourceId: '611f3c33e3488c6cb37b8bd1',
+      }];
+    });
     const data =
     {id: 'content',
       onFieldChange: mockOnFieldChange,

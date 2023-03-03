@@ -4,7 +4,7 @@ import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
-import messageStore from '../../../../../utils/messageStore';
+import messageStore, {message} from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {isHTML} from '../../../../../utils/string';
@@ -104,7 +104,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
         })
       );
 
-      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
     },
 
     [dispatch, enquesnackbar, integrationId, licenseId]
@@ -114,7 +114,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
 
     confirmDialog({
       title: 'Request add-on',
-      message: messageStore('LICENSE_UPGRADE_REQUEST'),
+      message: message.SUBSCRIPTION.LICENSE_UPGRADE_REQUEST,
       buttons: [
         {label: 'Submit request', onClick: handleContactSales(addonName)},
         {label: 'Cancel', variant: 'text'},

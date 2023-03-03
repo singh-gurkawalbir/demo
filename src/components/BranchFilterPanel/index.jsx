@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -21,16 +21,19 @@ import {
   generateRulesState,
   generateIOFilterExpression,
   getFilterRuleId,
+  convertBoolean,
 } from '../AFE/Editor/panels/Filter/util';
 import OperandSettingsDialog from '../AFE/Editor/panels/Filter/OperandSettingsDialog';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
-import { safeParse } from '../../utils/string';
+import { safeParse, isNumber } from '../../utils/string';
+import customCloneDeep from '../../utils/customCloneDeep';
+import { message } from '../../utils/messageStore';
 
 const defaultData = {};
 
-export default function BranchFilterPanel({ editorId, position, event, rule }) {
+export default function BranchFilterPanel({ editorId, position, type, rule, handlePatchEditor }) {
   // console.log(editorId, rule, event);
   const qbuilder = useRef(null);
   const disabled = useSelector(state =>
@@ -41,7 +44,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
   );
 
   const skipEmptyRuleCleanup = useSelector(state => {
-    if (event === 'focusout') {
+    if (type === 'branchFilter') {
       const editorRule = selectors.editorRule(state, editorId);
 
       return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
@@ -56,24 +59,8 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
   const [rulesState, setRulesState] = useState({});
   const dispatch = useDispatch();
 
-  const patchEditor = useCallback(
-    value => {
-      if (event === 'focusout') {
-        dispatch(
-          actions.editor.patchRule(editorId, value, {
-            rulePath: `branches[${position}].inputFilter.rules`,
-          })
-        );
-      }
-      if (event === 'input') {
-        dispatch(actions.editor.patchRule(editorId, value || []));
-      }
-    },
-    [dispatch, event, position, editorId]
-  );
-
   const setSkipEmptyRuleCleanup = useCallback(() => {
-    if (event === 'focusout') {
+    if (type === 'branchFilter') {
     // console.log('setSkipEmptyRuleCleanup: ', position);
       dispatch(
         actions.editor.patchRule(editorId, true, {
@@ -81,11 +68,20 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
         })
       );
     }
-  }, [dispatch, event, position, editorId]);
+  }, [dispatch, type, position, editorId]);
 
   const patchEditorValidation = useCallback(
-    isInvalid => {
-      dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
+    error => {
+      const featurePatch = {
+        isInvalid: !!error?.length,
+        error,
+        disablePreview: !!error?.length,
+      };
+
+      if (error) {
+        featurePatch.result = undefined;
+      }
+      dispatch(actions.editor.patchFeatures(editorId, featurePatch));
     },
     [dispatch, editorId]
   );
@@ -116,16 +112,11 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
     })
       .filter(p => p.id && !p.id.includes('[*].'))
       .forEach(p => {
-        if (event === 'focusout') {
-          jsonPaths.push({ id: `settings.${p.id}`, type: p.type });
-        }
-        if (event === 'input') {
-          jsonPaths.push({ id: `settings.${p.id}` });
-        }
+        jsonPaths.push({ id: `settings.${p.id}`, type: p.type });
       });
 
     return jsonPaths;
-  }, [context, event, jsonData]);
+  }, [context, jsonData]);
 
   useEffect(() => {
     const rules = convertIOFilterExpression(rule, context);
@@ -160,11 +151,12 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
   };
 
   const handleFilterRulesChange = () => {
-    patchEditorValidation(!isValid());
     if (isValid()) {
+      // reset editor errors
+      patchEditorValidation();
       const rule = getRules();
 
-      patchEditor(rule);
+      handlePatchEditor(rule);
     }
   };
   const showOperandSettings = ({ rule, rhs }) => {
@@ -188,7 +180,11 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
           valueField.val(rulesState[ruleId].data.lhs.value).trigger('input');
         }
-        valueField.off(event).on(event, () => {
+        valueField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
+        valueField.off('change').on('change', () => {
           if (
             rule.operator &&
             (rule.operator.type === 'is_empty' ||
@@ -220,9 +216,13 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
             .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
             .trigger('input');
         }
+        expressionField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         expressionField
-          .off(event)
-          .on(event, () => handleFilterRulesChange());
+          .off('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -232,7 +232,8 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
       rule.$el
         .find('[name$=_filter]')
         .after(
-          '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+          // eslint-disable-next-line no-undef
+          `<img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`
         );
       rule.$el
         .find('.rule-filter-container img.settings-icon')
@@ -273,7 +274,11 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
 
     const valueField = rule.$el.find(`[name=${name}]`);
 
-    valueField.off(event).on(event, () => handleFilterRulesChange());
+    valueField.on(
+      'validationError.queryBuilder',
+      (_1, _2, error) => patchEditorValidation(error)
+    );
+    valueField.off('change').on('change', () => handleFilterRulesChange());
   };
   const updateUIForRHSRule = ({ name, rule = {} }) => {
     function updateUIForField(rule) {
@@ -303,7 +308,10 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
               .trigger('change');
           });
         }
-
+        field.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         field.off('change').on('change', () => handleFilterRulesChange());
       }
     }
@@ -329,10 +337,13 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
             .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
             .trigger('input');
         }
-
+        expressionField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         expressionField
-          .off(event)
-          .on(event, () => handleFilterRulesChange());
+          .off('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -364,6 +375,17 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
   };
 
   const validateRule = rule => {
+    const arithmeticOperators = [
+      'add',
+      'subtract',
+      'divide',
+      'multiply',
+      'modulo',
+      'ceiling',
+      'floor',
+      'number',
+      'abs',
+    ];
     const r = rule.data;
     const toReturn = {
       isValid: true,
@@ -377,29 +399,17 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
+          toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
         [op] = JSON.parse(r.lhs.expression);
 
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-            'abs',
-          ].includes(op)
-        ) {
+        if (arithmeticOperators.includes(op)) {
           r.lhs.dataType = 'number';
         } else if (op === 'epochtime') {
           r.lhs.dataType = 'epochtime';
@@ -421,29 +431,17 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
+          toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
         [op] = JSON.parse(r.rhs.expression);
 
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-            'abs',
-          ].includes(op)
-        ) {
+        if (arithmeticOperators.includes(op)) {
           r.rhs.dataType = 'number';
         } else if (op === 'epochtime') {
           r.rhs.dataType = 'epochtime';
@@ -459,6 +457,44 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
       return toReturn;
     }
 
+    if (r.rhs.type === 'value' || r.lhs.type === 'value') {
+      const {dataType: dataTypeRhs, value: valueRhs, type: typeRhs} = r.rhs;
+      const {dataType: dataTypeLhs, value: valueLhs, type: typeLhs} = r.lhs;
+
+      // skipping check for other data types because
+      // string: value will always be a string
+      // boolean: we convert boolean values automatically
+      // datetime: we don't have validations for datetime
+      if ((typeRhs === 'value' && dataTypeRhs === 'number' && !isNumber(valueRhs)) ||
+          (typeLhs === 'value' && dataTypeLhs === 'number' && !isNumber(valueLhs))) {
+        toReturn.isValid = false;
+        toReturn.error = message.FILTER_PANEL.INVALID_DATATYPE;
+
+        return toReturn;
+      }
+
+      if (typeRhs === 'value' && dataTypeRhs === 'boolean') {
+        const convertedValue = convertBoolean(valueRhs);
+
+        if (typeof convertedValue !== 'boolean') {
+          toReturn.isValid = false;
+          toReturn.error = convertedValue;
+
+          return toReturn;
+        }
+      }
+
+      if (typeLhs === 'value' && dataTypeLhs === 'boolean') {
+        const convertedValue = convertBoolean(valueLhs);
+
+        if (typeof convertedValue !== 'boolean') {
+          toReturn.isValid = false;
+          toReturn.error = convertedValue;
+
+          return toReturn;
+        }
+      }
+    }
     /*
       if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
         r.lhs.dataType = r.rhs.dataType = 'epochtime'
@@ -466,7 +502,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
       */
     if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
       toReturn.isValid = false;
-      toReturn.error = 'Data types of both the operands should match.';
+      toReturn.error = message.FILTER_PANEL.INVALID_DATATYPES_OPERANDS;
     }
 
     if (!toReturn.isValid) {
@@ -475,7 +511,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
       toReturn.isValid = false;
-      toReturn.error = 'Please select left operand.';
+      toReturn.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
     }
 
     if (!toReturn.isValid) {
@@ -484,7 +520,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
       toReturn.isValid = false;
-      toReturn.error = 'Please select right operand.';
+      toReturn.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
     }
 
     if (!toReturn.isValid) {
@@ -576,15 +612,16 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
               ? ''
               : rulesState[ruleId].data.rhs.value;
 
-          if (event === 'input' && rulesState[ruleId].data.rhs.dataType === 'string' && typeof rhsValue === 'string') {
+          if (rulesState[ruleId].data.rhs.dataType === 'string' && typeof rhsValue === 'string') {
             rhsValue = rhsValue?.replaceAll('"', '&quot;');
           }
 
-          return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
+          // eslint-disable-next-line no-undef
+          return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`;
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
-          const r = cloneDeep(rulesState[ruleId].data);
+          const r = customCloneDeep(rulesState[ruleId].data);
           let lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
@@ -792,7 +829,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
         }
       });
 
-      if (event === 'focusout') {
+      if (type === 'branchFilter') {
         qbContainer.queryBuilder({
           ...config,
           lang: {
@@ -804,13 +841,17 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
           rules,
         });
       }
-      if (event === 'input') {
+      if (type === 'ioFilter') {
         qbContainer.queryBuilder({
           ...config,
           filters: filtersConfig,
           rules,
         });
       }
+      qbContainer.on(
+        'validationError.queryBuilder',
+        (_1, _2, error) => patchEditorValidation(error)
+      );
       qbContainer
         .off('rulesChanged.queryBuilder')
         .on('rulesChanged.queryBuilder', () => {
@@ -821,7 +862,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
       // don't change the sequence of these events
       qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
-        if (event === 'focusout') {
+        if (type === 'branchFilter') {
           setSkipEmptyRuleCleanup();
         }
       });
@@ -859,7 +900,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
   // 2. only need to check if rule length=1.
   // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
   useEffect(() => {
-    if (event === 'focusout') {
+    if (type === 'branchFilter') {
     // iterate over rulesState and find empty rules
       if (!rulesState || skipEmptyRuleCleanup) return;
 
@@ -877,7 +918,7 @@ export default function BranchFilterPanel({ editorId, position, event, rule }) {
         // eslint-disable-next-line camelcase
           const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-          if (state.data.rhs.type !== 'value' || state.data.rhs.value || state.data.rhs.value === 0 || isSingleInputOperator) return;
+          if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
 
           const $emptyRule = state.rule;
 

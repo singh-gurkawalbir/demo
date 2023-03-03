@@ -20,7 +20,7 @@ import {
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
-import messageStore from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
@@ -179,17 +179,16 @@ export function* retrieveAppInitializationResources() {
   if (isMFASetupIncomplete) {
     // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
     // all other APIs are evaded
-    yield call(
+    return yield call(
       getResourceCollection,
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     );
-  } else {
-    yield all([
-      call(retrievingOrgDetails),
-      call(retrievingAssistantDetails),
-      call(retrievingHttpConnectorDetails),
-    ]);
   }
+  yield all([
+    call(retrievingOrgDetails),
+    call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
+  ]);
 
   yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
@@ -289,6 +288,9 @@ export function* initializeApp(opts) {
   // so that all components lazily fetches latest data
   if (opts?.reload) {
     yield put(actions.app.deleteDataState());
+  }
+  if (opts?.mfaVerifySuccess) {
+    yield put(actions.auth.mfaVerify.success());
   }
   try {
     yield call(retrieveAppInitializationResources);
@@ -485,6 +487,11 @@ export function* auth({ email, password }) {
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
+      yield call(setCSRFToken, apiAuthentications._csrf);
+      yield call(
+        getResourceCollection,
+        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+      );
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
@@ -524,7 +531,7 @@ export function* signup({payloadBody}) {
     });
 
     if (apiAuthentications.success) {
-      yield put(actions.auth.signupStatus('success', SIGN_UP_SUCCESS));
+      yield put(actions.auth.signupStatus('success', apiAuthentications.message || SIGN_UP_SUCCESS));
     }
   } catch (error) {
     let authError = inferErrorMessages(error?.message)?.[0];
@@ -537,6 +544,20 @@ export function* signup({payloadBody}) {
   }
 }
 
+export function* validateAndInitSession() {
+  const resp = yield call(validateSession);
+  let isUserAuthenticated = resp.authenticated;
+
+  if (resp.mfaRequired) {
+    isUserAuthenticated = resp.mfaVerified;
+  }
+
+  if (isUserAuthenticated) {
+    yield put(actions.auth.complete());
+    yield call(initializeApp);
+  }
+}
+
 export function* initializeSession({opts} = {}) {
   try {
     const resp = yield call(validateSession);
@@ -544,6 +565,9 @@ export function* initializeSession({opts} = {}) {
 
     if (resp.mfaRequired) {
       isUserAuthenticated = resp.mfaVerified;
+    }
+    if (opts?.switchAcc) {
+      yield put(actions.user.org.accounts.switchToComplete());
     }
     if (resp.authenticated) {
       const _csrf = yield call(getCSRFTokenBackend);
@@ -563,9 +587,12 @@ export function* initializeSession({opts} = {}) {
       // existing session is invalid
       const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
-      if (!isMFASetupIncomplete) {
+      if (opts?.switchAcc && resp.mfaRequired && !resp.mfaVerified) {
+        yield put(actions.auth.mfaRequired({...resp, isAccountUser: true, dontAllowTrustedDevices: true}));
+      } else if (!isMFASetupIncomplete) {
         yield put(actions.auth.logout(true));
-      } else {
+      }
+      if (isMFASetupIncomplete) {
         yield call(retrieveAppInitializationResources);
       }
     }
@@ -665,7 +692,7 @@ export function* linkWithGoogle({ returnTo }) {
 function* mfaVerify({ payload }) {
   const { code, trustDevice } = payload || {};
   const _csrf = yield call(getCSRFTokenBackend);
-  const authFailedMsg = messageStore('MFA_AUTH_FAILED');
+  const authFailedMsg = message.MFA.MFA_AUTH_FAILED;
 
   try {
     const status = yield call(apiCallWithRetry, {
@@ -678,7 +705,7 @@ function* mfaVerify({ payload }) {
     });
 
     if (status?.success) {
-      yield call(initializeSession);
+      yield call(initializeSession, {opts: {mfaVerifySuccess: true}});
 
       return yield put(actions.auth.mfaVerify.success());
     }
@@ -693,6 +720,7 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, validateAcceptInviteToken),
   takeEvery(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, submitAcceptInvite),
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
+  takeEvery(actionTypes.AUTH.VALIDATE_AND_INIT_SESSION, validateAndInitSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),

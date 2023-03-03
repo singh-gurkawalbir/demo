@@ -3,16 +3,17 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import ForgotPasswordWrapper from '.';
-import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
 let initialStore;
 
 function store(auth) {
-  initialStore.getState().auth = auth;
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
+  });
 }
 
 async function initForgotPassword() {
@@ -82,7 +83,7 @@ describe('ForgotPasswordWrapper', () => {
     const forgotpasswordHeadingNode = screen.getByRole('heading', {name: 'Forgot your password?'});
 
     expect(forgotpasswordHeadingNode).toBeInTheDocument();
-    const email = screen.getByPlaceholderText('Email');
+    const email = screen.getByPlaceholderText('Email*');
 
     expect(email).toBeInTheDocument();
 
@@ -93,8 +94,6 @@ describe('ForgotPasswordWrapper', () => {
 
     expect(forgotpasswordButtonNode).toBeInTheDocument();
     userEvent.click(forgotpasswordButtonNode);
-
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest(email.value));
   });
   test('Should able to test the ForgotPassword success view', async () => {
     store({

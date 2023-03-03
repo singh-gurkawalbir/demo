@@ -3,7 +3,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import RequestResetWrapper from '.';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
@@ -11,7 +11,9 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function store(session) {
-  initialStore.getState().session = session;
+  mutateStore(initialStore, draft => {
+    draft.session = session;
+  });
 }
 
 async function initResetPassword() {
@@ -111,7 +113,7 @@ describe('resetPassword', () => {
     const setpasswordHeadingNode = screen.getByRole('heading', {name: 'Reset password'});
 
     expect(setpasswordHeadingNode).toBeInTheDocument();
-    const password = screen.getByPlaceholderText('Password');
+    const password = screen.getByPlaceholderText('Enter new password*');
 
     expect(password).toBeInTheDocument();
 

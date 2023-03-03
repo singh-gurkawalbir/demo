@@ -1,16 +1,30 @@
 import { makeStyles, TextField, MenuItem } from '@material-ui/core';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
+import { isArray } from 'lodash';
 import TrashIcon from '../../../icons/TrashIcon';
 import AutoSuggest from '../DynaAutoSuggest';
+import MultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import SortableHandle from '../../../Sortable/SortableHandle';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import CeligoSelect from '../../../CeligoSelect';
 import AfeIcon from '../../../icons/AfeIcon';
 import CloseIcon from '../../../icons/CloseIcon';
+import FieldHelp from '../../FieldHelp';
 
 const emptySet = {};
+
+const RemoveButton = ({icon, index, disabled, r, keyName, valueName, handleDelete}) => (
+  <ActionButton
+    disabled={disabled || (!(r[keyName] || r[valueName]))}
+    id={`delete-${index}`}
+    data-test={`delete-${index}`}
+    tooltip="Delete"
+    onClick={handleDelete(r.key)}>
+    {icon}
+  </ActionButton>
+);
 
 const useStyles = makeStyles(theme => ({
   rowWrapper: {
@@ -62,7 +76,7 @@ export default function KeyValueRow(props) {
     keyConfig: suggestKeyConfig,
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
-
+  const showMultiSelectValue = r.isMultiSelect && (!r[valueName] || isArray(r[valueName]) || r.options.find(({value}) => value === r[valueName]));
   const rowComponentClasses = useStyles();
   const [showGripper, setShowGripper] = useState(false);
   const handleOnMouseEnter = useCallback(() => {
@@ -81,15 +95,13 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
+  const dataFields = useMemo(() => props?.paramMeta?.fields.reduce((dataMap, {id, description}) => ({...dataMap, [id]: description}), {}), [props?.paramMeta?.fields]);
+
   const closeComponent = isInlineClose ? (
-    <ActionButton
-      disabled={disabled || (!(r[keyName] || r[valueName]))}
-      id={`delete-${index}`}
-      data-test={`delete-${index}`}
-      tooltip="Delete"
-      onClick={handleDelete(r.key)}>
-      <CloseIcon />
-    </ActionButton>
+    <RemoveButton
+      icon={<CloseIcon />} index={index} disabled={disabled} r={r}
+      keyName={keyName}
+      valueName={valueName} handleDelete={handleDelete} />
   ) : undefined;
 
   return (
@@ -99,9 +111,7 @@ export default function KeyValueRow(props) {
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
     >
-      {enableSorting && (
-        <SortableHandle isVisible={showGripper} />
-      )}
+      {enableSorting && (<SortableHandle isVisible={showGripper} />)}
       <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer, {[rowComponentClasses.rowContainerWrapper]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
@@ -109,7 +119,7 @@ export default function KeyValueRow(props) {
           value={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
-                    // autoFocus={r.row === rowInd && isKey}
+          autoFocus={index === rowInd && isKey && dataFields && !dataFields[r[keyName]]}
           placeholder={keyPlaceholder || keyName}
           variant="filled"
           onFieldChange={(_, _value) =>
@@ -120,7 +130,7 @@ export default function KeyValueRow(props) {
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
           isEndSearchIcon={isEndSearchIcon}
-          showInlineClose={!r.disableRowKey ? closeComponent : <></>}
+          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={r.name} helpText={dataFields[r.name]} /></ActionButton>}
           />
 
         )}
@@ -140,23 +150,37 @@ export default function KeyValueRow(props) {
         )}
 
         { (r.isSelect || suggestValueConfig) && !showSortOrder && (
-        <AutoSuggest
-          disabled={disabled}
-          value={r[valueName]}
-          id={`${valueName}-${index}`}
-          data-test={`${valueName}-${index}`}
+        <div className={r.isSelect ? clsx(classes.dynaField, classes.dynaValueField) : ''}>
+          <AutoSuggest
+            disabled={disabled}
+            value={r[valueName]}
+            id={`${valueName}-${index}`}
+            data-test={`${valueName}-${index}`}
                 // autoFocus={r.row === rowInd && isKey}
-          placeholder={valueName}
-          variant="filled"
-          labelName={r.isSelect ? 'name' : suggestValueConfig.labelName}
-          valueName={r.isSelect ? 'value' : suggestValueConfig.valueName}
-          onFieldChange={(_, _value) =>
-            handleUpdate(r.key, _value, valueName)}
-          options={r.isSelect ? {suggestions: r.options} : { suggestions: suggestValueConfig.suggestions }}
-          fullWidth
+            placeholder={valueName}
+            variant="filled"
+            labelName={r.isSelect ? 'name' : suggestValueConfig.labelName}
+            valueName={r.isSelect ? 'value' : suggestValueConfig.valueName}
+            onFieldChange={(_, _value) =>
+              handleUpdate(r.key, _value, valueName)}
+            options={r.isSelect ? {suggestions: r.options} : { suggestions: suggestValueConfig.suggestions }}
+            fullWidth
               />
+        </div>
         )}
-        {!r.isSelect && !suggestValueConfig && !showSortOrder && (
+        { showMultiSelectValue && (
+        <div className={clsx(classes.dynaField, classes.dynaValueField)}>
+          <MultiSelect
+            disabled={disabled}
+            value={r[valueName]}
+            id={`${valueName}-${index}`}
+            name={`${valueName}-${index}`}
+            onFieldChange={(_, _value) => handleUpdate(r.key, _value, valueName)}
+            options={[{ items: r.options || [] }]}
+          />
+        </div>
+        )}
+        {!r.isSelect && !showMultiSelectValue && !suggestValueConfig && !showSortOrder && (
         <TextField
           disabled={disabled}
           autoFocus={index === rowInd && !isKey}
@@ -188,14 +212,11 @@ export default function KeyValueRow(props) {
         )}
 
         {showDelete && (
-        <ActionButton
-          disabled={disabled || (!(r[keyName] || r[valueName]))}
-          id={`delete-${index}`}
-          data-test={`delete-${index}`}
-          tooltip="Delete"
-          onClick={handleDelete(r.key)}>
-          <TrashIcon />
-        </ActionButton>
+        <RemoveButton
+          icon={<TrashIcon />}
+          index={index} disabled={disabled} r={r} keyName={keyName}
+          valueName={valueName} handleDelete={handleDelete}
+          />
         )}
         {handleEditorClick && (
           <ActionButton

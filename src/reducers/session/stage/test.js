@@ -39,15 +39,15 @@ describe('stage reducers', () => {
       const patch = { op: 'replace', path: '/name', value: 'ABC' };
       let state;
 
-      state = reducer(state, actions.resource.patchStaged(id, [patch], 'value'));
+      state = reducer(state, actions.resource.patchStaged(id, [patch]));
       state = reducer(
         state,
         actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
       );
       expect(state[id].patch).toHaveLength(2);
 
-      state = reducer(state, actions.resource.clearStaged(id, 'value'));
-      expect(state[id].patch).toEqual([{...patch, path: '/other', timestamp: expect.any(Number)}]);
+      state = reducer(state, actions.resource.clearStaged(id));
+      expect(state[id].patch).toBeUndefined();
     });
   });
   describe('STAGE_REMOVE action', () => {
@@ -122,20 +122,20 @@ describe('stage reducers', () => {
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
       });
       expect(pAndCState[id]).toEqual({
-        patch: [{ ...patch[0], scope: 'value', timestamp: expect.any(Number) }],
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
       });
     });
     test('should add patch with scope if none yet exist.', () => {
       const id = 123;
-      const patch = [{ op: 'replace', path: '/name', value: 'ABC', scope: 'value' }];
-      const state = reducer(undefined, actions.resource.patchStaged(id, patch, 'value'));
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const state = reducer(undefined, actions.resource.patchStaged(id, patch));
       const pAndCState = reducer(undefined, actions.resource.patchAndCommitStaged('exports', id, patch));
 
       expect(state[id]).toEqual({
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
       });
       expect(pAndCState[id]).toEqual({
-        patch: [{ ...patch[0], scope: 'value', timestamp: expect.any(Number) }],
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
       });
     });
     test('should add patches if none yet exist.', () => {
@@ -168,8 +168,8 @@ describe('stage reducers', () => {
       });
       expect(pAndCState[id]).toEqual({
         patch: [
-          { ...patch1[0], scope: 'value', timestamp: expect.any(Number) },
-          { ...patch2[0], scope: 'value', timestamp: expect.any(Number) },
+          { ...patch1[0], timestamp: expect.any(Number) },
+          { ...patch2[0], timestamp: expect.any(Number) },
         ],
       });
     });
@@ -202,7 +202,6 @@ describe('stage reducers', () => {
             op: 'replace',
             path: '/name',
             value: '123',
-            scope: 'value',
             timestamp: expect.any(Number),
           },
         ],
@@ -216,10 +215,10 @@ describe('stage reducers', () => {
       const conflict = [{ op: 'replace', path: '/name', value: 'ABC'}];
       const state = reducer(
         undefined,
-        actions.resource.commitConflict(id, conflict, 'value')
+        actions.resource.commitConflict(id, conflict)
       );
 
-      expect(state[id]).toEqual({ conflict, scope: 'value' });
+      expect(state[id]).toEqual({ conflict });
     });
 
     test('should add subsequent patch if id matches and patch exists', () => {

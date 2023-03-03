@@ -15,7 +15,6 @@ import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
 import processorLogic, { featuresMap } from '../../reducers/session/editors/processorLogic';
-import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
@@ -25,7 +24,7 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -321,7 +320,7 @@ export function* save({ id, context }) {
           ];
          */
 
-  const { foregroundPatches, backgroundPatches } = patches || {};
+  const { foregroundPatches, backgroundPatches, options } = patches || {};
 
   if (foregroundPatches && Array.isArray(foregroundPatches)) {
     for (let index = 0; index < foregroundPatches.length; index += 1) {
@@ -333,13 +332,13 @@ export function* save({ id, context }) {
         yield put(foregroundPatches[index].action);
       } else if (!!patch && !!resourceType && !!resourceId) {
         yield put(
-          actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE)
+          actions.resource.patchStaged(resourceId, patch)
         );
         const error = yield call(commitStagedChanges, {
           resourceType,
           id: resourceId,
-          scope: SCOPES.VALUE,
           context,
+          options,
         });
 
         // trigger save failed in case of error
@@ -375,9 +374,9 @@ export function* save({ id, context }) {
 
 export function* autoEvaluateProcessor({ id }) {
   const editor = yield select(selectors.editor, id);
-  const editorViolations = yield select(selectors.editorViolations, id);
+  const {dataError, ruleError} = (yield select(selectors.editorViolations, id)) || {};
 
-  if (!editor || (editorViolations && editorViolations.length)) {
+  if (!editor || dataError || ruleError) {
     return; // nothing to do...
   }
 
@@ -494,6 +493,7 @@ export function* requestEditorSampleData({
     parentId,
     mapper2RowKey,
     router,
+    integrationId,
   } = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
@@ -616,7 +616,7 @@ export function* requestEditorSampleData({
     }
     const flow = yield select(selectors.resource, 'flows', flowId);
 
-    body.integrationId = flow?._integrationId;
+    body.integrationId = flow?._integrationId || (integrationId !== STANDALONE_INTEGRATION.id ? integrationId : undefined);
 
     body.fieldPath = fieldId || filterPath;
 
@@ -660,8 +660,11 @@ export function* requestEditorSampleData({
       delete body.templateVersion;
     } else if (resourceType === 'iClients') {
       body.type = 'iclient';
-      body.connectionId = editor.connectionId;
       body.iClient = resource || {};
+
+      if (!isNewId(editor.connectionId)) {
+        body.connectionId = editor.connectionId;
+      }
 
       if (parentType) {
         body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;

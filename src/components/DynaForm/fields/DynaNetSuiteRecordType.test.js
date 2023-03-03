@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
@@ -36,15 +36,17 @@ describe("test suite for 'Record type' field in Netsuite", () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.imports = [{
-      _id: 'import123',
-      name: 'NS import',
-      netsuite_da: {
-        operation: 'add',
-        recordType: 'customer',
-      },
-      adaptorType: 'NetSuiteDistributedImport',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.imports = [{
+        _id: 'import123',
+        name: 'NS import',
+        netsuite_da: {
+          operation: 'add',
+          recordType: 'customer',
+        },
+        adaptorType: 'NetSuiteDistributedImport',
+      }];
+    });
 
     renderWithProviders(<DynaNetSuiteRecordType {...props} />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(props.resourceId, [
@@ -52,7 +54,7 @@ describe("test suite for 'Record type' field in Netsuite", () => {
         op: 'remove',
         path: '/netsuite_da/subrecords',
       },
-    ], 'value'));
+    ]));
     expect(screen.getByText('DynaRefreshableSelect')).toBeInTheDocument();
   });
 
@@ -67,11 +69,13 @@ describe("test suite for 'Record type' field in Netsuite", () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.imports = [{
-      _id: 'import123',
-      name: 'NS import',
-      adaptorType: 'NetSuiteDistributedImport',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.imports = [{
+        _id: 'import123',
+        name: 'NS import',
+        adaptorType: 'NetSuiteDistributedImport',
+      }];
+    });
 
     renderWithProviders(<DynaNetSuiteRecordType {...props} />, {initialStore});
     expect(mockDispatchFn).not.toHaveBeenCalled();

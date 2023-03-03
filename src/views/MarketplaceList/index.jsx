@@ -22,6 +22,7 @@ import getImageUrl from '../../utils/image';
 import PageContent from '../../components/PageContent';
 import { gridViewStyles } from '../Home/View/TileView/HomeCard';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
+import messageStore, { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   pageCenter: {
@@ -143,7 +144,7 @@ export default function MarketplaceList() {
         isPrompt: true,
         title: 'Confirm multiple installs',
         label: 'Tag',
-        message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
+        message: message.MARKETPLACE.MULTIPLE_INSTALLS,
         buttons: [
           {
             label: 'Install',
@@ -177,7 +178,7 @@ export default function MarketplaceList() {
         title: 'You have already used up your trial license',
         isHtml: true,
         allowedTags: ['b'],
-        message: 'Click <b>Request demo</b> to have someone contact you to learn more about your needs.',
+        message: message.MARKETPLACE.ALREADY_TRIAL_LICENCE,
         buttons: [
           {
             label: 'Request demo',
@@ -196,7 +197,7 @@ export default function MarketplaceList() {
         title: `This will start your ${connector.trialPeriod} days free trial plan`,
         isHtml: true,
         allowedTags: ['b'],
-        message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
+        message: messageStore('MARKETPLACE.TRIAL_PLAN', {connectorName: connector.name}),
         buttons: [
           {
             label: 'Start free trial',
@@ -259,7 +260,7 @@ export default function MarketplaceList() {
                 </FilledButton>
                 )}
                 {connector.canRequestDemo && (
-                <Tooltip title="Have a solutions consultant contact me to demonstrate how this Integration App will automate my business processes." placement="bottom">
+                <Tooltip title={message.MARKETPLACE.REQUEST_DEMO} placement="bottom">
                   <span>
                     <FilledButton
                       data-test="contactSales"

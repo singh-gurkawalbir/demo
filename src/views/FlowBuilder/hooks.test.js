@@ -5,7 +5,7 @@ import { Route, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
-import { renderWithProviders} from '../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import * as utils from '../../utils/resource';
 import * as flowcontext from './FlowBuilderBody/Context';
@@ -117,7 +117,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: 'newFlowID',
           patch: [{ op: 'replace', path: 'somePath', value: 'someValue' }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -133,7 +132,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: 'oldFlowID',
           patch: [{ op: 'replace', path: 'somePath', value: 'someValue' }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -149,7 +147,9 @@ describe('FlowBuilder hooks UI tests', () => {
     test('should test handle delete when type is PageProcessor', () => {
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.flows = flows;
+      mutateStore(initialStore, draft => {
+        draft.data.resources.flows = flows;
+      });
 
       renderWithProviders(
         <ConfirmDialogProvider>
@@ -166,7 +166,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageProcessors', value: [{ position: 'first' }, { position: 'third' }]}],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -177,7 +176,9 @@ describe('FlowBuilder hooks UI tests', () => {
     test('should test handle delete when type is PageGenerator', () => {
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.flows = flows;
+      mutateStore(initialStore, draft => {
+        draft.data.resources.flows = flows;
+      });
 
       renderWithProviders(
         <ConfirmDialogProvider>
@@ -194,7 +195,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageGenerators', value: [{ position: 'first' }, { position: 'third' }] }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -207,7 +207,9 @@ describe('FlowBuilder hooks UI tests', () => {
     test('should test useHandleMovePP dispatch calls', () => {
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.flows = flows;
+      mutateStore(initialStore, draft => {
+        draft.data.resources.flows = flows;
+      });
 
       renderWithProviders(<SomeComponent
         hook={useHandleMovePP} callHookWith={['5ea16c600e2fab71928a6152']} params={[{oldIndex: 0, newIndex: 2}]}
@@ -219,7 +221,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageProcessors', value: [{ position: 'sec' }, { position: 'third' }, { position: 'first' }] }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -232,7 +233,9 @@ describe('FlowBuilder hooks UI tests', () => {
     test('should test useHandleMovePG dispatch calls', () => {
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.flows = flows;
+      mutateStore(initialStore, draft => {
+        draft.data.resources.flows = flows;
+      });
 
       renderWithProviders(<SomeComponent
         hook={useHandleMovePG} callHookWith={['5ea16c600e2fab71928a6152']} params={[{oldIndex: 0, newIndex: 2}]}
@@ -244,7 +247,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageGenerators', value: [{ position: 'sec' }, { position: 'third' }, { position: 'first' }] }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -292,7 +294,6 @@ describe('FlowBuilder hooks UI tests', () => {
             },
           ],
           id: 'SomeNewFlowId',
-          scope: 'value',
         }
       );
     });
@@ -312,7 +313,6 @@ describe('FlowBuilder hooks UI tests', () => {
             { op: 'add', path: '/disabled', value: false },
           ],
           id: 'SomeNewFlowId',
-          scope: 'value',
         }
       );
     });
@@ -337,7 +337,6 @@ describe('FlowBuilder hooks UI tests', () => {
             },
           ],
           id: 'SomeNewFlowId',
-          scope: 'value',
         }
       );
     });

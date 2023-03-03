@@ -3,11 +3,11 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
 
 const emptyObj = {};
 export const useHFSetInitializeFormData = ({
@@ -151,6 +151,12 @@ function DynaAssistantOptions(props) {
     resourceContext.resourceType,
   ]);
 
+  const {isSkipSort, updatedselectOptionsItems} = useMemo(() => {
+    const isSkipSort = selectOptionsItems?.filter(option => option.value === 'create-update-id').length > 0;
+
+    return {isSkipSort, updatedselectOptionsItems: isSkipSort ? [...selectOptionsItems.slice(0, selectOptionsItems.length - 1).sort((a, b) => a.label.localeCompare(b.label)), selectOptionsItems[selectOptionsItems.length - 1]] : selectOptionsItems};
+  }, [selectOptionsItems]);
+
   useHFSetInitializeFormData(props);
 
   // I have to adjust value when there is no option with the matching value
@@ -188,12 +194,11 @@ function DynaAssistantOptions(props) {
         fieldDependencyMap = {
           exports: {
             resource: ['operation', 'version', 'exportType'],
-            operation: ['exportType', 'version'],
+            operation: ['exportType'],
             version: ['exportType'],
           },
           imports: {
             resource: ['version', 'operation', 'updateEndpoint', 'createEndpoint'],
-            operation: ['version'],
           },
         };
       }
@@ -239,12 +244,44 @@ function DynaAssistantOptions(props) {
           value: versions[0]._id,
         });
       }
+      if (assistantFieldType === 'operation' && versions?.length > 1) {
+        const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
+        const endpointDetails = resourceType === 'imports' ? getImportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData }) : getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
+
+        if (formContext.resource !== endpointDetails?._httpConnectorResourceIds?.[0]) {
+          patch.push({
+            op: 'replace',
+            path: '/assistantMetadata/resource',
+            value: endpointDetails?._httpConnectorResourceIds?.[0],
+          });
+        }
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versionOptionsForEndpoint?.[0]?.value,
+        });
+      }
+      // When version is changed corresponding resource and operation/endpoint ids
+      // needs to be updated to get correct operationDetails
+      if (assistantFieldType === 'version') {
+        const endpointDetails = resourceType === 'imports' ? getImportOperationDetails({...formContext, version: value, assistantData }) : getExportOperationDetails({...formContext, version: value, assistantData });
+
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/resource',
+          value: endpointDetails?._httpConnectorResourceIds?.[0],
+        });
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operation',
+          value: endpointDetails?.id,
+        });
+      }
 
       dispatch(
         actions.resource.patchStaged(
           resourceContext.resourceId,
           patch,
-          SCOPES.VALUE
         )
       );
 
@@ -266,7 +303,9 @@ function DynaAssistantOptions(props) {
         .map(field => ({ id: field.id, value: field.value }));
 
       allTouchedFields.push({ id, value });
-
+      if (id === 'assistantMetadata.operation') {
+        allTouchedFields.push({id: 'assistantMetadata.version', value: patch.find(({path}) => path === '/assistantMetadata/version')?.value || versions?.[0]._id });
+      }
       if (id === 'assistantMetadata.exportType') {
         if (value === 'delta') {
           setDefaultValuesForDelta('queryParams', queryParamsMeta, queryParams, allTouchedFields);
@@ -299,9 +338,10 @@ function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
-      options={[{ items: selectOptionsItems }]}
+      options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}
       disabled={disabled || (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && selectOptionsItems.length === 1)}
+      skipSort={isSkipSort}
     />
   );
 }
@@ -314,4 +354,3 @@ export default function WrappedContextConsumer(props) {
 
   return <DynaAssistantOptions {...form} {...props} />;
 }
-

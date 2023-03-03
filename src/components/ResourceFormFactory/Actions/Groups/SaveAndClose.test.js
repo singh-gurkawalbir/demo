@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
@@ -74,12 +74,15 @@ describe('test suite for SaveAndClose', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveAndClose({formKey, resourceType, resourceId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
@@ -96,26 +99,27 @@ describe('test suite for SaveAndClose', () => {
     const connectionId = 'zkdzj33';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-      value: {
-        '/_connectionId': connectionId,
-      },
-    };
-
-    initialStore.getState().data.resources = {
-      flows: [{
-        _id: flowId,
-        _integrationId: integrationId,
-      }],
-      integrations: [{
-        _id: integrationId,
-        _registeredConnectionIds: [],
-      }],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+        value: {
+          '/_connectionId': connectionId,
+        },
+      };
+      draft.data.resources = {
+        flows: [{
+          _id: flowId,
+          _integrationId: integrationId,
+        }],
+        integrations: [{
+          _id: integrationId,
+          _registeredConnectionIds: [],
+        }],
+      };
+    });
 
     await initSaveAndClose({formKey, resourceType: 'imports', resourceId: '287dgf', onCancel, flowId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
@@ -123,7 +127,7 @@ describe('test suite for SaveAndClose', () => {
     userEvent.click(saveButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Confirm replace')).toBeInTheDocument();
-    expect(screen.getByText('Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to replace the connection for this flow? Replacing a connection will cancel all jobs currently running.')).toBeInTheDocument();
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     userEvent.click(cancelButton);

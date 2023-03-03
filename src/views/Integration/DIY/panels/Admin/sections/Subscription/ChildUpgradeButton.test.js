@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import ChildUpgradeButton from './ChildUpgradeButton';
-import { renderWithProviders } from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../../test/test-utils';
 import actions from '../../../../../../../actions';
 import { getCreatedStore } from '../../../../../../../store';
 
@@ -27,26 +27,32 @@ jest.mock('react-router-dom', () => ({
 }));
 
 async function initChildUpgradeButton(props) {
-  initialStore.getState().session.integrationApps.upgrade = {
-    213: {
-      inQueue: true,
-    },
-    122: {
-      status: 'done',
-    },
-    253: {
-      status: 'inProgress',
-    },
-    123: {
-      inQueue: true,
-      showWizard: true,
-    },
-    645: {
-      inQueue: false,
-      showWizard: true,
-    },
-    childList: ['123', '122'],
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.upgrade = {
+      213: {
+        inQueue: true,
+      },
+      122: {
+        status: 'done',
+      },
+      253: {
+        status: 'inProgress',
+      },
+      123: {
+        inQueue: true,
+        showWizard: true,
+      },
+      645: {
+        inQueue: false,
+        showWizard: true,
+      },
+      childList: ['123', '122'],
+      878: {
+        status: 'error',
+        errMessage: 'some error',
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ChildUpgradeButton {...props} />
@@ -155,5 +161,21 @@ describe('ChildUpgradeButton Unit tests', () => {
     }));
     expect(mockHistoryPush).toBeCalledWith('baseUrl/changeEditions/child/645');
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
+  });
+  test('Should render in case of error', async () => {
+    const props = {
+      resource: {
+        id: '878',
+        changeEditionId: '32jn2na9',
+        name: 'Child IA',
+      },
+    };
+
+    await initChildUpgradeButton(props);
+
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.deleteStatus('878'));
+    const errorMessage = screen.getByRole('alert');
+
+    expect(errorMessage).toHaveTextContent('The upgrade for Child IA has failed. some error. Select the active upgrade button when you are ready to continue with your setup.');
   });
 });

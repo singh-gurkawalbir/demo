@@ -1,11 +1,27 @@
-import { values, keyBy, cloneDeep } from 'lodash';
+import { values, keyBy } from 'lodash';
 import parseLinkHeader from 'parse-link-header';
 import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
-import messageStore from './messageStore';
-import errorMessageStore from './errorStore';
+import { message } from './messageStore';
+import customCloneDeep from './customCloneDeep';
+
+export const UI_FIELDS = ['mockOutput', 'mockResponse'];
+export const RESOURCES_WITH_UI_FIELDS = ['exports', 'imports'];
+// accumulates all the UI fields from the resource
+export const fetchUIFields = (resource = {}) =>
+  UI_FIELDS.reduce((uiFields, field) => ({ ...uiFields, [field]: resource[field] }), {});
+
+export const resourceWithoutUIFields = resource => {
+  if (!resource || typeof resource !== 'object') return resource;
+
+  return Object.keys(resource).reduce((acc, key) => {
+    if (!UI_FIELDS.includes(key)) acc[key] = resource[key];
+
+    return acc;
+  }, {});
+};
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -58,6 +74,7 @@ export const appTypeToAdaptorType = {
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
+  van: 'VAN',
 };
 
 // the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
@@ -117,10 +134,12 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  VANExport: 'van',
   MongodbImport: 'mongodb',
   S3Import: 's3',
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
+  VANImport: 'van',
   RDBMSImport: 'rdbms',
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
@@ -348,6 +367,9 @@ export const isScriptIdUsedInResource = (resource, scriptId) => {
 
   return !!selectedHooks.find(hook => hook._scriptId === scriptId);
 };
+
+export const isSignUpAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_SIGNUP_EU : ALLOW_SIGNUP) === 'true';
+export const isGoogleSignInAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_GOOGLE_SIGNIN_EU : ALLOW_GOOGLE_SIGNIN) === 'true';
 
 /*
  * Returns Boolean
@@ -740,9 +762,9 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
   mappingOriginal,
   subrecords
 ) => {
-  let mapping = cloneDeep(mappingOriginal);
+  let mapping = customCloneDeep(mappingOriginal);
 
-  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
+  const subrecordsMap = customCloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {
@@ -1034,21 +1056,21 @@ export const validateAliasId = (aliasId, previousAliasId, aliases) => {
   if (!aliasId) {
     return {
       isValid: false,
-      message: messageStore('REQUIRED_MESSAGE'),
+      message: message.REQUIRED_MESSAGE,
     };
   }
 
   if (aliasId !== previousAliasId && aliases.some(ra => ra.alias === aliasId)) {
     return {
       isValid: false,
-      message: errorMessageStore('DUPLICATE_ALIAS_ERROR_MESSAGE'),
+      message: message.ALIAS.DUPLICATE_ALIAS_ERROR_MESSAGE,
     };
   }
 
   if (!/^[a-zA-Z0-9-_]+$/.test(aliasId)) {
     return {
       isValid: false,
-      message: errorMessageStore('ALIAS_VALIDATION_ERROR_MESSAGE'),
+      message: message.ALIAS.VALIDATION_ERROR_MESSAGE,
     };
   }
 

@@ -1,21 +1,36 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
+import LoadingNotification from '../../App/LoadingNotification';
+import LoadResource from '../LoadResource';
 
-export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
+export function LoadResourcesContent({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
-  const requiredResources = useMemo(() => typeof resources === 'string'
-    ? resources.split(',').map(r => r?.trim())
-    : resources,
+  const requiredResources = useMemo(() => {
+    if (resources) {
+      return typeof resources === 'string'
+        ? resources.split(',').map(r => r?.trim())
+        : resources;
+    }
+
+    return [];
+  },
   [resources]);
+
   const lazyLoadResources = useMemo(() => typeof lazyResources === 'string'
     ? lazyResources.split(',').map(r => r?.trim())
     : lazyResources,
   [lazyResources]);
+
+  // at many places, connection info is dependent on its linked iClient
+  // so we need to load iClients as well
+  if (requiredResources.includes('connections') || lazyLoadResources.includes('connections')) {
+    lazyLoadResources.push('iClients');
+  }
   const allResources = useMemo(() => [...requiredResources, ...lazyLoadResources], [requiredResources, lazyLoadResources]);
 
   const resourceStatus = useSelectorMemo(selectors.mkResourceStatus, allResources, integrationId);
@@ -38,5 +53,22 @@ export default function LoadResources({ children, resources, required, lazyResou
     return children || null;
   }
 
-  return spinner || null;
+  return spinner || (<LoadingNotification message="Loading" />);
+}
+
+export default function LoadResourcesWrappers(props) {
+  const { integrationId } = props;
+
+  if (integrationId) {
+    return (
+      <LoadResource
+        resourceType="integrations"
+        resourceId={integrationId}
+      >
+        <LoadResourcesContent {...props} />
+      </LoadResource>
+    );
+  }
+
+  return <LoadResourcesContent {...props} />;
 }

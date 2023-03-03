@@ -5,95 +5,97 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DynaChildLicense from './index';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaChildLicense(props = {}) {
-  initialStore.getState().data.resources.connectorLicenses = [
-    {
-      _id: '631f34e4798cc1729e8b5118',
-      expires: '2023-09-13T06:59:59.999Z',
-      created: '2022-09-12T13:32:20.066Z',
-      sandbox: false,
-      user: {
-        email: 'johnwick86@celigo.com',
+  mutateStore(initialStore, draft => {
+    draft.data.resources.connectorLicenses = [
+      {
+        _id: '631f34e4798cc1729e8b5118',
+        expires: '2023-09-13T06:59:59.999Z',
+        created: '2022-09-12T13:32:20.066Z',
+        sandbox: false,
+        user: {
+          email: 'johnwick86@celigo.com',
+        },
+        type: 'integrationApp',
+        _connectorId: '62667711385b5c5d57b88224',
       },
-      type: 'integrationApp',
-      _connectorId: '62667711385b5c5d57b88224',
-    },
-    {
-      _id: '636c8902b09587796065061a',
-      created: '2022-11-10T05:15:46.535Z',
-      user: {
-        email: 'johnwick86@celigo.com',
+      {
+        _id: '636c8902b09587796065061a',
+        created: '2022-11-10T05:15:46.535Z',
+        user: {
+          email: 'johnwick86@celigo.com',
+        },
+        type: 'integrationAppChild',
+        _parentId: '631f34e4798cc1729e8b5118',
+        _connectorId: '62667711385b5c5d57b88224',
       },
-      type: 'integrationAppChild',
-      _parentId: '631f34e4798cc1729e8b5118',
-      _connectorId: '62667711385b5c5d57b88224',
-    },
-    {
-      _id: '636c8931b095877960650638',
-      created: '2022-11-10T05:16:33.595Z',
-      user: {
-        email: 'johnwick86@celigo.com',
+      {
+        _id: '636c8931b095877960650638',
+        created: '2022-11-10T05:16:33.595Z',
+        user: {
+          email: 'johnwick86@celigo.com',
+        },
+        type: 'integrationAppChild',
+        _parentId: '631f34e4798cc1729e8b5118',
+        _connectorId: '62667711385b5c5d57b88224',
       },
-      type: 'integrationAppChild',
-      _parentId: '631f34e4798cc1729e8b5118',
-      _connectorId: '62667711385b5c5d57b88224',
-    },
-    {
-      _id: '636c8cabc2158f10a5f13ef8',
-      created: '2022-11-10T05:31:23.117Z',
-      opts: {
-        id: 'license',
+      {
+        _id: '636c8cabc2158f10a5f13ef8',
+        created: '2022-11-10T05:31:23.117Z',
+        opts: {
+          id: 'license',
+        },
+        user: {
+          email: 'johnwick86@celigo.com',
+        },
+        type: 'integrationAppChild',
+        _parentId: '631f34e4798cc1729e8b5118',
+        _connectorId: '62667711385b5c5d57b88224',
       },
-      user: {
-        email: 'johnwick86@celigo.com',
-      },
-      type: 'integrationAppChild',
-      _parentId: '631f34e4798cc1729e8b5118',
-      _connectorId: '62667711385b5c5d57b88224',
-    },
-  ];
+    ];
 
-  initialStore.getState().data.resources.connectors = [
-    {
-      _id: '62667711385b5c5d57b88224',
-      name: 'aaa',
-      contactEmail: 'johnwick86@celigo.com',
-      handle: 'c6a012f3',
-      published: false,
-      managed: false,
-      _integrationId: '62613797dd4afe56b599a2d1',
-      lastModified: '2022-04-25T12:09:29.152Z',
-      _sharedImportIds: [],
-      _sharedExportIds: [],
-      _iClientIdMap: [],
-      applications: [
-        'accelo',
-      ],
-      framework: 'twoDotZero',
-      twoDotZero: {
+    draft.data.resources.connectors = [
+      {
+        _id: '62667711385b5c5d57b88224',
+        name: 'aaa',
+        contactEmail: 'johnwick86@celigo.com',
+        handle: 'c6a012f3',
+        published: false,
+        managed: false,
         _integrationId: '62613797dd4afe56b599a2d1',
-        editions: [],
-        isParentChild: true,
+        lastModified: '2022-04-25T12:09:29.152Z',
+        _sharedImportIds: [],
+        _sharedExportIds: [],
+        _iClientIdMap: [],
+        applications: [
+          'accelo',
+        ],
+        framework: 'twoDotZero',
+        twoDotZero: {
+          _integrationId: '62613797dd4afe56b599a2d1',
+          editions: [],
+          isParentChild: true,
+        },
+        trialEnabled: false,
       },
-      trialEnabled: false,
-    },
-  ];
-  initialStore.getState().session.filters = {
-    connectorChildLicenses: {
-      sort: {
-        order: 'asc',
-        orderBy: 'status',
+    ];
+    draft.session.filters = {
+      connectorChildLicenses: {
+        sort: {
+          order: 'asc',
+          orderBy: 'status',
+        },
+        selected: {},
+        isAllSelected: false,
       },
-      selected: {},
-      isAllSelected: false,
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: 'connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118'}]}>
       <Route path="connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118">
@@ -156,6 +158,7 @@ describe('dynaChildLicense UI tests', () => {
     expect(screen.getByText('Integration ID')).toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();           // Table headers //
 
+    screen.debug(null, Infinity);
     expect(screen.getByText('11/10/2022 5:15:46 am')).toBeInTheDocument();           // value for one of the table row //
   });
   test('should make 2 dispatch calls on initial render', async () => {
@@ -192,7 +195,7 @@ describe('dynaChildLicense UI tests', () => {
 
     expect(createButton).toBeInTheDocument();
     userEvent.click(createButton);
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('new-Id', patchSet, 'value')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('new-Id', patchSet)));
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118/add/connectorLicenses/new-Id'));
   });
 });

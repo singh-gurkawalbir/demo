@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import ResourceFormWithStatusPanel from '.';
 import actions from '../../actions';
 import {getCreatedStore} from '../../store';
@@ -136,9 +136,11 @@ describe('resourceFormWithStatusPanel UI test', () => {
   async function readyStore() {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.imports = imports;
-    initialStore.getState().data.resources.exports = exports;
-    initialStore.getState().data.resources.connections = connections;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.imports = imports;
+      draft.data.resources.exports = exports;
+      draft.data.resources.connections = connections;
+    });
 
     return {store: initialStore};
   }
@@ -222,7 +224,7 @@ describe('resourceFormWithStatusPanel UI test', () => {
 
     renderWithStoreAsndProps(store, props);
 
-    store.dispatch(actions.resourceForm.showBundleInstallNotification('1.0', '/', 'exports', '5e74798ec2c20f66f05cd370'));
+    store.dispatch(actions.resourceForm.showBundleInstallNotification('/', 'exports', '5e74798ec2c20f66f05cd370'));
     const link = screen.getByRole('link');
 
     expect(link).toHaveAttribute('href', '/');

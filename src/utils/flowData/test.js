@@ -8,7 +8,6 @@ import {
   getCurrentSampleDataStageStatus,
   getSubsequentStages,
   getPreviewStageData,
-  getAddedLookupIdInFlow,
   getFlowUpdatesFromPatch,
   isRawDataPatchSet,
   isUIDataExpectedForResource,
@@ -285,48 +284,6 @@ describe('getPreviewStageData util', () => {
   });
 });
 
-describe('getAddedLookupIdInFlow util', () => {
-  test('should return undefined when the patchSet is empty', () => {
-    expect(getAddedLookupIdInFlow()).toBeUndefined();
-  });
-  test('should return undefined when the patchSet does not contain /pageProcessors/index which means no lookup has been added', () => {
-    const flowPatchSet = [{
-      op: 'replace',
-      path: '/lastModified',
-      value: '2020-12-03T11:49:53.921Z',
-    },
-    {
-      op: 'remove',
-      path: '/pageProcessors/0/responseMapping',
-    }];
-
-    expect(getAddedLookupIdInFlow(flowPatchSet)).toBeUndefined();
-  });
-  test('should return undefined when the patchSet has /pageProcessors/index but an import has been added to the flow', () => {
-    const flowPatchSet = [{
-      op: 'add',
-      path: '/pageProcessors/1',
-      value: {
-        type: 'import',
-        _importId: '1234',
-      },
-    }];
-
-    expect(getAddedLookupIdInFlow(flowPatchSet)).toBeUndefined();
-  });
-  test('should return exportId when the patchSet has /pageProcessors/index and a lookup has been added to the flow', () => {
-    const flowPatchSet = [{
-      op: 'add',
-      path: '/pageProcessors/12',
-      value: {
-        type: 'export',
-        _exportId: '1234',
-      },
-    }];
-
-    expect(getAddedLookupIdInFlow(flowPatchSet)).toBe('1234');
-  });
-});
 describe('getFlowUpdatesFromPatch util', () => {
   test('should return empty object when the patchSet is empty', () => {
     expect(getFlowUpdatesFromPatch()).toEqual({});
@@ -346,54 +303,132 @@ describe('getFlowUpdatesFromPatch util', () => {
   });
   test('should return sequence as true if the patchSet is related to modification of PG/PP of new flow format', () => {
     const addPG = [{
-      op: 'replace',
+      op: 'add',
       path: '/pageGenerators/0',
-      scope: 'value',
       value: { _exportId: '1234'},
     }];
     const deletePG = [{
       op: 'remove',
       path: '/pageGenerators/0/id',
-      scope: 'value',
     }, {
       op: 'remove',
       path: '/pageGenerators/0/_exportId',
-      scope: 'value',
     }, {
       op: 'add',
       path: '/pageGenerators/0/setupInProgress',
-      scope: 'value',
       value: true,
     }];
     const addPP = [{
       op: 'replace',
       path: '/routers/0/branches/0/pageProcessors/0',
-      scope: 'value',
       value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
     }];
     const deletePP = [{
       op: 'remove',
       path: '/routers/0/branches/0/pageProcessors/0',
-      scope: 'value',
+    }];
+    const addOldPP = [{
+      op: 'add',
+      path: '/pageProcessors/0',
+      value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
     }];
 
-    expect(getFlowUpdatesFromPatch(addPG)).toEqual({
-      responseMapping: false,
+    const expectedOutput = {
       sequence: true,
-    });
-    expect(getFlowUpdatesFromPatch(deletePG)).toEqual({
       responseMapping: false,
-      sequence: true,
-    });
-    expect(getFlowUpdatesFromPatch(addPP)).toEqual({
-      responseMapping: false,
-      sequence: true,
-    });
-    expect(getFlowUpdatesFromPatch(deletePP)).toEqual({
-      responseMapping: false,
-      sequence: true,
-    });
+      router: false,
+    };
+
+    expect(getFlowUpdatesFromPatch(addPG)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(deletePG)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addPP)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addOldPP)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(deletePP)).toEqual(expectedOutput);
   });
+  test('should return sequence as true if the pgs or pps are dragged and dropped to change the order', () => {
+    const ppOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageProcessors/0/type',
+        value: 'export',
+      }, {
+        op: 'replace',
+        path: '/pageProcessors/1/type',
+        value: 'import',
+      }, {
+        op: 'remove',
+        path: '/pageProcessors/0/_importId',
+      }, {
+        op: 'remove',
+        path: '/pageProcessors/1/_exportId',
+      }, {
+        op: 'add',
+        path: '/pageGenerators/0/_exportId',
+        value: 'expId1',
+      }, {
+        op: 'add',
+        path: '/pageProcessors/1/_importId',
+        value: 'impId1',
+      },
+    ];
+    const pgOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageGenerators/1/_exportId',
+        value: 'expId1',
+      },
+      {
+        op: 'replace',
+        path: '/pageGenerators/0/_exportId',
+        value: 'expId2',
+      },
+    ];
+    const pgOrderChangeWithSkipRetries = [
+      {
+        op: 'replace',
+        path: '/pageGenerators/1/_exportId',
+        value: 'expId1',
+      },
+      {
+        op: 'replace',
+        path: '/pageGenerators/0/_exportId',
+        value: 'expId2',
+      },
+      {
+        op: 'add',
+        path: '/pageGenerators/1/skipRetries',
+        value: false,
+      },
+      {
+        op: 'remove',
+        path: '/pageGenerators/0/skipRetries',
+        value: 'expId2',
+      },
+    ];
+
+    const lookupOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageProcessors/0/_exportId',
+        value: 'expId1',
+      }, {
+        op: 'replace',
+        path: '/pageProcessors/1/_exportId',
+        value: 'expId0',
+      },
+    ];
+    const expectedOutput = {
+      sequence: true,
+      responseMapping: false,
+      router: false,
+    };
+
+    expect(getFlowUpdatesFromPatch(ppOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(lookupOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(pgOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(pgOrderChangeWithSkipRetries)).toEqual(expectedOutput);
+  });
+
   test('should return responseMapping with resourceIndex if the patchSet has pageProcessors/resourceIndex/responseMapping as the path', () => {
     const flowPatchSet = [
       {
@@ -411,6 +446,7 @@ describe('getFlowUpdatesFromPatch util', () => {
         resourceIndex: 2,
       },
       sequence: false,
+      router: false,
     });
   });
   test('should return responseMapping with resourceIndex if the patchSet has responseMapping for new flow format', () => {
@@ -432,7 +468,93 @@ describe('getFlowUpdatesFromPatch util', () => {
         routerIndex: 0,
       },
       sequence: false,
+      router: false,
     });
+  });
+  test('should return router with deleted true when the patch has delete router patch', () => {
+    const removeRouterPatch1 = [
+      {op: 'remove', path: '/routers'},
+      {op: 'add', path: '/pageProcessors', value: {}},
+    ];
+
+    const removeRouterPatch2 = [
+      {op: 'remove', path: '/routers/0/branches/1'},
+      {op: 'remove', path: '/routers/0/routeRecordsTo'},
+      {op: 'remove', path: '/routers/0/routeRecordsUsing'},
+    ];
+    const removeRouterPatch3 = [
+      {op: 'replace', path: '/routers/0/branches/0/pageProcessors', value: {}},
+      {op: 'replace', path: '/routers/0/branches/0/nextRouterId', value: 'ecQ3RZiQFOy'},
+      {op: 'remove', path: '/routers/1'},
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        deleted: true,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(removeRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(removeRouterPatch2)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(removeRouterPatch3)).toEqual(expectedOutput);
+  });
+  test('should return router with updated true and respective router index updated when the patch has update router patch', () => {
+    const updateRouterPatch1 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {} },
+    ];
+    const updateRouterPatch2 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'add', path: '/routers', value: {}},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {} },
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        updated: true,
+        routerIndex: 0,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(updateRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(updateRouterPatch2)).toEqual(expectedOutput);
+  });
+  test('should return router with updated true and respective router index updated when the router is added to the flow', () => {
+    const addRouterPatch1 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'add', path: '/routers', value: [{id: 'qUjQUKZpX8T'}]},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {}},
+    ];
+    const addRouterPatch2 = [
+      {op: 'remove', path: '/routers/0/script/function'},
+      {op: 'add', path: '/routers/0/branches/0/pageProcessors/0/id', value: '639a9d31a6ed283567403f40'},
+      {op: 'remove', path: '/routers/0/branches/0/name'},
+      {op: 'add', path: '/routers/0/branches/1'},
+      {op: 'replace', path: '/routers/0/id', value: 'zErvJOswDVO'},
+      {op: 'remove', path: '/routers/0/name'},
+      {op: 'add', path: '/routers/0/routeRecordsTo', value: 'first_matching_branch'},
+      {op: 'add', path: '/routers/0/routeRecordsUsing', value: 'input_filters'},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: { branches: [], script: {function: 'branching'}}},
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        updated: true,
+        routerIndex: 0,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(addRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addRouterPatch2)).toEqual(expectedOutput);
   });
 });
 describe('isRawDataPatchSet util', () => {
@@ -980,6 +1102,26 @@ describe('getResourceStageUpdatedFromPatch util', () => {
 
     expect(getResourceStageUpdatedFromPatch(hooksPatchSet)).toBe('preSavePage');
     expect(getResourceStageUpdatedFromPatch(transformPatchSet)).toBe('transform');
+  });
+  test('should return inputFilter stage if the patchSet has filter and resourceType is imports else outputFilter for exports', () => {
+    const patchSet = [{
+      path: '/filter',
+      op: 'replace',
+      value: {
+        type: 'expression',
+        expression: {
+          rules: [
+            'equals',
+            ['string', ['extract', 'userId']],
+            'id1',
+          ],
+          version: 1,
+        },
+      },
+    }];
+
+    expect(getResourceStageUpdatedFromPatch(patchSet, 'exports')).toBe('outputFilter');
+    expect(getResourceStageUpdatedFromPatch(patchSet, 'imports')).toBe('inputFilter');
   });
 });
 describe('getSampleFileMeta util', () => {

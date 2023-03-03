@@ -1,12 +1,13 @@
 import { put, select, call } from 'redux-saga/effects';
 import { selectors } from '../../../../reducers';
-import { SCOPES, updateFlowDoc } from '../../../resourceForm';
+import { updateFlowDoc } from '../../../resourceForm';
 import actions from '../../../../actions';
 import {
   getFlowUpdatesFromPatch,
   getResourceStageUpdatedFromPatch,
   getSubsequentStages,
   isRawDataPatchSet,
+  STAGES_TO_RESET_FLOW_DATA,
 } from '../../../../utils/flowData';
 import { emptyObject } from '../../../../constants';
 
@@ -15,7 +16,6 @@ export function* _updateResponseMapping({ flowId, resourceIndex, routerIndex, br
     selectors.resourceData,
     'flows',
     flowId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
   const { pageProcessors = [], routers = [] } = flow;
   let updatedResource;
@@ -75,16 +75,36 @@ export function* updateFlowOnResourceUpdate({
 
       yield call(_updateResponseMapping, { flowId: resourceId, resourceIndex, routerIndex, branchIndex });
     }
+    // Handles router update on flow
+    if (flowUpdates.router?.deleted) {
+      // Incase the router deleted, clean the entire flow data state
+      yield put(actions.flowData.clear(resourceId));
+    }
+    if (flowUpdates.router?.updated) {
+      // Incase the router updated, reset the state from the routerId onwards
+      const { routerIndex } = flowUpdates.router;
+      const updatedFlow = (yield select(selectors.resourceData, 'flows', resourceId))?.merged || emptyObject;
+      const routerId = updatedFlow.routers?.[routerIndex]?.id;
+
+      if (routerId) {
+        // Updates added/removed routers on the flow
+        yield put(actions.flowData.init(updatedFlow));
+        // Once updated, resets the flowData state from the routerId onwards
+        yield put(actions.flowData.resetStages(resourceId, routerId));
+      }
+    }
   }
 
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
     const stagesToReset = [];
-    const updatedStage = getResourceStageUpdatedFromPatch(patch);
+    const updatedStage = getResourceStageUpdatedFromPatch(patch, resourceType);
 
     // No need to update the resources if the patch set is a raw data patch set
     if (!isRawDataPatchSet(patch)) {
-    // If there is an updatedStage -> get list of all stages to update from that stage
-      if (updatedStage) {
+      // If there is an updatedStage -> get list of all stages to update from that stage
+      // If the stage is part of STAGES_TO_RESET_FLOW_DATA, then we need to reset the whole resource's state
+      // So we ignore listing all stages for this
+      if (updatedStage && !STAGES_TO_RESET_FLOW_DATA.includes(updatedStage)) {
         stagesToReset.push(updatedStage, ...getSubsequentStages(updatedStage, resourceType));
       }
       // else go ahead and update the whole resource's state as stagesToReset is []
@@ -129,7 +149,6 @@ export function* updateFlowData({ flowId }) {
     selectors.resourceData,
     'flows',
     flowId,
-    SCOPES.VALUE
   );
 
   if (updatedFlow) {

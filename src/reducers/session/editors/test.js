@@ -525,7 +525,6 @@ describe('editors reducers', () => {
           editorType: 'handlebars',
           stage: 'flowInput',
           autoEvaluate: true,
-          previewStatus: 'requested',
         },
       };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import { runServer } from '../../../test/api/server';
@@ -122,7 +122,6 @@ describe('PageGenerator UI tests', () => {
           { op: 'add', path: '/rdbmsAppType', value: undefined },
         ],
         id: 'somePGId',
-        scope: 'value',
       }
     );
 
@@ -158,7 +157,6 @@ describe('PageGenerator UI tests', () => {
           { op: 'add', path: '/rdbmsAppType', value: undefined },
         ],
         id: 'somePGId',
-        scope: 'value',
       }
     );
 
@@ -216,7 +214,6 @@ describe('PageGenerator UI tests', () => {
           { op: 'add', path: '/name', value: 'Data loader' },
         ],
         id: 'somePGId',
-        scope: 'value',
       }
     );
 
@@ -238,7 +235,9 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = exports;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = exports;
+    });
 
     renderFunction(pg, history, initialStore);
 
@@ -337,8 +336,10 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = exports;
-    initialStore.getState().data.resources.flows = flows;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = exports;
+      draft.data.resources.flows = flows;
+    });
 
     renderFunction(pg, history, initialStore);
 
@@ -362,8 +363,10 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = exports;
-    initialStore.getState().data.resources.flows = flows;
+    mutateStore(initialStore, draft => {
+      draft.data.resources.exports = exports;
+      draft.data.resources.flows = flows;
+    });
 
     renderWithProviders(
       <PageGenerator.WrappedComponent history={history} match={{url: 'someinitiaUrL', isExact: true}} {...pg} />,

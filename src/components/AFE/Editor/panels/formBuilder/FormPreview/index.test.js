@@ -2,7 +2,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import actions from '../../../../../../actions';
 import { getCreatedStore } from '../../../../../../store';
 
@@ -26,16 +26,20 @@ jest.mock('../../../../../DynaForm/DynaSubmit', () => ({
 const initialStore = getCreatedStore();
 
 function initFormPreview(props = {}) {
-  initialStore.getState().session.editors = {filecsv: {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    previewStatus: props.status,
-    result: {
-      data: 'custom value',
-    },
-  }};
+  const mustateState = draft => {
+    draft.session.editors = {filecsv: {
+      fieldId: 'file.csv',
+      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+      resourceId: '5b3c75dd5d3c125c88b5dd20',
+      resourceType: 'imports',
+      previewStatus: props.status,
+      result: {
+        data: 'custom value',
+      },
+    }};
+  };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<CsvGeneratePanel {...props} />, {initialStore});
 }

@@ -2,10 +2,11 @@
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {mockGetRequestOnce, reduxStore, renderWithProviders} from '../../../test/test-utils';
+import {mockGetRequestOnce, mutateStore, reduxStore, renderWithProviders} from '../../../test/test-utils';
 import RetryList from '.';
 import { runServer } from '../../../test/api/server';
 import { JOB_STATUS, JOB_TYPES } from '../../../constants';
+import messageStore, { message } from '../../../utils/messageStore';
 
 const initialStore = reduxStore;
 
@@ -53,65 +54,67 @@ function initRetryList({
     _connectionId: 'c3',
   }];
 
-  initialStore.getState().data.resources = {
-    flows,
-    exports,
-  };
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.profile = {
-    allowedToPublish: true,
-    developer: true,
-  };
-  initialStore.getState().user.org = {
-    accounts: [
-      {
-        accessLevel: 'owner',
-        _id: 'own',
-        ownerUser: {
-          licenses: [{
-            type: 'endpoint',
-            _id: 'license_id_1',
-            tier: 'premium',
-            endpoint: {
-              apiManagement: true,
-              production: {
-                numAddOnAgents: 2,
-                numAgents: 2,
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows,
+      exports,
+    };
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.profile = {
+      allowedToPublish: true,
+      developer: true,
+    };
+    draft.user.org = {
+      accounts: [
+        {
+          accessLevel: 'owner',
+          _id: 'own',
+          ownerUser: {
+            licenses: [{
+              type: 'endpoint',
+              _id: 'license_id_1',
+              tier: 'premium',
+              endpoint: {
+                apiManagement: true,
+                production: {
+                  numAddOnAgents: 2,
+                  numAgents: 2,
+                },
               },
-            },
-          }],
+            }],
+          },
         },
-      },
-    ],
-  };
-  initialStore.getState().data.integrationAShares = {
-    i1: [
-      {
-        _id: 'as1',
-        accepted: true,
-        accessLevel: 'manage',
-        sharedWithUser: {
-          _id: 'u1',
-          email: 'user1@celigo.com',
-          name: 'User1',
+      ],
+    };
+    draft.data.integrationAShares = {
+      i1: [
+        {
+          _id: 'as1',
+          accepted: true,
+          accessLevel: 'manage',
+          sharedWithUser: {
+            _id: 'u1',
+            email: 'user1@celigo.com',
+            name: 'User1',
+          },
         },
-      },
-      {
-        _id: 'as2',
-        accepted: true,
-        accessLevel: 'manage',
-        sharedWithUser: {
-          _id: 'u2',
-          email: 'user2@celigo.com',
-          name: 'User2',
+        {
+          _id: 'as2',
+          accepted: true,
+          accessLevel: 'manage',
+          sharedWithUser: {
+            _id: 'u2',
+            email: 'user2@celigo.com',
+            name: 'User2',
+          },
         },
-      },
-    ],
-  };
-  initialStore.getState().session.filters = filter;
+      ],
+    };
+    draft.session.filters = filter;
+  });
 
   const ui = (
     <MemoryRouter
@@ -152,9 +155,9 @@ describe('retryList UI tests', () => {
       props: {flowId: 'f2'},
       resourceId: 'e2',
     });
-
-    await waitFor(() => expect(screen.queryByText(/You don’t have any retries./i)).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByText(/Errors can be retried from the Open errors and Resolved errors tabs./i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(messageStore('NO_RESULT', {message: 'retries'}))).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(message.RETRY.ERRORS_RETRIEVE)).toBeInTheDocument());
+    // await waitFor(() => expect(screen.getByText(messageDisplay('RETRY.ERRORS_RETRIEVE'))).toBeInTheDocument());
   });
 
   test('should show a spinner if retries are requested', async () => {

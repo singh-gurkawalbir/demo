@@ -148,6 +148,7 @@ import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
+import DynaHFAssistantPathParams from './httpFramework/DynaHFAssistantPathParams';
 import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
@@ -160,8 +161,7 @@ import DynaSignupConsent from './DynaSignupConsent';
 import DynaSignupName from './DynaSignupName';
 import DynaSignupEmail from './DynaSignupEmail';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
-import DynaMockOutput from './DynaMockOutput';
-import DynaMockResponse from './DynaMockResponse';
+import DynaMockData from './DynaMockData';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 import DynaIClientHeaders from './DynaIClientHeaders';
@@ -169,6 +169,7 @@ import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
 import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
 import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
+import DynaHashAlgorithm from './DynaHashAlgorithm';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -293,7 +294,7 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  password: DynaPassword,
+  signinpassword: DynaPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
@@ -329,6 +330,7 @@ export default {
   integrationcloneselect: DynaIntegrationCloneSelect,
   hfoptions: DynaHFAssistantOptions,
   hfsearchparams: DynaHFAssistantSearchParams,
+  hfpathparams: DynaHFAssistantPathParams,
   semihfoperationselect: DynaSemiHFAssistantOperationSelect,
   amazonmwstype: DynaAmazonmwsType,
   mfamobilecode: DynaMFAMobileCode,
@@ -337,8 +339,8 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
-  mockoutput: DynaMockOutput,
-  mockResponse: DynaMockResponse,
+  mockoutput: DynaMockData,
+  mockResponse: DynaMockData,
   signupconsent: DynaSignupConsent,
   signupname: DynaSignupName,
   signupemail: DynaSignupEmail,
@@ -349,4 +351,5 @@ export default {
   shopifyheaderlink: DynaShopifyHeaderLink,
   ianameselect: DynaIANameSelect,
   shopifyconnectionselect: DynaShopifyConnectionSelect,
+  hashalgorithm: DynaHashAlgorithm,
 };

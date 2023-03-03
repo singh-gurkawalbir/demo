@@ -10,9 +10,9 @@ import DynaForm from '../../../..';
 import DynaSubmit from '../../../../DynaSubmit';
 import actions from '../../../../../../actions';
 import { getFormFieldMetadata } from './util';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import EditorDrawer from '../../../../../AFE/Drawer';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -107,7 +107,7 @@ function SubRecordDrawer(props) {
         expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression),
       };
       delete updatedFormValues.internalIdLookupExpression;
-      const updatedSubrecords = flow?.import?.netsuite?.subRecordImports || [];
+      const updatedSubrecords = customCloneDeep(flow?.import?.netsuite?.subRecordImports || []);
 
       if (referenceFieldId) {
         const srIndex = updatedSubrecords.findIndex(
@@ -133,7 +133,6 @@ function SubRecordDrawer(props) {
               value: updatedSubrecords,
             },
           ],
-          SCOPES.VALUE
         )
       );
       history.goBack();

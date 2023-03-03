@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import useFormOnCancelContext, { FormOnCancelProvider, useFormOnCancel } from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders} from '../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import { FORM_SAVE_STATUS } from '../../constants/resourceForm';
 
@@ -37,11 +37,13 @@ async function inituseFormOnCancel() {
   let returnData;
   const initialStore = getCreatedStore();
 
-  initialStore.getState().session.editors[key] = {
-    data: 'abc',
-    defaultData: 'def',
-  };
-  initialStore.getState().session.asyncTask[key] = { status };
+  mutateStore(initialStore, draft => {
+    draft.session.editors[key] = {
+      data: 'abc',
+      defaultData: 'def',
+    };
+    draft.session.asyncTask[key] = { status };
+  });
 
   const DummyComponent = () => {
     const { cancelTriggeredForAsyncKey } = useFormOnCancelContext(key);

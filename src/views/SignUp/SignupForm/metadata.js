@@ -39,9 +39,9 @@ export default function getFieldMeta(email) {
         placeholder: 'Phone',
         noApi: true,
       },
-      consent: {
-        id: 'consent',
-        name: 'consent',
+      agreeTOSAndPP: {
+        id: 'agreeTOSAndPP',
+        name: 'agreeTOSAndPP',
         type: 'signupconsent',
         required: true,
         label: 'Changes required',
@@ -54,7 +54,7 @@ export default function getFieldMeta(email) {
         'company',
         'role',
         'phone',
-        'consent',
+        'agreeTOSAndPP',
       ],
     },
   };

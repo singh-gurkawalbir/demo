@@ -4,7 +4,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../../actions';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 
 import OutputFormatsList from './OutputFormatsList';
@@ -12,15 +12,19 @@ import OutputFormatsList from './OutputFormatsList';
 const initialStore = getCreatedStore();
 
 function initOutputFormatsList(props = {}) {
-  initialStore.getState().session.mapping = {
-    mapping: {
-      version: 2,
-      isGroupedSampleData: props.sample,
-      isGroupedOutput: props.output,
-      importId: '5ea16cd30e2fab71928a6166',
-    },
+  const mustateState = draft => {
+    draft.session.mapping = {
+      mapping: {
+        version: 2,
+        isGroupedSampleData: props.sample,
+        isGroupedOutput: props.output,
+        importId: '5ea16cd30e2fab71928a6166',
+      },
+    };
+    draft.data.resources = {imports: [{_id: '5ea16cd30e2fab71928a6166', name: 'import1', file: {type: props.csv} }]};
   };
-  initialStore.getState().data.resources = {imports: [{_id: '5ea16cd30e2fab71928a6166', name: 'import1', file: {type: props.csv} }]};
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<OutputFormatsList {...props} />, {initialStore});
 }

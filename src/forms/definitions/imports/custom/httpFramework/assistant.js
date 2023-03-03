@@ -34,6 +34,20 @@ export default function assistantDefinition(
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
+
+      if (assistantMetadata.assistant === 'amazonsellingpartner') {
+        assistantMetadata.assistant = 'amazonmws';
+      }
+      if (assistantMetadata.assistant === 'recurlyv3') {
+        assistantMetadata.assistant = 'recurly';
+      }
+      if (assistantMetadata.assistant === 'loopreturnsv2') {
+        assistantMetadata.assistant = 'loopreturns';
+      }
+      if (assistantMetadata.assistant === 'acumaticaecommerce' || assistantMetadata.assistant === 'acumaticamanufacturing') {
+        assistantMetadata.assistant = 'acumatica';
+      }
+
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
@@ -57,6 +71,15 @@ export default function assistantDefinition(
         delete importDoc['/assistant'];
       }
       otherFormValues['/mockResponse'] = safeParse(otherFormValues['/mockResponse']);
+      if (Array.isArray(importDoc?.['/assistantMetadata']?.operation)) {
+        importDoc['/http/_httpConnectorEndpointIds'] = importDoc['/assistantMetadata'].operation;
+        importDoc['/http/_httpConnectorResourceId'] = importDoc['/assistantMetadata'].resource;
+        importDoc['/http/_httpConnectorVersionId'] = importDoc['/assistantMetadata'].version;
+      } else if (formValues['/assistantMetadata/operation'] && formValues['/assistantMetadata/operation'] !== 'create-update-id') {
+        importDoc['/http/_httpConnectorEndpointIds'] = [formValues['/assistantMetadata/operation']];
+        importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
+        importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
+      }
 
       return { ...otherFormValues, ...importDoc };
     },

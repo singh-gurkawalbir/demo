@@ -10,7 +10,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   isNewId } from '../../../utils/resource';
-import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import { getFormattedResourceForPreview, updateHTTP2Metadata } from '../../../utils/flowData';
 import {
   _fetchResourceInfoFromFormKey,
   extractFileSampleDataProps,
@@ -116,10 +116,12 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
     body.test = { limit: recordSize };
   }
 
+  const finalBody = updateHTTP2Metadata(body, formKey);
+
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
-      opts: { method: 'POST', body },
+      opts: { method: 'POST', body: finalBody },
       hidden: true,
     });
 
@@ -431,7 +433,7 @@ export function* _requestImportFileSampleData({ formKey }) {
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
-    const {userDefinitionId, options: fieldOptions} = fieldState;
+    const {userDefinitionId, options: fieldOptions} = fieldState || {};
     const { format, definitionId } = fieldOptions || {};
 
     const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {

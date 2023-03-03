@@ -6,7 +6,6 @@ import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import { TextButton } from '../../../../Buttons';
 import DynaSubmit from '../../../DynaSubmit';
 import getFormFieldMetadata from './util';
@@ -16,6 +15,7 @@ import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
 import ActionGroup from '../../../../ActionGroup';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 function SubRecordDrawer(props) {
   const history = useHistory();
@@ -76,7 +76,7 @@ function SubRecordDrawer(props) {
 
       updatedFormValues.recordType = recordType;
 
-      const updatedSubrecords = subrecords || [];
+      const updatedSubrecords = customCloneDeep(subrecords || []);
 
       if (fieldId) {
         const srIndex = updatedSubrecords.findIndex(
@@ -100,7 +100,6 @@ function SubRecordDrawer(props) {
               value: updatedSubrecords,
             },
           ],
-          SCOPES.VALUE
         )
       );
       history.goBack();

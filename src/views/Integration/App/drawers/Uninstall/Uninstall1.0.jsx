@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import { selectors } from '../../../../../reducers';
-import LoadResources from '../../../../../components/LoadResources';
+import LoadResource from '../../../../../components/LoadResource';
 import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';
 import InstallationStep from '../../../../../components/InstallStep';
@@ -19,6 +19,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import Loader from '../../../../../components/Loader';
 import Spinner from '../../../../../components/Spinner';
 import {HOME_PAGE_PATH} from '../../../../../constants';
+import messageStore, { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -105,7 +106,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   }, [dispatch, history, mode, integrationAppName, integrationId, isUninstallComplete, defaultSectionId, childId]);
 
   if (!integration || !integration._id) {
-    return <LoadResources required resources="integrations" />;
+    return <LoadResource resourceId={integrationId} resourceType="integrations" />;
   }
 
   if (error) {
@@ -192,8 +193,8 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
             {childName
-              ? `Complete the below steps to uninstall your integration app child ${childName}`
-              : 'Complete the below steps to uninstall your integration app.'}
+              ? messageStore('INTEGRATION.UNINSTALL_APP_CHILD', {childName})
+              : message.INTEGRATION.UNINSTALL}
           </Typography>
 
           <div className={classes.installIntegrationSteps}>

@@ -4,7 +4,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {renderWithProviders} from '../../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import SubscriptionSection from '.';
 import { getCreatedStore } from '../../../../../../../store';
 import { ConfirmDialogProvider } from '../../../../../../../components/ConfirmDialog';
@@ -13,59 +13,62 @@ import actions from '../../../../../../../actions';
 async function initSubscriptionSection(props = {}) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().data.resources.integrations = [{_id: '61604a5a8364267b8a378084', version: props.version, name: 'Amazon - NetSuite Connector', _connectorId: '58777a2b1008fb325e6c0953', initChild: {function: props.childSupport}, settings: {connectorEdition: 'starter', supportsMultiStore: true}}];
-  initialStore.getState().session = {integrationApps: {settings: {'61604a5a8364267b8a378084-addOns': {
-    status: 'received',
-    addOns: {
-      addOnMetaData: [
-        {
-          id: 'fbaInventoryAdjustment',
-          name: 'FBA Inventory Adjustments',
-          description: 'Manage your sellable and damaged inventory items. Track your inventory levels in NetSuite and minimize the chances of you underselling or overselling on Amazon and non-Amazon sales channels.',
-          installerFunction: 'installAddOn',
-          uninstallerFunction: 'uninstallAddOn',
-        },
-        {
-          id: 'transferOrder',
-          name: 'Transfer Order - InboundShipments',
-          installedOn: '2018-01-29T06:39:54.268Z',
-          description: 'Manage the Amazon inbound shipments, inbound shipment plans, and item receipts. This add-on sends a shipment of items from NetSuite to the Amazon FBA Warehouse and tracks back the shipment delivery status in NetSuite.',
-          installerFunction: 'installAddOn',
-          uninstallerFunction: 'uninstallAddOn',
-        },
-      ],
-      addOnLicenses: [{id: 'transferOrder'}],
-    },
-  }}}};
-  initialStore.getState().user.org.accounts = [{accessLevel: 'administrator',
-    _id: 'own',
-    ownerUser: {licenses: [{
-      _id: '5a6ec1bae9aaa11c9bc86106',
-      created: '2018-01-29T06:39:54.268Z',
-      lastModified: '2022-06-27T07:52:09.014Z',
-      expires: '2023-05-05T00:00:00.000Z',
-      type: 'connector',
-      _connectorId: '58777a2b1008fb325e6c0953',
-      opts: {
-        connectorEdition: props.edition,
-        addonLicenses: [
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [{_id: '61604a5a8364267b8a378084', version: props.version, name: 'Amazon - NetSuite Connector', _connectorId: '58777a2b1008fb325e6c0953', initChild: {function: props.childSupport}, settings: {connectorEdition: 'starter', supportsMultiStore: true}}];
+    draft.session = {integrationApps: {settings: {'61604a5a8364267b8a378084-addOns': {
+      status: 'received',
+      addOns: {
+        addOnMetaData: [
           {
-            type: 'store',
-            licenses: [
-              {
-                addOnEdition: 'premium',
-              },
-              {
-                addOnEdition: 'premium',
-              },
-            ],
+            id: 'fbaInventoryAdjustment',
+            name: 'FBA Inventory Adjustments',
+            description: 'Manage your sellable and damaged inventory items. Track your inventory levels in NetSuite and minimize the chances of you underselling or overselling on Amazon and non-Amazon sales channels.',
+            installerFunction: 'installAddOn',
+            uninstallerFunction: 'uninstallAddOn',
+          },
+          {
+            id: 'transferOrder',
+            name: 'Transfer Order - InboundShipments',
+            installedOn: '2018-01-29T06:39:54.268Z',
+            description: 'Manage the Amazon inbound shipments, inbound shipment plans, and item receipts. This add-on sends a shipment of items from NetSuite to the Amazon FBA Warehouse and tracks back the shipment delivery status in NetSuite.',
+            installerFunction: 'installAddOn',
+            uninstallerFunction: 'uninstallAddOn',
           },
         ],
+        addOnLicenses: [{id: 'transferOrder'}],
       },
-      upgradeText: 'Request upgrade',
-      _integrationId: '61604a5a8364267b8a378084',
-      resumable: false,
-    }]}}];
+    }}}};
+    draft.user.org.accounts = [{accessLevel: 'administrator',
+      _id: 'own',
+      ownerUser: {licenses: [{
+        _id: '5a6ec1bae9aaa11c9bc86106',
+        created: '2018-01-29T06:39:54.268Z',
+        lastModified: '2022-06-27T07:52:09.014Z',
+        expires: '2023-05-05T00:00:00.000Z',
+        type: 'connector',
+        _connectorId: '58777a2b1008fb325e6c0953',
+        opts: {
+          connectorEdition: props.edition,
+          addonLicenses: [
+            {
+              type: 'store',
+              licenses: [
+                {
+                  addOnEdition: 'premium',
+                },
+                {
+                  addOnEdition: 'premium',
+                },
+              ],
+            },
+          ],
+        },
+        upgradeText: 'Request upgrade',
+        _integrationId: '61604a5a8364267b8a378084',
+        resumable: false,
+      }]}}];
+  });
+
   const ui = (
     <MemoryRouter initialEntries={[{pathname: '/integrations/61604a5a8364267b8a378084/admin/sections/Order_MFN_/subscription'}]}>
       <Route path="/integrations/61604a5a8364267b8a378084/admin/sections/Order_MFN_/subscription">
@@ -139,6 +142,7 @@ describe('SubscriptionSection UI tests', () => {
       created: '2018-01-29T06:39:54.268Z',
       lastModified: '2022-06-27T07:52:09.014Z',
       nextPlan: '',
+      isHighestPlan: false,
       expires: '2023-05-05T00:00:00.000Z',
       type: 'connector',
       _connectorId: '58777a2b1008fb325e6c0953',

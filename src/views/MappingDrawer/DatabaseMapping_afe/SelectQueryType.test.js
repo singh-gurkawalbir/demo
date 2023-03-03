@@ -5,7 +5,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import SelectQueryType from './SelectQueryType';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initSelectQueryType({
   props = {
@@ -15,45 +15,46 @@ async function initSelectQueryType({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        adaptorType: 'RDBMSImport',
-        rdbms: {
-          queryType: [
-            'UPDATE',
-            'INSERT',
-          ],
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          adaptorType: 'RDBMSImport',
+          rdbms: {
+            queryType: [
+              'UPDATE',
+              'INSERT',
+            ],
+          },
         },
-      },
-      {
-        _id: 'import_id_1',
-        adaptorType: 'DynamodbImport',
-        dynamodb: {
-          method: 'putItem',
+        {
+          _id: 'import_id_1',
+          adaptorType: 'DynamodbImport',
+          dynamodb: {
+            method: 'putItem',
+          },
         },
-      },
-      {
-        _id: 'import_id_2',
-        adaptorType: 'RDBMSImport',
-        rdbms: {
-
+        {
+          _id: 'import_id_2',
+          adaptorType: 'RDBMSImport',
+          rdbms: {
+          },
         },
-      },
-      {
-        _id: 'import_id_3',
-        adaptorType: 'MongodbImport',
-        mongodb: {
-          method: 'insertMany',
+        {
+          _id: 'import_id_3',
+          adaptorType: 'MongodbImport',
+          mongodb: {
+            method: 'insertMany',
+          },
         },
-      },
-      {
-        _id: 'import_id_4',
-        adaptorType: 'NOTdbImport',
-      },
-    ],
-  };
+        {
+          _id: 'import_id_4',
+          adaptorType: 'NOTdbImport',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter

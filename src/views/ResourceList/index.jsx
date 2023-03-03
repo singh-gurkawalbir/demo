@@ -27,6 +27,7 @@ import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
+import LoadingNotification from '../../App/LoadingNotification';
 
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
@@ -54,6 +55,9 @@ const createdResouceLabelFn = (resourceType, resourceName) => {
 
   return createResourceLabel;
 };
+
+const spinner = <LoadingNotification message="Loading" />;
+
 export default function ResourceList(props) {
   const location = useLocation();
   const match = useRouteMatch();
@@ -162,7 +166,7 @@ export default function ResourceList(props) {
         </ActionGroup>
       </CeligoPageBar>
       <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
-        <LoadResources required resources={resourcesToLoad(resourceType)}>
+        <LoadResources required resources={resourcesToLoad(resourceType)} spinner={spinner} >
           <ResourceTableWrapper
             resourceType={resourceType}
             hasNoData={!list.count && !list.total}

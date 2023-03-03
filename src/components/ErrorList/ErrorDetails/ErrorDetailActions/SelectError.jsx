@@ -4,7 +4,7 @@ import { Checkbox, FormControlLabel, Tooltip } from '@material-ui/core';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import actions from '../../../../actions';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 export default function SelectError({
   flowId,
@@ -37,7 +37,7 @@ export default function SelectError({
 
   return (
     useMemo(() => (
-      <Tooltip title={tooltip || messageStore('SELECT_ERROR_HOVER_MESSAGE')}>
+      <Tooltip title={tooltip || message.ERROR_MANAGEMENT_2.SELECT_ERROR_HOVER_MESSAGE}>
         <FormControlLabel
           control={(
             <Checkbox

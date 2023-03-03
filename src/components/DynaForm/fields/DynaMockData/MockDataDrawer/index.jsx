@@ -16,7 +16,7 @@ import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import Panels from '../../../../PreviewPanel/Panels';
 import FieldHelp from '../../../FieldHelp';
 import PopulateWithPreviewData from '../../../../PopulateWithPreviewData';
-import {validateMockOutputField} from '../../../../../utils/flowDebugger';
+import {validateMockDataField} from '../../../../../utils/flowDebugger';
 import FieldMessage from '../../FieldMessage';
 import useResourceFormSampleData from '../../../../../hooks/useResourceFormSampleData';
 import ActionGroup from '../../../../ActionGroup';
@@ -70,13 +70,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MockOutputDrawerContent() {
+function MockDataDrawerContent() {
   const { formKey, fieldId } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId), shallowEqual);
-  const { value, disabled, resourceId, resourceType, isLoggable, flowId, required, isValid, label } = fieldState || {};
+  const { value, disabled, resourceId, resourceType, isLoggable, flowId, required, isValid, label, helpKey } = fieldState || {};
   const [errorMessage, setErrorMessage] = useState();
   const [editorContent, setEditorContent] = useState(value);
 
@@ -90,14 +90,14 @@ function MockOutputDrawerContent() {
 
   const handleUpdate = useCallback(newVal => {
     setEditorContent(newVal);
-    const errorMessage = validateMockOutputField(newVal);
+    const errorMessage = validateMockDataField(resourceType)(newVal);
 
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
       setErrorMessage();
     }
-  }, []);
+  }, [resourceType]);
 
   const handleDone = () => {
     dispatch(actions.form.fieldChange(formKey)(fieldId, editorContent));
@@ -108,13 +108,13 @@ function MockOutputDrawerContent() {
 
   return (
     <>
-      <DrawerHeader title="Mock output" handleClose={handleClose} />
+      <DrawerHeader title={label} handleClose={handleClose} />
       <DrawerContent className={classes.baseFormWithPreview}>
         <div {...isLoggableAttr(isLoggable)} >
           <div className={classes.headingWrapper}>
             <ActionGroup className={classes.title}>
               <Typography variant="body1" >
-                Mock output
+                {label}
               </Typography>
             </ActionGroup>
             <ActionGroup className={classes.title} position="right">
@@ -124,19 +124,19 @@ function MockOutputDrawerContent() {
                 formKey={formKey}
                 resourceType={resourceType}
                 resourceId={resourceId}
-                updateMockOutputContent={handleUpdate}
-            />
+                updateMockDataContent={handleUpdate}
+              />
             </ActionGroup>
           </div>
           <div className={classes.container}>
             <div className={classes.dynaEditorTextLabelWrapper}>
-              <FormLabel required={required} error={!isValid} >Mock output</FormLabel>
+              <FormLabel required={required} error={!isValid} >{label}</FormLabel>
               <FieldHelp
                 id={fieldId}
-                helpKey="mockOutput"
+                helpKey={helpKey}
                 label={label}
                 noApi
-            />
+              />
             </div>
             <div className={classes.inlineEditorContainer}>
               <CodeEditor
@@ -144,7 +144,8 @@ function MockOutputDrawerContent() {
                 value={editorContent}
                 mode="json"
                 readOnly={disabled}
-                onChange={handleUpdate} />
+                onChange={handleUpdate}
+              />
             </div>
             <FieldMessage
               errorMessages={errorMessage}
@@ -171,7 +172,7 @@ function MockOutputDrawerContent() {
       <DrawerFooter>
         <FilledButton
           data-test="saveContent"
-          disabled={value === editorContent || errorMessage}
+          disabled={value === editorContent || !!errorMessage}
           onClick={handleDone}>
           Done
         </FilledButton>
@@ -180,13 +181,13 @@ function MockOutputDrawerContent() {
   );
 }
 
-export default function MockOutputDrawer() {
+export default function MockDataDrawer() {
   return (
     <RightDrawer
       height="tall"
       width="full"
-      path={drawerPaths.EXPORT_MOCK_OUTPUT}>
-      <MockOutputDrawerContent />
+      path={drawerPaths.RESOURCE_MOCK_DATA}>
+      <MockDataDrawerContent />
     </RightDrawer>
   );
 }

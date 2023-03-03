@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import { ALIAS_FORM_KEY } from '../../../../../constants';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import TrashIcon from '../../../../icons/TrashIcon';
@@ -23,7 +23,7 @@ export default {
     const handleDelete = useCallback(() => {
       confirmDialog({
         title: 'Delete alias?',
-        message: messageStore('ALIAS_DELETE_CONFIRM_MESSAGE'),
+        message: message.ALIAS.DELETE_CONFIRM_MESSAGE,
         buttons: [
           {
             label: 'Delete alias',

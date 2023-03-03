@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../../actions';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import RulePanel from '.';
 
 const props = {editorId: 'readme', mode: 'html'};
@@ -20,7 +20,9 @@ describe('aFE RulePanel UI tests', () => {
 
   useDispatchSpy.mockReturnValue(mockDispatchFn);
   test('should pass the initial render when rules are changed', () => {
-    initialStore.getState().session.editors.readme = {editorType: 'readme', rule: '_ruleGoverningEditor'};
+    mutateStore(initialStore, draft => {
+      draft.session.editors.readme = {editorType: 'readme', rule: '_ruleGoverningEditor'};
+    });
     renderWithProviders(<RulePanel {...props} />, {initialStore});
     const codeRuleChangeBtn = screen.getByRole('button', {name: '_ruleGoverningEditor'});
 
