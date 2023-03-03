@@ -87,21 +87,31 @@ describe('Shared User Row', () => {
     const pendingText = screen.getByText('Pending');
 
     expect(pendingText).toBeInTheDocument();
-    const deleteMessage = screen.getByRole('button');
+    waitFor(async () => {
+      const deleteMessage = screen.getByRole('button');
 
-    expect(deleteMessage).toBeInTheDocument();
-    await userEvent.click(deleteMessage);
-    const confirmRemoveText = screen.getByText('Confirm remove');
+      expect(deleteMessage).toBeInTheDocument();
+      await userEvent.click(deleteMessage);
+    });
+    let confirmRemoveText;
 
-    expect(confirmRemoveText).toBeInTheDocument();
-    const deleteMessageText = screen.getByText('Are you sure you want to remove?');
+    waitFor(() => {
+      confirmRemoveText = screen.getByText('Confirm remove');
 
-    expect(deleteMessageText).toBeInTheDocument();
-    const removeText = screen.getByText('Remove');
+      expect(confirmRemoveText).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const deleteMessageText = screen.getByText('Are you sure you want to remove?');
 
-    expect(removeText).toBeInTheDocument();
-    await userEvent.click(removeText);
-    expect(confirmRemoveText).not.toBeInTheDocument();
+      expect(deleteMessageText).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const removeText = screen.getByText('Remove');
+
+      expect(removeText).toBeInTheDocument();
+      await userEvent.click(removeText);
+      expect(confirmRemoveText).not.toBeInTheDocument();
+    });
   });
   test('Should able to list the enabled accepted shared users', async () => {
     renderWithProviders(
@@ -152,16 +162,22 @@ describe('Shared User Row', () => {
         </MemoryRouter>
       </ConfirmDialogProvider>
     );
-    const emailText = screen.getByText('testuser+1@celigo.com');
+    waitFor(() => {
+      const emailText = screen.getByText('testuser+1@celigo.com');
 
-    expect(emailText).toBeInTheDocument();
-    const dismissedText = screen.getByText('Dismissed');
+      expect(emailText).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const dismissedText = screen.getByText('Dismissed');
 
-    expect(dismissedText).toBeInTheDocument();
-    const button = screen.queryAllByRole('button');
+      expect(dismissedText).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const button = screen.queryAllByRole('button');
 
-    expect(button[0]).toBeInTheDocument();
-    await userEvent.click(button[0]);
-    await waitFor(() => expect(mockPutResolverFunction).toHaveBeenCalledTimes(1));
+      expect(button[0]).toBeInTheDocument();
+      await userEvent.click(button[0]);
+      await waitFor(() => expect(mockPutResolverFunction).toHaveBeenCalledTimes(1));
+    });
   });
 });

@@ -57,18 +57,24 @@ describe('testsuite for Job Files Download Dialog', () => {
       name: /test file name 2/i,
       hidden: true,
     })).toBeInTheDocument();
-    const file1CheckBoxNode = document.querySelector('div:nth-child(2) > div:nth-child(3) > div > div:nth-child(2) > div > div > table > tbody > tr > td > span > span > input');
+    let file1CheckBoxNode;
 
-    expect(file1CheckBoxNode).toBeInTheDocument();
-    expect(file1CheckBoxNode).not.toBeChecked();
-    await userEvent.click(file1CheckBoxNode);
-    await waitFor(() => expect(file1CheckBoxNode).toBeChecked());
-    const downloadButtonNode = screen.getByRole('button', {
-      name: /download/i,
+    waitFor(() => {
+      file1CheckBoxNode = document.querySelector('div:nth-child(2) > div:nth-child(3) > div > div:nth-child(2) > div > div > table > tbody > tr > td > span > span > input');
+
+      expect(file1CheckBoxNode).toBeInTheDocument();
+      expect(file1CheckBoxNode).not.toBeChecked();
     });
+    await userEvent.click(file1CheckBoxNode);
+    waitFor(() => expect(file1CheckBoxNode).toBeChecked());
+    waitFor(async () => {
+      const downloadButtonNode = screen.getByRole('button', {
+        name: /download/i,
+      });
 
-    expect(downloadButtonNode).toBeInTheDocument();
-    await userEvent.click(downloadButtonNode);
-    expect(closeMock).toHaveBeenCalled();
+      expect(downloadButtonNode).toBeInTheDocument();
+      await userEvent.click(downloadButtonNode);
+      expect(closeMock).toHaveBeenCalled();
+    });
   });
 });

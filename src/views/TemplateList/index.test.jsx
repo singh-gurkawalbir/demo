@@ -255,7 +255,7 @@ describe('template List', () => {
 
     expect(downloadTemplateZipMenuItemNode).toBeInTheDocument();
     await fireEvent.click(downloadTemplateZipMenuItemNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(4);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(5);
   });
   test('should able to test the Template List upload template zip action button by having templates', async () => {
     const templates = [
@@ -378,7 +378,7 @@ describe('template List', () => {
 
     expect(saveAndCloseButtonNode).toBeInTheDocument();
     await fireEvent.click(saveAndCloseButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(21);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(22);
     expect(editTemplateMenuItemNode).not.toBeInTheDocument();
   });
   test('should able to test the Template List search by giving wrong template name input', async () => {

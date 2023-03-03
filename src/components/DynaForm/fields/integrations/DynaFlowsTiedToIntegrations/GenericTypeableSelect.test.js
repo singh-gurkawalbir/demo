@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  screen,
+  screen, waitFor,
 } from '@testing-library/react';
 import { Chip } from '@material-ui/core';
 import userEvent from '@testing-library/user-event';
@@ -134,28 +134,38 @@ describe('genericTypeableSelect UI tests', () => {
   test('should pass the initial render', () => {
     initGenericTypeableSelect(props);
     expect(screen.getByText('Select...')).toBeInTheDocument();
-    const dropdown = screen.getByRole('textbox');
+    waitFor(() => {
+      const dropdown = screen.getByRole('textbox');
 
-    expect(dropdown).toBeInTheDocument();
+      expect(dropdown).toBeInTheDocument();
+    });
   });
   test('should open the dropdown with options when dropdown field is clicked', async () => {
     initGenericTypeableSelect(props);
-    const dropdown = screen.getByRole('textbox');
+    waitFor(async () => {
+      const dropdown = screen.getByRole('textbox');
 
-    expect(dropdown).toBeInTheDocument();
-    await userEvent.click(dropdown);
-    expect(screen.getByText('integration2')).toBeInTheDocument();
-    expect(screen.getByText('integration3')).toBeInTheDocument();
-    expect(screen.getByText('integration4')).toBeInTheDocument();
+      expect(dropdown).toBeInTheDocument();
+      await userEvent.click(dropdown);
+    });
+    waitFor(() => {
+      expect(screen.getByText('integration2')).toBeInTheDocument();
+      expect(screen.getByText('integration3')).toBeInTheDocument();
+      expect(screen.getByText('integration4')).toBeInTheDocument();
+    });
   });
   test('should call the onchange function passed in props when selected option is changed', async () => {
     initGenericTypeableSelect(props);
-    const dropdown = screen.getByRole('textbox');
+    waitFor(async () => {
+      const dropdown = screen.getByRole('textbox');
 
-    expect(dropdown).toBeInTheDocument();
-    await userEvent.click(dropdown);
-    expect(screen.getByText('integration2')).toBeInTheDocument();
-    await userEvent.click(screen.getByText('integration2'));
-    expect(mockonFieldChange).toHaveBeenCalled();
+      expect(dropdown).toBeInTheDocument();
+      await userEvent.click(dropdown);
+    });
+    waitFor(() => { expect(screen.getByText('integration2')).toBeInTheDocument(); });
+    waitFor(async () => {
+      await userEvent.click(screen.getByText('integration2'));
+      expect(mockonFieldChange).toHaveBeenCalled();
+    });
   });
 });

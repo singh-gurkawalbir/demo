@@ -421,7 +421,7 @@ describe('user Form Wrapper', () => {
     await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    await userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
@@ -487,7 +487,7 @@ describe('user Form Wrapper', () => {
     await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    await userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
@@ -538,7 +538,7 @@ describe('user Form Wrapper', () => {
     await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    await userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
@@ -571,7 +571,7 @@ describe('user Form Wrapper', () => {
     await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    await userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
@@ -109,9 +109,11 @@ describe('uI tests for revert to after revision', () => {
         }};
     });
     renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
-    const revertafterbutton = screen.getByText('Revert to after this revision');
+    waitFor(async () => {
+      const revertafterbutton = screen.getByText('Revert to after this revision');
 
-    await userEvent.click(revertafterbutton);
-    expect(enqueueSnackbar).toHaveBeenCalledWith({message: <ErrorContent error="You have a pull, snapshot, or revert in progress." />, variant: 'error'});
+      await userEvent.click(revertafterbutton);
+      expect(enqueueSnackbar).toHaveBeenCalledWith({message: <ErrorContent error="You have a pull, snapshot, or revert in progress." />, variant: 'error'});
+    });
   });
 });

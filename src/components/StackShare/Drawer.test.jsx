@@ -51,7 +51,6 @@ describe('Invite Users UI tests', () => {
     const mockPostResolverFunction = jest.fn();
 
     mockGetRequestOnce('/api/sshares', (req, res, ctx) => {
-      console.log('####################################### inside mock request');
       mockResolverFunction();
 
       return res(ctx.json([]));
@@ -68,8 +67,9 @@ describe('Invite Users UI tests', () => {
     const refreshText = screen.getByText('Refresh');
 
     expect(refreshText).toBeInTheDocument();
-    await userEvent.click(refreshText);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
+    await userEvent.click(refreshText);
+    await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(2));
     const inviteStackUserText = screen.getByText('Invite user');
 
     expect(inviteStackUserText).toBeInTheDocument();

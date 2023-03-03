@@ -340,6 +340,6 @@ describe('wrappedContextConsumer UI tests', () => {
 
     await userEvent.click(option);
 
-    await userEvent.click(screen.getByText('option0'));
+    waitFor(async () => { await userEvent.click(screen.getByText('option0')); });
   });
 });

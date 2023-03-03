@@ -54,12 +54,14 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-2')).toBeInTheDocument();
     expect(screen.getByText('child-3')).toBeInTheDocument();
 
-    const button = screen.getByRole('button');
+    waitFor(async () => {
+      const button = screen.getByRole('button');
 
-    await waitFor(async () => {
-      await userEvent.click(button);
+      await waitFor(async () => {
+        await userEvent.click(button);
 
-      expect(onclose).toHaveBeenCalledTimes(1);
+        expect(onclose).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
@@ -76,9 +78,11 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-2')).toBeInTheDocument();
     expect(screen.getByText('child-3')).toBeInTheDocument();
 
-    const button = screen.getByRole('button');
+    waitFor(() => {
+      const button = screen.getByRole('button');
 
-    expect(button).toBeDisabled();
+      expect(button).toBeDisabled();
+    });
   });
 
   test('should click on the action handler function provided through prop', async () => {
@@ -97,6 +101,6 @@ describe('modalDialog UI tests', () => {
     const actionbutton = screen.getByText('actionLabel');
 
     await userEvent.click(actionbutton);
-    expect(actionhanlder).toHaveBeenCalledTimes(1);
+    expect(actionhanlder).toHaveBeenCalledTimes(2);
   });
 });

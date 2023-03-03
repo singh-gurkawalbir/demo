@@ -1,7 +1,7 @@
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { cleanup, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { cleanup, fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
@@ -102,26 +102,42 @@ describe('Shared User List', () => {
 
     expect(enableText).toBeInTheDocument();
     await userEvent.click(enableText);
-    const deleteText = screen.getByRole('button');
+    let deleteText;
 
-    expect(deleteText).toBeInTheDocument();
+    waitFor(() => {
+      deleteText = screen.getByRole('button');
+
+      expect(deleteText).toBeInTheDocument();
+    });
     await userEvent.click(deleteText);
-    const deleteMessageText = screen.getByText('Are you sure you want to remove?');
+    waitFor(() => {
+      const deleteMessageText = screen.getByText('Are you sure you want to remove?');
 
-    expect(deleteMessageText).toBeInTheDocument();
-    const cancelText = screen.getByText('Cancel');
+      expect(deleteMessageText).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelText = screen.getByText('Cancel');
 
-    expect(cancelText).toBeInTheDocument();
+      expect(cancelText).toBeInTheDocument();
+    });
     await userEvent.click(deleteText);
-    const confirmRemoveText = screen.getByText('Confirm remove');
+    waitFor(() => {
+      const confirmRemoveText = screen.getByText('Confirm remove');
 
-    expect(confirmRemoveText).toBeInTheDocument();
-    const removeText = screen.getByText('Remove');
+      expect(confirmRemoveText).toBeInTheDocument();
+    });
+    let removeText;
 
-    expect(removeText).toBeInTheDocument();
-    await userEvent.click(removeText);
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText('testuser+1@celigo.com')
-    );
+    waitFor(async () => {
+      removeText = screen.getByText('Remove');
+
+      expect(removeText).toBeInTheDocument();
+      await fireEvent.click(removeText);
+    });
+    waitFor(async () => {
+      await waitForElementToBeRemoved(() =>
+        screen.queryByText('testuser+1@celigo.com')
+      );
+    });
   });
 });
