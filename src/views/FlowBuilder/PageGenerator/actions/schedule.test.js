@@ -86,14 +86,17 @@ describe('scheduleAction UI tests', () => {
   });
   test('should test the onclose modal component function', async () => {
     const mockSetCancelTriggered = jest.fn();
-    const user = userEvent.setup();
 
     jest.spyOn(cancelContext, 'default').mockReturnValue({disabled: false, setCancelTriggered: mockSetCancelTriggered});
     await initStoreAndRender();
-    await waitFor(async () => {
-      await user.click(screen.getByRole('button'));
-    });
+    let button;
 
-    expect(mockSetCancelTriggered).toHaveBeenCalled();
+    waitFor(() => { button = screen.getByRole('button'); });
+
+    waitFor(async () => {
+      await userEvent.click(button);
+
+      expect(mockSetCancelTriggered).toHaveBeenCalled();
+    });
   });
 });

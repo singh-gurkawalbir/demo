@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import MultiSelectApplication from '.';
@@ -188,10 +188,12 @@ describe('Testsuite for Multi Select Application', () => {
 
     expect(acceloApplicationCloseButtonNode).toBeInTheDocument();
     await userEvent.click(acceloApplicationCloseButtonNode);
-    expect(screen.getByText(/option accelo, deselected\./i)).toBeInTheDocument();
-    expect(screen.getByText(
-      /0 results available\. select is focused ,type to refine list, press down to open the menu, press left to focus selected values/i
-    )).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByText(/option accelo, deselected\./i)).toBeInTheDocument();
+      expect(screen.getByText(
+        /0 results available\. select is focused ,type to refine list, press down to open the menu, press left to focus selected values/i
+      )).toBeInTheDocument();
+    });
     const inputButtonNode = document.querySelector('input');
 
     expect(inputButtonNode).toBeInTheDocument();

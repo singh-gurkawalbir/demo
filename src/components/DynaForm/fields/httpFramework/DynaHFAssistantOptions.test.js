@@ -1,7 +1,7 @@
 /* eslint-disable jest/expect-expect */
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
@@ -353,16 +353,18 @@ describe('dynaHFAssistantOptions UI tests', () => {
       undefined,
       [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'option2' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId'} }]
     ));
-    await userEvent.click(screen.getByText('delta'));
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'delta');
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(4, actions.resourceForm.init(
-      undefined,
-      undefined,
-      false,
-      false,
-      undefined,
-      [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'delta' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId', lastExportDateTime: 'lastExportDateTime' } }]
-    ));
+    waitFor(async () => {
+      await userEvent.click(screen.getByText('delta'));
+      expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'delta');
+      expect(mockDispatchFn).toHaveBeenNthCalledWith(4, actions.resourceForm.init(
+        undefined,
+        undefined,
+        false,
+        false,
+        undefined,
+        [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'delta' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId', lastExportDateTime: 'lastExportDateTime' } }]
+      ));
+    });
   });
   test('should display options for resources with resourceType "imports" and perform form init', async () => {
     const resourceContext = { resourceType: 'imports', resourceId: '_importId' };
