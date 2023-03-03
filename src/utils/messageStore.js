@@ -114,7 +114,7 @@ const USER_SIGN_IN = {
   SIGNIN_FAILED: 'Sign in failed. Please try again.',
   SIGNIN_REQUIRED: '{{label}} is required.',
   INVALID_FIRST_LAST_NAME: 'Please enter your first and last name.',
-  INVALID_EMAIL: 'Please enter a valid email address.',
+  INVALID_EMAIL: 'Please enter a valid email address',
 };
 // end region
 
