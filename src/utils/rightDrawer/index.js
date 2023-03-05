@@ -127,7 +127,7 @@ export const drawerPaths = {
   EDITOR: 'editor/:editorId',
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
   PREVIEW_PANEL_MOCK_INPUT: 'inputData',
-  EXPORT_MOCK_OUTPUT: 'mockOutput/:formKey/:fieldId',
+  RESOURCE_MOCK_DATA: 'mockData/:formKey/:fieldId',
   UPGRADE: {
     INSTALL: 'changeEditions/:type/:currentIntegrationId',
   },

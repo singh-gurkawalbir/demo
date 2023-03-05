@@ -69,8 +69,11 @@ export default function JavaScriptPanel({ editorId }) {
     useSelector(state => selectors.editorPreviewError(state, editorId), shallowEqual);
   const hasError = !!error;
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
+  const {flowId} = useSelector(state => selectors.editor(state, editorId));
+  const isIntegrationApp = !!useSelector(state => selectors.resource(state, 'flows', flowId)?._connectorId);
   const scriptContent = data?.merged?.content;
   const allScripts = useSelectorMemo(selectors.makeResourceListSelector, scriptFilterConfig).resources;
+  const fetchScript = scriptContent === undefined && !!scriptId && !isIntegrationApp;
   const patchRule = useCallback(
     val => {
       dispatch(actions.editor.patchRule(editorId, val));
@@ -117,10 +120,10 @@ export default function JavaScriptPanel({ editorId }) {
       // save a copy of _init_code for dirty checking
       patchObj._init_code = scriptContent;
       patchRule(patchObj);
-    } else if (scriptContent === undefined && scriptId) {
+    } else if (fetchScript) {
       requestScript();
     }
-  }, [scriptId, scriptContent, patchRule, requestScript, fetchScriptContent]);
+  }, [fetchScriptContent, patchRule, requestScript, scriptContent, fetchScript]);
 
   const defaultItem = (
     <MenuItem key="__placeholder" value="">
@@ -202,7 +205,7 @@ export default function JavaScriptPanel({ editorId }) {
         </div>
         {/* hide the script content */}
         <div className={classes.scriptPanel}>
-          {scriptContent === undefined && scriptId ? (
+          {fetchScript ? (
             <Spinner centerAll />
           ) : (
             <CodePanel

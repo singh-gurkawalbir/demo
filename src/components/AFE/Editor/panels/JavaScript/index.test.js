@@ -29,38 +29,64 @@ const initialStore = getCreatedStore();
 
 function initJavaScriptPanel(props = {}) {
   const mustateState = draft => {
-    draft.session.editors = {filecsv: {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      previewStatus: props.status,
-      insertStubKey: 'preSavePage',
-      rule: {
-        code: 'custom code',
-        entryFunction: 'preSavePage',
-        scriptId: '5b3c75dd5d3c125c88b5cc00',
+    draft.session.editors = {
+      filecsv: {
+        fieldId: 'file.csv',
+        formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+        resourceId: '5b3c75dd5d3c125c88b5dd20',
+        resourceType: 'imports',
+        previewStatus: props.status,
+        insertStubKey: 'preSavePage',
+        rule: {
+          code: 'custom code',
+          entryFunction: 'preSavePage',
+          scriptId: '5b3c75dd5d3c125c88b5cc00',
+        },
       },
-    },
-    '6b3c75dd5d3c125c88b5dd02': {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      previewStatus: props.status,
-      insertStubKey: 'preSavePage',
-      rule: {
-        code: 'custom code',
-        entryFunction: 'preSavePage',
-        scriptId: '7b3c75dd5d3c125c88b5cc01',
+      '6b3c75dd5d3c125c88b5dd02': {
+        fieldId: 'file.csv',
+        formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+        resourceId: '5b3c75dd5d3c125c88b5dd20',
+        resourceType: 'imports',
+        previewStatus: props.status,
+        insertStubKey: 'preSavePage',
+        rule: {
+          code: 'custom code',
+          entryFunction: 'preSavePage',
+          scriptId: '7b3c75dd5d3c125c88b5cc01',
+        },
       },
-    }};
+      'router-XZ7DSFgUTF2': {
+        editorType: 'router',
+        flowId: '629f0dcfccb94d35de6f436b',
+        resourceType: 'flows',
+        stage: 'router',
+        integrationId: '629f0dcfccb94d35de6f43w',
+        rule: {
+          name: '',
+          routeRecordsUsing: 'script',
+          id: 'XZ7DSFgUTF2',
+          script: {
+            _scriptId: '63daad2814f7cd246798635e',
+            function: 'branching',
+          },
+          scriptId: '63daad2814f7cd246798635e',
+          entryFunction: 'branching',
+        },
+        sampleDataStatus: 'received',
+        dataVersion: 2,
+      },
+    };
     draft.session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { fields: {
       'file.csv': {
         disabled: props.disabled,
       },
     },
     }};
+    draft.data.resources.flows = [{
+      _id: '629f0dcfccb94d35de6f436b',
+      _connectorId: '_connectorId',
+    }];
     draft.data.resources.scripts = [{
       _id: '5b3c75dd5d3c125c88b5cc00',
       name: 'script 1',
@@ -158,6 +184,15 @@ describe('javaScriptPanel UI tests', () => {
     expect(screen.getByText('custom code')).toBeInTheDocument();
     userEvent.click(screen.getByText('Code Panel'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {code: 'new code value'})));
+  });
+  test('should not make call for script content when resource belongs to integration App', async () => {
+    initJavaScriptPanel({editorId: 'router-XZ7DSFgUTF2', status: 'success'});
+    expect(mockDispatchFn).not.toHaveBeenCalledWith(
+      actions.resource.request('scripts', '63daad2814f7cd246798635e')
+    );
+    const inputFunction = screen.getByRole('textbox');
+
+    expect(inputFunction.getAttribute('value')).toBe('branching');
   });
   test('should make the repective dispatch call when script does not have content', async () => {
     initJavaScriptPanel({editorId: '6b3c75dd5d3c125c88b5dd02', status: 'success'});
