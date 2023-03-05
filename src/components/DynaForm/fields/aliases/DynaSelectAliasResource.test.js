@@ -165,14 +165,16 @@ describe('dynaAliasId UI tests', () => {
 
   test('should display all the valid flows when the aliasResourceType is "flows" and when clicked on the resource dropdown', async () => {
     initDynaSelect(props);
-    const dropBox = document.querySelector('[aria-haspopup="listbox"]');
+    waitFor(async () => {
+      const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
-    expect(dropBox).toBeInTheDocument();
+      expect(dropBox).toBeInTheDocument();
 
-    await userEvent.click(dropBox);
-    expect(screen.getByText('flow1')).toBeInTheDocument();
-    expect(screen.getByText('flow2')).toBeInTheDocument();
-    expect(screen.getByText('flow3')).toBeInTheDocument();
+      await userEvent.click(dropBox);
+      expect(screen.getByText('flow1')).toBeInTheDocument();
+      expect(screen.getByText('flow2')).toBeInTheDocument();
+      expect(screen.getByText('flow3')).toBeInTheDocument();
+    });
   });
   test('should only display the flows belonging to the integration in the above case', async () => {
     initDynaSelect(props);

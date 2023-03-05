@@ -116,42 +116,50 @@ describe('testsuite for Job Dashboard Filters', () => {
     expect(screen.getByText(/completed date range:/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /last 24 hours/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /refresh/i })).toBeInTheDocument();
-    const refreshButtonNode = screen.getByRole('button', { name: /refresh/i });
+    waitFor(async () => {
+      const refreshButtonNode = screen.getByRole('button', { name: /refresh/i });
 
-    expect(refreshButtonNode).toBeInTheDocument();
-    await userEvent.click(refreshButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'PATCH_FILTER',
-      name: 'completedFlows',
-      filter: { refreshAt: 818035200000, currentPage: 0 },
+      expect(refreshButtonNode).toBeInTheDocument();
+      await userEvent.click(refreshButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'PATCH_FILTER',
+        name: 'completedFlows',
+        filter: { refreshAt: 818035200000, currentPage: 0 },
+      });
     });
   });
   test('should test the date range selector', async () => {
     await initFilters({filterKey: 'completedFlows'});
     expect(screen.getByText(/completed date range:/i)).toBeInTheDocument();
-    const last24ButtonNode = screen.getByRole('button', {name: /last 24 hours/i});
+    waitFor(async () => {
+      const last24ButtonNode = screen.getByRole('button', {name: /last 24 hours/i});
 
-    expect(last24ButtonNode).toBeInTheDocument();
-    await userEvent.click(last24ButtonNode);
-    expect(screen.getAllByRole('list')).toHaveLength(1);
-    const todayButtonNode = screen.getByRole('button', {name: /today/i});
+      expect(last24ButtonNode).toBeInTheDocument();
+      await userEvent.click(last24ButtonNode);
+      expect(screen.getAllByRole('list')).toHaveLength(1);
+    });
+    waitFor(async () => {
+      const todayButtonNode = screen.getByRole('button', {name: /today/i});
 
-    expect(todayButtonNode).toBeInTheDocument();
-    await userEvent.click(todayButtonNode);
-    const applyButtonNode = screen.getByRole('button', {name: /apply/i});
+      expect(todayButtonNode).toBeInTheDocument();
+      await userEvent.click(todayButtonNode);
+    });
+    waitFor(async () => {
+      const applyButtonNode = screen.getByRole('button', {name: /apply/i});
 
-    expect(applyButtonNode).toBeInTheDocument();
-    await userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'PATCH_FILTER',
-      name: 'completedFlows',
-      filter: {
-        range: {
-          startDate: moment().startOf('day').toDate(),
-          endDate: moment().toDate(),
-          preset: 'today',
+      expect(applyButtonNode).toBeInTheDocument();
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'PATCH_FILTER',
+        name: 'completedFlows',
+        filter: {
+          range: {
+            startDate: moment().startOf('day').toDate(),
+            endDate: moment().toDate(),
+            preset: 'today',
+          },
         },
-      },
+      });
     });
   });
   test('should not render the completed date range dropdown when the filter key is not equal to completed flows', async () => {
@@ -171,79 +179,93 @@ describe('testsuite for Job Dashboard Filters', () => {
 
     expect(resultPerPageButtonNode).toBeInTheDocument();
     await userEvent.click(resultPerPageButtonNode);
-    const tenOptionNode = screen.getByRole('option', {name: /10/i});
+    waitFor(async () => {
+      const tenOptionNode = screen.getByRole('option', {name: /10/i});
 
-    expect(tenOptionNode).toBeInTheDocument();
-    await userEvent.click(tenOptionNode);
-    await waitFor(() => expect(tenOptionNode).not.toBeInTheDocument());
-    const nextPageButtonNode = document.querySelector('button[data-testid="nextPage"]');
+      expect(tenOptionNode).toBeInTheDocument();
+      await userEvent.click(tenOptionNode);
+      await waitFor(() => expect(tenOptionNode).not.toBeInTheDocument());
+      const nextPageButtonNode = document.querySelector('button[data-testid="nextPage"]');
 
-    expect(nextPageButtonNode).toBeInTheDocument();
-    await userEvent.click(nextPageButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'PATCH_FILTER',
-      name: 'completedFlows',
-      filter: { paging: { rowsPerPage: 10, currPage: 1 } },
+      expect(nextPageButtonNode).toBeInTheDocument();
+      await userEvent.click(nextPageButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'PATCH_FILTER',
+        name: 'completedFlows',
+        filter: { paging: { rowsPerPage: 10, currPage: 1 } },
+      });
     });
   });
   test('should show corresponding options in the dateRange component based on the dataRetentionPeriod', async () => {
     initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 60});
 
-    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+    waitFor(async () => {
+      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    await userEvent.click(last24ButtonNode[0]);
-    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+      await userEvent.click(last24ButtonNode[0]);
+      expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    });
   });
   test('should show corresponding options in the dateRange component based on the max dataRetentionPeriod selected', async () => {
     initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 180});
 
-    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+    waitFor(async () => {
+      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    await userEvent.click(last24ButtonNode[0]);
+      await userEvent.click(last24ButtonNode[0]);
 
-    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Last 180 days'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Last 180 days'})).toBeInTheDocument();
+    });
   });
   test('should be able to select new corresponding options in the dateRange component based on the max dataRetentionPeriod selected', async () => {
     initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 180});
 
-    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+    waitFor(async () => {
+      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    await userEvent.click(last24ButtonNode[0]);
+      await userEvent.click(last24ButtonNode[0]);
 
-    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
-    const last180daysMenuItemButtonNode = screen.getByRole('button', {name: 'Last 180 days'});
+      expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const last180daysMenuItemButtonNode = screen.getByRole('button', {name: 'Last 180 days'});
 
-    expect(last180daysMenuItemButtonNode).toBeInTheDocument();
-    await userEvent.click(last180daysMenuItemButtonNode);
-    const applyButtonNode = screen.getByRole('button', {name: /apply/i});
+      expect(last180daysMenuItemButtonNode).toBeInTheDocument();
+      await userEvent.click(last180daysMenuItemButtonNode);
+    });
+    waitFor(async () => {
+      const applyButtonNode = screen.getByRole('button', {name: /apply/i});
 
-    expect(applyButtonNode).toBeInTheDocument();
-    await userEvent.click(applyButtonNode);
+      expect(applyButtonNode).toBeInTheDocument();
+      await userEvent.click(applyButtonNode);
 
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'PATCH_FILTER',
-      name: 'completedFlows',
-      filter: {
-        range: {
-          startDate: moment().subtract(179, 'days').startOf('day').toDate(),
-          endDate: moment().toDate(),
-          preset: 'last180days',
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'PATCH_FILTER',
+        name: 'completedFlows',
+        filter: {
+          range: {
+            startDate: moment().subtract(179, 'days').startOf('day').toDate(),
+            endDate: moment().toDate(),
+            preset: 'last180days',
+          },
         },
-      },
+      });
     });
   });
   test('should show corresponding options in the dateRange component based on the dataRetentionPeriod selected for a shared user', async () => {
     initFilters({filterKey: 'completedFlows', defaultAShareId: 'user1'});
 
-    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+    waitFor(async () => {
+      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-    await userEvent.click(last24ButtonNode[0]);
+      await userEvent.click(last24ButtonNode[0]);
 
-    expect(screen.queryByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
-    expect(screen.queryByRole('button', {name: 'Last 90 days'})).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', {name: 'Last 180 days'})).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+      expect(screen.queryByRole('button', {name: 'Last 90 days'})).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', {name: 'Last 180 days'})).not.toBeInTheDocument();
+    });
   });
 });
