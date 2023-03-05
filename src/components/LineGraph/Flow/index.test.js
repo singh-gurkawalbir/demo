@@ -102,7 +102,7 @@ describe('flowChart UI Tests', () => {
     const {store} = renderWithProviders(<FlowCharts
       {...props} />);
 
-    store.dispatch(actions.user.profile.request());
+    act(() => { store.dispatch(actions.user.profile.request()); });
     await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
 
     return store;

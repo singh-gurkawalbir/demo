@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Router} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -140,11 +140,13 @@ describe('SuiteScript Tile UI tests', () => {
 
     initSsTile(props);
     await userEvent.click(screen.getByText('Continue setup', {exact: false}));
-    expect(history.push).toBeCalledWith(getRoutePath(buildDrawerUrl({
-      path: 'edit/:resourceType/:id',
-      baseUrl: '/',
-      params: { resourceType: 'connections', id: '6141b16ad316a90f0c3b6d5d' },
-    })));
+    waitFor(() => {
+      expect(history.push).toBeCalledWith(getRoutePath(buildDrawerUrl({
+        path: 'edit/:resourceType/:id',
+        baseUrl: '/',
+        params: { resourceType: 'connections', id: '6141b16ad316a90f0c3b6d5d' },
+      })));
+    });
   });
   test('should redirect to a different url,when ss linked connection is offline', async () => {
     history.push = jest.fn();

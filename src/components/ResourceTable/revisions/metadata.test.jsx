@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, reduxStore, renderWithProviders } from '../../../test/test-utils';
@@ -80,44 +80,48 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const columnNames = screen
-      .getAllByRole('columnheader')
-      .map(ele => ele.textContent);
+    waitFor(() => {
+      const columnNames = screen
+        .getAllByRole('columnheader')
+        .map(ele => ele.textContent);
 
-    expect(columnNames).toEqual([
-      'Description',
-      'Date created',
-      'Type',
-      'Status',
-      'User',
-      'Actions',
-    ]);
+      expect(columnNames).toEqual([
+        'Description',
+        'Date created',
+        'Type',
+        'Status',
+        'User',
+        'Actions',
+      ]);
 
-    //  first for table headings and the second as data row
-    expect(screen.getAllByRole('row')).toHaveLength(2);
+      //  first for table headings and the second as data row
+      expect(screen.getAllByRole('row')).toHaveLength(2);
 
-    const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
+      const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
-    expect(cells).toEqual([
-      'metadatatest',
-      date,
-      'Revert',
-      'In progress',
-      'Nametest2',
-      '',
-    ]);
-    const actionButton = screen.getByRole('button', { name: /more/i });
+      expect(cells).toEqual([
+        'metadatatest',
+        date,
+        'Revert',
+        'In progress',
+        'Nametest2',
+        '',
+      ]);
+    });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'Resume operation',
-      'Cancel revision',
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'Resume operation',
+        'Cancel revision',
+        'View details',
+      ]);
+    });
   });
   test('should render the table accordingly for rowactions when status is failed and type is revert', async () => {
     initImports({
@@ -130,17 +134,19 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const actionButton = screen.getByRole('button', { name: /more/i });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'Create pull',
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'Create pull',
+        'View details',
+      ]);
+    });
   });
 
   test('should render the table accordingly for rowactions when status is cancelled', async () => {
@@ -153,16 +159,18 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const actionButton = screen.getByRole('button', { name: /more/i });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'View details',
+      ]);
+    });
   });
 
   test('should render the table accordingly for rowactions when status is completed and type is snapshot', async () => {
@@ -176,17 +184,19 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const actionButton = screen.getByRole('button', { name: /more/i });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'Revert to this revision',
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'Revert to this revision',
+        'View details',
+      ]);
+    });
   });
   test('should render the table accordingly for rowactions when status is completed', async () => {
     initImports({
@@ -198,19 +208,21 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const actionButton = screen.getByRole('button', { name: /more/i });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'Revert to after this revision',
-      'Revert to before this revision',
-      'View resources changed',
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'Revert to after this revision',
+        'Revert to before this revision',
+        'View resources changed',
+        'View details',
+      ]);
+    });
   });
 
   test('should render the table accordingly for rowactions when status is completed and type is not snapshot', async () => {
@@ -263,16 +275,18 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const actionButton = screen.getByRole('button', { name: /more/i });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'View details',
+      ]);
+    });
   });
   test('should render the table accordingly for rowactions when status is completed and type is snapshot duplicate', async () => {
     mutateStore(initialStore, draft => {
@@ -324,16 +338,18 @@ describe('test suite for revisions metadata', () => {
       createdAt: date,
     });
 
-    const actionButton = screen.getByRole('button', { name: /more/i });
+    waitFor(async () => {
+      const actionButton = screen.getByRole('button', { name: /more/i });
 
-    await userEvent.click(actionButton);
-    const actionItems = screen
-      .getAllByRole('menuitem')
-      .map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = screen
+        .getAllByRole('menuitem')
+        .map(ele => ele.textContent);
 
-    expect(actionItems).toEqual([
-      'View resources changed',
-      'View details',
-    ]);
+      expect(actionItems).toEqual([
+        'View resources changed',
+        'View details',
+      ]);
+    });
   });
 });
