@@ -1056,6 +1056,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     pathParams,
     queryParams,
     bodyParams,
+    ashok: true,
   };
 }
 
@@ -1388,6 +1389,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     '/test': undefined,
     '/assistant': assistant,
     '/assistantMetadata': assistantMetadata,
+    '/ashok': true,
   };
 }
 
