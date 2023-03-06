@@ -17,6 +17,10 @@ export default {
       ];
     }
 
+    retValues['/unencrypted/feedOptions'] = safeParse(
+      retValues['/unencrypted/feedOptions']
+    );
+
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
     } else if (retValues['/http/method'] === 'COMPOSITE') {
@@ -1304,6 +1308,7 @@ export default {
     },
     'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
     'unencrypted.feedType': {fieldId: 'unencrypted.feedType'},
+    'unencrypted.feedOptions': {fieldId: 'unencrypted.feedOptions'},
     mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
@@ -1334,6 +1339,7 @@ export default {
           'http.lookups',
           'http.batchSize',
           'unencrypted.feedType',
+          'unencrypted.feedOptions',
           'http.body',
           'uploadFile',
         ],
