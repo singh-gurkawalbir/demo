@@ -1,33 +1,42 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': '3plcentral',
-    '/http/auth/type': 'oauth',
-    '/http/mediaType': 'json',
-    '/http/baseURI': 'https://secure-wms.com/',
-    '/http/ping/relativeURI': 'orders',
-    '/http/ping/method': 'GET',
-    '/http/auth/token/refreshMethod': 'POST',
-    '/http/auth/token/refreshMediaType': 'urlencoded',
-    '/http/auth/oauth/useIClientFields': false,
-    '/http/auth/oauth/grantType': 'clientcredentials',
-    '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
-    '/http/auth/oauth/tokenURI': 'https://secure-wms.com/AuthServer/api/Token',
-    '/http/auth/oauth/accessTokenBody': `{"grant_type": "client_credentials","tpl":"{${
-      formValues['/http/unencrypted/tpl']
-    }}", "user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`,
-    '/http/auth/token/location': 'header',
-    '/http/auth/token/headerName': 'Authorization',
-    '/http/auth/token/scheme': 'Bearer',
-  }),
+  preSave: formValues => {
+    let accessTokenBody = '';
+
+    if (formValues['/http/unencrypted/tpl'] === 'true') {
+      accessTokenBody = `{"grant_type": "client_credentials","tpl":"{${
+        formValues['/http/unencrypted/tpl']
+      }}", "user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`;
+    } else if (formValues['/http/unencrypted/tpl'] === 'false') {
+      accessTokenBody = `{"grant_type": "client_credentials","user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`;
+    }
+
+    return {
+      ...formValues,
+      '/type': 'http',
+      '/assistant': '3plcentral',
+      '/http/auth/type': 'oauth',
+      '/http/mediaType': 'json',
+      '/http/baseURI': 'https://secure-wms.com/',
+      '/http/ping/relativeURI': 'orders',
+      '/http/ping/method': 'GET',
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'urlencoded',
+      '/http/auth/oauth/useIClientFields': false,
+      '/http/auth/oauth/grantType': 'clientcredentials',
+      '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
+      '/http/auth/oauth/tokenURI': 'https://secure-wms.com/AuthServer/api/Token',
+      '/http/auth/oauth/accessTokenBody': accessTokenBody,
+      '/http/auth/token/location': 'header',
+      '/http/auth/token/headerName': 'Authorization',
+      '/http/auth/token/scheme': 'Bearer',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     'http.unencrypted.tpl': {
       id: 'http.unencrypted.tpl',
       type: 'text',
       label: '3PL GUID',
-      required: true,
       helpKey: '3plcentral.connection.http.unencrypted.tpl',
       defaultValue: '',
     },
