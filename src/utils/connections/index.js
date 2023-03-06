@@ -335,9 +335,9 @@ export const getParentResourceContext = (url, resourceType) => {
 export const getConnectionApi = connection => {
   let baseURI = '';
 
-  if (connection.type === 'rest') {
+  if (connection?.type === 'rest') {
     baseURI = connection.rest?.baseURI;
-  } else if (connection.type === 'http') {
+  } else if (connection?.type === 'http') {
     baseURI = connection.http?.baseURI;
   } else { return null; }
 
@@ -356,7 +356,7 @@ export const getConnectionApi = connection => {
           evaluatedOutput = evaluatedOutput?.[p];
         });
 
-        return evaluatedOutput || l;
+        return evaluatedOutput || `{{{${l}}}}`;
       }
 
       return l;
