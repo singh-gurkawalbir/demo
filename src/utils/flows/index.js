@@ -901,6 +901,7 @@ export function populateRestSchema(exportDoc = {}) {
   } = exportDoc;
 
   if (adaptorType === 'RESTExport') {
+    // eslint-disable-next-line no-param-reassign
     exportDoc._rest = deepClone(exportDoc.rest);
 
     return exportDoc;
@@ -1006,6 +1007,7 @@ export function populateRestSchema(exportDoc = {}) {
       }
     }
 
+    // eslint-disable-next-line no-param-reassign
     exportDoc._rest = restSubDoc;
   } catch (e) {
     // eslint-disable-next-line no-console
