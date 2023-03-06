@@ -2,7 +2,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import {reduxStore, renderWithProviders} from '../../../../../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import AddonInstallerButton from './AddonInstallerButton';
 import { ConfirmDialogProvider } from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
@@ -10,8 +10,10 @@ import actions from '../../../../../../../actions';
 async function initAddonButton(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.integrationApps.addon = {};
-  initialStore.getState().session.integrationApps.addon['678901234567890'] = {installInprogress: false};
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.addon = {};
+    draft.session.integrationApps.addon['678901234567890'] = {installInprogress: false};
+  });
 
   return renderWithProviders(<ConfirmDialogProvider><AddonInstallerButton {...props} /></ConfirmDialogProvider>, {initialStore});
 }

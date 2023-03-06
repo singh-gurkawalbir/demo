@@ -14,6 +14,7 @@ import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/co
 import { emptyObject } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles({
   button: {
@@ -27,9 +28,10 @@ export default function ManageLookup({ editorId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const handlebarHelperFunction = useSelector(state =>
+  const tempHandlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state), shallowEqual
   );
+  const handlebarHelperFunction = useMemo(() => customCloneDeep(tempHandlebarHelperFunction), [tempHandlebarHelperFunction]);
 
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
   const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups, fieldId} = useSelector(state => {

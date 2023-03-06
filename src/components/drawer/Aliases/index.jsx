@@ -23,6 +23,7 @@ import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import NoResultTypography from '../../NoResultTypography';
 import LoadResources from '../../LoadResources';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
@@ -44,8 +45,10 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const aliasesFilterKey = `${flowId}-aliases`;
   const inheritedAliasesFilterKey = `${flowId}-inheritedAliases`;
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
-  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
-  const inheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
+  const tempResourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
+  const resourceAliases = useMemo(() => customCloneDeep(tempResourceAliases), [tempResourceAliases]);
+  const tempInheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
+  const inheritedAliases = useMemo(() => customCloneDeep(tempInheritedAliases), [tempInheritedAliases]);
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
     resourceType: 'flows',
@@ -92,7 +95,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
           <DynaCeligoTable
             className={classes.accordianWrapper}
             title={tableData.title}
-            data={tableData.data}
+            data={customCloneDeep(tableData.data)}
             filterKey={tableData.filterKey}
             {...metadata}
             collapsable
@@ -132,7 +135,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
       {allAliases.length ? (
         <CeligoTable
           className={classes.accordianWrapper}
-          data={allAliases}
+          data={customCloneDeep(allAliases)}
           filterKey={filterKey}
           {...metadata}
           actionProps={actionProps}

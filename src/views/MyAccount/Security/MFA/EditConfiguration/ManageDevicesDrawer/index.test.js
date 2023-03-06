@@ -5,12 +5,14 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import ManageDevicesDrawer from '.';
 import { getCreatedStore } from '../../../../../../store';
 import { runServer } from '../../../../../../test/api/server';
-import { renderWithProviders } from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../test/test-utils';
 
 let initialStore;
 
 async function initManageDeviceDrawer({mfaValues} = {}) {
-  initialStore.getState().data.mfa = mfaValues;
+  mutateStore(initialStore, draft => {
+    draft.data.mfa = mfaValues;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/myAccount/security/mfa/trustedDevices/manage'}]}

@@ -16,19 +16,23 @@ export function* identifyUser() {
   const { _id, name, email, createdAt, role, developer } = profile || {};
   const [firstName, ...lastName] = (name || '').split(' ');
 
-  yield call(requestLicenseEntitlementUsage);
-  const licenseEntitlementUsage = yield select(selectors.getLicenseEntitlementUsage);
-
   const licenseActionDetails = yield select(
     selectors.platformLicenseWithMetadata
   );
+  const isUserAuthenticated = yield select(selectors.isUserAuthenticated);
+
+  if (licenseActionDetails.type !== 'diy' && isUserAuthenticated) {
+    yield call(requestLicenseEntitlementUsage);
+  }
+
+  const licenseEntitlementUsage = yield select(selectors.getLicenseEntitlementUsage);
 
   const accessLevelDetails = yield select(
     selectors.resourcePermissions
   );
 
-  const productionTypesEndpoints = [...licenseEntitlementUsage?.production?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set())].join();
-  const sandboxTypesEndpoints = [...licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set())].join();
+  const productionTypesEndpoints = [...(licenseEntitlementUsage?.production?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set()) || [])].join();
+  const sandboxTypesEndpoints = [...(licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints?.reduce((s, endpoint) => s.add(endpoint.type), new Set()) || [])].join();
 
   const accountInfo = {
     id: user?._id,
@@ -51,7 +55,7 @@ export function* identifyUser() {
     trialEndDate: licenseActionDetails.trialEndDate,
     trialInProgress: licenseActionDetails.inTrial,
     hasSandbox: licenseActionDetails.hasSandbox,
-    hasApiManagement: licenseActionDetails.endpoint.apiManagement,
+    hasApiManagement: licenseActionDetails?.endpoint?.apiManagement,
     hasSso: licenseActionDetails.hasSSO,
     ssoEnabled: licenseActionDetails.sso,
     numEntitledEndpointsProduction: licenseActionDetails.totalNumberofProductionEndpoints,

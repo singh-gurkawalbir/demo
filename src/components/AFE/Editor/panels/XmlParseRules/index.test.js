@@ -1,24 +1,26 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import XmlParseRules from '.';
 
 async function initXmlParseRules(props = {editorId: 'parsers'}, inAmperSand = false, resourcePath = '/') {
   const initialStore = reduxStore;
 
-  initialStore.getState().session =
-   {
-     editors: {
-       parsers: {
-         data: '<?xml version="1.0" encoding="UTF-8"?> <data> <recordType>customer</recordType> <Name>tc_507_gdrive_xml_to_ns</Name> <Email>tc_507_gdrive_xml_to_ns@celigo.com</Email> </data>',
-         resourceId: '_exportId',
-         resourceType: 'exports',
-         editorType: 'xmlParser',
-         formKey: 'exports-_exportId',
-         rule: {V0_json: !inAmperSand, resourcePath, trimSpaces: false, stripNewLineChars: false, groupByFields: [], sortByFields: []},
-       },
-     },
-   };
+  mutateStore(initialStore, draft => {
+    draft.session =
+    {
+      editors: {
+        parsers: {
+          data: '<?xml version="1.0" encoding="UTF-8"?> <data> <recordType>customer</recordType> <Name>tc_507_gdrive_xml_to_ns</Name> <Email>tc_507_gdrive_xml_to_ns@celigo.com</Email> </data>',
+          resourceId: '_exportId',
+          resourceType: 'exports',
+          editorType: 'xmlParser',
+          formKey: 'exports-_exportId',
+          rule: {V0_json: !inAmperSand, resourcePath, trimSpaces: false, stripNewLineChars: false, groupByFields: [], sortByFields: []},
+        },
+      },
+    };
+  });
 
   return renderWithProviders(<XmlParseRules {...props} />, { initialStore });
 }

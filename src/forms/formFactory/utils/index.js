@@ -1,6 +1,7 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get, sortBy } from 'lodash';
 import { C_LOCKED_FIELDS } from '../../../constants';
+import { isDeleted, isRemoved } from '../../../utils/form';
 
 const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
@@ -19,13 +20,43 @@ const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
 
   return null;
 };
+const fieldsWithRemoveDelete = fields => {
+  const fieldsNew = {};
 
-export const defaultPatchSetConverter = values =>
-  Object.keys(values).map(key => ({
-    op: 'replace',
-    path: key,
-    value: values[key],
-  }));
+  Object.keys(fields).forEach(key => {
+    const field = fields[key];
+
+    fieldsNew[key] = {...field, remove: isRemoved(field, fields), deleteWhen: isDeleted(field, fields)};
+  });
+
+  return fieldsNew;
+};
+
+const valuesToDelete = (values, fields) => {
+  const newValues = {...values};
+
+  Object.keys(fields).forEach(key => {
+    (fields[key].delete || fields[key].deleteWhen) ? delete newValues[`/${(key.replaceAll('.', '/'))}`] : '';
+  });
+
+  return newValues;
+};
+export const defaultPatchSetConverter = (values, fields) => {
+  const newFields = fieldsWithRemoveDelete(fields);
+  const newValues = valuesToDelete(values, newFields);
+
+  return Object.keys(newValues).map(key => {
+    const fieldkey = key.slice(1);
+    const valueKeys = fieldkey.replaceAll('/', '.');
+
+    return {
+      op: 'replace',
+      path: key,
+      // eslint-disable-next-line no-nested-ternary
+      value: (valueKeys in newFields) ? (newFields[valueKeys].remove) ? undefined : newValues[key] : newValues[key],
+    };
+  });
+};
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
 

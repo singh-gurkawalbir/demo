@@ -43,6 +43,10 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     selectors.areAllRevisionInstallStepsCompleted(state, integrationId, revisionId)
   );
 
+  const revisionStatus = useSelector(
+    state => selectors.revisionStatus(state, integrationId, revisionId)
+  );
+
   const revisionType = useSelector(state =>
     selectors.revisionType(state, integrationId, revisionId)
   );
@@ -80,11 +84,15 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   useEffect(() => {
     if (areAllRevisionInstallStepsCompleted) {
-      enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_SUCCESS : message.LCM.REVERT_SUCCESS });
+      if (revisionStatus !== 'failed') {
+        enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_SUCCESS : message.LCM.REVERT_SUCCESS });
+      } else {
+        enqueueSnackbar({ message: revisionType === REVISION_TYPES.PULL ? message.LCM.PULL_MERGE_ERROR : message.LCM.REVERT_ERROR, variant: 'error' });
+      }
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areAllRevisionInstallStepsCompleted]);
+  }, [areAllRevisionInstallStepsCompleted, revisionStatus]);
 
   const handleStepClick = step => {
     const { type, completed, isTriggered, _connectionId, sourceConnection, url } = step;

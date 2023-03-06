@@ -1,5 +1,5 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
-import { cloneDeep, isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -32,6 +32,7 @@ import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
 import { addPageProcessor, getFlowAsyncKey } from '../../utils/flows/flowbuilder';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* createFormValuesPatchSet({
   resourceType,
@@ -103,9 +104,16 @@ export function* createFormValuesPatchSet({
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
   }
+  const formKey = yield select(
+    selectors.formKey,
+    resourceType,
+    resourceId
+  );
+  const data = yield select(selectors.formState, formKey);
+  const {fields: formContext } = data;
 
   const patchSet = sanitizePatchSet({
-    patchSet: defaultPatchSetConverter(finalValues),
+    patchSet: defaultPatchSetConverter(finalValues, formContext),
     fieldMeta: formState.fieldMeta,
     resource,
   });
@@ -465,7 +473,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
     return [];
   }
-  const flowDocClone = cloneDeep(flowDoc);
+  const flowDocClone = customCloneDeep(flowDoc);
 
   const observer = jsonPatch.observe(flowDocClone);
 
@@ -952,3 +960,4 @@ export const resourceFormSagas = [
   ),
   ...connectionSagas,
 ];
+

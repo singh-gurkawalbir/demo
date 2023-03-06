@@ -4,18 +4,20 @@ import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DynaDateSelector from './index';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaDateSelector(props = {}) {
-  initialStore.getState().data.resources = {integrations: [{_id: '5ff579d745ceef7dcd797c15', name: 'integration1'}]};
-  initialStore.getState().user.preferences = {
-    dateFormat: 'MM/DD/YYYY',
-    ssConnectionIds: props.connections,
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {integrations: [{_id: '5ff579d745ceef7dcd797c15', name: 'integration1'}]};
+    draft.user.preferences = {
+      dateFormat: 'MM/DD/YYYY',
+      ssConnectionIds: props.connections,
+    };
+  });
 
   return renderWithProviders(<DynaDateSelector {...props} />, {initialStore});
 }

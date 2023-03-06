@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
 
 const onFieldChange = jest.fn();
@@ -10,12 +10,14 @@ const onFieldChange = jest.fn();
 describe('dynaFileEncryptDecrypt tests', () => {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '_conn1',
-      pgp: {privateKey: '_privateKeyEncr'},
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connections: [{
+        _id: '_conn1',
+        pgp: {privateKey: '_privateKeyEncr'},
+      }],
+    };
+  });
 
   test('should able to test DynaFileEncryptDecrypt with connection having privatekey', async () => {
     const props = {

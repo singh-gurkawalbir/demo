@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, mockGetRequestOnce} from '../../../../test/test-utils';
+import {renderWithProviders, mockGetRequestOnce, mutateStore} from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
 import integrationAppUtil from '../../../../utils/integrationApps';
@@ -94,11 +94,13 @@ describe('PageBar UI testing', () => {
 
     await prepareStore(initialStore);
 
-    initialStore.getState().session.errorManagement.openErrors = {'5ff579d745ceef7dcd797c15': {status: 'received',
-      data: {1111111: {numError: errorCount,
-        _flowId: '1111111'},
-      2: {numError: 0, _flowId: '1111111'},
-      }}};
+    mutateStore(initialStore, draft => {
+      draft.session.errorManagement.openErrors = {'5ff579d745ceef7dcd797c15': {status: 'received',
+        data: {1111111: {numError: errorCount,
+          _flowId: '1111111'},
+        2: {numError: 0, _flowId: '1111111'},
+        }}};
+    });
 
     return renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>

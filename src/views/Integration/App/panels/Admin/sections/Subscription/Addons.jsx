@@ -11,6 +11,7 @@ import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { message } from '../../../../../../../utils/messageStore';
+import customCloneDeep from '../../../../../../../utils/customCloneDeep';
 
 const metadata = {
   useColumns: () => {
@@ -177,7 +178,7 @@ export default function AddOns({integrationId, childId}) {
           </Typography>
         </div>
 
-        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
+        <CeligoTable data={customCloneDeep(subscribedAddOns)} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
       </>
       )}
     </>

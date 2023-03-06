@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactredux from 'react-redux';
-import { renderWithProviders} from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { runServer } from '../../../../../../test/api/server';
 import actions from '../../../../../../actions';
 import { getCreatedStore } from '../../../../../../store';
@@ -45,7 +45,9 @@ describe('GeneralPanel UI tests', () => {
 
     jest.spyOn(reactredux, 'useDispatch').mockReturnValue(mockDispatch);
 
-    initialStore.getState().session.integrationApps.settings['5a2e4cccc147dd5f5cfdddd'] = {formSaveStatus: 'loading'};
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5a2e4cccc147dd5f5cfdddd'] = {formSaveStatus: 'loading'};
+    });
 
     renderFunction(initialStore);
 

@@ -7,6 +7,7 @@ import { selectors } from '../../reducers';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import { FilledButton } from '../Buttons';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export default function RegisterConnections({ onClose, integrationId }) {
   const tableConfig = useSelector(state => selectors.filter(state, 'registerConnections'));
@@ -40,7 +41,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
           <CeligoTable
             filterKey="registerConnections"
             actionProps={{ onClose }}
-            data={connectionsToReg}
+            data={customCloneDeep(connectionsToReg)}
             onSelectChange={handleSelectChange}
             {...metadata}
             selectableRows

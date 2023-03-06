@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -27,7 +27,8 @@ import OperandSettingsDialog from '../AFE/Editor/panels/Filter/OperandSettingsDi
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
-import { isNumber, safeParse } from '../../utils/string';
+import { safeParse, isNumber } from '../../utils/string';
+import customCloneDeep from '../../utils/customCloneDeep';
 import { message } from '../../utils/messageStore';
 
 const defaultData = {};
@@ -70,11 +71,11 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   }, [dispatch, type, position, editorId]);
 
   const patchEditorValidation = useCallback(
-    (isInvalid, error) => {
+    error => {
       const featurePatch = {
-        isInvalid,
+        isInvalid: !!error?.length,
         error,
-        disablePreview: isInvalid,
+        disablePreview: !!error?.length,
       };
 
       if (error) {
@@ -150,8 +151,9 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   };
 
   const handleFilterRulesChange = () => {
-    patchEditorValidation(!isValid());
     if (isValid()) {
+      // reset editor errors
+      patchEditorValidation();
       const rule = getRules();
 
       handlePatchEditor(rule);
@@ -178,7 +180,11 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
           valueField.val(rulesState[ruleId].data.lhs.value).trigger('input');
         }
-        valueField.off('focusout').on('focusout', () => {
+        valueField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
+        valueField.off('change').on('change', () => {
           if (
             rule.operator &&
             (rule.operator.type === 'is_empty' ||
@@ -210,9 +216,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
             .trigger('input');
         }
+        expressionField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         expressionField
-          .off('focusout')
-          .on('focusout', () => handleFilterRulesChange());
+          .off('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -264,7 +274,11 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     const valueField = rule.$el.find(`[name=${name}]`);
 
-    valueField.off('focusout').on('focusout', () => handleFilterRulesChange());
+    valueField.on(
+      'validationError.queryBuilder',
+      (_1, _2, error) => patchEditorValidation(error)
+    );
+    valueField.off('change').on('change', () => handleFilterRulesChange());
   };
   const updateUIForRHSRule = ({ name, rule = {} }) => {
     function updateUIForField(rule) {
@@ -294,7 +308,10 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
               .trigger('change');
           });
         }
-
+        field.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         field.off('change').on('change', () => handleFilterRulesChange());
       }
     }
@@ -320,10 +337,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
             .trigger('input');
         }
-
+        expressionField.on(
+          'validationError.queryBuilder',
+          (_1, _2, error) => patchEditorValidation(error)
+        );
         expressionField
-          .off('focusout')
-          .on('focusout', () => handleFilterRulesChange());
+          .off('change')
+          .on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -601,7 +621,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
-          const r = cloneDeep(rulesState[ruleId].data);
+          const r = customCloneDeep(rulesState[ruleId].data);
           let lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
@@ -774,8 +794,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             const vr = validateRule(rule);
 
             if (!vr.isValid) {
-              patchEditorValidation(true, vr.error);
-
               return vr.error;
             }
 
@@ -786,7 +804,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             if (lhsValue && rhsValue) {
               return true;
             }
-            patchEditorValidation(true, 'Error');
 
             return 'Error';
           },
@@ -831,6 +848,10 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
           rules,
         });
       }
+      qbContainer.on(
+        'validationError.queryBuilder',
+        (_1, _2, error) => patchEditorValidation(error)
+      );
       qbContainer
         .off('rulesChanged.queryBuilder')
         .on('rulesChanged.queryBuilder', () => {
@@ -906,8 +927,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         }
       });
     }
-    // validate the query builder on initial render
-    isValid();
     // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
     // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
     // eslint-disable-next-line react-hooks/exhaustive-deps

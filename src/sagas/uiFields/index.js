@@ -1,9 +1,10 @@
-import { put, takeLatest, takeEvery, select, call, take } from 'redux-saga/effects';
+import { put, takeLatest, takeEvery, select, call, take, all } from 'redux-saga/effects';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { getResource } from '../resources';
 import { isNewId } from '../../utils/resource';
+import { flowPatchRegex } from '../../utils/flowData';
 import { apiCallWithRetry } from '../index';
 
 export function* requestFlowResources({ flowId }) {
@@ -22,6 +23,7 @@ export function* requestFlowResources({ flowId }) {
 }
 
 export function* loadResourceUIFields({ resourceId, resourceType }) {
+  if (!resourceId || !resourceType) return;
   const resourceUIFields = yield select(selectors.resourceUIFields, resourceId);
 
   if (!resourceUIFields) {
@@ -52,20 +54,46 @@ export function* onFlowUpdate({
   patch = [],
 }) {
   if (resourceType === 'flows') {
-    const pgOrPpPatch = patch.find(p => p.path.includes('pageGenerators') || p.path.includes('pageProcessors'));
+    const anyPgOrPpPatch = patch.find(p => p.path.includes('pageGenerators') || p.path.includes('pageProcessors'));
 
-    if (pgOrPpPatch) {
-      const isPgOrPpAdded = pgOrPpPatch.op === 'add';
+    // the below filter tracks any patch changes to pgs/pps in the flow
+    const addPatches = patch.filter(p => {
+      if (!['add', 'replace'].includes(p.op)) return false;
 
-      if (isPgOrPpAdded) {
-        const { value } = pgOrPpPatch;
-        const resource = Array.isArray(value) ? value[0] : value;
-        // fetch the resourceId just added to the flow
-        const resourceId = resource._exportId || resource._importId;
-        const resourceType = resource._exportId ? 'exports' : 'imports';
+      // go through add patches that match the flowPatchRegex
+      return flowPatchRegex.newPPSequence.test(p.path) ||
+        flowPatchRegex.pgSequence.test(p.path) ||
+        flowPatchRegex.oldPPSequence.test(p.path) ||
+        flowPatchRegex.firstPgOrPp.test(p.path) ||
+        flowPatchRegex.ppAddition.test(p.path);
+    });
 
-        yield call(loadResourceUIFields, { resourceId, resourceType });
-      }
+    if (addPatches.length) {
+      yield all(addPatches.map(addPatch => {
+        let resourceId;
+        let resourceType;
+
+        if (flowPatchRegex.oldPPSequence.test(addPatch.path)) {
+          resourceId = addPatch.value;
+          resourceType = addPatch.path.includes('_importId') ? 'imports' : 'exports';
+        } else if (/(\/pageGenerators\/(\d+)\/_exportId)$/.test(addPatch.path)) {
+          // Incase a PG is replaced with another, patch is different , so fetches the target exportId
+          resourceId = addPatch.value;
+          resourceType = 'exports';
+        } else {
+          const { value } = addPatch;
+          const resource = Array.isArray(value) ? value[0] : value;
+
+          // fetch the resourceId just added to the flow
+          resourceId = resource?._exportId || resource?._importId;
+          resourceType = resource?._exportId ? 'exports' : 'imports';
+        }
+
+        // load the UI fields for the resource if it is not loaded already
+        return call(loadResourceUIFields, { resourceId, resourceType });
+      }));
+    }
+    if (anyPgOrPpPatch) {
       // for any flow resource change patches, let us refresh resource list of the flow
       const flowResourceIds = yield select(selectors.flowResourceIds, flowId);
 

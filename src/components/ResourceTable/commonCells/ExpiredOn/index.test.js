@@ -2,14 +2,16 @@
 import React from 'react';
 import ExpiredOn from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
 function initExpiredOn(date, dateFormatData) {
-  initialStore.getState().user.preferences = {
-    dateFormat: dateFormatData,
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      dateFormat: dateFormatData,
+    };
+  });
   const ui = (
     <ExpiredOn date={date} />
   );

@@ -3,10 +3,12 @@ import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
+import produce from 'immer';
 import themeProvider from '../theme/themeProvider';
 import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
+import rootReducer from '../reducers';
 
 const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
@@ -27,7 +29,18 @@ export const renderWithProviders = (ui, { initialStore, renderFun = render } = {
   };
 };
 
-export const reduxStore = getCreatedStore();
+const returnReducer = mutationFunction => state => produce(state, mutationFunction);
+
+export const mutateStore = (store, mutationFunction = () => {}) => {
+  store.replaceReducer(returnReducer(mutationFunction));
+  store.replaceReducer(rootReducer);
+};
+
+export const reduxStore = (() => {
+  const initialStore = getCreatedStore();
+
+  return initialStore;
+})();
 
 export const mockGetRequestOnce = (url, resolver) => {
   server.use(API.getOnce(url, resolver));

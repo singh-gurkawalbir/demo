@@ -3,14 +3,16 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import ResourceName from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
 function initResourceName(resourceId, resourceType, exportData) {
-  initialStore.getState().data.resources.exports = [
-    exportData,
-  ];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.exports = [
+      exportData,
+    ];
+  });
   const ui = (
     <ResourceName resourceId={resourceId} resourceType={resourceType} />
   );

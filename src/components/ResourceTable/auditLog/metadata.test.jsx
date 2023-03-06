@@ -3,70 +3,73 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { reduxStore, renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user = {
-  preferences: {
-    environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    expand: 'Resources',
-    scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-    showReactSneakPeekFromDate: '2019-11-05',
-    showReactBetaFromDate: '2019-12-26',
-    defaultAShareId: 'own',
-    dashboard: {
-      view: 'tile',
-      pinnedIntegrations: [],
-    },
-    drawerOpened: false,
-  },
-  profile: {
-    _id: '625e84b4a2bca9036eb61252',
-    name: 'demo user',
-    email: 'demoUser@celigo.com',
-    role: 'CEO',
-    company: 'celigo',
-    createdAt: '2022-04-19T09:45:25.111Z',
-    useErrMgtTwoDotZero: true,
-    authTypeSSO: null,
-    timezone: 'Asia/Kolkata',
-  },
-  notifications: {
-    accounts: [],
-    stacks: [],
-    transfers: [],
-  },
-  org: {
-    users: [],
-    accounts: [
-      {
-        _id: 'own',
-        accessLevel: 'owner',
-        ownerUser: {
-          licenses: [
-            {
-              _id: '625e84b5a2bca9036eb61253',
-              created: '2022-04-19T09:45:25.125Z',
-              lastModified: '2022-04-28T05:05:45.751Z',
-              type: 'endpoint',
-              tier: 'free',
-              trialEndDate: '2022-05-28T05:05:45.740Z',
-              supportTier: 'essential',
-              sandbox: false,
-              resumable: false,
-            },
-          ],
-        },
+mutateStore(initialStore, draft => {
+  draft.user = {
+    preferences: {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      expand: 'Resources',
+      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+      showReactSneakPeekFromDate: '2019-11-05',
+      showReactBetaFromDate: '2019-12-26',
+      defaultAShareId: 'own',
+      dashboard: {
+        view: 'tile',
+        pinnedIntegrations: [],
       },
-    ],
-  },
-  debug: false,
-};
+      drawerOpened: false,
+    },
+    profile: {
+      _id: '625e84b4a2bca9036eb61252',
+      name: 'demo user',
+      email: 'demoUser@celigo.com',
+      role: 'CEO',
+      company: 'celigo',
+      createdAt: '2022-04-19T09:45:25.111Z',
+      useErrMgtTwoDotZero: true,
+      authTypeSSO: null,
+      timezone: 'Asia/Kolkata',
+    },
+    notifications: {
+      accounts: [],
+      stacks: [],
+      transfers: [],
+    },
+    org: {
+      users: [],
+      accounts: [
+        {
+          _id: 'own',
+          accessLevel: 'owner',
+          ownerUser: {
+            licenses: [
+              {
+                _id: '625e84b5a2bca9036eb61253',
+                created: '2022-04-19T09:45:25.125Z',
+                lastModified: '2022-04-28T05:05:45.751Z',
+                type: 'endpoint',
+                tier: 'free',
+                trialEndDate: '2022-05-28T05:05:45.740Z',
+                supportTier: 'essential',
+                sandbox: false,
+                resumable: false,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    debug: false,
+  };
+});
+
 function initImports(data = []) {
   const ui = (
     <MemoryRouter>

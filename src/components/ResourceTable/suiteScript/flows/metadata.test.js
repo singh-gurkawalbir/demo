@@ -2,21 +2,23 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import CeligoTable from '../../../CeligoTable';
 import metadata from './metadata';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.suiteScript = {ssLinkedConnectionId: {integrations: [
-  {
-    _id: 'integrationId',
-    _connectorId: '_connectorId',
-    urlName: 'someurlName',
+mutateStore(initialStore, draft => {
+  draft.data.suiteScript = {ssLinkedConnectionId: {integrations: [
+    {
+      _id: 'integrationId',
+      _connectorId: '_connectorId',
+      urlName: 'someurlName',
+    },
+  ],
   },
-],
-},
-};
+  };
+});
 
 function renderFunction(flow, actionProps) {
   renderWithProviders(

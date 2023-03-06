@@ -55,9 +55,6 @@ export default {
       delete retValues['/http/unencrypted/company'];
       retValues['/http/auth/cookie'] = undefined;
     }
-    if (retValues['/mode'] === 'cloud') {
-      retValues['/_agentId'] = undefined;
-    }
 
     return {
       ...retValues,
@@ -102,6 +99,7 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     instanceURI: {
       id: 'instanceURI',

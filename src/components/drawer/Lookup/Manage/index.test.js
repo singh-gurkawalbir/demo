@@ -2,23 +2,25 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import ManageLookup from '.';
 
 async function initManageLookup(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    formKey: {},
-  };
-  initialStore.getState().data.resources = {
-    imports: [
-      {_id: 'netsuite', adaptorType: 'NetSuiteImport'},
-      {_id: 'salesforce', adaptorType: 'SalesforceImport'},
-      {_id: 'rdbms', adaptorType: 'RDBMSImport'},
-      {_id: 'http', adaptorType: 'HTTPImport'},
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      formKey: {},
+    };
+    draft.data.resources = {
+      imports: [
+        {_id: 'netsuite', adaptorType: 'NetSuiteImport'},
+        {_id: 'salesforce', adaptorType: 'SalesforceImport'},
+        {_id: 'rdbms', adaptorType: 'RDBMSImport'},
+        {_id: 'http', adaptorType: 'HTTPImport'},
+      ],
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ManageLookup {...props} />
