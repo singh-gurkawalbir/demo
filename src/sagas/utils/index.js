@@ -294,7 +294,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
           };
 
           if (httpEndpoint.resourceFields) {
-            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
+            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, deepClone(r.sampleData));
           }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
