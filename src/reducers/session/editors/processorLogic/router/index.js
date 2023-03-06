@@ -38,7 +38,7 @@ function getBranchNameIndex(branches, routerNameIndex) {
 }
 
 export default {
-  init: ({ options }) => {
+  init: ({ options, scriptContext }) => {
     const activeProcessor = 'filter';
     const { router = {}, prePatches, branchNamingIndex } = options;
     const isEdit = !prePatches;
@@ -81,12 +81,14 @@ export default {
       rule,
       editorTitle,
       isEdit,
+      context: scriptContext,
     };
   },
 
   processor: 'branchFilter',
 
   requestBody: editor => {
+    const {context} = editor;
     const { activeProcessor } = editor.rule;
     const editorData = editor.data[activeProcessor];
     const { rules, data, options } = filter.requestBody({
@@ -110,6 +112,7 @@ export default {
         record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
+      options: context,
     };
   },
   // No point performing parsing or validation when it is an object
@@ -160,6 +163,7 @@ export default {
     const patches = {
       foregroundPatches: undefined,
       backgroundPatches: [],
+      options: {revertChangesOnFailure: true},
     };
     const {
       rule,

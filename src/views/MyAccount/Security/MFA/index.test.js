@@ -117,7 +117,7 @@ describe('Testsuite for MFA', () => {
     expect(screen.getByText(/you are required to enable mfa before you can continue in this account\./i)).toBeInTheDocument();
     const linkNode = screen.getByRole('link', {name: 'Learn more'});
 
-    expect(linkNode.getAttribute('href')).toBe('https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers');
+    expect(linkNode.getAttribute('href')).toBe('https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account');
   });
   test('should the toggle button be disabled when MFA setup is not completed and user settings are loaded', async () => {
     await initMFA({

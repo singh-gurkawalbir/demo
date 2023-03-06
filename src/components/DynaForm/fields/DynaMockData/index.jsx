@@ -3,10 +3,13 @@ import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import EditorField from '../DynaEditor';
-import { validateMockOutputField } from '../../../../utils/flowDebugger';
+import { validateMockDataField } from '../../../../utils/flowDebugger';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
+import PopulateWithPreviewData from '../../../PopulateWithPreviewData';
+import ActionGroup from '../../../ActionGroup';
+import CeligoDivider from '../../../CeligoDivider';
 
 const useStyles = makeStyles(theme => ({
   editor: {
@@ -18,9 +21,51 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     marginBottom: theme.spacing(2),
   },
+  modalTitle: {
+    display: 'flex',
+    wordBreak: 'normal !important',
+    alignItems: 'center',
+  },
+  referencesFullscreenAction: {
+    '&> :not(:last-child)': {
+      marginRight: 0,
+    },
+    '& .MuiButtonBase-root': {
+      padding: 0,
+    },
+  },
 }));
 
-export default function MockOutputEditorField(props) {
+function ModalTitle({
+  label,
+  formKey,
+  resourceId,
+  resourceType,
+  flowId,
+}) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.modalTitle}>
+      {label}
+      {
+        resourceType === 'imports' &&
+        (
+          <ActionGroup position="right" className={classes.referencesFullscreenAction}>
+            <PopulateWithPreviewData
+              flowId={flowId}
+              formKey={formKey}
+              resourceId={resourceId}
+              resourceType={resourceType} />
+            <CeligoDivider />
+          </ActionGroup>
+        )
+      }
+    </div>
+  );
+}
+
+export default function MockDataEditorField(props) {
   const {id, formKey, resourceType, resourceId, flowId, value} = props;
 
   const history = useHistory();
@@ -41,20 +86,20 @@ export default function MockOutputEditorField(props) {
   const expandMode = isPreviewPanelAvailableForResource ? 'drawer' : 'modal';
 
   useEffect(() => {
-    const error = validateMockOutputField(value);
+    const error = validateMockDataField(resourceType)(value);
 
     if (error) {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: error}));
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }
-  }, [dispatch, formKey, id, value]);
+  }, [dispatch, formKey, id, resourceType, value]);
 
   const handleExpandDrawer = useCallback(() => {
     const { formKey, id } = props;
 
     history.push(`${buildDrawerUrl({
-      path: drawerPaths.EXPORT_MOCK_OUTPUT,
+      path: drawerPaths.RESOURCE_MOCK_DATA,
       baseUrl: match.url,
       params: { formKey, fieldId: id },
     })}`);
@@ -63,11 +108,12 @@ export default function MockOutputEditorField(props) {
   return (
     <EditorField
       {...props}
+      modalTitle={<ModalTitle {...props} />}
       expandMode={expandMode}
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       customHandleEditorClick={expandMode === 'drawer' && handleExpandDrawer}
-      validateContent={validateMockOutputField}
+      validateContent={validateMockDataField(resourceType)}
       mode="json"
     />
   );
