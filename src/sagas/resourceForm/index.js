@@ -104,9 +104,16 @@ export function* createFormValuesPatchSet({
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
   }
+  const formKey = yield select(
+    selectors.formKey,
+    resourceType,
+    resourceId
+  );
+  const data = yield select(selectors.formState, formKey);
+  const {fields: formContext } = data;
 
   const patchSet = sanitizePatchSet({
-    patchSet: defaultPatchSetConverter(finalValues),
+    patchSet: defaultPatchSetConverter(finalValues, formContext),
     fieldMeta: formState.fieldMeta,
     resource,
   });
@@ -953,3 +960,4 @@ export const resourceFormSagas = [
   ),
   ...connectionSagas,
 ];
+
