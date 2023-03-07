@@ -222,7 +222,16 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         );
         expressionField
           .off('change')
-          .on('change', () => handleFilterRulesChange());
+          .on('change', () => {
+            if (
+              rule.operator &&
+              (rule.operator.type === 'is_empty' ||
+                rule.operator.type === 'is_not_empty')
+            ) {
+              rule.filter.valueGetter(rule);
+            }
+            handleFilterRulesChange();
+          });
       }
     }
 
@@ -343,7 +352,16 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         );
         expressionField
           .off('change')
-          .on('change', () => handleFilterRulesChange());
+          .on('change', () => {
+            if (
+              rule.operator &&
+              (rule.operator.type === 'is_empty' ||
+                rule.operator.type === 'is_not_empty')
+            ) {
+              rule.filter.valueGetter(rule);
+            }
+            handleFilterRulesChange();
+          });
       }
     }
 

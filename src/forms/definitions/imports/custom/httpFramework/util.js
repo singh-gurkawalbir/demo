@@ -340,6 +340,7 @@ export function fieldMeta({ resource, assistantData }) {
   let headerFields = [];
   let ignoreConfigFields = [];
   let howToFindIdentifierFields = [];
+  let supportsEndpointLevelAsyncHelper = false;
 
   if (assistantData && assistantData.import) {
     const assistantConfig = convertFromImport({
@@ -357,6 +358,8 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      supportsEndpointLevelAsyncHelper = operationDetails.supportsAsyncHelper;
+
       headerFields = headerFieldsMeta({
         headers,
         operationDetails,
@@ -439,7 +442,7 @@ export function fieldMeta({ resource, assistantData }) {
             }],
           },
           {
-            fields: fieldIds.slice(createEndpointIndex + 2),
+            fields: [...fieldIds.slice(createEndpointIndex + 2), ...(supportsEndpointLevelAsyncHelper ? ['http.configureAsyncHelper', 'http._asyncHelperId'] : [])],
           },
           ],
         },
@@ -454,8 +457,7 @@ export function fieldMeta({ resource, assistantData }) {
           label: 'Advanced',
           fields: ['http.ignoreEmptyNodes',
             'advancedSettings',
-            'http.configureAsyncHelper',
-            'http._asyncHelperId'],
+            ...(!supportsEndpointLevelAsyncHelper ? ['http.configureAsyncHelper', 'http._asyncHelperId'] : [])],
         },
       ],
     },
