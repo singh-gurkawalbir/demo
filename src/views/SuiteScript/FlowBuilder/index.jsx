@@ -4,8 +4,8 @@ import { Typography, Link } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import clsx from 'clsx';
+import {EditableText} from '@celigo/fuse-ui';
 import CeligoPageBar from '../../../components/CeligoPageBar';
-import EditableText from '../../../components/EditableText';
 import { selectors } from '../../../reducers';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import PageGenerator from './PageGenerator';
@@ -232,15 +232,9 @@ function FlowBuilder() {
           title={(
             <EditableText
               disabled={isViewMode || !flow.editable || isIntegrationApp}
-              text={flow.ioFlowName || flow.name}
+              text={flow.ioFlowName || flow.name || `Unnamed (id:${flowId})`}
             // multiline
-              defaultText={`Unnamed (id:${flowId})`}
               onChange={handleTitleChange}
-              inputClassName={
-              drawerOpened
-                ? classes.editableTextInputShift
-                : classes.editableTextInput
-            }
           />
           )}
           subtitle={(

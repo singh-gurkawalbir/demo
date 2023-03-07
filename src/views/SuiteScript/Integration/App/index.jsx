@@ -2,9 +2,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Chip } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {EditableText} from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
-import EditableText from '../../../../components/EditableText';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
@@ -108,11 +108,6 @@ export default function Integration({ match }) {
                 disabled={!canEdit}
                 text={integration.displayName}
                 onChange={handleTitleChange}
-                inputClassName={
-                  drawerOpened
-                    ? classes.editableTextInputShift
-                    : classes.editableTextInput
-                }
               />
             )
           }
