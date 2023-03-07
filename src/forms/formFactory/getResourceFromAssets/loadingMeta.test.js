@@ -218,6 +218,7 @@ describe('getResourceFromAssets load correct form', () => {
           ['oracle', {id: 'something1', type: 'rdbms', rdbms: { type: 'oracle'} }, 'rdbms.serverType'],
           ['postgresql', {id: 'something1', type: 'rdbms', rdbms: { type: 'postgresql'} }, 'rdbms.ssl.passphrase'],
           ['snowflake', {id: 'something1', type: 'rdbms', rdbms: { type: 'snowflake'} }, 'rdbms.host'],
+          ['netsuitejdbc', {id: 'something1', type: 'jdbc', jdbc: { type: 'netsuitejdbc'} }, 'jdbc.host'],
         ];
 
         test.each(inputs)('should load a %s connection form', (name, resource, fieldId) => {
@@ -299,6 +300,7 @@ describe('getResourceFromAssets load correct form', () => {
       ['financialforce', {id: 'something1', assistant: 'financialforce'}, {}, 'salesforce.soql'],
       ['snowflake', {id: 'something1', adaptorType: 'RDBMSExport'}, {id: 'something2', rdbms: {type: 'snowflake'}}, 'rdbms.query'],
       ['sql', {id: 'something1', adaptorType: 'RDBMSExport'}, {id: 'something2', rdbms: {type: 'mssql'}}, 'rdbms.query'],
+      ['netsuitejdbc', {id: 'something1', adaptorType: 'JDBCExport'}, {id: 'something2', jdbc: {type: 'netsuitejdbc'}}, 'rdbms.query'],
     ];
 
     test.each(inputs)('should load a %s export form', (name, resource, connection, fieldId) => {

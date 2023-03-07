@@ -19,7 +19,7 @@ export default {
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
     retValues['/jdbc/query'] = retValues['/rdbms/query'];
 
-    // will have to remove rdbms.query
+    delete retValues['/rdbms/query'];
 
     return {
       ...retValues,
@@ -27,7 +27,7 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    'rdbms.query': { fieldId: 'rdbms.query' },
+    'rdbms.query': { fieldId: 'rdbms.query', defaultValue: r => r?.jdbc?.query },
     type: {
       id: 'type',
       type: 'select',

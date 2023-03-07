@@ -16,8 +16,9 @@ export default {
       ];
 
       if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(r.type))) {
-        // rdbms subtype is required to filter the connections
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
+        // rdbms or JDBC subtype is required to filter the connections
+        r.type.indexOf('jdbc') > -1 ? expression.push({ 'jdbc.type': r.type })
+          : expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         const destinationType = ['ftp', 'as2', 's3', 'van'].includes(r.type) ? '' : r.type;
@@ -82,7 +83,8 @@ export default {
       }
       const applications = applicationsList();
       let application = getAssistantFromResource(r) ||
-      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
+      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : null) ||
+      (r.type === 'jdbc' ? r.jdbc.type : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
@@ -2351,19 +2353,7 @@ export default {
       },
     },
   },
-  'jdbc.serverDataSource': {
-    isLoggable: true,
-    required: true,
-    type: 'select',
-    label: 'Server Data Source',
-    options: [{
-      items: [
-        {label: 'Netsuite.com', value: 'Netsuite.com'},
-        {label: 'Netsuite2.com', value: 'Netsuite2.com'},
-      ],
-    }],
-  },
-  'jdbc.staticschemaexport': {
+  'jdbc.staticSchema': {
     isLoggable: true,
     type: 'checkbox',
     label: 'Static schema export',

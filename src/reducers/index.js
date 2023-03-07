@@ -5583,6 +5583,15 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
+  if (adaptorType?.toUpperCase().startsWith('JDBC')) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+
+    return connection && connection.jdbc && rdbmsSubTypeToAppType(connection.jdbc.type);
+  }
   if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
       state,

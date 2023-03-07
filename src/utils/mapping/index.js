@@ -3087,6 +3087,17 @@ export default {
 
         return toReturn;
       }
+      case adaptorTypeMap.JDBCExport: {
+        let toReturn;
+
+        if (conn) {
+          if (conn.jdbc?.type === 'netsuitejdbc') {
+            toReturn = 'NetSuite JDBC';
+          }
+        }
+
+        return toReturn;
+      }
 
       case adaptorTypeMap.DynamodbImport:
         return 'DynamoDB';

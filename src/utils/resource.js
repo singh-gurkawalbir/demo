@@ -75,6 +75,7 @@ export const appTypeToAdaptorType = {
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
   van: 'VAN',
+  netsuitejdbc: 'JDBC',
 };
 
 // the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
@@ -98,6 +99,7 @@ export const rdbmsAppTypeToSubType = appType => {
   if (appType === 'redshiftdatawarehouse') {
     return 'redshift';
   }
+  //
 
   return appType;
 };
@@ -147,6 +149,7 @@ export const adaptorTypeMap = {
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
   SimpleExport: 'file',
+  JDBCExport: 'jdbc',
 };
 
 export const multiStepSaveResourceTypes = [

@@ -1,8 +1,12 @@
+import { deepClone } from 'fast-json-patch';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => {
-    const newValues = { ...formValues };
+    const newValues = deepClone(formValues);
+
+    const roleId = newValues['/netsuite/token/auto/roleId'];
+    const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
 
     if (newValues['/netsuite/authType'] === 'token') {
       newValues['/netsuite/environment'] =
@@ -23,37 +27,74 @@ export default {
     }
 
     newValues['/jdbc/properties'] = [
-      ['accountId', newValues['/netsuite/account']],
-      ['roleId', newValues['/netsuite/token/auto/roleId']],
-      ['serverDataSource', newValues['/jdbc/serverDataSource']],
+      (accId && {name: 'accountId', value: accId}),
+      (roleId && {name: 'roleId', value: roleId}),
+      {name: 'serverDataSource', value: newValues['/jdbc/serverDataSource']},
+      {name: 'staticSchema', value: newValues['/jdbc/staticSchema'] ? 1 : 0 },
     ];
     newValues['/jdbc/type'] = 'netsuitejdbc';
+    newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
+    newValues['/jdbc/user'] = 'TBA';
+    newValues['/jdbc/password'] = 'TBA';// need to delete
+
+    newValues['/type'] = 'jdbc';
 
     delete newValues['/netsuite/token/auto'];
     delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
     delete newValues['/netsuite/tokenEnvironment'];
+    delete newValues['/jdbc/staticSchema'];
+    delete newValues['/jdbc/serverDataSource'];
 
     return newValues;
-  },
-  optionsHandler(fieldId, fields) {
-    const { value: env } =
-      fields.find(field => field.id === 'netsuite.environment') || {};
-    const { value: acc } =
-      fields.find(field => field.id === 'netsuite.account') || {};
-
-    if (fieldId === 'netsuite.account' && env !== '') {
-      return { env };
-    }
-
-    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
   },
   fieldMap: {
     name: { fieldId: 'name' },
     'jdbc.host': { fieldId: 'jdbc.host' },
-    'jdbc.serverDataSource': { fieldId: 'jdbc.serverDataSource' },
+    'jdbc.serverDataSource': {
+      id: 'jdbc.serverDataSource',
+      isLoggable: true,
+      required: true,
+      type: 'select',
+      label: 'Server Data Source',
+      options: [{
+        items: [
+          {label: 'NetSuite.com', value: 'NetSuite.com'},
+          {label: 'NetSuite2.com', value: 'NetSuite2.com'},
+        ],
+      }],
+      defaultValue: r => {
+        const properties = r?.jdbc?.properties || [];
+        let value = '';
+
+        properties.forEach(each => { if (each.name === 'serverDataSource') value = each.value; });
+
+        return value;
+      },
+    },
     'jdbc.port': { fieldId: 'jdbc.port', defaultDisabled: true, defaultValue: 1708 },
-    'jdbc.staticschemaexport': { fieldId: 'jdbc.staticschemaexport'},
+    'jdbc.staticSchema': {
+      id: 'jdbc.staticSchema',
+      isLoggable: true,
+      type: 'checkbox',
+      label: 'Static schema export',
+      visibleWhen: [
+        {
+          field: 'jdbc.serverDataSource',
+          is: ['NetSuite2.com'],
+        },
+      ],
+      defaultValue: r => {
+        const properties = r?.jdbc?.properties || [];
+        let value = null;
+
+        properties.forEach(each => { if (each.name === 'staticSchema') value = each.value; });
+
+        if (value === '1') { return true; }
+
+        return false;
+      },
+    },
     'jdbc.authType': { fieldId: 'jdbc.authType'},
     'netsuite.tokenEnvironment': {
       fieldId: 'netsuite.tokenEnvironment',
@@ -63,7 +104,14 @@ export default {
       id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
       type: 'text',
-      defaultValue: r => r && r.netsuite && r.netsuite.account,
+      defaultValue: r => {
+        const properties = r?.jdbc?.properties || [];
+        let value = null;
+
+        properties.forEach(each => { if (each.name === 'accountId') value = each.value; });
+
+        return value;
+      },
       label: 'Account ID',
       uppercase: true,
     },
@@ -73,7 +121,14 @@ export default {
       label: 'Account ID',
       uppercase: true,
       required: true,
-      defaultValue: r => r && r.netsuite && r.netsuite.account,
+      defaultValue: r => {
+        const properties = r?.jdbc?.properties || [];
+        let value = null;
+
+        properties.forEach(each => { if (each.name === 'accountId') value = each.value; });
+
+        return value;
+      },
       visibleWhen: [{ field: 'netsuite.authType', is: ['token-auto'] }],
     },
     'netsuite.token.auto.roleId': {
@@ -82,19 +137,14 @@ export default {
       label: 'Role',
       defaultDisabled: true,
       visible: r => r && !isNewId(r._id),
-      visibleWhen: r => {
-        const isNew = isNewId(r._id);
+      defaultValue: r => {
+        const properties = r?.jdbc?.properties || [];
+        let value = null;
 
-        if (isNew) return [];
+        properties.forEach(each => { if (each.name === 'roleId') value = each.value; });
 
-        return [
-          {
-            field: 'netsuite.authType',
-            is: ['token-auto'],
-          },
-        ];
+        return value;
       },
-      defaultValue: r => r && r.netsuite && r.netsuite.roleId,
     },
     'netsuite.tokenId': {
       fieldId: 'netsuite.tokenId',
@@ -135,7 +185,7 @@ export default {
           {
             type: 'indent',
             containers: [
-              {fields: ['jdbc.staticschemaexport']},
+              {fields: ['jdbc.staticSchema']},
             ],
           },
           { fields: [
@@ -143,7 +193,6 @@ export default {
             'netsuite.tokenEnvironment',
             'netsuite.tokenAccount',
             'netsuite.token.auto.account',
-            'netsuite.token.auto.roleId',
             'netsuite.token.auto.roleId',
             'netsuite.tokenId',
             'netsuite.tokenSecret',

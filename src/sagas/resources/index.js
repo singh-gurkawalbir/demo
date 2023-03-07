@@ -185,7 +185,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'connections' && !isNew) {
     // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
     // number of active tokens on netsuite, revoking token when user updates token-auto connection.
-    if (merged.type === 'netsuite') {
+    if (merged.type === 'netsuite' || merged.type === 'netsuitejdbc') {
       const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
       if (isTokenToBeRevoked) {

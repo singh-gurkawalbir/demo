@@ -78,8 +78,10 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   const { _id, type, assistant } = connection || {};
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
-
-  if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
+  if (type === 'jdbc' && RDBMS_TYPES.includes(connection?.jdbc?.type)) {
+    // jdbc subtype is required to filter the connections
+    expression.push({ 'jdbc.type': connection.jdbc.type });
+  } else if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
     expression.push({ 'rdbms.type': connection.rdbms.type });
   } else if ((type === 'rest' && connection?.isHTTP !== true) || (type === 'http' && connection?.http?.formType === 'rest')) {
@@ -130,6 +132,11 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
     options = { filter: filterExpression, appType: assistant };
+  } else if (type === 'jdbc') {
+    options = {
+      filter: andingExpressions,
+      appType: connection?.jdbc?.type,
+    };
   } else {
     options = {
       filter: andingExpressions,
