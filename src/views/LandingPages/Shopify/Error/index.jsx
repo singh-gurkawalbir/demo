@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import CeligoLogo from '../../../../components/CeligoLogo';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import useQuery from '../../../../hooks/useQuery';
 import ShopifyLandingPageHeader from '../PageHeader';
 import NotificationToaster from '../../../../components/NotificationToaster';

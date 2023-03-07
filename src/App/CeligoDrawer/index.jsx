@@ -5,8 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import actions from '../../actions';
-import CeligoLogo from '../../components/CeligoLogo';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
@@ -61,8 +61,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   menuContainerSandbox: {
-    gridTemplateRows: `${theme.appBarHeight +
-      theme.pageBarHeight}px auto 140px`,
+    gridTemplateRows: `${
+      theme.appBarHeight + theme.pageBarHeight
+    }px auto 140px`,
   },
 
   toggleContainer: {
@@ -136,7 +137,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CeligoDrawer({drawerOpened, isSandbox}) {
+function CeligoDrawer({ drawerOpened, isSandbox }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -164,19 +165,27 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
           [classes.drawerClose]: !drawerOpened,
         }),
       }}
-      open={!drawerOpened}>
+      open={!drawerOpened}
+    >
       <div
         className={clsx(classes.menuContainer, {
           [classes.menuContainerSandbox]: isSandbox,
         })}
-        onDoubleClick={handleDrawerToggle}>
+        onDoubleClick={handleDrawerToggle}
+      >
         <div>
           <div
             className={clsx(classes.logoContainer, {
               [classes.logoContainerSandbox]: isSandbox,
-            })}>
+            })}
+          >
             {drawerOpened ? (
-              <ButtonBase className={clsx(classes.logo, {[classes.logoSandbox]: isSandbox})} onClick={handleDrawerToggle}>
+              <ButtonBase
+                className={clsx(classes.logo, {
+                  [classes.logoSandbox]: isSandbox,
+                })}
+                onClick={handleDrawerToggle}
+              >
                 <CeligoLogo aria-label="open drawer" />
               </ButtonBase>
             ) : (
@@ -184,7 +193,9 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
                 color="inherit"
                 aria-label="close drawer"
                 onClick={handleDrawerToggle}
-                className={clsx({[classes.iconHoverSandbox]: isSandbox })}>
+                className={clsx({ [classes.iconHoverSandbox]: isSandbox })}
+                size="large"
+              >
                 <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
@@ -197,7 +208,7 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
             )}
           </div>
         </div>
-        <div className={classes.menuList} >
+        <div className={classes.menuList}>
           <MenuList />
         </div>
         <div>
@@ -207,7 +218,11 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
               aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={clsx(classes.drawerToggle, {[classes.drawerToggleSandbox]: isSandbox})}>
+              className={clsx(classes.drawerToggle, {
+                [classes.drawerToggleSandbox]: isSandbox,
+              })}
+              size="large"
+            >
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>
@@ -224,11 +239,8 @@ export default function MemoCeligoDrawer() {
   const isSandbox = environment === 'sandbox';
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
-  return useMemo(() => (
-    <CeligoDrawer
-      isSandbox={isSandbox}
-      drawerOpened={drawerOpened}
-    />
-  ), [drawerOpened, isSandbox]
+  return useMemo(
+    () => <CeligoDrawer isSandbox={isSandbox} drawerOpened={drawerOpened} />,
+    [drawerOpened, isSandbox]
   );
 }

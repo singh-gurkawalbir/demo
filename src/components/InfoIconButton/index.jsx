@@ -1,12 +1,13 @@
-import clsx from 'clsx';
-import React, { useState } from 'react';
+import { IconButton } from '@mui/material';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core';
+import clsx from 'clsx';
+import React, { useState } from 'react';
+
 import ArrowPopper from '../ArrowPopper';
-import TooltipContent from '../TooltipContent';
-import InfoIcon from '../icons/InfoIcon';
 import HelpContent from '../HelpContent';
+import InfoIcon from '../icons/InfoIcon';
+import TooltipContent from '../TooltipContent';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -25,7 +26,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title }) {
+export default function InfoIconButton({
+  info,
+  size = 'small',
+  className,
+  escapeUnsecuredDomains,
+  tabIndex = 0,
+  placement = 'right-start',
+  preventOverflow,
+  title,
+}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -51,7 +61,8 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
         tabIndex={tabIndex}
-        aria-haspopup="true">
+        aria-haspopup="true"
+      >
         <InfoIcon />
       </IconButton>
       <ArrowPopper
@@ -62,8 +73,17 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClose={handleInfoClose}
         preventOverflow={preventOverflow}
       >
-        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose}>
-          <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains}>{info}</TooltipContent>
+        <HelpContent
+          title={title}
+          supportFeedback={false}
+          onClose={handleInfoClose}
+        >
+          <TooltipContent
+            className={classes.infoText}
+            escapeUnsecuredDomains={escapeUnsecuredDomains}
+          >
+            {info}
+          </TooltipContent>
         </HelpContent>
       </ArrowPopper>
     </>

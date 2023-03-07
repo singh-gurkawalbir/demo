@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
-import InfoIconButton from '../InfoIconButton';
+import { Typography } from '@mui/material';
+import { InfoIconButton } from '@celigo/fuse-ui';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 export default function ResourceDrawerLink({
@@ -40,10 +40,18 @@ export default function ResourceDrawerLink({
           path: drawerPaths.RESOURCE.EDIT,
           baseUrl: match.url,
           params: { resourceType, id: resource._id },
-        })}>
+        })}
+      >
         {linkLabel}
       </Link>
-      { resource.description && <InfoIconButton info={resource.description} escapeUnsecuredDomains size="xs" title={linkLabel} />}
+      {resource.description && (
+        <InfoIconButton
+          info={resource.description}
+          escapeUnsecuredDomains
+          size="xs"
+          title={linkLabel}
+        />
+      )}
       {resource.shared && <Typography>Shared</Typography>}
     </>
   );

@@ -11,15 +11,9 @@ import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
 // import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
-import getImageUrl from '../../utils/image';
 // import GlobalSearch from './GlobalSearch';
 
 const useStyles = makeStyles(theme => ({
-  celigoLogo: {
-    height: 36,
-    width: 120,
-    background: `url(${getImageUrl('images/flow-builder/celigo-product-logo.svg')}) no-repeat center left`,
-  },
   appBar: {
     background: theme.palette.background.default,
     marginLeft: theme.drawerWidth,
@@ -94,7 +88,8 @@ export default function CeligoAppBar() {
       elevation={0}
       className={clsx(classes.appBar, {
         [classes.appBarShift]: drawerOpened,
-      })}>
+      })}
+    >
       <Toolbar className="topBar" variant="dense">
         <CeligoBreadcrumb />
         <ul className={classes.topBarActions}>
@@ -105,11 +100,21 @@ export default function CeligoAppBar() {
               */}
           {/* To toggle the global search feature, please uncomment the below line */}
           {/* <li><GlobalSearch /></li> */}
-          <li><AccountList /></li>
-          <li><LicenseAction /></li>
-          <li><EnvironmentToggle /></li>
-          <li><Notifications /></li>
-          <li><ProfileMenuButton /></li>
+          <li>
+            <AccountList />
+          </li>
+          <li>
+            <LicenseAction />
+          </li>
+          <li>
+            <EnvironmentToggle />
+          </li>
+          <li>
+            <Notifications />
+          </li>
+          <li>
+            <ProfileMenuButton />
+          </li>
         </ul>
       </Toolbar>
     </AppBar>
