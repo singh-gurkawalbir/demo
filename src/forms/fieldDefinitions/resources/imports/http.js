@@ -1,3 +1,5 @@
+import { HTTP_IMPORT_CREATE_FEED_RELATIVE_URI } from '../../../../constants';
+
 export default {
   'http.method': {
     isLoggable: true,
@@ -750,7 +752,7 @@ export default {
       },
       {
         field: 'http.relativeURI',
-        is: ['/feeds/2021-06-30/documents'],
+        is: [HTTP_IMPORT_CREATE_FEED_RELATIVE_URI],
       },
     ],
     options: [
@@ -809,7 +811,7 @@ export default {
       },
       {
         field: 'http.relativeURI',
-        is: ['/feeds/2021-06-30/documents'],
+        is: [HTTP_IMPORT_CREATE_FEED_RELATIVE_URI],
       },
     ],
   },
