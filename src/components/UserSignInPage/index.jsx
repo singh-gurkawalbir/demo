@@ -85,8 +85,15 @@ export default function UserSignInPage(props) {
     children} = props;
   const classes = useStyles();
 
+  let contentUrl;
+
+  if (pageTitle === 'Sign up') {
+    // eslint-disable-next-line no-undef
+    contentUrl = (getDomain() === 'eu.integrator.io' ? IO_SIGNUP_PROMOTION_URL_EU : IO_SIGNUP_PROMOTION_URL);
+  } else {
   // eslint-disable-next-line no-undef
-  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
+    contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
+  }
 
   return (
     <div className={classes.userSignInPageContainer}>
