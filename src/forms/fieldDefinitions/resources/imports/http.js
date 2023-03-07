@@ -1,5 +1,3 @@
-import { HTTP_IMPORT_CREATE_FEED_RELATIVE_URI } from '../../../../constants';
-
 export default {
   'http.method': {
     isLoggable: true,
@@ -752,7 +750,7 @@ export default {
       },
       {
         field: 'http.relativeURI',
-        is: [HTTP_IMPORT_CREATE_FEED_RELATIVE_URI],
+        is: ['/feeds/2021-06-30/documents'],
       },
     ],
     options: [
@@ -792,26 +790,7 @@ export default {
           'POST_FLAT_FILE_FBA_CREATE_REMOVAL',
           'RFQ_UPLOAD_FEED',
           'POST_EASYSHIP_DOCUMENTS',
-          'UPLOAD_VAT_INVOICE',
         ],
-      },
-    ],
-  },
-  'unencrypted.feedOptions': {
-    type: 'editor',
-    mode: 'json',
-    label: 'Feed options',
-    helpKey: 'import.unencrypted.feedOptions',
-    noApi: true,
-    validateContent: true,
-    visibleWhenAll: [
-      {
-        field: 'http.method',
-        is: ['POST'],
-      },
-      {
-        field: 'http.relativeURI',
-        is: [HTTP_IMPORT_CREATE_FEED_RELATIVE_URI],
       },
     ],
   },

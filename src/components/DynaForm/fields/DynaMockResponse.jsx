@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import EditorField from './DynaEditor';
 import { validateMockResponseField } from '../../../utils/flowDebugger';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   editor: {
@@ -16,7 +18,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaMockResponse(props) {
+  const {
+    id,
+    value,
+    formKey,
+  } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const error = validateMockResponseField(value);
+
+    if (error) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: error}));
+    } else {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+    }
+  }, [dispatch, formKey, id, value]);
 
   return (
     <EditorField

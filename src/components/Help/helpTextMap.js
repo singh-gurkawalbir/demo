@@ -1459,7 +1459,6 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
   'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'import.unencrypted.feedType': 'The type of the feed.',
-  'import.unencrypted.feedOptions': 'Additional options to control the feed. These vary by feed type.',
   'export.s3.region':
   'The default Amazon S3 region is [us-east-1]. To change the region, select the region for this S3 account',
   'export.webhook.provider':
