@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, TextField, Typography, Button } from '@material-ui/core';
 import clsx from 'clsx';
-import CeligoLogo from '../../CeligoLogo';
+import { CeligoLogo } from '@celigo/fuse-ui';
 
 const useStyles = makeStyles(theme => ({
   signUpForm: {

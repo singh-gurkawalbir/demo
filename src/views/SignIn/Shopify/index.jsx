@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import SigninForm from './SignInForm';
-import CeligoLogo from '../../../components/CeligoLogo';
 import { getDomain, isSignUpAllowed } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
 import UserSignInPageFooter from '../../../components/UserSignInPage/UserSignInPageFooter';
@@ -79,7 +80,9 @@ export default function Signin(props) {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
 
-  const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
+  const isSignupCompleted = useSelector(
+    state => selectors.signupStatus(state) === 'done'
+  );
   const signupMessage = useSelector(state => selectors.signupMessage(state));
 
   return (
@@ -91,13 +94,11 @@ export default function Signin(props) {
             <CeligoLogo />
           </div>
           <Title />
-          {
-            isSignupCompleted && (
-            <Typography variant="body2" className={classes.signupSuccess} >
+          {isSignupCompleted && (
+            <Typography variant="body2" className={classes.signupSuccess}>
               {signupMessage}
             </Typography>
-            )
-          }
+          )}
           <SigninForm
             {...props}
             dialogOpen={false}
@@ -105,13 +106,13 @@ export default function Signin(props) {
             queryParam={queryParams}
           />
           {isSignUpAllowed() && (
-          <div className={classes.signupLink}>
-            <UserSignInPageFooter
-              linkLabel="Don't have an account?"
-              linkText="Sign up"
-              link="signup"
-            />
-          </div>
+            <div className={classes.signupLink}>
+              <UserSignInPageFooter
+                linkLabel="Don't have an account?"
+                linkText="Sign up"
+                link="signup"
+              />
+            </div>
           )}
         </div>
       </div>

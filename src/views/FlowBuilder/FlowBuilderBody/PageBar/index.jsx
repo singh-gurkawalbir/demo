@@ -3,11 +3,11 @@ import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import {EditableText} from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import Status from '../../../../components/Buttons/Status';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
-import EditableText from '../../../../components/EditableText';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import FlowToggle from '../../../../components/FlowToggle';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
@@ -58,14 +58,9 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
     <EditableText
       disabled={isViewMode}
       text={flow.name}
+      placeholder={isNewFlowFn(flowId) ? 'New flow' : `Unnamed (id:${flowId})`}
             // multiline
-      defaultText={isNewFlowFn(flowId) ? 'New flow' : `Unnamed (id:${flowId})`}
       onChange={handleTitleChange}
-      inputClassName={
-              drawerOpened
-                ? classes.editableTextInputShift
-                : classes.editableTextInput
-            }
           />
   );
 };

@@ -1,4 +1,10 @@
-import React, { useMemo, Fragment, useEffect, useCallback, StrictMode } from 'react';
+import React, {
+  Fragment,
+  useEffect,
+  useCallback,
+  StrictMode,
+  useMemo,
+} from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
@@ -105,14 +111,22 @@ export const useSnackbarStyles = makeStyles({
       top: 16,
     },
   },
-
 });
 
 function NonSigninHeaderComponents() {
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
-  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+  const isUserAuthenticated = useSelector(
+    state => selectors.sessionInfo(state)?.authenticated
+  );
 
-  if (!isAuthInitialized && !isUserAuthenticated) return <Loader open>Loading...<Spinner /></Loader>;
+  if (!isAuthInitialized && !isUserAuthenticated) {
+    return (
+      <Loader open>
+        Loading...
+        <Spinner />
+      </Loader>
+    );
+  }
 
   return (
     <>
@@ -140,9 +154,21 @@ const PUBLIC_ROUTES = [
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
 export const PageContentComponents = () => (
   <Switch>
-    <Route exact path={getRoutePath('/reset-password/:token')} component={ResetPassword} />
-    <Route exact path={getRoutePath('/change-email/:token')} component={ChangeEmail} />
-    <Route exact path={getRoutePath('/set-initial-password/:token')} component={SetPassword} />
+    <Route
+      exact
+      path={getRoutePath('/reset-password/:token')}
+      component={ResetPassword}
+    />
+    <Route
+      exact
+      path={getRoutePath('/change-email/:token')}
+      component={ChangeEmail}
+    />
+    <Route
+      exact
+      path={getRoutePath('/set-initial-password/:token')}
+      component={SetPassword}
+    />
     <Route path={getRoutePath('/mfa/help')} component={MfaHelp} />
     <Route path={getRoutePath('/mfa/verify')} component={MfaVerify} />
     <Route path={getRoutePath('/signin')} component={Signin} />
@@ -151,11 +177,22 @@ export const PageContentComponents = () => (
       path={[
         getRoutePath('/request-reset?email'),
         getRoutePath('/request-reset'),
-      ]} component={ForgotPassword} />
+      ]}
+      component={ForgotPassword}
+    />
     <Route path={getRoutePath('/shopify/error')} component={ShopifyError} />
-    <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
-    <Route path={getRoutePath('/accept-invite/:token')} component={AcceptInvite} />
-    <Route path={getRoutePath('/concurconnect/:module')} component={ConcurConnect} />
+    <Route
+      path={getRoutePath('/request-reset-sent')}
+      component={ForgotPassword}
+    />
+    <Route
+      path={getRoutePath('/accept-invite/:token')}
+      component={AcceptInvite}
+    />
+    <Route
+      path={getRoutePath('/concurconnect/:module')}
+      component={ConcurConnect}
+    />
     <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
@@ -165,21 +202,35 @@ const Headers = () => {
 
   const isConcurLandingPage = location.pathname.startsWith('/concurconnect');
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
-  const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isPublicPage = PUBLIC_ROUTES.includes(
+    location.pathname?.split('/')?.[1]
+  );
   const isLandingPage = location.pathname.startsWith('/landing');
   const isAgreeTOSAndPPPage = location.pathname.startsWith('/agreeTOSAndPP');
 
-  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage || isAgreeTOSAndPPPage) return null;
+  if (
+    isConcurLandingPage ||
+    isPublicPage ||
+    isMFAVerifyPage ||
+    isLandingPage ||
+    isAgreeTOSAndPPPage
+  ) {
+    return null;
+  }
 
   return <NonSigninHeaderComponents />;
 };
 
 const PageContentWrapper = () => {
   const location = useLocation();
-  const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isPublicPage = PUBLIC_ROUTES.includes(
+    location.pathname?.split('/')?.[1]
+  );
   const isSignInPage = location.pathname.startsWith('/signin');
 
-  return isPublicPage && !isSignInPage ? <PageContentComponents /> : (
+  return isPublicPage && !isSignInPage ? (
+    <PageContentComponents />
+  ) : (
     <WithAuth>
       <PageContentComponents />
     </WithAuth>
@@ -192,14 +243,25 @@ export default function App() {
   const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
-  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const { colorTheme: currentTheme } = preferences;
+  const preferences = useSelector(
+    state => selectors.userProfilePreferencesProps(state),
+    shallowEqual
+  );
+  const {
+    colorTheme: currentTheme,
+    timezone,
+    timeFormat,
+    dateFormat,
+    showRelativeDateTime,
+  } = preferences;
+  const isSandbox = useSelector(
+    state => selectors.userPreferences(state).environment === 'sandbox'
+  );
   const themeName = useSelector(state =>
     selectors.userPreferences(state).environment === 'sandbox'
       ? 'sandbox'
       : currentTheme
   );
-
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
     dispatch(actions.user.toggleDebug());
@@ -220,40 +282,12 @@ export default function App() {
      */
     if (domain === 'localhost.io' && !process.env.DISABLE_TRACKING_IN_LOCAL) {
       gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
-      pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
+      pendo.init({ apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f' });
     }
   }, []);
 
-  // const generateClassName = createGenerateClassName({
-  //   // By enabling this option, if you have non-MUI elements (e.g. `<div />`)
-  //   // using MUI classes (e.g. `.MuiButton`) they will lose styles.
-  //   // Make sure to convert them to use `styled()` or `<Box />` first.
-  //   disableGlobal: true,
-  //   // Class names will receive this seed to avoid name collisions.
-  //   seed: 'mui-jss',
-  // });
-
-  const appContext = {
-    theme: themeName, // "light" | "sandbox";
-    // this should be fetched from user preferences...
-    // timezone?: string;
-    // language?: string;
-    // dateFormat?: string;
-    // timeFormat?: string;
-    // showRelativeDateTime?: boolean;
-  };
-
-  const AppRenderer = () => env !== 'development' ? (
-    <div className={classes.root}>
-      <LoadingNotification />
-      <ErrorNotifications />
-      {/* Headers */}
-      <Headers />
-      {/* page content */}
-      <PageContentWrapper />
-    </div>
-  ) : (
-    <StrictMode>
+  const AppRenderer = () =>
+    env !== 'development' ? (
       <div className={classes.root}>
         <LoadingNotification />
         <ErrorNotifications />
@@ -262,7 +296,40 @@ export default function App() {
         {/* page content */}
         <PageContentWrapper />
       </div>
-    </StrictMode>
+    ) : (
+      <StrictMode>
+        <div className={classes.root}>
+          <LoadingNotification />
+          <ErrorNotifications />
+          {/* Headers */}
+          <Headers />
+          {/* page content */}
+          <PageContentWrapper />
+        </div>
+      </StrictMode>
+    );
+
+  // Note tht this appContext should be properly cached as any changes
+  // to it will cause a full re-render of the app. This is by design,
+  // as we DO want any of these prefs to force a re-render of the app.
+  const appContext = useMemo(
+    () => ({
+      // language?: string; // not used yet dummy field
+      theme: currentTheme, // "light" | "dark" | "orion";
+      isSandbox,
+      timezone,
+      timeFormat,
+      dateFormat,
+      showRelativeDateTime,
+    }),
+    [
+      isSandbox,
+      currentTheme,
+      timezone,
+      timeFormat,
+      dateFormat,
+      showRelativeDateTime,
+    ]
   );
 
   return (
