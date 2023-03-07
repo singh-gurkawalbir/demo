@@ -94,7 +94,8 @@ module.exports = async ({ config }) => {
     new webpack.DefinePlugin({
       // replaces Globals referenced in the UI code
       'CDN_BASE_URI': JSON.stringify('HTTPS://d142hkd03ds8ug.cloudfront.net/'),
-      'IO_LOGIN_PROMOTION_URL': JSON.stringify('https://staging.celigo.com/login/display'),
+      'IO_LOGIN_PROMOTION_URL': JSON.stringify('https://staging.celigo.com/integratorio/signin/'),
+      'IO_SIGNUP_PROMOTION_URL': JSON.stringify('https://staging.celigo.com/integratorio/signup/'),
       // replaces env vars referenced in the UI code
       'process.env.STORYBOOK_FOO': JSON.stringify('value of process.env.STORYBOOK_FOO'),
     })
