@@ -254,21 +254,26 @@ describe('dynaHFAssistantOptions UI tests', () => {
     ];
 
     initDynaHFAssistantOptions({ ...props, id: endpoints[2].id });
-    expect(screen.getByText('Form view')).toBeInTheDocument();
+    waitFor(() => { expect(screen.getByText('Form view')).toBeInTheDocument(); });
+    let dropdown;
 
-    const dropdown = screen.getByText('Please select');
+    waitFor(() => {
+      dropdown = screen.getByText('Please select');
+    });
 
-    expect(dropdown).toBeInTheDocument();
-    await userEvent.click(dropdown);
-    // import operations are operations while for exports these are endpoints
-    expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument();
-    expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
-      '_exportId',
-      extendedPatch,
-    ));
+    waitFor(async () => {
+      expect(dropdown).toBeInTheDocument();
+      await userEvent.click(dropdown);
+      // import operations are operations while for exports these are endpoints
+      expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument();
+      await userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
+      expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
+      expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
+        '_exportId',
+        extendedPatch,
+      ));
+    });
   });
   test('should display options for versions in the dropdown when assistantFieldType is "version"', async () => {
     const patch = [
@@ -302,19 +307,21 @@ describe('dynaHFAssistantOptions UI tests', () => {
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'version' });
     await userEvent.click(screen.getByText('Please select'));
     expect(screen.getByText('v2')).toBeInTheDocument();
-    const option = screen.getByText('v3');
+    waitFor(async () => {
+      const option = screen.getByText('v3');
 
-    expect(option).toBeInTheDocument();
-    await userEvent.click(option);
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
-      '_exportId',
-      patch,
-    ));
+      expect(option).toBeInTheDocument();
+      await userEvent.click(option);
+      expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
+        '_exportId',
+        patch,
+      ));
+    });
   });
   test('should display options for resources in the dropdown when assistantFieldType is "resource"', async () => {
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'resource' });
     await userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('resource1')).toBeInTheDocument();
+    waitFor(() => { expect(screen.getByText('resource1')).toBeInTheDocument(); });
   });
   test('should display options passed as props in the dropdown when assistantFieldType is exportType', async () => {
     const props = {
@@ -341,18 +348,20 @@ describe('dynaHFAssistantOptions UI tests', () => {
 
     initDynaHFAssistantOptions(props, extraFields);
     await userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('delta')).toBeInTheDocument();
-    expect(screen.getByText('option2')).toBeInTheDocument();
-    await userEvent.click(screen.getByText('option2'));
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'option2');
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resourceForm.init(
-      undefined,
-      undefined,
-      false,
-      false,
-      undefined,
-      [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'option2' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId'} }]
-    ));
+    waitFor(async () => {
+      expect(screen.getByText('delta')).toBeInTheDocument();
+      expect(screen.getByText('option2')).toBeInTheDocument();
+      await userEvent.click(screen.getByText('option2'));
+      expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'option2');
+      expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resourceForm.init(
+        undefined,
+        undefined,
+        false,
+        false,
+        undefined,
+        [{ id: 'demoId', value: '' }, { id: 'assistantMetadata.exportType', value: 'option2' }, { id: 'assistantMetadata.queryParams', value: { id: 'fieldId' } }, { id: 'assistantMetadata.bodyParams', value: { id: 'fieldId'} }]
+      ));
+    });
     waitFor(async () => {
       await userEvent.click(screen.getByText('delta'));
       expect(mockOnFieldChangeFn).toHaveBeenCalledWith('assistantMetadata.exportType', 'delta');
@@ -377,8 +386,10 @@ describe('dynaHFAssistantOptions UI tests', () => {
       ...resourceContext,
       fieldId: 'fieldId',
     });
-    await userEvent.click(screen.getByText('Please select'));
-    await userEvent.click(screen.getByRole('menuitem', { name: 'resource1' }));
+    waitFor(async () => {
+      await userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByRole('menuitem', { name: 'resource1' }));
+    });
   });
   test('should display no options for resources with invalid resourceType', async () => {
     const resourceContext = { resourceType: 'imports', resourceId: '_importId' };
@@ -390,6 +401,6 @@ describe('dynaHFAssistantOptions UI tests', () => {
     });
     await userEvent.click(screen.getByText('Please select'));
     await userEvent.click(screen.getByRole('menuitem'));
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith(undefined, '', true);
+    waitFor(() => { expect(mockOnFieldChangeFn).toHaveBeenCalledWith(undefined, '', true); });
   });
 });
