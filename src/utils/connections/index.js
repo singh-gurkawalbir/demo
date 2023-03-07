@@ -254,6 +254,28 @@ export const amazonSellerCentralAuthURI = {
   A17E79C6D8DWNP: 'https://sellercentral.amazon.sa/apps/authorize/consent',
   AMEN7PMS3EDWL: 'https://sellercentral.amazon.com.be/apps/authorize/consent',
 };
+export const amazonVendorCentralAuthURI = {
+  A2EUQ1WTGCTBG2: 'https://vendorcentral.amazon.ca/',
+  ATVPDKIKX0DER: 'https://vendorcentral.amazon.com/',
+  A1AM78C64UM0Y8: 'https://vendorcentral.amazon.com.mx/',
+  A2Q3Y263D00KWC: 'https://vendorcentral.amazon.com.br/',
+  A1RKKUPIHCS9HS: 'https://vendorcentral.amazon.es/',
+  A1F83G8C2ARO7P: 'https://vendorcentral.amazon.co.uk/',
+  A13V1IB3VIYZZH: 'https://vendorcentral.amazon.fr/',
+  A1805IZSGTT6HS: 'https://vendorcentral.amazon.nl/',
+  A1PA6795UKMFR9: 'https://vendorcentral.amazon.de/',
+  APJ6JRA9NG5V4: 'https://vendorcentral.amazon.it/',
+  A2NODRKZP88ZB9: 'https://vendorcentral.amazon.se/',
+  A1C3SOZRARQ6R3: 'https://vendorcentral.amazon.pl/',
+  A33AVAJ2PDY3EV: 'https://vendorcentral.amazon.com.tr/',
+  A2VIGQ35RCS4UG: 'https://vendorcentral.amazon.me/',
+  A21TJRUUN4KGV: 'https://vendorcentral.amazon.in/',
+  A19VAU5U5O7RUS: 'https://vendorcentral.amazon.com.sg/',
+  A39IBJ37TRP1C6: 'https://vendorcentral.amazon.com.au/',
+  A1VC38T7YXB528: 'https://vendorcentral.amazon.co.jp/',
+  ARBP9OOSHTCHU: 'https://vendorcentral.amazon.me/',
+  AMEN7PMS3EDWL: 'https://vendorcentral.amazon.com.be/',
+};
 
 export const amazonSellerCentralMarketPlaceOptions = {
   northAmerica: [
@@ -274,6 +296,34 @@ export const amazonSellerCentralMarketPlaceOptions = {
     {label: 'Egypt', value: 'ARBP9OOSHTCHU'},
     {label: 'Turkey', value: 'A33AVAJ2PDY3EV'},
     {label: 'Saudi Arabia', value: 'A17E79C6D8DWNP'},
+    {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
+    {label: 'India', value: 'A21TJRUUN4KGV'},
+    {label: 'Belgium', value: 'AMEN7PMS3EDWL'},
+  ],
+  farEast: [
+    {label: 'Singapore', value: 'A19VAU5U5O7RUS'},
+    {label: 'Australia', value: 'A39IBJ37TRP1C6'},
+    {label: 'Japan', value: 'A1VC38T7YXB528'},
+  ],
+};
+export const amazonVendorCentralMarketPlaceOptions = {
+  northAmerica: [
+    {label: 'Canada', value: 'A2EUQ1WTGCTBG2' },
+    {label: 'United States of America', value: 'ATVPDKIKX0DER' },
+    {label: 'Mexico', value: 'A1AM78C64UM0Y8' },
+    {label: 'Brazil', value: 'A2Q3Y263D00KWC' },
+  ],
+  europe: [
+    {label: 'Spain', value: 'A1RKKUPIHCS9HS'},
+    {label: 'United Kingdom', value: 'A1F83G8C2ARO7P'},
+    {label: 'France', value: 'A13V1IB3VIYZZH'},
+    {label: 'Netherlands', value: 'A1805IZSGTT6HS'},
+    {label: 'Germany', value: 'A1PA6795UKMFR9'},
+    {label: 'Italy', value: 'APJ6JRA9NG5V4'},
+    {label: 'Sweden', value: 'A2NODRKZP88ZB9'},
+    {label: 'Poland', value: 'A1C3SOZRARQ6R3'},
+    {label: 'Egypt', value: 'ARBP9OOSHTCHU'},
+    {label: 'Turkey', value: 'A33AVAJ2PDY3EV'},
     {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
     {label: 'India', value: 'A21TJRUUN4KGV'},
     {label: 'Belgium', value: 'AMEN7PMS3EDWL'},
