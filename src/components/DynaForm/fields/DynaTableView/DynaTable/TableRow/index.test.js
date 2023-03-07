@@ -111,7 +111,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     await userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1, optionsMap: props.optionsMap});
   });
 
   test('should test rows data by providing type as number data and test updating the text', () => {
@@ -200,7 +200,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', () => {
     const props = {
@@ -265,7 +265,7 @@ describe('Table Row UI test cases', () => {
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
     userEvent.click(moreJobActionMenuButtonNode);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1, optionsMap: props.optionsMap});
   });
 
   test('should test rows data by providing type as select options at export fields and and multiselect at import fields', () => {
@@ -368,7 +368,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', () => {
     const props = {
@@ -430,6 +430,6 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1, optionsMap: props.optionsMap});
   });
 });
