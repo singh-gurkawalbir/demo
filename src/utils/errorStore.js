@@ -35,9 +35,6 @@ const messages = {
   MOCK_RESPONSE_INVALID_FORMAT: `Mock response must be in integrator.io canonical format. <a href=${MOCK_RESPONSE_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,
   MOCK_RESPONSE_SIZE_EXCEED: 'Mock response cannot be larger than 1 MB. Decrease your data size and try again.',
   // #endregion
-
-  // #region jsonEditor error messages
-  INVALID_JSON_VALUE: '{{{label}}} must be a valid JSON',
 };
 
 export default function errorMessageStore(key, argsObj) {

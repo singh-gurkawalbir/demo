@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EditorField from '../DynaEditor';
 import { validateMockOutputField } from '../../../../utils/flowDebugger';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   editor: {
@@ -20,11 +21,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function MockOutputEditorField(props) {
-  const {resourceType, resourceId, flowId} = props;
+  const {id, formKey, resourceType, resourceId, flowId, value} = props;
 
   const history = useHistory();
   const match = useRouteMatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
@@ -37,6 +39,16 @@ export default function MockOutputEditorField(props) {
   );
 
   const expandMode = isPreviewPanelAvailableForResource ? 'drawer' : 'modal';
+
+  useEffect(() => {
+    const error = validateMockOutputField(value);
+
+    if (error) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: error}));
+    } else {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+    }
+  }, [dispatch, formKey, id, value]);
 
   const handleExpandDrawer = useCallback(() => {
     const { formKey, id } = props;
