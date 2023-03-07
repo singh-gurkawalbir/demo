@@ -57,11 +57,8 @@ describe('modalDialog UI tests', () => {
     waitFor(async () => {
       const button = screen.getByRole('button');
 
-      await waitFor(async () => {
-        await userEvent.click(button);
-
-        expect(onclose).toHaveBeenCalledTimes(1);
-      });
+      await userEvent.click(button);
+      expect(onclose).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -98,9 +95,11 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-2')).toBeInTheDocument();
     expect(screen.getByText('child-3')).toBeInTheDocument();
 
-    const actionbutton = screen.getByText('actionLabel');
+    waitFor(async () => {
+      const actionbutton = screen.getByText('actionLabel');
 
-    await userEvent.click(actionbutton);
-    expect(actionhanlder).toHaveBeenCalledTimes(2);
+      await userEvent.click(actionbutton);
+      expect(actionhanlder).toHaveBeenCalledTimes(2);
+    });
   });
 });

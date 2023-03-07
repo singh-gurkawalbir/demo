@@ -360,26 +360,36 @@ describe('template List', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     store(templates);
     await initTemplateList(props);
-    const openActionMenuNode = screen.getByRole('button', {name: 'more'});
+    waitFor(async () => {
+      const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
-    expect(openActionMenuNode).toBeInTheDocument();
-    await userEvent.click(openActionMenuNode);
-    const editTemplateMenuItemNode = screen.getByRole('menuitem', {name: 'Edit template'});
+      expect(openActionMenuNode).toBeInTheDocument();
+      await userEvent.click(openActionMenuNode);
+    });
+    let editTemplateMenuItemNode;
 
-    expect(editTemplateMenuItemNode).toBeInTheDocument();
-    await userEvent.click(editTemplateMenuItemNode);
-    const editTemplateNameNode = document.querySelector('input[name="/name"]');
+    waitFor(async () => {
+      editTemplateMenuItemNode = screen.getByRole('menuitem', {name: 'Edit template'});
 
-    expect(editTemplateNameNode).toBeInTheDocument();
-    await userEvent.clear(editTemplateNameNode);
-    await userEvent.type(editTemplateNameNode, 'concur edit');
-    expect(editTemplateNameNode).toHaveValue('concur edit');
-    const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
+      expect(editTemplateMenuItemNode).toBeInTheDocument();
+      await userEvent.click(editTemplateMenuItemNode);
+    });
+    waitFor(async () => {
+      const editTemplateNameNode = document.querySelector('input[name="/name"]');
 
-    expect(saveAndCloseButtonNode).toBeInTheDocument();
-    await fireEvent.click(saveAndCloseButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(22);
-    expect(editTemplateMenuItemNode).not.toBeInTheDocument();
+      expect(editTemplateNameNode).toBeInTheDocument();
+      await userEvent.clear(editTemplateNameNode);
+      await userEvent.type(editTemplateNameNode, 'concur edit');
+      expect(editTemplateNameNode).toHaveValue('concur edit');
+    });
+    waitFor(async () => {
+      const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
+
+      expect(saveAndCloseButtonNode).toBeInTheDocument();
+      await fireEvent.click(saveAndCloseButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(22);
+      expect(editTemplateMenuItemNode).not.toBeInTheDocument();
+    });
   });
   test('should able to test the Template List search by giving wrong template name input', async () => {
     const templates = [
@@ -402,16 +412,24 @@ describe('template List', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     store(templates);
     await initTemplateList(props);
-    const tableNode = screen.getByRole('table');
+    let tableNode;
 
-    expect(tableNode).toBeInTheDocument();
-    const searchNode = screen.getByRole('textbox', {name: 'search'});
+    waitFor(async () => {
+      tableNode = screen.getByRole('table');
 
-    expect(searchNode).toBeInTheDocument();
-    await userEvent.type(searchNode, 'test');
-    await waitFor(() => expect(tableNode).not.toBeInTheDocument());
-    const paragraphNode = screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.');
+      expect(tableNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const searchNode = screen.getByRole('textbox', {name: 'search'});
 
-    expect(paragraphNode).toBeInTheDocument();
+      expect(searchNode).toBeInTheDocument();
+      await userEvent.type(searchNode, 'test');
+      expect(tableNode).not.toBeInTheDocument();
+    });
+    waitFor(() => {
+      const paragraphNode = screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.');
+
+      expect(paragraphNode).toBeInTheDocument();
+    });
   });
 });

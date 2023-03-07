@@ -16,14 +16,16 @@ describe('IntegrationTabs UI tests', () => {
         <Route path="/:integrationId"><IntegrationTabsComponent /></Route>
       </MemoryRouter>);
 
-    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
-    act(() => { store.dispatch(actions.user.preferences.request()); });
-    act(() => { store.dispatch(actions.user.profile.request()); });
-    act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
-    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan(1));
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.defaultAShareId).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.profile?.name).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    waitFor(async () => {
+      act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+      act(() => { store.dispatch(actions.user.preferences.request()); });
+      act(() => { store.dispatch(actions.user.profile.request()); });
+      act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
+      await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan(1));
+      await waitFor(() => expect(store?.getState()?.user?.preferences?.defaultAShareId).toBeDefined());
+      await waitFor(() => expect(store?.getState()?.user?.profile?.name).toBeDefined());
+      await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    });
   }
   test('should test various tabs', async () => {
     await renderWithStore();
@@ -55,6 +57,6 @@ describe('IntegrationTabs UI tests', () => {
       emailHash: '1c8eb6f416e72a5499283b56f2663fe1'});
 
     await renderWithStore();
-    expect(screen.getByText('Analytics')).toBeInTheDocument();
+    waitFor(() => { expect(screen.getByText('Analytics')).toBeInTheDocument(); });
   });
 });

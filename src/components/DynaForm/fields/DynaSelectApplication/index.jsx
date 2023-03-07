@@ -197,6 +197,7 @@ export default function SelectApplication(props) {
 
   const handleInputChange = (newVal, event) => {
     if (event.action === 'input-change') {
+      setMenuIsOpen(true);
       setInputValue(newVal);
     }
   };
@@ -208,7 +209,7 @@ export default function SelectApplication(props) {
     if (selectedValue) {
       setInputValue(selectedValue);
     }
-    setMenuIsOpen(!value);
+    setMenuIsOpen(false);
   };
 
   const customReactSelectStyles = CustomReactSelectStyles();

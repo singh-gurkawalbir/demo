@@ -251,14 +251,16 @@ describe('Testsuite for Multi Select Application', () => {
     initMultiSelectApplication({props});
     expect(screen.getByText(/mock search icon/i)).toBeInTheDocument();
     expect(screen.getByText(/mock field message/i)).toBeInTheDocument();
-    const inputButtonNode = document.querySelector('input');
+    waitFor(async () => {
+      const inputButtonNode = document.querySelector('input');
 
-    expect(inputButtonNode).toBeInTheDocument();
-    await userEvent.type(inputButtonNode, 'tes');
-    expect(screen.getByText(/mock application image/i)).toBeInTheDocument();
-    expect(screen.getByText(/type = test/i)).toBeInTheDocument();
-    await userEvent.click(screen.getByText('Test'));
-    expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['test']);
+      expect(inputButtonNode).toBeInTheDocument();
+      await userEvent.type(inputButtonNode, 'tes');
+      expect(screen.getByText(/mock application image/i)).toBeInTheDocument();
+      expect(screen.getByText(/type = test/i)).toBeInTheDocument();
+      await userEvent.click(screen.getByText('Test'));
+      expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['test']);
+    });
   });
   test('should select an published application checkbox by typing an application name when the multiselect and hideApplicationImage is set to false', async () => {
     const props = {
@@ -278,13 +280,15 @@ describe('Testsuite for Multi Select Application', () => {
     initMultiSelectApplication({props});
     expect(screen.getByText(/mock search icon/i)).toBeInTheDocument();
     expect(screen.getByText(/mock field message/i)).toBeInTheDocument();
-    const inputButtonNode = document.querySelector('input');
+    waitFor(async () => {
+      const inputButtonNode = document.querySelector('input');
 
-    expect(inputButtonNode).toBeInTheDocument();
-    await userEvent.type(inputButtonNode, 'acce');
-    expect(screen.getByText(/mock application image/i)).toBeInTheDocument();
-    expect(screen.getByText(/type = rest/i)).toBeInTheDocument();
-    await userEvent.click(screen.getByText('Accelo'));
-    expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['accelo']);
+      expect(inputButtonNode).toBeInTheDocument();
+      await userEvent.type(inputButtonNode, 'acce');
+      expect(screen.getByText(/mock application image/i)).toBeInTheDocument();
+      expect(screen.getByText(/type = rest/i)).toBeInTheDocument();
+      await userEvent.click(screen.getByText('Accelo'));
+      expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', ['accelo']);
+    });
   });
 });

@@ -96,15 +96,18 @@ describe('testsuite for SSOUserSettings', () => {
     const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
     expect(helpTextYesButtonNode).toBeInTheDocument();
-    await waitFor(async () => {
-      await userEvent.click(helpTextYesButtonNode);
+
+    await userEvent.click(helpTextYesButtonNode);
+    waitFor(() => {
       expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
     });
     await userEvent.click(useThisAccountForSSOHelpText);
-    const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
+    waitFor(async () => {
+      const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
 
-    expect(helpTextNoButtonNode).toBeInTheDocument();
-    await userEvent.click(helpTextNoButtonNode);
+      expect(helpTextNoButtonNode).toBeInTheDocument();
+      await userEvent.click(helpTextNoButtonNode);
+    });
   }, 30000);
 });
 

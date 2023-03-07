@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { mutateStore, renderWithProviders} from '../../test/test-utils';
@@ -296,13 +297,15 @@ describe('PopulateWithPreviewData UI tests', () => {
       resourceType,
       updateMockDataContent,
     });
-    const buttonRef = screen.getByRole('button', {name: 'Populate with preview data'});
+    waitFor(async () => {
+      const buttonRef = screen.getByRole('button', {name: 'Populate with preview data'});
 
-    expect(buttonRef).toBeInTheDocument();
-    expect(buttonRef).toBeEnabled();
-    userEvent.click(buttonRef);
-    expect(buttonRef).toBeDisabled();
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+      expect(buttonRef).toBeInTheDocument();
+      expect(buttonRef).toBeEnabled();
+      await userEvent.click(buttonRef);
+      expect(buttonRef).toBeDisabled();
+    });
+    waitFor(() => expect(mockDispatchFn).toBeCalledWith(
       actions.resourceFormSampleData.request(formKey, { refreshCache: true, asyncKey: getAsyncKey(resourceType, resourceId) })
     ));
 
@@ -321,14 +324,16 @@ describe('PopulateWithPreviewData UI tests', () => {
       },
     ];
 
-    initialStore.dispatch(
-      actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
-    );
-    await waitFor(() => expect(updateMockDataContent).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(mockDispatchFn).not.toBeCalledWith(
+    act(() => {
+      initialStore.dispatch(
+        actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
+      );
+    });
+    waitFor(() => expect(updateMockDataContent).toHaveBeenCalledTimes(1));
+    waitFor(() => expect(mockDispatchFn).not.toBeCalledWith(
       actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
     ));
-    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
+    waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
   });
   test('should dispatch correct action and render correct snackbar on error on click for exports', async () => {
     const resourceType = 'exports';

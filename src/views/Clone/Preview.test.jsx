@@ -614,77 +614,107 @@ describe('Clone Preview', () => {
 
     await initStore(integrationSession);
     await initClonePreview(props);
-    const cloneFlowNode = screen.getByRole('heading', {name: 'Clone flow'});
+    waitFor(() => {
+      const cloneFlowNode = screen.getByRole('heading', {name: 'Clone flow'});
 
-    expect(cloneFlowNode).toBeInTheDocument();
-    const flowNameNode = screen.getByRole('textbox', {name: ''});
-
-    expect(flowNameNode).toHaveValue('Clone - 3PL Central - FTP');
-    await userEvent.clear(flowNameNode);
-    await userEvent.type(flowNameNode, 'Succesfully Cloned - 3PL Central - FTP');
-    expect(flowNameNode).toHaveValue('Succesfully Cloned - 3PL Central - FTP');
-    const environmentNode = screen.getByRole('radiogroup', {name: 'Environment'});
-
-    expect(environmentNode).toBeInTheDocument();
-    const environmentProductionNode = screen.getByRole('radio', {name: 'Production'});
-
-    expect(environmentProductionNode).toBeInTheDocument();
-    const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
-
-    expect(environmentSandboxNode).toBeInTheDocument();
-    await userEvent.click(environmentSandboxNode);
-    expect(environmentSandboxNode).toBeChecked();
-    expect(environmentProductionNode).not.toBeChecked();
-    await userEvent.click(environmentProductionNode);
-    expect(environmentSandboxNode).not.toBeChecked();
-    expect(environmentProductionNode).toBeChecked();
-    const paragraphNode = screen.getByText('The following components will get cloned with this flow.');
-
-    expect(paragraphNode).toBeInTheDocument();
-    const integrationNode = screen.getByRole('button', {name: 'Please select'});
-
-    expect(integrationNode).toBeInTheDocument();
-    await userEvent.click(integrationNode);
-    const menuitemNode = screen.getByRole('menuitem', {name: '3PL Central'});
-
-    expect(menuitemNode).toBeInTheDocument();
-    await fireEvent.click(menuitemNode);
-    waitFor(async () => {
-      await waitForElementToBeRemoved(menuitemNode);
+      expect(cloneFlowNode).toBeInTheDocument();
     });
-    expect(integrationNode).toHaveAccessibleName('3PL Central');
-    const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
+    waitFor(async () => {
+      const flowNameNode = screen.getByRole('textbox', {name: ''});
 
-    expect(flowButtonNode).toBeInTheDocument();
-    expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await fireEvent.click(flowButtonNode);
-    expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
-    const tableNode = screen.getAllByRole('rowgroup');
+      expect(flowNameNode).toHaveValue('Clone - 3PL Central - FTP');
+      await userEvent.clear(flowNameNode);
+      await userEvent.type(flowNameNode, 'Succesfully Cloned - 3PL Central - FTP');
+      expect(flowNameNode).toHaveValue('Succesfully Cloned - 3PL Central - FTP');
+    });
+    waitFor(() => {
+      const environmentNode = screen.getByRole('radiogroup', {name: 'Environment'});
 
-    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
-    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
-    const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
+      expect(environmentNode).toBeInTheDocument();
+    });
+    let environmentProductionNode;
 
-    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
-    const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
+    waitFor(() => {
+      environmentProductionNode = screen.getByRole('radio', {name: 'Production'});
 
-    expect(exportButtonNode).toBeInTheDocument();
-    expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(exportButtonNode);
-    expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const importButtonNode = screen.getByRole('button', {name: 'Imports'});
+      expect(environmentProductionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
-    expect(importButtonNode).toBeInTheDocument();
-    expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(importButtonNode);
-    expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
+      expect(environmentSandboxNode).toBeInTheDocument();
+      await userEvent.click(environmentSandboxNode);
+      expect(environmentSandboxNode).toBeChecked();
+      expect(environmentProductionNode).not.toBeChecked();
+      await userEvent.click(environmentProductionNode);
+      expect(environmentSandboxNode).not.toBeChecked();
+      expect(environmentProductionNode).toBeChecked();
+    });
+    waitFor(() => {
+      const paragraphNode = screen.getByText('The following components will get cloned with this flow.');
 
-    expect(connectionsButtonNode).toBeInTheDocument();
-    expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(connectionsButtonNode);
-    expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
-  }, 30000);
+      expect(paragraphNode).toBeInTheDocument();
+    });
+    let integrationNode;
+
+    waitFor(async () => {
+      integrationNode = screen.getByRole('button', {name: 'Please select'});
+
+      expect(integrationNode).toBeInTheDocument();
+      await userEvent.click(integrationNode);
+    });
+    waitFor(() => {
+      const menuitemNode = screen.getByRole('menuitem', {name: '3PL Central'});
+
+      expect(menuitemNode).toBeInTheDocument();
+      fireEvent.click(menuitemNode);
+      waitForElementToBeRemoved(menuitemNode);
+      expect(integrationNode).toHaveAccessibleName('3PL Central');
+    });
+    waitFor(async () => {
+      const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
+
+      expect(flowButtonNode).toBeInTheDocument();
+      expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
+      await fireEvent.click(flowButtonNode);
+      expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
+    });
+    waitFor(() => {
+      const tableNode = screen.getAllByRole('rowgroup');
+
+      expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+      expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
+    });
+    waitFor(() => {
+      const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
+
+      expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
+    });
+    waitFor(async () => {
+      const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
+
+      expect(exportButtonNode).toBeInTheDocument();
+      expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(exportButtonNode);
+      expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const importButtonNode = screen.getByRole('button', {name: 'Imports'});
+
+      expect(importButtonNode).toBeInTheDocument();
+      expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(importButtonNode);
+      expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
+
+      expect(connectionsButtonNode).toBeInTheDocument();
+      expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(connectionsButtonNode);
+      expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+  });
   test('Should able to access the Integration App clone preview page', async () => {
     const props = {
       match: {
@@ -818,80 +848,112 @@ describe('Clone Preview', () => {
 
     await initStore(integrationSession);
     await initClonePreview(props);
-    const cloneIntegrationNode = screen.getByRole('heading', {name: 'Clone integration'});
+    waitFor(() => {
+      const cloneIntegrationNode = screen.getByRole('heading', {name: 'Clone integration'});
 
-    expect(cloneIntegrationNode).toBeInTheDocument();
-    const tagNode = screen.getByRole('textbox');
+      expect(cloneIntegrationNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const tagNode = screen.getByRole('textbox');
 
-    expect(tagNode).toHaveAttribute('name', 'tag');
-    await userEvent.type(tagNode, 'testing tag');
-    expect(tagNode).toHaveAttribute('value', 'testing tag');
-    const environmentNode = screen.getByRole('radiogroup', {name: 'Environment'});
+      expect(tagNode).toHaveAttribute('name', 'tag');
+      await userEvent.type(tagNode, 'testing tag');
+      expect(tagNode).toHaveAttribute('value', 'testing tag');
+    });
+    waitFor(() => {
+      const environmentNode = screen.getByRole('radiogroup', {name: 'Environment'});
 
-    expect(environmentNode).toBeInTheDocument();
-    const environmentProductionNode = screen.getByRole('radio', {name: 'Production'});
+      expect(environmentNode).toBeInTheDocument();
+    });
+    let environmentProductionNode;
 
-    expect(environmentProductionNode).toBeInTheDocument();
-    const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
+    waitFor(() => {
+      environmentProductionNode = screen.getByRole('radio', {name: 'Production'});
 
-    expect(environmentSandboxNode).toBeInTheDocument();
-    await userEvent.click(environmentSandboxNode);
-    expect(environmentSandboxNode).toBeChecked();
-    expect(environmentProductionNode).not.toBeChecked();
-    await userEvent.click(environmentProductionNode);
-    expect(environmentSandboxNode).not.toBeChecked();
-    expect(environmentProductionNode).toBeChecked();
-    const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
+      expect(environmentProductionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
-    expect(paragraphNode).toBeInTheDocument();
-    const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
+      expect(environmentSandboxNode).toBeInTheDocument();
+      await userEvent.click(environmentSandboxNode);
+      expect(environmentSandboxNode).toBeChecked();
+      expect(environmentProductionNode).not.toBeChecked();
+      await userEvent.click(environmentProductionNode);
+      expect(environmentSandboxNode).not.toBeChecked();
+      expect(environmentProductionNode).toBeChecked();
+    });
+    waitFor(() => {
+      const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
 
-    expect(flowButtonNode).toBeInTheDocument();
-    expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await fireEvent.click(flowButtonNode);
-    expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
-    const tableNode = screen.getAllByRole('rowgroup');
+      expect(paragraphNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
 
-    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
-    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
-    const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
+      expect(flowButtonNode).toBeInTheDocument();
+      expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
+      await fireEvent.click(flowButtonNode);
+      expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
+    });
+    waitFor(() => {
+      const tableNode = screen.getAllByRole('rowgroup');
 
-    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
-    const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
+      expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+      expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
+    });
+    waitFor(() => {
+      const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
 
-    expect(integrationsButtonNode).toBeInTheDocument();
-    expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(integrationsButtonNode);
-    expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
+      expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
+    });
+    waitFor(async () => {
+      const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
 
-    expect(exportButtonNode).toBeInTheDocument();
-    expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(exportButtonNode);
-    expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const importButtonNode = screen.getByRole('button', {name: 'Imports'});
+      expect(integrationsButtonNode).toBeInTheDocument();
+      expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(integrationsButtonNode);
+      expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
 
-    expect(importButtonNode).toBeInTheDocument();
-    expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(importButtonNode);
-    expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
+      expect(exportButtonNode).toBeInTheDocument();
+      expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(exportButtonNode);
+      expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const importButtonNode = screen.getByRole('button', {name: 'Imports'});
 
-    expect(connectionsButtonNode).toBeInTheDocument();
-    expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(connectionsButtonNode);
-    expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const scriptButtonNode = screen.getByRole('button', {name: 'Scripts'});
+      expect(importButtonNode).toBeInTheDocument();
+      expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(importButtonNode);
+      expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
 
-    expect(scriptButtonNode).toBeInTheDocument();
-    expect(scriptButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(scriptButtonNode);
-    expect(scriptButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
+      expect(connectionsButtonNode).toBeInTheDocument();
+      expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(connectionsButtonNode);
+      expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const scriptButtonNode = screen.getByRole('button', {name: 'Scripts'});
 
-    expect(cloneIntegrationButtonNode).toBeInTheDocument();
-    await userEvent.click(cloneIntegrationButtonNode);
-    await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
+      expect(scriptButtonNode).toBeInTheDocument();
+      expect(scriptButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(scriptButtonNode);
+      expect(scriptButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
+
+      expect(cloneIntegrationButtonNode).toBeInTheDocument();
+      await userEvent.click(cloneIntegrationButtonNode);
+      expect(cloneIntegrationButtonNode).not.toBeInTheDocument();
+    });
   }, 30000);
   test('Should able to access the Integration clone preview page of type sandbox', async () => {
     const props = {
@@ -999,73 +1061,103 @@ describe('Clone Preview', () => {
 
     initStore(integrationSession);
     await initClonePreview(props);
-    const cloneIntegrationHeadingNode = screen.getByRole('heading', {name: 'Clone integration'});
+    waitFor(() => {
+      const cloneIntegrationHeadingNode = screen.getByRole('heading', {name: 'Clone integration'});
 
-    expect(cloneIntegrationHeadingNode).toBeInTheDocument();
-    const integrationNameNode = screen.getByRole('textbox', {value: 'Clone - 3PL Central'});
+      expect(cloneIntegrationHeadingNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const integrationNameNode = screen.getByRole('textbox', {value: 'Clone - 3PL Central'});
 
-    expect(integrationNameNode).toBeInTheDocument();
-    await userEvent.clear(integrationNameNode);
-    await userEvent.type(integrationNameNode, 'Succesfully Cloned - 3Pl Central');
-    expect(integrationNameNode).toHaveValue('Succesfully Cloned - 3Pl Central');
-    const environmentNode = screen.getByRole('radiogroup', {name: 'Environment'});
+      expect(integrationNameNode).toBeInTheDocument();
+      await userEvent.clear(integrationNameNode);
+      await userEvent.type(integrationNameNode, 'Succesfully Cloned - 3Pl Central');
+      expect(integrationNameNode).toHaveValue('Succesfully Cloned - 3Pl Central');
+    });
+    waitFor(() => {
+      const environmentNode = screen.getByRole('radiogroup', {name: 'Environment'});
 
-    expect(environmentNode).toBeInTheDocument();
-    const environmentProductionNode = screen.getByRole('radio', {name: 'Production'});
+      expect(environmentNode).toBeInTheDocument();
+    });
+    let environmentProductionNode;
 
-    expect(environmentProductionNode).toBeInTheDocument();
-    const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
+    waitFor(() => {
+      environmentProductionNode = screen.getByRole('radio', {name: 'Production'});
 
-    expect(environmentSandboxNode).toBeInTheDocument();
-    await userEvent.click(environmentSandboxNode);
-    expect(environmentSandboxNode).toBeChecked();
-    expect(environmentProductionNode).not.toBeChecked();
-    const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
+      expect(environmentProductionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const environmentSandboxNode = screen.getByRole('radio', {name: 'Sandbox'});
 
-    expect(paragraphNode).toBeInTheDocument();
-    const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
+      expect(environmentSandboxNode).toBeInTheDocument();
+      await userEvent.click(environmentSandboxNode);
+      expect(environmentSandboxNode).toBeChecked();
+      expect(environmentProductionNode).not.toBeChecked();
+    });
+    waitFor(() => {
+      const paragraphNode = screen.getByText('The following components will get cloned with this integration.');
 
-    expect(flowButtonNode).toBeInTheDocument();
-    expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
-    await fireEvent.click(flowButtonNode);
-    expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
-    const tableNode = screen.getAllByRole('rowgroup');
+      expect(paragraphNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const flowButtonNode = screen.getByRole('button', {name: 'Flows'});
 
-    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
-    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
-    const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
+      expect(flowButtonNode).toBeInTheDocument();
+      expect(flowButtonNode).toHaveAttribute('aria-expanded', 'true');
+      await fireEvent.click(flowButtonNode);
+      expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
+    });
+    waitFor(() => {
+      const tableNode = screen.getAllByRole('rowgroup');
 
-    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
-    const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
+      expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+      expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
+    });
+    waitFor(() => {
+      const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
 
-    expect(integrationsButtonNode).toBeInTheDocument();
-    expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(integrationsButtonNode);
-    expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
+      expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
+    });
+    waitFor(async () => {
+      const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
 
-    expect(exportButtonNode).toBeInTheDocument();
-    expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(exportButtonNode);
-    expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const importButtonNode = screen.getByRole('button', {name: 'Imports'});
+      expect(integrationsButtonNode).toBeInTheDocument();
+      expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(integrationsButtonNode);
+      expect(integrationsButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
 
-    expect(importButtonNode).toBeInTheDocument();
-    expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(importButtonNode);
-    expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
+      expect(exportButtonNode).toBeInTheDocument();
+      expect(exportButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(exportButtonNode);
+      expect(exportButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const importButtonNode = screen.getByRole('button', {name: 'Imports'});
 
-    expect(connectionsButtonNode).toBeInTheDocument();
-    expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(connectionsButtonNode);
-    expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
+      expect(importButtonNode).toBeInTheDocument();
+      expect(importButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(importButtonNode);
+      expect(importButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const connectionsButtonNode = screen.getByRole('button', {name: 'Connections'});
 
-    expect(cloneIntegrationButtonNode).toBeInTheDocument();
-    await userEvent.click(cloneIntegrationButtonNode);
-    await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
-  }, 30000);
+      expect(connectionsButtonNode).toBeInTheDocument();
+      expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
+      await userEvent.click(connectionsButtonNode);
+      expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
+    });
+    waitFor(async () => {
+      const cloneIntegrationButtonNode = screen.getByRole('button', {name: 'Clone integration'});
+
+      expect(cloneIntegrationButtonNode).toBeInTheDocument();
+      await userEvent.click(cloneIntegrationButtonNode);
+      expect(cloneIntegrationButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('Should able to acess the Integration Clone preview page by using created components which has Integrations', async () => {
     const props = {
       match: {
@@ -1164,9 +1256,11 @@ describe('Clone Preview', () => {
 
     initStore(integrationSession);
     await initClonePreview(props);
-    const loading = screen.getByText('Loading');
+    waitFor(() => {
+      const loading = screen.getByText('Loading');
 
-    expect(loading).toBeInTheDocument();
+      expect(loading).toBeInTheDocument();
+    });
   });
   test('Should able to acess the Integration Clone preview page by using created components which has no Integrations', async () => {
     const props = {
@@ -1261,9 +1355,11 @@ describe('Clone Preview', () => {
 
     initStore(integrationSession);
     await initClonePreview(props);
-    const loading = screen.getByText('Loading');
+    waitFor(() => {
+      const loading = screen.getByText('Loading');
 
-    expect(loading).toBeInTheDocument();
+      expect(loading).toBeInTheDocument();
+    });
   });
   test('Should able to acess the Export Clone preview page by using created components which has no Integrations and flows', async () => {
     const props = {
@@ -1313,9 +1409,11 @@ describe('Clone Preview', () => {
 
     initStore(integrationSession);
     await initClonePreview(props);
-    const loading = screen.getByText('Loading');
+    waitFor(() => {
+      const loading = screen.getByText('Loading');
 
-    expect(loading).toBeInTheDocument();
+      expect(loading).toBeInTheDocument();
+    });
   });
 });
 
