@@ -21,7 +21,7 @@ describe('Table Row UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test rows data by providing type as input data and test updating the text', () => {
+  test('should test rows data by providing type as input data and test updating the text', async () => {
     const props = {
       rowValue: {
         export: 'Id',
@@ -44,15 +44,14 @@ describe('Table Row UI test cases', () => {
     const inputs = screen.getAllByRole('textbox');
 
     fireEvent.change(inputs[0], { target: { value: '' } });
-    userEvent.type(inputs[0], 'Name');
-    fireEvent.change(inputs[1], { target: { value: '' } });
-    userEvent.type(inputs[1], 'name');
+    await userEvent.type(inputs[0], 'Name');
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'export',
       value: 'Name',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -76,10 +75,15 @@ describe('Table Row UI test cases', () => {
         },
       ],
       onRowChange: {onRowChange} });
+    fireEvent.change(inputs[1], { target: { value: '' } });
+    await userEvent.type(inputs[1], 'name');
+    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'import',
       value: 'name',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -105,9 +109,10 @@ describe('Table Row UI test cases', () => {
       onRowChange: {onRowChange} });
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
+    screen.debug(null, Infinity);
     expect(deleterow).toBeInTheDocument();
-    userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    await userEvent.click(deleterow);
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
   });
 
   test('should test rows data by providing type as number data and test updating the text', () => {
@@ -138,6 +143,8 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: '110',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -165,6 +172,8 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: '120',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -192,7 +201,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
   });
   test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', () => {
     const props = {
@@ -228,6 +237,8 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: 'X',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -255,7 +266,7 @@ describe('Table Row UI test cases', () => {
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
     userEvent.click(moreJobActionMenuButtonNode);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
   });
 
   test('should test rows data by providing type as select options at export fields and and multiselect at import fields', () => {
@@ -291,6 +302,8 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: 'op2',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -326,6 +339,8 @@ describe('Table Row UI test cases', () => {
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'import',
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       value: ['N'],
       optionsMap: [
         {
@@ -354,7 +369,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
   });
   test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', () => {
     const props = {
@@ -389,6 +404,8 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: ['N'],
+      isVirtualizedTable: undefined,
+      tableSize: 2,
       optionsMap: [
         {
           id: 'export',
@@ -414,6 +431,6 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
   });
 });

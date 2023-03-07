@@ -1,7 +1,8 @@
-import { Typography } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useEffect, useReducer } from 'react';
+import { useDispatch } from 'react-redux';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { generateNewId } from '../../../../../utils/resource';
 import { hashCode } from '../../../../../utils/string';
@@ -9,6 +10,7 @@ import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
 import VirtualizedTable from './VirtualizedTable';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -48,15 +50,16 @@ export const generateRow = value => ({
   key: generateRowKey(value),
   value,
 });
-const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
+const initializeTableState = (optionsMap, ignoreEmptyRow, isVirtualizedTable) => value => {
   const emptyRowValue = generateEmptyRow(optionsMap);
   const emptyRow = generateRow(emptyRowValue);
 
   if (!value || !value.length) {
     return {
-
-      touched: false,
+      touched: !!isVirtualizedTable,
       ignoreEmptyRow,
+      isValid: !optionsMap.some(obj => obj.required),
+      tableSize: !value ? 1 : value.length + 1,
       tableStateValue: [
         emptyRow,
       ]};
@@ -65,6 +68,8 @@ const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
   return {
     touched: false,
     ignoreEmptyRow,
+    tableSize: !value ? 1 : value.length + 1,
+    isValid: true,
     tableStateValue: ignoreEmptyRow ? value.map(val => generateRow(val)) : [...value.map(val => generateRow(val)), emptyRow],
   };
 };
@@ -80,11 +85,23 @@ const BaseTable = ({
   id,
   ignoreEmptyRow,
   value,
+  formKey,
 }) => {
-  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
+  const dispatch = useDispatch();
+  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow, isVirtualizedTable));
 
-  const {touched, tableStateValue: tableValue} = tableState;
+  const {touched, tableStateValue: tableValue, isValid, tableSize, rowIndex} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
+
+  useEffect(() => {
+    if (isVirtualizedTable) {
+      if (!isValid) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, required: !isValid}));
+      } else {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true, required: !isValid}));
+      }
+    }
+  }, [isValid, tableSize, rowIndex, isVirtualizedTable, dispatch, formKey, id]);
 
   useEffect(() => {
     if (touched) {
@@ -155,6 +172,8 @@ const DynaTable = props => {
     disableDeleteRows,
     isVirtualizedTable,
     isLoggable,
+    formKey,
+    required,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 
@@ -169,7 +188,11 @@ const DynaTable = props => {
 
   return (
     <div className={clsx(classes.container, className)}>
-      {!hideLabel && <Typography {...isLoggableAttr(isLoggable)} variant="h6">{label}</Typography>}
+      {!hideLabel && (
+      <FormLabel {...isLoggableAttr(isLoggable)} required={required} error={required} >
+        {label}
+      </FormLabel>
+      )}
       <div data-test={id} className={classes.root} >
         <div className={classes.fieldsContentColumn}>
           <RefreshHeaders
@@ -178,6 +201,8 @@ const DynaTable = props => {
             isLoading={isLoading}
             optionsMap={optionsMapFinal}
             handleRefreshClickHandler={handleRefreshClickHandler}
+            isVirtualizedTable={isVirtualizedTable}
+            required={required}
           />
           {/* do all multicolumn entry tables need to be redacted ? */}
           <span {...isLoggableAttr(isLoggable)}>
@@ -192,6 +217,7 @@ const DynaTable = props => {
               id={id}
               ignoreEmptyRow={ignoreEmptyRow}
               value={value}
+              formKey={formKey}
           />
           </span>
 

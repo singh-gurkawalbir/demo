@@ -64,6 +64,7 @@ const TYPE_TO_ERROR_MESSAGE = {
   text: 'Please enter a value',
   autosuggest: 'Please select a value',
   select: 'Please select a value',
+  exportSelect: 'Please select a value',
 };
 
 const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
@@ -72,7 +73,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, isVirtualizedTable, tableSize}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -86,8 +87,10 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       value,
       optionsMap,
       onRowChange,
+      tableSize,
+      isVirtualizedTable,
     });
-  }, [id, onRowChange, optionsMap, rowIndex, setTableState]);
+  }, [id, onRowChange, optionsMap, rowIndex, setTableState, tableSize, isVirtualizedTable]);
 
   const fieldTestAttr = `text-suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -147,6 +150,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       <DynaExportSelect
         {...basicProps}
         {...op}
+        required={isVirtualizedTable ? false : (op.required || basicProps.required)}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
@@ -214,25 +218,28 @@ const RowCellMemo = ({
   tableSize,
   setTableState,
   onRowChange,
+  isVirtualizedTable,
 }) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
     <RowCell
+      isVirtualizedTable={isVirtualizedTable}
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
       isValid={isValid}
       rowIndex={rowIndex}
+      tableSize={tableSize}
       setTableState={setTableState}
       onRowChange={onRowChange}
       colIndex={colIndex}
   />
-  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, isVirtualizedTable, tableSize]);
 };
 
-const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
+const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, tableSize, classes, isVirtualizedTable, optionsMap}) =>
   useMemo(() => (
     <ActionButton
       tooltip=""
@@ -240,12 +247,12 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes})
       data-test={`deleteTableRow-${rowIndex}`}
       aria-label="delete"
       onClick={() => {
-        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex });
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex, tableSize: tableSize - 1, isVirtualizedTable, optionsMap });
       }}
       className={classes.margin}>
       <DeleteIcon fontSize="small" />
     </ActionButton>
-  ), [classes.margin, disableDeleteRows, rowIndex, setTableState]);
+  ), [classes.margin, disableDeleteRows, rowIndex, setTableState, tableSize, isVirtualizedTable, optionsMap]);
 export default function TableRow({
   rowValue,
   rowIndex,
@@ -255,6 +262,7 @@ export default function TableRow({
   setTableState,
   onRowChange,
   ignoreEmptyRow,
+  isVirtualizedTable,
   disableDeleteRows,
 }) {
   const classes = useStyles();
@@ -269,6 +277,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
+              isVirtualizedTable={isVirtualizedTable}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
@@ -291,7 +300,10 @@ export default function TableRow({
         <ActionButtonMemo
           disableDeleteRows={disableDeleteRows}
           rowIndex={rowIndex}
+          optionsMap={optionsMap}
           setTableState={setTableState}
+          tableSize={tableSize}
+          isVirtualizedTable={isVirtualizedTable}
           classes={classes}
         />
       </div>
