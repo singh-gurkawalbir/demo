@@ -337,14 +337,16 @@ describe('testsuite for Job Dashboard Filters', () => {
       numJobsSelected: 0,
     });
     expect(screen.getByRole('button', {name: /run now/i})).toBeInTheDocument();
-    const refreshButtonNode = screen.getByRole('button', {name: /refresh/i});
+    waitFor(async () => {
+      const refreshButtonNode = screen.getByRole('button', {name: /refresh/i});
 
-    expect(refreshButtonNode).toBeInTheDocument();
-    await userEvent.click(refreshButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'PATCH_FILTER',
-      name: 'jobs',
-      filter: { refreshAt: 818035920000, currentPage: 0 },
+      expect(refreshButtonNode).toBeInTheDocument();
+      await userEvent.click(refreshButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'PATCH_FILTER',
+        name: 'jobs',
+        filter: { refreshAt: 818035920000, currentPage: 0 },
+      });
     });
   });
   test('should test the hide empty box checkbox', async () => {
@@ -357,15 +359,17 @@ describe('testsuite for Job Dashboard Filters', () => {
       isFlowBuilderView: true,
       numJobsSelected: 0,
     });
-    const hideEmptyJobsCheckboxNode = screen.getByRole('checkbox', {name: /Hide empty jobs/i});
+    waitFor(async () => {
+      const hideEmptyJobsCheckboxNode = screen.getByRole('checkbox', {name: /Hide empty jobs/i});
 
-    expect(hideEmptyJobsCheckboxNode).toBeInTheDocument();
-    expect(hideEmptyJobsCheckboxNode).not.toBeChecked();
-    await userEvent.click(hideEmptyJobsCheckboxNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'PATCH_FILTER',
-      name: 'jobs',
-      filter: { hideEmpty: true, currentPage: 0 },
+      expect(hideEmptyJobsCheckboxNode).toBeInTheDocument();
+      expect(hideEmptyJobsCheckboxNode).not.toBeChecked();
+      await userEvent.click(hideEmptyJobsCheckboxNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'PATCH_FILTER',
+        name: 'jobs',
+        filter: { hideEmpty: true, currentPage: 0 },
+      });
     });
   });
 });

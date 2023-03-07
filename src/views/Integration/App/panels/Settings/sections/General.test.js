@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactredux from 'react-redux';
@@ -33,7 +34,7 @@ describe('GeneralPanel UI tests', () => {
   async function addInteration() {
     const initialStore = getCreatedStore();
 
-    initialStore.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { initialStore.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(initialStore?.getState()?.data?.resources?.integrations).toBeDefined());
 
     return {initialStore};

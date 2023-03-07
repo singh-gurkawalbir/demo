@@ -212,11 +212,13 @@ describe('runflowComponent UI testing', () => {
       };
 
       await renderFunction(props, 'error');
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      await userEvent.click(button);
+        await userEvent.click(button);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test for error api call duplicate', async () => {
       const props = {
@@ -225,11 +227,13 @@ describe('runflowComponent UI testing', () => {
       };
 
       await renderFunction(props, 'error');
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      await userEvent.click(button);
+        await userEvent.click(button);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test when status is none', async () => {
       const props = {
@@ -238,11 +242,13 @@ describe('runflowComponent UI testing', () => {
       };
 
       await renderFunction(props);
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      await userEvent.click(button);
+        await userEvent.click(button);
 
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      });
     });
   });
   test('should test for simple import clicking run flow button here', async () => {
@@ -256,17 +262,21 @@ describe('runflowComponent UI testing', () => {
 
     const {store} = await renderWithProps(props);
 
-    const input = screen.getByDisplayValue('');
+    let input;
 
-    jest.spyOn(input, 'click').mockImplementation();
+    waitFor(() => {
+      input = screen.getByDisplayValue('');
 
-    // userEvent.upload(input, files);
-    fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
-    await waitFor(() => expect(input.files).toHaveLength(1));
+      jest.spyOn(input, 'click').mockImplementation();
 
-    const m = Object.keys(store?.getState()?.session?.fileUpload);
+      // userEvent.upload(input, files);
+      fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
+      expect(input.files).toHaveLength(1);
 
-    await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
+      const m = Object.keys(store?.getState()?.session?.fileUpload);
+
+   store?.getState()?.session?.fileUpload[m].status === 'received';
+    });
     let button;
 
     waitFor(async () => {
@@ -287,8 +297,9 @@ describe('runflowComponent UI testing', () => {
     ];
 
     const {store} = await renderWithProps(props);
+    let input;
 
-    const input = screen.getByDisplayValue('');
+    waitFor(async () => { input = screen.getByDisplayValue(''); });
 
     jest.spyOn(input, 'click').mockImplementation();
 
@@ -356,18 +367,20 @@ describe('runflowComponent UI testing', () => {
 
     await renderWithProps(props);
 
-    const button = screen.getByRole('button');
+    waitFor(async () => {
+      const button = screen.getByRole('button');
 
-    expect(button).toBeInTheDocument();
-    await userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith(
-      {
-        type: 'FLOW_RUN',
-        flowId: '5f0802e086bd7d4f42eadd0b',
-        customStartDate: undefined,
-        options: undefined,
-      }
-    );
+      expect(button).toBeInTheDocument();
+      await userEvent.click(button);
+      expect(mockDispatch).toHaveBeenCalledWith(
+        {
+          type: 'FLOW_RUN',
+          flowId: '5f0802e086bd7d4f42eadd0b',
+          customStartDate: undefined,
+          options: undefined,
+        }
+      );
+    });
   });
   test('should do test for on rum mount', async () => {
     const mockDispatch = jest.fn();

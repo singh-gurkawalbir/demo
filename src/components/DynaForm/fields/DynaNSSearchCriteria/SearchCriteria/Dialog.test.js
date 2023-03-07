@@ -86,11 +86,11 @@ describe('searchCriteriaDialog UI tests', () => {
   });
   test('should display the dropdownwhen clicked on the operator dropdown', async () => {
     initSearchCriteriaDialog(props);
-    const dropdown = screen.getByText('Please select');
+    waitFor(async () => {
+      const dropdown = screen.getByText('Please select');
 
-    expect(dropdown).toBeInTheDocument();
-    await userEvent.click(dropdown);
-    waitFor(() => {
+      expect(dropdown).toBeInTheDocument();
+      await userEvent.click(dropdown);
       expect(screen.getByText('any')).toBeInTheDocument();
       expect(screen.getByText('contains')).toBeInTheDocument();
       expect(screen.getByText('does not contain')).toBeInTheDocument();
@@ -103,18 +103,22 @@ describe('searchCriteriaDialog UI tests', () => {
   });
   test('should call the onSave function passed in props when save button is clicked', async () => {
     initSearchCriteriaDialog(props);
-    const dropdown = screen.getByText('Please select');
+    waitFor(async () => {
+      const dropdown = screen.getByText('Please select');
 
-    expect(dropdown).toBeInTheDocument();
-    await userEvent.click(dropdown);
-    waitFor(async () => { await userEvent.click(screen.getByText('contains')); });
-    const deleteButton = document.querySelector('[id="delete-0"]');
+      expect(dropdown).toBeInTheDocument();
+      await userEvent.click(dropdown);
+      await userEvent.click(screen.getByText('contains'));
+    });
+    waitFor(async () => {
+      const deleteButton = document.querySelector('[id="delete-0"]');
 
-    expect(deleteButton).toBeInTheDocument();
-    await userEvent.click(deleteButton);
+      expect(deleteButton).toBeInTheDocument();
+      await userEvent.click(deleteButton);
 
-    await userEvent.click(screen.getByText('Save'));
-    expect(mockOnSave).toHaveBeenCalled();
+      await userEvent.click(screen.getByText('Save'));
+      expect(mockOnSave).toHaveBeenCalled();
+    });
   });
   test('should change the window size of the form when clicked on fullscreen button', async () => {
     initSearchCriteriaDialog(props);

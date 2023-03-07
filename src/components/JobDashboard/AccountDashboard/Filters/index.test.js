@@ -173,18 +173,20 @@ describe('testsuite for Job Dashboard Filters', () => {
           _id: x,
         }))}});
     expect(screen.getByText(/results per page:/i)).toBeInTheDocument();
-    const resultPerPageButtonNode = screen.getByRole('button', {
-      name: /50/i,
-    });
+    waitFor(async () => {
+      const resultPerPageButtonNode = screen.getByRole('button', {
+        name: /50/i,
+      });
 
-    expect(resultPerPageButtonNode).toBeInTheDocument();
-    await userEvent.click(resultPerPageButtonNode);
+      expect(resultPerPageButtonNode).toBeInTheDocument();
+      await userEvent.click(resultPerPageButtonNode);
+    });
     waitFor(async () => {
       const tenOptionNode = screen.getByRole('option', {name: /10/i});
 
       expect(tenOptionNode).toBeInTheDocument();
       await userEvent.click(tenOptionNode);
-      await waitFor(() => expect(tenOptionNode).not.toBeInTheDocument());
+      expect(tenOptionNode).not.toBeInTheDocument();
       const nextPageButtonNode = document.querySelector('button[data-testid="nextPage"]');
 
       expect(nextPageButtonNode).toBeInTheDocument();
