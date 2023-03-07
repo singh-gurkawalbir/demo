@@ -109,7 +109,6 @@ describe('Table Row UI test cases', () => {
       onRowChange: {onRowChange} });
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
-    screen.debug(null, Infinity);
     expect(deleterow).toBeInTheDocument();
     await userEvent.click(deleterow);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isVirtualizedTable: undefined, tableSize: 1});
