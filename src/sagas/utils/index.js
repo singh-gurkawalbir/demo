@@ -156,9 +156,10 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
             doesNotSupportPaging = true;
           }
+          const supportsAsyncHelper = fieldsUserMustSet?.find(f => f.path === 'export.asyncHelper');
 
           const ep = {
-            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds,
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
           };
 
                 r.exportPreConfiguredFields?.forEach(field => {
@@ -289,9 +290,10 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
               howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
             }
           }
+          const supportsAsyncHelper = httpEndpoint.supportedBy.fieldsUserMustSet?.find(f => f.path === 'import.asyncHelper');
 
           const ep = {
-            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds,
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
           };
 
           if (httpEndpoint.resourceFields) {
