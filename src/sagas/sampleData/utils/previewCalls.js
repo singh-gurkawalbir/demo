@@ -46,6 +46,8 @@ export function* pageProcessorPreview({
 
   let flow = yield call(filterPendingResources, { flow: flowClone });
 
+  const isIntegratorApp = flow?._connectorId;
+
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
   // // Incase of no pgs, preview call is stopped here
@@ -165,7 +167,8 @@ export function* pageProcessorPreview({
   const body = {
     flow,
     _pageProcessorId: updatedPageProcessorId,
-    ...(routerId && {_routerId: routerId, options: scriptContext}),
+    ...(routerId && {_routerId: routerId}),
+    ...(isIntegratorApp && {options: scriptContext}),
     pageGeneratorMap,
     pageProcessorMap,
     includeStages,
