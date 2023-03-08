@@ -6,7 +6,7 @@ export default {
       accessTokenBody = `{"grant_type": "client_credentials","tpl":"{${
         formValues['/http/unencrypted/tpl']
       }}", "user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`;
-    } else if (formValues['/http/unencrypted/tpl'] === 'false') {
+    } else {
       accessTokenBody = `{"grant_type": "client_credentials","user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`;
     }
 
