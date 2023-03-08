@@ -288,6 +288,7 @@ export function fieldMeta({ resource, assistantData }) {
   let exportTypeFields = [];
   let searchParameterFields = [];
   let headerFields = [];
+  let supportsEndpointLevelAsyncHelper = false;
 
   if (assistantData && assistantData.export) {
     const assistantConfig = convertFromExport({
@@ -305,6 +306,7 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      supportsEndpointLevelAsyncHelper = operationDetails.supportsAsyncHelper;
       headerFields = headerFieldsMeta({
         headers,
         operationDetails,
@@ -425,7 +427,8 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'What would you like to export?',
-          fields: [...fieldIds],
+          fields: [...fieldIds, ...(supportsEndpointLevelAsyncHelper ? ['configureAsyncHelper',
+            'http._asyncHelperId'] : [])],
         },
         {
           collapsed: true,
@@ -441,9 +444,9 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['configureAsyncHelper',
-            'http._asyncHelperId',
-            'advancedSettings'],
+          fields: [...(!supportsEndpointLevelAsyncHelper ? ['configureAsyncHelper',
+            'http._asyncHelperId'] : []),
+          'advancedSettings'],
         },
       ],
     },

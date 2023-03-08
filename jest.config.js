@@ -50,6 +50,7 @@ module.exports = {
     LOGROCKET_IDENTIFIER_EU: 'some logrocket identifier europe',
     CDN_BASE_URI: 'CDN_BASE_URI',
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
+    IO_SIGNUP_PROMOTION_URL: 'https://staging.celigo.com/integratorio/signup/',
     PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
     SHOPIFY_USER_IDS: '',
     ALLOW_SIGNUP: 'true',
