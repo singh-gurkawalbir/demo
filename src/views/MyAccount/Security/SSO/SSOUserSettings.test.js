@@ -108,6 +108,6 @@ describe('testsuite for SSOUserSettings', () => {
       expect(helpTextNoButtonNode).toBeInTheDocument();
       await userEvent.click(helpTextNoButtonNode);
     });
-  }, 30000);
+  });
 });
 

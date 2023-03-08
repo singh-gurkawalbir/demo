@@ -186,7 +186,7 @@ describe('licenses', () => {
     expect(deleteLicenseButtonNode).toBeInTheDocument();
     await userEvent.click(deleteLicenseButtonNode);
     expect(deleteLicenseButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the licenses page with no license', async () => {
     const props = {
       match: {

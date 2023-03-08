@@ -190,7 +190,7 @@ describe('template List', () => {
     expect(publishButtonNode).toBeInTheDocument();
     await userEvent.click(publishButtonNode);
     await waitFor(() => expect(confirmPublishNode).not.toBeInTheDocument());
-  }, 30000);
+  });
   test('should able to test the Template List delete action button by having templates', async () => {
     const templates = [
       {
@@ -338,7 +338,7 @@ describe('template List', () => {
     const savingTextNode = screen.getByRole('button', {name: 'Saving...'});
 
     expect(savingTextNode).toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the Template List edit template action button by having templates and save and close', async () => {
     const templates = [
       {

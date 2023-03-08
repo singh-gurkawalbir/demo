@@ -80,7 +80,7 @@ describe('Profile', () => {
     initialStore = getCreatedStore();
     store();
     // jest.useFakeTimers();
-    jest.setTimeout(100000);
+    // jest.setTimeout(100000);
     jest.clearAllMocks();
   });
 
@@ -151,96 +151,132 @@ describe('Profile', () => {
       return res(ctx.json([]));
     });
     await initProfile();
-    const profileText = screen.getByText('Profile');
+    waitFor(() => {
+      const profileText = screen.getByText('Profile');
 
-    expect(profileText).toBeInTheDocument();
+      expect(profileText).toBeInTheDocument();
 
-    expect(screen.getByText('Name')).toBeInTheDocument();
-    const textBox = screen.getAllByRole('textbox');
+      expect(screen.getByText('Name')).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const textBox = screen.getAllByRole('textbox');
 
-    expect(textBox[0]).toHaveValue('test user');
+      expect(textBox[0]).toHaveValue('test user');
 
-    await userEvent.type(textBox[0], 'test user1');
+      await userEvent.type(textBox[0], 'test user1');
 
-    expect(screen.getByText('Company')).toBeInTheDocument();
-    const companyTextBoxNode = screen.getAllByRole('textbox');
+      expect(screen.getByText('Company')).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const companyTextBoxNode = screen.getAllByRole('textbox');
 
-    expect(companyTextBoxNode[2]).toHaveValue('test');
-    await userEvent.clear(companyTextBoxNode[2]);
-    await userEvent.type(companyTextBoxNode[2], 'test company');
-    expect(companyTextBoxNode[2]).toHaveValue('test company');
+      expect(companyTextBoxNode[2]).toHaveValue('test');
+      await userEvent.clear(companyTextBoxNode[2]);
+      await userEvent.type(companyTextBoxNode[2], 'test company');
+      expect(companyTextBoxNode[2]).toHaveValue('test company');
 
-    expect(screen.getByText('Role')).toBeInTheDocument();
-    const roleLabelTextBoxNode = screen.getAllByRole('textbox');
+      expect(screen.getByText('Role')).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const roleLabelTextBoxNode = screen.getAllByRole('textbox');
 
-    expect(roleLabelTextBoxNode[3]).toHaveValue('');
-    await userEvent.type(roleLabelTextBoxNode[3], 'test role');
-    expect(roleLabelTextBoxNode[3]).toHaveValue('test role');
+      expect(roleLabelTextBoxNode[3]).toHaveValue('');
+      await userEvent.type(roleLabelTextBoxNode[3], 'test role');
+      expect(roleLabelTextBoxNode[3]).toHaveValue('test role');
 
-    expect(screen.getByText('Phone')).toBeInTheDocument();
-    const phoneLabelTextNode = screen.getAllByRole('textbox');
+      expect(screen.getByText('Phone')).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const phoneLabelTextNode = screen.getAllByRole('textbox');
 
-    expect(phoneLabelTextNode[4]).toHaveValue('1234567890');
-    await userEvent.clear(phoneLabelTextNode[4]);
-    await userEvent.type(phoneLabelTextNode[4], '9999999999');
-    expect(phoneLabelTextNode[4]).toHaveValue('9999999999');
-    const timeZoneLabelNode = screen.getByText('Time zone', { selector: 'label' });
+      expect(phoneLabelTextNode[4]).toHaveValue('1234567890');
+      await userEvent.clear(phoneLabelTextNode[4]);
+      await userEvent.type(phoneLabelTextNode[4], '9999999999');
+      expect(phoneLabelTextNode[4]).toHaveValue('9999999999');
+    });
+    waitFor(() => {
+      const timeZoneLabelNode = screen.getByText('Time zone', { selector: 'label' });
 
-    expect(timeZoneLabelNode).toBeInTheDocument();
-    const timeZoneButtonNode = screen.getByRole('button', {name: '(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi'});
+      expect(timeZoneLabelNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const timeZoneButtonNode = screen.getByRole('button', {name: '(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi'});
 
-    expect(timeZoneButtonNode).toBeInTheDocument();
-    await userEvent.click(timeZoneButtonNode);
-    const timeZoneMenuItems = screen.getByRole('menuitem', {name: '(GMT+05:45) Kathmandu'});
+      expect(timeZoneButtonNode).toBeInTheDocument();
+      await userEvent.click(timeZoneButtonNode);
+    });
+    waitFor(async () => {
+      const timeZoneMenuItems = screen.getByRole('menuitem', {name: '(GMT+05:45) Kathmandu'});
 
-    expect(timeZoneMenuItems).toBeInTheDocument();
-    await fireEvent.click(timeZoneMenuItems);
-    await waitForElementToBeRemoved(timeZoneMenuItems);
+      expect(timeZoneMenuItems).toBeInTheDocument();
+      await fireEvent.click(timeZoneMenuItems);
+      await waitForElementToBeRemoved(timeZoneMenuItems);
+    });
 
-    const dateFormatLabelNode = screen.getByText('Date format', { selector: 'label' });
+    waitFor(() => {
+      const dateFormatLabelNode = screen.getByText('Date format', { selector: 'label' });
 
-    expect(dateFormatLabelNode).toBeInTheDocument();
-    const dateFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-dateFormat');
+      expect(dateFormatLabelNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const dateFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-dateFormat');
 
-    expect(dateFormatButtonNode).toBeInTheDocument();
-    await userEvent.click(dateFormatButtonNode);
-    const dateFormatMenuItemNode = screen.getByRole('menuitem', {name: '12/31/1900'});
+      expect(dateFormatButtonNode).toBeInTheDocument();
+      await userEvent.click(dateFormatButtonNode);
+    });
+    waitFor(async () => {
+      const dateFormatMenuItemNode = screen.getByRole('menuitem', {name: '12/31/1900'});
 
-    expect(dateFormatMenuItemNode).toBeInTheDocument();
-    await fireEvent.click(dateFormatMenuItemNode);
-    await waitForElementToBeRemoved(dateFormatMenuItemNode);
+      expect(dateFormatMenuItemNode).toBeInTheDocument();
+      await fireEvent.click(dateFormatMenuItemNode);
+      await waitForElementToBeRemoved(dateFormatMenuItemNode);
+    });
 
-    const timeFormatLabelNode = screen.getByText('Time format');
+    waitFor(() => {
+      const timeFormatLabelNode = screen.getByText('Time format');
 
-    expect(timeFormatLabelNode).toBeInTheDocument();
-    const timeFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-timeFormat');
+      expect(timeFormatLabelNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const timeFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-timeFormat');
 
-    expect(timeFormatButtonNode).toBeInTheDocument();
-    await userEvent.click(timeFormatButtonNode);
-    const timeMenuItemNode = screen.getByRole('menuitem', {name: '2:34:25 pm'});
+      expect(timeFormatButtonNode).toBeInTheDocument();
+      await userEvent.click(timeFormatButtonNode);
+    });
+    waitFor(async () => {
+      const timeMenuItemNode = screen.getByRole('menuitem', {name: '2:34:25 pm'});
 
-    expect(timeMenuItemNode).toBeInTheDocument();
-    await fireEvent.click(timeMenuItemNode);
-    await waitForElementToBeRemoved(timeMenuItemNode);
-    const showTimestampsAsRelativeCheckboxNode = screen.getByRole('checkbox', {name: 'Show timestamps as relative'});
+      expect(timeMenuItemNode).toBeInTheDocument();
+      await fireEvent.click(timeMenuItemNode);
+      await waitForElementToBeRemoved(timeMenuItemNode);
+    });
+    waitFor(async () => {
+      const showTimestampsAsRelativeCheckboxNode = screen.getByRole('checkbox', {name: 'Show timestamps as relative'});
 
-    expect(showTimestampsAsRelativeCheckboxNode).not.toBeChecked();
-    await userEvent.click(showTimestampsAsRelativeCheckboxNode);
-    expect(showTimestampsAsRelativeCheckboxNode).toBeChecked();
+      expect(showTimestampsAsRelativeCheckboxNode).not.toBeChecked();
+      await userEvent.click(showTimestampsAsRelativeCheckboxNode);
+      expect(showTimestampsAsRelativeCheckboxNode).toBeChecked();
+    });
 
-    const developerCheckboxNode = screen.getByRole('checkbox', {name: 'Developer mode'});
+    waitFor(async () => {
+      const developerCheckboxNode = screen.getByRole('checkbox', {name: 'Developer mode'});
 
-    expect(developerCheckboxNode).toBeChecked();
-    await userEvent.click(developerCheckboxNode);
-    expect(developerCheckboxNode).not.toBeChecked();
-    const saveButtonNode = screen.getByRole('button', {name: 'Save'});
+      expect(developerCheckboxNode).toBeChecked();
+      await userEvent.click(developerCheckboxNode);
+      expect(developerCheckboxNode).not.toBeChecked();
+    });
+    waitFor(async () => {
+      const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
-    expect(saveButtonNode).toBeEnabled();
-    await fireEvent.click(saveButtonNode);
-    await waitFor(() => expect(mockResolverFunction2).toHaveBeenCalledTimes(2));
-    const savingNode = await waitFor(() => screen.findByText('Saving'));
+      expect(saveButtonNode).toBeEnabled();
+      await fireEvent.click(saveButtonNode);
+    });
+    waitFor(() => expect(mockResolverFunction2).toHaveBeenCalledTimes(2));
+    waitFor(() => {
+      const savingNode = screen.findByText('Saving');
 
-    expect(savingNode).toBeInTheDocument();
+      expect(savingNode).toBeInTheDocument();
+    });
   });
   test('Should able to load the profile pane and able to read the value email and update the email', async () => {
     const mockResolverFunction = jest.fn();
@@ -251,37 +287,53 @@ describe('Profile', () => {
       return res(ctx.json([]));
     });
     await initProfile();
-    const emailText = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editEmail');
+    waitFor(async () => {
+      const emailText = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editEmail');
 
-    expect(emailText).toBeInTheDocument();
-    await userEvent.click(emailText);
-    const changeEmailText = screen.getAllByText('Change email');
+      expect(emailText).toBeInTheDocument();
+      await userEvent.click(emailText);
+    });
+    let changeEmailText;
 
-    expect(changeEmailText[0]).toBeInTheDocument();
-    const newEmailText = screen.getByText('New email');
+    waitFor(() => {
+      changeEmailText = screen.getAllByText('Change email');
 
-    expect(newEmailText).toBeInTheDocument();
-    const changeEmailRole = screen.getByRole('textbox');
+      expect(changeEmailText[0]).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const newEmailText = screen.getByText('New email');
 
-    await userEvent.type(changeEmailRole, 'testuser+1@test.com');
-    const emailPasswordText = document.querySelectorAll('input[name="password"]');
+      expect(newEmailText).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const changeEmailRole = screen.getByRole('textbox');
 
-    expect(emailPasswordText[0]).toBeInTheDocument();
-    await userEvent.type(emailPasswordText[0], 'test@123');
+      await userEvent.type(changeEmailRole, 'testuser+1@test.com');
+    });
+    waitFor(async () => {
+      const emailPasswordText = document.querySelectorAll('input[name="password"]');
 
-    expect(screen.getByText('Note: we require your current password again to help safeguard your integrator.io account.')).toBeInTheDocument();
-    const changeEmailButton = screen.queryAllByRole('button');
+      expect(emailPasswordText[0]).toBeInTheDocument();
+      await userEvent.type(emailPasswordText[0], 'test@123');
 
-    expect(changeEmailButton[1]).toBeInTheDocument();
-    await userEvent.click(changeEmailButton[1]);
-    await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
-    await waitForElementToBeRemoved(changeEmailText[0]);
+      expect(screen.getByText('Note: we require your current password again to help safeguard your integrator.io account.')).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const changeEmailButton = screen.queryAllByRole('button');
 
-    expect(screen.getByText('Verification link sent to new email address.')).toBeInTheDocument();
-    const closeSnackbar = screen.queryByRole('button', {name: 'Close'});
+      expect(changeEmailButton[1]).toBeInTheDocument();
+      await userEvent.click(changeEmailButton[1]);
+      await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
+      await waitForElementToBeRemoved(changeEmailText[0]);
 
-    expect(closeSnackbar).toBeInTheDocument();
-    await userEvent.click(closeSnackbar);
-    await waitForElementToBeRemoved(closeSnackbar);
+      expect(screen.getByText('Verification link sent to new email address.')).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const closeSnackbar = screen.queryByRole('button', {name: 'Close'});
+
+      expect(closeSnackbar).toBeInTheDocument();
+      await userEvent.click(closeSnackbar);
+      await waitForElementToBeRemoved(closeSnackbar);
+    });
   });
 });

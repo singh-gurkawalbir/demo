@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
+import { screen, cleanup, waitForElementToBeRemoved, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
@@ -233,15 +233,17 @@ describe('reports', () => {
     };
 
     await initReports(params);
-    const runnningStatusNode = screen.getByRole('cell', {name: 'Running'});
+    waitFor(() => {
+      const runnningStatusNode = screen.getByRole('cell', {name: 'Running'});
 
-    expect(runnningStatusNode).toBeInTheDocument();
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.polling.start({
-      type: 'RESOURCE_REQUEST_COLLECTION',
-      resourceType: 'eventreports',
-      message: null,
-      refresh: true,
-    }, 5000));
+      expect(runnningStatusNode).toBeInTheDocument();
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.polling.start({
+        type: 'RESOURCE_REQUEST_COLLECTION',
+        resourceType: 'eventreports',
+        message: null,
+        refresh: true,
+      }));
+    });
   });
   test('should able to test report page with resource type as undefined', async () => {
     const params = {

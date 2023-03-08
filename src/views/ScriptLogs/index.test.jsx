@@ -317,7 +317,7 @@ describe('script logs', () => {
   beforeEach(done => {
     initialStore = getCreatedStore();
     // jest.useFakeTimers();
-    jest.setTimeout(100000);
+    // jest.setTimeout(100000);
     dateSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -396,7 +396,7 @@ describe('script logs', () => {
       },
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the last 15 minutes date range select button with no execution logs', async () => {
     store({});
     await initScriptLogs({
@@ -430,7 +430,7 @@ describe('script logs', () => {
       },
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the last 24 hours date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -468,7 +468,7 @@ describe('script logs', () => {
       },
     })));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the last 30 minutes date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -506,7 +506,7 @@ describe('script logs', () => {
       },
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the last hour date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -544,7 +544,7 @@ describe('script logs', () => {
       },
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the yesterday date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -582,7 +582,7 @@ describe('script logs', () => {
       },
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the last 4 hours date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -621,7 +621,7 @@ describe('script logs', () => {
       },
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the step button drop-down by selecting a flow', async () => {
     store({
       connections: {},
@@ -744,7 +744,7 @@ describe('script logs', () => {
     const preSavePageButtonNode = await waitFor(() => screen.getByRole('button', {name: 'preSavePage'}));
 
     expect(preSavePageButtonNode).toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the log level button drop-down', async () => {
     store({});
     await initScriptLogs({
@@ -1036,7 +1036,7 @@ describe('script logs', () => {
     const pageNode = screen.getByText(/11 - 11 of 11/i);
 
     expect(pageNode).toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the logs when the status is inprogress and clicking on pause and resume button', async () => {
     store({
       connections: {},
@@ -1135,5 +1135,5 @@ describe('script logs', () => {
     expect(changeEditionOptionNode).toBeInTheDocument();
     await userEvent.click(filterOptionNode);
     await waitFor(() => expect(functionTypeOptionNode).not.toBeInTheDocument());
-  }, 30000);
+  });
 });

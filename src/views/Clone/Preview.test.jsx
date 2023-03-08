@@ -525,7 +525,7 @@ describe('Clone Preview', () => {
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
     await userEvent.click(cloneIntegrationButtonNode);
     await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
-  }, 30000);
+  });
   test('Should able to access the Flow clone preview page', async () => {
     const props = {
       match: {
@@ -954,7 +954,7 @@ describe('Clone Preview', () => {
       await userEvent.click(cloneIntegrationButtonNode);
       expect(cloneIntegrationButtonNode).not.toBeInTheDocument();
     });
-  }, 30000);
+  });
   test('Should able to access the Integration clone preview page of type sandbox', async () => {
     const props = {
       match: {
