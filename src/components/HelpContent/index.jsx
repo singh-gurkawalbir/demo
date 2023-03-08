@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../actions';
 import OutlinedButton from '../Buttons/OutlinedButton';
@@ -12,7 +12,7 @@ import ThumbsDownIcon from '../icons/ThumbsDownIcon';
 import CloseIcon from '../icons/CloseIcon';
 import HelpDocumentationLink from '../HelpDocumentationLink';
 import HelpVideoLink from '../HelpVideoLink';
-import { HELP_CONTENT_FEATURE_ENABLED } from '../../constants';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -180,6 +180,8 @@ const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) =
 };
 
 export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, contentId, ...rest }) {
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const { helpContent: isHelpContentEnabled } = preferences;
   const classes = useStyles();
 
   return (
@@ -211,7 +213,7 @@ export default function HelpContent({ title, caption, children, supportFeedback 
         Field path: {caption}
       </Typography>
       )}
-      {HELP_CONTENT_FEATURE_ENABLED && contentId && (
+      {isHelpContentEnabled && contentId && (
         <div className={classes.buttonRef}>
           <HelpDocumentationLink contentId={contentId} />
           <HelpVideoLink contentId={contentId} />
