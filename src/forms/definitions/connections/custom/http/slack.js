@@ -37,7 +37,7 @@ export default {
       retValues['/settings'] = settings;
     }
 
-    const userScopes = ['admin', 'channels:write', 'dnd:write', 'identify', 'search:read', 'stars:read', 'stars:write', 'users.profile:write', 'reminders:read', 'reminders:write', 'chat:write', 'files:write', 'files:read'];
+    const userScopes = ['admin', 'auditlogs:read', 'bookmarks:read', 'bookmarks:write', 'channels:write', 'dnd:write', 'email', 'identify', 'identity.avatar', 'identity.basic', 'identity.email', 'identity.team', 'openid', 'profile', 'search:read', 'stars:read', 'stars:write', 'users.profile:write', 'reminders:read', 'reminders:write', 'chat:write', 'files:write', 'files:read'];
     let isUserScopeSelected = false;
 
     userScopes.forEach(userScope => {
@@ -114,6 +114,7 @@ export default {
         'team.billing:read',
         'team.preferences:read',
         'team:read',
+        'tokens.basic',
         'usergroups:read',
         'usergroups:write',
         'users.profile:read',
@@ -133,12 +134,22 @@ export default {
         {
           items: [
             { label: 'admin', value: 'admin' },
+            { label: 'auditlogs:read', value: 'auditlogs:read' },
+            { label: 'bookmarks:read', value: 'bookmarks:read' },
+            { label: 'bookmarks:write', value: 'bookmarks:write' },
             { label: 'channels:write', value: 'channels:write' },
             { label: 'chat:write', value: 'chat:write' },
             { label: 'dnd:write', value: 'dnd:write' },
+            { label: 'email', value: 'email' },
             { label: 'files:read', value: 'files:read' },
             { label: 'files:write', value: 'files:write' },
             { label: 'identify', value: 'identify' },
+            { label: 'identity.avatar', value: 'identity.avatar' },
+            { label: 'identity.basic', value: 'identity.basic' },
+            { label: 'identity.email', value: 'identity.email' },
+            { label: 'identity.team', value: 'identity.team' },
+            { label: 'openid', value: 'openid' },
+            { label: 'profile', value: 'profile' },
             { label: 'reminders:read', value: 'reminders:read' },
             { label: 'reminders:write', value: 'reminders:write' },
             { label: 'search:read', value: 'search:read' },
