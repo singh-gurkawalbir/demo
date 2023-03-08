@@ -138,7 +138,7 @@ describe('Mappings UI tests', () => {
 
     await userEvent.click(screen.getByText('extractsMetaData'));
 
-    input.blur();
+    await input.blur();
 
     expect(mockDispatch).toHaveBeenCalled();
   });

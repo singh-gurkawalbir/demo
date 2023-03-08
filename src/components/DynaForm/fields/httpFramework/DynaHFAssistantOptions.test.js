@@ -264,9 +264,9 @@ describe('dynaHFAssistantOptions UI tests', () => {
     });
 
     // import operations are operations while for exports these are endpoints
-    waitFor(() => { expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument(); });
-    waitFor(() => { expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument(); });
     waitFor(async () => {
+      expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument();
       await userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
       expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
       expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
@@ -305,7 +305,7 @@ describe('dynaHFAssistantOptions UI tests', () => {
     ];
 
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'version' });
-    await userEvent.click(screen.getByText('Please select'));
+    waitFor(async () => { await userEvent.click(screen.getByText('Please select')); });
     waitFor(() => { expect(screen.getByText('v2')).toBeInTheDocument(); });
     waitFor(async () => {
       const option = screen.getByText('v3');
