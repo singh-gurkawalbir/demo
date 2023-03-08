@@ -20,7 +20,7 @@ const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
 
   return null;
 };
-const fieldsWithRemoveDelete = fields => {
+export const fieldsWithRemoveDelete = fields => {
   const fieldsNew = {};
 
   Object.keys(fields).forEach(key => {
@@ -32,7 +32,7 @@ const fieldsWithRemoveDelete = fields => {
   return fieldsNew;
 };
 
-const valuesToDelete = (values, fields) => {
+export const valuesToDelete = (values, fields) => {
   const newValues = {...values};
 
   Object.keys(fields).forEach(key => {
@@ -41,22 +41,25 @@ const valuesToDelete = (values, fields) => {
 
   return newValues;
 };
-export const defaultPatchSetConverter = (values, fields) => {
-  const newFields = fieldsWithRemoveDelete(fields);
-  const newValues = valuesToDelete(values, newFields);
+export const valuesToRemove = (values, fields) => {
+  const newValues = {...values};
 
-  return Object.keys(newValues).map(key => {
-    const fieldkey = key.slice(1);
-    const valueKeys = fieldkey.replaceAll('/', '.');
+  Object.keys(values).forEach(key => {
+    const valkey = key.slice(1);
+    const valueKeys = valkey.replaceAll('/', '.');
 
-    return {
-      op: 'replace',
-      path: key,
-      // eslint-disable-next-line no-nested-ternary
-      value: (valueKeys in newFields) ? (newFields[valueKeys].remove) ? undefined : newValues[key] : newValues[key],
-    };
+    // eslint-disable-next-line no-self-assign
+    (valueKeys in fields && fields[valueKeys].remove) ? newValues[key] = undefined : newValues[key] = newValues[key];
   });
+
+  return newValues;
 };
+export const defaultPatchSetConverter = values =>
+  Object.keys(values).map(key => ({
+    op: 'replace',
+    path: key,
+    value: values[key],
+  }));
 
 const byId = (f, id) => (f.id ? f.id === id : f.fieldId === id);
 
@@ -279,6 +282,7 @@ export const sanitizePatchSet = ({
   resource,
   skipRemovePatches = false,
 }) => {
+  console.log({patchSet});
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce(
     (s, patch) => {
