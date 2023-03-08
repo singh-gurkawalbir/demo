@@ -386,11 +386,12 @@ export function fieldMeta({ resource, assistantData }) {
     },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
-      defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
-      visible: r => !(r && r.statusExport),
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId) || supportsEndpointLevelAsyncHelper,
+      visible: r => !(r && r.statusExport) && !supportsEndpointLevelAsyncHelper,
     },
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
+      required: supportsEndpointLevelAsyncHelper,
     },
   };
   const fieldIds = [];
@@ -413,6 +414,11 @@ export function fieldMeta({ resource, assistantData }) {
   };
 
   fieldMap.mockOutput = {fieldId: 'mockOutput'};
+  if (supportsEndpointLevelAsyncHelper) {
+    const index = fieldIds.findIndex(fld => fld === 'assistantMetadata.version');
+
+    fieldIds.splice(index + 1, 0, 'http._asyncHelperId');
+  }
 
   return {
     fieldMap,
@@ -427,8 +433,7 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'What would you like to export?',
-          fields: [...fieldIds, ...(supportsEndpointLevelAsyncHelper ? ['configureAsyncHelper',
-            'http._asyncHelperId'] : [])],
+          fields: [...fieldIds],
         },
         {
           collapsed: true,
@@ -445,7 +450,7 @@ export function fieldMeta({ resource, assistantData }) {
           collapsed: true,
           label: 'Advanced',
           fields: [...(!supportsEndpointLevelAsyncHelper ? ['configureAsyncHelper',
-            'http._asyncHelperId'] : []),
+            'http._asyncHelperId'] : ['configureAsyncHelper']),
           'advancedSettings'],
         },
       ],
