@@ -111,7 +111,6 @@ export default {
           'http.unencrypted.sellingRegion',
           'http.unencrypted.marketplace',
           'http.sellingPartnerId',
-          // 'http.unencrypted.marketplaceId',
         ],
       },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
