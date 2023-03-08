@@ -45,6 +45,7 @@ export function* _requestLookupMockInput({ resourceId, resourceType, flowId, ref
       throwOnError: true,
       includeStages: false,
       refresh,
+      doNotDeleteFilters: true,
     });
 
     if (isOneToManyResource(_pageProcessorDoc)) {
