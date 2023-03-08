@@ -584,24 +584,30 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const setupNode = screen.getByText('Setup');
+    waitFor(() => {
+      const setupNode = screen.getByText('Setup');
 
-    expect(setupNode).toBeInTheDocument();
-    const goBackButtonNode = screen.getAllByRole('button');
+      expect(setupNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const goBackButtonNode = screen.getAllByRole('button');
 
-    expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
-    await userEvent.click(goBackButtonNode[0]);
-    const list = screen.getByRole('list');
-    const { getAllByRole } = within(list);
-    const items = getAllByRole('listitem');
-    const names = items.map(item => item.textContent);
+      expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
+      await userEvent.click(goBackButtonNode[0]);
+    });
+    waitFor(() => {
+      const list = screen.getByRole('list');
+      const { getAllByRole } = within(list);
+      const items = getAllByRole('listitem');
+      const names = items.map(item => item.textContent);
 
-    expect(names).toMatchInlineSnapshot(`
+      expect(names).toMatchInlineSnapshot(`
       Array [
         "Setup",
         " 3PL Central - FTP ",
       ]
     `);
+    });
   });
   test('should able to verify the cloning text when the cloned flow has isSetupComplete as true', async () => {
     const integrationSession = {
@@ -731,9 +737,11 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const cloningNode = screen.getByText('Cloning');
+    waitFor(() => {
+      const cloningNode = screen.getByText('Cloning');
 
-    expect(cloningNode).toBeInTheDocument();
+      expect(cloningNode).toBeInTheDocument();
+    });
   });
   test('should able to access the setup page which has is installed failure as false and click on configure along with install bundle option', async () => {
     const integrationSession = {
@@ -1472,6 +1480,6 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    expect(mockHistoryPush).toBeCalledWith('/clone/imports/60db46af9433830f8f0e0fe8/preview');
+    waitFor(() => { expect(mockHistoryPush).toBeCalledWith('/clone/imports/60db46af9433830f8f0e0fe8/preview'); });
   });
 });
