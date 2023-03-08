@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useMemo} from 'react';
 import { useHistory } from 'react-router-dom';
+import makeStyles from '@material-ui/core';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { SIGN_UP_SUCCESS } from '../../../constants';
@@ -13,8 +14,15 @@ import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import useQuery from '../../../hooks/useQuery';
 
+const useStyles = makeStyles(theme => ({
+  errorMessageSignup: {
+    marginBottom: theme.spacing(1),
+  },
+
+}));
 const formKey = 'signupForm';
 export default function SignUp() {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
@@ -45,7 +53,7 @@ export default function SignUp() {
   return (
     <LoginFormWrapper>
       { signupStatus === 'failed' && error && (
-      <ShowErrorMessage error={error} />
+      <ShowErrorMessage error={error} className={classes.errorMessageSignup} />
       )}
       <DynaForm formKey={formKey} />
       <DynaSubmit
