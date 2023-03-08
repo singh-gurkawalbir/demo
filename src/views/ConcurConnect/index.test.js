@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import * as RouteMatch from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
@@ -129,73 +129,64 @@ describe('Testsuite for ConcurConnect', () => {
     initConcurConnect({isLoadingStatus: false, mockModule: 'expense'});
     expect(screen.getByText(/congratulations - you're linked!/i)).toBeInTheDocument();
     expect(screen.getByText(/mock expense reports message store/i)).toBeInTheDocument();
-    waitFor(async () => {
-      const startIntegratingButton = screen.getByRole('button', {
-        name: /start integrating/i,
-      });
-
-      expect(startIntegratingButton).toBeInTheDocument();
-      await userEvent.click(startIntegratingButton);
-      expect(mockHistoryPush).toHaveBeenCalledWith('/marketplace/concurexpense');
-      expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'expense', id: 'test_id', requestToken: 'test_request_token'}));
+    const startIntegratingButton = await screen.findByRole('button', {
+      name: /start integrating/i,
     });
+
+    expect(startIntegratingButton).toBeInTheDocument();
+    await userEvent.click(startIntegratingButton);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/marketplace/concurexpense');
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'expense', id: 'test_id', requestToken: 'test_request_token'}));
   });
   test('should test the ConcurConnect when there are no errors and module is equal to invoice', async () => {
     initConcurConnect({isLoadingStatus: false, mockModule: 'invoice'});
     expect(screen.getByText(/congratulations - you're linked!/i)).toBeInTheDocument();
     expect(screen.getByText(/mock expense invoices message store/i)).toBeInTheDocument();
-    waitFor(async () => {
-      const startIntegratingButton = screen.getByRole('button', {
-        name: /start integrating/i,
-      });
-
-      expect(startIntegratingButton).toBeInTheDocument();
-      await userEvent.click(startIntegratingButton);
-      expect(mockHistoryPush).toHaveBeenCalledWith('/marketplace/concurinvoice');
-      expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
+    const startIntegratingButton = await screen.findByRole('button', {
+      name: /start integrating/i,
     });
+
+    expect(startIntegratingButton).toBeInTheDocument();
+    await userEvent.click(startIntegratingButton);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/marketplace/concurinvoice');
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
   });
-  test('should test the ConcurConnect when there are errors', () => {
+  test('should test the ConcurConnect when there are errors', async () => {
     initConcurConnect({isLoadingStatus: false, errorStatus: ['testing error message'], mockModule: 'invoice'});
     expect(screen.getByText(/testing error message/i)).toBeInTheDocument();
-    waitFor(async () => {
-      const closeButtonNode = screen.getByRole('button', {
-        name: /close/i,
-      });
-
-      expect(closeButtonNode).toBeInTheDocument();
-      await userEvent.click(closeButtonNode);
-      expect(mockWindowClose).toHaveBeenCalledTimes(1);
-      expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
+    const closeButtonNode = await screen.findByRole('button', {
+      name: /close/i,
     });
+
+    expect(closeButtonNode).toBeInTheDocument();
+    await userEvent.click(closeButtonNode);
+    expect(mockWindowClose).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
   });
-  test('should test the ConcurConnect when there are no errors and no module', () => {
+  test('should test the ConcurConnect when there are no errors and no module', async () => {
     initConcurConnect({isLoadingStatus: false, mockModule: ''});
     expect(screen.getByText(/congratulations - you're linked!/i)).toBeInTheDocument();
     expect(screen.queryByText(/mock expense invoices message store/i)).not.toBeInTheDocument();
-    waitFor(async () => {
-      const startIntegratingButton = screen.getByRole('button', {
-        name: /start integrating/i,
-      });
 
-      expect(startIntegratingButton).toBeInTheDocument();
-      await userEvent.click(startIntegratingButton);
-      expect(mockHistoryPush).toHaveBeenCalledWith('/marketplace/concur');
-      expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: '', id: 'test_id', requestToken: 'test_request_token'}));
+    const startIntegratingButton = await screen.findByRole('button', {
+      name: /start integrating/i,
     });
+
+    expect(startIntegratingButton).toBeInTheDocument();
+    await userEvent.click(startIntegratingButton);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/marketplace/concur');
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: '', id: 'test_id', requestToken: 'test_request_token'}));
   });
-  test('should test the ConcurConnect when there are errors with no error message', () => {
+  test('should test the ConcurConnect when there are errors with no error message', async () => {
     initConcurConnect({isLoadingStatus: false, errorStatus: [''], mockModule: 'invoice'});
     expect(screen.queryByText(/testing error message/i)).not.toBeInTheDocument();
-    waitFor(async () => {
-      const closeButtonNode = screen.getByRole('button', {
-        name: /close/i,
-      });
-
-      expect(closeButtonNode).toBeInTheDocument();
-      await userEvent.click(closeButtonNode);
-      expect(mockWindowClose).toHaveBeenCalledTimes(1);
-      expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
+    const closeButtonNode = await screen.findByRole('button', {
+      name: /close/i,
     });
+
+    expect(closeButtonNode).toBeInTheDocument();
+    await userEvent.click(closeButtonNode);
+    expect(mockWindowClose).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.concur.connect({module: 'invoice', id: 'test_id', requestToken: 'test_request_token'}));
   });
 });
