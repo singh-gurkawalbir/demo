@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,11 +16,12 @@ import ForeignObject from '../ForeignObject';
 import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
-import { emptyObject, GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
+import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 import { isVirtualRouter } from '../../../../../utils/flows/flowbuilder';
 import { useIsDragInProgress } from '../../../hooks';
 import PGDropbox from '../PGDropbox';
 import itemTypes from '../../../itemTypes';
+import SubFlowButton from '../SubFlowButton';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -29,9 +30,16 @@ const useStyles = makeStyles(theme => ({
     stroke: theme.palette.secondary.lightest, // celigo neutral 3
     fill: 'transparent',
     '&:hover': {
+      // animation: 'dashdraw .5s linear infinite',
       // temporary rule to help trace overlapping paths.
-      stroke: theme.palette.primary.lightest,
     },
+  },
+  edgeAnimatedLine: {
+    strokeDasharray: 4,
+    strokeWidth: 2,
+    stroke: theme.palette.primary.light, // celigo neutral 3
+    fill: 'transparent',
+    animation: 'dashdraw .8s linear infinite',
   },
 }));
 
@@ -98,17 +106,18 @@ function getPositionAndOffset(
   return { position, offset };
 }
 
-function DefaultEdge({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  sourcePosition,
-  targetPosition,
-  style = emptyObject,
-  data,
-}) {
+function DefaultEdge(props) {
+  const {
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    data,
+  } = props;
+  // const [involvedNodes, setInvolvedNodes] = useState([]);
   const classes = useStyles();
   const dispatch = useDispatch();
   const { elements, dragNodeId, flow, flowId } = useFlowContext();
@@ -133,12 +142,31 @@ function DefaultEdge({
   const isViewMode = useSelector(state =>
     selectors.isFlowViewMode(state, flow._integrationId, flowId)
   );
+  const hoveredEdges = useSelector(state =>
+    selectors.fbEdgeHovered(state, flowId)
+  );
+  const selectedSubFlowNode = useSelector(state =>
+    selectors.fbSelectedSubFlow(state, flowId)
+  );
   const isFlowSaveInProgress = useSelector(state =>
     selectors.isFlowSaveInProgress(state, flowId)
   );
   const isDataLoaderFlow = useSelector(state =>
     selectors.isDataLoaderFlow(state, flowId)
   );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
+
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
+  );
+
+  const edge = elements.find(ele => ele?.id === id);
+
+  const subFlowIcon = (edge?.target === selectedSubFlowNode) && isSubFlowView;
+
+  // console.log('hovered', hoveredEdges);
 
   const {
     sourceType,
@@ -168,6 +196,30 @@ function DefaultEdge({
   const isMergableEdge =
     mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
   const maxRoutersLimitReached = flow.routers.filter(r => !isVirtualRouter(r)).length >= 25;
+
+  // useEffect(() => {
+  //   const targetNodeId = id.split('-')[1];
+
+  //   const targetNode = elements.find(e => e?.id === targetNodeId);
+
+  //   const getAllOutgoers = (node, elements) => getOutgoers(node, elements).reduce(
+  //     (memo, outgoer) => [...memo, outgoer, ...getAllOutgoers(outgoer, elements)],
+  //     []
+  //   );
+
+  //   const subsequentNodes = targetNode ? getAllOutgoers(targetNode, elements).map(node => node.id) : [];
+
+  //   const includedNodes = elements.filter(ele => {
+  //     if (!isEdge(ele)) return false;
+
+  //     const nodes = ele.id.split('-');
+
+  //     return (subsequentNodes.includes(nodes[0]) || subsequentNodes.includes(nodes[1]));
+  //   }
+  //   ).map(ele => ele.id);
+
+  //   setInvolvedNodes(includedNodes);
+  // }, [elements, id]);
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -222,23 +274,28 @@ function DefaultEdge({
 
     points.forEach((p, i) => {
       if (i === 0) {
+        console.log('1');
         path = `M${points[0].x},${points[0].y} `;
       } else if (i === 1 && isFirstPGEdge && isDraggingInProgress && showDropBox) {
+        console.log('2');
         drawLine(p, 'x');
         drawLine(p, 'y');
         drawLine({x: current.x, y: current.y - 100}, 'y');
       } else if (i === 1 && isSourceRouter) {
+        console.log('3');
         // first line
         // When the source is a router, we want to draw the lines vertically first to branch off
         // the edges asap. Not only for better looks, but also this prevents unwanted overlapping
         // edges in some use-cases.
         drawLine(p, 'y');
         drawLine(p, 'x');
-      } else if (i === 1 && isLastPGEdge && isDraggingInProgress && showDropBox) {
+      } else if (i === 1 && (isLastPGEdge && !isSubFlowView) && isDraggingInProgress && showDropBox) {
+        console.log('4');
         drawLine(p, 'x');
         drawLine(p, 'y');
         drawLine({x: current.x, y: current.y + 100}, 'y');
       } else if (i === points.length - 1 && !isTargetMerge) {
+        console.log('5');
         // last point
         // for the last point (that defines an edge), we want to draw the vertical line first so that
         // a node always connects to a horizontal line since our diagram is L-> R,
@@ -256,19 +313,25 @@ function DefaultEdge({
         // For pg edges (i.e. targetIndex > 1), the vertical line of the edge will be drawn upto the previous step,
         // and the horizontal line of the edge will be skipped, so that the line will not overlap the pg-dropbox
         if (targetIndex > 1) {
-          drawLine({x: p.x, y: p.y + (346 * (targetIndex - 1))}, 'y');
+          if (iconView === 'icon') {
+            drawLine({x: p.x, y: p.y + (130 * (targetIndex - 1))}, 'y');
+          } else {
+            drawLine({x: p.x, y: p.y + (346 * (targetIndex - 1))}, 'y');
+          }
         } else {
+          console.log('7');
           drawLine(p, 'y');
           drawLine(p, 'x');
         }
       } else {
+        console.log('8');
         drawLine(p, 'x');
         drawLine(p, 'y');
       }
     });
 
     return path;
-  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge, targetIndex]);
+  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge, isSubFlowView, targetIndex, iconView]);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));
@@ -277,6 +340,8 @@ function DefaultEdge({
   const handleMouseOver = useCallback(() => {
     dispatch(actions.flow.mergeTargetSet(flow._id, 'edge', id));
   }, [dispatch, flow._id, id]);
+
+  // const animate = selectedEdge?.id === id;
 
   const { position, offset } = getPositionAndOffset(
     targetType,
@@ -287,7 +352,17 @@ function DefaultEdge({
 
   return (
     <>
-      <path id={id} style={style} className={classes.edgePath} d={edgePath} />
+      <path id={id} className={hoveredEdges && hoveredEdges?.includes(id) ? classes.edgeAnimatedLine : classes.edgePath} d={edgePath} />
+      {subFlowIcon && isFirstPGEdge && isSubFlowView && (
+      <ForeignObject
+        edgePath={edgePath}
+        position={position}
+        offset={offset + 40}
+      >
+        <SubFlowButton edgeId={id} />
+      </ForeignObject>
+      )}
+
       {isDragging && isMergableEdge && (
         <ForeignObject
           onMouseOver={handleMouseOver}
@@ -351,6 +426,15 @@ function DefaultEdge({
         >
           <UnlinkButton edgeId={id} />
         </ForeignObject>
+      )}
+      {subFlowIcon && !isFirstPGEdge && (
+      <ForeignObject
+        edgePath={edgePath}
+        position={position}
+        offset={offset + 40}
+      >
+        <SubFlowButton edgeId={id} />
+      </ForeignObject>
       )}
     </>
   );

@@ -14,6 +14,7 @@ import {
   getResourceSubType,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
+import SubFlowBlock from '../SubFlowBlock';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
 import IconBlock from '../IconBlock';
@@ -21,6 +22,7 @@ import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
+import NewBlock from '../NewBlock';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
@@ -41,6 +43,7 @@ const PageGenerator = ({
   isViewMode,
   onDelete,
   onMove,
+  isSubFlow,
   openErrorCount,
   className,
   ...pg
@@ -62,6 +65,9 @@ const PageGenerator = ({
   );
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
+  );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
   );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
@@ -301,7 +307,9 @@ const PageGenerator = ({
   // #endregion
   // console.log('render: <PageGenerator>');
 
-  const Component = iconView === 'icon' ? IconBlock : AppBlock;
+  // eslint-disable-next-line no-nested-ternary
+  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (iconView === 'icon' ? IconBlock : AppBlock);
+  // const Component = NewBlock;
 
   return (
     <div className={clsx(classes.pgContainer, className)} >
@@ -310,6 +318,7 @@ const PageGenerator = ({
         name={blockName}
         onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
+        isSubFlow={isSubFlow}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
         assistant={assistant}

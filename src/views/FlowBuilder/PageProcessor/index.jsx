@@ -6,8 +6,10 @@ import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import IconBlock from '../IconBlock';
+import SubFlowBlock from '../SubFlowBlock';
 import { getResourceSubType, resourceCategory} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
+import NewBlock from '../NewBlock';
 import inputFilterAction from './actions/inputFilter_afe';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter_afe';
@@ -43,6 +45,7 @@ const PageProcessor = ({
   isMonitorLevelAccess,
   onDelete,
   onMove,
+  isSubFlow,
   openErrorCount,
   ...pp
 }) => {
@@ -51,6 +54,9 @@ const PageProcessor = ({
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
   const classes = useStyles();
   const dispatch = useDispatch();
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
   const resource =
     useSelector(state =>
       selectors.resource(
@@ -219,9 +225,13 @@ const PageProcessor = ({
 
   const name = pending ? '' : resource.name || resource.id;
 
-  const Component = iconView === 'icon' ? IconBlock : AppBlock;
+  // let Component;
 
-  console.log(iconView);
+  // if (isSubFlowView) { Component = isSubFlow ? SubFlowBlock : IconBlock; } else {
+  //   Component = (iconView === 'icon') ? IconBlock : AppBlock;
+  // }
+  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (iconView === 'icon' ? IconBlock : AppBlock);
+  // const Component = NewBlock;
 
   return (
     <>
@@ -230,6 +240,7 @@ const PageProcessor = ({
           {...pp}
           integrationId={integrationId}
           name={name}
+          isSubFlow={isSubFlow}
           onDelete={onDelete}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}

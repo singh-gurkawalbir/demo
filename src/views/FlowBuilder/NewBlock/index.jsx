@@ -6,19 +6,21 @@ import React, {
   useMemo,
 } from 'react';
 import { useDrag } from 'react-dnd';
+import Menu, { Typography, IconButton } from '@material-ui/core';
+import MenuItem from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
+import ArrowPopper from '../../../components/ArrowPopper';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-// import ResourceButton from '../ResourceButton';
-import OldResourceButton from '../OldResourceButton';
+import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
+import BranchIcon from '../../../components/icons/BranchIcon';
 import GripperIcon from '../../../components/icons/GripperIcon';
 import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
@@ -32,9 +34,11 @@ import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
+import EllipsisActionMenu from '../../../components/EllipsisActionMenu';
+import { useFlowContext } from '../FlowBuilderBody/Context';
 
-const blockHeight = 170;
-const blockWidth = 275;
+const blockHeight = 50;
+const blockWidth = 50;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -51,10 +55,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   box: {
-    width: blockWidth,
-    height: blockHeight,
     position: 'relative',
     zIndex: theme.zIndex.bubble,
+    background: 'transparent',
+    display: 'flex',
+    alignItems: 'flex-end',
   },
   name: {
     height: 150,
@@ -108,6 +113,7 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     opacity: 0,
+    color: theme.palette.primary.main,
     '& svg': {
       width: 0,
       height: 0,
@@ -116,8 +122,23 @@ const useStyles = makeStyles(theme => ({
   actionIsNew: {
     color: theme.palette.primary.main,
   },
+  actionUsed: {
+    color: theme.palette.primary.main,
+    '&:before': {
+      content: '""',
+      height: theme.spacing(1),
+      width: theme.spacing(1),
+      borderRadius: '50%',
+      backgroundColor: theme.palette.primary.main,
+      position: 'absolute',
+      top: theme.spacing(0.6),
+      right: theme.spacing(0.2),
+      display: 'block',
+      zIndex: 1,
+    },
+  },
   bubbleContainer: {
-    position: 'relative',
+    position: 'right',
     display: 'flex',
   },
   bubble: {
@@ -132,21 +153,21 @@ const useStyles = makeStyles(theme => ({
     fill: theme.palette.primary.main,
   },
   appLogoContainer: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     textAlign: 'center',
-    height: 41,
+    fill: 'blue',
   },
   appLogo: {
     position: 'relative',
     alignSelf: 'center',
-    maxWidth: 101,
+    maxWidth: theme.spacing(7),
     maxHeight: theme.spacing(4),
     pointerEvents: 'none',
   },
   deleteButton: {
     position: 'absolute',
     right: -theme.spacing(0.5),
-    top: -theme.spacing(0.5),
+    top: -theme.spacing(3),
     zIndex: 1,
     transition: theme.transitions.create('color'),
     color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
@@ -177,7 +198,34 @@ const useStyles = makeStyles(theme => ({
   pgContainerName: {
     background: theme.palette.background.paper,
   },
+  applicationsMenuPopper: {
+    border: 'none',
+  },
+  applicationsMenuPaper: {
+    right: styleProps => styleProps.additionalAppsCount >= styleProps.columns - 1 ? styleProps.pxSize : styleProps.pxSize / 2,
+  },
+  applicationsMenuPaperMax: {
+    right: styleProps => styleProps.pxSize * 1.5,
+  },
+  applicationsMenuPaperPlaceholder: {
+    position: 'relative',
+    maxHeight: styleProps => styleProps.pxSize * 4,
+    overflowY: 'auto',
+  },
 }));
+
+const blockMap = {
+  newPG: { label: 'Add source'},
+  newPP: { label: 'Add destination / lookup'},
+  newImport: { label: 'Add destination'},
+  export: { label: 'Export'},
+  import: { label: 'Import'},
+  lookup: { label: 'Lookup'},
+  listener: { label: 'Listener'},
+  dataLoader: { label: 'Data loader'},
+  exportTransfer: { label: 'Transfer'},
+  importTransfer: { label: 'Transfer'},
+};
 
 export default function AppBlock({
   className,
@@ -209,6 +257,7 @@ export default function AppBlock({
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [activeAction, setActiveAction] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const isNew = blockType.startsWith('new');
@@ -219,6 +268,7 @@ export default function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
+  const {flowHighlighter} = useFlowContext();
   const flowOriginal =
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
@@ -302,6 +352,19 @@ export default function AppBlock({
 
   const handleDelete = useCallback(id => () => onDelete(id), [onDelete]);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
+
+  const handleClick = useCallback(
+    event => {
+      handleExpandClick();
+      setAnchorEl(!anchorEl ? event.currentTarget : null);
+    },
+    [anchorEl, handleExpandClick]
+  );
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const open = !!anchorEl;
   const handleMouseOver = useCallback(
     isOver => () => {
       if (!activeAction) {
@@ -311,6 +374,7 @@ export default function AppBlock({
     [activeAction]
   );
   const handleActionClose = useCallback(() => {
+    handleClose();
     setActiveAction(null);
     setExpanded();
   }, []);
@@ -384,6 +448,7 @@ export default function AppBlock({
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
+            [classes.actionUsed]: expanded && a.isUsed,
           })}
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
@@ -426,8 +491,8 @@ export default function AppBlock({
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
         className={classes.box}
       >
-        <div className={classes.bubbleContainer}>
-          {onDelete && !isViewMode && !resource._connectorId && (
+        {/* <div className={classes.bubbleContainer}> */}
+        {/* {onDelete && !isViewMode && !resource._connectorId && (
             <IconButton
               size="small"
               className={classes.deleteButton}
@@ -478,8 +543,15 @@ export default function AppBlock({
           <div className={classes.rightActions}>
             {renderActions(rightActions, isDragInProgress)}
           </div>
-        </div>
+        </div> */}
         <div className={classes.appLogoContainer}>
+          <IconButton
+            size="small"
+            className={classes.deleteButton}
+            onClick={handleDelete(id)}
+            data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
+            <CloseIcon />
+          </IconButton>
           {iconType && (
             <ApplicationImg
               className={classes.appLogo}
@@ -487,10 +559,51 @@ export default function AppBlock({
               assistant={connAssistant || assistant}
             />
           )}
+
         </div>
         <div className={classes.buttonContainer}>
-          <OldResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
-          <div className={classes.middleActionContainer}>
+          <ResourceButton onClick={!iconType ? onBlockClick : handleClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          {/* <ArrowPopper
+            placement="bottom"
+            open={open}
+            anchorEl={anchorEl}
+            restrictToParent={false}
+            classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, classes.applicationsMenuPaper) }}
+            id="additionalApps"
+            onClose={handleClose} > */}
+          {/* <div className={classes.middleActionContainer}>
+              <div className={classes.leftActions}>
+                {renderActions(leftActions, isDragInProgress)}
+              </div>
+              <div className={classes.rightActions}>
+                {renderActions(rightActions, isDragInProgress)}
+              </div>
+            </div>
+            <div className={classes.middleActionContainer}>
+              {renderActions(middleActions)}
+              {!expanded && hasActions ? (
+                <ActionIconButton
+                  onClick={handleExpandClick}
+                  data-test="addDataProcessor"
+                  helpText="Define options">
+                  <AddIcon />
+                </ActionIconButton>
+              ) : null}
+            </div> */}
+          {/* <div> */}
+          {renderActions(leftActions, isDragInProgress)}
+          {renderActions(rightActions, isDragInProgress)}
+          {renderActions(middleActions)}
+          {/* <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+            <ActionIconButton
+              onClick={() => flowHighlighter(id)}
+              data-test="flowBranching"
+              helpText="flow tree expansion">
+              <BranchIcon />
+            </ActionIconButton> */}
+          {/* </div> */}
+          {/* </ArrowPopper> */}
+          {/* <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
               <ActionIconButton
@@ -500,19 +613,20 @@ export default function AppBlock({
                 <AddIcon />
               </ActionIconButton>
             ) : null}
-          </div>
+          </div> */}
         </div>
-        <ErrorStatus
+        {/* <ErrorStatus
           count={openErrorCount}
           isNew={isNew}
           flowId={flowId}
-          resourceId={resource?._id} />
+          resourceId={resource?._id} /> */}
       </div>
-      <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
+      {/* <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
           <CeligoTruncate isLoggable lines={2}>{name}</CeligoTruncate>
         </Typography>
-      </div>
+      </div> */}
     </div>
   );
 }
+

@@ -27,6 +27,7 @@ import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import BranchIcon from '../../../../components/icons/BranchIcon';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -176,7 +177,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, iconView}) => {
+const PageBarChildren = ({integrationId, flowId, iconView, isSubFlowView}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -217,15 +218,24 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
     placement: 'bottom',
   };
 
-  console.log(iconView);
   const handleViewChange = () => {
     if (iconView === 'icon') { dispatch(actions.flow.iconView(flowId, 'bubble')); } else {
       dispatch(actions.flow.iconView(flowId, 'icon'));
     }
   };
+  // const handleSubFlowClose = () => {
+  //   dispatch(actions.flow.toggleSubFlowView(flowId, false));
+  // };
 
   return (
     <div className={classes.actions}>
+      {/* {isSubFlowView && (
+      <IconButtonWithTooltip
+        onClick={handleSubFlowClose}
+        data-test="toggleSubFlowView">
+        <BranchIcon />
+      </IconButtonWithTooltip>
+      )} */}
       <IconButtonWithTooltip
         onClick={handleViewChange}
         data-test="flowSettings">
@@ -313,6 +323,9 @@ export default function PageBar({flowId, integrationId}) {
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
 
   return (
     <CeligoPageBar
@@ -323,7 +336,7 @@ export default function PageBar({flowId, integrationId}) {
     >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
-        flowId={flowId} integrationId={integrationId} iconView={iconView}
+        flowId={flowId} integrationId={integrationId} iconView={iconView} isSubFlowView={isSubFlowView}
       />
     </CeligoPageBar>
   );

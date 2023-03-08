@@ -28,13 +28,13 @@ const useStyles = makeStyles(theme => ({
   },
   newiconButtonRoot: {
     padding: theme.spacing(0.1),
-    marginRight: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
     '&:hover': {
       backgroundColor: theme.palette.background.paper,
       '& svg': {
         color: theme.palette.primary.main,
       },
+      placement: 'top',
     },
   },
   iconButtonLabel: {

@@ -15,9 +15,10 @@ import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-// import ResourceButton from '../ResourceButton';
-import OldResourceButton from '../OldResourceButton';
+import SubFlowResourceButton from '../SubFlowResourceButton';
+import ArrowPopper from '../../../components/ArrowPopper';
 import BubbleSvg from '../BubbleSvg';
+import BubbleSmallSvg from '../BubbleSmallSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import GripperIcon from '../../../components/icons/GripperIcon';
 import ErrorStatus from '../ErrorStatus';
@@ -31,16 +32,18 @@ import { useIsDragInProgress } from '../hooks';
 import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
+import SubFlowErrorStatus from '../SubFlowErrorStatus';
 import { message } from '../../../utils/messageStore';
 
-const blockHeight = 170;
-const blockWidth = 275;
+const blockHeight = 86;
+const blockWidth = 137;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: blockWidth,
+    // height: 86,
   },
   draggable: {
     '&:hover': {
@@ -52,19 +55,19 @@ const useStyles = makeStyles(theme => ({
   },
   box: {
     width: blockWidth,
-    height: blockHeight,
+    height: 104,
     position: 'relative',
     zIndex: theme.zIndex.bubble,
   },
   name: {
-    height: 150,
+    height: 65,
     overflow: 'hidden',
     width: '100%',
     justifyContent: 'center',
     display: 'flex',
     textAlign: 'center',
     marginTop: -85,
-    background: theme.palette.background.default,
+    // background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
     zIndex: theme.zIndex.bubbleName,
@@ -83,9 +86,24 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
+  applicationsMenuPopper: {
+    border: 'none',
+  },
+  applicationsMenuPaper: {
+    right: styleProps => styleProps.additionalAppsCount >= styleProps.columns - 1 ? styleProps.pxSize : styleProps.pxSize / 2,
+  },
+  applicationsMenuPaperMax: {
+    right: styleProps => styleProps.pxSize * 1.5,
+  },
+  applicationsMenuPaperPlaceholder: {
+    position: 'relative',
+    maxHeight: styleProps => styleProps.pxSize * 4,
+    overflowY: 'auto',
+  },
   middleActionContainer: {
     position: 'relative',
     alignSelf: 'center',
+    marginBottom: '20px',
   },
   sideActionContainer: {
     position: 'relative',
@@ -94,13 +112,13 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     display: 'flex',
     left: -16,
-    top: 68,
+    top: 28,
   },
   rightActions: {
     position: 'absolute',
     display: 'flex',
-    left: 280,
-    top: 68,
+    left: 140,
+    top: 28,
   },
   isNotOverActions: {
     width: 0,
@@ -115,6 +133,21 @@ const useStyles = makeStyles(theme => ({
   },
   actionIsNew: {
     color: theme.palette.primary.main,
+  },
+  actionUsed: {
+    color: theme.palette.primary.main,
+    '&:before': {
+      content: '""',
+      height: theme.spacing(1),
+      width: theme.spacing(1),
+      borderRadius: '50%',
+      backgroundColor: theme.palette.primary.main,
+      position: 'absolute',
+      top: theme.spacing(0.6),
+      right: theme.spacing(0.2),
+      display: 'block',
+      zIndex: 1,
+    },
   },
   bubbleContainer: {
     position: 'relative',
@@ -132,14 +165,15 @@ const useStyles = makeStyles(theme => ({
     fill: theme.palette.primary.main,
   },
   appLogoContainer: {
-    marginTop: theme.spacing(2),
+    marginTop: '12px',
     textAlign: 'center',
-    height: 41,
+    height: '16px',
   },
   appLogo: {
     position: 'relative',
     alignSelf: 'center',
-    maxWidth: 101,
+    maxWidth: 55,
+    marginRight: '30px',
     maxHeight: theme.spacing(4),
     pointerEvents: 'none',
   },
@@ -209,6 +243,7 @@ export default function AppBlock({
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [activeAction, setActiveAction] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const isNew = blockType.startsWith('new');
@@ -236,6 +271,9 @@ export default function AppBlock({
 
   const classes = useStyles({ isHover, noDragInfo });
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
@@ -371,7 +409,7 @@ export default function AppBlock({
     // This disables the default preview image, so that we can render our own custom drag layer.
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
-
+  // alert('came')
   function renderActions(flowActions, hide) {
     if (!flowActions || !flowActions.length || hide) return null;
 
@@ -384,6 +422,7 @@ export default function AppBlock({
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
+            [classes.actionUsed]: expanded && a.isUsed,
           })}
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
@@ -409,6 +448,19 @@ export default function AppBlock({
     ));
   }
 
+  const handleClick = useCallback(
+    event => {
+      handleExpandClick();
+      setAnchorEl(!anchorEl ? event.currentTarget : null);
+    },
+    [anchorEl, handleExpandClick]
+  );
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const open = !!anchorEl;
+
   return (
     <div
       ref={drag}
@@ -427,7 +479,7 @@ export default function AppBlock({
         className={classes.box}
       >
         <div className={classes.bubbleContainer}>
-          {onDelete && !isViewMode && !resource._connectorId && (
+          {/* {onDelete && !isViewMode && !resource._connectorId && (
             <IconButton
               size="small"
               className={classes.deleteButton}
@@ -435,7 +487,7 @@ export default function AppBlock({
               data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
               <CloseIcon />
             </IconButton>
-          )}
+          )} */}
           {isDraggable && (
             <IconButton
               size="small"
@@ -452,9 +504,7 @@ export default function AppBlock({
               id={id}
               path={rest.path} />
           </div>
-          <BubbleSvg
-            height={blockHeight}
-            width={blockWidth}
+          <BubbleSmallSvg
             classes={{ bubble: clsx(classes.bubble, {[classes.bubbleActive]: isActive}),
               bubbleBG: classes.bubbleBG,
             }}
@@ -489,7 +539,7 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <OldResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          <SubFlowResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
@@ -502,11 +552,6 @@ export default function AppBlock({
             ) : null}
           </div>
         </div>
-        <ErrorStatus
-          count={openErrorCount}
-          isNew={isNew}
-          flowId={flowId}
-          resourceId={resource?._id} />
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
@@ -516,3 +561,4 @@ export default function AppBlock({
     </div>
   );
 }
+

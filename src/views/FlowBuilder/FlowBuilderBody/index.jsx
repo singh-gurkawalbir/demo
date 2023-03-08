@@ -1,6 +1,7 @@
+/* eslint-disable no-param-reassign */
 import { makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactFlow, { MiniMap } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, getOutgoers, isEdge } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -70,6 +71,18 @@ const useStyles = makeStyles(theme => ({
     width: 275,
     height: 170,
   },
+  subppterminal: {
+    fill: theme.palette.secondary.lightest,
+    stroke: theme.palette.secondary.lightest,
+    width: 137,
+    height: 86,
+  },
+  iconterminal: {
+    fill: theme.palette.secondary.lightest,
+    stroke: theme.palette.secondary.lightest,
+    width: 75,
+    height: 70,
+  },
   title: {
     display: 'flex',
     padding: theme.spacing(4, 0, 6, 0),
@@ -110,6 +123,10 @@ const useStyles = makeStyles(theme => ({
 
 const nodeTypes = {
   pg: PgNode,
+  iconpp: PpNode,
+  iconpg: PgNode,
+  subflowpp: PpNode,
+  subflowpg: PgNode,
   pp: PpNode,
   terminal: TerminalNode,
   router: RouterNode,
@@ -127,6 +144,8 @@ export function Canvas({ flowId, fullscreen, iconView}) {
   const menuDrawerWidth = useMenuDrawerWidth();
   const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
   const classes = useStyles(drawerWidth);
+  const [selectedEdge, setSelectedEdge] = useState({});
+  const [subFlowElements, setSubFlowElements] = useState([]);
   const [rfInstance, setRFInstance] = useState(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [isPanning, setIsPanning] = useState(false);
@@ -135,6 +154,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     selectors.makeFlowDataForFlowBuilder,
     flowId
   );
+  const [render, setRender] = useState(null);
   const parentDiv = useRef(null);
   const elements = useSelector(state =>
     selectors.fbGraphElements(state, flowId)
@@ -157,16 +177,39 @@ export function Canvas({ flowId, fullscreen, iconView}) {
   const isFlowSaveInProgress = useSelector(state =>
     selectors.isFlowSaveInProgress(state, flowId)
   );
+  const hoveredEdges = useSelector(state =>
+    selectors.fbEdgeHovered(state, flowId)
+  );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
 
-  // const iconView = useSelector(state =>
-  //   selectors.isDataLoaderFlow(state, flowId)
-  // );
-  // const iconView = true;
-  // const iconView = useSelector(state =>
-  //   selectors.fbIconview(state, flowId)
-  // );
+  const getAllOutgoers = (node, elements) => getOutgoers(node, elements).reduce(
+    (memo, outgoer) => [...memo, outgoer, ...getAllOutgoers(outgoer, elements)],
+    []
+  );
 
-  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(elements, mergedFlow), [elements, iconView, mergedFlow]);
+  // let newElements;
+
+  const flowHighlighter = id => {
+    dispatch(actions.flow.toggleSubFlowView(flowId, true, id));
+    const node = elements.find(ele => ele.id === id);
+    const subFlow = getAllOutgoers(node, elements).map(node => node.id);
+
+    const newElements = elements.map(ele => {
+      if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
+        return {...ele, isSubFlow: true};
+      }
+
+      return ele;
+    });
+
+    setSubFlowElements(newElements);
+  };
+
+  const layouts = isSubFlowView ? subFlowElements : (render || elements);
+
+  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(layouts, mergedFlow) : newlayoutElements(layouts, mergedFlow, hoveredEdges), [hoveredEdges, iconView, layouts, mergedFlow]);
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {
@@ -205,6 +248,47 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     }
   }, [isPanning]);
 
+  const handleEdgeMouseHover = useCallback((evt, edge) => {
+    const {id} = edge;
+
+    const targetNodes = id.split('-');
+
+    const targetNodeId = targetNodes.length === 2 ? targetNodes[1] : targetNodes[2];
+
+    const targetNode = elements.find(e => e?.id === targetNodeId);
+
+    const getAllOutgoers = (node, elements) => getOutgoers(node, elements).reduce(
+      (memo, outgoer) => [...memo, outgoer, ...getAllOutgoers(outgoer, elements)],
+      []
+    );
+
+    const subsequentNodes = targetNode ? getAllOutgoers(targetNode, elements).map(node => node.id) : [];
+
+    const includedEdges = elements.filter(ele => {
+      if (!isEdge(ele)) return false;
+
+      const nodes = ele.id.split('-');
+
+      return targetNodes.length === 2 ? (subsequentNodes.includes(nodes[0]) || subsequentNodes.includes(nodes[1]))
+        : (subsequentNodes.includes(nodes[0]) || subsequentNodes.includes(nodes[1]) || subsequentNodes.includes(nodes[2]));
+    }
+    ).map(ele => ele.id);
+
+    includedEdges.push(id);
+    dispatch(actions.flow.edgeHovered(flowId, includedEdges));
+
+    // setRender(modifiedElements);
+
+    setSelectedEdge(edge);
+  }, [dispatch, elements, flowId]);
+
+  const handleEdgeMouseLeave = useCallback(() => {
+    dispatch(actions.flow.edgeUnhover(flowId));
+    // const modifiedElements = elements.map(ele => ({...ele, animated: false}));
+
+    // setRender(elements);
+  }, [dispatch, flowId]);
+
   return (
     <div className={classes.canvasContainer} style={calcCanvasStyle}>
       <LoadingNotification
@@ -217,7 +301,10 @@ export function Canvas({ flowId, fullscreen, iconView}) {
           elements={elements}
           elementsMap={elementsMap}
           iconView={iconView}
+          flowHighlighter={flowHighlighter}
           flow={mergedFlow}
+          setSelectedEdge={setSelectedEdge}
+          selectedEdge={selectedEdge}
           flowId={flowId}
           translateExtent={translateExtent}
           dragNodeId={dragStepId}
@@ -227,6 +314,8 @@ export function Canvas({ flowId, fullscreen, iconView}) {
             className={isPanning ? classes.isPanning : classes.canPan}
             onNodeDragStart={handleNodeDragStart}
             onNodeDragStop={handleNodeDragStop}
+            onEdgeMouseEnter={handleEdgeMouseHover}
+            onEdgeMouseLeave={handleEdgeMouseLeave}
             onNodeDrag={handleNodeDrag}
             onMoveEnd={handleMoveEnd}
             onMove={handleMove}
@@ -257,6 +346,14 @@ export function Canvas({ flowId, fullscreen, iconView}) {
                   case GRAPH_ELEMENTS_TYPE.MERGE:
                   case GRAPH_ELEMENTS_TYPE.EMPTY:
                     return classes.minimap;
+                  case GRAPH_ELEMENTS_TYPE.SUBFLOW_PP:
+                    return classes.subppterminal;
+                  case GRAPH_ELEMENTS_TYPE.SUBFLOW_PG:
+                    return classes.subppterminal;
+                  case GRAPH_ELEMENTS_TYPE.ICON_PP:
+                    return classes.iconterminal;
+                  case GRAPH_ELEMENTS_TYPE.ICON_PG:
+                    return classes.iconterminal;
 
                   default:
                     return classes.terminal;

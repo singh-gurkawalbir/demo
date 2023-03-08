@@ -12,6 +12,10 @@ export const GRAPH_ELEMENTS_TYPE = {
   EDGE: 'default',
   TERMINAL: 'terminal',
   PP_STEP: 'pp',
+  ICON_PP: 'iconpp',
+  ICON_PG: 'iconpg',
+  SUBFLOW_PP: 'subflowpp',
+  SUBFLOW_PG: 'subflowpg',
   PG_STEP: 'pg',
   EMPTY: 'empty',
 };

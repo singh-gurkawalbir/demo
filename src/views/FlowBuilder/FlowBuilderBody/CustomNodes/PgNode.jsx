@@ -29,7 +29,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageGeneratorNode(props) {
-  const { data = {} } = props;
+  const { data = {}} = props;
+  const { isSubFlow} = data;
   const classes = useStyles();
   const { flow, flowId } = useFlowContext();
   const dispatch = useDispatch();
@@ -45,17 +46,21 @@ export default function PageGeneratorNode(props) {
   }, [dispatch, flowId]);
   const handleMove = useHandleMovePG(flowId);
 
+  // alert(isSubFlow);
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
 
+  // const isSubFlow = false;
+
   return (
-    <div className={iconView === 'icon' ? classes.newroot : classes.root}>
-      <div className={iconView === 'icon' ? classes.newpgContainer : classes.pgContainer}>
+    <div className={iconView === 'icon' && !isSubFlow ? classes.newroot : classes.root}>
+      <div className={iconView === 'icon' && !isSubFlow ? classes.newpgContainer : classes.pgContainer}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
           index={+pgIndex}
+          isSubFlow={isSubFlow}
           onDelete={showDelete && handleDelete}
           flowId={flowId}
           onMove={handleMove}

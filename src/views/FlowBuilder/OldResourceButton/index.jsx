@@ -1,16 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
-import { selectors } from '../../../reducers';
 import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../components/icons/TransferUpIcon';
 import { TextButton } from '../../../components/Buttons';
-import { useFlowContext } from '../FlowBuilderBody/Context';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
@@ -40,46 +37,13 @@ export const resourceButtonStyles = makeStyles(theme => ({
       },
     },
   },
-  newresourceButton: {
-    marginRight: 0,
-    padding: 0,
-    minWidth: 'auto',
-    '& >* svg': {
-      fontSize: `${theme.spacing(3)}px !important`,
-    },
-    '&:hover': {
-      color: theme.palette.secondary.main,
-      '& > * svg': {
-        color: theme.palette.primary.main,
-      },
-    },
-    '& .MuiButton-startIcon': {
-      marginBottom: theme.spacing(-1),
-    },
-  },
 }));
 
-export default function ResourceButton({ onClick, variant, disabled}) {
+export default function OldResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
-  const {flowId} = useFlowContext();
   const block = blockMap[variant];
-  const label = ['newPG', 'newPP', 'newImport'].includes(variant) && block.label;
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
-  );
 
-  if (iconView === 'icon') {
-    if (variant === 'newPG') {
-      block.label = 'Add source';
-    }
-    if (variant === 'newPP') {
-      block.label = 'Add PP';
-    }
-  }
-
-  // console.log('came');
-
-  const comp1 = (
+  return (
     <TextButton
       data-test={block.label}
       onClick={onClick}
@@ -89,31 +53,5 @@ export default function ResourceButton({ onClick, variant, disabled}) {
       startIcon={<block.Icon />}>
       {block.label}
     </TextButton>
-  );
-
-  const comp2 = label ? (
-    <TextButton
-      data-test={block.label}
-      onClick={onClick}
-      className={classes.newresourceButton}
-      vertical
-      disabled={disabled}
-      startIcon={<block.Icon />}>
-      {block.label}
-    </TextButton>
-  )
-
-    : (
-      <TextButton
-        data-test={block.label}
-        onClick={onClick}
-        className={classes.newresourceButton}
-        vertical
-        disabled={disabled}
-        startIcon={<block.Icon />} />
-    );
-
-  return (
-    iconView !== 'icon' ? comp1 : comp2
   );
 }

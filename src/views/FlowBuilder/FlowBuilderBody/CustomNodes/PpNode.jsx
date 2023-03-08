@@ -89,7 +89,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {}}) {
-  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {}, showLeft = false, showRight = false } = data;
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {}, showLeft = false, showRight = false, isSubFlow } = data;
+  // const isSubFlow = false;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
@@ -103,6 +104,7 @@ export default function PageProcessorNode({ data = {}}) {
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
+
   const {confirmDialog} = useConfirmDialog();
   const handlePPMove = useHandleMovePP();
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
@@ -134,13 +136,19 @@ export default function PageProcessorNode({ data = {}}) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, flowId]);
 
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
+
+  console.log('subFlow', isSubFlow);
+
   return (
     <div className={iconView === 'icon' ? classes.newroot : classes.root}>
       <DefaultHandle type="target" position={Position.Left} />
 
       <div className={iconView === 'icon' ? classes.newcontentContainer : classes.contentContainer} >
         <div>
-          { iconView !== 'icon' && (
+          { (iconView !== 'icon' || (isSubFlow && !isSubFlowView)) && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
             {!isVirtual && (
             <Typography variant="overline" className={classes.branchName}>
@@ -161,13 +169,14 @@ export default function PageProcessorNode({ data = {}}) {
             showLeft={!!showLeft}
             showRight={!!showRight}
             path={path}
+            isSubFlow={isSubFlow}
             onMove={handlePPMove}
             routerIndex={routerIndex}
             branchIndex={branchIndex}
             iconView={iconView}
             pageProcessorIndex={pageProcessorIndex}
           />
-          { iconView === 'icon' && (
+          {/* { iconView === 'icon' && !isSubFlow && (
           <div className={clsx(classes.newbranchContainer, {[classes.firstBranchStep]: isFirst})}>
             {!isVirtual && (
             <Typography variant="overline" className={classes.newbranchName}>
@@ -175,7 +184,7 @@ export default function PageProcessorNode({ data = {}}) {
             </Typography>
             )}
           </div>
-          )}
+          )} */}
         </div>
       </div>
 

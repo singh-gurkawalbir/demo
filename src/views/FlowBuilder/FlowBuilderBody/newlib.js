@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
@@ -18,6 +19,22 @@ export const nodeSize = {
   pg: {
     width: 75,
     height: 95,
+  },
+  iconpp: {
+    width: 75,
+    height: 70,
+  },
+  iconpg: {
+    width: 75,
+    height: 95,
+  },
+  subflowpp: {
+    width: 137,
+    height: 86,
+  },
+  subflowpg: {
+    width: 137,
+    height: 86,
   },
   router: {
     width: 30,
@@ -43,8 +60,8 @@ const options = {
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',
   // ranker: 'longest-path', // seems worst
-  ranksep: 95,
-  nodesep: 30,
+  ranksep: 137,
+  nodesep: 40,
   marginx: 50,
   marginy: 50,
 };
@@ -74,10 +91,20 @@ export function rectifyPageGeneratorOrder(nodes = [], flow) {
   });
 }
 
-export function newlayoutElements(elements = [], flow) {
+export function newlayoutElements(elements = [], flow, hoveredEdges) {
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));
+  // elements.forEach(el => {
+  //   if (el.isSubFlow) {
+  //     if (el.type === 'iconpp') {
+  //       el.type = 'subflowpp';
+  //     } else if (el.type === 'pg') {
+  //       el.type = 'subflowpg';
+  //     }
+  //   }
+  // });
+
   graph.setGraph({ rankdir: 'LR', ...options });
 
   elements.forEach(el => {
@@ -98,7 +125,13 @@ export function newlayoutElements(elements = [], flow) {
   elements.forEach(el => {
     if (isNode(el)) {
       const node = graph.node(el.id);
-      const size = nodeSize[el.type];
+      let size;
+
+      if (el.isSubFlow && (el.type === 'iconpp' || el.type === 'iconpg')) {
+        size = nodeSize[el.type] * 2;
+      } else {
+        size = nodeSize[el.type];
+      }
       const offsetY = 0;
 
       if (node.x > highestX) {
@@ -111,10 +144,10 @@ export function newlayoutElements(elements = [], flow) {
       // most times a terminal node will only require a short horizontal edge and it looks better
       // if this edge is shorted, which is accomplished by shifting th terminal node left by 1/2 the
       // size of a step. This way, nodes visually line-up when branching.
-      const offsetX =
-        el.type === GRAPH_ELEMENTS_TYPE.TERMINAL
-          ? Math.min(nodeSize.pp.width / 2 - nodeSize[el.type].width / 2, 50)
-          : 0;
+      // const offsetX =
+      //   el.type === GRAPH_ELEMENTS_TYPE.TERMINAL
+      //     ? Math.max(nodeSize.pp.width / 2 - nodeSize[el.type].width / 2, 50)
+      //     : 100;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
@@ -125,12 +158,16 @@ export function newlayoutElements(elements = [], flow) {
         position.x = node.x;
         position.y = node.y - 31;
       } else if (el.type === 'terminal') {
-        position.x = node.x;
+        position.x = node.x + 5;
         position.y = node.y + 7;
       } else {
         position.x = node.x;
         position.y = node.y;
       }
+      if (el.isSubFlow) {
+        el.data = {...el.data, isSubFlow: true};
+      }
+
       nodes.push({
         ...el,
         position,
@@ -138,9 +175,15 @@ export function newlayoutElements(elements = [], flow) {
     } else {
       // these are the edges...
       const { points } = graph.edge({ v: el.source, w: el.target });
+
+      console.log({points});
       const source = elements.find(n => n.id === el.source);
       const target = elements.find(n => n.id === el.target);
       const edge = elements.find(n => n.id === `${el.source}-${el.target}`);
+
+      // if (hoveredEdges?.includes(el.id)) {
+      //   el = {...el, animated: true};
+      // }
 
       edges.push({
         ...el,

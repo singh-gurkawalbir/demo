@@ -65,7 +65,7 @@ export const capitalizeFirstLetter = (str = '') => str.charAt(0).toUpperCase() +
 export default { hashCode, isJsonString, safeParse, capitalizeFirstLetter };
 export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
 
-export const getTextAfterCount = (displayText, valueCount = 0) => `${valueCount} ${valueCount === 1 ? displayText : `${displayText}s`}`;
+export const getTextAfterCount = (displayText, valueCount = 0, subBlockchema) => subBlockchema ? `${valueCount}` : `${valueCount} ${valueCount === 1 ? displayText : `${displayText}s`}`;
 
 export const getTrimmedTitle = (title = '', maxLength = 40) => {
   if (maxLength < 4) return title;

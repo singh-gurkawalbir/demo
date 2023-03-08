@@ -20,6 +20,7 @@ import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
+import BranchIcon from '../../../components/icons/BranchIcon';
 import GripperIcon from '../../../components/icons/GripperIcon';
 import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
@@ -34,6 +35,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
 import EllipsisActionMenu from '../../../components/EllipsisActionMenu';
+import { useFlowContext } from '../FlowBuilderBody/Context';
 
 const blockHeight = 50;
 const blockWidth = 50;
@@ -111,6 +113,7 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     opacity: 0,
+    color: theme.palette.primary.main,
     '& svg': {
       width: 0,
       height: 0,
@@ -118,6 +121,21 @@ const useStyles = makeStyles(theme => ({
   },
   actionIsNew: {
     color: theme.palette.primary.main,
+  },
+  actionUsed: {
+    color: theme.palette.primary.main,
+    '&:before': {
+      content: '""',
+      height: theme.spacing(1),
+      width: theme.spacing(1),
+      borderRadius: '50%',
+      backgroundColor: theme.palette.primary.main,
+      position: 'absolute',
+      top: theme.spacing(0.6),
+      right: theme.spacing(0.2),
+      display: 'block',
+      zIndex: 1,
+    },
   },
   bubbleContainer: {
     position: 'right',
@@ -137,6 +155,7 @@ const useStyles = makeStyles(theme => ({
   appLogoContainer: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
+    fill: 'blue',
   },
   appLogo: {
     position: 'relative',
@@ -249,6 +268,7 @@ export default function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
+  const {flowHighlighter} = useFlowContext();
   const flowOriginal =
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
@@ -292,8 +312,6 @@ export default function AppBlock({
       return resource.rdbms.type;
     }
   });
-
-  console.log(iconType);
 
   const isDragInProgress = useIsDragInProgress();
 
@@ -430,6 +448,7 @@ export default function AppBlock({
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
+            [classes.actionUsed]: expanded && a.isUsed,
           })}
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
@@ -576,6 +595,12 @@ export default function AppBlock({
               {renderActions(rightActions, isDragInProgress)}
               {renderActions(middleActions)}
               <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+              <ActionIconButton
+                onClick={() => flowHighlighter(id)}
+                data-test="flowBranching"
+                helpText="flow tree expansion">
+                <BranchIcon />
+              </ActionIconButton>
             </div>
           </ArrowPopper>
           {/* <div className={classes.middleActionContainer}>
