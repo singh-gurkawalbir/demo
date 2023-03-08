@@ -282,7 +282,6 @@ export const sanitizePatchSet = ({
   resource,
   skipRemovePatches = false,
 }) => {
-  console.log({patchSet});
   if (!patchSet) return patchSet;
   const sanitizedSet = patchSet.reduce(
     (s, patch) => {
