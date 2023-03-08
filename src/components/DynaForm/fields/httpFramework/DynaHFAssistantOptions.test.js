@@ -257,22 +257,22 @@ describe('dynaHFAssistantOptions UI tests', () => {
     waitFor(() => { expect(screen.getByText('Form view')).toBeInTheDocument(); });
     let dropdown;
 
-    waitFor(() => {
-      dropdown = screen.getByText('Please select');
-    });
-
     waitFor(async () => {
+      dropdown = screen.getByText('Please select');
       expect(dropdown).toBeInTheDocument();
       await userEvent.click(dropdown);
-      // import operations are operations while for exports these are endpoints
-      waitFor(() => { expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument(); });
-      waitFor(() => { expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument(); });
+    });
+
+    // import operations are operations while for exports these are endpoints
+    waitFor(() => { expect(screen.getByRole('menuitem', { name: 'increment ticket' })).toBeInTheDocument(); });
+    waitFor(() => { expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument(); });
+    waitFor(async () => {
       await userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
-      waitFor(() => { expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
+      expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
       expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
         '_exportId',
         extendedPatch,
-      ));});
+      ));
     });
   });
   test('should display options for versions in the dropdown when assistantFieldType is "version"', async () => {
@@ -320,7 +320,7 @@ describe('dynaHFAssistantOptions UI tests', () => {
   });
   test('should display options for resources in the dropdown when assistantFieldType is "resource"', async () => {
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'resource' });
-    await userEvent.click(screen.getByText('Please select'));
+    waitFor(async () => { await userEvent.click(screen.getByText('Please select')); });
     waitFor(() => { expect(screen.getByText('resource1')).toBeInTheDocument(); });
   });
   test('should display options passed as props in the dropdown when assistantFieldType is exportType', async () => {
@@ -399,8 +399,10 @@ describe('dynaHFAssistantOptions UI tests', () => {
       resourceContext,
       fields: {},
     });
-    waitFor(async () => { await userEvent.click(screen.getByText('Please select'));
-    await userEvent.click(screen.getByRole('menuitem'));});
-    waitFor(() => { expect(mockOnFieldChangeFn).toHaveBeenCalledWith(undefined, '', true); });
+    waitFor(async () => {
+      await userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByRole('menuitem'));
+    });
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith(undefined, '', true);
   });
 });
