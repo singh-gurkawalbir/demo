@@ -238,7 +238,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
     if (resourceType === 'imports' && merged.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
       merged.http._httpConnectorEndpointIds = [merged.http._httpConnectorEndpointIds[0].split('+')?.[0]];
     }
-    merged.assistantMetadata = undefined;
+    // merged.assistantMetadata = undefined;
   }
   if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
