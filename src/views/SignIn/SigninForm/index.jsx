@@ -155,6 +155,10 @@ export default function SignIn({dialogOpen, className}) {
       </Typography>
       )}
       <DynaForm formKey={formKey} />
+
+      {!isAuthenticating && showError && error && (
+        <ShowErrorMessage error={error} />
+      )}
       {isAuthenticating ? <Spinner />
         : (
           <DynaSubmit
@@ -167,10 +171,6 @@ export default function SignIn({dialogOpen, className}) {
             Sign in
           </DynaSubmit>
         )}
-
-      {!isAuthenticating && showError && error && (
-        <ShowErrorMessage error={error} />
-      )}
 
       { !isAuthenticating && (
       <div>

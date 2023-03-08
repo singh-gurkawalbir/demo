@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaPassword(props) {
-  const { id, label, isLoggable, placeholder, value, formKey, onFieldChange } = props;
+  const { id, label, isLoggable, placeholder, value, formKey, onFieldChange, hidePasswordIcon } = props;
   const classes = useStyles();
   const inputFieldRef = useRef();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -148,7 +148,7 @@ export default function DynaPassword(props) {
           onFocus={handleFocusIn}
           onBlur={handleFocusOut}
           InputProps={{
-            endAdornment: (true) &&
+            endAdornment: (!hidePasswordIcon) &&
               (
                 <InputAdornment position="end">
                     {showPassword ? (
@@ -171,14 +171,38 @@ export default function DynaPassword(props) {
         <FieldMessage {...props} />
 
       </div>
-      <ArrowPopper
-        id="pageInfo"
-        open={open}
-        anchorEl={anchorEl}
-        placement="right"
-        classes={{ popper: classes.arrowPopperPassword }}
-        preventOverflow>
-        <TooltipContent className={classes.infoText}>
+
+      {!hidePasswordIcon && (
+      <>
+        <ArrowPopper
+          id="pageInfo"
+          open={open}
+          anchorEl={anchorEl}
+          placement="right"
+          classes={{ popper: classes.arrowPopperPassword }}
+          preventOverflow>
+          <TooltipContent className={classes.infoText}>
+            <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+            <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
+            <div className={classes.passwordListItem}>
+              {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              {containDigits ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              {validLength ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
+            </div>
+          </TooltipContent>
+        </ArrowPopper>
+
+        <div className={classes.passwordStrongSteps}>
           <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
           <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
           <div className={classes.passwordListItem}>
@@ -196,28 +220,9 @@ export default function DynaPassword(props) {
               : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
             <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
           </div>
-        </TooltipContent>
-      </ArrowPopper>
-
-      <div className={classes.passwordStrongSteps}>
-        <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
-        <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
-        <div className={classes.passwordListItem}>
-          {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-            : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-          <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
         </div>
-        <div className={classes.passwordListItem}>
-          {containDigits ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-            : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-          <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
-        </div>
-        <div className={classes.passwordListItem}>
-          {validLength ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-            : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-          <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
-        </div>
-      </div>
+      </>
+      )}
     </FormControl>
   );
 }
