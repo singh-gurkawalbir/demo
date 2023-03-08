@@ -70,19 +70,19 @@ describe('Integration UI tests', () => {
         <Route path="/:integrationId" ><Integration /></Route>
       </MemoryRouter>, {initialStore});
   }
-  test('should test integration of App version 2', async () => {
+  test('should test integration of App version 2', () => {
     initFunction();
 
-    await waitFor(() => expect(screen.queryByText('isIntegrationAppV2')).toBeInTheDocument());
+    waitFor(() => expect(screen.queryByText('isIntegrationAppV2')).toBeInTheDocument());
   });
-  test('should test integration of App version 1', async () => {
+  test('should test integration of App version 1', () => {
     initFunction('someid');
 
-    await waitFor(() => expect(screen.queryByText('isIntegrationAppV1')).toBeInTheDocument());
+    waitFor(() => expect(screen.queryByText('isIntegrationAppV1')).toBeInTheDocument());
   });
-  test('should test when integration Id not in the redux store', async () => {
+  test('should test when integration Id not in the redux store', () => {
     renderWithProviders(<MemoryRouter><Integration /></MemoryRouter>);
 
-    await waitFor(() => expect(screen.queryByText('isIntegrationAppV2')).toBeInTheDocument());
+    waitFor(() => expect(screen.queryByText('isIntegrationAppV2')).toBeInTheDocument());
   });
 });

@@ -39,38 +39,47 @@ describe('editors test cases', () => {
     });
 
     await initTransferList({});
-    await waitFor(() => expect(screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument());
+    waitFor(() => expect(screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument());
     expect(screen.getByRole('heading', {name: 'Editor examples'})).toBeInTheDocument();
-    const csvParser = screen.queryByText('CSV parser helper');
+    waitFor(async () => {
+      const csvParser = screen.queryByText('CSV parser helper');
 
-    expect(csvParser).toBeInTheDocument();
-    await userEvent.click(csvParser);
+      expect(csvParser).toBeInTheDocument();
+      await userEvent.click(csvParser);
+    });
+    let simpleCSVParser;
 
-    const simpleCSVParser = screen.queryByText('Simple CSV');
+    waitFor(async () => {
+      simpleCSVParser = screen.queryByText('Simple CSV');
 
-    expect(simpleCSVParser).toBeInTheDocument();
-    expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
-    await userEvent.click(simpleCSVParser);
-    expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
+      expect(simpleCSVParser).toBeInTheDocument();
+      expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
+      await userEvent.click(simpleCSVParser);
+      expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
+    });
 
-    const fullScreenButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('title') === 'Fullscreen mode');
+    waitFor(async () => {
+      const fullScreenButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('title') === 'Fullscreen mode');
 
-    expect(fullScreenButton).toBeInTheDocument();
-    await userEvent.click(fullScreenButton);
+      expect(fullScreenButton).toBeInTheDocument();
+      await userEvent.click(fullScreenButton);
+    });
 
-    const closeButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'closeRightDrawer');
+    waitFor(async () => {
+      const closeButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'closeRightDrawer');
 
-    expect(closeButton).toBeInTheDocument();
-    await userEvent.click(closeButton);
-    expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      await userEvent.click(closeButton);
+      expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
 
-    await userEvent.click(simpleCSVParser);
-    expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
-    const cancelButton = screen.getByRole('button', {name: 'Cancel'});
+      await userEvent.click(simpleCSVParser);
+      expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
+      const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
-    expect(cancelButton).toBeInTheDocument();
-    await userEvent.click(cancelButton);
+      expect(cancelButton).toBeInTheDocument();
+      await userEvent.click(cancelButton);
 
-    expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
+    });
   });
 });

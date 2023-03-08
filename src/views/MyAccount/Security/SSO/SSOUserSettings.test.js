@@ -85,23 +85,27 @@ describe('testsuite for SSOUserSettings', () => {
     await initSSOUserSettings();
     expect(screen.getByText(/my user/i)).toBeInTheDocument();
     expect(screen.getByText(/use this account for sso/i)).toBeInTheDocument();
-    const useThisAccountForSSOHelpText = document.querySelector('div > div:nth-child(1) > button');
+    let useThisAccountForSSOHelpText;
 
-    expect(useThisAccountForSSOHelpText).toBeInTheDocument();
-    await userEvent.click(useThisAccountForSSOHelpText);
-    expect(screen.getByRole('heading', {name: /use this account for sso/i})).toBeInTheDocument();
-    // checking help text for use this account for SSO
-    expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
-    expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
-    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
+    waitFor(async () => {
+      useThisAccountForSSOHelpText = document.querySelector('div > div:nth-child(1) > button');
 
-    expect(helpTextYesButtonNode).toBeInTheDocument();
-
-    await userEvent.click(helpTextYesButtonNode);
-    waitFor(() => {
-      expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
+      expect(useThisAccountForSSOHelpText).toBeInTheDocument();
+      await userEvent.click(useThisAccountForSSOHelpText);
+      expect(screen.getByRole('heading', {name: /use this account for sso/i})).toBeInTheDocument();
+      // checking help text for use this account for SSO
+      expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
+      expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
     });
-    await userEvent.click(useThisAccountForSSOHelpText);
+    waitFor(async () => {
+      const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
+
+      expect(helpTextYesButtonNode).toBeInTheDocument();
+
+      await userEvent.click(helpTextYesButtonNode);
+      expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
+      await userEvent.click(useThisAccountForSSOHelpText);
+    });
     waitFor(async () => {
       const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
 
