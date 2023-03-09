@@ -98,7 +98,7 @@ describe('signin', () => {
     const signinButtonNode = screen.getByRole('button', {name: 'Sign in'});
 
     expect(signinButtonNode).toBeInTheDocument();
-    userEvent.click(signinButtonNode);
+    await userEvent.click(signinButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true));
   });
 
@@ -122,12 +122,12 @@ describe('signin', () => {
   //   const trustedDeviceNode = screen.getByRole('checkbox', {name: 'Trust this device'});
 
   //   expect(trustedDeviceNode).not.toBeChecked();
-  //   userEvent.click(trustedDeviceNode);
+  //   await userEvent.click(trustedDeviceNode);
   //   await waitFor(() => expect(trustedDeviceNode).toBeChecked());
   //   const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
   //   expect(submitButtonNode).toBeInTheDocument();
-  //   userEvent.click(submitButtonNode);
+  //   await userEvent.click(submitButtonNode);
 
   //   expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.mfaVerify.request({ code: '123456', trustDevice: true }));
   // });
@@ -153,7 +153,7 @@ describe('signin', () => {
   //   const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
   //   expect(submitButtonNode).toBeInTheDocument();
-  //   userEvent.click(submitButtonNode);
+  //   await userEvent.click(submitButtonNode);
   //   const warningMessageNode = screen.getByText(/One time passcode is required/i);
 
   //   expect(warningMessageNode).toBeInTheDocument();
@@ -182,7 +182,7 @@ describe('signin', () => {
   //   const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
   //   expect(submitButtonNode).toBeInTheDocument();
-  //   userEvent.click(submitButtonNode);
+  //   await userEvent.click(submitButtonNode);
   //   const warningMessageNode = screen.getByText(/Invalid one time passcode/i);
 
   //   expect(warningMessageNode).toBeInTheDocument();

@@ -67,7 +67,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call on field change function with json stringify value', () => {
+  test('should call on field change function with json stringify value', async () => {
     initDynaNetSuiteLookupafe();
 
     expect(screen.getByText('ProvidedLabel')).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
 
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'netsuiteLookupFilter', {
         formKey: 'someFormKey',
@@ -98,11 +98,11 @@ describe('DynaNetSuiteLookupafe test cases', () => {
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', JSON.stringify('somestring'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/none/flowBuilder/new-DOsWPJry5/edit/exports/new-NNW5LX/editor/someID');
   });
-  test('should call on field change function with id and empty string when savefunction is called with empty array rule', () => {
+  test('should call on field change function with id and empty string when savefunction is called with empty array rule', async () => {
     initDynaNetSuiteLookupafe();
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     saveFunction({rule: []});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', '');
   });

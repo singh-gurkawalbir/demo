@@ -92,7 +92,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
   });
 
-  test('should be able to open editor', () => {
+  test('should be able to open editor', async () => {
     const props = {
       id: 'file.fileName',
       label: 'File name',
@@ -106,7 +106,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     render(<DynaFTPFileNameWithEditor {...props} />);
     const openEditorBtn = screen.getByTitle('Open handlebars editor');
 
-    userEvent.click(openEditorBtn);
+    await userEvent.click(openEditorBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('filefileName', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -119,7 +119,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith(`${mockRouteMatch.url}/editor/filefileName`);
   });
 
-  test('should be able to save value in AFE editor', () => {
+  test('should be able to save value in AFE editor', async () => {
     const props = {
       id: 'file.fileName',
       label: 'File name',
@@ -137,8 +137,8 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     );
     const openEditorBtn = screen.getByTitle('Open handlebars editor');
 
-    userEvent.click(openEditorBtn);
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(openEditorBtn);
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 

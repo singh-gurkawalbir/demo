@@ -89,16 +89,16 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '123456');
+    await userEvent.type(oneTimePassword, '123456');
     const trustedDeviceNode = screen.getByRole('checkbox', {name: 'Trust this device'});
 
     expect(trustedDeviceNode).not.toBeChecked();
-    userEvent.click(trustedDeviceNode);
+    await userEvent.click(trustedDeviceNode);
     await waitFor(() => expect(trustedDeviceNode).toBeChecked());
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.mfaVerify.request({ code: '123456', trustDevice: true }));
   });
@@ -127,11 +127,11 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '');
+    await userEvent.type(oneTimePassword, ' ');
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
     const warningMessageNode = screen.getByText(/One time passcode is required/i);
 
     expect(warningMessageNode).toBeInTheDocument();
@@ -163,11 +163,11 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '123');
+    await userEvent.type(oneTimePassword, '123');
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
     const warningMessageNode = screen.getByText(/Invalid one time passcode/i);
 
     expect(warningMessageNode).toBeInTheDocument();

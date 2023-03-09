@@ -49,8 +49,8 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
     isLoggable: true,
   };
 
-  test('should pass the initial render', () => {
-    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
+  test('should pass the initial render', async () => {
+    await renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
 
     expect(screen.getByText('Field Description')).toBeInTheDocument();
     expect(screen.getByText('Start')).toBeInTheDocument();
@@ -89,10 +89,10 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
       },
     ];
 
-    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
+    await renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
     const fields = screen.getAllByRole('textbox');
 
-    userEvent.type(fields[0], 'a');
+    await userEvent.type(fields[0], 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('testId', newval));
   });
 });

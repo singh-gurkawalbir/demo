@@ -74,9 +74,9 @@ describe('ReviewChangesDrawer tests', () => {
 
     expect(next).toBeEnabled();
     expect(close).toBeEnabled();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/');
-    userEvent.click(next);
+    await userEvent.click(next);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.revision.create('_integrationId', '_revisionId'));
   });
 

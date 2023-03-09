@@ -81,7 +81,7 @@ describe('DynaNetSuiteQualifieafe test cases', () => {
 
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'netsuiteQualificationCriteria', {
         formKey: 'someFormKey',
@@ -102,16 +102,16 @@ describe('DynaNetSuiteQualifieafe test cases', () => {
     initDynaNetSuiteQualifieafe();
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     saveFunction({rule: ['arraydata']});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', JSON.stringify(['arraydata']));
   });
-  test('should call on field change function with id and resetValue from useEffect when reset value is provided in options', () => {
+  test('should call on field change function with id and resetValue from useEffect when reset value is provided in options', async () => {
     initDynaNetSuiteQualifieafe({commMetaPath: 'somepath', resetValue: 'someresetvalue'});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', [], true);
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     saveFunction({rule: ['arraydata']});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', JSON.stringify(['arraydata']));
   });

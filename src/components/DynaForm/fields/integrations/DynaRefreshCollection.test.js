@@ -57,7 +57,7 @@ describe('dynaRefreshCollection UI tests', () => {
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(refreshButton).toBeInTheDocument();
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('imports')));
   });
 });

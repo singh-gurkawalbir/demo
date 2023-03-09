@@ -100,7 +100,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     expect(openAfeBtn).toBeDisabled();
   });
 
-  test('should open the AFE editor on clicking Edit Icon', () => {
+  test('should open the AFE editor on clicking Edit Icon', async () => {
     const props = {
       id: 'http.submit.transform',
       resourceId: asyncHelperId,
@@ -112,7 +112,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     render(<DynaTransformRules {...props} />);
     const openAfeBtn = document.querySelector('[data-test="editTransformation"]');
 
-    userEvent.click(openAfeBtn);
+    await userEvent.click(openAfeBtn);
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('httpsubmittransform', 'transform', {
       data: {},
@@ -129,7 +129,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith('/imports/edit/imports/import-123/edit/asyncHelpers/async-123/editor/httpsubmittransform');
   });
 
-  test('should be able to save the modified code in AFE', () => {
+  test('should be able to save the modified code in AFE', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'http.submit.transform',
@@ -146,11 +146,11 @@ describe('test suite for DynaTransformRules_afe', () => {
         <button type="button" onClick={() => mockSave({rule: 'sampleNewRule'})}>Save</button>
       </>
     );
-    userEvent.click(document.querySelector('[data-test="editTransformation"]'));
+    await userEvent.click(document.querySelector('[data-test="editTransformation"]'));
 
     const saveBtn = screen.getByRole('button', {name: /save/i});
 
-    userEvent.click(saveBtn);
+    await userEvent.click(saveBtn);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, {
       rules: ['sampleNewRule'],
       rulesCollection: {

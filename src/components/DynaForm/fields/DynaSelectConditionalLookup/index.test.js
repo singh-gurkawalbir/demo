@@ -150,7 +150,7 @@ describe('Testsuite for DynaSelectConditionalLookup', () => {
     expect(saveButtonNode).toBeInTheDocument();
     expect(saveButtonNode).toBeDisabled();
   });
-  test('should test the edit lookup click button when the value is passed', () => {
+  test('should test the edit lookup click button when the value is passed', async () => {
     jest.spyOn(ConditionalLookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
         <div>Mocking ConditionalLookupDrawer</div>
@@ -178,10 +178,10 @@ describe('Testsuite for DynaSelectConditionalLookup', () => {
     const editLookUpClick = document.querySelector('button[data-test="addEditConditionalLookup"]');
 
     expect(editLookUpClick).toBeInTheDocument();
-    userEvent.click(editLookUpClick);
+    await userEvent.click(editLookUpClick);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/conditionalLookup/edit/test_value');
   });
-  test('should test the add lookup click button when the value is passed', () => {
+  test('should test the add lookup click button when the value is passed', async () => {
     jest.spyOn(ConditionalLookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
         <div>Mocking ConditionalLookupDrawer</div>
@@ -209,10 +209,10 @@ describe('Testsuite for DynaSelectConditionalLookup', () => {
     const addLookupButtonNode = screen.getByRole('button', {name: 'Add Lookup Click'});
 
     expect(addLookupButtonNode).toBeInTheDocument();
-    userEvent.click(addLookupButtonNode);
+    await userEvent.click(addLookupButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/conditionalLookup/add');
   });
-  test('should test the select conditional lookup save button when the isEdit is set to true', () => {
+  test('should test the select conditional lookup save button when the isEdit is set to true', async () => {
     jest.spyOn(ConditionalLookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
         <div>Mocking ConditionalLookupDrawer</div>
@@ -240,11 +240,11 @@ describe('Testsuite for DynaSelectConditionalLookup', () => {
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.updateLookup({isConditionalLookup: true, newValue: {name: 'newValue'}, oldValue: 'oldValue'}));
     expect(mockOnFieldChange).toHaveBeenCalledWith('123', 'newValue');
   });
-  test('should test the select conditional lookup save button when the isEdit is set to false', () => {
+  test('should test the select conditional lookup save button when the isEdit is set to false', async () => {
     jest.spyOn(ConditionalLookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
         <div>Mocking ConditionalLookupDrawer</div>
@@ -272,7 +272,7 @@ describe('Testsuite for DynaSelectConditionalLookup', () => {
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.addLookup({isConditionalLookup: true, value: {name: 'newValue'}}));
     expect(mockOnFieldChange).toHaveBeenCalledWith('123', 'newValue');
   });

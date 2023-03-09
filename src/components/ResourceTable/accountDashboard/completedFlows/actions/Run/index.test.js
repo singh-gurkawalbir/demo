@@ -19,7 +19,7 @@ jest.mock('../../../../../RunFlowButton', () => ({
   },
 }));
 
-function renderFunction() {
+async function renderFunction() {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable
@@ -28,13 +28,13 @@ function renderFunction() {
       />
     </MemoryRouter>
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('run flow action test cases', () => {
-  test('should click on RunFlow button', () => {
-    renderFunction();
-    userEvent.click(screen.getByText('Run flow'));
+  test('should click on RunFlow button', async () => {
+    await renderFunction();
+    await userEvent.click(screen.getByText('Run flow'));
     expect(screen.getByText('flowId: someId true')).toBeInTheDocument();
   });
 });

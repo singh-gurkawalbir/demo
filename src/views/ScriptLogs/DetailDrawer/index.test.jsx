@@ -108,7 +108,7 @@ describe('script Logs Drawer Route', () => {
     const closeButtonNode = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockHistoryBack).toHaveBeenCalledTimes(1);
   });
   test('should able to test the Script logs drawer with no logs and with no name', async () => {

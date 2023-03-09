@@ -55,14 +55,14 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     const saveAndCloseButton = screen.getByRole('button', {name: 'Save & close'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(onSave).toHaveBeenLastCalledWith(!CLOSE_AFTER_SAVE);
 
-    userEvent.click(saveAndCloseButton);
+    await userEvent.click(saveAndCloseButton);
     expect(onSave).toHaveBeenCalledTimes(2);
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
@@ -85,10 +85,10 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const saveAndCloseButton = screen.getByRole('button', {name: 'Save & close'});
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(onSave).toHaveBeenLastCalledWith(!CLOSE_AFTER_SAVE);
 
-    userEvent.click(saveAndCloseButton);
+    await userEvent.click(saveAndCloseButton);
     expect(onSave).toHaveBeenCalledTimes(2);
   });
 

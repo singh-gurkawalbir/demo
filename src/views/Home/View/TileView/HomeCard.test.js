@@ -136,6 +136,24 @@ const cprops = {sortedTiles: [
   },
 ]};
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initHomeCard(props = {}) {
   const initialStore = getCreatedStore();
 

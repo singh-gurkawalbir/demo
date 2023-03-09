@@ -71,7 +71,7 @@ describe('DynaSoqlQuery test cases', () => {
     initDynaSoqlQuery();
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'sql', {
         formKey: 'someFormKey',
@@ -91,9 +91,9 @@ describe('DynaSoqlQuery test cases', () => {
     initDynaSoqlQuery({query: 'somequery'});
     const textbox = screen.getByRole('textbox');
 
-    userEvent.type(textbox, 'c');
+    await userEvent.type(textbox, 'c');
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', {query: 'somequeryc'});
-    fireEvent.blur(textbox);
+    await fireEvent.blur(textbox);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.metadata.request(
         'someconnectionId',
@@ -107,9 +107,9 @@ describe('DynaSoqlQuery test cases', () => {
     initDynaSoqlQuery({query: 'somequery'});
     const textbox = screen.getByRole('textbox');
 
-    userEvent.type(textbox, 'c');
+    await userEvent.type(textbox, 'c');
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', {query: 'somequeryc'});
-    fireEvent.blur(textbox);
+    await fireEvent.blur(textbox);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.metadata.request(
         'someconnectionId',

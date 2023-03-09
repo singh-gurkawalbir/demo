@@ -1,29 +1,29 @@
 
 import React from 'react';
-import { screen} from '@testing-library/react';
+import { fireEvent, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import ChipInput from '.';
 
 describe('chipInput testing', () => {
-  test('should test to store some value', () => {
+  test('should test to store some value', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} />);
+    await renderWithProviders(<ChipInput onChange={onchange} />);
     const tag = screen.getByText('tag');
 
-    userEvent.click(tag);
+    await userEvent.click(tag);
 
     const textbox = screen.getByRole('textbox');
 
-    userEvent.type(screen.getByRole('textbox'), 'Hello, World!');
-    textbox.blur();
+    await userEvent.type(screen.getByRole('textbox'), 'Hello, World!');
+    await textbox.blur();
     expect(onchange).toHaveBeenCalled();
   });
-  test('should test while disable', () => {
+  test('should test while disable', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} disabled />);
+    await renderWithProviders(<ChipInput onChange={onchange} disabled />);
     const tag = screen.getByText('tag');
 
     expect(tag).toBeInTheDocument();
@@ -32,44 +32,44 @@ describe('chipInput testing', () => {
 
     expect(textbox).not.toBeInTheDocument();
   });
-  test('should test again with same value', () => {
+  test('should test again with same value', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} />);
+    await renderWithProviders(<ChipInput onChange={onchange} />);
     const tag = screen.getByText('tag');
 
-    userEvent.click(tag);
+    await userEvent.click(tag);
 
     const textbox = screen.getByRole('textbox');
 
-    userEvent.type(screen.getByRole('textbox'), 'Hello, World!');
-    textbox.blur();
+    await userEvent.type(screen.getByRole('textbox'), 'Hello, World!');
+    await textbox.blur();
     expect(onchange).toHaveBeenCalledTimes(1);
     const button = screen.getByText('Hello, World!');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const textbox2 = screen.getByRole('textbox');
 
-    userEvent.clear(textbox2);
-    userEvent.type(textbox2, 'Hello, World!');
+    await userEvent.clear(textbox2);
+    await userEvent.type(textbox2, 'Hello, World!');
 
-    textbox2.blur();
+    await textbox2.blur();
     expect(onchange).not.toHaveBeenCalledTimes(2);
     expect(onchange).toHaveBeenCalledTimes(1);
   });
-  test('should test while sending null', () => {
+  test('should test while sending null', async () => {
     const onchange = jest.fn();
 
-    renderWithProviders(<ChipInput onChange={onchange} value={null} />);
+    await renderWithProviders(<ChipInput onChange={onchange} value={null} />);
     const tag = screen.getByText('tag');
 
     expect(tag).toBeInTheDocument();
-    userEvent.click(tag);
+    await userEvent.click(tag);
 
     const textbox = screen.getByRole('textbox');
 
-    userEvent.type(screen.getByRole('textbox'), null);
-    textbox.blur();
+    await fireEvent.change(screen.getByRole('textbox'), null);
+    await textbox.blur();
     expect(onchange).not.toHaveBeenCalled();
   });
 });

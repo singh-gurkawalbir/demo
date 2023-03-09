@@ -72,9 +72,9 @@ describe('test suite for OAuthAndCancel', () => {
     const saveButton = screen.getByRole('button', {name: 'Save & authorize'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockHandleSave).toHaveBeenCalledTimes(1);
   });
 });

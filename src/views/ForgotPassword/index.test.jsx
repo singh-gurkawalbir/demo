@@ -93,7 +93,7 @@ describe('ForgotPasswordWrapper', () => {
     const forgotpasswordButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(forgotpasswordButtonNode).toBeInTheDocument();
-    userEvent.click(forgotpasswordButtonNode);
+    await userEvent.click(forgotpasswordButtonNode);
   });
   test('Should able to test the ForgotPassword success view', async () => {
     store({
@@ -117,7 +117,7 @@ describe('ForgotPasswordWrapper', () => {
 
     expect(SigninButton).toBeInTheDocument();
 
-    userEvent.click(SigninButton);
+    await userEvent.click(SigninButton);
 
     expect(SigninButton.closest('a')).toHaveAttribute('href', '/signin');
   });

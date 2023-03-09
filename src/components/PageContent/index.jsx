@@ -26,7 +26,8 @@ export default function PageContent({children, showPagingBar = false, hidePaging
         classes.pageWrapper,
         {[classes.pagingBarShow]: showPagingBar},
         {[classes.pagingBarHide]: hidePagingBar},
-        className)}>{children}
+        className)}>
+      {children}
     </div>
   );
 }

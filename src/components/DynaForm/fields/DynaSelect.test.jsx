@@ -18,11 +18,29 @@ function initDynaSelect(props = {}) {
 }
 const mockOnFieldChange = jest.fn();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaSelect UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('connection field is updated after selecting netsuite connection from the dropdown', () => {
+  test('connection field is updated after selecting netsuite connection from the dropdown', async () => {
     const data =
     {
       disabled: false,
@@ -49,11 +67,11 @@ describe('dynaSelect UI test cases', () => {
     };
 
     initDynaSelect(data);
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getAllByRole('menuitem')[2]);
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getAllByRole('menuitem')[2]);
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '62f7a541d07aa55c7643a023');
   });
-  test('connection field is updated after selecting please select from the dropdown', () => {
+  test('connection field is updated after selecting please select from the dropdown', async () => {
     const data =
     {
       disabled: false,
@@ -113,11 +131,11 @@ describe('dynaSelect UI test cases', () => {
     };
 
     initDynaSelect(data);
-    userEvent.click(screen.getByText('ftp Connection'));
-    userEvent.click(screen.getByRole('menuitem'));
+    await userEvent.click(screen.getByText('ftp Connection'));
+    await userEvent.click(screen.getByRole('menuitem'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '');
   });
-  test('keyboard listener with keycode 40', () => {
+  test('keyboard listener with keycode 40', async () => {
     const data =
     {
       disabled: false,
@@ -173,16 +191,16 @@ describe('dynaSelect UI test cases', () => {
     initDynaSelect(data);
     const button = screen.getByText('Snowflake');
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '34');
   });
 
-  test('keyboard listener with keycode 38', () => {
+  test('keyboard listener with keycode 38', async () => {
     const data =
     {
       disabled: false,
@@ -238,17 +256,17 @@ describe('dynaSelect UI test cases', () => {
     initDynaSelect(data);
     const button = screen.getByRole('button', { name: /Snowflake/ });
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
 
-    userEvent.keyboard('{arrowup}');
-    fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
+    await fireEvent.keyDown(button, {key: 'ArrowUp', code: 'ArrowUp', keyCode: 38});
+    await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
   });
-  test('keyboard listener with keycode 13', () => {
+  test('keyboard listener with keycode 13', async () => {
     const data =
     {
       disabled: false,
@@ -304,15 +322,14 @@ describe('dynaSelect UI test cases', () => {
     initDynaSelect(data);
     const button = screen.getByRole('button', { name: /Snowflake/ });
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
-
-    userEvent.keyboard('{arrowup}');
-    userEvent.keyboard('{enter}');
-    fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', keyCode: 13});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowDown', code: 'ArrowDown', keyCode: 40});
+    await fireEvent.keyDown(button, {key: 'ArrowUp', code: 'ArrowUp', keyCode: 38});
+    await userEvent.keyboard('{enter}');
+    await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', keyCode: 13});
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
   });
 });

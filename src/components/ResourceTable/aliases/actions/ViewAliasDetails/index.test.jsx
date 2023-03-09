@@ -18,7 +18,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data._integrationId}/aliases`}]}>
       <Route path="/integrations/:integrationId/aliases">
@@ -26,7 +26,7 @@ function renderFuntion(data) {
       </Route>
     </MemoryRouter>
   );
-  userEvent.click(screen.getByRole('button', { name: /more/i }));
+  await userEvent.click(screen.getByRole('button', { name: /more/i }));
 }
 
 describe('uI test cases for view alias details', () => {
@@ -39,20 +39,20 @@ describe('uI test cases for view alias details', () => {
   const _parentId = 'someparentId';
   const _integrationId = '5e44efa28015c9464272256f';
 
-  test('should push viewdetails URL onClick without parentId when it is not provided', () => {
-    renderFuntion({ _id, alias, status, _integrationId });
+  test('should push viewdetails URL onClick without parentId when it is not provided', async () => {
+    await renderFuntion({ _id, alias, status, _integrationId });
     const request = screen.getByText('View details');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/5e44efa28015c9464272256f/aliases/viewdetails/6368de0bec4c35664453023b'
     );
   });
-  test('should push viewdetails URL onClick with parentId when it is provided', () => {
-    renderFuntion({ _id, alias, _parentId, status, _integrationId });
+  test('should push viewdetails URL onClick with parentId when it is provided', async () => {
+    await renderFuntion({ _id, alias, _parentId, status, _integrationId });
     const request = screen.getByText('View details');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/5e44efa28015c9464272256f/aliases/viewdetails/6368de0bec4c35664453023b/inherited/someparentId'
     );

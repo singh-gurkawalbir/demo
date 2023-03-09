@@ -109,11 +109,11 @@ describe('Dashboard UI tests', () => {
     expect(history.push).toBeCalled();
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should display different infotexts when clicked on InfoIcon button', () => {
+  test('should display different infotexts when clicked on InfoIcon button', async () => {
     initDashboard();
     const element = document.querySelector('[aria-haspopup="true"]');
 
-    userEvent.click(element);
+    await userEvent.click(element);
     expect(screen.getByText('This dashboard offers a comprehensive view of all running and completed flows in each integration.')).toBeInTheDocument();
   });
 });

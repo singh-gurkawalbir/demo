@@ -65,7 +65,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     enqueueSnackbar.mockClear();
     jest.clearAllMocks();
   });
-  test('should call enquesnackbar if there are errors and test refresh buttons and update the text in the rows', () => {
+  test('should call enquesnackbar if there are errors and test refresh buttons and update the text in the rows', async () => {
     mutateStore(initialStore, draft => {
       draft.session.exportData = {
         '-916382817':
@@ -121,7 +121,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       { extract: 'name', generate: 'samplename' },
     ]);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
   });
   test('should test static map with number data by setting prefered value as num to true', () => {

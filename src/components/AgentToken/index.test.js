@@ -64,7 +64,7 @@ describe('agentToken component Test cases', () => {
       const showTokenButton = screen.getByRole('button', {name: 'Show token'});
 
       expect(showTokenButton).toBeInTheDocument();
-      userEvent.click(showTokenButton);
+      await userEvent.click(showTokenButton);
       await expect(mockDispatchFn).toHaveBeenCalledWith(actions.agent.displayToken('agent_id'));
     });
 

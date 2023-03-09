@@ -180,15 +180,15 @@ describe('flows metadata UI test case', () => {
     cellIndex = indexOfCell('Success', 'cell');
     expectFunction(headerIndex, cellIndex);
   });
-  test('should verify action for integration app', () => {
+  test('should verify action for integration app', async () => {
     initflowTable({...actionProps, isIntegrationApp: true});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
   });
-  test('should show detach option when flow does not belongs to standalone', () => {
+  test('should show detach option when flow does not belongs to standalone', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();
@@ -197,9 +197,9 @@ describe('flows metadata UI test case', () => {
     expect(screen.getByText('Detach flow')).toBeInTheDocument();
     expect(screen.getByText('Delete flow')).toBeInTheDocument();
   });
-  test('should show detach option when flow belongs to standalone', () => {
+  test('should show detach option when flow belongs to standalone', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null, _integrationId: null});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();

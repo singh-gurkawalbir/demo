@@ -27,10 +27,10 @@ function initHomeTiles(data = {}) {
 }
 
 describe('tiles Upin action UI tests', () => {
-  test('should make dispatch for unpin integration when clicked on unpin action', () => {
+  test('should make dispatch for unpin integration when clicked on unpin action', async () => {
     initHomeTiles({key: 'somekey', name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'});
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Unpin integration'));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Unpin integration'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.user.preferences.unpinIntegration('somekey'));
   });
 });

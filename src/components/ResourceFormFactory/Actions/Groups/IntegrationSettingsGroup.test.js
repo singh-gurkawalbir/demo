@@ -77,7 +77,7 @@ describe('test suite for IntegrationSettings', () => {
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButton).toBeEnabled();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -100,9 +100,9 @@ describe('test suite for IntegrationSettings', () => {
     expect(saveButton).toBeEnabled();
     expect(closeButton).toBeEnabled();
     expect(saveAndCloseButton).toBeEnabled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockSave).toHaveBeenCalledTimes(1);
-    userEvent.click(saveAndCloseButton);
+    await userEvent.click(saveAndCloseButton);
     expect(mockSave).toHaveBeenCalledTimes(2);
   });
 });

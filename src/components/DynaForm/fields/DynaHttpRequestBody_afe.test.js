@@ -84,7 +84,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     expect(requestBody).toHaveTextContent(props.value);
   });
 
-  test('should open the editor on clicking Edit Icon', () => {
+  test('should open the editor on clicking Edit Icon', async () => {
     const props = {
       id: 'http.body',
       resourceId,
@@ -100,7 +100,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     render(<DynaHttpRequestBody {...props} />);
     const openEditorBtn = screen.getByRole('button', {name: 'openEditor'});
 
-    userEvent.click(openEditorBtn);
+    await userEvent.click(openEditorBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('httpbody', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -117,7 +117,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith(`/imports/edit/imports/${resourceId}/editor/httpbody`);
   });
 
-  test('should be able to save the modified code in editor', () => {
+  test('should be able to save the modified code in editor', async () => {
     mockRouteMatch = {
       path: '/exports/:operation(add|edit)/:resourceType/:id',
       url: `/exports/edit/exports/${resourceId}`,
@@ -145,7 +145,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     render(<DynaHttpRequestBody {...props} />);
     const openEditorBtn = screen.getByRole('button', {name: 'openEditor'});
 
-    userEvent.click(openEditorBtn);
+    await userEvent.click(openEditorBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('httpbody', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -161,11 +161,11 @@ describe('test suite for DynaTransformRules_afe', () => {
 
     expect(mockHistoryPush).toHaveBeenCalledWith(`/exports/edit/exports/${resourceId}/editor/httpbody`);
 
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 
-  test('should save the modified code in editor corresponding to the correct list of requests', () => {
+  test('should save the modified code in editor corresponding to the correct list of requests', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'http.body',
@@ -185,8 +185,8 @@ describe('test suite for DynaTransformRules_afe', () => {
     const openEditorBtn = screen.getByRole('button', {name: 'openEditor'});
     const saveBtn = screen.getByRole('button', {name: 'Save'});
 
-    userEvent.click(openEditorBtn);
-    userEvent.click(saveBtn);
+    await userEvent.click(openEditorBtn);
+    await userEvent.click(saveBtn);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, ['{method: "POST"}', 'SampleRule', '{method: "PUT"}']);
   });
 });

@@ -30,7 +30,7 @@ describe('dynaRoutingRules UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test dynarouting rules', () => {
+  test('should test dynarouting rules', async () => {
     const genralProps = {
       id: '5cd51efd3607fe7d8eda9c97',
       label: 'Routing rules editor',
@@ -40,27 +40,27 @@ describe('dynaRoutingRules UI test cases', () => {
     initDynaRoutingRules(genralProps);
     const launchButton = screen.getByText('Launch');
 
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const mockdynahook = screen.getByText('Mock DynaHook_afe');
 
     expect(mockdynahook).toBeInTheDocument();
     const SaveButton = screen.getByText('Save');
 
-    userEvent.click(SaveButton);
+    await userEvent.click(SaveButton);
 
     expect(mockdynahook).not.toBeInTheDocument();
 
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const mockdynahookcancel = screen.getByText('Mock DynaHook_afe');
 
     expect(mockdynahookcancel).toBeInTheDocument();
     const cancelButton = screen.getByText('Cancel');
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(mockdynahookcancel).not.toBeInTheDocument();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     expect(screen.getByText('Mock DynaHook_afe')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('closeModalDialog'));
+    await userEvent.click(screen.getByTestId('closeModalDialog'));
     expect(cancelButton).not.toBeInTheDocument();
   });
 });

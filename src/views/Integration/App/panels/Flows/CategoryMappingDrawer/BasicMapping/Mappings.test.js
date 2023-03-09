@@ -16,7 +16,7 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('Mappings UI tests', () => {
-  test('should check the dispatch call when a field is selected', () => {
+  test('should check the dispatch call when a field is selected', async () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -36,8 +36,8 @@ describe('Mappings UI tests', () => {
     const allInputs = screen.getAllByRole('textbox');
     const input = allInputs.find(each => each.getAttribute('id') === 'fieldMappingGenerate-key');
 
-    userEvent.click(input);
-    userEvent.click(screen.getByText('sometext2'));
+    await userEvent.click(input);
+    await userEvent.click(screen.getByText('sometext2'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'INTEGRATION_APPS_SETTINGS_CATEGORY_MAPPINGS_PATCH_FIELD',
@@ -50,7 +50,7 @@ describe('Mappings UI tests', () => {
       }
     );
   });
-  test('should delete the category mapping', () => {
+  test('should delete the category mapping', async () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -71,7 +71,7 @@ describe('Mappings UI tests', () => {
 
     const deleteButton = allButton.find(each => each.getAttribute('data-test') === 'fieldMappingRemove-key');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -83,7 +83,7 @@ describe('Mappings UI tests', () => {
       }
     );
   });
-  test('should choose a field mapping generate option', () => {
+  test('should choose a field mapping generate option', async () => {
     jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
     const initialStore = getCreatedStore();
 
@@ -104,14 +104,14 @@ describe('Mappings UI tests', () => {
     const allInput = screen.getAllByRole('textbox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
-    userEvent.click(input);
+    await userEvent.click(input);
     const emptystring = screen.getAllByRole('option')[1];
 
-    userEvent.click(emptystring);
+    await userEvent.click(emptystring);
 
     expect(mockDispatch).toHaveBeenCalled();
   });
-  test('should choose a Field mapping extract option', () => {
+  test('should choose a Field mapping extract option', async () => {
     jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
 
     const initialStore = getCreatedStore();
@@ -134,15 +134,15 @@ describe('Mappings UI tests', () => {
     const allInput = screen.getAllByRole('textbox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingExtract-someGeneratedId');
 
-    userEvent.click(input);
+    await userEvent.click(input);
 
-    userEvent.click(screen.getByText('extractsMetaData'));
+    await userEvent.click(screen.getByText('extractsMetaData'));
 
-    input.blur();
+    await input.blur();
 
     expect(mockDispatch).toHaveBeenCalled();
   });
-  test('should check different icon for different filters', () => {
+  test('should check different icon for different filters', async () => {
     jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
 
     const initialStore = getCreatedStore();
@@ -169,7 +169,7 @@ describe('Mappings UI tests', () => {
     const allInput = screen.getAllByRole('textbox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
-    userEvent.click(input);
+    await userEvent.click(input);
 
     const preferred = screen.getByText('sometext2');
 

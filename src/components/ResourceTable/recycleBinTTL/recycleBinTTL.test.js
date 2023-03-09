@@ -44,7 +44,7 @@ describe('recycle Bin TTL test suite', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const lastModified = new Date().toUTCString();
     const data = [{
       doc: {
@@ -80,7 +80,7 @@ describe('recycle Bin TTL test suite', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
 
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
@@ -149,7 +149,7 @@ describe('recycle Bin TTL test suite', () => {
     expect(timeLeft6).toBe('0 seconds');
   });
 
-  test('should be able to restore the deleted item', () => {
+  test('should be able to restore the deleted item', async () => {
     const data = [{
       doc: {
         _id: 'flow123',
@@ -160,14 +160,14 @@ describe('recycle Bin TTL test suite', () => {
     }];
 
     initRecycleBin(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const restoreButton = screen.getByRole('menuitem', {name: 'Restore'});
 
-    userEvent.click(restoreButton);
+    await userEvent.click(restoreButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.recycleBin.restore('flows', 'flow123'));
   });
 
-  test('should be able to purge the deleted item', () => {
+  test('should be able to purge the deleted item', async () => {
     const data = [{
       doc: {
         _id: 'flow123',
@@ -178,10 +178,10 @@ describe('recycle Bin TTL test suite', () => {
     }];
 
     initRecycleBin(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     let purgeButton = screen.getByRole('menuitem', {name: 'Purge'});
 
-    userEvent.click(purgeButton);
+    await userEvent.click(purgeButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByRole('dialog').textContent).toContain('Confirm purge');
     expect(screen.getByRole('dialog').textContent).toContain('Are you sure you want to purge this flow?');
@@ -189,28 +189,28 @@ describe('recycle Bin TTL test suite', () => {
     //  should be able to cancel a purge by clicking Cancel Button
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
     //  should be able to cancel a purge by clicking close Button
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     purgeButton = screen.getByRole('menuitem', {name: 'Purge'});
-    userEvent.click(purgeButton);
+    await userEvent.click(purgeButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     const closeButton = screen.getByTestId('closeModalDialog');
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
     //  should be able to confirm a purge
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     purgeButton = screen.getByRole('menuitem', {name: 'Purge'});
-    userEvent.click(purgeButton);
+    await userEvent.click(purgeButton);
     const confirmButton = screen.getByRole('button', {name: 'Purge'});
 
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.recycleBin.purge('flows', 'flow123'));
   });
 });

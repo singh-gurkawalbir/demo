@@ -44,7 +44,7 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('test suite for Form Fragment', () => {
-  test("should render a field corresponding to it's 'visible' property", () => {
+  test("should render a field corresponding to it's 'visible' property", async () => {
     const formKey = 'exports-123';
     const props = {
       formKey,
@@ -106,16 +106,16 @@ describe('test suite for Form Fragment', () => {
     const fieldFocusBtn = screen.getByRole('button', {name: 'fieldFocus'});
     const fieldRegisterBtn = screen.getByRole('button', {name: 'fieldRegister'});
 
-    userEvent.click(fieldChangeBtn);
+    await userEvent.click(fieldChangeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange(formKey)('type', 'csv', true));
 
-    userEvent.click(fieldBlurBtn);
+    await userEvent.click(fieldBlurBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldBlur(formKey)('type'));
 
-    userEvent.click(fieldFocusBtn);
+    await userEvent.click(fieldFocusBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldFocus(formKey)('type'));
 
-    userEvent.click(fieldRegisterBtn);
+    await userEvent.click(fieldRegisterBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.registerField(formKey)('type'));
   });
 

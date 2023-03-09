@@ -25,7 +25,7 @@ jest.mock('../../../../CeligoTable/TableContext', () => ({
     resourceType: 'connectors',
   }),
 }));
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable
@@ -34,20 +34,20 @@ function renderFuntion(data) {
         />
     </MemoryRouter>
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for install base', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should render table accordingly', () => {
+  test('should render table accordingly', async () => {
     const applications = ['3dcart', 'docusign', 'salesforce', 'magento'];
 
-    renderFuntion({_id: 'someappKey', applications});
+    await renderFuntion({_id: 'someappKey', applications});
     const viewresourcechanged = screen.getByText('Install base');
 
-    userEvent.click(viewresourcechanged);
+    await userEvent.click(viewresourcechanged);
     expect(mockHistoryPush).toHaveBeenCalledWith('/connectors/someappKey/installBase');
   });
 });

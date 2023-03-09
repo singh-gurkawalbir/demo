@@ -81,9 +81,9 @@ describe('OpenRevertDrawer tests', () => {
     const next = screen.getByRole('button', {name: 'Next'});
 
     expect(close).toBeInTheDocument();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(1, '/');
-    userEvent.click(next);
+    await userEvent.click(next);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(4, '//revert/_tempRevId/review');
   });
 });

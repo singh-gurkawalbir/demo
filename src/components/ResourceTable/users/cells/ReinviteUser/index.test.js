@@ -23,7 +23,7 @@ jest.mock('../../../../Spinner', () => ({
 }));
 
 describe('test for Reinviting User', () => {
-  test('should be able to reinvite a user', () => {
+  test('should be able to reinvite a user', async () => {
     initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -34,7 +34,7 @@ describe('test for Reinviting User', () => {
     renderWithProviders(<ReinviteUser user={{_id: 'user123'}} />, {initialStore});
     const reinviteButton = screen.getByRole('button', {name: 'Reinvite'});
 
-    userEvent.click(reinviteButton);
+    await userEvent.click(reinviteButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.reinvite('user123'));
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });

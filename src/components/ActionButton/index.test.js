@@ -65,7 +65,7 @@ describe('actionButton component Test cases', () => {
     const buttonRef = screen.getByRole('button', {name: 'tooltip'});
 
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     await waitFor(() => {
       expect(mockOnClick).toHaveBeenCalledTimes(1);

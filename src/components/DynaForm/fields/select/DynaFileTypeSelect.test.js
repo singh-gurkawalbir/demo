@@ -8,6 +8,24 @@ import DynaFileTypeSelect from './DynaFileTypeSelect';
 const onFieldChange = jest.fn();
 const props = {userDefinitionId: '_userDefinitionId', onFieldChange, id: 'file.type', formKey: 'imports-_importId', value: 'filedefinition'};
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initDynaFileTypeSelect(props = {}, fileType) {
   const initialStore = reduxStore;
 
@@ -43,7 +61,7 @@ describe('dynaFileTypeSelect tests', () => {
   });
   test('should render dynaSelect with fileType xml', async () => {
     await initDynaFileTypeSelect(props, 'xml');
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(onFieldChange).toHaveBeenCalledWith('file.type', 'filedefinition', true);
   });

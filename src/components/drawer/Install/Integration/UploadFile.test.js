@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import UploadFile from './UploadFile';
@@ -69,7 +68,7 @@ describe('UploadFile tests', () => {
     const input = screen.getByLabelText(/Choose file/i);
     const file = new File([new ArrayBuffer(1)], 'mockUpload.zip', {type: 'application/zip'});
 
-    userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
     await waitFor(() => expect(input.files[0]).toEqual(file));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.previewZip(file)));

@@ -19,6 +19,24 @@ const props = {
   flowId: '_flowId',
 };
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaSemiHFAssistantOperationSelect(props = {}) {
   mutateStore(initialStore, draft => {
     draft.session.form = {
@@ -96,22 +114,22 @@ function initDynaSemiHFAssistantOperationSelect(props = {}) {
 }
 
 describe('dynaSemiHFAssistantOperationSelect UI tests', () => {
-  test('should pass the initial render with openair assistant in exports', () => {
+  test('should pass the initial render with openair assistant in exports', async () => {
     initDynaSemiHFAssistantOperationSelect(props);
     expect(screen.getByText('Select an operation')).toBeInTheDocument();
     const dropdown = screen.getByRole('button', { name: 'Please select' });
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     const option = screen.getByText('child1');
 
     expect(option).toBeInTheDocument();
-    userEvent.click(option);
+    await userEvent.click(option);
     expect(screen.getByText('Confirm')).toBeInTheDocument();
     expect(screen.getByText('This will clear some of the http field values and populate them with the default values for the selected operation. Are you sure want to proceed?')).toBeInTheDocument();
     expect(screen.getByText('Yes')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
+    await userEvent.click(screen.getByText('Yes'));
     expect(mockOnFieldChangeFn).toHaveBeenNthCalledWith(1, undefined, '.key1');
     expect(mockOnFieldChangeFn).toHaveBeenNthCalledWith(2, 'http.fields', '');
     expect(mockOnFieldChangeFn).toHaveBeenNthCalledWith(3, 'type', 'all');

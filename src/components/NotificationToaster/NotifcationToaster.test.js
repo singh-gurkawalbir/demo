@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import NotificationToaster from '.';
 
 describe('notifcationToaster UI tests', () => {
-  test('should click on the close button', () => {
+  test('should click on the close button', async () => {
     const onClose = jest.fn();
 
     render(
@@ -14,7 +14,7 @@ describe('notifcationToaster UI tests', () => {
     expect(screen.getByText('message')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
   test('should not show the close button as the onClose function is not passed as prop', () => {

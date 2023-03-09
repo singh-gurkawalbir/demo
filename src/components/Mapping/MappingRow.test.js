@@ -168,7 +168,7 @@ describe('mappingRow component Test cases', () => {
     const extractBlurButton = screen.getByRole('button', {name: 'mock handleBlur extract_1'});
 
     expect(extractBlurButton).toBeInTheDocument();
-    userEvent.click(extractBlurButton);
+    await userEvent.click(extractBlurButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
 
     const generateBlurButton = screen.getByRole('button', {name: 'mock handleBlur generate_1'});
@@ -176,19 +176,19 @@ describe('mappingRow component Test cases', () => {
     expect(generateBlurButton).toBeInTheDocument();
     userEvent.hover(generateBlurButton);
     userEvent.unhover(generateBlurButton);
-    userEvent.click(generateBlurButton);
+    await userEvent.click(generateBlurButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
 
     const deleteButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'fieldMappingRemove-1'); // 1 is default index props
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.delete('key_1'));
 
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
     });
-    userEvent.click(extractBlurButton);
+    await userEvent.click(extractBlurButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
   });
 
@@ -215,14 +215,14 @@ describe('mappingRow component Test cases', () => {
     const generateBlurButton = screen.getByRole('button', {name: 'mock handleBlur generate_2'});
 
     expect(generateBlurButton).toBeInTheDocument();
-    userEvent.click(generateBlurButton);
+    await userEvent.click(generateBlurButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.delete('key_2'));
     userEvent.hover(generateBlurButton);
 
     const generateTouchButton = screen.getByRole('button', {name: 'mock handleFieldTouch generate_2'});
 
     expect(generateTouchButton).toBeInTheDocument();
-    userEvent.click(generateTouchButton);
+    await userEvent.click(generateTouchButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.updateLastFieldTouched('key_2'));
   });
 
@@ -308,7 +308,7 @@ describe('mappingRow component Test cases', () => {
     const bulrField = screen.queryAllByText('mock handleBlur');
 
     expect(bulrField[0]).toBeInTheDocument();
-    userEvent.click(bulrField[0]);
+    await userEvent.click(bulrField[0]);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.delete('key_90'));
   });
 

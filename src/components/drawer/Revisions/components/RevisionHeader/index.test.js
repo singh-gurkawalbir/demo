@@ -65,14 +65,14 @@ describe('RevisionHeader tests', () => {
 
     // RefreshIcon's data-test can be corrected //
     expect(refreshIcon).toBeEnabled();
-    userEvent.click(refreshIcon);
+    await userEvent.click(refreshIcon);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.compare.revertRequest('_integrationId', '_revisionId'));
   });
   test('Should able to test the initial render with mode: REVIEW type pull', async () => {
     await initRevisionHeader(props, 'received', 'pull');
     const refreshIcon = screen.getAllByRole('button').find(btn => btn.getAttribute('data-test') === 'expandAll');
 
-    userEvent.click(refreshIcon);
+    await userEvent.click(refreshIcon);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.compare.pullRequest('_integrationId', '_revisionId'));
     expect(screen.getByText('0 conflicts')).toBeInTheDocument();
   });
@@ -98,7 +98,7 @@ describe('RevisionHeader tests', () => {
     // CancelRevisionIcon's data-test can be corrected //
     expect(cancelRevision).toBeInTheDocument();
     expect(cancelRevision).toBeEnabled();
-    userEvent.click(cancelRevision);
+    await userEvent.click(cancelRevision);
   });
 
   test('Should able to test the initial render with mode: INSTALL, revision type: pull', async () => {
@@ -107,6 +107,6 @@ describe('RevisionHeader tests', () => {
     const cancelRevision = screen.getByRole('button', {name: 'Cancel merge'});
 
     expect(cancelRevision).toBeEnabled();
-    userEvent.click(cancelRevision);
+    await userEvent.click(cancelRevision);
   });
 });

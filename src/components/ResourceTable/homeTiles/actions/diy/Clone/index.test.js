@@ -40,16 +40,16 @@ describe('homeTile Clone(DIY) action UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show the Clone option and redirect to clone preview page', () => {
+  test('should show the Clone option and redirect to clone preview page', async () => {
     initHomeTiles({key: 'somekey', name: 'tileName', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Clone integration'));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Clone integration'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/clone/integrations/2_integrationId/preview');
   });
-  test('should not show clone option beacuse of permission', () => {
+  test('should not show clone option beacuse of permission', async () => {
     initHomeTiles({key: 'somekey', name: 'tileName', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'});
 
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Clone integration')).not.toBeInTheDocument();
   });
 });

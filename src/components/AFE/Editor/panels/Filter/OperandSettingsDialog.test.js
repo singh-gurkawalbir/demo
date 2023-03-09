@@ -8,6 +8,37 @@ import * as FormInitWithPermissions from '../../../../../hooks/useFormInitWithPe
 const mockOnClose = jest.fn();
 const mockOnSubmit = jest.fn();
 let mockOptionsHandler = jest.fn();
+const mockReact = React;
+
+jest.mock('@material-ui/core/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@material-ui/core/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
 
 function initOperandSettingsDialog({
   ruleData,
@@ -88,7 +119,7 @@ describe('Testsuite for OperandSettingsDialog', () => {
     mockOnClose.mockClear();
     mockOnSubmit.mockClear();
   });
-  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues doesn\'t have transformations and no data types', () => {
+  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues doesn\'t have transformations and no data types', async () => {
     initOperandSettingsDialog({
       onClose: mockOnClose,
       onSubmit: mockOnSubmit,
@@ -114,10 +145,10 @@ describe('Testsuite for OperandSettingsDialog', () => {
     });
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockOnSubmit).toHaveBeenCalledWith({dataType: undefined, transformations: [], type: undefined});
   });
-  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues has transformations and of data type string', () => {
+  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues has transformations and of data type string', async () => {
     initOperandSettingsDialog({
       onClose: mockOnClose,
       onSubmit: mockOnSubmit,
@@ -145,10 +176,10 @@ describe('Testsuite for OperandSettingsDialog', () => {
     });
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockOnSubmit).toHaveBeenCalledWith({dataType: 'string', transformations: ['lowercase', 'uppercase'], type: 'test_type'});
   });
-  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues has transformations and of data type number', () => {
+  test('should test operand settings dialog when there are no formvalues and click on save button when the formValues has transformations and of data type number', async () => {
     initOperandSettingsDialog({
       onClose: mockOnClose,
       onSubmit: mockOnSubmit,
@@ -177,10 +208,10 @@ describe('Testsuite for OperandSettingsDialog', () => {
     expect(mockOptionsHandler).toEqual([{items: [{label: 'Ceiling', value: 'ceiling'}, {label: 'Floor', value: 'floor'}, {label: 'Absolute', value: 'abs'}]}]);
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockOnSubmit).toHaveBeenCalledWith({dataType: '', transformations: ['ceiling', 'floor', 'abs'], type: 'expression'});
   });
-  test('should test operand settings dialog and test the cancel button', () => {
+  test('should test operand settings dialog and test the cancel button', async () => {
     initOperandSettingsDialog({
       onClose: mockOnClose,
       onSubmit: mockOnSubmit,
@@ -194,7 +225,7 @@ describe('Testsuite for OperandSettingsDialog', () => {
     });
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(mockOptionsHandler).toEqual([{items: []}]);
     expect(mockOnClose).toHaveBeenCalled();
   });

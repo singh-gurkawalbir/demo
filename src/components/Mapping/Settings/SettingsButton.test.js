@@ -120,7 +120,7 @@ describe('mappingSettingsButton test cases', () => {
     const buttonRef = screen.getByRole('button');
 
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     await expect(mockHistoryPush).toHaveBeenCalledTimes(0);
   });
@@ -136,7 +136,7 @@ describe('mappingSettingsButton test cases', () => {
     const buttonRef = screen.getByRole('button');
 
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     await expect(mockHistoryPush).toHaveBeenCalledTimes(0);
   });
@@ -155,7 +155,7 @@ describe('mappingSettingsButton test cases', () => {
     const buttonRef = screen.getByRole('button');
 
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     await expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });
@@ -170,7 +170,7 @@ describe('mappingSettingsButton test cases', () => {
     const buttonRef = screen.getByRole('button');
 
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     await expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });

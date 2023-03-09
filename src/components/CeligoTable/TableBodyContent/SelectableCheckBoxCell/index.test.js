@@ -63,13 +63,13 @@ describe('selectableCheckBoxCell component Test cases', () => {
     expect(cellBox1).toBeInTheDocument();
     expect(cellBox1.firstChild).not.toHaveClass('Mui-checked');
 
-    userEvent.click(screen.getByRole('checkbox'));  // check the checkbox
+    await userEvent.click(screen.getByRole('checkbox'));  // check the checkbox
     const cellBox2 = await screen.getByRole('cell');
 
     expect(cellBox2).toBeInTheDocument();
     expect(cellBox2.firstChild).toHaveClass('Mui-checked'); // Mui-checked class is getting added to span when checked
 
-    userEvent.click(screen.getByRole('checkbox'));  // uncheck the checkbox
+    await userEvent.click(screen.getByRole('checkbox'));  // uncheck the checkbox
     const cellBox3 = await screen.getByRole('cell');
 
     expect(cellBox3).toBeInTheDocument();

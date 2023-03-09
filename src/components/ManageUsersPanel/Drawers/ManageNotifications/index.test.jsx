@@ -252,7 +252,7 @@ describe('Manage Notifications', () => {
     const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
     expect(pleaseSelectText).toBeInTheDocument();
-    userEvent.click(pleaseSelectText);
+    await userEvent.click(pleaseSelectText);
     const checkboxMessage = screen.getByRole('option', {name: 'All flows'});
 
     expect(checkboxMessage).toBeInTheDocument();
@@ -260,14 +260,14 @@ describe('Manage Notifications', () => {
     const doneMessage = screen.getByText('Done');
 
     expect(doneMessage).toBeInTheDocument();
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
     const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify user when connection goes offline');
 
     expect(notifyUserWhenConnectionGoesOfflineText).toBeInTheDocument();
     const pleaseSelectText1 = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
 
     expect(pleaseSelectText1).toBeInTheDocument();
-    userEvent.click(pleaseSelectText1);
+    await userEvent.click(pleaseSelectText1);
     const checkboxMessage1 = screen.queryAllByRole('listbox').find(eachOption => eachOption.getAttribute('role') === 'listbox');
 
     expect(checkboxMessage1).toBeInTheDocument();
@@ -275,11 +275,11 @@ describe('Manage Notifications', () => {
     const saveMessage = screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => {
       expect(mockNotificationUpdateFunction).toHaveBeenCalledTimes(1);
     });
-  }, 10000);
+  });
   test('Should able to access the Notification Drawer and notify the user when a connection throws error by selecting a connection and save and close the notication drawer', async () => {
     store();
     await initManageNotification({
@@ -292,7 +292,7 @@ describe('Manage Notifications', () => {
     const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
 
     expect(pleaseSelectText).toBeInTheDocument();
-    userEvent.click(pleaseSelectText);
+    await userEvent.click(pleaseSelectText);
     const checkboxMessage = screen.getByRole('option', {name: 'Test Connection'});
 
     expect(checkboxMessage).toBeInTheDocument();
@@ -300,11 +300,11 @@ describe('Manage Notifications', () => {
     const doneMessage = screen.getByText('Done');
 
     expect(doneMessage).toBeInTheDocument();
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
     const saveandcloseMessage = screen.getByText('Save & close');
 
     expect(saveandcloseMessage).toBeInTheDocument();
-    userEvent.click(saveandcloseMessage);
+    await userEvent.click(saveandcloseMessage);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'RESOURCE_UPDATE_TILE_NOTIFICATIONS',
       resourcesToUpdate: {
@@ -393,7 +393,7 @@ describe('Manage Notifications', () => {
     const flowSelected = screen.getByText('Sample1');
 
     expect(flowSelected).toBeInTheDocument();
-    userEvent.click(flowSelected);
+    await userEvent.click(flowSelected);
     const checkboxMessage = screen.getByRole('option', {name: 'Sample1'});
 
     expect(checkboxMessage).toBeInTheDocument();
@@ -401,13 +401,13 @@ describe('Manage Notifications', () => {
     const doneMessage = screen.getByText('Done');
 
     expect(doneMessage).toBeInTheDocument();
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
 
     expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
     const connectionSelected = screen.getByText('Test Connection');
 
     expect(connectionSelected).toBeInTheDocument();
-    userEvent.click(connectionSelected);
+    await userEvent.click(connectionSelected);
     const checkboxMessage1 = screen.getByRole('option', {name: 'Test Connection'});
 
     expect(checkboxMessage1).toBeInTheDocument();
@@ -415,12 +415,12 @@ describe('Manage Notifications', () => {
     const doneButtonNode = screen.getByRole('button', {name: 'Done'});
 
     expect(doneButtonNode).toBeInTheDocument();
-    userEvent.click(doneButtonNode);
+    await userEvent.click(doneButtonNode);
     await waitFor(() => expect(doneButtonNode).not.toBeInTheDocument());
     const saveText = await waitFor(() => screen.getByRole('button', {name: 'Save'}));
 
     expect(saveText).toBeInTheDocument();
-  }, 10000);
+  });
   test('Should able to access the Notification Drawer and remove the unsaved selected connection and flow which have been selected by the user and save', async () => {
     const mockNotificationUpdateFunction = jest.fn();
 
@@ -441,7 +441,7 @@ describe('Manage Notifications', () => {
     const flowSelected = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
     expect(flowSelected).toBeInTheDocument();
-    userEvent.click(flowSelected);
+    await userEvent.click(flowSelected);
     const checkboxMessage = screen.queryAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === '5aabd0fdc69b4508218f832b');
 
     expect(checkboxMessage).toBeInTheDocument();
@@ -449,12 +449,12 @@ describe('Manage Notifications', () => {
     const doneMessage = screen.getByRole('button', {name: 'Done'});
 
     expect(doneMessage).toBeInTheDocument();
-    userEvent.click(doneMessage);
+    await userEvent.click(doneMessage);
     await waitFor(() => expect(doneMessage).not.toBeInTheDocument());
     const saveText = screen.getByRole('button', {name: 'Save'});
 
     expect(saveText).toBeInTheDocument();
-    userEvent.click(saveText);
+    await userEvent.click(saveText);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'RESOURCE_UPDATE_TILE_NOTIFICATIONS',
       resourcesToUpdate: {

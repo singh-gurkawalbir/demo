@@ -23,8 +23,8 @@ describe('ChatbotWidget component Test cases', () => {
     script.onload();
     expect(mockFn).toHaveBeenCalledWith('webWidget', 'hide');
   });
-  test('should call the handler on clicking the button', () => {
-    userEvent.click(screen.getByRole('button'));
+  test('should call the handler on clicking the button', async () => {
+    await userEvent.click(screen.getByRole('button'));
     expect(mockFn).toHaveBeenCalledWith('webWidget', 'show');
   });
 });

@@ -116,7 +116,7 @@ describe('PageProcessor test cases', () => {
     const onBlockClick = screen.getByRole('button', { name: 'mock onBlockClick'});
 
     expect(onBlockClick).toBeInTheDocument();
-    userEvent.click(onBlockClick);
+    await userEvent.click(onBlockClick);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('id_1', [{
       op: 'add',
       path: '/application',
@@ -156,7 +156,7 @@ describe('PageProcessor test cases', () => {
     const onBlockClick = screen.getByRole('button', { name: 'mock onBlockClick'});
 
     expect(onBlockClick).toBeInTheDocument();
-    userEvent.click(onBlockClick);
+    await userEvent.click(onBlockClick);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('id_1', [{
       op: 'add',
       path: '/application',
@@ -195,7 +195,7 @@ describe('PageProcessor test cases', () => {
     const onBlockClick = screen.getByRole('button', { name: 'mock onBlockClick'});
 
     expect(onBlockClick).toBeInTheDocument();
-    userEvent.click(onBlockClick);
+    await userEvent.click(onBlockClick);
 
     expect(mockHistoryReplace).toBeCalledWith('/edit/exports/export_id_1');
   });
@@ -220,7 +220,7 @@ describe('PageProcessor test cases', () => {
     const onBlockClick = screen.getByRole('button', { name: 'mock onBlockClick'});
 
     expect(onBlockClick).toBeInTheDocument();
-    userEvent.click(onBlockClick);
+    await userEvent.click(onBlockClick);
 
     expect(mockHistoryPush).toBeCalledWith('/edit/imports/import_id');
   });

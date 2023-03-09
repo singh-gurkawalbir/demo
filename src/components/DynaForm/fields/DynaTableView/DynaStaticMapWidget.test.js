@@ -13,6 +13,25 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatchFn,
 }));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const initialStore = reduxStore;
 
 function initDynaStaticMapWidget(props = {}) {
@@ -27,7 +46,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup', () => {
+  test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup', async () => {
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someIntegrationId: {
@@ -66,10 +85,10 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {allowFailures: true, default: 'defaultValue', map: {id: 'Id', name: 'samplename'}}, true);
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-14"]'));
+    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-14"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('extracts', 'someId', 'someIntegrationId'));
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('radio')[0]);
+    await userEvent.click(screen.getAllByRole('radio')[0]);
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: { name: 'samplename', id: 'Id' },
       default: undefined,
@@ -78,8 +97,8 @@ describe('DynaStaticMapWidget UI test cases', () => {
 
     const inputs = screen.getAllByRole('textbox');
 
-    fireEvent.change(inputs[0], { target: { value: '' } });
-    userEvent.type(inputs[0], 'Typechanged');
+    await fireEvent.change(inputs[0], { target: { value: '' } });
+    await userEvent.type(inputs[0], 'Typechanged');
     expect(screen.getByDisplayValue('Typechanged')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: { Typechanged: 'samplename', id: 'Id' },
@@ -89,7 +108,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     unmount();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.clearMetadata('someId', 'someIntegrationId'));
   });
-  test('should test static mapping refresh buttons and selecting use null as default value radio button in action to take if unique match not found radio options', () => {
+  test('should test static mapping refresh buttons and selecting use null as default value radio button in action to take if unique match not found radio options', async () => {
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someIntegrationId: {
@@ -124,7 +143,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
     const radiobutton = document.querySelectorAll('input[type="radio"]');
 
-    userEvent.click(radiobutton[2]);
+    await userEvent.click(radiobutton[2]);
     expect(radiobutton[2]).toBeChecked();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: {},
@@ -133,7 +152,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     }, true);
   });
 
-  test('should test static mapping refresh buttons and selecting empty string as default value radio button in action to take if unique match not found radio options', () => {
+  test('should test static mapping refresh buttons and selecting empty string as default value radio button in action to take if unique match not found radio options', async () => {
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someIntegrationId: {
@@ -167,7 +186,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
     const radiobutton = document.querySelectorAll('input[type="radio"]');
 
-    userEvent.click(radiobutton[1]);
+    await userEvent.click(radiobutton[1]);
     expect(radiobutton[1]).toBeChecked();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: {},
@@ -177,7 +196,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
 
     const inputs = screen.getAllByRole('textbox');
 
-    userEvent.type(inputs[0], 'RandomText');
+    await userEvent.type(inputs[0], 'RandomText');
     expect(screen.getByDisplayValue('RandomText')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: {},
@@ -188,7 +207,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     unmount();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.clearMetadata('someId', 'someIntegrationId'));
   });
-  test('should test perform mapping dropdown', () => {
+  test('should test perform mapping dropdown', async () => {
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someIntegrationId: {
@@ -229,18 +248,18 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {allowFailures: true, default: 'defaultValue', map: {id: 'Id', name: 'samplename'}}, true);
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[2]);
+    await userEvent.click(screen.getAllByRole('button')[2]);
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'exportop1...',
-        'exportop2...',
+        'Please select',
+        'exportop1',
+        'exportop2',
       ]
     );
-    userEvent.click(screen.getAllByRole('menuitem')[0]);
+    await userEvent.click(screen.getAllByRole('menuitem')[0]);
     expect(mockOnFieldChange).toBeCalledWith('someId', {
       map: { name: 'samplename', id: 'Id' },
       default: '',

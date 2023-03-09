@@ -127,7 +127,7 @@ describe('metadata of stacks UI Tests', () => {
     expect(cellI).toBeGreaterThan(-1);
     expect(cellI).toEqual(headerI);
   });
-  test('should verify the row actions', () => {
+  test('should verify the row actions', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={['/flowId']}>
         <Route path="/:flowId">
@@ -141,7 +141,7 @@ describe('metadata of stacks UI Tests', () => {
     );
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(screen.getByText('Edit stack')).toBeInTheDocument();
 
     expect(screen.getByText('View audit log')).toBeInTheDocument();

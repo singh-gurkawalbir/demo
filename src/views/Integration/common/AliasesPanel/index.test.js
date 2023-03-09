@@ -199,7 +199,7 @@ describe('Testsuite for Aliases', () => {
     useDispatchFn.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test Aliases when there are no aliases data and when the integration is of type v2 and has owner access', () => {
+  test('should test Aliases when there are no aliases data and when the integration is of type v2 and has owner access', async () => {
     initAliases(
       {
         integrationId: '12345',
@@ -244,7 +244,7 @@ describe('Testsuite for Aliases', () => {
     });
 
     expect(createAliasButtonNode).toBeInTheDocument();
-    userEvent.click(createAliasButtonNode);
+    await userEvent.click(createAliasButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/add');
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
@@ -360,7 +360,7 @@ describe('Testsuite for Aliases', () => {
     expect(buttonNode).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.aliases.clear('12345'));
   });
-  test('should test Aliases when there are aliases data and when the integration is not of type v2 and has owner access and allias status is save', () => {
+  test('should test Aliases when there are aliases data and when the integration is not of type v2 and has owner access and allias status is save', async () => {
     initAliases(
       {
         integrationId: '12345',
@@ -415,7 +415,7 @@ describe('Testsuite for Aliases', () => {
     });
 
     expect(createAliasButtonNode).toBeInTheDocument();
-    userEvent.click(createAliasButtonNode);
+    await userEvent.click(createAliasButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/add');
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.aliases.clear('12345'));
   });

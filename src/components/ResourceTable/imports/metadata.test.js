@@ -38,7 +38,7 @@ function initImports(data = {}) {
 }
 
 describe('test suite for Imports', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: 'imp123',
       name: 'The Import',
@@ -71,7 +71,7 @@ describe('test suite for Imports', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

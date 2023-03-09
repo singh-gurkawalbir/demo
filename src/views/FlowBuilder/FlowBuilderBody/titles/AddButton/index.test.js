@@ -10,34 +10,34 @@ describe('Testsuite for Add Button', () => {
   afterEach(() => {
     mockOnClick.mockClear();
   });
-  test('should test the add button when type is generator', () => {
+  test('should test the add button when type is generator', async () => {
     render(
       <AddButton onClick={mockOnClick} type="generator" />
     );
     const buttonNode = document.querySelector('button[data-test="addGenerator"]');
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     expect(mockOnClick).toBeCalled();
   });
-  test('should test the add button when type is processor', () => {
+  test('should test the add button when type is processor', async () => {
     render(
       <AddButton onClick={mockOnClick} type="processor" />
     );
     const buttonNode = document.querySelector('button[data-test="addProcessor"]');
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     expect(mockOnClick).toBeCalled();
   });
-  test('should test the add button when there is no type', () => {
+  test('should test the add button when there is no type', async () => {
     render(
       <AddButton onClick={mockOnClick} type="" />
     );
     const buttonNode = document.querySelector('button[data-test="addProcessor"]');
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     expect(mockOnClick).toBeCalled();
   });
 });

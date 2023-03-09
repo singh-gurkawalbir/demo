@@ -316,8 +316,8 @@ describe('script logs', () => {
 
   beforeEach(done => {
     initialStore = getCreatedStore();
-    jest.useFakeTimers();
-    jest.setTimeout(100000);
+    // jest.useFakeTimers();
+    // jest.setTimeout(100000);
     dateSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -330,9 +330,9 @@ describe('script logs', () => {
     done();
   });
   afterEach(async () => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllTimers();
+    // jest.runOnlyPendingTimers();
+    // jest.useRealTimers();
+    // jest.clearAllTimers();
     dateSpy.mockRestore();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
@@ -345,9 +345,11 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const runNode = screen.getByText('Run now');
+    waitFor(() => {
+      const runNode = screen.getByText('Run now');
 
-    expect(runNode).toBeInTheDocument();
+      expect(runNode).toBeInTheDocument();
+    });
   });
   test('should able to test the start debug button', async () => {
     store({});
@@ -355,9 +357,11 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const startDebugButton = screen.getByText('Start debug');
+    waitFor(() => {
+      const startDebugButton = screen.getByText('Start debug');
 
-    expect(startDebugButton).toBeInTheDocument();
+      expect(startDebugButton).toBeInTheDocument();
+    });
   });
   test('should able to test the today date range select button', async () => {
     store({});
@@ -366,37 +370,48 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    const todayButtonNode = screen.queryByRole('button', { name: 'Today' });
+      expect(cancelButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const todayButtonNode = screen.queryByRole('button', { name: 'Today' });
 
-    expect(todayButtonNode).toBeInTheDocument();
-    userEvent.click(todayButtonNode);
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: null,
-        preset: 'today',
-        startDate: moment(new Date('2022-08-13')).startOf('day').toDate(),
-      },
-    }));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(todayButtonNode).toBeInTheDocument();
+      await userEvent.click(todayButtonNode);
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: null,
+          preset: 'today',
+          startDate: moment(new Date('2022-08-13')).startOf('day').toDate(),
+        },
+      }));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the last 15 minutes date range select button with no execution logs', async () => {
     store({});
     await initScriptLogs({
@@ -404,33 +419,42 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: null,
-        preset: 'last15minutes',
-        startDate: moment(new Date('2022-08-13')).subtract(15, 'minutes').toDate(),
-      },
-    }));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(cancelButtonNode).toBeInTheDocument();
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: null,
+          preset: 'last15minutes',
+          startDate: moment(new Date('2022-08-13')).subtract(15, 'minutes').toDate(),
+        },
+      }));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the last 24 hours date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -438,37 +462,48 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    const last24HoursButtonNode = screen.queryByRole('button', { name: 'Last 24 hours' });
+      expect(cancelButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const last24HoursButtonNode = screen.queryByRole('button', { name: 'Last 24 hours' });
 
-    expect(last24HoursButtonNode).toBeInTheDocument();
-    userEvent.click(last24HoursButtonNode);
-    userEvent.click(applyButtonNode);
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: null,
-        preset: 'last24hours',
-        startDate: moment(new Date('2022-08-13')).subtract(24, 'hours').toDate(),
-      },
-    })));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(last24HoursButtonNode).toBeInTheDocument();
+      await userEvent.click(last24HoursButtonNode);
+      await userEvent.click(applyButtonNode);
+      await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: null,
+          preset: 'last24hours',
+          startDate: moment(new Date('2022-08-13')).subtract(24, 'hours').toDate(),
+        },
+      })));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the last 30 minutes date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -476,37 +511,48 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    const last30minutesButtonNode = screen.queryByRole('button', { name: 'Last 30 minutes' });
+      expect(cancelButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const last30minutesButtonNode = screen.queryByRole('button', { name: 'Last 30 minutes' });
 
-    expect(last30minutesButtonNode).toBeInTheDocument();
-    userEvent.click(last30minutesButtonNode);
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: null,
-        preset: 'last30minutes',
-        startDate: moment(new Date('2022-08-13')).subtract(30, 'minutes').toDate(),
-      },
-    }));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(last30minutesButtonNode).toBeInTheDocument();
+      await userEvent.click(last30minutesButtonNode);
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: null,
+          preset: 'last30minutes',
+          startDate: moment(new Date('2022-08-13')).subtract(30, 'minutes').toDate(),
+        },
+      }));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the last hour date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -514,37 +560,48 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    const lastHourButtonNode = screen.queryByRole('button', { name: 'Last hour' });
+      expect(cancelButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const lastHourButtonNode = screen.queryByRole('button', { name: 'Last hour' });
 
-    expect(lastHourButtonNode).toBeInTheDocument();
-    userEvent.click(lastHourButtonNode);
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: null,
-        preset: 'last1hour',
-        startDate: moment(new Date('2022-08-13')).subtract(1, 'hours').toDate(),
-      },
-    }));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(lastHourButtonNode).toBeInTheDocument();
+      await userEvent.click(lastHourButtonNode);
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: null,
+          preset: 'last1hour',
+          startDate: moment(new Date('2022-08-13')).subtract(1, 'hours').toDate(),
+        },
+      }));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the yesterday date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -552,37 +609,48 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    const yesterdayButtonNode = screen.queryByRole('button', { name: 'Yesterday' });
+      expect(cancelButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const yesterdayButtonNode = screen.queryByRole('button', { name: 'Yesterday' });
 
-    expect(yesterdayButtonNode).toBeInTheDocument();
-    userEvent.click(yesterdayButtonNode);
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: moment(new Date('2022-08-13')).subtract(1, 'days').endOf('day').toDate(),
-        preset: 'yesterday',
-        startDate: moment(new Date('2022-08-13')).subtract(1, 'days').startOf('day').toDate(),
-      },
-    }));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(yesterdayButtonNode).toBeInTheDocument();
+      await userEvent.click(yesterdayButtonNode);
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: moment(new Date('2022-08-13')).subtract(1, 'days').endOf('day').toDate(),
+          preset: 'yesterday',
+          startDate: moment(new Date('2022-08-13')).subtract(1, 'days').startOf('day').toDate(),
+        },
+      }));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the last 4 hours date range select button', async () => {
     store({});
     await initScriptLogs({
@@ -591,37 +659,48 @@ describe('script logs', () => {
       logs: [],
     });
 
-    const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
+    waitFor(async () => {
+      const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
-    expect(last15ButtonNode).toBeInTheDocument();
-    userEvent.click(last15ButtonNode);
+      expect(last15ButtonNode).toBeInTheDocument();
+      await userEvent.click(last15ButtonNode);
+    });
+    let applyButtonNode;
 
-    const applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
+    waitFor(() => {
+      applyButtonNode = screen.queryByRole('button', { name: 'Apply' });
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const clearButtonNode = screen.queryByRole('button', { name: 'Clear' });
 
-    expect(clearButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
+      expect(clearButtonNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelButtonNode = screen.queryByRole('button', { name: 'Cancel' });
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    const last4HoursButtonNode = screen.queryByRole('button', { name: 'Last 4 hours' });
+      expect(cancelButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const last4HoursButtonNode = screen.queryByRole('button', { name: 'Last 4 hours' });
 
-    expect(last4HoursButtonNode).toBeInTheDocument();
-    userEvent.click(last4HoursButtonNode);
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'dateRange',
-      value: {
-        endDate: null,
-        preset: 'last4hours',
-        startDate: moment(new Date('2022-08-13')).subtract(4, 'hours').toDate(),
-      },
-    }));
-    expect(applyButtonNode).not.toBeInTheDocument();
-  }, 30000);
+      expect(last4HoursButtonNode).toBeInTheDocument();
+      await userEvent.click(last4HoursButtonNode);
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'dateRange',
+        value: {
+          endDate: null,
+          preset: 'last4hours',
+          startDate: moment(new Date('2022-08-13')).subtract(4, 'hours').toDate(),
+        },
+      }));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the step button drop-down by selecting a flow', async () => {
     store({
       connections: {},
@@ -662,32 +741,50 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const stepDropDownNode = screen.getByRole('button', { name: 'Step' });
+    waitFor(async () => {
+      const stepDropDownNode = screen.getByRole('button', { name: 'Step' });
 
-    expect(stepDropDownNode).toBeInTheDocument();
-    userEvent.click(stepDropDownNode);
-    const typeCheckBoxNode = screen.getByRole('checkbox', {name: 'Type'});
+      expect(stepDropDownNode).toBeInTheDocument();
+      await userEvent.click(stepDropDownNode);
+    });
+    waitFor(() => {
+      const typeCheckBoxNode = screen.getByRole('checkbox', {name: 'Type'});
 
-    expect(typeCheckBoxNode).toBeInTheDocument();
-    const exportCheckBoxNode = screen.getByRole('checkbox', {name: 'export'});
+      expect(typeCheckBoxNode).toBeInTheDocument();
+    });
+    let exportCheckBoxNode;
 
-    expect(exportCheckBoxNode).toBeInTheDocument();
-    const flowCheckBoxNode = screen.getByRole('checkbox', {name: 'flow'});
+    waitFor(() => {
+      exportCheckBoxNode = screen.getByRole('checkbox', {name: 'export'});
 
-    expect(flowCheckBoxNode).toBeInTheDocument();
-    const integrationCheckBoxNode = screen.getByRole('checkbox', {name: 'integration'});
+      expect(exportCheckBoxNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const flowCheckBoxNode = screen.getByRole('checkbox', {name: 'flow'});
 
-    expect(integrationCheckBoxNode).toBeInTheDocument();
-    userEvent.click(exportCheckBoxNode);
-    const applyButtonNode = screen.getByRole('button', {name: 'Apply'});
+      expect(flowCheckBoxNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const integrationCheckBoxNode = screen.getByRole('checkbox', {name: 'integration'});
 
-    expect(applyButtonNode).toBeInTheDocument();
-    const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
+      expect(integrationCheckBoxNode).toBeInTheDocument();
+      await userEvent.click(exportCheckBoxNode);
+    });
+    let applyButtonNode;
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(applyButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', field: 'selectedResources', value: [{id: '62e59e0c76ce554057c07abc', name: 'Test Export', type: 'export' }]}));
-    expect(applyButtonNode).not.toBeInTheDocument();
+    waitFor(() => {
+      applyButtonNode = screen.getByRole('button', {name: 'Apply'});
+
+      expect(applyButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
+
+      expect(cancelButtonNode).toBeInTheDocument();
+      await userEvent.click(applyButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', field: 'selectedResources', value: [{id: '62e59e0c76ce554057c07abc', name: 'Test Export', type: 'export' }]}));
+      expect(applyButtonNode).not.toBeInTheDocument();
+    });
   });
   test('should able to test the function type button drop-down', async () => {
     store({});
@@ -695,89 +792,135 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const functionTypeDropDownNode = screen.getByRole('button', { name: 'Function type' });
+    waitFor(async () => {
+      const functionTypeDropDownNode = screen.getByRole('button', { name: 'Function type' });
 
-    expect(functionTypeDropDownNode).toBeInTheDocument();
-    userEvent.click(functionTypeDropDownNode);
-    const optionNode = document.querySelectorAll('[role="option"]');
+      expect(functionTypeDropDownNode).toBeInTheDocument();
+      await userEvent.click(functionTypeDropDownNode);
+    });
+    waitFor(() => {
+      const optionNode = document.querySelectorAll('[role="option"]');
 
-    expect(optionNode).toHaveLength(11);
-    const preSavePageOptionDate = screen.getByRole('option', {name: 'preSavePage'});
+      expect(optionNode).toHaveLength(11);
+    });
+    let preSavePageOptionDate;
 
-    expect(preSavePageOptionDate).toBeInTheDocument();
-    const preMapOptionNode = screen.getByRole('option', {name: 'preMap'});
+    waitFor(() => {
+      preSavePageOptionDate = screen.getByRole('option', {name: 'preSavePage'});
 
-    expect(preMapOptionNode).toBeInTheDocument();
-    const postMapOptionNode = screen.getByRole('option', {name: 'postMap'});
+      expect(preSavePageOptionDate).toBeInTheDocument();
+    });
+    let preMapOptionNode;
 
-    expect(postMapOptionNode).toBeInTheDocument();
-    const postSubmitOptionNode = screen.getByRole('option', {name: 'postSubmit'});
+    waitFor(() => {
+      preMapOptionNode = screen.getByRole('option', {name: 'preMap'});
 
-    expect(postSubmitOptionNode).toBeInTheDocument();
-    const postAggregateOptionNode = screen.getByRole('option', {name: 'postAggregate'});
+      expect(preMapOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postMapOptionNode = screen.getByRole('option', {name: 'postMap'});
 
-    expect(postAggregateOptionNode).toBeInTheDocument();
-    const postResponseMapOptionNode = screen.getByRole('option', {name: 'postResponseMap'});
+      expect(postMapOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postSubmitOptionNode = screen.getByRole('option', {name: 'postSubmit'});
 
-    expect(postResponseMapOptionNode).toBeInTheDocument();
-    const filterOptionNode = screen.getByRole('option', {name: 'filter'});
+      expect(postSubmitOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postAggregateOptionNode = screen.getByRole('option', {name: 'postAggregate'});
 
-    expect(filterOptionNode).toBeInTheDocument();
-    const transformOptionNode = screen.getByRole('option', {name: 'transform'});
+      expect(postAggregateOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postResponseMapOptionNode = screen.getByRole('option', {name: 'postResponseMap'});
 
-    expect(transformOptionNode).toBeInTheDocument();
-    const initFormOptionNode = screen.getByRole('option', {name: 'initForm'});
+      expect(postResponseMapOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const filterOptionNode = screen.getByRole('option', {name: 'filter'});
 
-    expect(initFormOptionNode).toBeInTheDocument();
-    const preSaveOptionNode = screen.getByRole('option', {name: 'preSave'});
+      expect(filterOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const transformOptionNode = screen.getByRole('option', {name: 'transform'});
 
-    expect(preSaveOptionNode).toBeInTheDocument();
-    userEvent.click(preSavePageOptionDate);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'functionType',
-      value: 'preSavePage',
-    }));
+      expect(transformOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const initFormOptionNode = screen.getByRole('option', {name: 'initForm'});
 
-    await waitFor(() => expect(preMapOptionNode).not.toBeInTheDocument());
-    const preSavePageButtonNode = await waitFor(() => screen.getByRole('button', {name: 'preSavePage'}));
+      expect(initFormOptionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const preSaveOptionNode = screen.getByRole('option', {name: 'preSave'});
 
-    expect(preSavePageButtonNode).toBeInTheDocument();
-  }, 30000);
+      expect(preSaveOptionNode).toBeInTheDocument();
+      await userEvent.click(preSavePageOptionDate);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'functionType',
+        value: 'preSavePage',
+      }));
+
+      expect(preMapOptionNode).not.toBeInTheDocument();
+    });
+    waitFor(() => {
+      const preSavePageButtonNode = screen.getByRole('button', {name: 'preSavePage'});
+
+      expect(preSavePageButtonNode).toBeInTheDocument();
+    });
+  });
   test('should able to test the log level button drop-down', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const logLevelDropDownNode = screen.getByRole('button', { name: 'Log level' });
+    waitFor(async () => {
+      const logLevelDropDownNode = screen.getByRole('button', { name: 'Log level' });
 
-    expect(logLevelDropDownNode).toBeInTheDocument();
-    userEvent.click(logLevelDropDownNode);
-    const debugOption = screen.getByRole('option', {name: 'debug'});
+      expect(logLevelDropDownNode).toBeInTheDocument();
+      await userEvent.click(logLevelDropDownNode);
+    });
+    let debugOption;
 
-    expect(debugOption).toBeInTheDocument();
-    const infoOption = screen.getByRole('option', {name: 'info'});
+    waitFor(() => {
+      debugOption = screen.getByRole('option', {name: 'debug'});
 
-    expect(infoOption).toBeInTheDocument();
-    const warnOption = screen.getByRole('option', {name: 'warn'});
+      expect(debugOption).toBeInTheDocument();
+    });
+    let infoOption;
 
-    expect(warnOption).toBeInTheDocument();
-    const errorOption = screen.getByRole('option', {name: 'error'});
+    waitFor(() => {
+      infoOption = screen.getByRole('option', {name: 'info'});
 
-    expect(errorOption).toBeInTheDocument();
-    userEvent.click(debugOption);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
-      scriptId: '62e59df376ce554057c07abc',
-      flowId: '62e59e1176ce554057c07abc',
-      field: 'logLevel',
-      value: 'DEBUG',
-    }));
-    await waitFor(() => expect(infoOption).not.toBeInTheDocument());
-    const debugButtonNode = screen.getByRole('button', {name: 'debug'});
+      expect(infoOption).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const warnOption = screen.getByRole('option', {name: 'warn'});
 
-    expect(debugButtonNode).toBeInTheDocument();
+      expect(warnOption).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const errorOption = screen.getByRole('option', {name: 'error'});
+
+      expect(errorOption).toBeInTheDocument();
+      await userEvent.click(debugOption);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({
+        scriptId: '62e59df376ce554057c07abc',
+        flowId: '62e59e1176ce554057c07abc',
+        field: 'logLevel',
+        value: 'DEBUG',
+      }));
+      expect(infoOption).not.toBeInTheDocument();
+    });
+    waitFor(() => {
+      const debugButtonNode = screen.getByRole('button', {name: 'debug'});
+
+      expect(debugButtonNode).toBeInTheDocument();
+    });
   });
   test('should able to test the purge logs action', async () => {
     store({
@@ -811,13 +954,17 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const moreActions = screen.getAllByRole('button', {name: /more/i});
+    waitFor(async () => {
+      const moreActions = screen.getAllByRole('button', {name: /more/i});
 
-    userEvent.click(moreActions[0]);
-    const purgeLogs = screen.getByText(/Purge all logs of this script/i);
+      await userEvent.click(moreActions[0]);
+    });
+    waitFor(() => {
+      const purgeLogs = screen.getByText(/Purge all logs of this script/i);
 
-    expect(purgeLogs).toBeInTheDocument();
-    expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
+      expect(purgeLogs).toBeInTheDocument();
+      expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
+    });
   });
   test('should able to test the refresh button', async () => {
     store({
@@ -850,14 +997,16 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const refreshButtonNode = screen.getByRole('button', {name: 'Refresh'});
+    waitFor(async () => {
+      const refreshButtonNode = screen.getByRole('button', {name: 'Refresh'});
 
-    expect(refreshButtonNode).toBeInTheDocument();
-    userEvent.click(refreshButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.refresh({
-      flowId: '62e59e1176ce554057c07abc',
-      scriptId: '62e59df376ce554057c07abc',
-    }));
+      expect(refreshButtonNode).toBeInTheDocument();
+      await userEvent.click(refreshButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.refresh({
+        flowId: '62e59e1176ce554057c07abc',
+        scriptId: '62e59df376ce554057c07abc',
+      }));
+    });
   });
   test('should able to test the rows button with no execution logs', async () => {
     store({
@@ -883,24 +1032,38 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const rowsTextNode = screen.getByText(/Rows/i);
+    waitFor(() => {
+      const rowsTextNode = screen.getByText(/Rows/i);
 
-    expect(rowsTextNode).toBeInTheDocument();
-    const rowsNode = screen.getByRole('button', {name: '50'});
+      expect(rowsTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const rowsNode = screen.getByRole('button', {name: '50'});
 
-    expect(rowsNode).toBeInTheDocument();
-    userEvent.click(rowsNode);
-    const tenOptionNode = screen.getByRole('option', {name: '10'});
+      expect(rowsNode).toBeInTheDocument();
+      await userEvent.click(rowsNode);
+    });
+    let tenOptionNode;
 
-    expect(tenOptionNode).toBeInTheDocument();
-    const twentyFiveOptionNode = screen.getByRole('option', {name: '25'});
+    waitFor(() => {
+      tenOptionNode = screen.getByRole('option', {name: '10'});
 
-    expect(twentyFiveOptionNode).toBeInTheDocument();
-    const fiftyOptionNode = screen.getByRole('option', {name: '50'});
+      expect(tenOptionNode).toBeInTheDocument();
+    });
+    let twentyFiveOptionNode;
 
-    expect(fiftyOptionNode).toBeInTheDocument();
-    userEvent.click(tenOptionNode);
-    await waitFor(() => expect(twentyFiveOptionNode).not.toBeInTheDocument());
+    waitFor(() => {
+      twentyFiveOptionNode = screen.getByRole('option', {name: '25'});
+
+      expect(twentyFiveOptionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const fiftyOptionNode = screen.getByRole('option', {name: '50'});
+
+      expect(fiftyOptionNode).toBeInTheDocument();
+      await userEvent.click(tenOptionNode);
+      expect(twentyFiveOptionNode).not.toBeInTheDocument();
+    });
     const noExecutionLogsNode = screen.getByText("You don't have any execution logs in the selected time frame.");
 
     expect(noExecutionLogsNode).toBeInTheDocument();
@@ -1008,35 +1171,55 @@ describe('script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     });
 
-    const rowsTextNode = screen.getByText(/Rows/i);
+    waitFor(() => {
+      const rowsTextNode = screen.getByText(/Rows/i);
 
-    expect(rowsTextNode).toBeInTheDocument();
-    const rowsNode = screen.getByRole('button', {name: '50'});
+      expect(rowsTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const rowsNode = screen.getByRole('button', {name: '50'});
 
-    expect(rowsNode).toBeInTheDocument();
-    userEvent.click(rowsNode);
-    const tenOptionNode = screen.getByRole('option', {name: '10'});
+      expect(rowsNode).toBeInTheDocument();
+      await userEvent.click(rowsNode);
+    });
+    let tenOptionNode;
 
-    expect(tenOptionNode).toBeInTheDocument();
-    const twentyFiveOptionNode = screen.getByRole('option', {name: '25'});
+    waitFor(() => {
+      tenOptionNode = screen.getByRole('option', {name: '10'});
 
-    expect(twentyFiveOptionNode).toBeInTheDocument();
-    const fiftyOptionNode = screen.getByRole('option', {name: '50'});
+      expect(tenOptionNode).toBeInTheDocument();
+    });
+    let twentyFiveOptionNode;
 
-    expect(fiftyOptionNode).toBeInTheDocument();
-    userEvent.click(tenOptionNode);
-    await waitFor(() => expect(twentyFiveOptionNode).not.toBeInTheDocument());
-    const prevPageButtonNode = screen.getByTestId(/prevPage/i);
+    waitFor(() => {
+      twentyFiveOptionNode = screen.getByRole('option', {name: '25'});
 
-    expect(prevPageButtonNode).toBeInTheDocument();
-    const nextPageButtonNode = screen.getByTestId(/nextPage/i);
+      expect(twentyFiveOptionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const fiftyOptionNode = screen.getByRole('option', {name: '50'});
 
-    expect(nextPageButtonNode).toBeInTheDocument();
-    userEvent.click(nextPageButtonNode);
-    const pageNode = screen.getByText(/11 - 11 of 11/i);
+      expect(fiftyOptionNode).toBeInTheDocument();
+      await userEvent.click(tenOptionNode);
+      expect(twentyFiveOptionNode).not.toBeInTheDocument();
+    });
+    waitFor(() => {
+      const prevPageButtonNode = screen.getByTestId(/prevPage/i);
 
-    expect(pageNode).toBeInTheDocument();
-  }, 30000);
+      expect(prevPageButtonNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const nextPageButtonNode = screen.getByTestId(/nextPage/i);
+
+      expect(nextPageButtonNode).toBeInTheDocument();
+      await userEvent.click(nextPageButtonNode);
+    });
+    waitFor(() => {
+      const pageNode = screen.getByText(/11 - 11 of 11/i);
+
+      expect(pageNode).toBeInTheDocument();
+    });
+  });
   test('should able to test the logs when the status is inprogress and clicking on pause and resume button', async () => {
     store({
       connections: {},
@@ -1062,18 +1245,24 @@ describe('script logs', () => {
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const fetchingLogsNode = screen.getByText(/Fetching logs... 0% completed/i);
+    waitFor(() => {
+      const fetchingLogsNode = screen.getByText(/Fetching logs... 0% completed/i);
 
-    expect(fetchingLogsNode).toBeInTheDocument();
-    const pauseButtonNode = screen.getByRole('button', {name: 'Pause'});
+      expect(fetchingLogsNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const pauseButtonNode = screen.getByRole('button', {name: 'Pause'});
 
-    userEvent.click(pauseButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.setFetchStatus({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', fetchStatus: 'paused'}));
-    const resumeButtonNode = screen.getByRole('button', {name: 'Resume'});
+      await userEvent.click(pauseButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.setFetchStatus({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', fetchStatus: 'paused'}));
+    });
+    waitFor(async () => {
+      const resumeButtonNode = screen.getByRole('button', {name: 'Resume'});
 
-    expect(resumeButtonNode).toBeInTheDocument();
-    userEvent.click(resumeButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.loadMore({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', fetchNextPage: true}));
+      expect(resumeButtonNode).toBeInTheDocument();
+      await userEvent.click(resumeButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.loadMore({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', fetchNextPage: true}));
+    });
   });
   test('should able to test the function type drop-down button when there is no flow id', async () => {
     store({});
@@ -1081,59 +1270,97 @@ describe('script logs', () => {
       flowId: '',
       scriptId: '62e59df376ce554057c07abc',
     });
-    const functionTypeButtonNode = screen.getByRole('button', {name: 'Function type'});
+    waitFor(async () => {
+      const functionTypeButtonNode = screen.getByRole('button', {name: 'Function type'});
 
-    expect(functionTypeButtonNode).toBeInTheDocument();
-    userEvent.click(functionTypeButtonNode);
-    const optionsNode = screen.getAllByRole('option');
+      expect(functionTypeButtonNode).toBeInTheDocument();
+      await userEvent.click(functionTypeButtonNode);
+    });
+    waitFor(() => {
+      const optionsNode = screen.getAllByRole('option');
 
-    expect(optionsNode).toHaveLength(15);
-    const functionTypeOptionNode = screen.getByRole('option', {name: 'Function type'});
+      expect(optionsNode).toHaveLength(15);
+    });
+    let functionTypeOptionNode;
 
-    expect(functionTypeOptionNode).toBeInTheDocument();
-    const preSavePageOptionNode = screen.getByRole('option', {name: 'preSavePage'});
+    waitFor(() => {
+      functionTypeOptionNode = screen.getByRole('option', {name: 'Function type'});
 
-    expect(preSavePageOptionNode).toBeInTheDocument();
-    const preMapPageOptionNode = screen.getByRole('option', {name: 'preMap'});
+      expect(functionTypeOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const preSavePageOptionNode = screen.getByRole('option', {name: 'preSavePage'});
 
-    expect(preMapPageOptionNode).toBeInTheDocument();
-    const postMapPageOptionNode = screen.getByRole('option', {name: 'postMap'});
+      expect(preSavePageOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const preMapPageOptionNode = screen.getByRole('option', {name: 'preMap'});
 
-    expect(postMapPageOptionNode).toBeInTheDocument();
-    const postSubmitOptionNode = screen.getByRole('option', {name: 'postSubmit'});
+      expect(preMapPageOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postMapPageOptionNode = screen.getByRole('option', {name: 'postMap'});
 
-    expect(postSubmitOptionNode).toBeInTheDocument();
-    const postAggregateOptionNode = screen.getByRole('option', {name: 'postAggregate'});
+      expect(postMapPageOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postSubmitOptionNode = screen.getByRole('option', {name: 'postSubmit'});
 
-    expect(postAggregateOptionNode).toBeInTheDocument();
-    const postResponseMapOptionNode = screen.getByRole('option', {name: 'postResponseMap'});
+      expect(postSubmitOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postAggregateOptionNode = screen.getByRole('option', {name: 'postAggregate'});
 
-    expect(postResponseMapOptionNode).toBeInTheDocument();
-    const filterOptionNode = screen.getByRole('option', {name: 'filter'});
+      expect(postAggregateOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const postResponseMapOptionNode = screen.getByRole('option', {name: 'postResponseMap'});
 
-    expect(filterOptionNode).toBeInTheDocument();
-    const transformOptionNode = screen.getByRole('option', {name: 'transform'});
+      expect(postResponseMapOptionNode).toBeInTheDocument();
+    });
+    let filterOptionNode;
 
-    expect(transformOptionNode).toBeInTheDocument();
-    const initFormOptionNode = screen.getByRole('option', {name: 'initForm'});
+    waitFor(() => {
+      filterOptionNode = screen.getByRole('option', {name: 'filter'});
 
-    expect(initFormOptionNode).toBeInTheDocument();
-    const preSaveOptionNode = screen.getByRole('option', {name: 'preSave'});
+      expect(filterOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const transformOptionNode = screen.getByRole('option', {name: 'transform'});
 
-    expect(preSaveOptionNode).toBeInTheDocument();
-    const updateOptionNode = screen.getByRole('option', {name: 'update'});
+      expect(transformOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const initFormOptionNode = screen.getByRole('option', {name: 'initForm'});
 
-    expect(updateOptionNode).toBeInTheDocument();
-    const stepOptionNode = screen.getByRole('option', {name: 'step'});
+      expect(initFormOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const preSaveOptionNode = screen.getByRole('option', {name: 'preSave'});
 
-    expect(stepOptionNode).toBeInTheDocument();
-    const initChildOptionNode = screen.getByRole('option', {name: 'initChild'});
+      expect(preSaveOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const updateOptionNode = screen.getByRole('option', {name: 'update'});
 
-    expect(initChildOptionNode).toBeInTheDocument();
-    const changeEditionOptionNode = screen.getByRole('option', {name: 'changeEdition'});
+      expect(updateOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const stepOptionNode = screen.getByRole('option', {name: 'step'});
 
-    expect(changeEditionOptionNode).toBeInTheDocument();
-    userEvent.click(filterOptionNode);
-    await waitFor(() => expect(functionTypeOptionNode).not.toBeInTheDocument());
-  }, 30000);
+      expect(stepOptionNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const initChildOptionNode = screen.getByRole('option', {name: 'initChild'});
+
+      expect(initChildOptionNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const changeEditionOptionNode = screen.getByRole('option', {name: 'changeEdition'});
+
+      expect(changeEditionOptionNode).toBeInTheDocument();
+      await userEvent.click(filterOptionNode);
+      expect(functionTypeOptionNode).not.toBeInTheDocument();
+    });
+  });
 });

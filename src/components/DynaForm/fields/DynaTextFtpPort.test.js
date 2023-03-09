@@ -55,7 +55,7 @@ describe('test suite for Port field in FTP connection', () => {
     expect(onFieldChange).toHaveBeenCalledWith(props.id, props.options, true);
   });
 
-  test('should respond to change in value', () => {
+  test('should respond to change in value', async () => {
     const onFieldChange = jest.fn();
     const props = {
       formKey: 'connections-62fb3e595ebfa623b56565c3',
@@ -91,7 +91,7 @@ describe('test suite for Port field in FTP connection', () => {
 
     expect(inputField).toHaveAttribute('placeholder', props.placeholder);
 
-    userEvent.type(inputField, '8080');
+    await userEvent.type(inputField, '8080');
 
     let currVal = '';
 

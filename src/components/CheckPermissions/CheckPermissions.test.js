@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce, mutateStore} from '../../test/test-utils';
 import CheckPermissions from '.';
 import { runServer } from '../../test/api/server';
@@ -67,8 +68,8 @@ describe('checkPermissions UI tests', () => {
         }><div>You are allowed to see this content</div>
       </CheckPermissions>);
 
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.user.org.accounts.requestCollection());
+    act(() => { store.dispatch(actions.user.preferences.request()); });
+    act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
     store.dispatch(actions.user.profile.request());
     mutateStore(store, draft => {
       draft.auth = {authenticated: true, defaultAccountSet: true};

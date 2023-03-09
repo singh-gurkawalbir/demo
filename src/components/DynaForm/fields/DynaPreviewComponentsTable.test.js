@@ -6,7 +6,7 @@ import { renderWithProviders } from '../../../test/test-utils';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 
 describe('test for previewing resources while cloning', () => {
-  test('should expand only flows section by default', () => {
+  test('should expand only flows section by default', async () => {
     const props = {
       useColumns: () => [],
       resourceType: 'integrations',
@@ -60,7 +60,7 @@ describe('test for previewing resources while cloning', () => {
     [integrationTable, connectionTable, asyncHelperTable, fileDefinitionsTable].forEach(table =>
       expect(table).toHaveAttribute('aria-expanded', 'false')
     );
-    userEvent.click(screen.getByRole('button', {name: 'Connections'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Connections'}));
     expect(screen.getAllByRole('row')).toHaveLength(4);
   });
 

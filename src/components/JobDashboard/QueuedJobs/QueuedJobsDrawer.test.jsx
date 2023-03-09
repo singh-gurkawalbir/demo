@@ -97,6 +97,25 @@ jest.mock('../../../utils/jobdashboard', () => ({
   getStatus: jest.fn().mockReturnValue('Mocking get Status'),
   getPages: jest.fn().mockReturnValue('Mocking get Pages'),
 }));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('testsuite for Queued Jobs Drawer', () => {
   let mockDispatchFn;
   let useDispatchSpy;

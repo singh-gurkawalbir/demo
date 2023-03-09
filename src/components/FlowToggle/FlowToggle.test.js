@@ -141,7 +141,7 @@ describe('unit tests for FlowToggle button', () => {
     const toggleButton = screen.getByRole('checkbox');
 
     expect(toggleButton).toBeInTheDocument();
-    userEvent.click(toggleButton);
+    await userEvent.click(toggleButton);
     await waitFor(() =>
       expect(screen.queryByText(/Confirm disable/i)).toBeInTheDocument()
     );
@@ -165,14 +165,14 @@ describe('unit tests for FlowToggle button', () => {
     const toggleButton = screen.getByRole('checkbox');
 
     expect(toggleButton).toBeInTheDocument();
-    userEvent.click(toggleButton);
+    await userEvent.click(toggleButton);
     await waitFor(() =>
       expect(screen.getByText(/Confirm disable/i)).toBeInTheDocument()
     );
     const disButton = screen.getByText('Disable');
 
     expect(disButton).toBeInTheDocument();
-    userEvent.click(disButton);
+    await userEvent.click(disButton);
     await waitFor(() =>
       expect(mockDispatchFn).toHaveBeenCalledWith(
         actions.flow.isOnOffActionInprogress(true, '626bdab2987bb423914b487d')
@@ -197,10 +197,10 @@ describe('unit tests for FlowToggle button', () => {
     await flowTog({resource: demoFlows, integrationId: '626bda66987bb423914b486f', flowId: '626bdab2987bb423914b487d', disabled: false, integ: []});
     const toggleButton = screen.getByRole('checkbox');
 
-    userEvent.click(toggleButton);
+    await userEvent.click(toggleButton);
     const disButton = screen.getByText('Disable');
 
-    userEvent.click(disButton);
+    await userEvent.click(disButton);
     await waitFor(() =>
       expect(mockDispatchFn).toHaveBeenCalledWith(
         actions.flow.isOnOffActionInprogress(true, '626bdab2987bb423914b487d')

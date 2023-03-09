@@ -22,7 +22,7 @@ describe('status button component test', () => {
   });
 
   // eslint-disable-next-line jest/expect-expect
-  test('statusbutton click working', () => {
+  test('statusbutton click working', async () => {
     renderWithProviders(
       <Status
         variant="error" size="mini" onClick={handleErrorClick}>
@@ -30,11 +30,11 @@ describe('status button component test', () => {
       </Status>);
     const Message = screen.getByText('handleErrorClick');
 
-    userEvent.click(Message);
+    await userEvent.click(Message);
   });
 
   // eslint-disable-next-line jest/expect-expect
-  test('passing number', () => {
+  test('passing number', async () => {
     renderWithProviders(
       <Status
         variant="error" size="mini" onClick={handleErrorClick}>
@@ -42,7 +42,7 @@ describe('status button component test', () => {
       </Status>);
     const Message = screen.getByText('123');
 
-    userEvent.click(Message);
+    await userEvent.click(Message);
   });
 
   test('testing by className', () => {

@@ -164,12 +164,12 @@ describe('MockOutputDrawerContent UI tests', () => {
     expect(screen.getByText('Headers')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
-  test('should show error for invalid mock output and done button should be disabled', () => {
+  test('should show error for invalid mock output and done button should be disabled', async () => {
     initMockOutputDrawer();
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
-    userEvent.clear(inputNode);
-    userEvent.type(inputNode, 'userinput');
+    await userEvent.clear(inputNode);
+    await userEvent.type(inputNode, 'userinput');
     expect(screen.getByText(/userinput/i)).toBeInTheDocument();
     expect(screen.getByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeInTheDocument();
     const doneButton = screen.getByRole('button', {name: 'Done'});
@@ -184,14 +184,15 @@ describe('MockOutputDrawerContent UI tests', () => {
     // make the editor dirty
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
-    userEvent.clear(inputNode);
-    userEvent.paste(inputNode, mockOutputJson);
+    await userEvent.clear(inputNode);
+    inputNode.focus();
+    await userEvent.paste(mockOutputJson);
 
     const doneButton = screen.getByRole('button', {name: 'Done'});
 
     expect(doneButton).toBeInTheDocument();
     expect(doneButton).toBeEnabled();
-    userEvent.click(doneButton);
+    await userEvent.click(doneButton);
     await waitFor(() => {
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange(formKey)(fieldId, mockOutputJson));
     });

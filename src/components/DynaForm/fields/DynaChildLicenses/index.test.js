@@ -194,7 +194,7 @@ describe('dynaChildLicense UI tests', () => {
     const createButton = screen.getByText('Create child license');
 
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('new-Id', patchSet)));
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118/add/connectorLicenses/new-Id'));
   });

@@ -51,7 +51,7 @@ describe('test suite for SaveAndCloseMiniButtons', () => {
     expect(closeButton).not.toBeInTheDocument();
   });
 
-  test('should be able to execute handleSave and handleCancel', () => {
+  test('should be able to execute handleSave and handleCancel', async () => {
     const handleSave = jest.fn();
     const handleCancel = jest.fn();
 
@@ -62,10 +62,10 @@ describe('test suite for SaveAndCloseMiniButtons', () => {
     expect(handleSave).not.toHaveBeenCalled();
     expect(handleCancel).not.toHaveBeenCalled();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(handleSave).toHaveBeenCalledTimes(1);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(handleCancel).toHaveBeenCalledTimes(1);
   });
 });

@@ -28,7 +28,7 @@ describe('create flow group UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should redirect to flow page for adding new group', () => {
+  test('should redirect to flow page for adding new group', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={['/integrations/603ce75ac4fec33283691f43/flows']}>
         <Route path="/integrations/603ce75ac4fec33283691f43/flows">
@@ -40,8 +40,8 @@ describe('create flow group UI test cases', () => {
         </Route>
       </MemoryRouter>,
     );
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    userEvent.click(screen.queryByText('Create flow group'));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByText('Create flow group'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/603ce75ac4fec33283691f43/flows/flowgroups/add');
   });
 });

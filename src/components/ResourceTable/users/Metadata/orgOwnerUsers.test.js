@@ -74,7 +74,7 @@ describe('test suite for orgOwnerUsers', () => {
     mockHistoryPush.mockClear();
   });
 
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       sharedWithUser: {
         name: 'User name',
@@ -117,7 +117,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(addNotificationsButton).toHaveAttribute('title', 'Add notifications');
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -125,7 +125,7 @@ describe('test suite for orgOwnerUsers', () => {
     ]);
   });
 
-  test('should be able to modify permissions of a user', () => {
+  test('should be able to modify permissions of a user', async () => {
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -138,10 +138,10 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const managePermissionsButton = screen.getByRole('menuitem', {name: 'Manage permissions'});
 
-    userEvent.click(managePermissionsButton);
+    await userEvent.click(managePermissionsButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(`${mockRouteMatch.url}/edit/sharedUser123`);
   });
 
@@ -168,7 +168,7 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -178,7 +178,7 @@ describe('test suite for orgOwnerUsers', () => {
     ]);
     const resetMfaButton = screen.getByRole('menuitem', {name: 'Reset MFA'});
 
-    userEvent.click(resetMfaButton);
+    await userEvent.click(resetMfaButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mfa.resetMFA({ aShareId: 'sharedUser123' }));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.asyncTask.clear('MFA_RESET_ASYNC_KEY')));
     expect(mockResolverFunction).toHaveBeenCalledTimes(1);
@@ -210,17 +210,17 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const deleteUserButton = screen.getByRole('menuitem', {name: 'Remove user from account'});
 
-    userEvent.click(deleteUserButton);
+    await userEvent.click(deleteUserButton);
 
     const confirmDialog = screen.getByRole('dialog');
     const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm delete');
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123'));
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -248,13 +248,13 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const deleteUserButton = screen.getByRole('menuitem', {name: 'Remove user from account'});
 
-    userEvent.click(deleteUserButton);
+    await userEvent.click(deleteUserButton);
     const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123'));
 
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(errorMessage));
@@ -283,15 +283,15 @@ describe('test suite for orgOwnerUsers', () => {
 
     mockTableContext.accessLevel = 'owner';
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const makeOwnerButton = screen.getByRole('menuitem', {name: 'Make account owner'});
 
-    userEvent.click(makeOwnerButton);
+    await userEvent.click(makeOwnerButton);
     const confirmDialog = screen.getByRole('dialog');
     const confirmButton = screen.getByRole('button', {name: 'Make owner'});
 
     expect(confirmDialog).toContainElement(confirmButton);
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.makeOwner('mail@user.in'));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(
       'An Account Ownership invitation has been sent to User 1 (mail@user.in). Once accepted, your account will be converted to a regular user account with Manager access.'
@@ -322,15 +322,15 @@ describe('test suite for orgOwnerUsers', () => {
 
     mockTableContext.accessLevel = 'owner';
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const makeOwnerButton = screen.getByRole('menuitem', {name: 'Make account owner'});
 
-    userEvent.click(makeOwnerButton);
+    await userEvent.click(makeOwnerButton);
     const confirmDialog = screen.getByRole('dialog');
     const confirmButton = screen.getByRole('button', {name: 'Make owner'});
 
     expect(confirmDialog).toContainElement(confirmButton);
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.makeOwner('mail@user.in'));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(
       `Request to make user User 1 as account owner is failed due to the error "${errorMessage}"`
@@ -360,13 +360,13 @@ describe('test suite for orgOwnerUsers', () => {
     initOrgOwnerUsers(data);
     const disableUserButton = document.querySelector('[data-test="disableUser"]');
 
-    userEvent.click(disableUserButton);
+    await userEvent.click(disableUserButton);
     const confirmDialog = screen.getByRole('dialog');
     const confirmButton = screen.getByRole('button', {name: 'Disable'});
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm disable');
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('User sampleName disabled successfully'));
   });
@@ -395,13 +395,13 @@ describe('test suite for orgOwnerUsers', () => {
     initOrgOwnerUsers(data);
     const disableUserButton = document.querySelector('[data-test="disableUser"]');
 
-    userEvent.click(disableUserButton);
+    await userEvent.click(disableUserButton);
     const confirmDialog = screen.getByRole('dialog');
     const confirmButton = screen.getByRole('button', {name: 'Disable'});
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm disable');
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(`Disabling user sampleName failed due to the error "${errorMessage}"`));
   });
@@ -438,7 +438,7 @@ describe('test suite for orgOwnerUsers', () => {
     initOrgOwnerUsers(data);
     const reinviteButton = screen.getByRole('button', {name: 'Reinvite'});
 
-    userEvent.click(reinviteButton);
+    await userEvent.click(reinviteButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.reinvite('user123'));
   });
 
@@ -490,7 +490,7 @@ describe('test suite for orgOwnerUsers', () => {
 
     expect(enableMFA).toBeEnabled();
     expect(enableMFA).not.toBeChecked();
-    userEvent.click(enableMFA);
+    await userEvent.click(enableMFA);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.update('user123', {
       accountMFARequired: true,
       _id: 'user123',
@@ -618,7 +618,7 @@ describe('test suite for orgOwnerUsers', () => {
 
     expect(requireSsoButton).toBeEnabled();
     expect(requireSsoButton).not.toBeChecked();
-    userEvent.click(requireSsoButton);
+    await userEvent.click(requireSsoButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.update('user123', {
       ...data[0],
       accountSSORequired: true,

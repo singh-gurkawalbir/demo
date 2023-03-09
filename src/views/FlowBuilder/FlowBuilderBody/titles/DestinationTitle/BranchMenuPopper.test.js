@@ -96,7 +96,7 @@ describe('Testsuite for BranchMenuPopper', () => {
     mockHistoryPush.mockClear();
     mockhandleClose.mockClear();
   });
-  test('should test the Branch Menu by clicking an menu item and verify the action call made', () => {
+  test('should test the Branch Menu by clicking an menu item and verify the action call made', async () => {
     jest.spyOn(mockGetAllFlowBranches, 'getAllFlowBranches').mockReturnValue([{
       id: 'branch_id',
       name: 'Branch 1.0',
@@ -115,7 +115,7 @@ describe('Testsuite for BranchMenuPopper', () => {
     const branchNodeMenuItem = screen.getByRole('menuitem', {name: 'Branch 1.0'});
 
     expect(branchNodeMenuItem).toBeInTheDocument();
-    userEvent.click(branchNodeMenuItem);
+    await userEvent.click(branchNodeMenuItem);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.addNewPPStepInfo('flow_id', {branchPath: '/routers/1/branches/0'}));
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/add/pageProcessor/somegeneratedID');
     expect(mockhandleClose).toHaveBeenCalled();
@@ -135,7 +135,7 @@ describe('Testsuite for BranchMenuPopper', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should test the Branch Menu when there is are no branches', () => {
+  test('should test the Branch Menu when there is are no branches', async () => {
     jest.spyOn(mockGetAllFlowBranches, 'getAllFlowBranches').mockReturnValue([]);
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     initBranchMenuPopper([
@@ -151,7 +151,7 @@ describe('Testsuite for BranchMenuPopper', () => {
     const tooltipNode = screen.getByRole('tooltip', {name: 'Select branch to add to'});
 
     expect(tooltipNode).toBeInTheDocument();
-    userEvent.click(tooltipNode);
+    await userEvent.click(tooltipNode);
     expect(mockhandleClose).toHaveBeenCalled();
   });
 });

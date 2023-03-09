@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactredux from 'react-redux';
@@ -10,12 +11,30 @@ import actions from '../../../../../../actions';
 import { getCreatedStore } from '../../../../../../store';
 import GeneralPanel from './General';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('GeneralPanel UI tests', () => {
   runServer();
   async function addInteration() {
     const initialStore = getCreatedStore();
 
-    initialStore.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { initialStore.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(initialStore?.getState()?.data?.resources?.integrations).toBeDefined());
 
     return {initialStore};
@@ -35,7 +54,7 @@ describe('GeneralPanel UI tests', () => {
     const option1 = screen.getByText('Option1');
 
     expect(option1).toBeInTheDocument();
-    userEvent.click(option1);
+    await userEvent.click(option1);
     expect(screen.getByText('Option2')).toBeInTheDocument();
   });
   test('should test when form status is loading', async () => {

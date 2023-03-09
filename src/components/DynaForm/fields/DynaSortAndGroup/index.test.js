@@ -63,26 +63,26 @@ describe('uI test cases for DynaSortAndGroup', () => {
 
   test('should display the options in the select component for a export which is not of type http or rdbms', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} />, {initialStore});
-    userEvent.click(screen.queryByText(/Select.../i));
+    await userEvent.click(screen.queryByText(/Select.../i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText(/randomObject/i)).toBeInTheDocument());
   });
   test('should display the options in the select component for a http, rdbms and file type export', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} resourceSubType="http" />, {initialStore});
-    userEvent.click(screen.queryByText(/Select.../i));
+    await userEvent.click(screen.queryByText(/Select.../i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
   });
   test('should not display the object in the select component as options for a http or rdbms type export', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} value={value} resourceSubType="rdbms" />, {initialStore});
     expect(screen.queryByText(/selectedValue/i)).toBeInTheDocument();
-    userEvent.click(screen.queryByText(/selectedValue/i));
+    await userEvent.click(screen.queryByText(/selectedValue/i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText(/randomObject/i)).not.toBeInTheDocument());
   });
   test('should display the object in the select component as options for a file type export', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} value={value} />, {initialStore});
     expect(screen.queryByText(/selectedValue/i)).toBeInTheDocument();
-    userEvent.click(screen.queryByText(/selectedValue/i));
+    await userEvent.click(screen.queryByText(/selectedValue/i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText(/randomObject/i)).toBeInTheDocument());
   });

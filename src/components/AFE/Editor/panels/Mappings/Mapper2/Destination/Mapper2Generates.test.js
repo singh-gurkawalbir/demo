@@ -39,29 +39,29 @@ describe('mapper2Generates test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should change the data type Generates field', () => {
+  test('should change the data type Generates field', async () => {
     initFunction();
 
-    userEvent.type(screen.getByRole('textbox'), 'number');
-    userEvent.click(screen.getByText('string'));
-    userEvent.click(screen.getByRole('button', {name: 'number'}));
+    await userEvent.type(screen.getByRole('textbox'), 'number');
+    await userEvent.click(screen.getByText('string'));
+    await userEvent.click(screen.getByRole('button', {name: 'number'}));
     expect(mockOnBlur).toHaveBeenCalledWith('number');
   });
   test('should show the textbox as disabled', () => {
     initFunction(true);
     expect(screen.getByRole('textbox')).toBeDisabled();
   });
-  test('should press the escape button and textbox should be blurred', () => {
+  test('should press the escape button and textbox should be blurred', async () => {
     initFunction();
 
-    userEvent.type(screen.getByRole('textbox'), 'number');
-    userEvent.keyboard('{Escape}');
+    await userEvent.type(screen.getByRole('textbox'), 'number');
+    await userEvent.keyboard('{Escape}');
     expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });
-  test('should click outside the textbox and the textbox should be blurred', () => {
+  test('should click outside the textbox and the textbox should be blurred', async () => {
     initFunction();
 
-    userEvent.type(screen.getByRole('textbox'), 'number');
+    await userEvent.type(screen.getByRole('textbox'), 'number');
     fireEvent.click(document);
     expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });

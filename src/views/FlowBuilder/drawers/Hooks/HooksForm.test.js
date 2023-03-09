@@ -2,7 +2,7 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import HooksForm from './HooksForm';
 import actions from '../../../../actions';
@@ -158,50 +158,52 @@ describe('HooksForm test cases', () => {
   test('should pass the initial render with default value', async () => {
     await initHooksForm();
 
-    const saveButton = screen.getByRole('button', { name: 'mock onSave'});
-    const closeButton = screen.getByRole('button', { name: 'mock onClose'});
-    const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock onSave'});
+      const closeButton = screen.getByRole('button', { name: 'mock onClose'});
+      const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
 
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountButton).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(remountButton);
+      await userEvent.click(remountButton);
 
-    userEvent.click(closeButton);
-    expect(mockHistoryGoBack).toBeCalled();
-    mockDispatchFn.mockClear();
+      await userEvent.click(closeButton);
+      expect(mockHistoryGoBack).toBeCalled();
+      mockDispatchFn.mockClear();
 
-    userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('exports', 'export_id', [
-      {
-        op: 'replace',
-        path: '/hooks',
-        value: {
-          preSavePage: {
-            _scriptId: 'script_id',
-            function: 'preSavePageFunction',
+      await userEvent.click(saveButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('exports', 'export_id', [
+        {
+          op: 'replace',
+          path: '/hooks',
+          value: {
+            preSavePage: {
+              _scriptId: 'script_id',
+              function: 'preSavePageFunction',
+            },
           },
         },
-      },
-    ], {
-      context: { flowId: 'flow_id' },
-      asyncKey: 'form_key',
-    }));
-    expect(mockDispatchFn).toBeCalledWith(actions.hooks.save({
-      resourceType: 'exports',
-      resourceId: 'export_id',
-      flowId: 'flow_id',
-      match: {
-        isExact: true,
-        params: {
-          resourceId: 'export_id',
-          resourceType: 'exports',
+      ], {
+        context: { flowId: 'flow_id' },
+        asyncKey: 'form_key',
+      }));
+      expect(mockDispatchFn).toBeCalledWith(actions.hooks.save({
+        resourceType: 'exports',
+        resourceId: 'export_id',
+        flowId: 'flow_id',
+        match: {
+          isExact: true,
+          params: {
+            resourceId: 'export_id',
+            resourceType: 'exports',
+          },
+          path: '/flowBuilder/flow_id/hooks/:resourceType/:resourceId',
+          url: '/flowBuilder/flow_id/hooks/exports/export_id',
         },
-        path: '/flowBuilder/flow_id/hooks/:resourceType/:resourceId',
-        url: '/flowBuilder/flow_id/hooks/exports/export_id',
-      },
-    }));
+      }));
+    });
   });
 
   test('should pass the initial render with invalid export hook', async () => {
@@ -209,20 +211,22 @@ describe('HooksForm test cases', () => {
       resourceId: 'export_id_1',
     });
 
-    const saveButton = screen.getByRole('button', { name: 'mock onSave'});
-    const closeButton = screen.getByRole('button', { name: 'mock onClose'});
-    const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock onSave'});
+      const closeButton = screen.getByRole('button', { name: 'mock onClose'});
+      const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
 
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountButton).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(remountButton);
+      await userEvent.click(remountButton);
 
-    userEvent.click(closeButton);
-    expect(mockHistoryGoBack).toBeCalled();
+      await userEvent.click(closeButton);
+      expect(mockHistoryGoBack).toBeCalled();
 
-    userEvent.click(saveButton); // onSave will return null. can't check any dispatch or operations at component level
+      await userEvent.click(saveButton);
+    }); // onSave will return null. can't check any dispatch or operations at component level
   });
 
   test('should pass the initial render with invalid import hooks', async () => {
@@ -231,18 +235,20 @@ describe('HooksForm test cases', () => {
       resourceId: 'import_id_1',
     });
 
-    const saveButton = screen.getByRole('button', { name: 'mock onSave'});
-    const closeButton = screen.getByRole('button', { name: 'mock onClose'});
-    const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock onSave'});
+      const closeButton = screen.getByRole('button', { name: 'mock onClose'});
+      const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
 
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountButton).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(closeButton);
-    expect(mockHistoryGoBack).toBeCalled();
+      await userEvent.click(closeButton);
+      expect(mockHistoryGoBack).toBeCalled();
 
-    userEvent.click(saveButton); // onSave will return null. can't check any dispatch or operations at component level
+      await userEvent.click(saveButton);
+    });// onSave will return null. can't check any dispatch or operations at component level
   });
 
   test('should pass the initial render with import hook', async () => {
@@ -251,55 +257,57 @@ describe('HooksForm test cases', () => {
       resourceId: 'import_id_2',
     });
 
-    const saveButton = screen.getByRole('button', { name: 'mock onSave'});
-    const closeButton = screen.getByRole('button', { name: 'mock onClose'});
-    const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock onSave'});
+      const closeButton = screen.getByRole('button', { name: 'mock onClose'});
+      const remountButton = screen.getByRole('button', { name: 'mock remountAfterSaveFn'});
 
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountButton).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountButton).toBeInTheDocument();
 
-    userEvent.click(remountButton);
+      await userEvent.click(remountButton);
 
-    userEvent.click(closeButton);
-    expect(mockHistoryGoBack).toBeCalled();
+      await userEvent.click(closeButton);
+      expect(mockHistoryGoBack).toBeCalled();
 
-    userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('imports', 'import_id_2', [
-      {
-        op: 'replace',
-        path: '/hooks',
-        value: {},
-      },
-      {
-        op: 'replace',
-        path: '/netsuite_da/hooks',
-        value: {
-          postMap: {},
-          postSubmit: {},
-          preMap: {
-            fileInternalId: 'internal_id',
-            function: 'preMapFunction',
+      await userEvent.click(saveButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('imports', 'import_id_2', [
+        {
+          op: 'replace',
+          path: '/hooks',
+          value: {},
+        },
+        {
+          op: 'replace',
+          path: '/netsuite_da/hooks',
+          value: {
+            postMap: {},
+            postSubmit: {},
+            preMap: {
+              fileInternalId: 'internal_id',
+              function: 'preMapFunction',
+            },
           },
         },
-      },
-    ], {
-      context: { flowId: 'flow_id' },
-      asyncKey: 'form_key',
-    }));
-    expect(mockDispatchFn).toBeCalledWith(actions.hooks.save({
-      resourceType: 'imports',
-      resourceId: 'import_id_2',
-      flowId: 'flow_id',
-      match: {
-        isExact: true,
-        params: {
-          resourceId: 'import_id_2',
-          resourceType: 'imports',
+      ], {
+        context: { flowId: 'flow_id' },
+        asyncKey: 'form_key',
+      }));
+      expect(mockDispatchFn).toBeCalledWith(actions.hooks.save({
+        resourceType: 'imports',
+        resourceId: 'import_id_2',
+        flowId: 'flow_id',
+        match: {
+          isExact: true,
+          params: {
+            resourceId: 'import_id_2',
+            resourceType: 'imports',
+          },
+          path: '/flowBuilder/flow_id/hooks/:resourceType/:resourceId',
+          url: '/flowBuilder/flow_id/hooks/imports/import_id_2',
         },
-        path: '/flowBuilder/flow_id/hooks/:resourceType/:resourceId',
-        url: '/flowBuilder/flow_id/hooks/imports/import_id_2',
-      },
-    }));
+      }));
+    });
   });
 });

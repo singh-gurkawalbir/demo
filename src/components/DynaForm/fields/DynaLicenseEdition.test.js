@@ -15,6 +15,24 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('test suite for DynaLicenseEdition field', () => {
   afterEach(() => {
     mockDispatchFn.mockClear();
@@ -32,7 +50,7 @@ describe('test suite for DynaLicenseEdition field', () => {
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
   });
 
-  test('should be required when creating new license', () => {
+  test('should be required when creating new license', async () => {
     const props = {
       id: 'edition',
       label: 'Edition',
@@ -66,7 +84,7 @@ describe('test suite for DynaLicenseEdition field', () => {
     const {utils: {unmount}} = renderWithProviders(<DynaLicenseEdition {...props} />, {initialStore});
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState(props.formKey)(props.id, {required: true}));
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     [
       'Please select',
       'id_starter',

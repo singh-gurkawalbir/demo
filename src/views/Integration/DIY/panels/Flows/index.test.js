@@ -239,6 +239,24 @@ jest.mock('../../../common/ErrorsList', () => ({
   ,
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('Flows Panel UI tests', () => {
   test('should render the title along with the error count and searchbar', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf'};
@@ -278,29 +296,29 @@ describe('Flows Panel UI tests', () => {
 
     expect(element).toBeInTheDocument();
   });
-  test('should display the mapping drawer when clicked on edit mapping icon', () => {
+  test('should display the mapping drawer when clicked on edit mapping icon', async () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
     const element = document.querySelector('[title="Add mapping"]');
 
-    userEvent.click(element);
+    await userEvent.click(element);
     expect(screen.getByText('Mapping Drawer')).toBeInTheDocument();       // mocked component//
   });
-  test('should display the schedule drawer when clicked on edit mapping icon', () => {
+  test('should display the schedule drawer when clicked on edit mapping icon', async () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
     const element = document.querySelector('[title="Remove or configure all unconfigured flow steps to edit the flow schedule"]');
 
-    userEvent.click(element);
+    await userEvent.click(element);
     expect(screen.getByText('Schedule Drawer')).toBeInTheDocument();       // mocked component//
   });
-  test('should display the errorList drawer when clicked on the number of errors', () => {
+  test('should display the errorList drawer when clicked on the number of errors', async () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    userEvent.click(screen.getByText(/4 errors/i));
+    await userEvent.click(screen.getByText(/4 errors/i));
     expect(screen.getByText('ErrorList Drawer')).toBeInTheDocument();       // mocked component//
   });
   test('should display the predefined unassigned flowgrouping when flowGroupingId is not present in any of the flows', () => {
@@ -309,12 +327,12 @@ describe('Flows Panel UI tests', () => {
     initFlowsPanel(props);
     expect(screen.getByText(/Unassigned/i)).toBeInTheDocument();
   });
-  test('should display different flows when clicked on different flow grouping', () => {
+  test('should display different flows when clicked on different flow grouping', async () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
     expect(screen.getByText('flow1')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Unassigned'));
+    await userEvent.click(screen.getByText('Unassigned'));
     expect(screen.getByText('flow3')).toBeInTheDocument();
     expect(screen.queryByText('flow1')).toBeNull();    // only flows of respective flowgrouping have to be displayed //
   });
@@ -324,8 +342,8 @@ describe('Flows Panel UI tests', () => {
     initFlowsPanel(props);
     const element = document.querySelector('[aria-label="search"]');
 
-    userEvent.click(element);
-    userEvent.type(element, 'senorita');
+    await userEvent.click(element);
+    await userEvent.type(element, 'senorita');
     await waitFor(() => expect(screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.')).toBeInTheDocument());
   });
   test('should display the flows that match the keywords in the searchbar', async () => {
@@ -334,9 +352,9 @@ describe('Flows Panel UI tests', () => {
     initFlowsPanel(props);
     const element = document.querySelector('[aria-label="search"]');
 
-    userEvent.clear(element);
-    userEvent.click(element);
-    userEvent.type(element, 'flow');
+    await userEvent.clear(element);
+    await userEvent.click(element);
+    await userEvent.type(element, 'flow');
     await waitFor(() => expect(screen.getByText('Showing all flow groups that contain search matches.')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('flow1')).toBeInTheDocument());
   });

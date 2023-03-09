@@ -136,7 +136,7 @@ describe('testsuite for JobActionMenu', () => {
     mockHistoryPush.mockClear();
     mockOnActionClick.mockClear();
   });
-  test('should test edit flow menu option when the flow builder view has set to false and when user permissions for flow edit is set to true', () => {
+  test('should test edit flow menu option when the flow builder view has set to false and when user permissions for flow edit is set to true', async () => {
     initJobActionsMenu({
       job: {
         numError: 3,
@@ -177,7 +177,7 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const editFlowButtonNode = screen.getByRole('menuitem', {name: /edit flow/i});
 
     expect(editFlowButtonNode).toBeInTheDocument();
@@ -190,10 +190,10 @@ describe('testsuite for JobActionMenu', () => {
     const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {name: /Download diagnostics/i});
 
     expect(downloadDiagnosticsButtonNode).toBeInTheDocument();
-    userEvent.click(editFlowButtonNode);
+    await userEvent.click(editFlowButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/123/flowBuilder/456');
   });
-  test('should test view flow menu option when the flow builder view has set to false and when user permissions for flow edit is set to false', () => {
+  test('should test view flow menu option when the flow builder view has set to false and when user permissions for flow edit is set to false', async () => {
     initJobActionsMenu({
       job: {
         numError: 3,
@@ -234,7 +234,7 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const viewFlowButtonNode = screen.getByRole('menuitem', {name: /view flow/i});
 
     expect(viewFlowButtonNode).toBeInTheDocument();
@@ -247,10 +247,10 @@ describe('testsuite for JobActionMenu', () => {
     const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {name: /Download diagnostics/i});
 
     expect(downloadDiagnosticsButtonNode).toBeInTheDocument();
-    userEvent.click(viewFlowButtonNode);
+    await userEvent.click(viewFlowButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/123/flowBuilder/456');
   });
-  test('should test the cancel menu option when the job status is in queued state', () => {
+  test('should test the cancel menu option when the job status is in queued state', async () => {
     initJobActionsMenu({
       job: {
         numError: 3,
@@ -291,11 +291,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const cancelButtonNode = screen.getByRole('menuitem', {name: /cancel/i});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(screen.getByText(/confirm cancel/i)).toBeInTheDocument();
     const yesCancelButtonNode = screen.getByRole('button', {
       name: /yes, cancel/i,
@@ -306,10 +306,10 @@ describe('testsuite for JobActionMenu', () => {
     const noGoBackButtonNode = screen.getByRole('button', {name: /No, go back/});
 
     expect(noGoBackButtonNode).toBeInTheDocument();
-    userEvent.click(yesCancelButtonNode);
+    await userEvent.click(yesCancelButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.cancel({ jobId: '321' }));
   });
-  test('should test the cancel menu option when the job status is in retrying state', () => {
+  test('should test the cancel menu option when the job status is in retrying state', async () => {
     initJobActionsMenu({
       job: {
         numError: 3,
@@ -352,11 +352,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const cancelButtonNode = screen.getByRole('menuitem', {name: /cancel/i});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(screen.getByText(/confirm cancel/i)).toBeInTheDocument();
     const yesCancelButtonNode = screen.getByRole('button', {
       name: /yes, cancel/i,
@@ -366,10 +366,10 @@ describe('testsuite for JobActionMenu', () => {
     const noGoBackButtonNode = screen.getByRole('button', {name: /No, go back/});
 
     expect(noGoBackButtonNode).toBeInTheDocument();
-    userEvent.click(yesCancelButtonNode);
+    await userEvent.click(yesCancelButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.cancel({ jobId: 839 }));
   });
-  test('should test the cancel menu option when the job status is in retrying state and job type is export', () => {
+  test('should test the cancel menu option when the job status is in retrying state and job type is export', async () => {
     initJobActionsMenu({
       job: {
         numError: 3,
@@ -412,11 +412,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const cancelButtonNode = screen.getByRole('menuitem', {name: /cancel/i});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(screen.getByText(/confirm cancel/i)).toBeInTheDocument();
     const yesCancelButtonNode = screen.getByRole('button', {
       name: /yes, cancel/i,
@@ -426,10 +426,10 @@ describe('testsuite for JobActionMenu', () => {
     const noGoBackButtonNode = screen.getByRole('button', {name: /No, go back/});
 
     expect(noGoBackButtonNode).toBeInTheDocument();
-    userEvent.click(yesCancelButtonNode);
+    await userEvent.click(yesCancelButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.cancel({ jobId: '789' }));
   });
-  test('should test the Run Flow menu option', () => {
+  test('should test the Run Flow menu option', async () => {
     const url = 'POST:/flows/456/run';
 
     initJobActionsMenu({
@@ -480,15 +480,15 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const runFlowButtonNode = screen.getByRole('button', {name: /run flow/i});
 
     expect(runFlowButtonNode).toBeInTheDocument();
-    userEvent.click(runFlowButtonNode);
+    await userEvent.click(runFlowButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.paging.setCurrentPage(0));
     expect(screen.getByText(/testing error/i)).toBeInTheDocument();
   });
-  test('should test the Run Flow menu option when the network status is success', () => {
+  test('should test the Run Flow menu option when the network status is success', async () => {
     const url = 'POST:/flows/456/run';
 
     initJobActionsMenu({
@@ -539,14 +539,14 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const runFlowButtonNode = screen.getByRole('button', {name: /run flow/i});
 
     expect(runFlowButtonNode).toBeInTheDocument();
-    userEvent.click(runFlowButtonNode);
+    await userEvent.click(runFlowButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.paging.setCurrentPage(0));
   });
-  test('should test the view retries menu option', () => {
+  test('should test the view retries menu option', async () => {
     initJobActionsMenu({
       job: {
         numError: 0,
@@ -590,16 +590,16 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const viewRetriesOptionNode = screen.getByRole('menuitem', {name: /view retries/i});
 
     expect(viewRetriesOptionNode).toBeInTheDocument();
-    userEvent.click(viewRetriesOptionNode);
+    await userEvent.click(viewRetriesOptionNode);
     expect(screen.getByText(/Mock Job Retries Dialog/i)).toBeInTheDocument();
     const closeButtonNode = document.querySelector('button[data-test="jobretriesdialog_close"]');
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(closeButtonNode).not.toBeInTheDocument();
   });
   test('should test the retry all job menu option and by clicking on undo button of snackbar', async () => {
@@ -643,11 +643,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const retryallJobsOptionNode = screen.getByRole('menuitem', {name: /retry all/i});
 
     expect(retryallJobsOptionNode).toBeInTheDocument();
-    userEvent.click(retryallJobsOptionNode);
+    await userEvent.click(retryallJobsOptionNode);
     expect(screen.getByText(/2 errors retried\./i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retryFlowJob({
       jobId: '321',
@@ -711,11 +711,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const retryallJobsOptionNode = screen.getByRole('menuitem', {name: /retry all/i});
 
     expect(retryallJobsOptionNode).toBeInTheDocument();
-    userEvent.click(retryallJobsOptionNode);
+    await userEvent.click(retryallJobsOptionNode);
     expect(screen.getByText(/1 error retried\./i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retryFlowJob({
       jobId: '321',
@@ -781,11 +781,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const retryJobsOptionNode = screen.getByRole('menuitem', {name: /retry/i});
 
     expect(retryJobsOptionNode).toBeInTheDocument();
-    userEvent.click(retryJobsOptionNode);
+    await userEvent.click(retryJobsOptionNode);
     expect(screen.getByText(/1 error retried\./i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retrySelected({
       jobs: [{ _id: '321', _flowJobId: '734' }],
@@ -850,11 +850,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const retryJobsOptionNode = screen.getByRole('menuitem', {name: /retry/i});
 
     expect(retryJobsOptionNode).toBeInTheDocument();
-    userEvent.click(retryJobsOptionNode);
+    await userEvent.click(retryJobsOptionNode);
     expect(screen.getByText(/1 error retried\./i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retrySelected({
       jobs: [{ _id: '321', _flowJobId: '734' }],
@@ -919,11 +919,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const markResolvedOptionNode = screen.getByRole('menuitem', {name: /mark resolved/i});
 
     expect(markResolvedOptionNode).toBeInTheDocument();
-    userEvent.click(markResolvedOptionNode);
+    await userEvent.click(markResolvedOptionNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelected({jobs: [{ _id: '321', _flowJobId: '734' }], match: { path: '/', url: '/', params: {}, isExact: true }}));
     expect(screen.getByText(/1 errors marked as resolved\./i)).toBeInTheDocument();
     const undoButtonNode = screen.getByRole('button', {
@@ -931,7 +931,7 @@ describe('testsuite for JobActionMenu', () => {
     });
 
     expect(undoButtonNode).toBeInTheDocument();
-    userEvent.click(undoButtonNode);
+    await userEvent.click(undoButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveUndo({type: 'JOB_RESOLVE_UNDO', parentJobId: '734', childJobId: '321'}));
     await waitFor(() => expect(undoButtonNode).not.toBeInTheDocument());
   });
@@ -978,11 +978,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const markResolvedOptionNode = screen.getByRole('menuitem', {name: /mark resolved/i});
 
     expect(markResolvedOptionNode).toBeInTheDocument();
-    userEvent.click(markResolvedOptionNode);
+    await userEvent.click(markResolvedOptionNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelected({jobs: [{ _id: '321', _flowJobId: '734' }], match: { path: '/', url: '/', params: {}, isExact: true }}));
     expect(screen.getByText(/1 errors marked as resolved\./i)).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {
@@ -990,11 +990,11 @@ describe('testsuite for JobActionMenu', () => {
     });
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveCommit({jobs: [{_id: '321', _flowJobId: '734'}]}));
     await waitFor(() => expect(closeButtonNode).not.toBeInTheDocument());
   });
-  test('should test the download files menu option when there are files of more than 1', () => {
+  test('should test the download files menu option when there are files of more than 1', async () => {
     initJobActionsMenu({
       job: {
         numError: '1',
@@ -1043,19 +1043,19 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const downloadFilesOptionNode = screen.getByRole('menuitem', {name: /download files/i});
 
     expect(downloadFilesOptionNode).toBeInTheDocument();
-    userEvent.click(downloadFilesOptionNode);
+    await userEvent.click(downloadFilesOptionNode);
     expect(screen.getByText(/Mock Job Files Download Dialog/i)).toBeInTheDocument();
     const closeButtonNode = document.querySelector('button[data-test="jobfiledownload_close"]');
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(closeButtonNode).not.toBeInTheDocument();
   });
-  test('should test the download file menu option when there is only 1 file', () => {
+  test('should test the download file menu option when there is only 1 file', async () => {
     initJobActionsMenu({
       job: {
         numError: '1',
@@ -1101,14 +1101,14 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const downloadFileOptionNode = screen.getByRole('menuitem', {name: /download file/i});
 
     expect(downloadFileOptionNode).toBeInTheDocument();
-    userEvent.click(downloadFileOptionNode);
+    await userEvent.click(downloadFileOptionNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '321' }));
   });
-  test('should test the Download diagnostics menu option', () => {
+  test('should test the Download diagnostics menu option', async () => {
     initJobActionsMenu({
       job: {
         numError: '1',
@@ -1150,11 +1150,11 @@ describe('testsuite for JobActionMenu', () => {
     const jobActionmenuButton = document.querySelector('button[data-test="moreJobActionsMenu"]');
 
     expect(jobActionmenuButton).toBeInTheDocument();
-    userEvent.click(jobActionmenuButton);
+    await userEvent.click(jobActionmenuButton);
     const downloadDiagnosticsOptionNode = screen.getByRole('menuitem', {name: /Download diagnostics/i});
 
     expect(downloadDiagnosticsOptionNode).toBeInTheDocument();
-    userEvent.click(downloadDiagnosticsOptionNode);
+    await userEvent.click(downloadDiagnosticsOptionNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '321', fileType: 'diagnostics' }));
   });
 });

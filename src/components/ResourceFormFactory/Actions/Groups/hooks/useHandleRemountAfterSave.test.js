@@ -60,7 +60,7 @@ describe('test suite for useHandleRemountAfterSave hook', () => {
     });
 
     await initUseHandleRemountAfterSave({formKey, onSave, remountAfterSaveFn}, initialStore);
-    userEvent.click(screen.getByRole('button', {name: 'Click Here'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Click Here'}));
     expect(onSave).toBeCalled();
     expect(remountAfterSaveFn).toBeCalled();
   });

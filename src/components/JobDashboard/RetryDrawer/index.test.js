@@ -1,5 +1,5 @@
 
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
@@ -124,7 +124,7 @@ describe('testsuite for Retry Drawer', () => {
     const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'JOB_ERROR_UPDATE_RETRY_DATA',
       retryData: { data: { id: '123' } },
@@ -143,21 +143,25 @@ describe('testsuite for Retry Drawer', () => {
           name: 'test',
         },
       }});
-    const textBoxNode = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
+    waitFor(async () => {
+      const textBoxNode = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
 
-    expect(textBoxNode).toBeInTheDocument();
-    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('{"id":"123","name":"test"}');
-    await fireEvent.change(textBoxNode, {target: {value: '{"id":"123"}'}});
-    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('{"id":"123"}');
-    const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
+      expect(textBoxNode).toBeInTheDocument();
+      expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('{"id":"123","name":"test"}');
+      await fireEvent.change(textBoxNode, {target: {value: '{"id":"123"}'}});
+      expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('{"id":"123"}');
+    });
+    waitFor(async () => {
+      const saveAndCloseButtonNode = screen.getByRole('button', {name: 'Save & close'});
 
-    expect(saveAndCloseButtonNode).toBeInTheDocument();
-    userEvent.click(saveAndCloseButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'JOB_ERROR_UPDATE_RETRY_DATA',
-      retryData: { data: { id: '123' } },
-      retryId: '6543',
-      asyncKey: 'retryDrawer-0987-7654',
+      expect(saveAndCloseButtonNode).toBeInTheDocument();
+      await userEvent.click(saveAndCloseButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'JOB_ERROR_UPDATE_RETRY_DATA',
+        retryData: { data: { id: '123' } },
+        retryId: '6543',
+        asyncKey: 'retryDrawer-0987-7654',
+      });
     });
   });
   test('should load the retry drawer with JSON content and click on close button', async () => {
@@ -173,12 +177,14 @@ describe('testsuite for Retry Drawer', () => {
         },
       }});
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
-    const closeButtonNode = screen.getByRole('button', {name: 'Close'});
+    waitFor(async () => {
+      const closeButtonNode = screen.getByRole('button', {name: 'Close'});
 
-    expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
-    expect(mockHistoryGoBack).toHaveBeenCalled();
-    mockHistoryGoBack.mockClear();
+      expect(closeButtonNode).toBeInTheDocument();
+      await userEvent.click(closeButtonNode);
+      expect(mockHistoryGoBack).toHaveBeenCalled();
+      mockHistoryGoBack.mockClear();
+    });
   });
   test('should load the retry drawer with JSON content and click on retry button and the save button should be in disabled state', async () => {
     mockHistoryGoBack = jest.fn();
@@ -193,24 +199,26 @@ describe('testsuite for Retry Drawer', () => {
         },
       }});
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
-    const retryButtonNode = screen.getByRole('button', {name: 'Retry'});
+    waitFor(async () => {
+      const retryButtonNode = screen.getByRole('button', {name: 'Retry'});
 
-    expect(retryButtonNode).toBeInTheDocument();
-    userEvent.click(retryButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'JOB_ERROR_RETRY_SELECTED',
-      jobId: '0987',
-      flowJobId: '7654',
-      selectedRetryIds: ['6543'],
-      match: {
-        path: '/integrations/1234/dashboard/viewErrors/editRetry/:retryId',
-        url: '/integrations/1234/dashboard/viewErrors/editRetry/6543',
-        isExact: true,
-        params: { retryId: '6543' },
-      },
+      expect(retryButtonNode).toBeInTheDocument();
+      await userEvent.click(retryButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'JOB_ERROR_RETRY_SELECTED',
+        jobId: '0987',
+        flowJobId: '7654',
+        selectedRetryIds: ['6543'],
+        match: {
+          path: '/integrations/1234/dashboard/viewErrors/editRetry/:retryId',
+          url: '/integrations/1234/dashboard/viewErrors/editRetry/6543',
+          isExact: true,
+          params: { retryId: '6543' },
+        },
+      });
+      expect(mockHistoryGoBack).toHaveBeenCalled();
+      mockHistoryGoBack.mockClear();
     });
-    expect(mockHistoryGoBack).toHaveBeenCalled();
-    mockHistoryGoBack.mockClear();
   });
   test('should load the retry drawer by modifying incorrect JSON content and verify the warning message and verify the retry and close button is in disabled state', async () => {
     await initRetryDawer({height: 'tall',
@@ -224,14 +232,16 @@ describe('testsuite for Retry Drawer', () => {
         },
       }});
     expect(screen.getByText(/edit retry data/i)).toBeInTheDocument();
-    const textBoxNode = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
+    waitFor(async () => {
+      const textBoxNode = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
 
-    expect(textBoxNode).toBeInTheDocument();
-    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('{"id":"123","name":"test"}');
-    await fireEvent.change(textBoxNode, {target: {value: 'test'}});
-    expect(screen.getByText(/Your retry data is not a valid JSON object./i)).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
-    expect(screen.getByRole('button', {name: 'Retry'})).toBeDisabled();
+      expect(textBoxNode).toBeInTheDocument();
+      expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('{"id":"123","name":"test"}');
+      await fireEvent.change(textBoxNode, {target: {value: 'test'}});
+      expect(screen.getByText(/Your retry data is not a valid JSON object./i)).toBeInTheDocument();
+      expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
+      expect(screen.getByRole('button', {name: 'Retry'})).toBeDisabled();
+    });
   });
   test('should load the retry drawer with no data', async () => {
     await initRetryDawer({height: 'tall',

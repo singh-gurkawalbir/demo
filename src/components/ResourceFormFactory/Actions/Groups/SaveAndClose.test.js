@@ -64,7 +64,7 @@ describe('test suite for SaveAndClose', () => {
     await initSaveAndClose({onCancel, disabled: true});
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -87,7 +87,7 @@ describe('test suite for SaveAndClose', () => {
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButton).toBeEnabled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockHandleSubmit).toHaveBeenCalled();
   });
 
@@ -124,19 +124,19 @@ describe('test suite for SaveAndClose', () => {
     await initSaveAndClose({formKey, resourceType: 'imports', resourceId: '287dgf', onCancel, flowId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Confirm replace')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to replace the connection for this flow? Replacing a connection will cancel all jobs currently running.')).toBeInTheDocument();
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     const confirmButton = screen.getByRole('button', {name: 'Replace'});
 
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.completeRegister(
       [connectionId], integrationId
     ));

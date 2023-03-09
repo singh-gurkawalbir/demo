@@ -15,29 +15,29 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-function initRunHistoryTable(data = {}, initialStore = null) {
+async function initRunHistoryTable(data = {}, initialStore = null) {
   const ui = (
     <CeligoTable {...metadata} data={[data]} />
   );
 
   renderWithProviders(ui, {initialStore});
-  userEvent.click(screen.queryByRole('button', {name: /more/i}));
+  await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 }
 
 describe("run history's Download Files test cases", () => {
-  test('should click Download files button when only one files is there to download', () => {
-    initRunHistoryTable({files: [1], _id: '_id'});
+  test('should click Download files button when only one files is there to download', async () => {
+    await initRunHistoryTable({files: [1], _id: '_id'});
 
-    userEvent.click(screen.getByText('Download files'));
+    await userEvent.click(screen.getByText('Download files'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '_id' }));
   });
 
-  test('should open modal when more than one file is there to downlaod', () => {
-    initRunHistoryTable({files: [{id: 1}, {id: 2}], _id: '_id'});
+  test('should open modal when more than one file is there to downlaod', async () => {
+    await initRunHistoryTable({files: [{id: 1}, {id: 2}], _id: '_id'});
 
-    userEvent.click(screen.getByText('Download files'));
+    await userEvent.click(screen.getByText('Download files'));
     expect(screen.getByText('Download')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('closeModalDialog'));
+    await userEvent.click(screen.getByTestId('closeModalDialog'));
     expect(screen.queryByTestId('closeModalDialog')).not.toBeInTheDocument();
   });
 });

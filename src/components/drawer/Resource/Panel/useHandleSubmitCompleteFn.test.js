@@ -72,34 +72,34 @@ describe('useHandleSubmitCompleteFn tests', () => {
   });
   test('Should able to test the custom hook with new pageGenerator', async () => {
     await inituseHandleSubmitCompleteFn('pageGenerator');
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/exports/_resourceId');
   });
   test('Should able to test the custom hook with new integration', async () => {
     await inituseHandleSubmitCompleteFn('integrations', 'add', 'new-integration');
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).not.toHaveBeenCalledWith('/add/integrations/new-integration');
   });
   test('Should able to test the custom hook with new script with skipClose', async () => {
     await inituseHandleSubmitCompleteFn('scripts', 'add', 'new-script');
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.created(undefined, 'new-script'));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/scripts/new-script');
   });
   test('Should able to test the custom hook with new API', async () => {
     await inituseHandleSubmitCompleteFn('apis', 'add', 'new-api');
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.created(undefined, 'new-api'));
     expect(mockOnClose).toHaveBeenCalled();
   });
   test('Should able to test the custom hook with edit export with skipClose', async () => {
     await inituseHandleSubmitCompleteFn('exports', 'edit', '_exportId');
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/exports/_exportId');
   });
   test('Should able to test the custom hook with edit connection without skipClose', async () => {
     await inituseHandleSubmitCompleteFn('connections', 'edit', '_connectionId');
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockOnClose).toHaveBeenCalled();
   });
 });

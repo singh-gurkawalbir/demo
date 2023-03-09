@@ -1,5 +1,5 @@
 import React from 'react';
-import {screen, fireEvent} from '@testing-library/react';
+import {screen, fireEvent, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaStaticMap from './DynaStaticMap';
 import { renderWithProviders } from '../../../../test/test-utils';
@@ -17,7 +17,7 @@ function initDynaStaticMap(props = {}) {
 }
 
 describe('DynaStaticMap UI test cases', () => {
-  test('should test static mapping by modifying the data inside the rows and deleting', () => {
+  test('should test static mapping by modifying the data inside the rows and deleting', async () => {
     const genralProps = {
       keyName: 'export',
       keyLabel: 'Export field value',
@@ -39,31 +39,33 @@ describe('DynaStaticMap UI test cases', () => {
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(screen.getByDisplayValue('samplename')).toBeInTheDocument();
-    const input = screen.getAllByRole('textbox');
+    waitFor(async () => {
+      const input = screen.getAllByRole('textbox');
 
-    fireEvent.change(input[0], { target: { value: '' } });
-    userEvent.type(input[0], 'Idexport');
-    fireEvent.change(input[1], { target: { value: '' } });
-    userEvent.type(input[1], 'Idimport');
-    expect(screen.queryByText('id')).not.toBeInTheDocument();
-    expect(screen.queryByText('Id')).not.toBeInTheDocument();
-    expect(screen.getByDisplayValue('Idexport')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Idimport')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('samplename')).toBeInTheDocument();
-    const deleteButton = document.querySelector('button[data-test="deleteTableRow-0"]');
+      await fireEvent.change(input[0], { target: { value: '' } });
+      await userEvent.type(input[0], 'Idexport');
+      await fireEvent.change(input[1], { target: { value: '' } });
+      await userEvent.type(input[1], 'Idimport');
+      expect(screen.queryByText('id')).not.toBeInTheDocument();
+      expect(screen.queryByText('Id')).not.toBeInTheDocument();
+      expect(screen.getByDisplayValue('Idexport')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Idimport')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('name')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('samplename')).toBeInTheDocument();
+      const deleteButton = document.querySelector('button[data-test="deleteTableRow-0"]');
 
-    expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
-    expect(screen.queryByText('Idexport')).not.toBeInTheDocument();
-    expect(screen.queryByText('Idimport')).not.toBeInTheDocument();
-    const deleteButtontest = document.querySelector('button[data-test="deleteTableRow-0"]');
+      expect(deleteButton).toBeInTheDocument();
+      await userEvent.click(deleteButton);
+      expect(screen.queryByText('Idexport')).not.toBeInTheDocument();
+      expect(screen.queryByText('Idimport')).not.toBeInTheDocument();
+      const deleteButtontest = document.querySelector('button[data-test="deleteTableRow-0"]');
 
-    expect(deleteButtontest).toBeInTheDocument();
-    userEvent.click(deleteButtontest);
-    expect(screen.queryByText('name')).not.toBeInTheDocument();
-    expect(screen.queryByText('samplename')).not.toBeInTheDocument();
-    expect(mockonFieldChange).toBeCalled();
+      expect(deleteButtontest).toBeInTheDocument();
+      await userEvent.click(deleteButtontest);
+      expect(screen.queryByText('name')).not.toBeInTheDocument();
+      expect(screen.queryByText('samplename')).not.toBeInTheDocument();
+      expect(mockonFieldChange).toBeCalled();
+    });
   });
   test('should display data for provided mappings', () => {
     const genralProps = {

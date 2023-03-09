@@ -46,17 +46,17 @@ describe('useOpenRevisionWhenValid tests', () => {
     const openBtn = screen.getByRole('button', {name: 'Open'});
 
     expect(openBtn).toBeInTheDocument();
-    userEvent.click(openBtn);
+    await userEvent.click(openBtn);
     expect(mockHistoryPush).not.toHaveBeenCalledWith('/drawerURL');
   });
   test('Should able to test the hook without any revision inProgress and is not a pull', async () => {
     await inituseOpenRevisionWhenValid(props);
-    userEvent.click(screen.getByRole('button', {name: 'Open'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Open'}));
     expect(mockHistoryPush).toHaveBeenCalledWith('/drawerURL');
   });
   test('Should able to test the hook with isCreatePull true and not having any clone family', async () => {
     await inituseOpenRevisionWhenValid({...props, isCreatePull: true});
-    userEvent.click(screen.getByRole('button', {name: 'Open'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Open'}));
     expect(mockHistoryPush).not.toHaveBeenCalledWith('/drawerURL');
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByRole('link')).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('useOpenRevisionWhenValid tests', () => {
   });
   test('Should able to test the hook with revision inProgress', async () => {
     await inituseOpenRevisionWhenValid(props, true);
-    userEvent.click(screen.getByRole('button', {name: 'Open'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Open'}));
     expect(mockHistoryPush).not.toHaveBeenCalledWith('/drawerURL');
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByText('You have a pull, snapshot, or revert in progress.')).toBeInTheDocument();

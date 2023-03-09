@@ -34,7 +34,7 @@ describe('test suite for NextAndCancel', () => {
 
     await initNextAndCancel({onCancel, submitButtonLabel});
     expect(screen.getByRole('button', {name: submitButtonLabel})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Close'}));
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -70,7 +70,7 @@ describe('test suite for NextAndCancel', () => {
     const saveButton = screen.getByRole('button', {name: submitButtonLabel});
 
     expect(saveButton).toBeEnabled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalled();
   });
 

@@ -51,9 +51,9 @@ describe('dynaAction ui test cases', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should click on Dyna action button and make dispatch call for form validation', () => {
+  test('should click on Dyna action button and make dispatch call for form validation', async () => {
     initDynaAction({formKey: 'secondformKey', ignoreFormTouchedCheck: true});
-    userEvent.click(screen.getByText('Child Text'));
+    await userEvent.click(screen.getByText('Child Text'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.form.showFormValidations('secondformKey')
     );

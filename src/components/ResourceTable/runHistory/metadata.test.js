@@ -96,15 +96,15 @@ describe('jobStatusWithTag test cases', () => {
     cellIndex = indexOfCell(numPagesGenerated, 'cell');
     expectFunction(headerIndex, cellIndex);
   });
-  test('should click on action button and show only download disgnostics', () => {
+  test('should click on action button and show only download disgnostics', async () => {
     initRunHistoryTable({ key});
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Download diagnostics')).toBeInTheDocument();
     expect(screen.queryByText('Download files')).not.toBeInTheDocument();
   });
-  test('should click on action button and show download disgnostics and Download file options', () => {
+  test('should click on action button and show download disgnostics and Download file options', async () => {
     initRunHistoryTable({ key, files: [1]});
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Download diagnostics')).toBeInTheDocument();
     expect(screen.getByText('Download files')).toBeInTheDocument();
   });

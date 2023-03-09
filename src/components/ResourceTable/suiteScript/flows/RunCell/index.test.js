@@ -44,34 +44,34 @@ describe('suite script ScheduleCell ui test', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should redirect to uknown location when flow data is not provided', () => {
+  test('should redirect to uknown location when flow data is not provided', async () => {
     renderWithProviders(<MemoryRouter><RunCell flow={{}} /> </MemoryRouter>);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockHistoryPush).toHaveBeenCalledWith('/suitescript/undefined/integrations/undefined/dashboard');
   });
-  test('should redirect to inetgartion Apps URL  proper location', () => {
+  test('should redirect to inetgartion Apps URL  proper location', async () => {
     renderWithProviders(
       <MemoryRouter>
         <RunCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{_id: 'flowId', _integrationId: 'integrationId'}} />
       </MemoryRouter>, {initialStore});
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockHistoryPush).toHaveBeenCalledWith('/suitescript/ssLinkedConnectionId/integrationapps/someurl/integrationId/dashboard');
   });
-  test('should redirect to  proper location', () => {
+  test('should redirect to  proper location', async () => {
     renderWithProviders(
       <MemoryRouter>
         <RunCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{_id: 'flowId', _integrationId: '_integrationId'}} />
       </MemoryRouter>, {initialStore});
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockHistoryPush).toHaveBeenCalledWith('/suitescript/ssLinkedConnectionId/integrations/_integrationId/dashboard');
   });
-  test('should call the onRunStart function when provided as pramater', () => {
+  test('should call the onRunStart function when provided as pramater', async () => {
     const onRunStart = jest.fn();
 
     renderWithProviders(
@@ -80,7 +80,7 @@ describe('suite script ScheduleCell ui test', () => {
       </MemoryRouter>);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(onRunStart).toHaveBeenCalled();
   });
 });

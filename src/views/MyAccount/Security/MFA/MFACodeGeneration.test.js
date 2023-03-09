@@ -40,11 +40,11 @@ describe('Testsuite for MFA Code Generation', () => {
     const viewQRCodeButtonNode = screen.getByRole('button', {name: /view qr code/i});
 
     expect(viewQRCodeButtonNode).toBeInTheDocument();
-    userEvent.click(viewQRCodeButtonNode);
+    await userEvent.click(viewQRCodeButtonNode);
     const onCloseButtonNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
   });
   test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog', async () => {
@@ -64,11 +64,11 @@ describe('Testsuite for MFA Code Generation', () => {
     });
 
     expect(viewAccountAndSecretKeyButtonNode).toBeInTheDocument();
-    userEvent.click(viewAccountAndSecretKeyButtonNode);
+    await userEvent.click(viewAccountAndSecretKeyButtonNode);
     const onCloseButtonNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
   });
   test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog duplicate', async () => {
@@ -88,11 +88,11 @@ describe('Testsuite for MFA Code Generation', () => {
     });
 
     expect(viewAccountAndSecretKeyButtonNode).toBeInTheDocument();
-    userEvent.click(viewAccountAndSecretKeyButtonNode);
+    await userEvent.click(viewAccountAndSecretKeyButtonNode);
     const onCloseButtonNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
   });
   test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog duplicate1', async () => {

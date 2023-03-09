@@ -32,7 +32,7 @@ function initDefault(data = {}) {
 }
 
 describe('test suite for default', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: '123',
       name: 'iClient test',
@@ -70,7 +70,7 @@ describe('test suite for default', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

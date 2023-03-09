@@ -129,23 +129,23 @@ describe("openErros table's metadata UI tests", () => {
     initFunction(props, {actionInProgress: true});
     expect(screen.queryByRole('button', {name: /more/i})).not.toBeInTheDocument();
   });
-  test('should show actions options for the non retryable errors', () => {
+  test('should show actions options for the non retryable errors', async () => {
     initFunction(props, {actionInProgress: false});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Resolve')).toBeInTheDocument();
     expect(screen.getByText('View error details')).toBeInTheDocument();
   });
-  test('should show actions options for the retryable errors', () => {
+  test('should show actions options for the retryable errors', async () => {
     initFunction({...props, retryDataKey: 'someRetryDataKEy'}, {actionInProgress: false});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit retry data')).toBeInTheDocument();
     expect(screen.getByText('Resolve')).toBeInTheDocument();
     expect(screen.getByText('Retry')).toBeInTheDocument();
     expect(screen.getByText('View error details')).toBeInTheDocument();
   });
-  test('should show the option for download when source is FTP bridge', () => {
+  test('should show the option for download when source is FTP bridge', async () => {
     initFunction({...props, source: 'ftp_bridge', retryDataKey: 'someRetryDataKey'}, {actionInProgress: false});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const menuItems = screen.getAllByRole('menuitem');
     const list = menuItems.map(each => each.textContent);
 
@@ -159,9 +159,9 @@ describe("openErros table's metadata UI tests", () => {
       ]
     );
   });
-  test('should show option for View respone and request for NetSuite', () => {
+  test('should show option for View respone and request for NetSuite', async () => {
     initFunction({...props, source: 'ftp_bridge', reqAndResKey: 'reqAndResKey'}, {actionInProgress: false, resourceId: '5e5f495a3a9b335b1a007b43'}, initialStore);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const menuItems = screen.getAllByRole('menuitem');
     const list = menuItems.map(each => each.textContent);
 
@@ -169,9 +169,9 @@ describe("openErros table's metadata UI tests", () => {
       ['Resolve', 'View error details', 'View request', 'View response']
     );
   });
-  test('should show option for View respone and request for HTTP', () => {
+  test('should show option for View respone and request for HTTP', async () => {
     initFunction({...props, source: 'ftp_bridge', reqAndResKey: 'reqAndResKey'}, {actionInProgress: false, resourceId: '5e5f495a3a9b335b1a007b43'});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const menuItems = screen.getAllByRole('menuitem');
     const list = menuItems.map(each => each.textContent);
 

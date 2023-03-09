@@ -5,7 +5,7 @@ import DynaJsonResourcePath from './DynaJsonResourcePath';
 import { getCreatedStore } from '../../../store';
 
 describe('test suite for DynaJsonResourcePath field', () => {
-  test('should be able to update resource path', () => {
+  test('should be able to update resource path', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'file.json.resourcePath',
@@ -36,7 +36,7 @@ describe('test suite for DynaJsonResourcePath field', () => {
     expect(onFieldChange).toBeCalledWith(props.id, {...props.value, resourcePathToSave: '*'}, true);
     const jsonResourcePathInput = document.querySelector('input');
 
-    userEvent.type(jsonResourcePathInput, 'rec');
+    await userEvent.type(jsonResourcePathInput, 'rec');
     'rec'.split('').forEach(char =>
       expect(onFieldChange).toBeCalledWith(props.id, {
         resourcePathToShow: char,
@@ -44,7 +44,7 @@ describe('test suite for DynaJsonResourcePath field', () => {
       }));
   });
 
-  test('should convert the value to object if passed a string', () => {
+  test('should convert the value to object if passed a string', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'file.json.resourcePath',
@@ -71,9 +71,9 @@ describe('test suite for DynaJsonResourcePath field', () => {
 
     renderWithProviders(<DynaJsonResourcePath {...props} />, {initialStore});
     expect(onFieldChange).toBeCalledWith(props.id, {resourcePathToShow: '', resourcePathToSave: ''}, true);
-    const jsonResourcePathInput = document.querySelector('input');
+    document.querySelector('input').focus();
 
-    userEvent.paste(jsonResourcePathInput, 'items');
+    await userEvent.paste('items');
     expect(onFieldChange).toBeCalledWith(props.id, {
       resourcePathToShow: 'items',
       resourcePathToSave: 'items.*',
@@ -110,7 +110,7 @@ describe('test suite for DynaJsonResourcePath field', () => {
     expect(onFieldChange).toBeCalledWith(props.id, {resourcePathToShow: 'items', resourcePathToSave: 'items.*'}, true);
   });
 
-  test('should assume * for empty value', () => {
+  test('should assume * for empty value', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'file.json.resourcePath',
@@ -142,7 +142,7 @@ describe('test suite for DynaJsonResourcePath field', () => {
     }, true);
     const jsonResourcePathInput = document.querySelector('input');
 
-    userEvent.clear(jsonResourcePathInput);
+    await userEvent.clear(jsonResourcePathInput);
     expect(onFieldChange).toBeCalledWith(props.id, {
       resourcePathToShow: '',
       resourcePathToSave: '*',

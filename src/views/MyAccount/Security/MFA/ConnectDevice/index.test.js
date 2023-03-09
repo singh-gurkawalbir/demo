@@ -11,6 +11,24 @@ import { getCreatedStore } from '../../../../../store';
 
 let initialStore;
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initConnectDevice({defaultAShareIdValue, accountsValue} = {}) {
   mutateStore(initialStore, draft => {
     draft.user.preferences = {defaultAShareId: defaultAShareIdValue};
@@ -65,22 +83,30 @@ describe('Testsuite for Connect device', () => {
     expect(screen.getByRole('heading', {
       name: /trust this device you've used to sign into integrator\.io/i,
     })).toBeInTheDocument();
-    const trustDeviceCheckboxNode = screen.getByRole('checkbox', {
-      name: /trust device/i,
+    let trustDeviceCheckboxNode;
+
+    waitFor(async () => {
+      trustDeviceCheckboxNode = screen.getByRole('checkbox', {
+        name: /trust device/i,
+      });
+
+      expect(trustDeviceCheckboxNode).toBeInTheDocument();
+      expect(trustDeviceCheckboxNode).not.toBeChecked();
+      await userEvent.click(trustDeviceCheckboxNode);
+      expect(trustDeviceCheckboxNode).toBeChecked();
     });
-
-    expect(trustDeviceCheckboxNode).toBeInTheDocument();
-    expect(trustDeviceCheckboxNode).not.toBeChecked();
-    userEvent.click(trustDeviceCheckboxNode);
-    expect(trustDeviceCheckboxNode).toBeChecked();
     expect(screen.getByText(/connect your mobile device \*/i)).toBeInTheDocument();
-    const connectButtonNode = screen.getByRole('button', { name: /connect/i});
+    let connectButtonNode;
 
-    expect(connectButtonNode).toBeInTheDocument();
-    userEvent.click(connectButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'MFA_USER_SETTINGS_SETUP',
-      mfaConfig: { trustDevice: true, enabled: true, context: 'setup' },
+    waitFor(async () => {
+      connectButtonNode = screen.getByRole('button', { name: /connect/i});
+
+      expect(connectButtonNode).toBeInTheDocument();
+      await userEvent.click(connectButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'MFA_USER_SETTINGS_SETUP',
+        mfaConfig: { trustDevice: true, enabled: true, context: 'setup' },
+      });
     });
   });
   test('should test the connect device when account is not of type owner', async () => {
@@ -95,41 +121,47 @@ describe('Testsuite for Connect device', () => {
         },
       }]});
     expect(screen.getByText(/choose primary account to reset mfa/i)).toBeInTheDocument();
-    const pleaseSelectButtonNode = screen.getByRole('button', {
-      name: /please select/i,
+    waitFor(async () => {
+      const pleaseSelectButtonNode = screen.getByRole('button', {
+        name: /please select/i,
+      });
+
+      expect(pleaseSelectButtonNode).toBeInTheDocument();
+      await userEvent.click(pleaseSelectButtonNode);
+      const menuItemsOptionNode = screen.getByRole('menuitem', { name: /test company/i });
+
+      expect(menuItemsOptionNode).toBeInTheDocument();
+      await userEvent.click(menuItemsOptionNode);
+      await waitFor(() => expect(menuItemsOptionNode).not.toBeInTheDocument());
+      expect(screen.getByRole('heading', {
+        name: /trust this device you've used to sign into integrator\.io/i,
+      })).toBeInTheDocument();
     });
+    waitFor(async () => {
+      const trustDeviceCheckboxNode = screen.getByRole('checkbox', {
+        name: /trust device/i,
+      });
 
-    expect(pleaseSelectButtonNode).toBeInTheDocument();
-    userEvent.click(pleaseSelectButtonNode);
-    const menuItemsOptionNode = screen.getByRole('menuitem', { name: /test company/i });
-
-    expect(menuItemsOptionNode).toBeInTheDocument();
-    await userEvent.click(menuItemsOptionNode);
-    await waitFor(() => expect(menuItemsOptionNode).not.toBeInTheDocument());
-    expect(screen.getByRole('heading', {
-      name: /trust this device you've used to sign into integrator\.io/i,
-    })).toBeInTheDocument();
-    const trustDeviceCheckboxNode = screen.getByRole('checkbox', {
-      name: /trust device/i,
+      expect(trustDeviceCheckboxNode).toBeInTheDocument();
+      await userEvent.click(trustDeviceCheckboxNode);
+      expect(screen.getByRole('heading', {
+        name: /connect your mobile device \*/i,
+      })).toBeInTheDocument();
     });
+    waitFor(async () => {
+      const connectButtonNode = screen.getByRole('button', { name: /connect/i});
 
-    expect(trustDeviceCheckboxNode).toBeInTheDocument();
-    userEvent.click(trustDeviceCheckboxNode);
-    expect(screen.getByRole('heading', {
-      name: /connect your mobile device \*/i,
-    })).toBeInTheDocument();
-    const connectButtonNode = screen.getByRole('button', { name: /connect/i});
-
-    expect(connectButtonNode).toBeInTheDocument();
-    userEvent.click(connectButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'MFA_USER_SETTINGS_SETUP',
-      mfaConfig: {
-        _allowResetByUserId: '21344',
-        trustDevice: true,
-        enabled: true,
-        context: 'setup',
-      },
+      expect(connectButtonNode).toBeInTheDocument();
+      await userEvent.click(connectButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'MFA_USER_SETTINGS_SETUP',
+        mfaConfig: {
+          _allowResetByUserId: '21344',
+          trustDevice: true,
+          enabled: true,
+          context: 'setup',
+        },
+      });
     });
   });
   test('should test the connect device when account is not of type of owner and by not selecting any account', async () => {
@@ -147,10 +179,14 @@ describe('Testsuite for Connect device', () => {
     });
 
     expect(screen.getByRole('button', { name: /please select/i })).toBeInTheDocument();
-    const connectButtonNode = screen.getByRole('button', { name: /connect/i});
+    let connectButtonNode;
 
-    expect(connectButtonNode).toBeInTheDocument();
-    userEvent.click(connectButtonNode);
-    expect(screen.getByText(/A value must be provided/i)).toBeInTheDocument();
+    waitFor(async () => {
+      connectButtonNode = screen.getByRole('button', { name: /connect/i});
+
+      expect(connectButtonNode).toBeInTheDocument();
+      await userEvent.click(connectButtonNode);
+      expect(screen.getByText(/A value must be provided/i)).toBeInTheDocument();
+    });
   });
 });

@@ -6,6 +6,24 @@ import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaChangeLicenseEdition tests', () => {
   const initialStore = reduxStore;
 
@@ -53,7 +71,7 @@ describe('dynaChangeLicenseEdition tests', () => {
     };
 
     await renderWithProviders(<DynaChangeLicenseEdition {...props} />, {initialStore});
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('menuitem', {name: '_editionId3'})).toBeInTheDocument();
   });
   test('should able to test DynaChangeLicenseEdition with invalid connectorId', async () => {

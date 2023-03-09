@@ -1,4 +1,4 @@
-import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
+import React, { useMemo, Fragment, useEffect, useCallback, StrictMode } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
@@ -185,6 +185,7 @@ const PageContentWrapper = () => {
 };
 
 export default function App() {
+  const env = process.env.NODE_ENV;
   const classes = useStyles();
   const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
@@ -221,6 +222,28 @@ export default function App() {
     }
   }, []);
 
+  const AppRenderer = () => env !== 'development' ? (
+    <div className={classes.root}>
+      <LoadingNotification />
+      <ErrorNotifications />
+      {/* Headers */}
+      <Headers />
+      {/* page content */}
+      <PageContentWrapper />
+    </div>
+  ) : (
+    <StrictMode>
+      <div className={classes.root}>
+        <LoadingNotification />
+        <ErrorNotifications />
+        {/* Headers */}
+        <Headers />
+        {/* page content */}
+        <PageContentWrapper />
+      </div>
+    </StrictMode>
+  );
+
   return (
     <MuiThemeProvider theme={theme}>
       <CrashReporter>
@@ -239,14 +262,7 @@ export default function App() {
                 * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
                 */}
                   <BrowserRouter getUserConfirmation={() => {}}>
-                    <div className={classes.root}>
-                      <LoadingNotification />
-                      <ErrorNotifications />
-                      {/* Headers */}
-                      <Headers />
-                      {/* page content */}
-                      <PageContentWrapper />
-                    </div>
+                    <AppRenderer />
                   </BrowserRouter>
                   <ConflictAlertDialog />
                 </SnackbarProvider>

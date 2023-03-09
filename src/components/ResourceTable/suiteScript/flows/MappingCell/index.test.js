@@ -24,7 +24,7 @@ describe('suite script MappingCell ui test', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should call history push after clikcing the mapping button', () => {
+  test('should call history push after clikcing the mapping button', async () => {
     render(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
@@ -36,7 +36,7 @@ describe('suite script MappingCell ui test', () => {
     const mappingButton = screen.getByRole('button');
 
     expect(mappingButton).toBeInTheDocument();
-    userEvent.click(mappingButton);
+    await userEvent.click(mappingButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/initialURL/flowID/mapping');
   });
 });

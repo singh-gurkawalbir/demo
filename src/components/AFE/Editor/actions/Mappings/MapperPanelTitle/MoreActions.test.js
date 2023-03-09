@@ -48,46 +48,46 @@ describe('moreActions UI tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should pass the initial render', () => {
+  test('should pass the initial render', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166'});
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Auto-populate destination fields')).toBeInTheDocument();
     expect(screen.getByText('Remove all mappings')).toBeInTheDocument();
   });
-  test('should display the confirm dialog box when clicked on autopopulate mapping option', () => {
+  test('should display the confirm dialog box when clicked on autopopulate mapping option', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166', tree: [{isRequired: false, generate: true}]});
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Auto-populate destination fields')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Auto-populate destination fields'));
+    await userEvent.click(screen.getByText('Auto-populate destination fields'));
     expect(screen.getByText('Confirm auto-populate')).toBeInTheDocument();
     expect(screen.getByText('Auto-populate')).toBeInTheDocument();
   });
   test('should make a dispatch call when clicked on confirm button in the dialog box', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166', tree: [{isRequired: false, generate: true}]});
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Auto-populate destination fields')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Auto-populate destination fields'));
+    await userEvent.click(screen.getByText('Auto-populate destination fields'));
     expect(screen.getByText('Auto-populate')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Auto-populate'));
+    await userEvent.click(screen.getByText('Auto-populate'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.autoCreateStructure({}, false)));
   });
   test('should make a dispatch call and should not display the confirm dialog when clicked on autopopulate when mappings are not present', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166'});
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Auto-populate destination fields')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Auto-populate destination fields'));
+    await userEvent.click(screen.getByText('Auto-populate destination fields'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.autoCreateStructure({}, false)));
   });
   test('should make a dispatch call when clicked on Remove all mappings option', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166'});
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Remove all mappings')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Remove all mappings'));
+    await userEvent.click(screen.getByText('Remove all mappings'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.deleteAll(false)));
   });
 });

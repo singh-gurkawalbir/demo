@@ -121,7 +121,7 @@ describe('dynaFileDefinitionEditor_afe UI tests', () => {
     const LaunchButton = screen.getByText('Launch');
 
     expect(LaunchButton).toBeInTheDocument();
-    userEvent.click(LaunchButton);
+    await userEvent.click(LaunchButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
     await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/filecsv/editor/fieldId'));
   });

@@ -151,7 +151,7 @@ describe('uI test cases for Audit Log Filter', () => {
     const sourceType = screen.getByText(/Select source/i);
 
     expect(sourceType).toBeInTheDocument();
-    userEvent.click(sourceType);
+    await userEvent.click(sourceType);
 
     const allSourceOptions = screen.getAllByRole('option');
 
@@ -167,11 +167,11 @@ describe('uI test cases for Audit Log Filter', () => {
     expect(screen.getByText('Integration app')).toBeInTheDocument();
   });
 
-  test('should display the available users on clicking the Select user dropdown', () => {
+  test('should display the available users on clicking the Select user dropdown', async () => {
     const selectUser = screen.getByText(/Select user/i);
 
     expect(selectUser).toBeInTheDocument();
-    userEvent.click(selectUser);
+    await userEvent.click(selectUser);
     const users = screen.getAllByRole('option');
 
     expect(users).toHaveLength(2);
@@ -181,12 +181,12 @@ describe('uI test cases for Audit Log Filter', () => {
     expect(defaultType).toBeInTheDocument();
   });
 
-  test('should display 12 options on clicking the "Select resources type" drop down', () => {
+  test('should display 12 options on clicking the "Select resources type" drop down', async () => {
     const resourceType = screen.getByText('Select resource type');
 
     expect(resourceType).toBeInTheDocument();
 
-    userEvent.click(resourceType);
+    await userEvent.click(resourceType);
 
     const resourceOptions = screen.getAllByRole('option');
 
@@ -195,8 +195,8 @@ describe('uI test cases for Audit Log Filter', () => {
 
     expect(defaultType).toBeInTheDocument();
   });
-  test('should run the onSave function on clicking the mocked download button', () => {
-    userEvent.click(screen.getByText('Download'));
+  test('should run the onSave function on clicking the mocked download button', async () => {
+    await userEvent.click(screen.getByText('Download'));
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
   });
   test('should able to pass initial render with default values having logs > 0 and navigate to next and previous Page', () => {
@@ -213,7 +213,7 @@ describe('uI test cases for Audit Log Filter', () => {
   });
 });
 describe('filters test cases', () => {
-  test('should display the user emailId under select users tab when name is not present', () => {
+  test('should display the user emailId under select users tab when name is not present', async () => {
     const tempStore = reduxStore;
 
     mutateStore(tempStore, draft => {
@@ -257,7 +257,7 @@ describe('filters test cases', () => {
       };
     });
     renderWithProviders(<Filters {...propsObj} />, {initialStore: tempStore});
-    userEvent.click(screen.getByText(/Select user/i));
+    await userEvent.click(screen.getByText(/Select user/i));
     waitFor(() => expect(screen.getByText(/testUser@celigo.com/i)).toBeInTheDocument());
   });
 });

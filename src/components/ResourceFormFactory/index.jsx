@@ -19,6 +19,12 @@ const Form = props => {
   return <DynaForm {...props} formKey={formKey} />;
 };
 
+const useStyles = makeStyles({
+  formNotLoadedSpinner: {
+    marginTop: 60,
+  },
+});
+
 export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, skipInitFormOnSubmit, ...props }) => {
   const { fieldMeta } = props;
   // once the form successfully completes submission (could be async)
@@ -46,12 +52,6 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);
-
-  const useStyles = makeStyles({
-    formNotLoadedSpinner: {
-      marginTop: 60,
-    },
-  });
 
   const classes = useStyles();
 

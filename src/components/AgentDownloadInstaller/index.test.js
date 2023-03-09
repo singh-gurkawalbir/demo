@@ -59,7 +59,7 @@ describe('agentDownloadInstaller component Test cases', () => {
       let windowItem;
 
       beforeEach(async () => {
-        userEvent.click(downloadButton);
+        await userEvent.click(downloadButton);
         windowItem = await screen.getByRole('menuitem', {name: 'Windows'});
       });
 
@@ -68,7 +68,7 @@ describe('agentDownloadInstaller component Test cases', () => {
       });
 
       test('should pass the handleInstallerClick with default agent id', async () => {
-        userEvent.click(windowItem);
+        await userEvent.click(windowItem);
         await expect(mockDispatchFn).toHaveBeenCalledWith(actions.agent.downloadInstaller('windows', ''));
 
         await waitFor(() => expect(screen.queryByText('Windows')).not.toBeInTheDocument());
@@ -82,11 +82,11 @@ describe('agentDownloadInstaller component Test cases', () => {
       const downloadButton = screen.getByRole('button', {name: 'Download'});
 
       expect(downloadButton).toBeInTheDocument();
-      userEvent.click(downloadButton);
+      await userEvent.click(downloadButton);
       const windowItem = await screen.getByRole('menuitem', {name: 'Windows'});
 
       expect(windowItem).toBeInTheDocument();
-      userEvent.click(windowItem);
+      await userEvent.click(windowItem);
       await expect(mockDispatchFn).toHaveBeenCalledWith(actions.agent.downloadInstaller('windows', 'agent_id'));
 
       await waitFor(() => expect(screen.queryByText('Windows')).not.toBeInTheDocument());

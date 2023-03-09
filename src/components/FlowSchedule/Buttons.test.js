@@ -228,7 +228,7 @@ describe('Flow schedule buttons UI tests', () => {
     });
     expect(screen.getByText('Save & close')).toBeInTheDocument();
   });
-  test('should make a dispatch call when clicked on the save button', () => {
+  test('should make a dispatch call when clicked on the save button', async () => {
     const mockOnClose = jest.fn();
 
     customSchedule({
@@ -243,7 +243,7 @@ describe('Flow schedule buttons UI tests', () => {
     const saveButton = screen.getByText('Save');
 
     expect(saveButton).toBeInTheDocument();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledTimes(1);
   });
 });

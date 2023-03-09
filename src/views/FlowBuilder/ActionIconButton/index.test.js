@@ -43,11 +43,11 @@ describe('Testsuite for Action Icon Button', () => {
     const buttonNode = screen.getByRole('button');
 
     expect(buttonNode.getAttribute('title')).toBe('Test help Text');
-    userEvent.hover(buttonNode);
+    await userEvent.hover(buttonNode);
     expect(buttonNode).not.toHaveAttribute('title');
     await waitFor(() => expect(buttonNode).toHaveAttribute('aria-describedBy'));
     expect(screen.getByRole('tooltip')).toHaveTextContent('Test help Text');
-    userEvent.unhover(buttonNode);
+    await userEvent.unhover(buttonNode);
     await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
     await waitFor(() => expect(buttonNode).toHaveAttribute('title'));
     expect(screen.getByText(/test children/i)).toBeInTheDocument();
@@ -63,11 +63,11 @@ describe('Testsuite for Action Icon Button', () => {
     const buttonNode = screen.getByRole('button');
 
     expect(buttonNode.getAttribute('title')).toBe('Test help key');
-    userEvent.hover(buttonNode);
+    await userEvent.hover(buttonNode);
     expect(buttonNode).not.toHaveAttribute('title');
     await waitFor(() => expect(buttonNode).toHaveAttribute('aria-describedBy'));
     expect(screen.getByRole('tooltip')).toHaveTextContent('Test help key');
-    userEvent.unhover(buttonNode);
+    await userEvent.unhover(buttonNode);
     await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
     await waitFor(() => expect(buttonNode).toHaveAttribute('title'));
     expect(screen.getByText(/test children/i)).toBeInTheDocument();

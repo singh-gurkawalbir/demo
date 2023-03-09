@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import FileUploader from './FileUploader';
 import { renderWithProviders } from '../../../../test/test-utils';
 
-function fileUploader(props = {}) {
+async function fileUploader(props = {}) {
   const ui = (
     <FileUploader {...props} />
   );
@@ -13,7 +13,7 @@ function fileUploader(props = {}) {
 }
 
 describe('FileUploader UI test cases', () => {
-  test('Should test the file uploading and error message to be displayed', () => {
+  test('Should test the file uploading and error message to be displayed', async () => {
     const data = {
       id: 'uploadFile',
       disabled: false,
@@ -29,7 +29,7 @@ describe('FileUploader UI test cases', () => {
       isLoggable: false,
     };
 
-    fileUploader(data);
+    await fileUploader(data);
     expect(screen.getByText('Sample file (that would be generated)')).toBeInTheDocument();
     expect(screen.getByText('Choose file')).toBeInTheDocument();
     expect(screen.getByText('No file chosen')).toBeInTheDocument();
@@ -46,11 +46,11 @@ describe('FileUploader UI test cases', () => {
       type: 'application/json',
     });
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.json');
   });
-  test('Should upload a new file', () => {
+  test('Should upload a new file', async () => {
     const data = {
       id: 'uploadFile',
       disabled: false,
@@ -65,11 +65,11 @@ describe('FileUploader UI test cases', () => {
       isLoggable: false,
     };
 
-    fileUploader(data);
+    await fileUploader(data);
     expect(screen.getByText('fileA.json')).toBeInTheDocument();
     const uploadfile = document.querySelector('[data-test="uploadFile"]');
 
-    userEvent.click(uploadfile);
+    await userEvent.click(uploadfile);
     const input = document.querySelector('input[data-test="uploadFile"]');
     const someValues = [{ name: 'teresa teng' }];
     const str = JSON.stringify(someValues);
@@ -78,7 +78,7 @@ describe('FileUploader UI test cases', () => {
       type: 'application/json',
     });
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.json');
   });

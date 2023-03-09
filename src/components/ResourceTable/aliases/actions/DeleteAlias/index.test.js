@@ -18,7 +18,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-function initHomeTiles(data = {alias: 'aliasId'}, actionProps) {
+async function initHomeTiles(data = {alias: 'aliasId'}, actionProps) {
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>
@@ -32,7 +32,7 @@ function initHomeTiles(data = {alias: 'aliasId'}, actionProps) {
   );
 
   renderWithProviders(ui);
-  userEvent.click(screen.queryByRole('button', {name: /more/i}));
+  await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 }
 
 const props = [
@@ -45,27 +45,27 @@ const props = [
 ];
 
 describe('deleteAlias test cases', () => {
-  test('should show modal dialog for delete Alias on clicking Delete alias', () => {
-    initHomeTiles(...props);
-    userEvent.click(screen.getByText('Delete alias'));
+  test('should show modal dialog for delete Alias on clicking Delete alias', async () => {
+    await initHomeTiles(...props);
+    await userEvent.click(screen.getByText('Delete alias'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Delete alias?')).toBeInTheDocument();
     const deleteButton = screen.getByText('Delete alias');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.resource.aliases.delete('someResourceId', 'integrations', 'aliasId', ALIAS_FORM_KEY.integrations)
     );
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
-  test('should click on cancel button of Delete Alias modal', () => {
-    initHomeTiles(...props);
-    userEvent.click(screen.getByText('Delete alias'));
+  test('should click on cancel button of Delete Alias modal', async () => {
+    await initHomeTiles(...props);
+    await userEvent.click(screen.getByText('Delete alias'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });

@@ -22,7 +22,7 @@ describe('test suite for RawHtml component', () => {
     expect(screen.getByRole('link')).toHaveTextContent('Hello World');
   });
 
-  test('should pass the provided props', () => {
+  test('should pass the provided props', async () => {
     const onClick = jest.fn();
     const options = {allowedTags: ['button']};
     const html = '<button>clickMe</button>';
@@ -31,7 +31,7 @@ describe('test suite for RawHtml component', () => {
     const button = screen.getByRole('button', {name: 'clickMe'});
 
     expect(onClick).toHaveBeenCalledTimes(0);
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(onClick).toHaveBeenCalledTimes(1);
   });
   test('should pass the render when options is an empty object', () => {

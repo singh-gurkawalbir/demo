@@ -79,7 +79,7 @@ describe('PreviewLogDetails tests', () => {
     const httpResponse = screen.getByText(/HTTP response/i);
 
     expect(httpResponse).toBeInTheDocument();
-    userEvent.click(httpResponse);
+    await userEvent.click(httpResponse);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.flowStep.requestLogDetails(props.flowId, props.resourceId, 'randomActiveLogKey'));
   });
   test('Should able to test the error snackbar when changeIdentifier is updated', async () => {

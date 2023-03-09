@@ -29,7 +29,7 @@ describe('text button component test', () => {
   //     </TextButton>);
   //   const Message = screen.getByText('Cancel');
 
-  //   userEvent.click(Message);
+  //   await userEvent.click(Message);
   // });
 
   // eslint-disable-next-line jest/no-commented-out-tests
@@ -41,7 +41,7 @@ describe('text button component test', () => {
   //     </TextButton>);
   //   const Message = screen.getByText('123');
 
-  //   userEvent.click(Message);
+  //   await userEvent.click(Message);
   // });
 
   test('testing by className', () => {

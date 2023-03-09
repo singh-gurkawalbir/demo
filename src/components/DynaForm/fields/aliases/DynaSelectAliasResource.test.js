@@ -13,6 +13,24 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const initialStore = getCreatedStore();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaSelect(props = {}) {
   mutateStore(initialStore, draft => {
     draft.session.asyncTask = {'integration-alias': props.status};
@@ -145,59 +163,61 @@ describe('dynaAliasId UI tests', () => {
     value: 'test',
   };
 
-  test('should display all the valid flows when the aliasResourceType is "flows" and when clicked on the resource dropdown', () => {
+  test('should display all the valid flows when the aliasResourceType is "flows" and when clicked on the resource dropdown', async () => {
     initDynaSelect(props);
-    const dropBox = document.querySelector('[aria-haspopup="listbox"]');
+    waitFor(async () => {
+      const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
-    expect(dropBox).toBeInTheDocument();
+      expect(dropBox).toBeInTheDocument();
 
-    userEvent.click(dropBox);
-    expect(screen.getByText('flow1')).toBeInTheDocument();
-    expect(screen.getByText('flow2')).toBeInTheDocument();
-    expect(screen.getByText('flow3')).toBeInTheDocument();
+      await userEvent.click(dropBox);
+      expect(screen.getByText('flow1')).toBeInTheDocument();
+      expect(screen.getByText('flow2')).toBeInTheDocument();
+      expect(screen.getByText('flow3')).toBeInTheDocument();
+    });
   });
-  test('should only display the flows belonging to the integration in the above case', () => {
+  test('should only display the flows belonging to the integration in the above case', async () => {
     initDynaSelect(props);
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
-    userEvent.click(dropBox);
+    await userEvent.click(dropBox);
     expect(screen.getByText('flow1')).toBeInTheDocument();
     expect(screen.getByText('flow2')).toBeInTheDocument();
     expect(screen.getByText('flow3')).toBeInTheDocument();
 
     expect(screen.queryByText('flow4')).toBeNull();     // flow4 belongs to a different integration hence should not be shown //
   });
-  test('should display the registered connectionIds of the integration passed when aliasResourceType is selected as "connections"', () => {
+  test('should display the registered connectionIds of the integration passed when aliasResourceType is selected as "connections"', async () => {
     initDynaSelect({...props, options: {aliasResourceType: 'connections'}});
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
-    userEvent.click(dropBox);
+    await userEvent.click(dropBox);
     expect(screen.getByText('connection1')).toBeInTheDocument();
     expect(screen.getByText('connection2')).toBeInTheDocument();
     expect(screen.getByText('connection3')).toBeInTheDocument();
 
     expect(screen.queryByText('connection4')).toBeNull();     // connection4 is not registered with the passed integration hence should not be shown //
   });
-  test('should display the imports belonging to the integration passed when aliasResourceType is selected as "imports"', () => {
+  test('should display the imports belonging to the integration passed when aliasResourceType is selected as "imports"', async () => {
     initDynaSelect({...props, options: {aliasResourceType: 'imports'}});
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
-    userEvent.click(dropBox);
+    await userEvent.click(dropBox);
     expect(screen.getByText('import1')).toBeInTheDocument();
     expect(screen.getByText('import2')).toBeInTheDocument();
     expect(screen.getByText('import3')).toBeInTheDocument();
 
     expect(screen.queryByText('import4')).toBeNull();     // import4 is not registered with the passed integration hence should not be shown //
   });
-  test('should display the imports belonging to the integration passed when aliasResourceType is selected as "exports"', () => {
+  test('should display the imports belonging to the integration passed when aliasResourceType is selected as "exports"', async () => {
     initDynaSelect({...props, options: {aliasResourceType: 'exports'}});
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
-    userEvent.click(dropBox);
+    await userEvent.click(dropBox);
     expect(screen.getByText('export1')).toBeInTheDocument();
     expect(screen.getByText('export2')).toBeInTheDocument();
     expect(screen.getByText('export3')).toBeInTheDocument();

@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Tooltip, Zoom } from '@material-ui/core';
-import Truncate from 'react-truncate';
+import TruncateMarkup from 'react-truncate-markup';
 import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children, className, disableHoverListener}) {
+export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLoggable, children, className, disableHoverListener, lineHeight}) {
   const classes = useStyles();
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -25,19 +25,24 @@ export default function CeligoTruncate({ ellipsis, placement, lines, delay, isLo
         placement={placement}
         enterDelay={delay}
         disableHoverListener={disableHoverListener}>
-        <Truncate lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}>
-          {children}
-        </Truncate>
+        <span style={{width: '100%'}}>
+          <TruncateMarkup lines={lines} ellipsis={ellipsis} className={className} lineHeight={lineHeight}>
+            <div>{children}</div>
+          </TruncateMarkup>
+        </span>
       </Tooltip>
     );
   }
 
   return (
-    <Truncate
-      lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
-      {...isLoggableAttr(isLoggable)}>
-      {children}
-    </Truncate>
+    <span style={{width: '100%'}}>
+      <TruncateMarkup
+        lines={lines} ellipsis={ellipsis} onTruncate={setIsTruncated} className={className}
+        lineHeight={lineHeight}
+        {...isLoggableAttr(isLoggable)}>
+        <div>{children}</div>
+      </TruncateMarkup>
+    </span>
   );
 }
 

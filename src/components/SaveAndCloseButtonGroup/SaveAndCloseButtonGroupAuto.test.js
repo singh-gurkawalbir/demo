@@ -47,10 +47,10 @@ describe('saveAndCloseButtonGroupAuto test suite', () => {
     expect(onClose).not.toHaveBeenCalled();
     expect(onSave).not.toHaveBeenCalled();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(onSave).toHaveBeenCalledTimes(1);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -72,7 +72,7 @@ describe('saveAndCloseButtonGroupAuto test suite', () => {
     expect(onClose).not.toHaveBeenCalled();
     expect(mockHandleCancel).not.toHaveBeenCalled();
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
 
     expect(mockHandleCancel).toHaveBeenCalledTimes(1);
     expect(onClose).not.toHaveBeenCalled();

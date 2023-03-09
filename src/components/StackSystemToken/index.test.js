@@ -45,7 +45,7 @@ describe('stackSystemToken test cases', () => {
 
     const buttonRef = screen.getByRole('button');
 
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.stack.displayToken()); // id will be undefined
   });
 });

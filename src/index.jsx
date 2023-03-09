@@ -1,6 +1,6 @@
 import 'url-search-params-polyfill';
 import * as smoothscroll from 'smoothscroll-polyfill';
-import React, { StrictMode } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import GA4React from 'ga-4-react';
@@ -17,7 +17,7 @@ const GAKey1 = (getDomain() === 'eu.integrator.io' ? GA_KEY_1_EU : GA_KEY_1);
 // eslint-disable-next-line no-undef
 const GAKey2 = (getDomain() === 'eu.integrator.io' ? GA_KEY_2_EU : GA_KEY_2);
 const container = document.getElementById('root');
-const root = createRoot(container); // createRoot(container!) if you use TypeScript
+const root = createRoot(container);
 
 if (env !== 'development' && GAKey1?.length > 1) {
   const ga4react = new GA4React(GAKey1);
