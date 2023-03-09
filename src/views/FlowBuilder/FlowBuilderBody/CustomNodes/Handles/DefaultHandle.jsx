@@ -16,6 +16,6 @@ export default function DefaultHandle({className, ...props}) {
   const classes = useStyles();
 
   return (
-    <Handle className={clsx(classes.defaultHandle, className)} {...props} />
+    <Handle className={clsx(classes.defaultHandle, className)} {...props} style={{minWidth: 0}} />
   );
 }

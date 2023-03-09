@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import { getSmoothStepPath } from 'reactflow';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDragDropManager } from 'react-dnd';
@@ -8,6 +7,7 @@ import {
   nodeSize,
   areMultipleEdgesConnectedToSameEdgeTarget,
   snapPointsToHandles,
+  getEdgeStepPath,
 } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
@@ -180,7 +180,7 @@ function DefaultEdge({
   */
   const edgePath = useMemo(() => {
     if (isTargetTerminal && !isSourceRouter) {
-      const sp = getSmoothStepPath({
+      const sp = getEdgeStepPath({
         sourceX,
         sourceY,
         sourcePosition,
@@ -189,7 +189,7 @@ function DefaultEdge({
         targetPosition,
       });
 
-      return sp;
+      return Array.isArray(sp) ? sp[0] : sp;
     }
 
     const targetHandle = { x: targetX, y: targetY };

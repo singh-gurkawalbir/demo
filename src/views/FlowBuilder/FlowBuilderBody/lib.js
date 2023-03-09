@@ -1,4 +1,4 @@
-import { isEdge, isNode } from 'reactflow';
+import { isEdge, isNode, getSmoothStepPath } from 'reactflow';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
@@ -215,6 +215,12 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
   return getModulusVal(x2 - x1);
 };
 
+export const getEdgeStepPath = (data = {}) => {
+  const sp = getSmoothStepPath(data);
+
+  return sp;
+};
+
 export const getPositionInEdge = (
   edgeCommands,
   position = 'center',
@@ -240,7 +246,7 @@ export const getPositionInEdge = (
         );
       }
 
-      const isQuadratic = !!commandSplit[1];
+      const isQuadratic = !!commandSplit[1] && cmd.includes(',');
 
       if (isQuadratic) {
         return commandSplit[1];
