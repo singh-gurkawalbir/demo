@@ -20,6 +20,7 @@ import ReplaceConnection from './actions/ReplaceConnection';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
 import OnlineStatus from '../../OnlineStatus';
 import { selectors } from '../../../reducers';
+import { getConnectionApi } from '../../../utils/connections';
 
 export default {
   key: 'connections',
@@ -56,13 +57,7 @@ export default {
         heading: 'API',
         // check
         isLoggable: true,
-        Value: ({rowData: r}) => {
-          if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
-
-          if (r.type === 'http') return r && r.http && r.http.baseURI;
-
-          return null;
-        },
+        Value: ({rowData: r}) => getConnectionApi({...r}),
       },
       {
         key: 'lastUpdated',
