@@ -37,7 +37,7 @@ export default {
       retValues['/settings'] = settings;
     }
 
-    const userScopes = ['admin', 'auditlogs:read', 'bookmarks:read', 'bookmarks:write', 'channels:write', 'dnd:write', 'email', 'identify', 'identity.avatar', 'identity.basic', 'identity.email', 'identity.team', 'openid', 'profile', 'search:read', 'stars:read', 'stars:write', 'users.profile:write', 'reminders:read', 'reminders:write', 'chat:write', 'files:write', 'files:read'];
+    const userScopes = ['admin', 'auditlogs:read', 'bookmarks:read', 'bookmarks:write', 'channels:history', 'channels:write', 'dnd:write', 'email', 'identify', 'identity.avatar', 'identity.basic', 'identity.email', 'identity.team', 'openid', 'profile', 'search:read', 'stars:read', 'stars:write', 'users.profile:write', 'reminders:read', 'reminders:write', 'chat:write', 'files:write', 'files:read'];
     let isUserScopeSelected = false;
 
     userScopes.forEach(userScope => {
@@ -88,7 +88,6 @@ export default {
       scopes: [
         'calls:read',
         'calls:write',
-        'channels:history',
         'channels:read',
         'commands',
         'dnd:read',
@@ -137,6 +136,7 @@ export default {
             { label: 'auditlogs:read', value: 'auditlogs:read' },
             { label: 'bookmarks:read', value: 'bookmarks:read' },
             { label: 'bookmarks:write', value: 'bookmarks:write' },
+            { label: 'channels:history', value: 'channels:history' },
             { label: 'channels:write', value: 'channels:write' },
             { label: 'chat:write', value: 'chat:write' },
             { label: 'dnd:write', value: 'dnd:write' },
