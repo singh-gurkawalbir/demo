@@ -148,7 +148,7 @@ export default function DynaPassword(props) {
           onFocus={handleFocusIn}
           onBlur={handleFocusOut}
           InputProps={{
-            endAdornment: (!hidePasswordIcon) &&
+            endAdornment: (true) &&
               (
                 <InputAdornment position="end">
                     {showPassword ? (
