@@ -1,9 +1,9 @@
 /* eslint-disable no-useless-escape */
-/* eslint-disable no-param-reassign */
 import { filter, isEmpty, uniqBy } from 'lodash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
 
+/* eslint-disable no-param-reassign */
 const updateRulesForSOQL = (dataIn = { rules: [] }) => {
   const referenceFieldsUsed = [];
 
@@ -24,10 +24,12 @@ const updateRulesForSOQL = (dataIn = { rules: [] }) => {
 
   return referenceFieldsUsed;
 };
+/* eslint-enable no-param-reassign */
 
-export function convertSalesforceQualificationCriteria(sql, queryBuilder) {
+export function convertSalesforceQualificationCriteria(_sql, queryBuilder) {
   let rules;
   let referenceFieldsUsed;
+  let sql = _sql;
 
   if (sql) {
     /*
@@ -186,16 +188,18 @@ export function getFilterList(jsonPaths, rules) {
       if (rr.condition) {
         iterate(rr);
       } else {
-        if (!rr.id) {
+        let { id } = rr;
+
+        if (!id) {
           if (jsonPaths.length === 0) {
             jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
           }
 
-          rr.id = jsonPaths[0].id;
+          id = jsonPaths[0].id;
         }
 
-        if (!filter(jsonPaths, { id: rr.id }).length) {
-          jsonPaths.push({ id: rr.id });
+        if (!filter(jsonPaths, { id }).length) {
+          jsonPaths.push({ id });
         }
 
         if (rr.rhs && rr.rhs.type === 'field' && rr.rhs.field) {

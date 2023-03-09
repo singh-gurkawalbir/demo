@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   invert,
   isBoolean,
@@ -9,7 +8,7 @@ import {
   filter,
 } from 'lodash';
 import { message } from '../../../../../utils/messageStore';
-import {isNumber as isNumberString} from '../../../../../utils/string';
+import { isNumber as isNumberString } from '../../../../../utils/string';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -42,6 +41,7 @@ export function convertIOFilterExpression(filterExpression = [], context) {
   const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
   const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase', 'abs'];
 
+  /* eslint-disable no-param-reassign */
   function iterate(exp) {
     const toReturn = {};
     let oneRule = {};
@@ -152,6 +152,7 @@ export function convertIOFilterExpression(filterExpression = [], context) {
 
     return toReturn;
   }
+  /* eslint-disable no-param-reassign */
 
   let tr = iterate(filterExpression);
 
