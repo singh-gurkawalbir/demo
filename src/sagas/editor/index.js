@@ -320,7 +320,7 @@ export function* save({ id, context }) {
           ];
          */
 
-  const { foregroundPatches, backgroundPatches } = patches || {};
+  const { foregroundPatches, backgroundPatches, options } = patches || {};
 
   if (foregroundPatches && Array.isArray(foregroundPatches)) {
     for (let index = 0; index < foregroundPatches.length; index += 1) {
@@ -338,6 +338,7 @@ export function* save({ id, context }) {
           resourceType,
           id: resourceId,
           context,
+          options,
         });
 
         // trigger save failed in case of error

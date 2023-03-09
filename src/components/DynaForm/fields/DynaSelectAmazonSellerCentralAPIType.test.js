@@ -2,18 +2,20 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form.someformKey = {fields: {_connectionId: {value: 'someconnectionId'}}};
+mutateStore(initialStore, draft => {
+  draft.session.form.someformKey = {fields: {_connectionId: {value: 'someconnectionId'}}};
 
-initialStore.getState().data.resources.connections = [{
-  _id: 'someconnectionId',
-  http: {
-    type: 'Amazon-Hybrid',
-  },
-}];
+  draft.data.resources.connections = [{
+    _id: 'someconnectionId',
+    http: {
+      type: 'Amazon-Hybrid',
+    },
+  }];
+});
 
 const props =
 {

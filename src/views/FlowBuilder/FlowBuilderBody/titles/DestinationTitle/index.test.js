@@ -5,7 +5,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import DestinationTitle from '.';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import * as utils from '../../../../../utils/resource';
 import * as mockGetAllFlowBranches from '../../lib';
 import actions from '../../../../../actions';
@@ -14,30 +14,32 @@ let initialStore;
 const mockHistoryPush = jest.fn();
 
 function initDestinationTile(flowData) {
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    exports: [
-      {
-        _id: 'export_id_1',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    connections: [
-      {
-        _id: 'connection_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    flows: flowData,
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      exports: [
+        {
+          _id: 'export_id_1',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      connections: [
+        {
+          _id: 'connection_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      flows: flowData,
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: '/test'}]} >
       <Route path="/test">

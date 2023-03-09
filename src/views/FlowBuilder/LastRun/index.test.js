@@ -1,27 +1,28 @@
 
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
-import {reduxStore, renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../test/test-utils';
 import LastRun from '.';
 
 const initialStore = reduxStore;
 
 function initLastRun(props) {
-  initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
-  initialStore.getState().session.errorManagement.latestFlowJobs = {
-    '6253af74cddb8a1ba550a010': {
-
-      data: [
-        {
-          _id: '62c6f1bcae93a81493321aa1',
-          lastModified: '2022-07-07T14:46:57.191Z',
-          lastExecutedAt: props.last,
-          status: props.status,
-          endedAt: props.date,
-        },
-      ],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.profile.useErrMgtTwoDotZero = true;
+    draft.session.errorManagement.latestFlowJobs = {
+      '6253af74cddb8a1ba550a010': {
+        data: [
+          {
+            _id: '62c6f1bcae93a81493321aa1',
+            lastModified: '2022-07-07T14:46:57.191Z',
+            lastExecutedAt: props.last,
+            status: props.status,
+            endedAt: props.date,
+          },
+        ],
+      },
+    };
+  });
 
   return renderWithProviders(<LastRun {...props} />, {initialStore});
 }

@@ -13,6 +13,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import FilledButton from '../../../../components/Buttons/FilledButton';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 import { message } from '../../../../utils/messageStore';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   infoTransfers: {
@@ -136,7 +137,7 @@ export default function Invite(props) {
       </div>
       {response && response.length && (
         <div className={classes.initiateTransferWrapper}>
-          <CeligoTable resourceType="transfers" data={response} {...metadata} />
+          <CeligoTable resourceType="transfers" data={customCloneDeep(response)} {...metadata} />
           <FilledButton
             data-test="invite"
             className={classes.initiateTransferBtn}

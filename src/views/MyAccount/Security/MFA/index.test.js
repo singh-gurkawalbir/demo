@@ -5,19 +5,21 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import MFA from '.';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
 
 let initialStore;
 
 async function initMFA({ mfaValues = {}, defaultAShareIdValue, accountsValue, mfaSessionInfo } = {}) {
-  initialStore.getState().data.mfa = mfaValues;
-  initialStore.getState().user.preferences = {defaultAShareId: defaultAShareIdValue};
-  initialStore.getState().user.org = {
-    accounts: accountsValue,
-  };
-  initialStore.getState().session.mfa.sessionInfo = mfaSessionInfo;
+  mutateStore(initialStore, draft => {
+    draft.data.mfa = mfaValues;
+    draft.user.preferences = {defaultAShareId: defaultAShareIdValue};
+    draft.user.org = {
+      accounts: accountsValue,
+    };
+    draft.session.mfa.sessionInfo = mfaSessionInfo;
+  });
   const ui = (
     <MemoryRouter>
       <MFA />
@@ -115,7 +117,7 @@ describe('Testsuite for MFA', () => {
     expect(screen.getByText(/you are required to enable mfa before you can continue in this account\./i)).toBeInTheDocument();
     const linkNode = screen.getByRole('link', {name: 'Learn more'});
 
-    expect(linkNode.getAttribute('href')).toBe('https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers');
+    expect(linkNode.getAttribute('href')).toBe('https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account');
   });
   test('should the toggle button be disabled when MFA setup is not completed and user settings are loaded', async () => {
     await initMFA({

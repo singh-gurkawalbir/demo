@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import actions from '../../../../../../actions';
 import metadata from '../../../metadata';
 import CeligoTable from '../../../../../CeligoTable';
@@ -24,24 +24,26 @@ const notExpired = new Date();
 end.setMonth(end.getMonth() - 2);
 notExpired.setMonth(notExpired.getMonth() + 2);
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own'};
 
-initialStore.getState().user.org.accounts = [
-  {_id: 'own',
-    ownerUser: {licenses: [
-      {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: true, trialEndDate: end},
-      {_integrationId: '4_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: notExpired},
-      {_integrationId: '3_integrationId', _connectorId: 'some_connectorId', resumable: true, expires: end},
-      {_integrationId: '5_integrationId', _connectorId: 'some_connectorId', resumable: true, trialEndDate: end},
-      {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, expires: end, _id: 'someLicenseId'},
-    ],
-    },
+  draft.user.org.accounts = [
+    {_id: 'own',
+      ownerUser: {licenses: [
+        {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: true, trialEndDate: end},
+        {_integrationId: '4_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: notExpired},
+        {_integrationId: '3_integrationId', _connectorId: 'some_connectorId', resumable: true, expires: end},
+        {_integrationId: '5_integrationId', _connectorId: 'some_connectorId', resumable: true, trialEndDate: end},
+        {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, expires: end, _id: 'someLicenseId'},
+      ],
+      },
+    }];
+
+  draft.data.resources.integrations = [{
+    _id: '5_integrationId',
+    installSteps: [1],
   }];
-
-initialStore.getState().data.resources.integrations = [{
-  _id: '5_integrationId',
-  installSteps: [1],
-}];
+});
 
 function initHomeTiles(data = {}, initialStore = null) {
   const ui = (

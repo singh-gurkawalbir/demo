@@ -3,7 +3,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-import {reduxStore, renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../test/test-utils';
 import Redirection from '.';
 import ResourceButton from '../ResourceButton';
 import actions from '../../../actions';
@@ -11,90 +11,92 @@ import actions from '../../../actions';
 function initRedirection(ui, props = {}, env = false) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.flows = [{
-    _id: '62c6f122a2f4a703c3dee3d0',
-    lastModified: '2022-07-07T14:46:06.187Z',
-    name: 'New flow',
-    disabled: false,
-    _integrationId: '6253af74cddb8a1ba550a010',
-    isSimpleImport: true,
-    skipRetries: false,
-    _connectorId: props.connId,
-    pageProcessors: [
-      {
-        responseMapping: {
-          fields: [],
-          lists: [],
+  mutateStore(initialStore, draft => {
+    draft.data.resources.flows = [{
+      _id: '62c6f122a2f4a703c3dee3d0',
+      lastModified: '2022-07-07T14:46:06.187Z',
+      name: 'New flow',
+      disabled: false,
+      _integrationId: '6253af74cddb8a1ba550a010',
+      isSimpleImport: true,
+      skipRetries: false,
+      _connectorId: props.connId,
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '62c6f15aae93a81493321a87',
         },
-        type: 'import',
-        _importId: '62c6f15aae93a81493321a87',
+      ],
+      pageGenerators: [
+        {
+          _exportId: '62c6f121a2f4a703c3dee3ce',
+          skipRetries: false,
+        },
+      ],
+      sandbox: env,
+      createdAt: '2022-07-07T14:43:46.730Z',
+      lastExecutedAt: '2022-07-07T14:46:57.185Z',
+      autoResolveMatchingTraceKeys: true,
+    }];
+    draft.data.resources.integrations = [{
+      _id: '6253af74cddb8a1ba550a010',
+      lastModified: '2022-06-30T06:39:32.607Z',
+      name: 'demoint',
+      description: 'demo integration',
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '62bd43c87b94d20de64e9ab3',
+        '62bd452420ecb90e02f2a6f0',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2022-04-11T04:32:52.823Z',
+    }];
+    draft.data.resources.exports = [{
+      _id: '62c6f121a2f4a703c3dee3ce',
+      createdAt: '2022-07-07T14:43:45.064Z',
+      lastModified: '2022-07-07T14:43:45.114Z',
+      name: 'demoexp',
+      _connectionId: '62bd43c87b94d20de64e9ab3',
+      apiIdentifier: 'e9de6ee3c5',
+      asynchronous: true,
+      oneToMany: false,
+      sandbox: false,
+      parsers: [],
+      type: props.type,
+      http: {
+        relativeURI: 'demo',
+        method: 'GET',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        formType: 'rest',
+        paging: {},
       },
-    ],
-    pageGenerators: [
-      {
-        _exportId: '62c6f121a2f4a703c3dee3ce',
-        skipRetries: false,
+      adaptorType: 'HTTPExport',
+      _rest: {
+        relativeURI: 'demo',
       },
-    ],
-    sandbox: env,
-    createdAt: '2022-07-07T14:43:46.730Z',
-    lastExecutedAt: '2022-07-07T14:46:57.185Z',
-    autoResolveMatchingTraceKeys: true,
-  }];
-  initialStore.getState().data.resources.integrations = [{
-    _id: '6253af74cddb8a1ba550a010',
-    lastModified: '2022-06-30T06:39:32.607Z',
-    name: 'demoint',
-    description: 'demo integration',
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '62bd43c87b94d20de64e9ab3',
-      '62bd452420ecb90e02f2a6f0',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2022-04-11T04:32:52.823Z',
-  }];
-  initialStore.getState().data.resources.exports = [{
-    _id: '62c6f121a2f4a703c3dee3ce',
-    createdAt: '2022-07-07T14:43:45.064Z',
-    lastModified: '2022-07-07T14:43:45.114Z',
-    name: 'demoexp',
-    _connectionId: '62bd43c87b94d20de64e9ab3',
-    apiIdentifier: 'e9de6ee3c5',
-    asynchronous: true,
-    oneToMany: false,
-    sandbox: false,
-    parsers: [],
-    type: props.type,
-    http: {
-      relativeURI: 'demo',
-      method: 'GET',
-      successMediaType: 'json',
-      errorMediaType: 'json',
-      formType: 'rest',
-      paging: {},
-    },
-    adaptorType: 'HTTPExport',
-    _rest: {
-      relativeURI: 'demo',
-    },
-  }];
-  initialStore.getState().user.profile = {useErrMgtTwoDotZero: true};
-  initialStore.getState().user.preferences = {defaultAShareId: false, environment: 'production'};
-  initialStore.getState().session.resource['new-mnbvcxz'] = {isExact: true};
-  initialStore.getState().session.errorManagement.openErrors['62c6f122a2f4a703c3dee3d0'] = {
-    status: 'received',
-    data: {
-      '62c6f121a2f4a703c3dee3ce': {
-        _expOrImpId: '62c6f121a2f4a703c3dee3ce',
-        numError: props.numErrors,
-        lastErrorAt: '2022-08-08T13:44:03.841Z',
+    }];
+    draft.user.profile = {useErrMgtTwoDotZero: true};
+    draft.user.preferences = {defaultAShareId: false, environment: 'production'};
+    draft.session.resource['new-mnbvcxz'] = {isExact: true};
+    draft.session.errorManagement.openErrors['62c6f122a2f4a703c3dee3d0'] = {
+      status: 'received',
+      data: {
+        '62c6f121a2f4a703c3dee3ce': {
+          _expOrImpId: '62c6f121a2f4a703c3dee3ce',
+          numError: props.numErrors,
+          lastErrorAt: '2022-08-08T13:44:03.841Z',
+        },
       },
-    },
-  };
+    };
+  });
 
   renderWithProviders(ui, {initialStore});
 }

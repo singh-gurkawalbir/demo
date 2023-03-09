@@ -659,7 +659,7 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
   }
   const retValues = { ...formValues };
 
-  if (httpConnector.versioning?.location === 'uri') {
+  if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.[0]?.includes('/:_version')) {
     if (retValues['/http/unencrypted/version']) {
       retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
     } else {

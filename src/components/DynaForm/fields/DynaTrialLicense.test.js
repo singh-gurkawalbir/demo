@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaTrialLicense from './DynaTrialLicense';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
@@ -27,7 +27,9 @@ describe('test suite for DynaTrialLicense field', () => {
     const props = { connectorId: 'connector-123' };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.email = email;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.email = email;
+    });
     const { utils: { unmount } } = renderWithProviders(<DynaTrialLicense {...props} />, {initialStore});
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection(`connectors/${props.connectorId}/licenses`));

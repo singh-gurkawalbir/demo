@@ -1,29 +1,31 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 
 async function initDynaAmazonRestrictedReportType(props) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      fields: {
-        _connectionId: {value: '_amazonConnectionId'},
-        'http.relativeURI': {value: '/reports/2021-06-30/documents/xyz'},
-        'unencrypted.apiType': {value: 'Amazon-SP-API'},
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        fields: {
+          _connectionId: {value: '_amazonConnectionId'},
+          'http.relativeURI': {value: '/reports/2021-06-30/documents/xyz'},
+          'unencrypted.apiType': {value: 'Amazon-SP-API'},
+        },
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '_amazonConnectionId',
-      http: {
-        type: 'Amazon-SP-API',
-      },
-    }],
-  };
+    };
+    draft.data.resources = {
+      connections: [{
+        _id: '_amazonConnectionId',
+        http: {
+          type: 'Amazon-SP-API',
+        },
+      }],
+    };
+  });
 
   return renderWithProviders(<DynaAmazonRestrictedReportType {...props} />, { initialStore });
 }

@@ -9,7 +9,7 @@ import {
   cancel,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { keys, cloneDeep } from 'lodash';
+import { keys } from 'lodash';
 import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -59,6 +59,7 @@ import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
 import { getMockOutputFromResource } from '../../../utils/flowDebugger';
+import customCloneDeep from '../../../utils/customCloneDeep';
 import { loadFlowResourceUIFields } from '../../uiFields';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
@@ -638,7 +639,7 @@ export function* requestProcessorData({
     const options = {};
 
     if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
-      resourceMappings = {mappings: cloneDeep(resource.mappings), lookups};
+      resourceMappings = {mappings: customCloneDeep(resource.mappings), lookups};
 
       const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
       const flow = yield select(selectors.resource, 'flows', flowId);

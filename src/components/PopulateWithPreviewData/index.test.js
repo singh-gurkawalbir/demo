@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders} from '../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../test/test-utils';
 import PopulateWithPreviewData from '.';
 import { getCreatedStore } from '../../store';
 import actions from '../../actions';
@@ -15,75 +15,79 @@ const initialStore = getCreatedStore();
 
 const formKey = 'newForm';
 
+const updateMockDataContent = jest.fn();
+
 function initPopulateWithPreviewData(props = {}) {
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        id: 'import1',
-        assistant: 'googledrive',
-        type: 'http',
-      },
-    ],
-    exports: [
-      {
-        _id: 'export1',
-        adaptorType: 'HTTPExport',
-      },
-      {
-        _id: 'ftpnoparse',
-        type: 'blob',
-        adaptorType: 'FTPExport',
-      },
-    ],
-  };
-  initialStore.getState().session.form = {
-    [formKey]: {
-      fields: {
-        mockOutput: {
-          resourceId: '6385c3d96e36a72ff64a4b90',
-          resourceType: 'exports',
-          flowId: '6385c3dd6e36a72ff64a4b93',
-          label: 'Mock output',
-          helpKey: 'mockOutput',
-          type: 'mockoutput',
-          fieldId: 'mockOutput',
-          id: 'mockOutput',
-          name: '/mockOutput',
-          defaultValue: '',
-          value: '',
-          touched: false,
-          visible: true,
-          required: false,
-          disabled: false,
-          options: {},
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          id: 'import1',
+          assistant: 'googledrive',
+          type: 'http',
         },
-        mockResponse: {
-          resourceId: '6385c3d96e36a72ff64a4b90',
-          resourceType: 'imports',
-          flowId: '6385c3dd6e36a72ff64a4b93',
-          label: 'Mock response',
-          helpKey: 'mockResponse',
-          type: 'mockresponse',
-          fieldId: 'mockResponse',
-          id: 'mockResponse',
-          name: '/mockResponse',
-          defaultValue: '',
-          value: '',
-          touched: false,
-          visible: true,
-          required: false,
-          disabled: false,
-          options: {},
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
+      ],
+      exports: [
+        {
+          _id: 'export1',
+          adaptorType: 'HTTPExport',
+        },
+        {
+          _id: 'ftpnoparse',
+          type: 'blob',
+          adaptorType: 'FTPExport',
+        },
+      ],
+    };
+    draft.session.form = {
+      [formKey]: {
+        fields: {
+          mockOutput: {
+            resourceId: '6385c3d96e36a72ff64a4b90',
+            resourceType: 'exports',
+            flowId: '6385c3dd6e36a72ff64a4b93',
+            label: 'Mock output',
+            helpKey: 'mockOutput',
+            type: 'mockoutput',
+            fieldId: 'mockOutput',
+            id: 'mockOutput',
+            name: '/mockOutput',
+            defaultValue: '',
+            value: '',
+            touched: false,
+            visible: true,
+            required: false,
+            disabled: false,
+            options: {},
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
+          },
+          mockResponse: {
+            resourceId: '6385c3d96e36a72ff64a4b90',
+            resourceType: 'imports',
+            flowId: '6385c3dd6e36a72ff64a4b93',
+            label: 'Mock response',
+            helpKey: 'mockResponse',
+            type: 'mockresponse',
+            fieldId: 'mockResponse',
+            id: 'mockResponse',
+            name: '/mockResponse',
+            defaultValue: '',
+            value: '',
+            touched: false,
+            visible: true,
+            required: false,
+            disabled: false,
+            options: {},
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
+          },
         },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(
     <PopulateWithPreviewData
@@ -98,7 +102,9 @@ describe('PopulateWithPreviewData UI tests', () => {
   let useDispatchSpy;
 
   beforeEach(done => {
-    initialStore.getState().session = {};
+    mutateStore(initialStore, draft => {
+      draft.session = {};
+    });
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
@@ -145,15 +151,17 @@ describe('PopulateWithPreviewData UI tests', () => {
     expect(screen.getByText(/Populate with sample response data/i)).toBeInTheDocument();
   });
   test('should disable populate with preview data button if resource sample data is requested for exports', () => {
-    initialStore.getState().session = {
-      resourceFormSampleData: {
-        export1: {
-          preview: {
-            status: 'requested',
+    mutateStore(initialStore, draft => {
+      draft.session = {
+        resourceFormSampleData: {
+          export1: {
+            preview: {
+              status: 'requested',
+            },
           },
         },
-      },
-    };
+      };
+    });
     initPopulateWithPreviewData({
       resourceId: 'export1',
       resourceType: 'exports',
@@ -163,15 +171,17 @@ describe('PopulateWithPreviewData UI tests', () => {
     expect(buttonRef).toBeDisabled();
   });
   test('should disable populate with preview data button if resource sample data is requested for exports dupliccate', () => {
-    initialStore.getState().session = {
-      resourceFormSampleData: {
-        export1: {
-          preview: {
-            status: 'requested',
+    mutateStore(initialStore, draft => {
+      draft.session = {
+        resourceFormSampleData: {
+          export1: {
+            preview: {
+              status: 'requested',
+            },
           },
         },
-      },
-    };
+      };
+    });
     initPopulateWithPreviewData({
       resourceId: 'export1',
       resourceType: 'exports',
@@ -271,8 +281,51 @@ describe('PopulateWithPreviewData UI tests', () => {
     initialStore.dispatch(
       actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
     );
-
+    await waitFor(() => expect(updateMockDataContent).toHaveBeenCalledTimes(0));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+      actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
+    ));
+    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
+  });
+  test('should call updateMockDataContent function and render correct snackbar on success on click for exports', async () => {
+    const resourceType = 'exports';
+    const resourceId = 'export1';
+
+    initPopulateWithPreviewData({
+      resourceId,
+      resourceType,
+      updateMockDataContent,
+    });
+    const buttonRef = screen.getByRole('button', {name: 'Populate with preview data'});
+
+    expect(buttonRef).toBeInTheDocument();
+    expect(buttonRef).toBeEnabled();
+    userEvent.click(buttonRef);
+    expect(buttonRef).toBeDisabled();
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+      actions.resourceFormSampleData.request(formKey, { refreshCache: true, asyncKey: getAsyncKey(resourceType, resourceId) })
+    ));
+
+    const previewData = [
+      {
+        id: '1234567890',
+        errors: [{
+          code: 'error_code',
+          message: 'error message',
+          source: 'application',
+        }],
+        ignored: false,
+        statusCode: 200,
+        dataURI: '',
+        _json: { responseField1: '', responseField2: '' },
+      },
+    ];
+
+    initialStore.dispatch(
+      actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
+    );
+    await waitFor(() => expect(updateMockDataContent).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockDispatchFn).not.toBeCalledWith(
       actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
     ));
     await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());

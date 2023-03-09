@@ -8,27 +8,29 @@ import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
 import TokenGenerator from './index';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
 function initTokenGenerator(props = {}) {
-  initialStore.getState().session.connectionToken = {
-    '5b3c75dd5d3c125c88b5dd20': {
-      fieldsToBeSetWithValues: {
-        field1: 1,
-        field2: 2,
+  mutateStore(initialStore, draft => {
+    draft.session.connectionToken = {
+      '5b3c75dd5d3c125c88b5dd20': {
+        fieldsToBeSetWithValues: {
+          field1: 1,
+          field2: 2,
+        },
+        status: props.status,
+        message: props.message,
       },
-      status: props.status,
-      message: props.message,
-    },
-  };
-  initialStore.getState().session.form = {
-    formKey: {
-      fields: [{id: 'fieldId1', value: 'value', touched: true}, {id: 'fieldId2', value: 'value2'}],
-      value: 'formValue',
-    },
-  };
+    };
+    draft.session.form = {
+      formKey: {
+        fields: [{id: 'fieldId1', value: 'value', touched: true}, {id: 'fieldId2', value: 'value2'}],
+        value: 'formValue',
+      },
+    };
+  });
 
   return renderWithProviders(<TokenGenerator {...props} />, {initialStore});
 }

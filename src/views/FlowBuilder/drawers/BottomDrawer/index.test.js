@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import BottomDrawer from '.';
 import { getCreatedStore } from '../../../../store';
 
@@ -88,7 +88,10 @@ describe('test suite for BottomDrawer', () => {
   test('should show Run Dashboard Action buttons only for users in EM2.0', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
+
     await initBottomDrawer({}, initialStore);
     expect(screen.getByText('Run Dashboard Actions')).toBeInTheDocument();
   });
@@ -105,35 +108,47 @@ describe('test suite for BottomDrawer', () => {
   test('should be able to increase or decrease the height of bottom drawer', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user = {
-      preferences: {
-        defaultAShareId: '123abc',
-        accounts: {
-          '123abc': {
-            fbBottomDrawerHeight: 200,
+    mutateStore(initialStore, draft => {
+      draft.user = {
+        preferences: {
+          defaultAShareId: '123abc',
+          accounts: {
+            '123abc': {
+              fbBottomDrawerHeight: 200,
+            },
           },
         },
-      },
-      org: {
-        accounts: [
-          {
-            _id: '123abc',
-          },
-        ],
-      },
-    };
+        org: {
+          accounts: [
+            {
+              _id: '123abc',
+            },
+          ],
+        },
+      };
+    });
+
     await initBottomDrawer({}, initialStore);
     const increaseButton = document.querySelector('[data-test="increaseFlowBuilderBottomDrawer"]');
 
     userEvent.click(increaseButton);
-    const increasedHeight = initialStore.getState().user.preferences.accounts['123abc'].fbBottomDrawerHeight;
+    let increasedHeight;
+
+    mutateStore(initialStore, draft => {
+      increasedHeight = draft.user.preferences.accounts['123abc'].fbBottomDrawerHeight;
+    });
 
     expect(increasedHeight).toBeGreaterThan(200);
 
     const decreaseButton = document.querySelector('[data-test="decreaseFlowBuilderBottomDrawer"]');
 
     userEvent.click(decreaseButton);
-    const decreasedHeight = initialStore.getState().user.preferences.accounts['123abc'].fbBottomDrawerHeight;
+
+    let decreasedHeight;
+
+    mutateStore(initialStore, draft => {
+      decreasedHeight = draft.user.preferences.accounts['123abc'].fbBottomDrawerHeight;
+    });
 
     expect(decreasedHeight).toBeLessThan(increasedHeight);
   });
@@ -141,7 +156,9 @@ describe('test suite for BottomDrawer', () => {
   test('Run Dashboard Actions panel should be displayed only for EM2.0 users', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
     await initBottomDrawer({}, initialStore);
     expect(screen.getByText('Run Dashboard Actions')).toBeInTheDocument();
   });
@@ -149,7 +166,10 @@ describe('test suite for BottomDrawer', () => {
   test('dashboard label should be "Run console" for users in EM2.0', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
+
     await initBottomDrawer({}, initialStore);
     expect(screen.getByText('Run console')).toBeInTheDocument();
   });
@@ -163,7 +183,10 @@ describe('test suite for BottomDrawer', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
+
     await initBottomDrawer({}, initialStore);
     expect(screen.queryByText('Run Dashboard Panel')).not.toBeInTheDocument();
     expect(screen.getByText('Run Dashboard V2')).toBeInTheDocument();
@@ -172,21 +195,24 @@ describe('test suite for BottomDrawer', () => {
   test('should be able to render scripts tab', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = [{
-      _id: '123flow',
-      pageGenerators: [{ _exportId: '123exp'}],
-    }];
-    initialStore.getState().data.resources.exports = [{
-      _id: '123exp',
-      filter: {
-        type: 'script',
-        script: { _scriptId: '123script' },
-      },
-    }];
-    initialStore.getState().data.resources.scripts = [{
-      _id: '123script',
-      _sourceId: '123flow',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.flows = [{
+        _id: '123flow',
+        pageGenerators: [{ _exportId: '123exp'}],
+      }];
+      draft.data.resources.exports = [{
+        _id: '123exp',
+        filter: {
+          type: 'script',
+          script: { _scriptId: '123script' },
+        },
+      }];
+      draft.data.resources.scripts = [{
+        _id: '123script',
+        _sourceId: '123flow',
+      }];
+    });
+
     await initBottomDrawer({flowId: '123flow'}, initialStore);
     const scriptTab = screen.getByRole('tab', {name: 'Scripts'});
 

@@ -2,14 +2,16 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ErrorPanel from './errorPanel';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 async function initErrorPanel({resourceId, data} = {}) {
-  initialStore.getState().session.resourceFormSampleData[resourceId] = data;
+  mutateStore(initialStore, draft => {
+    draft.session.resourceFormSampleData[resourceId] = data;
+  });
   const ui = (
     <MemoryRouter>
       <ErrorPanel resourceId={resourceId} />

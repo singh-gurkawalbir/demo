@@ -5,7 +5,7 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, mockPostRequestOnce, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, mockPostRequestOnce, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 import StackShareDrawer from './Drawer';
 import reduxStore from '../../store';
 import { runServer } from '../../test/api/server';
@@ -13,18 +13,20 @@ import { runServer } from '../../test/api/server';
 function initDrawer() {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.stacks = [{
-    _id: '62d2ef8aa7777017e5a8081a',
-    name: 'test',
-    type: 'server',
-    lastModified: '2022-07-16T17:04:10.875Z',
-    createdAt: '2022-07-16T17:04:10.835Z',
-    server: {
-      systemToken: '******',
-      hostURI: 'https://integrator.io',
-      ipRanges: [],
-    },
-  }];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.stacks = [{
+      _id: '62d2ef8aa7777017e5a8081a',
+      name: 'test',
+      type: 'server',
+      lastModified: '2022-07-16T17:04:10.875Z',
+      createdAt: '2022-07-16T17:04:10.835Z',
+      server: {
+        systemToken: '******',
+        hostURI: 'https://integrator.io',
+        ipRanges: [],
+      },
+    }];
+  });
 
   const ui = (
     <MemoryRouter

@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../../test/test-utils';
 import ErrorTable from '.';
 
 const props = {integrationId: '_integrationId', revisionId: '_revisionId'};
@@ -10,13 +10,15 @@ const props = {integrationId: '_integrationId', revisionId: '_revisionId'};
 async function initErrorTable(props = {}, data = []) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement.revision._integrationId = {
-    _revisionId: {
-      errors: {
-        data,
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement.revision._integrationId = {
+      _revisionId: {
+        errors: {
+          data,
+        },
       },
-    },
-  };
+    };
+  });
 
   const ui = (
     <MemoryRouter>

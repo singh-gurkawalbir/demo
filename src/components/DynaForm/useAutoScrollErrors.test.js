@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import {screen} from '@testing-library/react';
 import useAutoScrollErrors from './useAutoScrollErrors';
-import { renderWithProviders, reduxStore} from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 
 describe('useAutoScrollErrors UI test cases', () => {
   const initialStore = reduxStore;
@@ -16,38 +16,40 @@ describe('useAutoScrollErrors UI test cases', () => {
     return <div ref={formRef}><div id="b"> Form </div></div>;
   };
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      fields: {
-        a: {
-          id: 'a',
-          name: 'a',
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        fields: {
+          a: {
+            id: 'a',
+            name: 'a',
+          },
+          b: {
+            id: 'b',
+            name: 'b',
+            visible: true,
+            isValid: false,
+          },
         },
-        b: {
-          id: 'b',
-          name: 'b',
-          visible: true,
-          isValid: false,
+        fieldMeta: {
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                fields: ['a', 'b'],
+              },
+            ],
+          },
         },
+        isValid: false,
+        validationOnSaveIdentifier: true,
       },
-      fieldMeta: {
-        layout: {
-          type: 'collapse',
-          containers: [
-            {
-              collapsed: true,
-              fields: ['a', 'b'],
-            },
-          ],
-        },
+      _key: {
+        isValid: false,
       },
-      isValid: false,
-      validationOnSaveIdentifier: true,
-    },
-    _key: {
-      isValid: false,
-    },
-  };
+    };
+  });
 
   test('should validate with valid formKey', async () => {
     await renderWithProviders(<DummyComponent formKey="_formKey" />, {initialStore});

@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Revisions from '.';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import actions from '../../../../../actions';
 
@@ -12,9 +12,11 @@ let initialStore;
 const mockUseOpenRevisionWhenValid = jest.fn();
 
 function initRevisions({integrationId, userData, revisionsData, revisionsFilterData, rerender}) {
-  initialStore.getState().user = userData;
-  initialStore.getState().data.revisions = revisionsData;
-  initialStore.getState().session.filters = revisionsFilterData;
+  mutateStore(initialStore, draft => {
+    draft.user = userData;
+    draft.data.revisions = revisionsData;
+    draft.session.filters = revisionsFilterData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test'}]}
