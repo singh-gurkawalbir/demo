@@ -86,7 +86,6 @@ export default {
       label: 'Marketplace',
       required: true,
       helpKey: 'amazonvendorcentral.connection.http.unencrypted.marketplace',
-      defaultDisabled: r => !isNewId(r?._id),
       defaultValue: r => r?.http?.unencrypted?.marketplaceId,
     },
     'http.sellingPartnerId': {
