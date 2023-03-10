@@ -6,69 +6,71 @@ import * as reactRedux from 'react-redux';
 import RunningFlows from '.';
 import { getCreatedStore } from '../../../../store';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
 async function initRunningFlows(dashboardTab, runningJobsStatus, runningJobsData, renderFun, store) {
   if (store) { initialStore = store; } else {
-    initialStore.getState().data.runningJobs = {runningJobs: runningJobsData, status: runningJobsStatus};
-    initialStore.getState().session.filters = {
-      runningFlows: {
-        sort: {
-          order: 'asc',
-          orderBy: 'startedAt',
+    mutateStore(initialStore, draft => {
+      draft.data.runningJobs = {runningJobs: runningJobsData, status: runningJobsStatus};
+      draft.session.filters = {
+        runningFlows: {
+          sort: {
+            order: 'asc',
+            orderBy: 'startedAt',
+          },
+          selected: {},
+          isAllSelected: false,
+          paging: {
+            rowsPerPage: 50,
+            currPage: 0,
+          },
         },
-        selected: {},
-        isAllSelected: false,
-        paging: {
-          rowsPerPage: 50,
-          currPage: 0,
-        },
-      },
-    };
-    initialStore.getState().data.resources.integrations = [{
-      _id: '12345',
-      name: 'Test integration name',
-    }];
-    initialStore.getState().data.resources.flows = [{
-      _id: '67890',
-      name: 'Test flow name 1',
-      _integrationId: '12345',
-      disabled: false,
-      pageProcessors: [
-        {
-          type: 'import',
-          _importId: 'nxksnn',
-        },
-      ],
-      pageGenerators: [
-        {
-          _exportId: 'xsjxks',
-        },
-      ],
-    }];
-    initialStore.getState().data.resources.connections = [{
-      _id: 'abcde',
-      name: 'Test connection 1',
-      _integrationId: '12345',
-    }, {
-      _id: 'fghijk',
-      name: 'Test connection 2',
-      _integrationId: '12345',
-    }];
-    initialStore.getState().data.resources.exports = [{
-      _id: 'xsjxks',
-      name: 'Test export',
-      _connectionId: 'abcde',
-      _integrationId: '12345',
-    }];
-    initialStore.getState().data.resources.imports = [{
-      _id: 'nxksnn',
-      name: 'Test import',
-      _connectionId: 'fghijk',
-      _integrationId: '12345',
-    }];
+      };
+      draft.data.resources.integrations = [{
+        _id: '12345',
+        name: 'Test integration name',
+      }];
+      draft.data.resources.flows = [{
+        _id: '67890',
+        name: 'Test flow name 1',
+        _integrationId: '12345',
+        disabled: false,
+        pageProcessors: [
+          {
+            type: 'import',
+            _importId: 'nxksnn',
+          },
+        ],
+        pageGenerators: [
+          {
+            _exportId: 'xsjxks',
+          },
+        ],
+      }];
+      draft.data.resources.connections = [{
+        _id: 'abcde',
+        name: 'Test connection 1',
+        _integrationId: '12345',
+      }, {
+        _id: 'fghijk',
+        name: 'Test connection 2',
+        _integrationId: '12345',
+      }];
+      draft.data.resources.exports = [{
+        _id: 'xsjxks',
+        name: 'Test export',
+        _connectionId: 'abcde',
+        _integrationId: '12345',
+      }];
+      draft.data.resources.imports = [{
+        _id: 'nxksnn',
+        name: 'Test import',
+        _connectionId: 'fghijk',
+        _integrationId: '12345',
+      }];
+    });
   }
   const ui = (
     <MemoryRouter
@@ -153,7 +155,9 @@ describe('testsuite for Running flows', () => {
     )).toBeInTheDocument();
     utils.unmount();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'JOB_DASHBOARD_RUNNING_CLEAR' });
-    store.getState().session.filters.runningFlows.isAllSelected = true;
+    mutateStore(initialStore, draft => {
+      draft.session.filters.runningFlows.isAllSelected = true;
+    });
     await initRunningFlows('runningFlows', 'success', runningJobsData, utils.rerender, store);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'JOB_DASHBOARD_RUNNING_REQUEST_COLLECTION',

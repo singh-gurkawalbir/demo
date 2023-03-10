@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { reduxStore, renderWithProviders } from '../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import SaveAndCloseResourceForm from './SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../constants/resourceForm';
@@ -41,12 +41,15 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     const onClose = jest.fn();
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveAndCloseResourceForm({formKey, onSave, onClose, status: FORM_SAVE_STATUS.COMPLETE, disableOnCloseAfterSave: false}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const saveAndCloseButton = screen.getByRole('button', {name: 'Save & close'});
@@ -69,12 +72,15 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     const onClose = jest.fn();
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveAndCloseResourceForm({formKey, onSave, onClose, status: FORM_SAVE_STATUS.COMPLETE, disableOnCloseAfterSave: true}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const saveAndCloseButton = screen.getByRole('button', {name: 'Save & close'});
@@ -90,11 +96,14 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      fields: {
-        tempField: { touched: true },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        fields: {
+          tempField: { touched: true },
+        },
+      };
+    });
+
     await initSaveAndCloseResourceForm({formKey, status: FORM_SAVE_STATUS.COMPLETE, disabled: true}, initialStore);
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
   });

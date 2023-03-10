@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ResourceReferences from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 
 async function initResourceReferences({
   props = {
@@ -16,7 +16,9 @@ async function initResourceReferences({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resource = resource;
+  mutateStore(initialStore, draft => {
+    draft.session.resource = resource;
+  });
 
   const ui = (
     <MemoryRouter>

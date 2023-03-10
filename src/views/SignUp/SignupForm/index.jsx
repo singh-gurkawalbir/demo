@@ -11,6 +11,7 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import getRoutePath from '../../../utils/routePaths';
+import useQuery from '../../../hooks/useQuery';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -55,10 +56,12 @@ export default function SignUp() {
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const signupStatus = useSelector(state => selectors.signupStatus(state));
   const error = useSelector(state => selectors.signupMessage(state));
+  const query = useQuery();
+  const params = Object.fromEntries(query);
 
   const handleSignup = useCallback(values => {
-    dispatch(actions.auth.signup(values));
-  }, [dispatch]);
+    dispatch(actions.auth.signup({...values, ...params}));
+  }, [dispatch, params]);
 
   const handleOnSubmit = useCallback(values => {
     handleSignup(values);

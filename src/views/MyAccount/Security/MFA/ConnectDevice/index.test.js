@@ -5,24 +5,26 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ConnectDevice from '.';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { runServer } from '../../../../../test/api/server';
 import { getCreatedStore } from '../../../../../store';
 
 let initialStore;
 
 async function initConnectDevice({defaultAShareIdValue, accountsValue} = {}) {
-  initialStore.getState().user.preferences = {defaultAShareId: defaultAShareIdValue};
-  initialStore.getState().user.org = {
-    accounts: accountsValue,
-  };
-  initialStore.getState().session.mfa = {
-    codes: {
-      mobileCode: {
-        status: 'success',
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {defaultAShareId: defaultAShareIdValue};
+    draft.user.org = {
+      accounts: accountsValue,
+    };
+    draft.session.mfa = {
+      codes: {
+        mobileCode: {
+          status: 'success',
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ConnectDevice />

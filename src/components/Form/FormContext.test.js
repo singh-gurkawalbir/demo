@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import useFormContext from './FormContext';
 
 function initUseFormContext(formKey, initialStore) {
@@ -27,7 +27,10 @@ describe('tests for useFormContext hook', () => {
       type: 'csv',
     };
 
-    initialStore.getState().session.form[formKey] = sampleForm;
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = sampleForm;
+    });
+
     const formState = initUseFormContext(formKey, initialStore);
 
     expect(formState).toEqual(sampleForm);

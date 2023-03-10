@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import ReinviteUser from '.';
 import actions from '../../../../../actions';
 import { getCreatedStore } from '../../../../../store';
@@ -25,9 +25,12 @@ jest.mock('../../../../Spinner', () => ({
 describe('test for Reinviting User', () => {
   test('should be able to reinvite a user', () => {
     initialStore = getCreatedStore();
-    initialStore.getState().user.org.users = [{
-      _id: 'user123',
-    }];
+
+    mutateStore(initialStore, draft => {
+      draft.user.org.users = [{
+        _id: 'user123',
+      }];
+    });
     renderWithProviders(<ReinviteUser user={{_id: 'user123'}} />, {initialStore});
     const reinviteButton = screen.getByRole('button', {name: 'Reinvite'});
 

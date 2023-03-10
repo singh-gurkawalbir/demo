@@ -341,6 +341,7 @@ export function fieldMeta({ resource, assistantData }) {
   let headerFields = [];
   let ignoreConfigFields = [];
   let howToFindIdentifierFields = [];
+  let supportsEndpointLevelAsyncHelper = false;
 
   if (assistantData && assistantData.import) {
     const assistantConfig = convertFromImport({
@@ -358,6 +359,8 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      supportsEndpointLevelAsyncHelper = operationDetails.supportsAsyncHelper;
+
       headerFields = headerFieldsMeta({
         headers,
         operationDetails,
@@ -399,8 +402,10 @@ export function fieldMeta({ resource, assistantData }) {
     advancedSettings: {
       formId: 'advancedSettings',
     },
-    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
-    'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
+    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper',
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId) || supportsEndpointLevelAsyncHelper,
+      visible: r => !(r && r.statusExport) && !supportsEndpointLevelAsyncHelper },
+    'http._asyncHelperId': { fieldId: 'http._asyncHelperId', required: supportsEndpointLevelAsyncHelper },
   };
   const fieldIds = [];
 
@@ -412,9 +417,15 @@ export function fieldMeta({ resource, assistantData }) {
   fieldMap.settings = {
     fieldId: 'settings',
   };
-  const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
 
   fieldMap.mockResponseSection = {formId: 'mockResponseSection'};
+
+  if (supportsEndpointLevelAsyncHelper) {
+    const index = fieldIds.findIndex(fld => fld === 'assistantMetadata.updateEndpoint');
+
+    fieldIds.splice(index + 1, 0, 'http._asyncHelperId');
+  }
+  const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
 
   return {
     fieldMap,
@@ -455,8 +466,7 @@ export function fieldMeta({ resource, assistantData }) {
           label: 'Advanced',
           fields: ['http.ignoreEmptyNodes',
             'advancedSettings',
-            'http.configureAsyncHelper',
-            'http._asyncHelperId'],
+            ...(!supportsEndpointLevelAsyncHelper ? ['http.configureAsyncHelper', 'http._asyncHelperId'] : ['http.configureAsyncHelper'])],
         },
       ],
     },

@@ -21,6 +21,7 @@ import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const metadata = {
   rowKey: 'id',
@@ -171,7 +172,7 @@ const ErrorsList = ({integrationId, childId}) => {
   }
 
   return (
-    <CeligoTable data={resources} filterKey={FILTER_KEY} {...metadata} />
+    <CeligoTable data={customCloneDeep(resources)} filterKey={FILTER_KEY} {...metadata} />
   );
 };
 

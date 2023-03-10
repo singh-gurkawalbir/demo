@@ -8,6 +8,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../constants';
+import customCloneDeep from '../utils/customCloneDeep';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -1821,115 +1822,6 @@ describe('resource region selector testcases', () => {
       expect(selectors.flowSupportsSettings(state, 'flowId2')).toBe(true);
       expect(selectors.flowSupportsSettings(state, 'flowId2', 'child1')).toBe(true);
       expect(selectors.flowSupportsSettings(state, 'flowId2', 'child2')).toBe(false);
-    });
-  });
-
-  describe('selectors.flowListWithMetadata test cases', () => {
-    const state = {
-      data: {
-        resources: {
-          exports: [{
-            _id: 'exp1',
-            type: 'distributed',
-          }, {
-            _id: 'exp2',
-            type: 'simple',
-          }],
-          flows: [{
-            _id: 'flow1',
-            pageGenerators: [{
-              _exportId: 'exp1',
-            }],
-            pageProcessors: [{
-              _importId: 'imp1',
-              type: 'import',
-            }],
-          },
-          {
-            _id: 'flow2',
-            pageGenerators: [{
-              _exportId: 'exp2',
-            }],
-            pageProcessors: [{
-              _importId: 'imp1',
-              type: 'import',
-            }],
-          },
-          {
-            _id: 'flow3',
-            schedule: '* 5 * * * *',
-            pageGenerators: [{
-              _exportId: 'exp3',
-            }],
-            pageProcessors: [{
-              _importId: 'imp1',
-              type: 'import',
-            }],
-          }],
-        },
-      },
-    };
-
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowListWithMetadata()).toEqual({resources: []});
-      expect(selectors.flowListWithMetadata({})).toEqual({resources: []});
-      expect(selectors.flowListWithMetadata(null)).toEqual({resources: []});
-      expect(selectors.flowListWithMetadata(null, null)).toEqual({resources: []});
-    });
-
-    test('should return correct flow list with metadata', () => {
-      expect(selectors.flowListWithMetadata(state, { type: 'flows' })).toEqual({
-        resources: [
-          {
-            _id: 'flow1',
-            isRealtime: true,
-            pageGenerators: [
-              {
-                _exportId: 'exp1',
-              },
-            ],
-            pageProcessors: [
-              {
-                _importId: 'imp1',
-                type: 'import',
-              },
-            ],
-          },
-          {
-            _id: 'flow2',
-            isRunnable: true,
-            isSimpleImport: true,
-            pageGenerators: [
-              {
-                _exportId: 'exp2',
-              },
-            ],
-            pageProcessors: [
-              {
-                _importId: 'imp1',
-                type: 'import',
-              },
-            ],
-          },
-          {
-            _id: 'flow3',
-            isRunnable: true,
-            showScheduleIcon: true,
-            schedule: '* 5 * * * *',
-            pageGenerators: [
-              {
-                _exportId: 'exp3',
-              },
-            ],
-            pageProcessors: [
-              {
-                _importId: 'imp1',
-                type: 'import',
-              },
-            ],
-          },
-        ],
-      });
     });
   });
 
@@ -8191,9 +8083,11 @@ describe('selectors.isParserSupported test cases', () => {
     );
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-    state.session.form[formKey].value = { '/http/successMediaType': parser };
+    const cloneState = customCloneDeep(state);
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
+    cloneState.session.form[formKey].value = { '/http/successMediaType': parser };
+
+    expect(selectors.isParserSupported(cloneState, formKey, parser)).toBe(true);
   });
 
   test('should return false for HTTP export with overridden success media type different from parser', () => {
@@ -8215,9 +8109,12 @@ describe('selectors.isParserSupported test cases', () => {
     );
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-    state.session.form[formKey].value = { '/http/successMediaType': 'csv' };
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
+    const cloneState = customCloneDeep(state);
+
+    cloneState.session.form[formKey].value = { '/http/successMediaType': 'csv' };
+
+    expect(selectors.isParserSupported(cloneState, formKey, parser)).toBe(false);
   });
 
   test('should not rely on success media type of connection', () => {

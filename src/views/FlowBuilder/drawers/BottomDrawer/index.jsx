@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
   actionsContainer: {
     paddingRight: theme.spacing(3),
     justifyContent: 'center',
+    display: 'flex',
   },
   tabBar: {
     backgroundColor: theme.palette.background.paper,

@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { cloneDeep } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const addSupportsRefreshToOptions = option => ({
   ...option,
@@ -38,7 +38,7 @@ export default function DynaMultiSubsidiaryMapping(props) {
   }, [_integrationId, dispatch, id]);
 
   const metadata = useMemo(() => {
-    const formattedData = cloneDeep(data);
+    const formattedData = customCloneDeep(data);
 
     if (formattedData && formattedData.optionsMap && Array.isArray(formattedData.optionsMap)) {
       formattedData.optionsMap = formattedData.optionsMap.map(addSupportsRefreshToOptions);

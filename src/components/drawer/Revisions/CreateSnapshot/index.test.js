@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import CreateSnapshotDrawer from '.';
 import { DrawerProvider } from '../../Right/DrawerContext/index';
 
@@ -14,18 +14,20 @@ const mockHistoryReplace = jest.fn();
 async function initCreateSnapshotDrawer(status = 'created') {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement = {
-    revision: {
-      _integrationId: {
-        _revId: {status},
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      revision: {
+        _integrationId: {
+          _revId: {status},
+        },
       },
-    },
-  };
-  initialStore.getState().session.form = {
-  };
-  initialStore.getState().session.resource = {
-    _revId: status === 'created' ? {} : undefined,
-  };
+    };
+    draft.session.form = {
+    };
+    draft.session.resource = {
+      _revId: status === 'created' ? {} : undefined,
+    };
+  });
 
   const props = {integrationId: '_integrationId'};
   const ui = (

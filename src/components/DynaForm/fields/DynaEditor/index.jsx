@@ -68,6 +68,7 @@ export default function DynaEditor(props) {
     customHandleEditorClick,
     isLoggable,
     validateContent,
+    modalTitle,
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
@@ -151,7 +152,7 @@ export default function DynaEditor(props) {
             <ExpandEditorModal
               show={showEditor}
               handleClose={handleEditorClick}
-              label={label}
+              label={modalTitle || label}
               validateContent={validateContent}
               editorProps={{
                 id,

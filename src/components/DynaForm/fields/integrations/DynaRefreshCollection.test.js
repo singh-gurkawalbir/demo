@@ -6,20 +6,22 @@ import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
 import DynaRefreshCollection from './DynaRefreshCollection';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
 function initDynaRefreshCollection(props = {}) {
-  initialStore.getState().session.form = {
-    formKey: {
-      fields: {
-        integration: {
-          value: '5b3c75dd5d3c125c88b5dd20',
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      formKey: {
+        fields: {
+          integration: {
+            value: '5b3c75dd5d3c125c88b5dd20',
+          },
         },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<DynaRefreshCollection {...props} />, {initialStore});
 }

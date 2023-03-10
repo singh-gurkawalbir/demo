@@ -324,6 +324,12 @@ describe('all modal sagas', () => {
         );
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
         expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
+          put(actions.user.preferences.update({
+            defaultAShareId: 'something',
+            environment: 'production',
+          })),
+        );
+        expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
           put(actions.auth.clearStore({ authenticated: true })),
         );
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));

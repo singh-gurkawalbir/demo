@@ -1,7 +1,7 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import {renderWithProviders, reduxStore} from '../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 import AuditLogTable from './AuditLogTable';
 
 const initialStore = reduxStore;
@@ -117,8 +117,10 @@ describe('test cases for audit log table', () => {
     const resourceType = 'flows';
     const resourceId = 'flow_id';
 
-    initialStore.getState().session.filters = {};
-    initialStore.getState().data.audit.flows = demoFlow;
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {};
+      draft.data.audit.flows = demoFlow;
+    });
     renderWithProviders(<MemoryRouter><AuditLogTable resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>, {initialStore});
     expect(screen.getByText('Time')).toBeInTheDocument();
     expect(screen.getByText('Source')).toBeInTheDocument();
@@ -136,17 +138,19 @@ describe('test cases for audit log table', () => {
     expect(screen.getByText("You don't have any audit logs.")).toBeInTheDocument();
   });
   test('should display contents of auditlog table when resourceType is flows', () => {
-    initialStore.getState().session.filters = {
-      'integrations-6253af74cddb8a1ba550a010-auditLogs': {
-        sort: {
-          order: 'desc',
-          orderBy: 'lastModified',
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {
+        'integrations-6253af74cddb8a1ba550a010-auditLogs': {
+          sort: {
+            order: 'desc',
+            orderBy: 'lastModified',
+          },
+          selected: {},
+          isAllSelected: false,
         },
-        selected: {},
-        isAllSelected: false,
-      },
-    };
-    initialStore.getState().data.audit = demoIntegration;
+      };
+      draft.data.audit = demoIntegration;
+    });
     const filters = {
       resourceType: 'flow',
     };

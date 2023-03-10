@@ -1,12 +1,13 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
-import { isEmpty, cloneDeep, set, unset, get } from 'lodash';
+import { isEmpty, set, unset, get } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export const getDataTypeDefaultValue = (dataType = 'string') => {
   const data = {string: 'abc', number: 123, boolean: true, stringarray: ['a', 'b'], numberarray: [1, 2], booleanarray: [true, false], objectarray: [{a: 'b'}, {c: 'd'}], object: {a: 'b'} };
@@ -116,10 +117,10 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
     versions = versions.filter(v => v._id === connectionVersion);
     httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]?._id));
   }
-  exportData.versions = cloneDeep(versions);
+  exportData.versions = customCloneDeep(versions);
 
   exportData.resources = httpResources.map(httpResource => {
-    const exportPreConfiguredFields = cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
+    const exportPreConfiguredFields = customCloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
 
     return {
       ...httpResource, id: httpResource._id, exportPreConfiguredFields, hidden: !!httpResource.hidden,
@@ -155,9 +156,10 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
             doesNotSupportPaging = true;
           }
+          const supportsAsyncHelper = !!fieldsUserMustSet?.find(f => f.path === 'http._asyncHelperId');
 
           const ep = {
-            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds,
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
           };
 
                 r.exportPreConfiguredFields?.forEach(field => {
@@ -220,10 +222,10 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]?._id));
   }
 
-  importData.versions = cloneDeep(versions);
+  importData.versions = customCloneDeep(versions);
   importData.resources = httpResources.map(httpResource => {
-    const resourcePreConfiguredFields = cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
-    const resourceFieldsUserMustSet = cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
+    const resourcePreConfiguredFields = customCloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
+    const resourceFieldsUserMustSet = customCloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
 
     const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
 
@@ -288,9 +290,10 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
               howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
             }
           }
+          const supportsAsyncHelper = !!httpEndpoint.supportedBy.fieldsUserMustSet?.find(f => f.path === 'http._asyncHelperId');
 
           const ep = {
-            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds,
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
           };
 
           if (httpEndpoint.resourceFields) {
@@ -403,7 +406,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     return finalFieldMeta;
   }
   const connectionTemplate = connector.supportedBy.connection;
-  const tempFiledMeta = cloneDeep(finalFieldMeta);
+  const tempFiledMeta = customCloneDeep(finalFieldMeta);
   let resourceVersion = resource?.http?.unencrypted?.version;
 
   if (!resourceVersion && resource?.http?._httpConnectorVersionId) {
@@ -434,7 +437,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       if (key === 'http.ping.relativeURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
-        } else if (connector.versioning?.location === 'uri') {
+        } else if (connector.versioning?.location === 'uri' && connector?.baseURIs?.[0]?.includes('/:_version')) {
           if (resourceVersion) {
             tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
           } else if (connector.versions?.[0]?.name) {
@@ -780,7 +783,7 @@ export const updateWebhookFinalMetadataWithHttpFramework = (finalFieldMeta, conn
     return finalFieldMeta;
   }
   const exportTemplate = connector.supportedBy.export;
-  const tempFiledMeta = cloneDeep(finalFieldMeta);
+  const tempFiledMeta = customCloneDeep(finalFieldMeta);
 
   Object.keys(tempFiledMeta.fieldMap).map(key => {
     const preConfiguredField = exportTemplate.preConfiguredFields?.find(field => key === field.path);

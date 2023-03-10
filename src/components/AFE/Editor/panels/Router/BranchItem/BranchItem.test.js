@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import BranchItem from '.';
 import actions from '../../../../../../actions';
 
@@ -17,24 +17,26 @@ const props = {
 async function initBranchItem(props = {}, rules = []) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors['router-abcd'] = {
-    editorType: 'router',
-    rule: {
-      routeRecordsTo: 'first_matching_branch',
-      routeRecordsUsing: 'input_filters',
-      id: 'abcd',
-      branches: [
-        {
-          name: 'R1B1',
-          description: 'For branch',
-          inputFilter: {rules},
-        },
-        {
-          name: 'R1B2',
-          inputFilter: {rules},
-        },
-      ]},
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors['router-abcd'] = {
+      editorType: 'router',
+      rule: {
+        routeRecordsTo: 'first_matching_branch',
+        routeRecordsUsing: 'input_filters',
+        id: 'abcd',
+        branches: [
+          {
+            name: 'R1B1',
+            description: 'For branch',
+            inputFilter: {rules},
+          },
+          {
+            name: 'R1B2',
+            inputFilter: {rules},
+          },
+        ]},
+    };
+  });
   const ui = (
     <BranchItem {...props} />
   );

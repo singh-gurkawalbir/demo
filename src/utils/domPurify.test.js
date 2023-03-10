@@ -120,4 +120,41 @@ describe('Testsuite for Get Dom Purify', () => {
 
     expect(node).toHaveAttribute('xlink:href', 'http://test.com');
   });
+  test('should test the anchor tag to text when there is no href', () => {
+    const options = { allowedTags: ['a'] };
+
+    getDomPurify(options);
+    expect(DOMPurify.addHook).toHaveBeenCalledTimes(1);
+
+    const arg1 = DOMPurify.addHook.mock.calls[0][0];
+
+    expect(arg1).toBe('afterSanitizeAttributes');
+
+    const arg2 = DOMPurify.addHook.mock.calls[0][1];
+    const node = document.createElement('a');
+
+    node.textContent = 'test';
+    const parentNode = document.createElement('div');
+
+    parentNode.appendChild(node);
+    document.body.innerHTML = '<h1>Hello World!</h1>';
+
+    document.body.appendChild(parentNode);
+    arg2(node);
+
+    expect(DOMPurify.addHook).toHaveBeenCalledTimes(2);
+
+    const afterSanitizeElementsHook = DOMPurify.addHook.mock.calls[1];
+
+    expect(afterSanitizeElementsHook[0]).toBe('afterSanitizeElements');
+
+    const afterSanitizeElementsHookCallback = afterSanitizeElementsHook[1];
+
+    afterSanitizeElementsHookCallback(node);
+    expect(node).not.toBeNull();
+    expect(node.textContent).toBe('test');
+
+    // clean up by removing parentNode from the DOM
+    document.body.removeChild(parentNode);
+  });
 });
