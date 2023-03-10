@@ -76,8 +76,20 @@ function MockDataDrawerContent() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId), shallowEqual);
-  const { value, disabled, resourceId, resourceType, isLoggable, flowId, required, isValid, label, helpKey } = fieldState || {};
-  const [errorMessage, setErrorMessage] = useState();
+  const {
+    value,
+    disabled,
+    resourceId,
+    resourceType,
+    isLoggable,
+    flowId,
+    required,
+    isValid,
+    label,
+    helpKey,
+    errorMessages,
+  } = fieldState || {};
+  const [errorMessage, setErrorMessage] = useState(errorMessages);
   const [editorContent, setEditorContent] = useState(value);
 
   const handleClose = useCallback(() => history.goBack(), [history]);
@@ -90,13 +102,7 @@ function MockDataDrawerContent() {
 
   const handleUpdate = useCallback(newVal => {
     setEditorContent(newVal);
-    const errorMessage = validateMockDataField(resourceType)(newVal);
-
-    if (errorMessage) {
-      setErrorMessage(errorMessage);
-    } else {
-      setErrorMessage();
-    }
+    setErrorMessage(validateMockDataField(resourceType)(newVal));
   }, [resourceType]);
 
   const handleDone = () => {
