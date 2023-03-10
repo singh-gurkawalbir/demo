@@ -18,6 +18,7 @@ const VirtualizedListRow = ({index, style, data}) => {
     setTableState,
     onRowChange,
     disableDeleteRows,
+    isSubFormTable,
   } = data;
 
   const { value, key } = items[index];
@@ -28,6 +29,7 @@ const VirtualizedListRow = ({index, style, data}) => {
     >
       <TableRow
         isVirtualizedTable
+        isSubFormTable={isSubFormTable}
         rowValue={value}
         rowIndex={index}
         tableSize={items.length}
@@ -87,7 +89,8 @@ const VirtualizedTable = ({
   isAnyColumnFetching,
   setTableState,
   onRowChange,
-  disableDeleteRows }) => {
+  disableDeleteRows,
+  isSubFormTable }) => {
   const listRef = React.createRef();
 
   const [, setItemCount] = useState(items.length);
@@ -116,7 +119,8 @@ const VirtualizedTable = ({
     setTableState,
     onRowChange,
     disableDeleteRows,
-  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows]);
+    isSubFormTable,  // Add the isSubFormTable property in the rowProps so that VariableSizeList component could pass the property to it's children
+  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, isSubFormTable]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders
@@ -159,7 +163,6 @@ const VirtualizedTable = ({
       itemCount={items.length}
       itemData={rowProps}
       onScroll={onScroll}
-
      >
       {/* when options are loading we have to return the spinner, this is to block the user
          from accessing the table till the DynaAutocomplete initial value state settles */}

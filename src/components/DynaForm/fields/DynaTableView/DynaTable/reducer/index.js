@@ -25,8 +25,7 @@ export default function reducer(state, action) {
     field,
     optionsMap,
     onRowChange,
-    tableSize,
-    isVirtualizedTable,
+    isSubFormTable,
   } = action;
 
   return produce(state, draft => {
@@ -37,8 +36,12 @@ export default function reducer(state, action) {
     switch (type) {
       case actionTypes.REMOVE_TABLE_ROW:
         tableStateValue.splice(rowIndex, 1);
-        draft.tableSize = tableSize;
-        if (isVirtualizedTable && tableSize === 1 && optionsMap.some(obj => obj.required)) {
+        /*
+          The below condition will checks when the table has left with 1 row in deletion process and sets the isValid
+          to false when there are required properties within option map orelse it will set the isValid to true so that
+          user can save the form.
+        */
+        if (isSubFormTable && tableStateValue === 1 && optionsMap.some(obj => obj.required)) {
           draft.isValid = false;
         } else {
           draft.isValid = true;
@@ -47,7 +50,6 @@ export default function reducer(state, action) {
         break;
       case actionTypes.UPDATE_TABLE_ROW:
         draft.touched = true;
-        draft.tableSize = tableSize;
         if (onRowChange) {
           // eslint-disable-next-line no-param-reassign
           tableStateValue[rowIndex].value = onRowChange(tableStateValue[rowIndex].value, field, value);
@@ -60,7 +62,11 @@ export default function reducer(state, action) {
         // eslint-disable-next-line no-case-declarations
         const isLastRowEmpty = Object.values(tableStateValue[tableStateValue.length - 1].value).every(val => !val);
 
-        if (isVirtualizedTable && isAllValuesEntered && isLastRowEmpty) {
+        /*
+          The below if condition will calculate whether the all required fields are having the values
+          and checking whether the last row is empty and setting the isValid property based on it.
+        */
+        if (isSubFormTable && isAllValuesEntered && isLastRowEmpty) {
           draft.isValid = true;
         } else {
           draft.isValid = false;

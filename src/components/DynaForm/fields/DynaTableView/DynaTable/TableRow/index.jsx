@@ -73,7 +73,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, isVirtualizedTable, tableSize}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, isSubFormTable}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -87,10 +87,9 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       value,
       optionsMap,
       onRowChange,
-      tableSize,
-      isVirtualizedTable,
+      isSubFormTable,
     });
-  }, [id, onRowChange, optionsMap, rowIndex, setTableState, tableSize, isVirtualizedTable]);
+  }, [id, onRowChange, optionsMap, rowIndex, setTableState, isSubFormTable]);
 
   const fieldTestAttr = `text-suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -150,7 +149,9 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       <DynaExportSelect
         {...basicProps}
         {...op}
-        required={isVirtualizedTable ? false : (op.required || basicProps.required)}
+        /* When the staticMap is being used and it has an type property as exportSelect in the optionMap
+        we are setting the isRequiredProperty to false in order to avoid the allignement issue between the table cells */
+        required={isSubFormTable ? false : (op.required || basicProps.required)}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
@@ -218,28 +219,27 @@ const RowCellMemo = ({
   tableSize,
   setTableState,
   onRowChange,
-  isVirtualizedTable,
+  isSubFormTable,
 }) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
     <RowCell
-      isVirtualizedTable={isVirtualizedTable}
+      isSubFormTable={isSubFormTable}
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
       isValid={isValid}
       rowIndex={rowIndex}
-      tableSize={tableSize}
       setTableState={setTableState}
       onRowChange={onRowChange}
       colIndex={colIndex}
   />
-  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, isVirtualizedTable, tableSize]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, isSubFormTable]);
 };
 
-const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, tableSize, classes, isVirtualizedTable, optionsMap}) =>
+const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes, isSubFormTable, optionsMap}) =>
   useMemo(() => (
     <ActionButton
       tooltip=""
@@ -247,12 +247,12 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, tableSize
       data-test={`deleteTableRow-${rowIndex}`}
       aria-label="delete"
       onClick={() => {
-        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex, tableSize: tableSize - 1, isVirtualizedTable, optionsMap });
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex, isSubFormTable, optionsMap });
       }}
       className={classes.margin}>
       <DeleteIcon fontSize="small" />
     </ActionButton>
-  ), [classes.margin, disableDeleteRows, rowIndex, setTableState, tableSize, isVirtualizedTable, optionsMap]);
+  ), [classes.margin, disableDeleteRows, rowIndex, setTableState, isSubFormTable, optionsMap]);
 export default function TableRow({
   rowValue,
   rowIndex,
@@ -262,7 +262,7 @@ export default function TableRow({
   setTableState,
   onRowChange,
   ignoreEmptyRow,
-  isVirtualizedTable,
+  isSubFormTable,
   disableDeleteRows,
 }) {
   const classes = useStyles();
@@ -277,7 +277,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
-              isVirtualizedTable={isVirtualizedTable}
+              isSubFormTable={isSubFormTable}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
@@ -302,8 +302,7 @@ export default function TableRow({
           rowIndex={rowIndex}
           optionsMap={optionsMap}
           setTableState={setTableState}
-          tableSize={tableSize}
-          isVirtualizedTable={isVirtualizedTable}
+          isSubFormTable={isSubFormTable}
           classes={classes}
         />
       </div>
