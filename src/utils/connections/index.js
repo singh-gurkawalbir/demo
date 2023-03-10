@@ -229,6 +229,7 @@ export const KBDocumentation = {
   netsuite: 'https://docs.celigo.com/hc/en-us/articles/360038996151-Set-up-a-connection-to-NetSuite',
   s3: 'https://docs.celigo.com/hc/en-us/articles/360038373912-Set-up-a-connection-to-Amazon-S3',
   salesforce: 'https://docs.celigo.com/hc/en-us/sections/360007478991-Salesforce-',
+  amazonvendorcentral: 'https://docs.celigo.com/hc/en-us/articles/13497353678747',
 };
 
 export const amazonSellerCentralAuthURI = {
