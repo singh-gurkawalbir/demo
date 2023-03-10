@@ -119,7 +119,12 @@ export default {
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
-      return isAccountOwnerMFAEnabled ? [ResetOwnerMFA] : [];
+      if (!integrationId && accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN && isAccountOwnerMFAEnabled) {
+        // An admin can reset owner's MFA setup at account level
+        return [ResetOwnerMFA];
+      }
+
+      return [];
     }
 
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
