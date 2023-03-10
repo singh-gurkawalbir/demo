@@ -37,10 +37,33 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function convertIOFilterExpression(filterExpression = [], context) {
-  const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
-  const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase', 'abs'];
+const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
+const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase', 'abs'];
 
+export function checkExpression(rule) {
+  // check if expression has nested datatypes
+  // this is an invalid case for the UI, but it needs to be handled
+  // for ex: the expression
+  // ["string",["string",["extract","myField"]]]
+  if (!rule || !Array.isArray(rule)) return false;
+
+  if (dataTypes.includes(rule[0].toLowerCase()) &&
+      Array.isArray(rule[1]) &&
+      dataTypes.includes(rule[1][0].toLowerCase())) {
+    return true;
+  }
+
+  if (transformations.includes(rule[0].toLowerCase()) &&
+      Array.isArray(rule[1]) &&
+      transformations.includes(rule[1][0].toLowerCase())) {
+    return true;
+  }
+
+  return !dataTypes.includes(rule[0].toLowerCase()) &&
+  !transformations.includes(rule[0].toLowerCase());
+}
+
+export function convertIOFilterExpression(filterExpression = [], context) {
   /* eslint-disable no-param-reassign */
   function iterate(exp) {
     const toReturn = {};
@@ -88,8 +111,7 @@ export function convertIOFilterExpression(filterExpression = [], context) {
 
           if (isArray(exp[i])) {
             if (
-              !dataTypes.includes(exp[i][0].toLowerCase()) &&
-                !transformations.includes(exp[i][0].toLowerCase())
+              checkExpression(exp[i])
             ) {
               temp.type = 'expression';
               temp.expression = exp[i];
