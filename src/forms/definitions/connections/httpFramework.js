@@ -207,6 +207,9 @@ export default {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
+    'http.apiType': {
+      fieldId: 'http.apiType',
+    },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
       fieldId: 'http.headers',
@@ -383,6 +386,7 @@ export default {
           'name',
           'connectionFormView',
           'application',
+          'http.apiType',
           'mode',
           '_agentId',
         ],

@@ -1,0 +1,151 @@
+import React, { useState, useMemo, useCallback } from 'react';
+import {useSelector, shallowEqual, useDispatch} from 'react-redux';
+import {makeStyles, FormLabel } from '@material-ui/core';
+import clsx from 'clsx';
+import FieldHelp from '../../FieldHelp';
+import useFormContext from '../../../Form/FormContext';
+import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../../../reducers';
+import { emptyObject } from '../../../../constants';
+import {useHFSetInitializeFormData} from './DynaHFAssistantOptions';
+import getResourceFormAssets from '../../../../forms/formFactory/getResourceFromAssets';
+import { defaultPatchSetConverter, sanitizePatchSet } from '../../../../forms/formFactory/utils';
+import MultiApiSelect from '../../../MultiApiSelect';
+
+const useStyles = makeStyles(() => ({
+  fieldWrapper: {
+    width: '100%',
+  },
+}));
+const desc = 'Access and manipulate a store\'s data using traditional RESTful methods.';
+const dummyData = [{
+  name: 'Shopify',
+  id: '63d94c4d8ba47f5fa4c00001',
+  description: 'Access and manipulate a store\'s data using traditional RESTful methods.',
+},
+{
+  name: 'Shopify Graph QL',
+  id: '63d94c4d8ba47f5fa4c00002',
+  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
+},
+{
+  name: 'Shopify Graph QL',
+  id: '63d94c4d8ba47f5fa4c00002',
+  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
+},
+{
+  name: 'Shopify Graph QL',
+  id: '63d94c4d8ba47f5fa4c00002',
+  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
+}];
+
+export default function APISelect(props) {
+  const {
+    required,
+    label,
+    id,
+    formKey,
+    resourceType,
+    resourceId,
+    defaultValue,
+  } = props;
+
+  const classes = useStyles();
+  const formContext = useFormContext(formKey);
+  const dispatch = useDispatch();
+
+  const { merged } =
+  useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  ) || {};
+  const stagedResource = merged || emptyObject;
+
+  const httpConnectorData = useSelector(state => selectors.connectorData(state, stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId), shallowEqual);
+  const data = useMemo(() => httpConnectorData?.apis?.map(({name, _id, description}) => ({name, id: _id, description: description || desc })), [httpConnectorData?.apis]);
+  const val = useMemo(() => {
+    if (!stagedResource || !stagedResource.http || !stagedResource.http._httpConnectorApiId) return defaultValue;
+
+    return stagedResource.http?._httpConnectorApiId;
+  }, [stagedResource, defaultValue]);
+
+  const [value, setValue] = useState(val);
+  const resourceFormState = useSelector(
+    state =>
+      selectors.resourceFormState(state, resourceType, resourceId) || emptyObject
+  );
+  const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
+
+  useHFSetInitializeFormData({...props, isHTTPFramework: stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId});
+
+  const handleClick = useCallback(val => {
+    setValue(val);
+    // onFieldChange(id, val);
+    const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+      acc[`/${curr}`] = stagedResource[curr];
+
+      return acc;
+    }, {});
+
+    // use this function to get the corresponding preSave function for this current form
+    const { preSave } = getResourceFormAssets({
+      resourceType,
+      resource: stagedResource,
+      isNew: false,
+      accountOwner,
+    });
+    const finalValues = preSave(formContext.value, stagedRes);
+    const newFinalValues = {...finalValues};
+
+    if (val) {
+      stagedRes['/http/apiType'] = val;
+      newFinalValues['/http/apiType'] = val;
+    }
+    const allPatches = sanitizePatchSet({
+      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
+      fieldMeta: resourceFormState.fieldMeta,
+      resource: {},
+    });
+
+    dispatch(actions.resource.clearStaged(resourceId));
+    dispatch(
+      actions.resource.patchStaged(resourceId, allPatches)
+    );
+
+    let allTouchedFields = Object.values(formContext.fields)
+      .filter(field => !!field.touched)
+      .map(field => ({ id: field.id, value: field.value }));
+
+    // When we initialize we always have the selected form view field touched
+    allTouchedFields = [
+      ...allTouchedFields,
+      { id, value: val },
+    ];
+    dispatch(
+      actions.resourceForm.init(
+        resourceType,
+        resourceId,
+        false,
+        false,
+        '',
+        allTouchedFields
+      )
+    );
+  }, [accountOwner, dispatch, formContext?.fields, formContext?.value, id, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
+
+  // if (!data || !data.length) {
+  //   return null;
+  // }
+
+  return (
+    <div className={clsx(classes.fieldWrapper)}>
+      <FormLabel required={required} htmlFor={label}>
+        {label}
+      </FormLabel>
+      <FieldHelp {...props} />
+      <MultiApiSelect items={dummyData} value={value} onClick={handleClick} />
+    </div>
+  );
+}
