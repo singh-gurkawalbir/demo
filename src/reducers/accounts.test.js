@@ -134,6 +134,85 @@ describe('Accounts region selector testcases', () => {
       );
     });
   });
+  describe('isAccountOwnerMFAEnabled selector', () => {
+    test('should return false if mfaEnabled prop does not exist for ownerUser', () => {
+      const state1 = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: '1234' },
+            org: {
+              accounts: [
+                {
+                  _id: '1234',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                  ownerUser: {
+                    _id: '111',
+                    email: 'abc@celigo.com',
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some action'
+      );
+      const state2 = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: '1234' },
+            org: {
+              accounts: [
+                {
+                  _id: '1234',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                  ownerUser: {
+                    _id: '111',
+                    email: 'abc@celigo.com',
+                    mfaEnabled: false,
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.isAccountOwnerMFAEnabled(state1)).toBeFalsy();
+      expect(selectors.isAccountOwnerMFAEnabled(state2)).toBeFalsy();
+    });
+    test('should return true if mfaEnabled prop exist for ownerUser under shared ashare', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: '1234' },
+            org: {
+              accounts: [
+                {
+                  _id: '1234',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                  ownerUser: {
+                    _id: '111',
+                    email: 'abc@celigo.com',
+                    mfaEnabled: true,
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.isAccountOwnerMFAEnabled(state)).toBeTruthy();
+    });
+  });
 
   describe('selectors.allRegisteredConnectionIdsFromManagedIntegrations test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
