@@ -15,6 +15,8 @@ const initialStore = getCreatedStore();
 
 const formKey = 'newForm';
 
+const updateMockDataContent = jest.fn();
+
 function initPopulateWithPreviewData(props = {}) {
   mutateStore(initialStore, draft => {
     draft.data.resources = {
@@ -279,8 +281,51 @@ describe('PopulateWithPreviewData UI tests', () => {
     initialStore.dispatch(
       actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
     );
-
+    await waitFor(() => expect(updateMockDataContent).toHaveBeenCalledTimes(0));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+      actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
+    ));
+    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
+  });
+  test('should call updateMockDataContent function and render correct snackbar on success on click for exports', async () => {
+    const resourceType = 'exports';
+    const resourceId = 'export1';
+
+    initPopulateWithPreviewData({
+      resourceId,
+      resourceType,
+      updateMockDataContent,
+    });
+    const buttonRef = screen.getByRole('button', {name: 'Populate with preview data'});
+
+    expect(buttonRef).toBeInTheDocument();
+    expect(buttonRef).toBeEnabled();
+    userEvent.click(buttonRef);
+    expect(buttonRef).toBeDisabled();
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+      actions.resourceFormSampleData.request(formKey, { refreshCache: true, asyncKey: getAsyncKey(resourceType, resourceId) })
+    ));
+
+    const previewData = [
+      {
+        id: '1234567890',
+        errors: [{
+          code: 'error_code',
+          message: 'error message',
+          source: 'application',
+        }],
+        ignored: false,
+        statusCode: 200,
+        dataURI: '',
+        _json: { responseField1: '', responseField2: '' },
+      },
+    ];
+
+    initialStore.dispatch(
+      actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData)
+    );
+    await waitFor(() => expect(updateMockDataContent).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockDispatchFn).not.toBeCalledWith(
       actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
     ));
     await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());

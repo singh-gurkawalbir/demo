@@ -24,7 +24,9 @@ export const validateMockOutputField = value => {
   }
 
   // more than 10 records
-  if (unwrapExportFileSampleData(jsonValue)?.length > 10) {
+  const unwrappedSampleData = unwrapExportFileSampleData(jsonValue);
+
+  if (Array.isArray(unwrappedSampleData) && unwrappedSampleData.length > 10) {
     return errorMessageStore('MOCK_OUTPUT_NUM_RECORDS_EXCEED');
   }
 };
@@ -47,6 +49,9 @@ export const validateMockResponseField = value => {
     return errorMessageStore('MOCK_RESPONSE_INVALID_FORMAT');
   }
 };
+
+export const validateMockDataField = resourceType => value =>
+  resourceType === 'exports' ? validateMockOutputField(value) : validateMockResponseField(value);
 
 export const getMockOutputFromResource = resource => {
   const {mockOutput} = resource || {};
