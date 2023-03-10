@@ -2,7 +2,7 @@
 import React from 'react';
 import { waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import FileDataChange from './FileDataChange';
 import { getCreatedStore } from '../../../../store';
 import actions from '../../../../actions';
@@ -10,17 +10,19 @@ import actions from '../../../../actions';
 const initialStore = getCreatedStore();
 
 function initFileDataChange(props = {}) {
-  initialStore.getState().data.resources.exports = [{
-    _id: '63515cc28eab567612a83249',
-    file: {type: 'csv' },
-    sampleData: {id: 'sample', data: 'data'},
-  }];
-  initialStore.getState().session.editors = {
-    filecsv: {
-      resourceType: 'exports',
-      resourceId: '63515cc28eab567612a83249',
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources.exports = [{
+      _id: '63515cc28eab567612a83249',
+      file: {type: 'csv' },
+      sampleData: {id: 'sample', data: 'data'},
+    }];
+    draft.session.editors = {
+      filecsv: {
+        resourceType: 'exports',
+        resourceId: '63515cc28eab567612a83249',
+      },
+    };
+  });
 
   return renderWithProviders(<FileDataChange {...props} />, {initialStore});
 }

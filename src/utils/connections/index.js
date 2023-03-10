@@ -332,3 +332,37 @@ export const getParentResourceContext = (url, resourceType) => {
     path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,
     exact: true})?.params || {};
 };
+export const getConnectionApi = connection => {
+  let baseURI = '';
+
+  if (connection?.type === 'rest') {
+    baseURI = connection.rest?.baseURI;
+  } else if (connection?.type === 'http') {
+    baseURI = connection.http?.baseURI;
+  } else { return null; }
+
+  if (baseURI?.includes('{{{connection.')) {
+    baseURI = baseURI.replaceAll('}}}', '{{{');
+    let list = baseURI.split('{{{');
+
+    list = list.map(l => {
+      if (l.includes('connection.')) {
+        let placeHolderArray = l.replace('connection.', '');
+
+        placeHolderArray = placeHolderArray.split('.');
+        let evaluatedOutput = {...connection};
+
+        placeHolderArray.forEach(p => {
+          evaluatedOutput = evaluatedOutput?.[p];
+        });
+
+        return evaluatedOutput || `{{{${l}}}}`;
+      }
+
+      return l;
+    });
+    baseURI = list.join('');
+  }
+
+  return baseURI;
+};

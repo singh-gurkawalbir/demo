@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import DynaRelativeUriAFE from './DynaRelativeUri_afe';
@@ -44,11 +44,13 @@ describe('test for relative uri field', () => {
     const baseURI = 'https://netsuite.com';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      type: 'http',
-      http: { baseURI },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        type: 'http',
+        http: { baseURI },
+      }];
+    });
     renderWithProviders(<DynaRelativeUriAFE {...props} />, {initialStore});
     expect(screen.getByTestId('stage')).toHaveTextContent(EXPORT_FILTERED_DATA_STAGE);
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
@@ -69,11 +71,13 @@ describe('test for relative uri field', () => {
     const baseURI = 'https://netsuite.com';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      type: 'rest',
-      rest: { baseURI },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        type: 'rest',
+        rest: { baseURI },
+      }];
+    });
     renderWithProviders(<DynaRelativeUriAFE {...props} />, {initialStore});
     expect(screen.getByTestId('stage')).toHaveTextContent('importMappingExtract');
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
@@ -93,11 +97,13 @@ describe('test for relative uri field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      type: 'rest',
-      rest: { baseURI: 'https://netsuite.com' },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        type: 'rest',
+        rest: { baseURI: 'https://netsuite.com' },
+      }];
+    });
     renderWithProviders(<DynaRelativeUriAFE {...props} />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState(props.formKey)(props.id, {isValid: false, errorMessages: 'A value must be provided'}));
   });

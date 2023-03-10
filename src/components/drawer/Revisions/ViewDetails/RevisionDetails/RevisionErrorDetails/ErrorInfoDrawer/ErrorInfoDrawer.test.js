@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import {DrawerProvider} from '../../../../../Right/DrawerContext/index';
-import { renderWithProviders } from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../../test/test-utils';
 import ErrorInfoDrawer from '.';
 import { getCreatedStore } from '../../../../../../../store';
 
@@ -26,13 +26,15 @@ jest.mock('../../../../../Right', () => ({
 async function initErrorInfoDrawer(props = {}, errorId) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().session.lifeCycleManagement.revision._integrationId = {
-    _revisionId: {
-      errors: {
-        data: [{code: 'err1', message: 'Error 1', _id: '_errorId'}],
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement.revision._integrationId = {
+      _revisionId: {
+        errors: {
+          data: [{code: 'err1', message: 'Error 1', _id: '_errorId'}],
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: `/error/${errorId}`}]}>
       <Route

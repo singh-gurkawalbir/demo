@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders} from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import VariationMappings from './MappingsWrapper';
 
@@ -24,8 +24,10 @@ describe('MappingsWrapper UI tests', () => {
   function initStoreAndRender(statusObj) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['4321-1234'] = {mappings: []};
-    initialStore.getState().session.integrationApps.settings['4321-1234'].mappings['4321-sectionId-5-variationAttributes'] = statusObj;
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['4321-1234'] = {mappings: []};
+      draft.session.integrationApps.settings['4321-1234'].mappings['4321-sectionId-5-variationAttributes'] = statusObj;
+    });
 
     renderWithProviders(
       <MemoryRouter>

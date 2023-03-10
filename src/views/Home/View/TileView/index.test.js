@@ -2,7 +2,7 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import TileView from './index';
 
@@ -65,51 +65,52 @@ const demotiles = [
 function initTileView(props = {}) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().data.resources.tiles = props.tiles;
+  mutateStore(initialStore, draft => {
+    draft.data.resources.tiles = props.tiles;
 
-  initialStore.getState().user = {
-    preferences: {
-      environment: 'production',
-      dateFormat: 'MM/DD/YYYY',
-      timeFormat: 'h:mm:ss a',
-      drawerOpened: true,
-      expand: 'Resources',
-      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-      showReactSneakPeekFromDate: '2019-11-05',
-      showReactBetaFromDate: '2019-12-26',
-      defaultAShareId: 'own',
-      dashboard: {
-        view: 'list',
-        tilesOrder: [
-          '62bedcdca0f5f21448171ea2',
-          '62be9cf14a6daf23ece8ed33',
-          '62beb29aa0f5f2144816f80c',
-          '6253af74cddb8a1ba550a010',
-        ],
+    draft.user = {
+      preferences: {
+        environment: 'production',
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: 'h:mm:ss a',
+        drawerOpened: true,
+        expand: 'Resources',
+        scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+        showReactSneakPeekFromDate: '2019-11-05',
+        showReactBetaFromDate: '2019-12-26',
+        defaultAShareId: 'own',
+        dashboard: {
+          view: 'list',
+          tilesOrder: [
+            '62bedcdca0f5f21448171ea2',
+            '62be9cf14a6daf23ece8ed33',
+            '62beb29aa0f5f2144816f80c',
+            '6253af74cddb8a1ba550a010',
+          ],
+        },
       },
-    },
-    profile: {
-      _id: '62386a5fed961b5e22e992c7',
-      name: 'Prashanth Kumar Nesa',
-      email: 'prashanthkumar.nesa@celigo.com',
-      role: 'engineering intern',
-      company: 'celigo',
-      phone: '7995045186',
-      auth_type_google: {},
-      timezone: 'Asia/Calcutta',
-      developer: true,
-      allowedToPublish: true,
-      agreeTOSAndPP: true,
-      createdAt: '2022-03-21T12:06:55.685Z',
-      useErrMgtTwoDotZero: true,
-      authTypeSSO: null,
-      emailHash: '087e41a1843139c27bce730b99664a84',
-    },
+      profile: {
+        _id: '62386a5fed961b5e22e992c7',
+        name: 'Prashanth Kumar Nesa',
+        email: 'prashanthkumar.nesa@celigo.com',
+        role: 'engineering intern',
+        company: 'celigo',
+        phone: '7995045186',
+        auth_type_google: {},
+        timezone: 'Asia/Calcutta',
+        developer: true,
+        allowedToPublish: true,
+        agreeTOSAndPP: true,
+        createdAt: '2022-03-21T12:06:55.685Z',
+        useErrMgtTwoDotZero: true,
+        authTypeSSO: null,
+        emailHash: '087e41a1843139c27bce730b99664a84',
+      },
+      debug: false,
+    };
 
-    debug: false,
-  };
-
-  initialStore.getState().session.filters = props.obj;
+    draft.session.filters = props.obj;
+  });
 
   return renderWithProviders(<MemoryRouter><TileView /></MemoryRouter>, {initialStore});
 }

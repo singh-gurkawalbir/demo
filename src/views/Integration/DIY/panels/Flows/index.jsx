@@ -35,6 +35,7 @@ import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
 import NoResultTypography from '../../../../../components/NoResultTypography';
 import InfoIcon from '../../../../../components/icons/InfoIcon';
 import infoText from '../infoText';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -559,7 +560,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             filterKey={filterKey}
             searchFilterKey={searchFilterKey}
             actionProps={actionProps}
-            flows={flows}
+            flows={customCloneDeep(flows)}
         />
         </LoadResources>
       </div>

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import customCloneDeep from './customCloneDeep';
 import { MAX_BRANCHES } from '../constants';
 import { celigoListCompare } from './sort';
 
@@ -28,7 +29,7 @@ export function getUnionObject(arr) {
     return arr[0];
   }
 
-  const cloneArr = _.cloneDeep(arr);
+  const cloneArr = customCloneDeep(arr);
 
   cloneArr.length = Math.min(arr.length, MAX_BRANCHES);
   _.each(cloneArr, obj => {

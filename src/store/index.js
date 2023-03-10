@@ -63,6 +63,10 @@ export const getCreatedStore = () => {
 
   sagaMiddleware.run(rootSaga);
 
+  // if (env === 'test') {
+  //   return store;
+  // }
+
   return store;
 };
 export const store = getCreatedStore();

@@ -36,6 +36,14 @@ export default (state = {}, action) => {
           draft[resourceType] = 'failed';
         }
         break;
+      case actionTypes.RESOURCE.CLEAR_COLLECTION:
+
+        delete draft[resourceType];
+        if (draft[integrationId]) {
+          delete draft[integrationId][resourceType];
+        }
+
+        break;
       default:
         return state;
     }

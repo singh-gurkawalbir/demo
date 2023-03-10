@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
@@ -28,19 +28,19 @@ const end = new Date();
 
 end.setMonth(end.getMonth() - 2);
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own', dashboard: {view: 'list'} };
-
-initialStore.getState().user.org.accounts = [
-  {_id: 'own',
-    ownerUser: {licenses: [
-      {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: true, expires: end},
-      {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, expires: end},
-    ]}}];
-
-initialStore.getState().data.resources.connections = [{
-  _id: 'ssLinkedConnectionId2',
-  netsuite: {account: 'accountName'},
-}];
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own', dashboard: {view: 'list'} };
+  draft.user.org.accounts = [
+    {_id: 'own',
+      ownerUser: {licenses: [
+        {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: true, expires: end},
+        {_integrationId: '2_integrationId', _connectorId: 'some_connectorId', resumable: false, expires: end},
+      ]}}];
+  draft.data.resources.connections = [{
+    _id: 'ssLinkedConnectionId2',
+    netsuite: {account: 'accountName'},
+  }];
+});
 
 function initHomeTiles(data = {}, initialStore = null) {
   const ui = (

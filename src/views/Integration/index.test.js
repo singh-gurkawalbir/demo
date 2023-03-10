@@ -3,7 +3,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import Integration from '.';
-import { renderWithProviders} from '../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
@@ -45,22 +45,25 @@ describe('Integration UI tests', () => {
   function initFunction(_connectorId) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: '5ff579d745ceef7dcd797c15',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      _connectorId,
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5cd51efd3607fe7d8eda9c97',
-        '5ff57a8345ceef7dcd797c21',
-      ],
-      installSteps: [],
-      uninstallSteps: [],
-      flowGroupings: [],
-      createdAt: '2021-01-06T08:50:31.935Z',
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: '5ff579d745ceef7dcd797c15',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        _connectorId,
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5cd51efd3607fe7d8eda9c97',
+          '5ff57a8345ceef7dcd797c21',
+        ],
+        installSteps: [],
+        uninstallSteps: [],
+        flowGroupings: [],
+        createdAt: '2021-01-06T08:50:31.935Z',
+      }];
+    });
+
     renderWithProviders(
       <MemoryRouter
         initialEntries={[{pathname: '/62d2ef8aa7777017e5a8081a'}]}>

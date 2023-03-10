@@ -3,7 +3,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
 import VerifyTag from './index';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
@@ -17,9 +17,11 @@ function initVerifyTag(props = {}) {
 
 describe('verifyTag UI test cases', () => {
   test('should display verifying when status is set to requested', () => {
-    initialStore.getState().session.sso = {
-      status: 'requested',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'requested',
+      };
+    });
     initVerifyTag();
     const progressBar = document.querySelector('div[role="progressbar"]');
 
@@ -32,16 +34,20 @@ describe('verifyTag UI test cases', () => {
       error: 'someerror',
     };
 
-    initialStore.getState().session.sso = {
-      status: 'success',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'success',
+      };
+    });
     initVerifyTag(data);
     expect(screen.getByText('someerror')).toBeInTheDocument();
   });
   test('should display verifying when status is set to success', () => {
-    initialStore.getState().session.sso = {
-      status: 'success',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'success',
+      };
+    });
     initVerifyTag();
     expect(screen.getByText('Verified')).toBeInTheDocument();
   });

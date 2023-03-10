@@ -76,6 +76,10 @@ export function* onFlowUpdate({
         if (flowPatchRegex.oldPPSequence.test(addPatch.path)) {
           resourceId = addPatch.value;
           resourceType = addPatch.path.includes('_importId') ? 'imports' : 'exports';
+        } else if (/(\/pageGenerators\/(\d+)\/_exportId)$/.test(addPatch.path)) {
+          // Incase a PG is replaced with another, patch is different , so fetches the target exportId
+          resourceId = addPatch.value;
+          resourceType = 'exports';
         } else {
           const { value } = addPatch;
           const resource = Array.isArray(value) ? value[0] : value;

@@ -20,6 +20,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../../ActionGroup';
 import { FilledButton, TextButton } from '../../../../Buttons/index';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
@@ -237,7 +238,7 @@ function RelatedListView(props) {
   return (
     <div className={classes.dynaRelatedListTable}>
       <CeligoTable
-        data={updatedValue}
+        data={customCloneDeep(updatedValue)}
         key={count}
         {...metadata}
         actionProps={{ handleDeleteItem, handleEditItem }}

@@ -303,6 +303,10 @@ export default {
         is: ['records'],
       },
     ],
+    requiredWhenAll: [{
+      field: 'http.batchSize',
+      isNot: ['', 0, 1],
+    }],
   },
   'http.response.errorPath': {
     isLoggable: true,

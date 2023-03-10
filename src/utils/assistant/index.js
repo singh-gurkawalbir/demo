@@ -2,7 +2,6 @@ import qs from 'qs';
 import {
   isObject,
   isString,
-  cloneDeep,
   isEmpty,
   defaultsDeep,
   isNaN,
@@ -16,6 +15,7 @@ import {
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
+import customCloneDeep from '../customCloneDeep';
 import {VALID_MONGO_ID} from '../../constants/regex';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -591,7 +591,7 @@ export function getExportOperationDetails({
     }
   }
 
-  return cloneDeep({
+  return customCloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
@@ -832,7 +832,7 @@ export function getImportOperationDetails({
     }
   }
 
-  return cloneDeep({
+  return customCloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
@@ -865,7 +865,7 @@ export function getMergedImportOperationDetails({
   }
   const lengthisIdentifier = createOperation.parameters.length;
 
-  const createorupdateoperation = cloneDeep(createOperation);
+  const createorupdateoperation = customCloneDeep(createOperation);
 
   createorupdateoperation.ignoreExisting = false;
   createorupdateoperation.ignoreMissing = false;
@@ -894,8 +894,8 @@ export function getMergedImportOperationDetails({
 }
 
 export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
-  const exportDoc = cloneDeep(exportDocOrig);
-  const assistantData = cloneDeep(assistantDataOrig);
+  const exportDoc = customCloneDeep(exportDocOrig);
+  const assistantData = customCloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
@@ -1017,7 +1017,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
 
   if (exportAdaptorSubSchema.postBody) {
     if (isObject(exportAdaptorSubSchema.postBody)) {
-      bodyParams = cloneDeep(exportAdaptorSubSchema.postBody);
+      bodyParams = customCloneDeep(exportAdaptorSubSchema.postBody);
     } else if (isString(exportAdaptorSubSchema.postBody)) {
       if (exportDoc.assistant === 'expensify') {
         bodyParams = exportAdaptorSubSchema.postBody.replace(
@@ -1083,13 +1083,13 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   });
   const exportDefaults = {
     rest: {
-      ...cloneDeep(DEFAULT_PROPS.EXPORT.REST),
+      ...customCloneDeep(DEFAULT_PROPS.EXPORT.REST),
       resourcePath: operationDetails.resourcePath,
       successPath: operationDetails.successPath,
       allowUndefinedResource: !!operationDetails.allowUndefinedResource,
     },
     http: {
-      ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
+      ...customCloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
       requestMediaType: operationDetails.requestMediaType,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
@@ -1227,7 +1227,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     if (['POST', 'PUT'].includes(exportDoc.method)) {
       if (!isEmpty(bodyParams)) {
         exportDoc.postBody = defaultsDeep(
-          cloneDeep(operationDetails.postBody),
+          customCloneDeep(operationDetails.postBody),
           bodyParams
         );
 
@@ -1241,7 +1241,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
           );
         }
       } else if (operationDetails.postBody) {
-        exportDoc.postBody = cloneDeep(operationDetails.postBody);
+        exportDoc.postBody = customCloneDeep(operationDetails.postBody);
       } else {
         exportDoc.postBody = queryParams;
       }
@@ -1269,7 +1269,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   } else if (['POST', 'PUT'].includes(exportDoc.method)) {
     if (!isEmpty(bodyParams)) {
       exportDoc.body = defaultsDeep(
-        cloneDeep(operationDetails.body),
+        customCloneDeep(operationDetails.body),
         bodyParams
       );
 
@@ -1280,7 +1280,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         );
       }
     } else if (operationDetails.body) {
-      exportDoc.body = cloneDeep(operationDetails.body);
+      exportDoc.body = customCloneDeep(operationDetails.body);
     } else {
       exportDoc.body = queryParams;
     }
@@ -1809,23 +1809,21 @@ export function updateFormValues({
 
 export function convertFromImport({ importDoc: importDocOrig, assistantData: assistantDataOrig, adaptorType }) {
   // mutating of args so we are cloning of objects to allow this operation
-  const importDoc = cloneDeep(importDocOrig);
+  const importDoc = customCloneDeep(importDocOrig);
 
-  const assistantData = cloneDeep(assistantDataOrig);
+  const assistantData = customCloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType, createEndpoint, updateEndpoint } =
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
-      if (operation === 'create-update-id' || isArray(operation) || importDoc.http._httpConnectorEndpointIds?.length > 1) {
-        operation = operation || importDoc.http._httpConnectorEndpointIds;
-        resource = resource || importDoc.http._httpConnectorResourceId;
-        version = version || importDoc.http._httpConnectorVersionId;
+      if (operation === 'create-update-id' || isArray(operation) || (importDoc.http._httpConnectorEndpointIds?.length > 1 && operation !== '')) {
+        operation = (VALID_MONGO_ID.test(operation) || VALID_MONGO_ID.test(operation?.[0]) || operation?.includes('+') || operation?.includes('create-update-id')) ? operation : importDoc.http._httpConnectorEndpointIds;
       } else {
         operation = (VALID_MONGO_ID.test(operation) || operation?.includes('+')) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
-        resource = (VALID_MONGO_ID.test(resource) || resource?.includes('+')) ? resource : importDoc.http?._httpConnectorResourceId;
-        version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
       }
+      resource = (VALID_MONGO_ID.test(resource) || resource?.includes('+')) ? resource : importDoc.http?._httpConnectorResourceId;
+      version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
     }
     if (operation !== 'create-update-id' && ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1))) {
       [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
@@ -2107,6 +2105,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               assistantData,
             });
 
+            if (luEndpoint.url?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
             lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
@@ -2251,10 +2250,10 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   }
   const importDefaults = {
     rest: {
-      ...cloneDeep(DEFAULT_PROPS.IMPORT.REST),
+      ...customCloneDeep(DEFAULT_PROPS.IMPORT.REST),
     },
     http: {
-      ...cloneDeep(DEFAULT_PROPS.IMPORT.HTTP),
+      ...customCloneDeep(DEFAULT_PROPS.IMPORT.HTTP),
     },
   };
   const importDoc = {
@@ -2394,7 +2393,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         }); /* indices should be false to handle IO-1776 */
 
         if (queryString) {
-          lookupOperationRelativeURI += `?${queryString}`;
+          lookupOperationRelativeURI += (lookupOperationRelativeURI?.includes('?') ? '&' : '?') + queryString;
         }
       } else if (luConfig.method === 'POST') {
         luConfig.postBody = lookupQueryParams;

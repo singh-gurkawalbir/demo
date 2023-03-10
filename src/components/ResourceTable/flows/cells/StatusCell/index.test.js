@@ -2,14 +2,16 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { reduxStore, renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders} from '../../../../../test/test-utils';
 import StatusCell from '.';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.profile = {
-  timezone: 'Asia/Calcutta',
-};
+mutateStore(initialStore, draft => {
+  draft.user.profile = {
+    timezone: 'Asia/Calcutta',
+  };
+});
 
 describe('status Cell of Flow Table UI test cases', () => {
   test('should show undefined as name when no props are provided', () => {
