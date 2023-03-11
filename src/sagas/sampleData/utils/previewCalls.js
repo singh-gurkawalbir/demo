@@ -31,7 +31,7 @@ export function* pageProcessorPreview({
   includeStages = false,
   runOffline = false,
   addMockData,
-  doNotDeleteFilters,
+  includeFilterProcessing,
 }) {
   if (!flowId || (!_pageProcessorId && !routerId)) return;
 
@@ -120,7 +120,7 @@ export function* pageProcessorPreview({
       if (pageProcessor._exportId === updatedPageProcessorId) {
         pageProcessorMap[updatedPageProcessorId].options = {};
         // for lookup, remove inputFilters & output filters configured while making preview call for flowInput
-        if (!doNotDeleteFilters) {
+        if (!includeFilterProcessing) {
           delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
           delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
         }
@@ -131,7 +131,7 @@ export function* pageProcessorPreview({
           _importId: pageProcessor._exportId,
         };
       }
-      if (pageProcessor._importId === updatedPageProcessorId && !doNotDeleteFilters) {
+      if (pageProcessor._importId === updatedPageProcessorId && !includeFilterProcessing) {
         // for imports, remove inputFilters configured while making preview call for flowInput
         delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
       }
@@ -207,6 +207,7 @@ export function* pageProcessorPreview({
         throwOnError,
         refresh,
         includeStages,
+        includeFilterProcessing: true,
       });
     }
     // Error handler

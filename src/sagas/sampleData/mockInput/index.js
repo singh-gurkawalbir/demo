@@ -45,7 +45,7 @@ export function* _requestLookupMockInput({ resourceId, resourceType, flowId, ref
       throwOnError: true,
       includeStages: false,
       refresh,
-      doNotDeleteFilters: true,
+      includeFilterProcessing: true,
     });
 
     if (isOneToManyResource(_pageProcessorDoc)) {
@@ -79,6 +79,7 @@ export function* _requestImportMockInput({ resourceId, resourceType, flowId, ref
       throwOnError: true,
       includeStages: false,
       refresh,
+      includeFilterProcessing: true,
     });
 
     if (isOneToManyResource(_pageProcessorDoc)) {
