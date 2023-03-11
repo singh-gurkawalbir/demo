@@ -1,7 +1,9 @@
 import React from 'react';
 import {screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { reduxStore, renderWithProviders } from '../../test/test-utils';
-import BranchFilterPanel from './index';
+import BranchFilterPanel from '.';
+import actions from '../../actions';
 
 const mockDispatch = jest.fn();
 
@@ -17,7 +19,7 @@ const rule = {};
 const handlePatchEditor = jest.fn();
 const type = 'ioFilter';
 
-function initBranchFilterPanel(props = {}) {
+function initBranchFilterPanel(props = {}, ops = {}) {
   const inputProps = {
     editorId,
     rule,
@@ -26,10 +28,12 @@ function initBranchFilterPanel(props = {}) {
     ...props,
   };
 
-  renderWithProviders(
+  const { utils: renderUtil } = renderWithProviders(
     <BranchFilterPanel {...inputProps} />,
-    {initialStore}
+    {initialStore, renderFun: ops.render}
   );
+
+  return renderUtil;
 }
 
 describe('Branch filter panel test cases', () => {
@@ -103,5 +107,44 @@ describe('Branch filter panel test cases', () => {
 
     initBranchFilterPanel({rule});
     expect(screen.getByText('record.sampleField')).toBeInTheDocument();
+  });
+  test('should not call skipEmptyRuleCleanup for ioFilter', async () => {
+    const inputProps = {
+      rule: undefined,
+      position: 0,
+      type: 'ioFilter',
+    };
+
+    initBranchFilterPanel(inputProps);
+    const addRuleButton = screen.getByRole('button', {name: 'Add Rule'});
+
+    expect(addRuleButton).toBeInTheDocument();
+    await userEvent.click(addRuleButton);
+
+    expect(mockDispatch).not.toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
+      rulePath: 'branches[0].skipEmptyRuleCleanup',
+    }));
+  });
+  test('should dispatch actions with correct params on rerender', async () => {
+    const inputProps = {
+      rule: undefined,
+      position: 0,
+      type: 'branchFilter',
+    };
+    const renderUtil = initBranchFilterPanel(inputProps);
+    const updatedProps = {...inputProps, position: 1};
+    const addRuleButton = screen.getByRole('button', {name: 'Add condition'});
+
+    await userEvent.click(addRuleButton);
+
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
+      rulePath: 'branches[0].skipEmptyRuleCleanup',
+    }));
+    initBranchFilterPanel(updatedProps, {render: renderUtil.rerender});
+
+    await userEvent.click(addRuleButton);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
+      rulePath: 'branches[0].skipEmptyRuleCleanup',
+    }));
   });
 });
