@@ -105,6 +105,37 @@ describe('Sign up form test cases', () => {
       );
     });
   });
+  test('should click the sign up button when unknown search param is present in URL', () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={[{pathname: '/signup', search: 'source=google'}]}>
+        <Route path="/signup" >
+          <Signup />
+        </Route>
+      </MemoryRouter>, {initialStore}
+    );
+    const nameTextBox = screen.getByPlaceholderText('Name*');
+    const emailTextBox = screen.getByPlaceholderText('Business email*');
+
+    userEvent.type(nameTextBox, 'first second');
+    userEvent.type(emailTextBox, 'abc@celigo.com');
+
+    userEvent.click(screen.getByRole('checkbox'));
+
+    const signupButton = screen.getByRole('button');
+
+    userEvent.click(signupButton);
+
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.auth.signup({
+        name: 'first second',
+        email: 'abc@celigo.com',
+        company: undefined,
+        role: undefined,
+        phone: undefined,
+        agreeTOSAndPP: true,
+      })
+    );
+  });
   test('should show error message when sign in fails', () => {
     const initialStore = getCreatedStore();
 
