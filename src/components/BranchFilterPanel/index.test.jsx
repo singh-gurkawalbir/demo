@@ -132,7 +132,6 @@ describe('Branch filter panel test cases', () => {
       type: 'branchFilter',
     };
     const renderUtil = initBranchFilterPanel(inputProps);
-    const updatedProps = {...inputProps, position: 1};
     const addRuleButton = screen.getByRole('button', {name: 'Add condition'});
 
     await userEvent.click(addRuleButton);
@@ -140,11 +139,13 @@ describe('Branch filter panel test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
       rulePath: 'branches[0].skipEmptyRuleCleanup',
     }));
+    const updatedProps = {...inputProps, position: 1};
+
     initBranchFilterPanel(updatedProps, {render: renderUtil.rerender});
 
     await userEvent.click(addRuleButton);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
-      rulePath: 'branches[0].skipEmptyRuleCleanup',
+      rulePath: 'branches[1].skipEmptyRuleCleanup',
     }));
   });
 });
