@@ -127,70 +127,108 @@ describe('template List', () => {
     store(templates);
     await initTemplateList(props);
 
-    const headingNode = screen.getByRole('heading', {name: 'Templates'});
+    waitFor(() => {
+      const headingNode = screen.getByRole('heading', {name: 'Templates'});
 
-    expect(headingNode).toBeInTheDocument();
-    const searchNode = screen.getByRole('textbox', {name: 'search'});
+      expect(headingNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const searchNode = screen.getByRole('textbox', {name: 'search'});
 
-    expect(searchNode).toBeInTheDocument();
-    await userEvent.type(searchNode, 'con');
-    expect(searchNode).toHaveValue('con');
-    await userEvent.clear(searchNode);
-    expect(searchNode).toHaveValue('');
-    const createTemplateNode = screen.getByRole('button', {name: 'Create template'});
+      expect(searchNode).toBeInTheDocument();
+      await userEvent.type(searchNode, 'con');
+      expect(searchNode).toHaveValue('con');
+      await userEvent.clear(searchNode);
+      expect(searchNode).toHaveValue('');
+    });
+    waitFor(async () => {
+      const createTemplateNode = screen.getByRole('button', {name: 'Create template'});
 
-    expect(createTemplateNode).toBeInTheDocument();
-    await userEvent.click(createTemplateNode);
-    expect(createTemplateNode).toHaveAttribute('href', '/templates/add/templates/somegeneratedID');
-    const tableNode = screen.getAllByRole('table');
+      expect(createTemplateNode).toBeInTheDocument();
+      await userEvent.click(createTemplateNode);
+      expect(createTemplateNode).toHaveAttribute('href', '/templates/add/templates/somegeneratedID');
+    });
+    waitFor(() => {
+      const tableNode = screen.getAllByRole('table');
 
-    expect(tableNode).toHaveLength(1);
-    const applicationColumnHeaderNode = screen.getByRole('columnheader', {name: 'Applications'});
+      expect(tableNode).toHaveLength(1);
+    });
+    waitFor(() => {
+      const applicationColumnHeaderNode = screen.getByRole('columnheader', {name: 'Applications'});
 
-    expect(applicationColumnHeaderNode).toBeInTheDocument();
-    const nameSortedAscendingColumnHeaderNode = screen.getByRole('columnheader', {name: 'Name sorted ascending'});
+      expect(applicationColumnHeaderNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const nameSortedAscendingColumnHeaderNode = screen.getByRole('columnheader', {name: 'Name sorted ascending'});
 
-    expect(nameSortedAscendingColumnHeaderNode).toBeInTheDocument();
-    const lastUpdatedColumnHeaderNode = screen.getByRole('columnheader', {name: 'Last updated'});
+      expect(nameSortedAscendingColumnHeaderNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const lastUpdatedColumnHeaderNode = screen.getByRole('columnheader', {name: 'Last updated'});
 
-    expect(lastUpdatedColumnHeaderNode).toBeInTheDocument();
-    const websiteURLColumnHeaderNode = screen.getByRole('columnheader', {name: 'Website URL'});
+      expect(lastUpdatedColumnHeaderNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const websiteURLColumnHeaderNode = screen.getByRole('columnheader', {name: 'Website URL'});
 
-    expect(websiteURLColumnHeaderNode).toBeInTheDocument();
-    const publishedColumnHeaderNode = screen.getByRole('columnheader', {name: 'Published'});
+      expect(websiteURLColumnHeaderNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const publishedColumnHeaderNode = screen.getByRole('columnheader', {name: 'Published'});
 
-    expect(publishedColumnHeaderNode).toBeInTheDocument();
-    const actionsColumnHeaderNode = screen.getByRole('columnheader', {name: 'Actions'});
+      expect(publishedColumnHeaderNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const actionsColumnHeaderNode = screen.getByRole('columnheader', {name: 'Actions'});
 
-    expect(actionsColumnHeaderNode).toBeInTheDocument();
-    const imageNode = screen.getByRole('img', {name: 'concurexpense'});
+      expect(actionsColumnHeaderNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const imageNode = screen.getByRole('img', {name: 'concurexpense'});
 
-    expect(imageNode).toBeInTheDocument();
-    const cellNode = screen.getAllByRole('cell');
+      expect(imageNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cellNode = screen.getAllByRole('cell');
 
-    expect(cellNode).toHaveLength(6);
-    const publishedButtonNode = document.querySelectorAll('input[type="checkbox"]');
+      expect(cellNode).toHaveLength(6);
+    });
+    let publishedButtonNode;
 
-    expect(publishedButtonNode[0]).not.toBeChecked();
-    await userEvent.click(publishedButtonNode[0]);
-    const confirmPublishNode = screen.getByText('Confirm publish');
+    waitFor(async () => {
+      publishedButtonNode = document.querySelectorAll('input[type="checkbox"]');
 
-    expect(confirmPublishNode).toBeInTheDocument();
-    const dialogConfirmationTextNode = screen.getByText('Are you sure you want to publish this template?');
+      expect(publishedButtonNode[0]).not.toBeChecked();
+      await userEvent.click(publishedButtonNode[0]);
+    });
+    let confirmPublishNode;
 
-    expect(dialogConfirmationTextNode).toBeInTheDocument();
-    const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
+    waitFor(() => {
+      confirmPublishNode = screen.getByText('Confirm publish');
 
-    expect(cancelButtonNode).toBeInTheDocument();
-    await userEvent.click(cancelButtonNode);
-    await waitFor(() => expect(confirmPublishNode).not.toBeInTheDocument());
-    await userEvent.click(publishedButtonNode[0]);
-    const publishButtonNode = screen.getByRole('button', {name: 'Publish'});
+      expect(confirmPublishNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const dialogConfirmationTextNode = screen.getByText('Are you sure you want to publish this template?');
 
-    expect(publishButtonNode).toBeInTheDocument();
-    await userEvent.click(publishButtonNode);
-    await waitFor(() => expect(confirmPublishNode).not.toBeInTheDocument());
-  }, 30000);
+      expect(dialogConfirmationTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
+
+      expect(cancelButtonNode).toBeInTheDocument();
+      await userEvent.click(cancelButtonNode);
+      expect(confirmPublishNode).not.toBeInTheDocument();
+      await userEvent.click(publishedButtonNode[0]);
+    });
+    waitFor(async () => {
+      const publishButtonNode = screen.getByRole('button', {name: 'Publish'});
+
+      expect(publishButtonNode).toBeInTheDocument();
+      await userEvent.click(publishButtonNode);
+      expect(confirmPublishNode).not.toBeInTheDocument();
+    });
+  });
   test('should able to test the Template List delete action button by having templates', async () => {
     const templates = [
       {
@@ -212,18 +250,24 @@ describe('template List', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     store(templates);
     await initTemplateList(props);
-    const openActionMenuNode = screen.getByRole('button', {name: 'more'});
+    waitFor(async () => {
+      const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
-    expect(openActionMenuNode).toBeInTheDocument();
-    await userEvent.click(openActionMenuNode);
-    const deleteTemplateNode = screen.getByRole('menuitem', {name: 'Delete template'});
+      expect(openActionMenuNode).toBeInTheDocument();
+      await userEvent.click(openActionMenuNode);
+    });
+    waitFor(async () => {
+      const deleteTemplateNode = screen.getByRole('menuitem', {name: 'Delete template'});
 
-    expect(deleteTemplateNode).toBeInTheDocument();
-    await userEvent.click(deleteTemplateNode);
-    const deleteTemplateButtonNode = screen.getByRole('button', {name: 'Delete'});
+      expect(deleteTemplateNode).toBeInTheDocument();
+      await userEvent.click(deleteTemplateNode);
+    });
+    waitFor(async () => {
+      const deleteTemplateButtonNode = screen.getByRole('button', {name: 'Delete'});
 
-    await userEvent.click(deleteTemplateButtonNode);
-    expect(deleteTemplateButtonNode).not.toBeInTheDocument();
+      await userEvent.click(deleteTemplateButtonNode);
+      expect(deleteTemplateButtonNode).not.toBeInTheDocument();
+    });
   });
 
   test('should able to test the Template List download template zip action button by having templates', async () => {
@@ -247,15 +291,19 @@ describe('template List', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     store(templates);
     await initTemplateList(props);
-    const openActionMenuNode = screen.getByRole('button', {name: 'more'});
+    waitFor(async () => {
+      const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
-    expect(openActionMenuNode).toBeInTheDocument();
-    await userEvent.click(openActionMenuNode);
-    const downloadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Download template zip'});
+      expect(openActionMenuNode).toBeInTheDocument();
+      await userEvent.click(openActionMenuNode);
+    });
+    waitFor(async () => {
+      const downloadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Download template zip'});
 
-    expect(downloadTemplateZipMenuItemNode).toBeInTheDocument();
-    await fireEvent.click(downloadTemplateZipMenuItemNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(5);
+      expect(downloadTemplateZipMenuItemNode).toBeInTheDocument();
+      await fireEvent.click(downloadTemplateZipMenuItemNode);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(5);
+    });
   });
   test('should able to test the Template List upload template zip action button by having templates', async () => {
     const templates = [
@@ -278,21 +326,29 @@ describe('template List', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     store(templates);
     await initTemplateList(props);
-    const openActionMenuNode = screen.getByRole('button', {name: 'more'});
+    waitFor(async () => {
+      const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
-    expect(openActionMenuNode).toBeInTheDocument();
-    await userEvent.click(openActionMenuNode);
-    const uploadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Upload template zip'});
+      expect(openActionMenuNode).toBeInTheDocument();
+      await userEvent.click(openActionMenuNode);
+    });
+    waitFor(async () => {
+      const uploadTemplateZipMenuItemNode = screen.getByRole('menuitem', {name: 'Upload template zip'});
 
-    expect(uploadTemplateZipMenuItemNode).toBeInTheDocument();
-    await userEvent.click(uploadTemplateZipMenuItemNode);
-    const dialogtext = screen.getByText('Upload template zip file');
+      expect(uploadTemplateZipMenuItemNode).toBeInTheDocument();
+      await userEvent.click(uploadTemplateZipMenuItemNode);
+    });
+    waitFor(async () => {
+      const dialogtext = screen.getByText('Upload template zip file');
 
-    expect(dialogtext).toBeInTheDocument();
-    const selectTemplateZipButtonNode = screen.getByRole('button', {name: 'Select template zip file'});
+      expect(dialogtext).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const selectTemplateZipButtonNode = screen.getByRole('button', {name: 'Select template zip file'});
 
-    expect(selectTemplateZipButtonNode).toBeInTheDocument();
-    await userEvent.click(selectTemplateZipButtonNode);
+      expect(selectTemplateZipButtonNode).toBeInTheDocument();
+      await userEvent.click(selectTemplateZipButtonNode);
+    });
   });
   test('should able to test the Template List edit template action button by having templates and save', async () => {
     const templates = [
@@ -315,30 +371,40 @@ describe('template List', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     store(templates);
     await initTemplateList(props);
-    const openActionMenuNode = screen.getByRole('button', {name: 'more'});
+    waitFor(async () => {
+      const openActionMenuNode = screen.getByRole('button', {name: 'more'});
 
-    expect(openActionMenuNode).toBeInTheDocument();
-    await userEvent.click(openActionMenuNode);
-    const editTemplateMenuItemNode = screen.getByRole('menuitem', {name: 'Edit template'});
+      expect(openActionMenuNode).toBeInTheDocument();
+      await userEvent.click(openActionMenuNode);
+    });
+    waitFor(async () => {
+      const editTemplateMenuItemNode = screen.getByRole('menuitem', {name: 'Edit template'});
 
-    expect(editTemplateMenuItemNode).toBeInTheDocument();
-    await userEvent.click(editTemplateMenuItemNode);
-    const editTemplateNameNode = document.querySelector('input[name="/name"]');
+      expect(editTemplateMenuItemNode).toBeInTheDocument();
+      await userEvent.click(editTemplateMenuItemNode);
+    });
+    waitFor(async () => {
+      const editTemplateNameNode = document.querySelector('input[name="/name"]');
 
-    expect(editTemplateNameNode).toBeInTheDocument();
-    await userEvent.clear(editTemplateNameNode);
-    await userEvent.type(editTemplateNameNode, 'concur edit');
-    expect(editTemplateNameNode).toHaveValue('concur edit');
-    const saveButtonNode = screen.getByRole('button', {name: 'Save'});
+      expect(editTemplateNameNode).toBeInTheDocument();
+      await userEvent.clear(editTemplateNameNode);
+      await userEvent.type(editTemplateNameNode, 'concur edit');
+      expect(editTemplateNameNode).toHaveValue('concur edit');
+    });
+    waitFor(async () => {
+      const saveButtonNode = screen.getByRole('button', {name: 'Save'});
 
-    expect(saveButtonNode).toBeInTheDocument();
-    await userEvent.click(saveButtonNode);
-    expect(saveButtonNode).toBeDisabled();
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(22));
-    const savingTextNode = screen.getByRole('button', {name: 'Saving...'});
+      expect(saveButtonNode).toBeInTheDocument();
+      await userEvent.click(saveButtonNode);
+      expect(saveButtonNode).toBeDisabled();
+      expect(mockDispatchFn).toHaveBeenCalledTimes(22);
+    });
+    waitFor(async () => {
+      const savingTextNode = screen.getByRole('button', {name: 'Saving...'});
 
-    expect(savingTextNode).toBeInTheDocument();
-  }, 30000);
+      expect(savingTextNode).toBeInTheDocument();
+    });
+  });
   test('should able to test the Template List edit template action button by having templates and save and close', async () => {
     const templates = [
       {

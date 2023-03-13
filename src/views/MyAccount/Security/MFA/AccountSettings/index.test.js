@@ -112,5 +112,5 @@ describe('Testsuite for AccountSettings', () => {
     await initAccountSettings({asyncStatus: 'pending', accountSettingsStatus: 'pending'});
     expect(document.querySelector('circle[class="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate"]')).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_ACCOUNT_SETTINGS_REQUEST' });
-  }, 10000);
+  });
 });

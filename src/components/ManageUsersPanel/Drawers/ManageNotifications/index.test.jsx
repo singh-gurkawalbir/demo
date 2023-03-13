@@ -279,7 +279,7 @@ describe('Manage Notifications', () => {
     await waitFor(() => {
       expect(mockNotificationUpdateFunction).toHaveBeenCalledTimes(1);
     });
-  }, 10000);
+  });
   test('Should able to access the Notification Drawer and notify the user when a connection throws error by selecting a connection and save and close the notication drawer', async () => {
     store();
     await initManageNotification({
@@ -420,7 +420,7 @@ describe('Manage Notifications', () => {
     const saveText = await waitFor(() => screen.getByRole('button', {name: 'Save'}));
 
     expect(saveText).toBeInTheDocument();
-  }, 10000);
+  });
   test('Should able to access the Notification Drawer and remove the unsaved selected connection and flow which have been selected by the user and save', async () => {
     const mockNotificationUpdateFunction = jest.fn();
 

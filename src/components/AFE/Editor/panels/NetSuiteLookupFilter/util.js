@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isString, isArray, tail, filter } from 'lodash';
 import { message } from '../../../../../utils/messageStore';
 
@@ -23,7 +22,7 @@ function isComplexNetSuiteFilterExpression(expression) {
 
   return isComplexExpression;
 }
-
+/* eslint-disable no-param-reassign */
 function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
   for (let i = 0; i < expression.length; i += 1) {
     if (expression[i] === 'NOT') {
@@ -43,6 +42,7 @@ function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
 
   return expression;
 }
+/* eslint-enable no-param-reassign */
 
 function updateNetSuiteLookupFilterExpressionForConditions(expression) {
   let updatedExpression = [];
@@ -98,7 +98,7 @@ function updateNetSuiteLookupFilterExpressionForConditions(expression) {
 
   return updatedExpression;
 }
-
+/* eslint-disable no-param-reassign */
 function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
   expression,
   data
@@ -216,6 +216,7 @@ function convertNetSuiteLookupFilterExpressionToQueryBuilderRules(
 
   return qbRules;
 }
+/* eslint-enable no-param-reassign */
 
 export function convertNetSuiteLookupFilterExpression(
   filterExpression = [],
@@ -240,16 +241,18 @@ export function getFilterList(jsonPaths, rules) {
       if (rr.condition) {
         iterate(rr);
       } else {
-        if (!rr.id) {
+        let {id} = rr;
+
+        if (!id) {
           if (jsonPaths.length === 0) {
             jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
           }
 
-          rr.id = jsonPaths[0].id;
+          id = jsonPaths[0].id;
         }
 
-        if (!filter(jsonPaths, { id: rr.id }).length) {
-          jsonPaths.push({ id: rr.id });
+        if (!filter(jsonPaths, { id }).length) {
+          jsonPaths.push({ id });
         }
 
         if (rr.rhs && rr.rhs.type === 'field' && rr.rhs.field) {

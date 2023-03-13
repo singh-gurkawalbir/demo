@@ -275,7 +275,7 @@ describe('user Form Wrapper', () => {
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
     expect(history.goBack).toHaveBeenCalledWith();
-  }, 30000);
+  });
   test('should be able to invite a user with manage access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -317,7 +317,7 @@ describe('user Form Wrapper', () => {
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
     expect(history.goBack).toHaveBeenCalledTimes(1);
-  }, 30000);
+  });
   test('should be able to invite a user with monitor access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -379,7 +379,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  }, 30000);
+  });
   test('should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -445,7 +445,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  }, 30000);
+  });
   test('should be able to invite a user with monitor integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -511,7 +511,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  }, 30000);
+  });
   test('should be able to verify the monitor integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f985');
     await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
@@ -544,7 +544,7 @@ describe('user Form Wrapper', () => {
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-  }, 30000);
+  });
   test('should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
     await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
@@ -577,5 +577,5 @@ describe('user Form Wrapper', () => {
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-  }, 30000);
+  });
 });
