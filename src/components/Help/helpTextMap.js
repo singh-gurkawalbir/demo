@@ -932,6 +932,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'http.auth.oauth.oauth1.accessToken': 'Enter the access token. The consumer uses this token to gain access to the protected resources on user\'s behalf.<br \\>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'http.auth.oauth.oauth1.tokenSecret': 'Enter the token secret. The consumer uses this secret to establish ownership of a provided token.<br \\>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'http.auth.oauth.oauth1.consumerPrivateKey': 'Enter the consumer private RSA key. This key is used to sign the API call request.',
+  'http.auth.oauth.oauth1.realm': 'This is a string specified by the server in the WWW-Authenticate response header. It should contain at least the name of the host performing the authentication and might additionally indicate the collection of users who might have access.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
 'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',
