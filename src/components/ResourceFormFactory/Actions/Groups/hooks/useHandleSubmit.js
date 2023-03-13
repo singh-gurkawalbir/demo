@@ -6,7 +6,6 @@ import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 import { useSelectorMemo } from '../../../../../hooks';
-import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 export default function useHandleSubmit({
   resourceType,
@@ -35,12 +34,8 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = customCloneDeep({...values});
+      const newValues = {...values};
 
-      // TODO: Need some sanity for customCloneDep: ex. '/parsers': [{rules:{}}, resourcePath: '/'] given as '/parsers': [{rules:{}}, empty, resourcePath: '/']
-      if (newValues['/parsers']) {
-        newValues['/parsers'] = values['/parsers'];
-      }
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {
         newValues['/http/_iClientId'] = iClients?.[0]?._id;
