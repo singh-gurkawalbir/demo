@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
@@ -23,7 +22,6 @@ import {
   isPageGeneratorResource,
   getImportsFromFlow,
   getAllConnectionIdsUsedInTheFlow,
-  getFlowListWithMetadata,
   getNextDataFlows,
   getIAFlowSettings,
   getIAResources,
@@ -1575,15 +1573,6 @@ selectors.flowSupportsSettings = (state, id, childId) => {
    the flowDetails, we should delete that selector.
 *********************************************************************** */
 
-selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options || emptyObject).resources || emptyArray;
-  const exports = selectors.resourceList(state, {
-    type: 'exports',
-  }).resources;
-
-  return getFlowListWithMetadata(flows, exports);
-};
-
 /*
  * Gives all other valid flows of same Integration
  */
@@ -1914,7 +1903,9 @@ selectors.mkFilteredHomeTiles = () => {
         const applications = appSel(state, t);
         const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
 
+        // eslint-disable-next-line no-param-reassign
         t.applications = applications;
+        // eslint-disable-next-line no-param-reassign
         t.pinned = pinnedIntegrations.includes(t._integrationId);
       });
 
@@ -2344,9 +2335,9 @@ selectors.paginatedAuditLogs = createSelector(
   (auditLogs, filters) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 
-    auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+    const logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
-    return auditLogs;
+    return {...auditLogs, logs};
   });
 
 selectors.mkFlowResources = () => createSelector(
@@ -2715,7 +2706,7 @@ selectors.mkGetMediaTypeOptions = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, {formKey}) => selectors.formState(state, formKey)?.value || {},
+    (state, {formKey}) => selectors.formState(state, formKey)?.value || emptyObject,
 
     (state, {formKey}) => {
       const formValues = selectors.formState(state, formKey)?.value || {};
@@ -2728,7 +2719,9 @@ selectors.mkGetMediaTypeOptions = () => {
     (_, {dependentFieldForMediaType}) => dependentFieldForMediaType,
     (_, {options}) => options,
     (_, {fieldId}) => fieldId,
-    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, options, fieldId) => {
+    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, _options, fieldId) => {
+      let options = Array.isArray(_options) ? [..._options] : [];
+
       if (resourceType === 'imports' && fieldId === 'http.requestMediaType') {
         const inputMode = formValues['/inputMode'];
 
@@ -3305,19 +3298,20 @@ selectors.makeIntegrationAppSectionFlows = () =>
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
 
-      flows = flows
+      const _flows = flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
         ).map(f => ({...f, errors: errorMap?.[f._id] || 0, searchKey: requiredFlows.find(flow => flow.id === f._id)?.searchKey}));
 
       return filterAndSortResources(addLastExecutedAtSortableProp({
-        flows,
+        flows: _flows,
         isUserInErrMgtTwoDotZero,
         latestFlowJobs,
         supportsMultiStore,
         childId,
-        requiredFlows}), options);
+        requiredFlows,
+      }), options);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
@@ -6185,21 +6179,22 @@ selectors.integrationErrorsPerSection = createSelector(
   state => state?.data?.resources?.flows,
   (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
-    flowSections.reduce((errorsMap, section) => {
+    flowSections.reduce((acc, section) => {
       const { flows = [], titleId } = section;
 
-      errorsMap[titleId] = flows.reduce((total, flow) => {
+      acc[titleId] = flows.reduce((total, flow) => {
         const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
 
         // we consider enabled flows to show total count per section
         if (!isFlowDisabled) {
+          // eslint-disable-next-line no-param-reassign
           total += (integrationErrors[flow._id] || 0);
         }
 
         return total;
       }, 0);
 
-      return errorsMap;
+      return acc;
     }, {})
 
 );
@@ -6214,14 +6209,14 @@ selectors.integrationErrorsPerChild = (state, integrationId) => {
 
   if (!supportsMultiStore) return emptyObject;
 
-  return children.reduce((childErrorsMap, child) => {
+  return children.reduce((acc, child) => {
     const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, child.id);
 
-    childErrorsMap[child.id] = Object.values(sectionErrorsMap).reduce(
+    acc[child.id] = Object.values(sectionErrorsMap).reduce(
       (total, count) => total + count,
       0);
 
-    return childErrorsMap;
+    return acc;
   }, {});
 };
 
@@ -6233,17 +6228,17 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   selectors.integrationEnabledFlowIds,
   (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
-  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
+  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((acc, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
     const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
-    if (!groupErrorMap[groupId]) {
-      groupErrorMap[groupId] = 0;
+    if (!acc[groupId]) {
+      acc[groupId] = 0;
     }
-    groupErrorMap[groupId] += errorCount;
+    acc[groupId] += errorCount;
 
-    return groupErrorMap;
+    return acc;
   }, {})
 );
 
@@ -7100,6 +7095,12 @@ selectors.isSSOEnabled = state => {
   if (!oidcClient) return false;
 
   return !oidcClient.disabled;
+};
+
+selectors.isAccountOwnerMFAEnabled = state => {
+  const accountOwner = selectors.ownerUser(state);
+
+  return !!accountOwner?.mfaEnabled;
 };
 
 selectors.userLinkedSSOClientId = state => {

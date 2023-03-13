@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React, {
   useRef,
   useState,
@@ -87,10 +86,10 @@ export function SalesforceLookupFilterPanelData({
   );
   const salesforceFilterDataTypes = useMemo(
     () =>
-      filters.reduce((obj, sf) => {
-        obj[sf.value] = sf.type;
+      filters.reduce((acc, cur) => {
+        acc[cur.value] = cur.type;
 
-        return obj;
+        return acc;
       }, {}),
     [filters]
   );
@@ -339,6 +338,7 @@ export function SalesforceLookupFilterPanelData({
 
           r.lhs[r.lhs.type || 'field'] = lhsValue;
           r.rhs[r.rhs.type || 'value'] = rhsValue;
+          // eslint-disable-next-line no-param-reassign
           rule.data = r;
 
           return rhsValue;
@@ -369,6 +369,7 @@ export function SalesforceLookupFilterPanelData({
 
             r.lhs[r.lhs.type || 'field'] = lhsValue;
             r.rhs[r.rhs.type || 'value'] = rhsValue;
+            // eslint-disable-next-line no-param-reassign
             rule.data = r;
 
             const vr = validateRule(rule);
