@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isString, isArray, filter, invert } from 'lodash';
 
 const operatorsMap = {
@@ -96,16 +95,18 @@ export function getFilterList(jsonPaths, rules) {
       if (rr.condition) {
         iterate(rr);
       } else {
+        let {id} = rr;
+
         if (!rr.id) {
           if (jsonPaths.length === 0) {
             jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
           }
 
-          rr.id = jsonPaths[0].id;
+          id = jsonPaths[0].id;
         }
 
-        if (!filter(jsonPaths, { id: rr.id }).length) {
-          jsonPaths.push({ id: rr.id });
+        if (!filter(jsonPaths, { id }).length) {
+          jsonPaths.push({ id });
         }
 
         if (rr.rhs && rr.rhs.type === 'field' && rr.rhs.field) {
@@ -158,50 +159,51 @@ export function generateNetSuiteQualifierExpression(qbRules) {
   let lhs;
   let rhs;
   let filter;
+  let queryBuilderRules = [...qbRules.rules];
 
   /**
    * A and B and C is not allowed in backend.
    * So, we need to convert it to A and [B and C]
    */
-  if (qbRules.rules.length > 2) {
-    const [firstRule, ...otherRules] = qbRules.rules;
+  if (queryBuilderRules.length > 2) {
+    const [firstRule, ...otherRules] = queryBuilderRules;
 
-    qbRules.rules = [
+    queryBuilderRules = [
       firstRule,
       { condition: qbRules.condition, rules: otherRules },
     ];
   }
 
-  for (let i = 0; i < qbRules.rules.length; i += 1) {
-    if (qbRules.rules[i].rules && qbRules.rules[i].rules.length > 0) {
+  for (let i = 0; i < queryBuilderRules.length; i += 1) {
+    if (queryBuilderRules[i].rules && queryBuilderRules[i].rules.length > 0) {
       nsFilterExpression.push(
-        generateNetSuiteQualifierExpression(qbRules.rules[i])
+        generateNetSuiteQualifierExpression(queryBuilderRules[i])
       );
     } else {
-      lhs = qbRules.rules[i].id;
+      lhs = queryBuilderRules[i].id;
 
-      filter = [lhs, operatorsMap.jQueryToIOFilters[qbRules.rules[i].operator]];
+      filter = [lhs, operatorsMap.jQueryToIOFilters[queryBuilderRules[i].operator]];
 
       if (filter[1] === 'empty') {
         filter.push(true);
       } else if (filter[1] === 'notempty') {
         filter[1] = 'empty';
         filter.push(false);
-      } else if (qbRules.rules[i].data && qbRules.rules[i].data.rhs) {
+      } else if (queryBuilderRules[i].data && queryBuilderRules[i].data.rhs) {
         rhs =
-          qbRules.rules[i].data.rhs[qbRules.rules[i].data.rhs.type || 'field'];
+        queryBuilderRules[i].data.rhs[queryBuilderRules[i].data.rhs.type || 'field'];
 
         if (rhs) {
           filter.push(rhs);
         }
       } else {
-        filter.push(qbRules.rules[i].value);
+        filter.push(queryBuilderRules[i].value);
       }
 
       nsFilterExpression.push(filter);
     }
 
-    if (i < qbRules.rules.length - 1) {
+    if (i < queryBuilderRules.length - 1) {
       nsFilterExpression.push((qbRules.condition || 'AND').toLowerCase());
     }
   }

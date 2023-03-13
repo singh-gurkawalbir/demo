@@ -3,11 +3,11 @@ import { call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
 import {
-  requestAccountSettings, updateAccountSettings,
+  requestAccountSettings, updateAccountSettings, resetOwnerMFA,
 } from '.';
 import { apiCallWithRetry } from '..';
 import actions from '../../actions';
-import { MFA_ACCOUNT_SETTINGS_ASYNC_KEY } from '../../constants';
+import { MFA_ACCOUNT_SETTINGS_ASYNC_KEY, MFA_OWNER_RESET_ASYNC_KEY } from '../../constants';
 
 describe('requestAccountSettings saga', () => {
   const path = '/accountSettings';
@@ -157,6 +157,55 @@ describe('updateAccountSettings saga', () => {
       })
       .not.call(requestAccountSettings)
       .put(actions.asyncTask.failed(MFA_ACCOUNT_SETTINGS_ASYNC_KEY))
+      .run();
+  });
+});
+
+describe('resetOwnerMFA saga', () => {
+  test('should dispatch asyncTask success action and refetch shared ashares if api call is a success', () => {
+    const path = '/owner/mfa/reset';
+
+    expectSaga(resetOwnerMFA)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'POST',
+          },
+        })],
+      ])
+      .put(actions.asyncTask.start(MFA_OWNER_RESET_ASYNC_KEY))
+      .call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'POST',
+        },
+      })
+      .put(actions.asyncTask.success(MFA_OWNER_RESET_ASYNC_KEY))
+      .put(actions.user.org.accounts.requestCollection())
+      .run();
+  });
+  test('should dispatch asyncTask failed action if api call fails', () => {
+    const path = '/owner/mfa/reset';
+    const error = new Error('error');
+
+    expectSaga(resetOwnerMFA)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'POST',
+          },
+        }), throwError(error)],
+      ])
+      .put(actions.asyncTask.start(MFA_OWNER_RESET_ASYNC_KEY))
+      .call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'POST',
+        },
+      })
+      .put(actions.asyncTask.failed(MFA_OWNER_RESET_ASYNC_KEY))
       .run();
   });
 });

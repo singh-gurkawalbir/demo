@@ -401,8 +401,10 @@ export function fieldMeta({ resource, assistantData }) {
     advancedSettings: {
       formId: 'advancedSettings',
     },
-    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
-    'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
+    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper',
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId) || supportsEndpointLevelAsyncHelper,
+      visible: r => !(r && r.statusExport) && !supportsEndpointLevelAsyncHelper },
+    'http._asyncHelperId': { fieldId: 'http._asyncHelperId', required: supportsEndpointLevelAsyncHelper },
   };
   const fieldIds = [];
 
@@ -414,9 +416,15 @@ export function fieldMeta({ resource, assistantData }) {
   fieldMap.settings = {
     fieldId: 'settings',
   };
-  const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
 
   fieldMap.mockResponseSection = {formId: 'mockResponseSection'};
+
+  if (supportsEndpointLevelAsyncHelper) {
+    const index = fieldIds.findIndex(fld => fld === 'assistantMetadata.updateEndpoint');
+
+    fieldIds.splice(index + 1, 0, 'http._asyncHelperId');
+  }
+  const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
 
   return {
     fieldMap,
@@ -442,7 +450,7 @@ export function fieldMeta({ resource, assistantData }) {
             }],
           },
           {
-            fields: [...fieldIds.slice(createEndpointIndex + 2), ...(supportsEndpointLevelAsyncHelper ? ['http.configureAsyncHelper', 'http._asyncHelperId'] : [])],
+            fields: fieldIds.slice(createEndpointIndex + 2),
           },
           ],
         },
@@ -457,7 +465,7 @@ export function fieldMeta({ resource, assistantData }) {
           label: 'Advanced',
           fields: ['http.ignoreEmptyNodes',
             'advancedSettings',
-            ...(!supportsEndpointLevelAsyncHelper ? ['http.configureAsyncHelper', 'http._asyncHelperId'] : [])],
+            ...(!supportsEndpointLevelAsyncHelper ? ['http.configureAsyncHelper', 'http._asyncHelperId'] : ['http.configureAsyncHelper'])],
         },
       ],
     },
