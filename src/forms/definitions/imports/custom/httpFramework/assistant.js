@@ -70,7 +70,7 @@ export default function assistantDefinition(
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }
-      if ((importDoc['/ignoreExisting'] === true || importDoc['/ignoreMissing'] === true) && importDoc['/http'].existingExtract && !importDoc['/http'].ignoreExtract) {
+      if ((importDoc['/ignoreExisting'] === true || importDoc['/ignoreMissing'] === true) && importDoc['/http']?.existingExtract && !importDoc['/http']?.ignoreExtract) {
         importDoc['/http/ignoreExtract'] = importDoc['/http'].existingExtract;
         importDoc['/http'].existingExtract = undefined;
         delete importDoc['/http'].existingExtract;
