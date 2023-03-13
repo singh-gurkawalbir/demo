@@ -57,6 +57,11 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  refreshButton: {
+    '& .MuiButtonBase-root': {
+      marginTop: 0,
+    },
+  },
 }));
 const TYPE_TO_ERROR_MESSAGE = {
   input: 'Please enter a value',
@@ -155,7 +160,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
-        className={clsx(classes.root, classes.menuItemsWrapper)}
+        className={classes.refreshButton}
     />
     );
   }

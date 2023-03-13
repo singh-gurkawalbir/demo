@@ -135,6 +135,7 @@ const BaseTable = ({
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
         isSubFormTable={isSubFormTable}
+        rowHeight={64}
     />
     );
   }
@@ -211,7 +212,7 @@ const DynaTable = props => {
             required={required}
           />
           {/* do all multicolumn entry tables need to be redacted ? */}
-          <span {...isLoggableAttr(isLoggable)}>
+          <div {...isLoggableAttr(isLoggable)}>
             <BaseTable
               isLoading={isLoading}
               isVirtualizedTable={isVirtualizedTable}
@@ -226,7 +227,7 @@ const DynaTable = props => {
               formKey={formKey}
               isSubFormTable={isSubFormTable}
           />
-          </span>
+          </div>
 
         </div>
 
