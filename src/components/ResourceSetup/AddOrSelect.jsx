@@ -54,6 +54,11 @@ export default function AddOrSelect(props) {
   const options = resourceList.map(c => ({
     label: c.offline ? `${c.name} - Offline` : c.name,
     value: c._id,
+    connInfo: {
+      httpConnectorId: c?.http?._httpConnectorId,
+      httpConnectorApiId: c?.http?._httpConnectorApiId,
+      httpConnectorVersionId: c?.http?._httpConnectorVersionId,
+    },
   }));
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)

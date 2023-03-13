@@ -16,6 +16,11 @@ export default function DynaSelectAliasResource({ options = {}, ...props}) {
     items: resourceList.map(res => ({
       label: res.name,
       value: res._id,
+      connInfo: {
+        httpConnectorId: res?.http?._httpConnectorId,
+        httpConnectorApiId: res?.http?._httpConnectorApiId,
+        httpConnectorVersionId: res?.http?._httpConnectorVersionId,
+      },
     })),
   }]), [resourceList]);
 
