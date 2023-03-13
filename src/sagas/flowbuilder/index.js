@@ -1,5 +1,6 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { cloneDeep } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
@@ -15,7 +16,6 @@ import {
 } from '../../utils/flows/flowbuilder';
 import { getChangesPatchSet } from '../../utils/json';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
-import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* moveStep({flowId, stepInfo}) {
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
@@ -114,7 +114,7 @@ export function* deleteEdge({ flowId, edgeId }) {
 
 export function* deleteRouter({flowId, routerId, prePatches}) {
   const flow = yield select(selectors.fbFlow, flowId);
-  const {routers = []} = customCloneDeep(flow);
+  const {routers = []} = cloneDeep(flow);
   const patchSet = prePatches || [];
 
   const router = routers.find(r => r.id === routerId);
