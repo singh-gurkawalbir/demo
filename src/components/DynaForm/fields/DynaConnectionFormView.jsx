@@ -152,7 +152,7 @@ export default function FormView(props) {
     );
   }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  if (!_httpConnectorId || !sourceForm) {
+  if (!_httpConnectorId || !sourceForm || stagedResource?._connectorID) {
     return null;
   }
 
@@ -162,7 +162,6 @@ export default function FormView(props) {
         value={value}
         onChange={onFieldChangeFn}
         exclusive
-        disabled={!!stagedResource?._connectorID}
         options={options}
         className={classes.textToggle}
       />
