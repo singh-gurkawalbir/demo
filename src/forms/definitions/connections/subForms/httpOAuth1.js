@@ -26,6 +26,10 @@ export default {
         { field: 'http.auth.oauth.oauth1.signatureMethod', is: ['rsa-sha1', 'rsa-sha256', 'rsa-sha512'] },
       ],
     },
+    'http.auth.oauth.oauth1.realm': {
+      fieldId: 'http.auth.oauth.oauth1.realm',
+      visibleWhen: [{ field: 'http.auth.oauth.oauth1.signatureMethod', is: ['hmac-sha1', 'hmac-sha256', 'hmac-sha512', 'plaintext', 'rsa-sha1', 'rsa-sha256', 'rsa-sha512'] }],
+    },
   },
   layout: {
     fields: [
@@ -34,6 +38,7 @@ export default {
       'http.auth.oauth.oauth1.accessToken',
       'http.auth.oauth.oauth1.tokenSecret',
       'http.auth.oauth.oauth1.consumerPrivateKey',
+      'http.auth.oauth.oauth1.realm',
     ],
   },
 };
