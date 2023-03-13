@@ -191,7 +191,8 @@ describe('MockOutputDrawerContent UI tests', () => {
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
     await userEvent.clear(inputNode);
-    await userEvent.paste(inputNode, mockOutputJson);
+    inputNode.focus();
+    await userEvent.paste(mockOutputJson);
     expect(screen.getByText(mockOutputJson)).toBeInTheDocument();
     expect(screen.queryByText('Mock data should be valid json')).toBeNull();
     expect(doneButton).toBeInTheDocument();
