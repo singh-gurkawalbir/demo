@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../actions';
 import OutlinedButton from '../Buttons/OutlinedButton';
@@ -10,6 +10,9 @@ import ThumbsUpIcon from '../icons/ThumbsUpIcon';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
 import ThumbsDownIcon from '../icons/ThumbsDownIcon';
 import CloseIcon from '../icons/CloseIcon';
+import HelpDocumentationLink from '../HelpDocumentationLink';
+import HelpVideoLink from '../HelpVideoLink';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -93,6 +96,13 @@ const useStyles = makeStyles(theme => ({
   closeButton: {
     padding: 0,
   },
+  buttonRef: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'row-reverse',
+  },
 }));
 
 const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) => {
@@ -169,7 +179,9 @@ const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) =
   );
 };
 
-export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, ...rest }) {
+export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, contentId, ...rest }) {
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const { helpContent: isHelpContentEnabled } = preferences;
   const classes = useStyles();
 
   return (
@@ -200,6 +212,12 @@ export default function HelpContent({ title, caption, children, supportFeedback 
       <Typography variant="subtitle2" className={classes.caption}>
         Field path: {caption}
       </Typography>
+      )}
+      {isHelpContentEnabled && contentId && (
+        <div className={classes.buttonRef}>
+          <HelpDocumentationLink contentId={contentId} />
+          <HelpVideoLink contentId={contentId} />
+        </div>
       )}
     </div>
   );

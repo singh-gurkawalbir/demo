@@ -155,7 +155,7 @@ export default function Revisions({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions} contentId="revisions">
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton

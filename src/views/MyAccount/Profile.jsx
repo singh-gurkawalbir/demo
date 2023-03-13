@@ -151,8 +151,8 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, darkTheme: undefined };
+    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, helpContent } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, darkTheme: undefined, helpContent };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -171,6 +171,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.dateFormat;
     delete completePayloadCopy.showRelativeDateTime;
     delete completePayloadCopy.colorTheme;
+    delete completePayloadCopy.helpContent;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch, preferences.developer]);
@@ -324,6 +325,16 @@ export default function ProfilePanel() {
         labelSubText: 'For internal testing only',
         visible: !isProduction(),
       },
+      helpContent: {
+        id: 'helpContent',
+        name: 'helpContent',
+        helpKey: 'myaccount.helpContent',
+        type: 'checkbox',
+        label: 'Help Content',
+        defaultValue: preferences?.helpContent || false,
+        labelSubText: 'For internal testing only',
+        visible: !isProduction(),
+      },
     },
     layout: {
       fields: [
@@ -339,6 +350,7 @@ export default function ProfilePanel() {
         'showRelativeDateTime',
         'developer',
         'colorTheme',
+        'helpContent',
       ],
     },
   }), [preferences, isUserAllowedOnlySSOSignIn, dateTimeZonesList, dateFormatList, timeFormatList, colorThemeList]);
@@ -356,7 +368,7 @@ export default function ProfilePanel() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} contentId="profile" />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit
