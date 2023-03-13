@@ -152,7 +152,7 @@ export default function FormView(props) {
     );
   }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  if (!_httpConnectorId || !sourceForm || stagedResource?._connectorID) {
+  if (!_httpConnectorId || !sourceForm || stagedResource?._connectorId) {
     return null;
   }
 
