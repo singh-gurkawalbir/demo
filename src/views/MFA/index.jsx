@@ -43,8 +43,8 @@ export default function MfaVerify() {
   const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
 
   if (isAccountUser) {
-    infoMessage = messageStore(noOfDays
-      ? messageStore('MFA.USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS', { noOfDays }) : message.MFA.MFA_USER_OTP_INFO);
+    infoMessage = noOfDays
+      ? messageStore('MFA.USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS', { noOfDays }) : message.MFA.USER_OTP_INFO;
   } else {
     infoMessage = message.MFA.OWNER_OTP_INFO;
   }

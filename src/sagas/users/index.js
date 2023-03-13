@@ -430,6 +430,12 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
     resourceType === 'account' &&
     userPreferences.defaultAShareId === ACCOUNT_IDS.OWN
   ) {
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: id,
+        environment: 'production',
+      })
+    ); // incase the account which is accepted has mfa required. we need to update the preference first so that initSession set requiredMfaSetUp to true
     yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {
