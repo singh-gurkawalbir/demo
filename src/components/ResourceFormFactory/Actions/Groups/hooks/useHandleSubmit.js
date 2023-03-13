@@ -37,6 +37,10 @@ export default function useHandleSubmit({
     closeAfterSave => {
       const newValues = customCloneDeep({...values});
 
+      // TODO: Need some sanity for customCloneDep: ex. '/parsers': [{rules:{}}, resourcePath: '/'] given as '/parsers': [{rules:{}}, empty, resourcePath: '/']
+      if (newValues['/parsers']) {
+        newValues['/parsers'] = values['/parsers'];
+      }
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {
         newValues['/http/_iClientId'] = iClients?.[0]?._id;
