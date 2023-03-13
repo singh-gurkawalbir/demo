@@ -1,6 +1,6 @@
 import { makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactFlow, { MiniMap } from 'reactflow';
+import ReactFlow, { MiniMap, useNodesState, useEdgesState } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -160,12 +160,21 @@ export function Canvas({ flowId, fullscreen }) {
     selectors.isFlowSaveInProgress(state, flowId)
   );
 
-  const {nodes, edges, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
+  const {nodes: initialNodes, edges: initialEdges, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
     elements, mergedFlow,
   ]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+  useEffect(() => {
+    setNodes(initialNodes);
+  }, [initialNodes, setNodes]);
+  useEffect(() => {
+    setEdges(initialEdges);
+  }, [initialEdges, setEdges]);
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
+  console.log('nodes', nodes);
   useEffect(() => {
     dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
@@ -220,19 +229,21 @@ export function Canvas({ flowId, fullscreen }) {
             className={isPanning ? classes.isPanning : classes.canPan}
             onNodeDragStart={handleNodeDragStart}
             onNodeDragStop={handleNodeDragStop}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
             onNodeDrag={handleNodeDrag}
             onMoveEnd={handleMoveEnd}
             onMove={handleMove}
-            nodesDraggable={false}
             nodesConnectable={false}
             minZoom={0.4}
             maxZoom={1.25}
             panOnScroll
+            nodesDraggable={false}
             translateExtent={translateExtent}
             onInit={onLoad}
             defaultViewport={defaultViewport}
-            nodes={nodes}
-            edges={edges}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             preventScrolling={false}
