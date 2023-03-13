@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
-import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, makeStyles, createGenerateClassName } from '@material-ui/core/styles';
 import { StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
@@ -286,6 +286,11 @@ export default function App() {
     }
   }, []);
 
+  const generateClassName = createGenerateClassName({
+    disableGlobal: true,
+    seed: 'mui-jss',
+  });
+
   const AppRenderer = () =>
     env !== 'development' ? (
       <div className={classes.root}>
@@ -333,7 +338,7 @@ export default function App() {
   );
 
   return (
-    <StyledEngineProvider injectFirst>
+    <StyledEngineProvider generateClassName={generateClassName}>
       <MuiThemeProvider theme={theme}>
         <AppShell appContext={appContext}>
           <CrashReporter>
