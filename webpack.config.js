@@ -100,7 +100,9 @@ const config = {
       GA_KEY_1_EU: JSON.stringify(process.env.GA_KEY_1_EU),
       GA_KEY_2_EU: JSON.stringify(process.env.GA_KEY_2_EU),
       IO_LOGIN_PROMOTION_URL: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL),
+      IO_SIGNUP_PROMOTION_URL: JSON.stringify(process.env.IO_SIGNUP_PROMOTION_URL),
       IO_LOGIN_PROMOTION_URL_EU: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL_EU),
+      IO_SIGNUP_PROMOTION_URL_EU: JSON.stringify(process.env.IO_SIGNUP_PROMOTION_URL_EU),
       PORTAL_URL: JSON.stringify(process.env.PORTAL_URL),
       SHOPIFY_USER_IDS: JSON.stringify(process.env.SHOPIFY_USER_IDS),
       //  Note that because the plugin does a direct text replacement, the value given to it must include actual quotes inside of the string itself.
