@@ -54,8 +54,8 @@ export default function PageGeneratorNode(props) {
   // const isSubFlow = false;
 
   return (
-    <div className={iconView === 'icon' && !isSubFlow ? classes.newroot : classes.root}>
-      <div className={iconView === 'icon' && !isSubFlow ? classes.newpgContainer : classes.pgContainer}>
+    <div className={iconView === 'icon' ? classes.newroot : classes.root}>
+      <div className={iconView === 'icon' ? classes.newpgContainer : classes.pgContainer}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}

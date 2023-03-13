@@ -173,6 +173,7 @@ function DefaultEdge(props) {
     targetType,
     points: edgePoints,
     processorCount,
+    highlight,
     mergableTerminals = [],
   } = data;
   const isDragging = !!dragNodeId;
@@ -352,7 +353,7 @@ function DefaultEdge(props) {
 
   return (
     <>
-      <path id={id} className={hoveredEdges && hoveredEdges?.includes(id) ? classes.edgeAnimatedLine : classes.edgePath} d={edgePath} />
+      <path id={id} className={(hoveredEdges && hoveredEdges?.includes(id)) || highlight ? classes.edgeAnimatedLine : classes.edgePath} d={edgePath} />
       {subFlowIcon && isFirstPGEdge && isSubFlowView && (
       <ForeignObject
         edgePath={edgePath}
@@ -413,7 +414,7 @@ function DefaultEdge(props) {
       }
 
       {!isDragging && showAddIcon && (
-        <ForeignObject edgePath={edgePath} position={position} offset={offset}>
+        <ForeignObject edgePath={edgePath} position={position} offset={45}>
           <AddNewButton edgeId={id} disabled={maxRoutersLimitReached} />
         </ForeignObject>
       )}

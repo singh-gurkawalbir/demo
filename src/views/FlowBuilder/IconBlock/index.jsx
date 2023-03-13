@@ -268,7 +268,7 @@ export default function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
-  const {flowHighlighter} = useFlowContext();
+  const {flowHighlighter, upstreamHighlighter} = useFlowContext();
   const flowOriginal =
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
@@ -598,7 +598,13 @@ export default function AppBlock({
               <ActionIconButton
                 onClick={() => flowHighlighter(id)}
                 data-test="flowBranching"
-                helpText="flow tree expansion">
+                helpText="DownStream expansion">
+                <BranchIcon />
+              </ActionIconButton>
+              <ActionIconButton
+                onClick={() => upstreamHighlighter(id)}
+                data-test="flowBranching1"
+                helpText="Upstream expansion">
                 <BranchIcon />
               </ActionIconButton>
             </div>

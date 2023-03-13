@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactFlow, { MiniMap, getOutgoers, isEdge } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, getOutgoers, isEdge, getIncomers } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -189,12 +189,32 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     []
   );
 
+  const getAllIncomers = (node, elements) => getIncomers(node, elements).reduce(
+    (memo, incomer) => [...memo, incomer, ...getAllIncomers(incomer, elements)],
+    []
+  );
+
   // let newElements;
 
   const flowHighlighter = id => {
     dispatch(actions.flow.toggleSubFlowView(flowId, true, id));
     const node = elements.find(ele => ele.id === id);
     const subFlow = getAllOutgoers(node, elements).map(node => node.id);
+
+    const newElements = elements.map(ele => {
+      if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
+        return {...ele, isSubFlow: true};
+      }
+
+      return ele;
+    });
+
+    setSubFlowElements(newElements);
+  };
+  const upstreamHighlighter = id => {
+    dispatch(actions.flow.toggleSubFlowView(flowId, true, id));
+    const node = elements.find(ele => ele.id === id);
+    const subFlow = getAllIncomers(node, elements).map(node => node.id);
 
     const newElements = elements.map(ele => {
       if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
@@ -302,6 +322,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
           elementsMap={elementsMap}
           iconView={iconView}
           flowHighlighter={flowHighlighter}
+          upstreamHighlighter={upstreamHighlighter}
           flow={mergedFlow}
           setSelectedEdge={setSelectedEdge}
           selectedEdge={selectedEdge}

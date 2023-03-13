@@ -158,8 +158,14 @@ export function newlayoutElements(elements = [], flow, hoveredEdges) {
         position.x = node.x;
         position.y = node.y - 31;
       } else if (el.type === 'terminal') {
-        position.x = node.x + 5;
+        position.x = node.x - 5;
         position.y = node.y + 7;
+      } else if (el.type === 'pg' && !el.isSubFlow) {
+        position.x = node.x - 35;
+        position.y = node.y;
+      } else if (el.type === 'pg' && el.isSubFlow) {
+        position.x = node.x - 35;
+        position.y = node.y - 25;
       } else {
         position.x = node.x;
         position.y = node.y;
@@ -181,14 +187,21 @@ export function newlayoutElements(elements = [], flow, hoveredEdges) {
       const target = elements.find(n => n.id === el.target);
       const edge = elements.find(n => n.id === `${el.source}-${el.target}`);
 
-      // if (hoveredEdges?.includes(el.id)) {
-      //   el = {...el, animated: true};
-      // }
+      if (source.type === 'pg') {
+        // points.splice(2, 1);
+        console.log(points);
+      }
+      let highlighted = false;
+
+      if (source.isSubFlow && target.isSubFlow) {
+        highlighted = true;
+      }
 
       edges.push({
         ...el,
         data: {
           ...edge.data,
+          highlight: highlighted,
           sourceType: source.type,
           targetType: target.type,
           sourceId: source.id,

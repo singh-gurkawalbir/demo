@@ -219,6 +219,7 @@ const PageBarChildren = ({integrationId, flowId, iconView, isSubFlowView}) => {
   };
 
   const handleViewChange = () => {
+    dispatch(actions.flow.toggleSubFlowView(flowId, false));
     if (iconView === 'icon') { dispatch(actions.flow.iconView(flowId, 'bubble')); } else {
       dispatch(actions.flow.iconView(flowId, 'icon'));
     }

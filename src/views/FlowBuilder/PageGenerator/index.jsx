@@ -28,6 +28,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 const emptyObj = {};
 const useStyles = makeStyles({
   pgContainer: {
+    width: '137px',
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'center',
