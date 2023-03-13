@@ -15,6 +15,7 @@ import {
 } from '../../utils/flows/flowbuilder';
 import { getChangesPatchSet } from '../../utils/json';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* moveStep({flowId, stepInfo}) {
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
@@ -113,7 +114,7 @@ export function* deleteEdge({ flowId, edgeId }) {
 
 export function* deleteRouter({flowId, routerId, prePatches}) {
   const flow = yield select(selectors.fbFlow, flowId);
-  const {routers = []} = flow;
+  const {routers = []} = customCloneDeep(flow);
   const patchSet = prePatches || [];
 
   const router = routers.find(r => r.id === routerId);
