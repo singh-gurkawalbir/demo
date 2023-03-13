@@ -162,6 +162,7 @@ export default function FormView(props) {
         value={value}
         onChange={onFieldChangeFn}
         exclusive
+        disabled={!!stagedResource?._connectorID}
         options={options}
         className={classes.textToggle}
       />
