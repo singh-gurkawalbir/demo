@@ -60,7 +60,7 @@ const mockOutput = {
 };
 const mockOutputJson = JSON.stringify(mockOutput);
 
-function initMockOutputDrawer() {
+function initMockOutputDrawer(fieldStateProps) {
   mutateStore(initialStore, draft => {
     draft.data.resources = {
       exports: [
@@ -93,6 +93,7 @@ function initMockOutputDrawer() {
             isValid: true,
             isDiscretelyInvalid: false,
             errorMessages: '',
+            ...fieldStateProps,
           },
         },
       },
@@ -163,6 +164,39 @@ describe('MockOutputDrawerContent UI tests', () => {
     expect(screen.getByText('Body')).toBeInTheDocument();
     expect(screen.getByText('Headers')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
+  });
+  test('should display error messages if field state has error messages on initial render', async () => {
+    initMockOutputDrawer({errorMessages: 'Mock data should be valid json', value: 'abc'});
+
+    // Mock output drawer heading
+    const label = screen.getByRole('heading', {name: 'Mock output'});
+
+    expect(label).toBeInTheDocument();
+
+    // Populate with preview data button
+    expect(screen.getByText('Populate with preview data')).toBeInTheDocument();
+
+    expect(screen.getByText('abc')).toBeInTheDocument();
+
+    // done button
+    const doneButton = screen.getByRole('button', {name: 'Done'});
+
+    expect(doneButton).toBeInTheDocument();
+
+    expect(doneButton).toBeDisabled();
+
+    expect(screen.getByText('Mock data should be valid json')).toBeInTheDocument();
+
+    // change the editor content to valid json
+    const inputNode = document.querySelector('textarea[name="codeEditor"]');
+
+    await userEvent.clear(inputNode);
+    await userEvent.paste(inputNode, mockOutputJson);
+    expect(screen.getByText(mockOutputJson)).toBeInTheDocument();
+    expect(screen.queryByText('Mock data should be valid json')).toBeNull();
+    expect(doneButton).toBeInTheDocument();
+
+    expect(doneButton).toBeEnabled();
   });
   test('should show error for invalid mock output and done button should be disabled', async () => {
     initMockOutputDrawer();

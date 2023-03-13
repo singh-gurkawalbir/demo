@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isArray, filter, invert } from 'lodash';
 import parser from 'js-sql-parser';
 
@@ -120,16 +119,18 @@ export function getFilterList(jsonPaths, rules) {
       if (rr.condition) {
         iterate(rr);
       } else {
-        if (!rr.id) {
+        let {id} = rr;
+
+        if (!id) {
           if (jsonPaths.length === 0) {
             jsonPaths.push({ id: 'sampleField', name: 'sampleField' });
           }
 
-          rr.id = jsonPaths[0].id;
+          id = jsonPaths[0].id;
         }
 
-        if (!filter(jsonPaths, { id: rr.id }).length) {
-          jsonPaths.push({ id: rr.id });
+        if (!filter(jsonPaths, { id }).length) {
+          jsonPaths.push({ id });
         }
 
         if (rr.rhs && rr.rhs.type === 'field' && rr.rhs.field) {
@@ -182,56 +183,57 @@ export function generateSalesforceLookupFilterExpression(
   let lhs;
   let rhs;
   let salesforceFilterExpression = '';
+  let queryBuilderRules = [...qbRules.rules];
 
   /**
    * A and B and C is not allowed in backend.
    * So, we need to convert it to A and [B and C]
    */
-  if (qbRules.rules.length > 2) {
-    const [firstRule, ...otherRules] = qbRules.rules;
+  if (queryBuilderRules.length > 2) {
+    const [firstRule, ...otherRules] = queryBuilderRules;
 
-    qbRules.rules = [
+    queryBuilderRules = [
       firstRule,
       { condition: qbRules.condition, rules: otherRules },
     ];
   }
 
-  for (let i = 0; i < qbRules.rules.length; i += 1) {
-    if (qbRules.rules[i].rules && qbRules.rules[i].rules.length > 0) {
+  for (let i = 0; i < queryBuilderRules.length; i += 1) {
+    if (queryBuilderRules[i].rules && queryBuilderRules[i].rules.length > 0) {
       salesforceFilterExpression += generateSalesforceLookupFilterExpression(
-        qbRules.rules[i],
+        queryBuilderRules[i],
         salesforceFilterDataTypes
       );
     } else {
       if (
         ['formuladate', 'formulanumeric', 'formulatext'].indexOf(
-          qbRules.rules[i].id
+          queryBuilderRules[i].id
         ) > -1
       ) {
-        lhs = `${qbRules.rules[i].id}:${qbRules.rules[i].data.lhs.expression}`;
+        lhs = `${queryBuilderRules[i].id}:${queryBuilderRules[i].data.lhs.expression}`;
       } else {
-        lhs = qbRules.rules[i].id;
+        lhs = queryBuilderRules[i].id;
       }
 
-      if (qbRules.rules[i].data && qbRules.rules[i].data.rhs) {
+      if (queryBuilderRules[i].data && queryBuilderRules[i].data.rhs) {
         rhs =
-          qbRules.rules[i].data.rhs[qbRules.rules[i].data.rhs.type || 'field'];
-        if (qbRules.rules[i].data.rhs.type === 'field') {
+        queryBuilderRules[i].data.rhs[queryBuilderRules[i].data.rhs.type || 'field'];
+        if (queryBuilderRules[i].data.rhs.type === 'field') {
           rhs = `{{{${salesforceFilterDataTypes[lhs]} ${rhs}}}}`;
         }
       }
 
       salesforceFilterExpression += `(${lhs} ${
-        operatorsMap.jQueryToIOFilters[qbRules.rules[i].operator]
+        operatorsMap.jQueryToIOFilters[queryBuilderRules[i].operator]
       } ${rhs})`;
     }
 
-    if (i < qbRules.rules.length - 1) {
+    if (i < queryBuilderRules.length - 1) {
       salesforceFilterExpression += ` ${qbRules.condition || 'AND'} `;
     }
   }
 
-  if (qbRules.rules.length > 1) {
+  if (queryBuilderRules.length > 1) {
     salesforceFilterExpression = `(${salesforceFilterExpression})`;
   }
 

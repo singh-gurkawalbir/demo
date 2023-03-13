@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 /*
  * Utility functions related to sample data for flows
  */
@@ -377,10 +376,10 @@ export const isPostDataNeededInResource = resource => {
 export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
   const defaultExtractsList = responseMappingUtil.getResponseMappingExtracts(resourceType, adaptorType);
 
-  return defaultExtractsList.reduce((extractsObj, extractItem) => {
-    extractsObj[extractItem] = '';
+  return defaultExtractsList.reduce((acc, extractItem) => {
+    acc[extractItem] = '';
 
-    return extractsObj;
+    return acc;
   }, {});
 };
 
