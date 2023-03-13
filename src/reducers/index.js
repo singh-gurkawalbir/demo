@@ -5590,7 +5590,7 @@ selectors.applicationType = (state, resourceType, id) => {
       getStagedValue('/_connectionId') || (resourceObj?._connectionId)
     );
 
-    return connection && connection.jdbc && rdbmsSubTypeToAppType(connection.jdbc.type);
+    return connection && connection.jdbc && connection.jdbc.type;
   }
   if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(

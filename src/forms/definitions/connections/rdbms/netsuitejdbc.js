@@ -26,16 +26,23 @@ export default {
       newValues['/netsuite/roleId'] = newValues['/netsuite/token/auto/roleId'];
     }
 
-    newValues['/jdbc/properties'] = [
-      (accId && {name: 'accountId', value: accId}),
-      (roleId && {name: 'roleId', value: roleId}),
-      {name: 'serverDataSource', value: newValues['/jdbc/serverDataSource']},
+    let properties = [
+      {name: 'ServerDataSource', value: newValues['/jdbc/serverDataSource']},
       {name: 'staticSchema', value: newValues['/jdbc/staticSchema'] ? 1 : 0 },
     ];
+
+    if (roleId) {
+      properties = [{name: 'RoleID', value: roleId}, ...properties];
+    }
+
+    if (accId) {
+      properties = [{name: 'AccountID', value: accId}, ...properties];
+    }
+
+    newValues['/jdbc/properties'] = properties;
     newValues['/jdbc/type'] = 'netsuitejdbc';
     newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
     newValues['/jdbc/user'] = 'TBA';
-    newValues['/jdbc/password'] = 'TBA';// need to delete
 
     newValues['/type'] = 'jdbc';
 
@@ -67,7 +74,7 @@ export default {
         const properties = r?.jdbc?.properties || [];
         let value = '';
 
-        properties.forEach(each => { if (each.name === 'serverDataSource') value = each.value; });
+        properties.forEach(each => { if (each.name === 'ServerDataSource') value = each.value; });
 
         return value;
       },
@@ -108,7 +115,7 @@ export default {
         const properties = r?.jdbc?.properties || [];
         let value = null;
 
-        properties.forEach(each => { if (each.name === 'accountId') value = each.value; });
+        properties.forEach(each => { if (each.name === 'AccountID') value = each.value; });
 
         return value;
       },
@@ -125,7 +132,7 @@ export default {
         const properties = r?.jdbc?.properties || [];
         let value = null;
 
-        properties.forEach(each => { if (each.name === 'accountId') value = each.value; });
+        properties.forEach(each => { if (each.name === 'AccountID') value = each.value; });
 
         return value;
       },

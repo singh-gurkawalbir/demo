@@ -2341,6 +2341,7 @@ export default {
     type: 'text',
     required: true,
     label: 'Server Name',
+    defaultValue: r => r?.jdbc?.host,
   },
   'jdbc.port': {
     isLoggable: true,
