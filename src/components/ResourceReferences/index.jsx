@@ -1,5 +1,5 @@
 import { makeStyles, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CeligoTable from '../CeligoTable';
 import { selectors } from '../../reducers';
@@ -11,6 +11,7 @@ import metadata from './metadata';
 import Loader from '../Loader';
 import { TextButton } from '../Buttons';
 import messageStore, { message } from '../../utils/messageStore';
+import LoadResources from '../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   referenceLink: {
@@ -29,6 +30,8 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
   const resourceReferences = useSelector(state =>
     selectors.resourceReferences(state)
   );
+  // to make unique set of all the resources needed to be loaded
+  const resourcesToBeLoaded = useMemo(() => [...(new Set(resourceReferences?.map(resource => resource.resourceType) || []))], [resourceReferences]);
   const resourceTypeLabel = MODEL_PLURAL_TO_LABEL[resourceType]
     ? MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()
     : '';
@@ -71,7 +74,9 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
               {title &&
               messageStore('RESOURCE.DELETED', {resourceTypeLabel})}
             </Typography>
-            <CeligoTable actionProps={{ onClose }} data={resourceReferences} {...metadata} />
+            <LoadResources resources={resourcesToBeLoaded} >
+              <CeligoTable actionProps={{ onClose }} data={resourceReferences} {...metadata} />
+            </LoadResources>
           </div>
         </ModalDialog>
       )}
