@@ -9,10 +9,10 @@ export default function Subscription() {
   const licenseType = useSelector(state => selectors.platformLicense(state)?.type);
 
   switch (licenseType) {
-    // case 'diy':
-    //   return <DIY />;
-    // case 'integrator':
-    //   return <Integrator />;
+    case 'diy':
+      return <DIY />;
+    case 'integrator':
+      return <Integrator />;
     case 'endpoint':
       return <Endpoint />;
     default:

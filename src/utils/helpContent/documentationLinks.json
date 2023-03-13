@@ -5,7 +5,7 @@
     "accountDashboard": "https://docs.celigo.com/hc/en-us/articles/4404692954395-View-all-activity-in-the-Account-Dashboard",
     "integrationDashboard": "https://docs.celigo.com/hc/en-us/articles/360025641652-Navigate-your-integration",
     "marketplace": "https://docs.celigo.com/hc/en-us/articles/4403702343195-Jump-start-integrations-with-templates-and-apps",
-    "connectionsResources": "https://docs.celigo.com/hc/en-us/articles/226974368-Initiate-a-connection-resource-to-an-application",
+    "connections": "https://docs.celigo.com/hc/en-us/articles/226974368-Initiate-a-connection-resource-to-an-application",
     "imports": "https://docs.celigo.com/hc/en-us/articles/226933887-What-are-imports-",
     "exports": "https://docs.celigo.com/hc/en-us/articles/226934107-What-are-exports-",
     "agents": "https://docs.celigo.com/hc/en-us/articles/360004081771-Integrate-data-through-firewall-with-on-premise-agent",
@@ -16,5 +16,4 @@
     "auditLog" : "https://docs.celigo.com/hc/en-us/articles/6514515710107",
     "analytics": "https://docs.celigo.com/hc/en-us/articles/7788318803867",
     "revisions": "https://docs.celigo.com/hc/en-us/articles/5349100943003"
-
 }
