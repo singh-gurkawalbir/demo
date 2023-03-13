@@ -1,6 +1,5 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
-import { cloneDeep } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
@@ -114,7 +113,7 @@ export function* deleteEdge({ flowId, edgeId }) {
 
 export function* deleteRouter({flowId, routerId, prePatches}) {
   const flow = yield select(selectors.fbFlow, flowId);
-  const {routers = []} = cloneDeep(flow);
+  const {routers = []} = flow;
   const patchSet = prePatches || [];
 
   const router = routers.find(r => r.id === routerId);
