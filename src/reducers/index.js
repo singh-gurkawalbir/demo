@@ -7097,6 +7097,12 @@ selectors.isSSOEnabled = state => {
   return !oidcClient.disabled;
 };
 
+selectors.isAccountOwnerMFAEnabled = state => {
+  const accountOwner = selectors.ownerUser(state);
+
+  return !!accountOwner?.mfaEnabled;
+};
+
 selectors.userLinkedSSOClientId = state => {
   if (selectors.isAccountOwner(state)) {
     return selectors.oidcSSOClient(state)?._id;
