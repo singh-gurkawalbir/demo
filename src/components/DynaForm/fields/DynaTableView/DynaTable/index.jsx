@@ -1,7 +1,8 @@
-import { Typography } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useEffect, useReducer } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { generateNewId } from '../../../../../utils/resource';
 import { hashCode } from '../../../../../utils/string';
@@ -9,6 +10,8 @@ import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
 import VirtualizedTable from './VirtualizedTable';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -54,9 +57,10 @@ const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
 
   if (!value || !value.length) {
     return {
-
       touched: false,
       ignoreEmptyRow,
+      // isValid property is added to check whether the optionMap has required fields or not.
+      isValid: !optionsMap.some(obj => obj.required),
       tableStateValue: [
         emptyRow,
       ]};
@@ -65,6 +69,7 @@ const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
   return {
     touched: false,
     ignoreEmptyRow,
+    isValid: true,
     tableStateValue: ignoreEmptyRow ? value.map(val => generateRow(val)) : [...value.map(val => generateRow(val)), emptyRow],
   };
 };
@@ -80,11 +85,28 @@ const BaseTable = ({
   id,
   ignoreEmptyRow,
   value,
+  formKey,
+  isSubFormTable,
 }) => {
-  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
+  const dispatch = useDispatch();
 
-  const {touched, tableStateValue: tableValue} = tableState;
+  // Fetching isShowValidationBeforeTouched property in order to forceState the isValid property to true when there are required fields from the settingsForm so that we could validate the form on the initial render
+  const isShowValidationBeforeTouched = useSelector(state => selectors.formState(state, formKey)?.showValidationBeforeTouched);
+
+  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
+  const {touched, tableStateValue: tableValue, isValid, rowIndex} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
+
+  // Adding the if-else condition in the useEffect, so that when ever the isShowValidationBeforeTouched has been set to true, we will be triggering the below dispatch calls inorder to force state the following values to the form inorder to validate it based on the isValid property.
+  useEffect(() => {
+    if (isShowValidationBeforeTouched) {
+      if (!isValid) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, required: !isValid}));
+      } else {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true, required: !isValid}));
+      }
+    }
+  }, [isValid, rowIndex, isShowValidationBeforeTouched, dispatch, formKey, id]);
 
   useEffect(() => {
     if (touched) {
@@ -112,6 +134,7 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        isSubFormTable={isSubFormTable}
     />
     );
   }
@@ -155,6 +178,9 @@ const DynaTable = props => {
     disableDeleteRows,
     isVirtualizedTable,
     isLoggable,
+    formKey,
+    required,
+    isSubFormTable,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 
@@ -169,7 +195,11 @@ const DynaTable = props => {
 
   return (
     <div className={clsx(classes.container, className)}>
-      {!hideLabel && <Typography {...isLoggableAttr(isLoggable)} variant="h6">{label}</Typography>}
+      {!hideLabel && (
+      <FormLabel {...isLoggableAttr(isLoggable)} required={required} error={required} >
+        {label}
+      </FormLabel>
+      )}
       <div data-test={id} className={classes.root} >
         <div className={classes.fieldsContentColumn}>
           <RefreshHeaders
@@ -178,6 +208,7 @@ const DynaTable = props => {
             isLoading={isLoading}
             optionsMap={optionsMapFinal}
             handleRefreshClickHandler={handleRefreshClickHandler}
+            required={required}
           />
           {/* do all multicolumn entry tables need to be redacted ? */}
           <span {...isLoggableAttr(isLoggable)}>
@@ -192,6 +223,8 @@ const DynaTable = props => {
               id={id}
               ignoreEmptyRow={ignoreEmptyRow}
               value={value}
+              formKey={formKey}
+              isSubFormTable={isSubFormTable}
           />
           </span>
 
