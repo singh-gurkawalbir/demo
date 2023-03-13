@@ -932,6 +932,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'http.auth.oauth.oauth1.accessToken': 'Enter the access token. The consumer uses this token to gain access to the protected resources on user\'s behalf.<br \\>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'http.auth.oauth.oauth1.tokenSecret': 'Enter the token secret. The consumer uses this secret to establish ownership of a provided token.<br \\>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'http.auth.oauth.oauth1.consumerPrivateKey': 'Enter the consumer private RSA key. This key is used to sign the API call request.',
+  'http.auth.oauth.oauth1.realm': 'This is a string specified by the server in the WWW-Authenticate response header. It should contain at least the name of the host performing the authentication and might additionally indicate the collection of users who might have access.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
 'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',
@@ -2590,4 +2591,8 @@ use the custom option.`,
   'transfer.email': 'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',
   'transfer._integrationIds': 'Click the checkbox for each integration to be transferred to the new owner.',
   'import.assistantMetadata.lookupQueryParams': 'Click Launch to enter the dynamic search parameters to identify existing records.',
+  'amazonvendorcentral.connection.http.type': 'Selling Partner API (SP-API): The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs.',
+  'amazonvendorcentral.connection.http.unencrypted.sellingRegion': 'Select AWS regions to associate your API Endpoints. The region is required for calculating a signature when calling the Selling Partner API.',
+  'amazonvendorcentral.connection.http.unencrypted.marketplace': 'Select a country or marketplace for your connection request. This field is populated based on the selling region chosen above.',
+  'amazonvendorcentral.connection.http.sellingPartnerId': 'The identifier selling partner who is authorizing your application.',
 };

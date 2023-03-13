@@ -164,7 +164,7 @@ describe('MockOutputDrawerContent UI tests', () => {
     expect(screen.getByText('Headers')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
-  test('should display error messages if field state has error messages on initial render', () => {
+  test('should display error messages if field state has error messages on initial render', async () => {
     initMockOutputDrawer({errorMessages: 'Mock data should be valid json', value: 'abc'});
 
     // Mock output drawer heading
@@ -189,8 +189,9 @@ describe('MockOutputDrawerContent UI tests', () => {
     // change the editor content to valid json
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
-    userEvent.clear(inputNode);
-    userEvent.paste(inputNode, mockOutputJson);
+    await userEvent.clear(inputNode);
+    inputNode.focus();
+    await userEvent.paste(mockOutputJson);
     expect(screen.getByText(mockOutputJson)).toBeInTheDocument();
     expect(screen.queryByText('Mock data should be valid json')).toBeNull();
     expect(doneButton).toBeInTheDocument();

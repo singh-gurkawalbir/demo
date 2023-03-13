@@ -96,7 +96,7 @@ export default {
       rule: editor.rule,
     });
     const javascriptData = safeParse(editorData) || {};
-    const router = { ...rules.rules };
+    const router = { ...customCloneDeep(rules.rules) };
 
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
     if (!router.script) {
