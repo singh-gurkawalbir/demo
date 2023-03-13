@@ -180,7 +180,7 @@ function DefaultEdge({
   */
   const edgePath = useMemo(() => {
     if (isTargetTerminal && !isSourceRouter) {
-      const sp = getEdgeStepPath({
+      return getEdgeStepPath({
         sourceX,
         sourceY,
         sourcePosition,
@@ -188,8 +188,6 @@ function DefaultEdge({
         targetY,
         targetPosition,
       });
-
-      return Array.isArray(sp) ? sp[0] : sp;
     }
 
     const targetHandle = { x: targetX, y: targetY };

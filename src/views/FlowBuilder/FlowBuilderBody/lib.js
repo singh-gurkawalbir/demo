@@ -217,8 +217,20 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
 
 export const getEdgeStepPath = (data = {}) => {
   const sp = getSmoothStepPath(data);
+  let points = sp;
 
-  return sp;
+  if (Array.isArray(sp)) {
+    [points] = sp;
+
+    points = points.substr(0, 1) + points
+      .substr(1)
+      .split(/[LQ]/)
+      .map(cmd => cmd.trim())
+      .map(cmd => cmd.split(' ').join(','))
+      .join(' L');
+  }
+
+  return points;
 };
 
 export const getPositionInEdge = (
