@@ -266,7 +266,7 @@ describe('router processor logic', () => {
         ],
       });
     });
-    test('should return correct request body for filter with scriptContext', () => {
+    test('should return correct request body for filter with scriptContext for IA', () => {
       const editor = {
         rule: {
           activeProcessor: 'javascript',
@@ -275,10 +275,14 @@ describe('router processor logic', () => {
           javascript: {a: 'b'},
           input_filters: {c: 'd'},
         },
+        flow: {
+          _id: 1234,
+          _connectorId: 4321,
+        },
         context: {
-          _integrationId: 'inetgartionID',
+          _integrationId: 'integartionID',
           _flowId: 'flowId',
-          container: 'inetgration',
+          container: 'integration',
           type: 'hook',
         },
       };
@@ -304,9 +308,9 @@ describe('router processor logic', () => {
           },
         ],
         options: {
-          _integrationId: 'inetgartionID',
+          _integrationId: 'integartionID',
           _flowId: 'flowId',
-          container: 'inetgration',
+          container: 'integration',
           type: 'hook',
         },
       });

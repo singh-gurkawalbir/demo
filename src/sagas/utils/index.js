@@ -297,7 +297,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
           };
 
           if (httpEndpoint.resourceFields) {
-            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
+            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, deepClone(r.sampleData));
           }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
@@ -429,9 +429,14 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (isNewId(resource?._id) && preConfiguredField) {
         tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
       }
-      if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
-        tempFiledMeta.fieldMap[key]._conditionIds = fieldUserMustSet?._conditionIds;
-        tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
+      if (fieldUserMustSet) {
+        if (fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+          tempFiledMeta.fieldMap[key]._conditionIds = fieldUserMustSet?._conditionIds;
+          tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
+        }
+        if (fieldUserMustSet?.inputType) {
+          tempFiledMeta.fieldMap[key].inputType = fieldUserMustSet?.inputType;
+        }
       }
 
       if (key === 'http.ping.relativeURI') {
@@ -574,6 +579,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
       const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.unencrypted.${fld.id}` === field.path);
       const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.unencrypted.${fld.id}` === field.path);
+      let {inputType} = fld;
 
       if (preConfiguredField) {
         const fieldLists = connectionTemplate.preConfiguredFields?.filter(field => `http.unencrypted.${fld.id}` === field.path);
@@ -581,8 +587,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         fieldLists.forEach(field => {
           if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
         });
-      } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
-        _conditionIds = fieldUserMustSet?._conditionIds;
+      } else if (fieldUserMustSet) {
+        if (fieldUserMustSet._conditionIds && fieldUserMustSet._conditionIds.length > 0) {
+          _conditionIds = fieldUserMustSet?._conditionIds;
+        }
+        if (fieldUserMustSet.inputType) {
+          inputType = fieldUserMustSet?.inputType;
+        }
       }
       unEncryptedFields.push({
         position: 1,
@@ -597,6 +608,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           _conditionIdValuesMap,
           helpLink: fld.helpURL,
           _conditionIds,
+          inputType,
         },
       });
     });
@@ -664,6 +676,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
     Object.entries(fieldMap).forEach(([, value]) => {
       const _conditionIdValuesMap = [];
+      let {inputType} = value;
+
       let _conditionIds = [];
 
       if (!isGenericHTTP) {
@@ -676,8 +690,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           fieldLists.forEach(field => {
             if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
           });
-        } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
-          _conditionIds = fieldUserMustSet?._conditionIds;
+        } else if (fieldUserMustSet) {
+          if (fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+            _conditionIds = fieldUserMustSet?._conditionIds;
+          }
+          if (fieldUserMustSet.inputType) {
+            inputType = fieldUserMustSet?.inputType;
+          }
         }
       }
 
@@ -693,6 +712,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           helpLink: value.helpURL,
           _conditionIdValuesMap,
           _conditionIds,
+          inputType,
         },
       });
     });

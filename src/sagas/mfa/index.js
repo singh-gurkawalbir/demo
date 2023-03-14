@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
-import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY, MFA_ACCOUNT_SETTINGS_ASYNC_KEY } from '../../constants';
+import { MFA_RESET_ASYNC_KEY, MFA_OWNER_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY, MFA_ACCOUNT_SETTINGS_ASYNC_KEY } from '../../constants';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -114,6 +114,26 @@ export function* requestSecretCode({ password, isQRCode }) {
   }
   yield put(actions.mfa.showSecretCode());
 }
+
+export function* resetOwnerMFA() {
+  yield put(actions.asyncTask.start(MFA_OWNER_RESET_ASYNC_KEY));
+  try {
+    yield call(apiCallWithRetry, {
+      path: '/owner/mfa/reset',
+      opts: {
+        method: 'POST',
+      },
+    });
+
+    yield put(actions.asyncTask.success(MFA_OWNER_RESET_ASYNC_KEY));
+    yield put(actions.user.org.accounts.requestCollection());
+  } catch (error) {
+    yield put(actions.asyncTask.failed(MFA_OWNER_RESET_ASYNC_KEY));
+
+    return undefined;
+  }
+}
+
 export function* resetMFA({ password, aShareId }) {
   const path = aShareId ? `/ashares/${aShareId}/mfa/reset` : '/mfa/reset';
 
@@ -197,6 +217,7 @@ export default [
   takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, updateAccountSettings),
   takeLatest(actionTypes.MFA.SECRET_CODE.REQUEST, requestSecretCode),
   takeLatest(actionTypes.MFA.RESET, resetMFA),
+  takeLatest(actionTypes.MFA.OWNER_ACCOUNT_RESET, resetOwnerMFA),
   takeLatest(actionTypes.MFA.DELETE_DEVICE, deleteTrustedDevice),
   takeLatest(actionTypes.MFA.MOBILE_CODE.VERIFY, verifyMobileCode),
   takeLatest(actionTypes.MFA.SESSION_INFO.REQUEST, requestMFASessionInfo),
