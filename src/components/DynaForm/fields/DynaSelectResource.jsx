@@ -326,6 +326,11 @@ export default function DynaSelectResource(props) {
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
       itemInfo: getItemInfo?.(conn),
+      connInfo: {
+        httpConnectorId: conn?.http?._httpConnectorId,
+        httpConnectorApiId: conn?.http?._httpConnectorApiId,
+        httpConnectorVersionId: conn?.http?._httpConnectorVersionId,
+      },
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
@@ -430,6 +435,7 @@ export default function DynaSelectResource(props) {
       optionSearch: i.label,
       value: i.value,
       itemInfo: i.itemInfo,
+      connInfo: i.connInfo,
     }));
 
   useEffect(() => {

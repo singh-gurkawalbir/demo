@@ -688,6 +688,8 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
   }
 
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
+  retValues['/http/_httpConnectorApiId'] = formValues['/http/apiType'];
+  delete retValues['/http/apiType'];
   if (retValues['/http/unencrypted/version']) {
     const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
 
