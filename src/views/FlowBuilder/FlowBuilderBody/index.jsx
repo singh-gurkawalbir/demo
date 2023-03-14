@@ -174,7 +174,6 @@ export function Canvas({ flowId, fullscreen }) {
   }, [initialEdges, setEdges]);
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
-  console.log('nodes', nodes);
   useEffect(() => {
     dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
