@@ -6,13 +6,13 @@ import { getApp } from '../../../constants/applications';
 import { logoSizes } from '../index';
 
 const useStyles = makeStyles(theme => ({
-  logoStripWrapper: {
+  logoStripWrapper: props => ({
     display: 'grid',
     margin: 0,
     padding: 0,
     maxWidth: 300,
-    gridTemplateColumns: props => `repeat(${props.cols}, ${props.pxSize}px)`,
-    '& > *': props => ({
+    gridTemplateColumns: `repeat(${props.cols}, ${props.pxSize}px)`,
+    '& > *': {
       justifyContent: 'center',
       position: 'relative',
       display: 'flex',
@@ -38,8 +38,8 @@ const useStyles = makeStyles(theme => ({
       [`&:nth-child(n+${props.columns + 1})`]: {
         borderTop: 'none',
       },
-    }),
-  },
+    },
+  }),
 }));
 
 export default function Applications({applications, children, className, columns, size = 'small', type = 'other', value = ''}) {
@@ -57,7 +57,7 @@ export default function Applications({applications, children, className, columns
     // 'count' prop that only recognizes app count, and throws off the column count.
     cols += 1;
   }
-  const classes = useStyles(cols, pxSize, columns, appCount, hasChildren);
+  const classes = useStyles({pxSize, columns, count: appCount, hasChildren, cols});
 
   return (
     <ul className={clsx(classes.logoStripWrapper, className)}>
