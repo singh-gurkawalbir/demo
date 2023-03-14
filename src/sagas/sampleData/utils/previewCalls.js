@@ -122,8 +122,8 @@ export function* pageProcessorPreview({
         // for lookup, remove inputFilters & output filters configured while making preview call for flowInput
         if (!includeFilterProcessing) {
           delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
-          delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
         }
+        delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
 
         return {
           ...pageProcessor,
