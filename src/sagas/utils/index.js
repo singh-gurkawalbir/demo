@@ -156,7 +156,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
             doesNotSupportPaging = true;
           }
-          const supportsAsyncHelper = fieldsUserMustSet?.find(f => f.path === 'export.asyncHelper');
+          const supportsAsyncHelper = !!fieldsUserMustSet?.find(f => f.path === 'http._asyncHelperId');
 
           const ep = {
             id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
@@ -290,14 +290,14 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
               howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
             }
           }
-          const supportsAsyncHelper = httpEndpoint.supportedBy.fieldsUserMustSet?.find(f => f.path === 'import.asyncHelper');
+          const supportsAsyncHelper = !!httpEndpoint.supportedBy.fieldsUserMustSet?.find(f => f.path === 'http._asyncHelperId');
 
           const ep = {
             id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
           };
 
           if (httpEndpoint.resourceFields) {
-            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
+            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, deepClone(r.sampleData));
           }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
@@ -437,7 +437,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       if (key === 'http.ping.relativeURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
-        } else if (connector.versioning?.location === 'uri') {
+        } else if (connector.versioning?.location === 'uri' && connector?.baseURIs?.[0]?.includes('/:_version')) {
           if (resourceVersion) {
             tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
           } else if (connector.versions?.[0]?.name) {

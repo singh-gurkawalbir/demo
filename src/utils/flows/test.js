@@ -2,7 +2,6 @@ import {
   getFlowResources,
   getFlowType,
   flowbuilderUrl,
-  getFlowListWithMetadata,
   getImportsFromFlow,
   isRunnable,
   showScheduleIcon,
@@ -1431,30 +1430,6 @@ describe('getImportsFromFlow', () => {
   });
   test('should return imports for valid flow when imports are empty', () => {
     expect(getImportsFromFlow(oldFlow, [])).toEqual([]);
-  });
-});
-
-describe('getFlowListWithMetadata', () => {
-  const dataLoaderFlowWithMetadata = {resources: [{...dataLoaderFlow,
-    isSimpleImport: true,
-    isRunnable: true,
-  }]};
-  const realtimeFlowWithMetadata = {resources: [{...realtimeFlow,
-    isRealtime: true,
-  }]};
-  const batchFlowWithMetadata = {resources: [{...flowWithPGsandPPs,
-    isRunnable: true,
-    showScheduleIcon: true,
-  }]};
-
-  test('should return valid metadata for data loader flow', () => {
-    expect(getFlowListWithMetadata([dataLoaderFlow], exports)).toEqual(dataLoaderFlowWithMetadata);
-  });
-  test('should return valid metadata for realtime flow', () => {
-    expect(getFlowListWithMetadata([realtimeFlow], realtimeExports)).toEqual(realtimeFlowWithMetadata);
-  });
-  test('should return valid metadata for batch flow', () => {
-    expect(getFlowListWithMetadata([flowWithPGsandPPs], exports)).toEqual(batchFlowWithMetadata);
   });
 });
 
