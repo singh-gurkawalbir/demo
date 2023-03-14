@@ -176,6 +176,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
     const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
+    const skipListBox = optionsMap?.some(({skipListBoxComponent}) => skipListBoxComponent);
 
     return (
       <div
@@ -189,6 +190,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
           labelName="label"
           valueName="value"
           onBlur={onFieldChange}
+          skipListBoxComponent={skipListBox}
     />
       </div>
     );
