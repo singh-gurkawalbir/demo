@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../reducers';
-// import DIY from './DIY';
-// import Integrator from './Integrator';
+import DIY from './DIY';
+import Integrator from './Integrator';
 import Endpoint from './Endpoint';
 
 export default function Subscription() {
