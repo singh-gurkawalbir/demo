@@ -421,7 +421,6 @@ export default function AppBlock({
         onFocus={handleMouseOver(true)}
         onMouseLeave={handleMouseOver(false)}
         onBlur={handleMouseOver(false)}
-        {...rest}
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
         className={classes.box}
       >

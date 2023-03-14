@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import * as ReactFlowRenderer from 'react-flow-renderer';
+import * as ReactFlowRenderer from 'reactflow';
 import userEvent from '@testing-library/user-event';
 import CanvasControls from './CanvasControls';
 import { renderWithProviders } from '../../../../test/test-utils';
@@ -23,9 +23,9 @@ function initCanvasControls({
   return renderWithProviders(ui, {initialStore});
 }
 
-jest.mock('react-flow-renderer', () => ({
+jest.mock('reactflow', () => ({
   __esModule: true,
-  ...jest.requireActual('react-flow-renderer'),
+  ...jest.requireActual('reactflow'),
   Controls: props => (
     <div>
       <div>showInteractive={props.showInteractive}</div>
@@ -76,7 +76,7 @@ jest.mock('../../../../components/icons/FullScreenOpenIcon', () => ({
 }));
 describe('Testsuite for Canvas Controls', () => {
   beforeEach(() => {
-    jest.spyOn(ReactFlowRenderer, 'useZoomPanHelper').mockReturnValue({zoomIn: mockZommIn, zoomOut: mockZoomOut, fitView: mockFitView});
+    jest.spyOn(ReactFlowRenderer, 'useReactFlow').mockReturnValue({zoomIn: mockZommIn, zoomOut: mockZoomOut, fitView: mockFitView});
     initialStore = getCreatedStore();
   });
   afterEach(() => {

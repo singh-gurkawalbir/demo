@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Position } from 'react-flow-renderer';
+import { Position } from 'reactflow';
 import { Typography } from '@material-ui/core';
 import DefaultHandle from '../Handles/DefaultHandle';
 

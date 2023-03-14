@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
-import { Handle } from 'react-flow-renderer';
+import { Handle } from 'reactflow';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
@@ -16,6 +16,6 @@ export default function DefaultHandle({className, ...props}) {
   const classes = useStyles();
 
   return (
-    <Handle className={clsx(classes.defaultHandle, className)} {...props} />
+    <Handle className={clsx(classes.defaultHandle, className)} {...props} style={{minWidth: 0}} />
   );
 }
