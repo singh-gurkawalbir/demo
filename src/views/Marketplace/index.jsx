@@ -12,7 +12,7 @@ export default function Marketplace() {
 
   return (
     <>
-      <CeligoPageBar title="Marketplace" infoText={message.MARKETPLACE.HELPINFO}>
+      <CeligoPageBar title="Marketplace" infoText={message.MARKETPLACE.HELPINFO} contentId="marketplace">
         <KeywordSearch filterKey={filterKey} />
       </CeligoPageBar>
       <ApplicationsList filter={filter} />

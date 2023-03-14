@@ -19,7 +19,7 @@ export default function HelpDocumentationLink({ contentId }) {
   const classes = useStyles();
 
   return isHelpContentEnabled && link ? (
-    <Tooltip title="help article" placement="top">
+    <Tooltip title="help article " placement="top">
       <div className={classes.helpButton}>
         <a href={link} rel="noreferrer" target="_blank">
           <KnowledgeBaseIcon />
