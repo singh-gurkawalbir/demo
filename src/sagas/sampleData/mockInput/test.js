@@ -14,6 +14,40 @@ const flowId = 'flow-123';
 const refresh = 'false';
 
 describe('mockInput sagas', () => {
+  describe('requestMockInput saga', () => {
+    test('should do nothing if there is no resourceId or resourceType', () => expectSaga(requestMockInput, {})
+      .not.call.fn(_requestLookupMockInput)
+      .not.call.fn(_requestImportMockInput)
+      .run());
+    test('should do nothing if the resourceType is not a valid one for sample data', () => expectSaga(requestMockInput, { resourceId, resourceType: 'flows', flowId, options: {} })
+      .not.call.fn(_requestLookupMockInput)
+      .not.call.fn(_requestImportMockInput)
+      .run());
+    test('should call _requestLookupMockInput with refreshCache option incase of lookups', () => {
+      const resourceId = 'import-123';
+
+      expectSaga(requestMockInput, { resourceId, resourceType: 'exports', flowId, options: {refreshCache: refresh} })
+        .provide([
+          [call(_requestLookupMockInput, { resourceId, resourceType: 'exports', flowId, refresh }), {}],
+          [select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' }), true],
+        ])
+        .call(_requestLookupMockInput, { resourceId, resourceType: 'exports', flowId, refresh })
+        .not.call.fn(_requestImportMockInput)
+        .run();
+    });
+    test('should call _requestImportMockInput with refreshCache option incase of imports', () => {
+      const resourceId = 'import-123';
+
+      expectSaga(requestMockInput, { resourceId, resourceType: 'imports', flowId, options: {refreshCache: refresh} })
+        .provide([
+          [call(_requestImportMockInput, { resourceId, resourceType: 'imports', flowId, refresh }), {}],
+          [select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'imports' }), false],
+        ])
+        .call(_requestImportMockInput, { resourceId, resourceType: 'imports', flowId, refresh })
+        .not.call.fn(_requestLookupMockInput)
+        .run();
+    });
+  });
   describe('_handlePreviewError saga', () => {
     test('should do nothing if there is no resourceId or invalid error', () => {
       const e = {
@@ -85,6 +119,7 @@ describe('mockInput sagas', () => {
             throwOnError: true,
             includeStages: false,
             refresh,
+            includeFilterProcessing: true,
           }), previewData],
         ])
         .call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined })
@@ -98,7 +133,7 @@ describe('mockInput sagas', () => {
           throwOnError: true,
           includeStages: false,
           refresh,
-          doNotDeleteFilters: true,
+          includeFilterProcessing: true,
         })
         .put(actions.mockInput.received(resourceId, previewData))
         .run();
@@ -127,7 +162,7 @@ describe('mockInput sagas', () => {
             throwOnError: true,
             includeStages: false,
             refresh,
-            doNotDeleteFilters: true,
+            includeFilterProcessing: true,
           }), previewData._PARENT],
         ])
         .call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined })
@@ -141,6 +176,7 @@ describe('mockInput sagas', () => {
           throwOnError: true,
           includeStages: false,
           refresh,
+          includeFilterProcessing: true,
         })
         .put(actions.mockInput.received(resourceId, previewData))
         .run();
@@ -260,40 +296,6 @@ describe('mockInput sagas', () => {
         .call.fn(pageProcessorPreview)
         .not.put(actions.mockInput.received(resourceId, undefined))
         .call(_handlePreviewError, { e: error, resourceId })
-        .run();
-    });
-  });
-  describe('requestMockInput saga', () => {
-    test('should do nothing if there is no resourceId or resourceType', () => expectSaga(requestMockInput, {})
-      .not.call.fn(_requestLookupMockInput)
-      .not.call.fn(_requestImportMockInput)
-      .run());
-    test('should do nothing if the resourceType is not a valid one for sample data', () => expectSaga(requestMockInput, { resourceId, resourceType: 'flows', flowId, options: {} })
-      .not.call.fn(_requestLookupMockInput)
-      .not.call.fn(_requestImportMockInput)
-      .run());
-    test('should call _requestLookupMockInput with refreshCache option incase of lookups', () => {
-      const resourceId = 'import-123';
-
-      expectSaga(requestMockInput, { resourceId, resourceType: 'exports', flowId, options: {refreshCache: refresh} })
-        .provide([
-          [call(_requestLookupMockInput, { resourceId, resourceType: 'exports', flowId, refresh }), {}],
-          [select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' }), true],
-        ])
-        .call(_requestLookupMockInput, { resourceId, resourceType: 'exports', flowId, refresh })
-        .not.call.fn(_requestImportMockInput)
-        .run();
-    });
-    test('should call _requestImportMockInput with refreshCache option incase of imports', () => {
-      const resourceId = 'import-123';
-
-      expectSaga(requestMockInput, { resourceId, resourceType: 'imports', flowId, options: {refreshCache: refresh} })
-        .provide([
-          [call(_requestImportMockInput, { resourceId, resourceType: 'imports', flowId, refresh }), {}],
-          [select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'imports' }), false],
-        ])
-        .call(_requestImportMockInput, { resourceId, resourceType: 'imports', flowId, refresh })
-        .not.call.fn(_requestLookupMockInput)
         .run();
     });
   });

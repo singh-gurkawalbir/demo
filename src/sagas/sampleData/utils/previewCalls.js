@@ -31,7 +31,7 @@ export function* pageProcessorPreview({
   includeStages = false,
   runOffline = false,
   addMockData,
-  includeFilterProcessing,
+  includeFilterProcessing = false,
 }) {
   if (!flowId || (!_pageProcessorId && !routerId)) return;
 
@@ -207,7 +207,7 @@ export function* pageProcessorPreview({
         throwOnError,
         refresh,
         includeStages,
-        includeFilterProcessing: true,
+        includeFilterProcessing,
       });
     }
     // Error handler
