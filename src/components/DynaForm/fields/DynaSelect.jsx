@@ -325,8 +325,8 @@ export default function DynaSelect(props) {
   const getItemSize = useCallback(rowIndex => {
     const { connInfo } = items[rowIndex];
 
-    if (connInfo?.apiType && connInfo?.apiVersion) return ITEM_SIZE_WITH_2_OPTIONS;
-    if (connInfo?.apiType || connInfo?.apiVersion) return ITEM_SIZE_WITH_1_OPTION;
+    if (connInfo?.httpConnectorApiId && connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_2_OPTIONS;
+    if (connInfo?.httpConnectorApiId || connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_1_OPTION;
 
     return ITEM_SIZE;
   }, [items]);
