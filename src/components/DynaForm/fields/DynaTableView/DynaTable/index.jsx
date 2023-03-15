@@ -8,6 +8,7 @@ import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
+import Spinner from '../../../../Spinner';
 import VirtualizedTable from './VirtualizedTable';
 
 const useStyles = makeStyles(theme => ({
@@ -116,6 +117,13 @@ const BaseTable = ({
     );
   }
 
+  // isLoading flag is generally used with Virtualized table
+  if (isAnyColumnFetching) {
+    return (
+      <Spinner centerAll />
+    );
+  }
+
   return (tableValue.map((arr, rowIndex) => {
     const {value, key} = arr;
 
@@ -194,9 +202,7 @@ const DynaTable = props => {
               value={value}
           />
           </span>
-
         </div>
-
       </div>
     </div>
   );

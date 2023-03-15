@@ -32,7 +32,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {optionsMap: [{id: 'extracts', label: 'extract header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'generates', label: 'generate header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
             },
@@ -56,6 +56,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      isVirtualizedTable: true,
     };
     const { utils: { unmount } } = initDynaStaticMapWidget(props);
 
@@ -94,7 +95,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {generates: [{id: 'extracts', text: 'extract header'}], extracts: [{id: 'generates', label: 'generate header'}]},
             fieldType: 'somefieldtype',
@@ -138,7 +139,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {},
             fieldType: 'somefieldtype',
@@ -158,6 +159,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      isVirtualizedTable: true,
     };
     const { utils: { unmount } } = initDynaStaticMapWidget(props);
 
@@ -193,7 +195,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {generates: [{text: 'exportop1', id: 'op1'}, {text: 'exportop2', id: 'op2'}],
             },
@@ -217,6 +219,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      isVirtualizedTable: true,
     };
 
     initDynaStaticMapWidget(props);
