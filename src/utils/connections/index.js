@@ -276,6 +276,7 @@ export const amazonVendorCentralAuthURI = {
   A1VC38T7YXB528: 'https://vendorcentral.amazon.co.jp/',
   ARBP9OOSHTCHU: 'https://vendorcentral.amazon.me/',
   AMEN7PMS3EDWL: 'https://vendorcentral.amazon.com.be/',
+  A17E79C6D8DWNP: 'https://vendorcentral.amazon.me',
 };
 
 export const amazonSellerCentralMarketPlaceOptions = {
@@ -325,6 +326,7 @@ export const amazonVendorCentralMarketPlaceOptions = {
     {label: 'Poland', value: 'A1C3SOZRARQ6R3'},
     {label: 'Egypt', value: 'ARBP9OOSHTCHU'},
     {label: 'Turkey', value: 'A33AVAJ2PDY3EV'},
+    {label: 'Saudi Arabia', value: 'A17E79C6D8DWNP'},
     {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
     {label: 'India', value: 'A21TJRUUN4KGV'},
     {label: 'Belgium', value: 'AMEN7PMS3EDWL'},
