@@ -30,9 +30,6 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'amazonsellingpartner') {
         assistantMetadata.assistant = 'amazonmws';
       }
-      if (assistantMetadata.assistant === 'amazonvendorcentral') {
-        assistantMetadata.assistant = 'amazonvendorcentral';
-      }
       if (assistantMetadata.assistant === 'recurlyv3') {
         assistantMetadata.assistant = 'recurly';
       }

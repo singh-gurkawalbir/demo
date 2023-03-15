@@ -254,7 +254,7 @@ function howToFindIdentifierFieldsMeta({
         p => !!p.isIdentifier
       );
       const identifierFieldId = `assistantMetadata.${operationDetails.howToIdentifyExistingRecords ? 'existingExtract' : `pathParams.${identifierPathParam?.id}`}`;
-      const identifierFieldValue = operationDetails.howToIdentifyExistingRecords ? identifierValue : pathParameterValues[identifierPathParam?.id];
+      const identifierFieldValue = operationDetails.howToIdentifyExistingRecords ? (identifierValue || pathParameterValues[identifierPathParam?.id]) : pathParameterValues[identifierPathParam?.id];
       const identifierField = {
         id: identifierFieldId,
         label: 'Which field?',
