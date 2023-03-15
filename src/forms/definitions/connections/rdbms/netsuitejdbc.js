@@ -39,19 +39,25 @@ export default {
       properties = [{name: 'AccountID', value: accId}, ...properties];
     }
 
-    newValues['/jdbc/properties'] = properties;
+    const configuredProperties = newValues['/rdbms/options'] || [];
+
+    newValues['/jdbc/properties'] = [...properties, ...configuredProperties];
     newValues['/jdbc/type'] = 'netsuitejdbc';
     newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
     newValues['/jdbc/user'] = 'TBA';
+    newValues['/jdbc/concurrencyLevel'] = newValues['/rdbms/concurrencyLevel'];
 
     newValues['/type'] = 'jdbc';
 
     delete newValues['/netsuite/token/auto'];
+    delete newValues['/netsuite/roleId'];
     delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
     delete newValues['/netsuite/tokenEnvironment'];
     delete newValues['/jdbc/staticSchema'];
     delete newValues['/jdbc/serverDataSource'];
+    delete newValues['/rdbms/concurrencyLevel'];
+    delete newValues['/rdbms/options'];
 
     return newValues;
   },
@@ -161,7 +167,14 @@ export default {
       fieldId: 'netsuite.tokenSecret',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
     },
-    rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+    _borrowConcurrencyFromConnectionId: {fieldId: '_borrowConcurrencyFromConnectionId'},
+    'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
+    'rdbms.options': {
+      fieldId: 'rdbms.options',
+      defaultValue: r => r?.jdbc?.properties?.filter(property => ![
+        'AccountID', 'RoleID', 'staticSchema', 'ServerDataSource',
+      ].includes(property.name)),
+    },
     application: {
       fieldId: 'application',
     },
@@ -210,7 +223,11 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['rdbmsAdvanced'],
+        fields: [
+          'rdbms.options',
+          '_borrowConcurrencyFromConnectionId',
+          'rdbms.concurrencyLevel',
+        ],
       },
     ],
   },
