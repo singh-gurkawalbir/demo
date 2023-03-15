@@ -21,7 +21,7 @@ export default function HelpVideoLink({ contentId }) {
   return isHelpContentEnabled && link ? (
     <Tooltip title="help content" placement="top">
       <div className={classes.helpButton}>
-        <a href={link} rel="noreferrer" target="_blank">
+        <a href={link} rel="noreferrer" target="_blank" data-test="helpVideoLink">
           <VideoIcon />
         </a>
       </div>

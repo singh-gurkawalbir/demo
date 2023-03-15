@@ -3,22 +3,22 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-import HelpVideoLink from '.';
+import HelpContentLinks from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import customCloneDeep from '../../utils/customCloneDeep';
 
-function initHelpVideoLink({initialStore, props = {}} = {}) {
+function initHelpContentLinks({initialStore, props = {}} = {}) {
   const ui = (
     <MemoryRouter>
-      <HelpVideoLink {...props} />
+      <HelpContentLinks {...props} />
     </MemoryRouter>
   );
 
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('HelpVideoLink component', () => {
+describe('HelpContentLinks component', () => {
   runServer();
   let initialStore;
   let mockDispatchFn;
@@ -39,7 +39,7 @@ describe('HelpVideoLink component', () => {
     useDispatchSpy.mockClear();
   });
   test('should pass the initial render without any props', async () => {
-    const { utils } = await initHelpVideoLink();
+    const { utils } = await initHelpContentLinks();
 
     expect(utils.container).toBeEmptyDOMElement();
   });
@@ -50,9 +50,11 @@ describe('HelpVideoLink component', () => {
     };
 
     mutateStore(initialStore, mustateState);
-    await initHelpVideoLink({ initialStore, props: { contentId: 'profile'}});
+    await initHelpContentLinks({ initialStore, props: { contentId: 'profile'}});
 
-    expect(screen.getByRole('link')).toBeInTheDocument();
+    const documentLink = screen.getAllByRole('link').find(eachLink => eachLink.getAttribute('data-test') === 'helpVideoLink');
+
+    expect(documentLink).toBeInTheDocument();
   });
 
   test('should pass the initial render with contentId and helpContent feature is disable', async () => {
@@ -61,7 +63,7 @@ describe('HelpVideoLink component', () => {
     };
 
     mutateStore(initialStore, mustateState);
-    const { utils } = await initHelpVideoLink({ initialStore, props: { contentId: 'profile'}});
+    const { utils } = await initHelpContentLinks({ initialStore, props: { contentId: 'profile'}});
 
     expect(utils.container).toBeEmptyDOMElement();
   });

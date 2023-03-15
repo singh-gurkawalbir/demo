@@ -22,10 +22,10 @@ export default function HelpContentLinks({ contentId }) {
   const isContentLinkPresent = helpContent.documentationLinks[contentId] || helpContent.videoLinks[contentId];
   const classes = useStyles();
 
-  return isHelpContentEnabled && isContentLinkPresent && (
-  <div className={classes.buttonRef}>
-    <HelpDocumentationLink contentId={contentId} />
-    <HelpVideoLink contentId={contentId} />
-  </div>
-  );
+  return isHelpContentEnabled && isContentLinkPresent ? (
+    <div className={classes.buttonRef}>
+      <HelpDocumentationLink contentId={contentId} />
+      <HelpVideoLink contentId={contentId} />
+    </div>
+  ) : null;
 }

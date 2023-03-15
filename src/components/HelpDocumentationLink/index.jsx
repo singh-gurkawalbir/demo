@@ -21,7 +21,7 @@ export default function HelpDocumentationLink({ contentId }) {
   return isHelpContentEnabled && link ? (
     <Tooltip title="help article " placement="top">
       <div className={classes.helpButton}>
-        <a href={link} rel="noreferrer" target="_blank">
+        <a href={link} rel="noreferrer" target="_blank" data-test="helpDocumentLink">
           <KnowledgeBaseIcon />
         </a>
       </div>
