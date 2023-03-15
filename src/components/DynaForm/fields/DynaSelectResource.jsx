@@ -96,7 +96,8 @@ const handleAddNewResource = args => {
         values = { ...values, '/http/_asyncHelperId': generateNewId() };
       }
       if (resourceType === 'connections' && integrationId && integrationId !== 'none') {
-        values = { ...values, '/integrationId': integrationId};
+        values = { ...values, '/integrationId': integrationId, '/_connectorId': connectorId,
+        };
       }
 
       if (statusExport) {

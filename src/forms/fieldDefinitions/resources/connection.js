@@ -433,6 +433,13 @@ export default {
     required: true,
     description: 'Note: for security reasons this field must always be re-entered.',
   },
+  'rest.oauth.oauth1.realm': {
+    type: 'uri',
+    label: 'Realm',
+    helpKey: 'http.auth.oauth.oauth1.realm',
+    showExtract: false,
+    showLookup: false,
+  },
   'rest.authScheme': {
     isLoggable: true,
     type: 'select',
@@ -1182,6 +1189,13 @@ export default {
     helpKey: 'http.auth.oauth.oauth1.consumerPrivateKey',
     required: true,
     description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'http.auth.oauth.oauth1.realm': {
+    type: 'uri',
+    label: 'Realm',
+    helpKey: 'http.auth.oauth.oauth1.realm',
+    showExtract: false,
+    showLookup: false,
   },
   // #endregion http
   // #region ftp
