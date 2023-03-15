@@ -6,10 +6,10 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
   KeyboardTimePicker,
-} from '@material-ui/pickers';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import {FormLabel} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+} from '@mui/lab';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import {FormLabel} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FieldMessage from '../FieldMessage';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';

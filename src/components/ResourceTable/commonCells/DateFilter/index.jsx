@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';

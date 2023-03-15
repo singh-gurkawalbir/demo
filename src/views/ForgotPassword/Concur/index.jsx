@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../../reducers';
@@ -60,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     justifyContent: 'center',
     marginBottom: theme.spacing(2),
-    lineHeight: `${theme.spacing(2)}px`,
+    lineHeight: theme.spacing(2),
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),
@@ -87,7 +88,7 @@ const useStyles = makeStyles(theme => ({
     // bottom: theme.spacing(8),
   },
   ForgotPasswordForm: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
   },

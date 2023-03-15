@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { AppBar, Toolbar } from '@material-ui/core';
+import { AppBar, Toolbar } from '@mui/material';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import ProfileMenuButton from './ProfileMenuButton';
 import { selectors } from '../../reducers';
 import Notifications from './Notifications';
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     background: theme.palette.background.default,
     marginLeft: theme.drawerWidth,
-    width: `calc(100% - ${theme.spacing(7)}px)`,
+    width: `calc(100% - ${theme.spacing(7)})`,
     height: 36,
     overflow: 'hidden',
     boxSizing: 'border-box',

@@ -1,4 +1,6 @@
-import { fade, useTheme, makeStyles } from '@material-ui/core';
+import { alpha, useTheme } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 export const ReactSelectUseStyles = makeStyles(theme => ({
   fieldWrapper: {
@@ -159,7 +161,7 @@ export function CustomReactSelectStyles() {
       padding: theme.spacing(0.5, 1, 0, 1),
       cursor: 'pointer',
       '&:hover': {
-        color: fade(theme.palette.secondary.light, 0.8),
+        color: alpha(theme.palette.secondary.light, 0.8),
       },
     }),
     singleValue: (provided, state) => ({

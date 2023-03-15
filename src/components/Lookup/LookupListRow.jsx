@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { IconButton, TableCell, TableRow, Menu, MenuItem } from '@material-ui/core';
+import { IconButton, TableCell, TableRow, Menu, MenuItem } from '@mui/material';
 import EditIcon from '../icons/EditIcon';
 import DeleteOutlinedIcon from '../icons/TrashIcon';
 import EllipsisIcon from '../icons/EllipsisHorizontalIcon';

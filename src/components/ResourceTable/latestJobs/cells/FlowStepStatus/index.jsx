@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { JOB_STATUS, JOB_TYPES } from '../../../../../constants';
 import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';

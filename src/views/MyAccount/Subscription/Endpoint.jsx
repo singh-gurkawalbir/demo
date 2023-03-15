@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { capitalize, makeStyles, Typography } from '@material-ui/core';
+import { capitalize, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';

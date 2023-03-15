@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';

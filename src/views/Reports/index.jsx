@@ -1,5 +1,5 @@
-import { MenuItem, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { MenuItem, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect, useCallback, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generatePath, Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';

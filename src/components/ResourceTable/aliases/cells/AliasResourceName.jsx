@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getResourceFromAlias } from '../../../../utils/resource';

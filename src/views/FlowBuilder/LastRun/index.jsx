@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Divider } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Divider } from '@mui/material';
 import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';

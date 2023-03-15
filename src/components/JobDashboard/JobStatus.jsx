@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Button } from '@mui/material';
 import DashboardTag from '../tags/DashboardTag';
 import Spinner from '../Spinner';
 import { getJobStatusDetails } from '../../utils/jobdashboard';

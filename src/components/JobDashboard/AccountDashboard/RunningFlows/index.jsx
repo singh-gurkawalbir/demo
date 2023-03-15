@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import {useRouteMatch} from 'react-router-dom';
 import { selectors } from '../../../../reducers';

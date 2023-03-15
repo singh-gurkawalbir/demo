@@ -1,6 +1,7 @@
 import React, { useState} from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, Tooltip, Zoom } from '@material-ui/core';
+import { Tooltip, Zoom } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import TruncateMarkup from 'react-truncate-markup';
 import isLoggableAttr from '../../utils/isLoggableAttr';
 

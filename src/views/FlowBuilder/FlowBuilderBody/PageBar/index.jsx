@@ -1,4 +1,5 @@
-import { Divider, IconButton, makeStyles } from '@material-ui/core';
+import { Divider, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

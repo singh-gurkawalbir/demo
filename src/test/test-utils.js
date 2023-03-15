@@ -1,4 +1,4 @@
-import { MuiThemeProvider } from '@material-ui/core';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material';
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
@@ -15,11 +15,13 @@ export const renderWithProviders = (ui, { initialStore, renderFun = render } = {
   const reduxStore = initialStore || getCreatedStore();
   const utils = renderFun(
     <Provider store={reduxStore}>
-      <MuiThemeProvider theme={theme}>
-        <SnackbarProvider>
-          {ui}
-        </SnackbarProvider>
-      </MuiThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider>
+            {ui}
+          </SnackbarProvider>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>
   );
 

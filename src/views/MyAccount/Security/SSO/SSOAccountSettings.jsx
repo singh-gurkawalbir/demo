@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../../components/LoadResources';

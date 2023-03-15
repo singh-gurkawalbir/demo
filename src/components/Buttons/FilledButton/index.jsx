@@ -1,8 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import Button from '@material-ui/core/Button';
-import {makeStyles} from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({

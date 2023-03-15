@@ -1,5 +1,5 @@
-import { MenuItem, Select } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { MenuItem, Select } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -249,6 +249,7 @@ export default function PageBar() {
         </TextButton>
         )}
         <Select
+          variant="standard"
           displayEmpty
           data-test={`select${storeLabel}`}
           className={classes.childSelect}
@@ -262,6 +263,5 @@ export default function PageBar() {
       </div>
       )}
     </CeligoPageBar>
-
   );
 }

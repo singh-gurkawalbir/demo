@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import InfoIconButton from '../InfoIconButton';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 

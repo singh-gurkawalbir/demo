@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { getTextAfterCount } from '../../../utils/string';
 import StatusCircle from '../../StatusCircle';
 import CeligoDivider from '../../CeligoDivider';

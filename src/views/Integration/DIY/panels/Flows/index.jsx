@@ -1,4 +1,5 @@
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch, useParams } from 'react-router-dom';

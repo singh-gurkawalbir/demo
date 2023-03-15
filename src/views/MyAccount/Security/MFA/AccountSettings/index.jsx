@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import CollapsableContainer from '../../../../../components/CollapsableContainer';
 import useForm from '../../../../../components/Form';
 import DynaForm from '../../../../../components/DynaForm';

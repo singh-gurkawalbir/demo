@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import lookupUtil from '../../../../utils/lookup';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';

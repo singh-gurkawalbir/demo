@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FormControl, makeStyles } from '@material-ui/core';
+import { FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import DynaMultiSelect from '../DynaMultiSelect';
 import actions from '../../../../actions';
@@ -102,6 +103,7 @@ export default function DynaFileKeyColumn_afe(props) {
 
   return (
     <FormControl
+      variant="standard"
       key={id}
       disabled={disabled}
       className={classes.keyColumnFormWrapper}>

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import React, { useCallback } from 'react';
-import { FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoSwitch from '../../../CeligoSwitch';
 import FieldHelp from '../../FieldHelp';
 import ActionGroup from '../../../ActionGroup';

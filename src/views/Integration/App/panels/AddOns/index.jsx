@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
+import { Card, CardActions, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';

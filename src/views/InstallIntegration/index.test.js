@@ -17,9 +17,9 @@ jest.mock('./UploadFile', () => ({
 
 const mockReact = React;
 
-jest.mock('@material-ui/core/IconButton', () => ({
+jest.mock('@mui/material/IconButton', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/core/IconButton'),
+  ...jest.requireActual('@mui/material/IconButton'),
   default: props => {
     const mockProps = {...props};
 

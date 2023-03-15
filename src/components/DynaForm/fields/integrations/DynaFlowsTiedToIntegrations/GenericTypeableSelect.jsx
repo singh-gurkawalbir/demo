@@ -1,4 +1,5 @@
-import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
@@ -141,40 +142,38 @@ export const GenericTypeableSelect = props => {
     </Option>
   );
 
-  return (
+  return <>
+    <div className={classes.fullWidth}>
+      <FormLabel htmlFor={id} required={required} error={!isValid}>
+        {label}
+      </FormLabel>
+      <FieldHelp {...props} />
+    </div>
+    <FormControl
+      variant="standard"
+      className={classes.fullWidth}
+      error={!isValid}
+      disabled={disabled}
+      required={required}>
+      <span {...isLoggableAttr(isLoggable)}>
+        <Select
+          isDisabled={disabled}
+          isMulti
+          placeholder={placeholder}
+          components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
+          options={options}
+          value={value}
+          onChange={handleChange}
+          closeMenuOnSelect={false}
+          hideSelectedOptions={false}
+          styles={customStyles}
+          isSearchable={!unSearchable}
+          defaultMenuIsOpen={defaultMenuIsOpen}
+   />
+      </span>
 
-    <>
-      <div className={classes.fullWidth}>
-        <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      <FormControl
-        className={classes.fullWidth}
-        error={!isValid}
-        disabled={disabled}
-        required={required}>
-        <span {...isLoggableAttr(isLoggable)}>
-          <Select
-            isDisabled={disabled}
-            isMulti
-            placeholder={placeholder}
-            components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
-            options={options}
-            value={value}
-            onChange={handleChange}
-            closeMenuOnSelect={false}
-            hideSelectedOptions={false}
-            styles={customStyles}
-            isSearchable={!unSearchable}
-            defaultMenuIsOpen={defaultMenuIsOpen}
-     />
-        </span>
-
-        <FieldMessage {...props} />
-      </FormControl>
-    </>
-  );
+      <FieldMessage {...props} />
+    </FormControl>
+  </>;
 };
 

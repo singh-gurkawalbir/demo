@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
-import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { difference } from 'lodash';
 import clsx from 'clsx';
 import { JOB_STATUS } from '../../constants';
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   name: {
     wordBreak: 'break-word',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('lg')]: {
       wordBreak: 'normal',
     },
   },

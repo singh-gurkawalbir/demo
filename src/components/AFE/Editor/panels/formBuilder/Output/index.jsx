@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../../reducers';
 import CodePanel from '../../Code';
 import Spinner from '../../../../../Spinner';

@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';

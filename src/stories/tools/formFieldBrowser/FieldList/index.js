@@ -1,5 +1,6 @@
 import React from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, makeStyles, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import UpArrowIcon from '../../../../components/icons/ArrowUpIcon';
 import fieldDefinitions from '../../../../forms/fieldDefinitions';
 import FieldDetails from '../FieldDetails';

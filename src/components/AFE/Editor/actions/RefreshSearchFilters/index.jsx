@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import FormLabel from '@material-ui/core/FormLabel';
-import { IconButton } from '@material-ui/core';
+import FormLabel from '@mui/material/FormLabel';
+import { IconButton } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';

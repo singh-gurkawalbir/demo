@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core';
+import { FormControlLabel, Checkbox, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoSelect from '../../CeligoSelect';
 import CeligoPagination from '../../CeligoPagination';

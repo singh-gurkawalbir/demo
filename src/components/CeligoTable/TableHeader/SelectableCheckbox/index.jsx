@@ -1,5 +1,5 @@
 
-import {TableCell, Checkbox } from '@material-ui/core';
+import {TableCell, Checkbox } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';

@@ -1,4 +1,5 @@
-import { Tooltip, makeStyles } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { Controls, ControlButton, useReactFlow } from 'reactflow';
 import ToggleMapIcon from '../../../../components/icons/ToggleMapIcon';

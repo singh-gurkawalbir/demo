@@ -1,11 +1,5 @@
-import {
-  ClickAwayListener,
-  IconButton,
-  makeStyles,
-  MenuItem,
-  MenuList,
-  Tooltip,
-} from '@material-ui/core';
+import { ClickAwayListener, IconButton, MenuItem, MenuList, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
@@ -102,7 +96,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
         title={isConnectedToRouterOrTerminal ? 'Add destination / lookup' : ''}
         placement="top"
       >
-        <IconButton onClick={handleAddNode} className={classes.addButton}>
+        <IconButton onClick={handleAddNode} className={classes.addButton} size="large">
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -110,7 +104,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
   }
 
   return (
-    <IconButton className={classes.addButton} onClick={handleOpenMenu}>
+    <IconButton className={classes.addButton} onClick={handleOpenMenu} size="large">
       <AddIcon />
     </IconButton>
   );

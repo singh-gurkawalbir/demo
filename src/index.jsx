@@ -3,6 +3,9 @@ import * as smoothscroll from 'smoothscroll-polyfill';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { CacheProvider } from '@emotion/react';
+import { TssCacheProvider } from 'tss-react';
+import createCache from '@emotion/cache';
 import GA4React from 'ga-4-react';
 import App from './App';
 import { getDomain } from './utils/resource';
@@ -10,6 +13,14 @@ import reduxStore from './store';
 
 smoothscroll.polyfill();
 
+const muiCache = createCache({
+  key: 'mui',
+  prepend: true,
+});
+
+const tssCache = createCache({
+  key: 'tss',
+});
 const env = process.env.NODE_ENV;
 
 // eslint-disable-next-line no-undef
@@ -49,8 +60,12 @@ if (env !== 'development' && GAKey1?.length > 1) {
 } else { // DEV ENV
   // We don't need to register Google Analytics here.
   root.render(
-    <Provider store={reduxStore}>
-      <App />
-    </Provider>
+    <CacheProvider value={muiCache}>
+      <TssCacheProvider value={tssCache}>
+        <Provider store={reduxStore}>
+          <App />
+        </Provider>
+      </TssCacheProvider>
+    </CacheProvider>
   );
 }

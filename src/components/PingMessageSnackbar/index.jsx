@@ -1,5 +1,5 @@
 import React from 'react';
-import { Snackbar } from '@material-ui/core';
+import { Snackbar } from '@mui/material';
 import { PING_STATES } from '../../reducers/comms/ping';
 import NotificationToaster from '../NotificationToaster';
 import TestConnectionSnackbar from './TestConnectionSnackbar';

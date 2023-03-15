@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Spinner from '../../../../../Spinner';
 import CeligoTable from '../../../../../CeligoTable';
 import actions from '../../../../../../actions';

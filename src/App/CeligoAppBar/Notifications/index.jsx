@@ -1,7 +1,7 @@
 import React, { useState, useCallback, Fragment, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Tooltip, IconButton, Badge, Divider } from '@mui/material';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';

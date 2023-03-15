@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { makeStyles, Tabs, Tab, IconButton } from '@material-ui/core';
+import { Tabs, Tab, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FloatingPaper from '../ResourceFilter/FloatingPaper';
 import CloseIcon from '../../icons/CloseIcon';
 import ResourceResults from './ResourceResults';

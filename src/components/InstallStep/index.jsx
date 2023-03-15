@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
 import { INSTALL_STEP_TYPES } from '../../constants';

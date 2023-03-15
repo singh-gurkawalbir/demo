@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import CodePanel from '../../AFE/Editor/panels/Code';

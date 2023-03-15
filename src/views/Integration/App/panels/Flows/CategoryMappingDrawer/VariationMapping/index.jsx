@@ -1,4 +1,5 @@
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';

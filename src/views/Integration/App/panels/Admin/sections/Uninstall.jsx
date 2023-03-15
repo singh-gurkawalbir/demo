@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Typography, Divider } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { selectors } from '../../../../../../reducers';

@@ -3,7 +3,7 @@ import {
   ClickAwayListener,
   IconButton,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';

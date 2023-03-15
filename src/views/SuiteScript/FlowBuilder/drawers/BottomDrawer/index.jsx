@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Drawer, IconButton, Tabs, Tab } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../components/icons/ArrowDownIcon';

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback, useReducer } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import ReactResizeDetector from 'react-resize-detector';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { MenuItem } from '@material-ui/core';
+import { MenuItem } from '@mui/material';
 import userEvent from '@testing-library/user-event';
 import CeligoSelect from '.';
 import { renderWithProviders } from '../../test/test-utils';

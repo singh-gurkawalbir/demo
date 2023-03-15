@@ -1,12 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
-import {
-  makeStyles,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@material-ui/core';
+import { Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { sortableHandle } from 'react-sortable-hoc';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Tooltip } from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import { Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import TimeAgo from 'react-timeago';
 import TextOverflowCell from '../../../TextOverflowCell';
 import { CLASSIFICATION_LABELS_MAP } from '../../../../utils/errorManagement';

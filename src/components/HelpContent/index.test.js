@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {renderWithProviders} from '../../test/test-utils';
 import HelpContent from '.';
 import ArrowPopper from '../ArrowPopper';

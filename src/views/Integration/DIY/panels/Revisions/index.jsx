@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch } from 'react-router-dom';
 import { generateId } from '../../../../../utils/string';
 import { TextButton } from '../../../../../components/Buttons';

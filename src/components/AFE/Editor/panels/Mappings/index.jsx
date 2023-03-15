@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import {useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../../reducers';
 import Spinner from '../../../../Spinner';

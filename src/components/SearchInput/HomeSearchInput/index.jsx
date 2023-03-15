@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useReducer, useEffect} from 'react';
 import clsx from 'clsx';
-import {InputBase, IconButton} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {InputBase, IconButton} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '../../icons/SearchIcon';
 import CloseIcon from '../../icons/CloseIcon';
 import reducer from './stateReducer';

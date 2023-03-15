@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { selectors } from '../../reducers';

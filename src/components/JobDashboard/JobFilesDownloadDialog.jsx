@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 import CeligoTable from '../CeligoTable';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';

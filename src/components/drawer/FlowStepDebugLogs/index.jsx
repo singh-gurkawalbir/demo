@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   titleHeader: {
     '& > h4': {
-      marginRight: `${theme.spacing(-0.5)}px !important`,
+      marginRight: `${theme.spacing(-0.5)} !important`,
     },
   },
 }));

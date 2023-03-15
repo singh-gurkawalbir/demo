@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import React, { useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { IconButton } from '@mui/material';
 import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
 import InfoIcon from '../icons/InfoIcon';

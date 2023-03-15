@@ -1,4 +1,4 @@
-import { TableCell } from '@material-ui/core';
+import { TableCell } from '@mui/material';
 import React from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import IsLoggableContextProvider from '../../../IsLoggableContextProvider';

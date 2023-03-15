@@ -1,7 +1,7 @@
-import { FormLabel, Input, ListSubheader } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel, Input, ListSubheader } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
@@ -310,6 +310,7 @@ export default function DynaSelect(props) {
         <HelpLink {...props} />
       </div>
       <FormControl
+        variant="standard"
         key={id}
         disabled={disabled}
         required={required}

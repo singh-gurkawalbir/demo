@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../../../components/HomePageCard/Header';

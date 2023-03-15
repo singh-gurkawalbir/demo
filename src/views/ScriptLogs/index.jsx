@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
 import { selectors } from '../../reducers';
 import actions from '../../actions';

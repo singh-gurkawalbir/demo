@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoTable from '../../../../components/CeligoTable';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';

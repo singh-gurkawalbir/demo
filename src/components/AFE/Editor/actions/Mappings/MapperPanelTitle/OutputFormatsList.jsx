@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { List, ListItem, ListItemText } from '@mui/material';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../../../actions';

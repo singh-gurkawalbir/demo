@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';

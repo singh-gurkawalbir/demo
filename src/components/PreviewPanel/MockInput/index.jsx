@@ -2,8 +2,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Paper } from '@mui/material';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   editMockCodeWrapper: {
     overflow: 'auto',
-    height: `calc(100vh - ${theme.spacing(32)}px)`,
+    height: `calc(100vh - ${theme.spacing(32)})`,
   },
 }));
 

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
-import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';

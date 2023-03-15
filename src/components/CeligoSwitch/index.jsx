@@ -2,7 +2,7 @@ import React from 'react';
 import Toggle from 'react-toggle';
 import clsx from 'clsx';
 import 'react-toggle/style.css';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 import SwitchOffIcon from '../icons/Switch/Off';
 import SwitchOnIcon from '../icons/Switch/On';

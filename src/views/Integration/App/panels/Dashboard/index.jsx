@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {useRouteMatch, useHistory} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import JobDashboard from '../../../../../components/JobDashboard';

@@ -1,7 +1,8 @@
 /* eslint-disable react/jsx-pascal-case */
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CodeEditor from '../../../CodeEditor2';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';

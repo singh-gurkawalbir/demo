@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
-import { makeStyles, Typography, Tooltip } from '@material-ui/core';
+import { Typography, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { Position } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
 import DiamondMergeIcon from '../../DiamondMergeIcon';

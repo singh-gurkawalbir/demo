@@ -1,8 +1,8 @@
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Paper } from '@mui/material';
 import { selectors } from '../../../../reducers';
 import { drawerPaths } from '../../../../utils/rightDrawer';
 import RightDrawer from '../../../../components/drawer/Right';

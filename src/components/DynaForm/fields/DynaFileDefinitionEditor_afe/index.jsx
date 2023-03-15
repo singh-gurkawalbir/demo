@@ -2,8 +2,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import FieldHelp from '../../FieldHelp';

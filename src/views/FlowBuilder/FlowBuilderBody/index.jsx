@@ -1,4 +1,5 @@
-import { makeStyles, useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, { MiniMap, useNodesState, useEdgesState } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';

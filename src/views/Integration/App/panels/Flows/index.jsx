@@ -5,7 +5,8 @@ import {
   useRouteMatch,
   useHistory,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem, Tabs, Tab, Typography } from '@material-ui/core';
+import { Grid, List, ListItem, Tabs, Tab, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';

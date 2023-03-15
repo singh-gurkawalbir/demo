@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 

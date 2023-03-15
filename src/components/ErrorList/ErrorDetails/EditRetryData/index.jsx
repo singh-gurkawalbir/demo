@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo} from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     maxWidth: 500,
     marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       maxWidth: '100%',
     },
   },
@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     marginTop: theme.spacing(-2),
     marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
+    lineHeight: theme.spacing(2),
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),

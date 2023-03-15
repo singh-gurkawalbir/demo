@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';

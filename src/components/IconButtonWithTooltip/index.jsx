@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, Tooltip, makeStyles } from '@material-ui/core';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 

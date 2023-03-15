@@ -1,5 +1,5 @@
-import { Tab, Tabs, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Tab, Tabs, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';

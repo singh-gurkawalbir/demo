@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';

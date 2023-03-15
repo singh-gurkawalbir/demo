@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useRouteMatch, useLocation, matchPath, useHistory } from 'react-router-dom';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import MFA from './MFA';
 import SSO from './SSO';
 import LeftNav from './LeftNav';

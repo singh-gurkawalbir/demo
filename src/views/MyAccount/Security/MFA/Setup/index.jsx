@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Stepper from '../Stepper';
 import MFACodeGeneration from '../MFACodeGeneration';
 import MobileCodeVerification from '../MobileCodeVerification';

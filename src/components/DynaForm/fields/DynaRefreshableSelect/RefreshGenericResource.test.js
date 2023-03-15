@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import RefreshGenericResource from './RefreshGenericResource';
 import { getCreatedStore } from '../../../../store';

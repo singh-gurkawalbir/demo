@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { fade } from '@material-ui/core/styles';
-import { makeStyles, Input } from '@material-ui/core';
+import { alpha } from '@mui/material/styles';
+import { Input } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   textContainer: {
@@ -11,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       cursor: 'text',
       backgroundColor: theme.palette.background.paper2,
-      borderBottom: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,
+      borderBottom: `solid 1px ${alpha(theme.palette.primary.light, 0.5)}`,
     },
   },
   overflowText: {
@@ -21,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
   input: {
     font: 'inherit',
-    border: `solid 1px ${fade(theme.palette.primary.light, 0.5)}`,
+    border: `solid 1px ${alpha(theme.palette.primary.light, 0.5)}`,
     width: '100%',
     maxWidth: 'unset',
     marginBottom: 0,

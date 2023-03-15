@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { MenuItem, InputLabel, FormControl} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
@@ -139,68 +139,66 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   };
 
-  return (
-    <>
-      <TextButton
-        disabled={disabled}
-        startIcon={<DebugIcon />}
-        onClick={toggleClick}
-        data-test="refreshResource">
-        {debugUntil ? (
-          <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
-        ) : 'Start debug'}
-      </TextButton>
-      <ArrowPopper
-        disabled={disabled}
-        open={!!anchorEl}
-        anchorEl={anchorEl}
-        restrictToParent={false}
-        classes={{
-          popper: classes.dateRangePopper,
-        }}
-        placement="bottom-end"
-        onClose={toggleClick}>
-        {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <div className={classes.row}>
-                  <InputLabel className={classes.formLabel}>
-                    Start debug log level for:
-                  </InputLabel>
-                  <FormControl className={classes.formControl}>
+  return <>
+    <TextButton
+      disabled={disabled}
+      startIcon={<DebugIcon />}
+      onClick={toggleClick}
+      data-test="refreshResource">
+      {debugUntil ? (
+        <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
+      ) : 'Start debug'}
+    </TextButton>
+    <ArrowPopper
+      disabled={disabled}
+      open={!!anchorEl}
+      anchorEl={anchorEl}
+      restrictToParent={false}
+      classes={{
+        popper: classes.dateRangePopper,
+      }}
+      placement="bottom-end"
+      onClose={toggleClick}>
+      {anchorEl && (
+        <div className={classes.dateRangePickerWrapper}>
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <div className={classes.row}>
+                <InputLabel className={classes.formLabel}>
+                  Start debug log level for:
+                </InputLabel>
+                <FormControl variant="standard" className={classes.formControl}>
 
-                    <CeligoSelect
-                      data-test="selectDebugInterval"
-                      className={classes.dropdown}
-                      onChange={handleChange}
-                      value={value || ''}
-                      MenuProps={MenuProps}
-                    >
-                      {debugOptions.map(opt => (
-                        <MenuItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </MenuItem>
-                      ))}
-                    </CeligoSelect>
-                  </FormControl>
+                  <CeligoSelect
+                    data-test="selectDebugInterval"
+                    className={classes.dropdown}
+                    onChange={handleChange}
+                    value={value || ''}
+                    MenuProps={MenuProps}
+                  >
+                    {debugOptions.map(opt => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))}
+                  </CeligoSelect>
+                </FormControl>
 
-                </div>
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <OutlinedButton onClick={handleSave}>
-                    Apply
-                  </OutlinedButton>
-                  <TextButton onClick={handleClose}>
-                    Cancel
-                  </TextButton>
-                </ActionGroup>
               </div>
             </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <OutlinedButton onClick={handleSave}>
+                  Apply
+                </OutlinedButton>
+                <TextButton onClick={handleClose}>
+                  Cancel
+                </TextButton>
+              </ActionGroup>
+            </div>
           </div>
-        )}
-      </ArrowPopper>
-    </>
-  );
+        </div>
+      )}
+    </ArrowPopper>
+  </>;
 }

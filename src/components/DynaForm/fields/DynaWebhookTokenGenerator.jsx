@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { generateUUID } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -105,45 +105,43 @@ export default function DynaWebhookTokenGenerator(props) {
     }
   }, [finalResourceId, id, onFieldChange, webHookProvider, resourceId, url, value]);
 
-  return (
-    <>
-      <div className={classes.dynaWebhookTokenWrapper}>
-        <div className={classes.dynaWebhookTokenField}>
-          <DynaTextForSetFields
-            {...props}
-            isLoggable={false}
-            required
-            value={value}
-            setFieldIds={setFieldIds}
-        />
-          {value?.match(/^[A-Za-z0-9]/) && (
-          <FieldMessage
-            className={classes.warningText}
-            warningMessages={warningTextMessage} />
-        )}
-        </div>
-        <div className={classes.dynaWebhookTokenbtn}>
-          {value?.match(/^[A-Za-z0-9]/) ? (
-            <CopyToClipboard
-              data-private
-              onCopy={handleCopy}
-              text={value}>
-              <IconButtonWithTooltip
-                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
-                buttonSize={{size: 'small'}}>
-                <CopyIcon />
-              </IconButtonWithTooltip>
-            </CopyToClipboard>
-          ) : (
-            <IconButtonWithTooltip
-              tooltipProps={{title: buttonLabel, placement: 'bottom'}}
-              buttonSize={{size: 'small'}}
-              onClick={handleGenerateClick}>
-              <AddIcon />
-            </IconButtonWithTooltip>
-          )}
-        </div>
+  return <>
+    <div className={classes.dynaWebhookTokenWrapper}>
+      <div className={classes.dynaWebhookTokenField}>
+        <DynaTextForSetFields
+          {...props}
+          isLoggable={false}
+          required
+          value={value}
+          setFieldIds={setFieldIds}
+      />
+        {value?.match(/^[A-Za-z0-9]/) && (
+        <FieldMessage
+          className={classes.warningText}
+          warningMessages={warningTextMessage} />
+      )}
       </div>
-    </>
-  );
+      <div className={classes.dynaWebhookTokenbtn}>
+        {value?.match(/^[A-Za-z0-9]/) ? (
+          <CopyToClipboard
+            data-private
+            onCopy={handleCopy}
+            text={value}>
+            <IconButtonWithTooltip
+              tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+              buttonSize={{size: 'small'}}>
+              <CopyIcon />
+            </IconButtonWithTooltip>
+          </CopyToClipboard>
+        ) : (
+          <IconButtonWithTooltip
+            tooltipProps={{title: buttonLabel, placement: 'bottom'}}
+            buttonSize={{size: 'small'}}
+            onClick={handleGenerateClick}>
+            <AddIcon />
+          </IconButtonWithTooltip>
+        )}
+      </div>
+    </div>
+  </>;
 }

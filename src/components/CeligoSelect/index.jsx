@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import Select from '@material-ui/core/Select';
+import { makeStyles } from '@mui/styles';
+import Select from '@mui/material/Select';
 import clsx from 'clsx';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import OutlinedButton from '../Buttons/OutlinedButton';
@@ -135,6 +135,7 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
 
   return (
     <Select
+      variant="standard"
       {...isLoggableAttr(isLoggable)}
       IconComponent={ArrowDownIcon}
       className={clsx(classes.select, className)}
@@ -143,8 +144,7 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
       onClose={closeSelect}
       classes={{selectMenu: classes.selectMenu}}
       MenuProps={menuProps}
-      {...props}
-      >
+      {...props}>
       {children}
     </Select>
   );

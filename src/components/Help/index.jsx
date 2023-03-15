@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { makeStyles } from '@material-ui/core/styles';
+import IconButton from '@mui/material/IconButton';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import makeStyles from '@mui/styles/makeStyles';
 import ArrowPopper from '../ArrowPopper';
 import HelpContent from '../HelpContent';
 import HelpIcon from '../icons/HelpIcon';
@@ -66,30 +66,28 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
 
   if (!helpTextValue) return null;
 
-  return (
-    <>
-      <ClickAwayListener onClickAway={handleClose}>
-        <IconButton className={className} onClick={handleMenu}>
-          <HelpIcon className={classes.helpIcon} />
-        </IconButton>
-      </ClickAwayListener>
-      <ArrowPopper
-        placement={placement}
-        id="helpBubble"
-        open={open}
-        disablePortal={disablePortal}
-        popperRef={popperRef}
-        anchorEl={anchorEl}>
-        <HelpContent {...rest} updatePosition={() => { popperRef.current.update(); }}>
-          {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml
-              html={helpTextValue}
-              options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br', 'u', 'ul', 'li'], escapeUnsecuredDomains}} />
-          ) : (
-            helpTextValue
-          )}
-        </HelpContent>
-      </ArrowPopper>
-    </>
-  );
+  return <>
+    <ClickAwayListener onClickAway={handleClose}>
+      <IconButton className={className} onClick={handleMenu} size="large">
+        <HelpIcon className={classes.helpIcon} />
+      </IconButton>
+    </ClickAwayListener>
+    <ArrowPopper
+      placement={placement}
+      id="helpBubble"
+      open={open}
+      disablePortal={disablePortal}
+      popperRef={popperRef}
+      anchorEl={anchorEl}>
+      <HelpContent {...rest} updatePosition={() => { popperRef.current.update(); }}>
+        {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
+          <RawHtml
+            html={helpTextValue}
+            options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br', 'u', 'ul', 'li'], escapeUnsecuredDomains}} />
+        ) : (
+          helpTextValue
+        )}
+      </HelpContent>
+    </ArrowPopper>
+  </>;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Dialog, DialogTitle, DialogContent, DialogActions }
-  from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { generateId } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import CodeEditor from '../../../components/CodeEditor2/editor';

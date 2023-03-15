@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
 import ShowContentIcon from '../../icons/ShowContentIcon';
@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     left: '50px !important',
     top: '0px !important',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       display: 'none',
     },
   },
@@ -136,7 +136,7 @@ export default function DynaPassword(props) {
   };
 
   return (
-    <FormControl className={classes.field}>
+    <FormControl variant="standard" className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
       </div>

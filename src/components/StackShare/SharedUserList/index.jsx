@@ -5,7 +5,7 @@ import {
   TableHead,
   TableCell,
   TableBody,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useDispatch } from 'react-redux';
 import React, { useMemo, useEffect } from 'react';
 import { selectors } from '../../../reducers';

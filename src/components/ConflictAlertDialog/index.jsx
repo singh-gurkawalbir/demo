@@ -1,15 +1,15 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import { Typography } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import makeStyles from '@mui/styles/makeStyles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import { FilledButton } from '../Buttons';
@@ -63,11 +63,10 @@ export default function ConflictAlertDialog() {
   return (
     <Dialog
       open
-      disableBackdropClick
       disableEscapeKeyDown
       maxWidth="sm"
       aria-labelledby="confirmation-dialog-title">
-      <DialogTitle id="confirmation-dialog-title" disableTypography>
+      <DialogTitle id="confirmation-dialog-title">
         <Typography variant="h6">Change Notification</Typography>
       </DialogTitle>
       <DialogContent>

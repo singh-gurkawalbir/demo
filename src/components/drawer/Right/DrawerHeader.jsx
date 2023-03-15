@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';

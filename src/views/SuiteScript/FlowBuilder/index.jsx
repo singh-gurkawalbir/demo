@@ -1,7 +1,8 @@
 import { withRouter, useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useState, useCallback } from 'react';
-import { Typography, Link } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Typography, Link } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -310,7 +311,7 @@ function FlowBuilder() {
               <Typography className={classes.resultContainer}>
                 The ability to change settings for the data flow you have
                 selected is not currently supported. Please{' '}
-                <Link href="https://celigo.com/support" target="_blank">
+                <Link href="https://celigo.com/support" target="_blank" underline="hover">
                   contact Celigo Support
                 </Link>{' '}
                 to request changes.
@@ -355,7 +356,7 @@ function FlowBuilder() {
                 className={classes.fabContainer}
                 style={{
                   bottom: bottomDrawerSize
-                    ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
+                    ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)})`
                     : bottomDrawerMin + theme.spacing(3),
                 }}
               />

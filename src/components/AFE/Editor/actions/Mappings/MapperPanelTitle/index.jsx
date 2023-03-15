@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { IconButton, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import Help from '../../../../../Help';

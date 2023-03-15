@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { Button, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import CeligoLogo from '../../../../components/CeligoLogo';
 import useQuery from '../../../../hooks/useQuery';

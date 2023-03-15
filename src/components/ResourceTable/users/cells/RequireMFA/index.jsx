@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme, Typography } from '@material-ui/core';
+import { useTheme, Typography } from '@mui/material';
 import SwatchSet from '../SwatchSet';
 
 export default function PaletteSwatch() {

@@ -1,7 +1,7 @@
 /* eslint-disable react/state-in-constructor */
 /* eslint-disable react/no-unused-state */
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import LogRocket from 'logrocket';
 import ModalDialog from '../../components/ModalDialog';
 import getRoutePath from '../../utils/routePaths';

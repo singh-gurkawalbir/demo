@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../actions';
 import errorMessageStore from '../../../../utils/errorStore';
 import DynaCheckbox from '../checkbox/DynaCheckbox';

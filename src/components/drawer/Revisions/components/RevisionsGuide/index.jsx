@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
+import { useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Icon from '../../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../../Buttons';
 import { REVISIONS_GUIDE_URL } from '../../../../../constants';
@@ -21,25 +22,24 @@ export default function RevisionsGuide() {
   const classes = useStyles();
   const hasWideScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-  return (
-    <>
-      {hasWideScreen ? (
-        <TextButton
+  return <>
+    {hasWideScreen ? (
+      <TextButton
+        {...anchorProps}
+        className={classes.button}
+        startIcon={<Icon />}>
+        Revisions guide
+      </TextButton>
+    ) : (
+      <Tooltip title="Revisions guide" placement="bottom" aria-label="revisions guide" >
+        <IconButton
           {...anchorProps}
           className={classes.button}
-          startIcon={<Icon />}>
-          Revisions guide
-        </TextButton>
-      ) : (
-        <Tooltip title="Revisions guide" placement="bottom" aria-label="revisions guide" >
-          <IconButton
-            {...anchorProps}
-            className={classes.button}
-            aria-label="revisions guide">
-            <Icon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </>
-  );
+          aria-label="revisions guide"
+          size="large">
+          <Icon />
+        </IconButton>
+      </Tooltip>
+    )}
+  </>;
 }

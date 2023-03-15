@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   FormControlLabel,
   FormControl,
   FormLabel,
   RadioGroup,
   Radio,
-} from '@material-ui/core';
+} from '@mui/material';
 import FieldMessage from '../FieldMessage';
 import RawHtml from '../../../RawHtml';
 import WarningIcon from '../../../icons/WarningIcon';
@@ -125,7 +125,7 @@ export default function DynaRadio(props) {
 
   return (
     <div>
-      <FormControl component="fieldset" disabled={disabled}>
+      <FormControl variant="standard" component="fieldset" disabled={disabled}>
         <div className={clsx(classes.radioGroupWrapper, className)}>
 
           <div className={classes.radioGroupWrapperLabel}>

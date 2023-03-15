@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../../components/ModalDialog';

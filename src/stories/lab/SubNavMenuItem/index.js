@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListItem, makeStyles, Typography } from '@material-ui/core';
+import { ListItem, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import SortableHandle from '../../../components/Sortable/SortableHandle';
 import Status from '../../../components/Buttons/Status';
 

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel, TextField } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, FormLabel, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import ChangeEmail from '../../../views/MyAccount/ChangeEmail';
 import actions from '../../../actions';
@@ -41,7 +41,7 @@ export default function DynaUserEmail(props) {
   const { id, value, label, readOnly = false, isLoggable } = props;
 
   return (
-    <FormControl className={classes.field}>
+    <FormControl variant="standard" className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
         <FieldHelp {...props} />

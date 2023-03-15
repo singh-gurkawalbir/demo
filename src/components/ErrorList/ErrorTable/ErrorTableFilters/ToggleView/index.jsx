@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ViewWithRowsIcon from '../../../../icons/ViewWithRows';
 import ViewWithRowsPanelIcon from '../../../../icons/ViewWithRowsPanel';
 import { OPEN_ERRORS_VIEW_TYPES } from '../../../../../constants';
@@ -36,11 +37,12 @@ export default function ToggleViewSelect({
 
   return (
     <Select
+      variant="standard"
       labelId="toggle-view-label"
       id="toggle-view"
       value={viewType || defaultView}
       className={classes.toggleViewSelect}
-      onChange={handleToggleChange} >
+      onChange={handleToggleChange}>
       {toggleOptions[variant]?.map(item => (
         <MenuItem key={item.value} className={classes.item} value={item.value}>{item.Icon}</MenuItem>
       ))}

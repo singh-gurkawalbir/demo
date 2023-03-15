@@ -1,5 +1,5 @@
-import { IconButton, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../../ArrowPopper';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
@@ -9,7 +9,7 @@ import TextButton from '../../Buttons/TextButton';
 const useStyles = makeStyles(theme => ({
   actionsMenuPopper: {
     maxWidth: 250,
-    top: `${theme.spacing(1)}px !important`,
+    top: `${theme.spacing(1)} !important`,
   },
 }));
 

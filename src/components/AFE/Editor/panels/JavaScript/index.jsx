@@ -1,12 +1,12 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   TextField,
   MenuItem,
   FormControl,
   FormLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
@@ -150,7 +150,7 @@ export default function JavaScriptPanel({ editorId }) {
     <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
-          <FormControl className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
@@ -179,7 +179,7 @@ export default function JavaScriptPanel({ editorId }) {
               {[defaultItem, ...scriptOptions]}
             </CeligoSelect>
           </FormControl>
-          <FormControl className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl}>
             <FormLabel htmlFor="entryFunction">
               Function
             </FormLabel>

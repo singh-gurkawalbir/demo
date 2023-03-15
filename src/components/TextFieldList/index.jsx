@@ -1,7 +1,7 @@
 // import clsx from 'clsx';
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Input, InputLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Input, InputLabel } from '@mui/material';
 import { generateId } from '../../utils/string';
 import TrashIcon from '../icons/TrashIcon';
 import ActionButton from '../ActionButton';

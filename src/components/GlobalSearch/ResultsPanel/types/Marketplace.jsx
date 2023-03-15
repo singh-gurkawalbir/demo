@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Divider, makeStyles, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import DownArrowIcon from '../../../icons/ArrowDownIcon';
 import FilledButton from '../../../Buttons/FilledButton';

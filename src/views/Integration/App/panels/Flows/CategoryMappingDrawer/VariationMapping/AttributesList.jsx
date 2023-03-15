@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useMemo } from 'react';
-import { makeStyles, List, ListItem } from '@material-ui/core';
+import { List, ListItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { NavLink } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';

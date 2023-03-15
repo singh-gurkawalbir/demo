@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, Tooltip, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import Editor from '../../components/AFE/Editor';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';

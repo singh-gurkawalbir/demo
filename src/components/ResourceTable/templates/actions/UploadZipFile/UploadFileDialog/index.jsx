@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  makeStyles,
-} from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { Checkbox, FormControlLabel, Tooltip } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Tooltip } from '@mui/material';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import actions from '../../../../actions';

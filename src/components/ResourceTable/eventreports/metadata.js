@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { capitalize } from '@material-ui/core';
+import { capitalize } from '@mui/material';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import DateFilter from '../commonCells/DateFilter';

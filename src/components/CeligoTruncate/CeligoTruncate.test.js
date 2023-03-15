@@ -3,9 +3,9 @@ import React from 'react';
 import { render, screen, waitFor} from '@testing-library/react';
 import CeligoTruncate from '.';
 
-jest.mock('@material-ui/core', () => ({
+jest.mock('@mui/material', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/core'),
+  ...jest.requireActual('@mui/material'),
   Tooltip: props => (
     <>
       <div>

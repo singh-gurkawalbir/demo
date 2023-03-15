@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, useRouteMatch, generatePath } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import SortableHandle from '../../../../../../components/Sortable/SortableHandle';
 import { selectors } from '../../../../../../reducers';

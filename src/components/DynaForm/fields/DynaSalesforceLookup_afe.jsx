@@ -2,8 +2,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
@@ -76,41 +76,39 @@ export default function DynaSalesforceLookup_afe(props) {
     }));
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
-  return (
-    <>
-      <FormControl className={classes.dynaTextFormControl}>
-        <div className={classes.dynaTextLabelWrapper}>
-          <FormLabel htmlFor={id} required={required} error={!isValid}>
-            {label}
-          </FormLabel>
-          <FieldHelp {...props} />
+  return <>
+    <FormControl variant="standard" className={classes.dynaTextFormControl}>
+      <div className={classes.dynaTextLabelWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <div className={classes.lookupFieldWrapper}>
+        <div className={classes.lookupField}>
+          <TextField
+            key={id}
+            name={name}
+            multiline={multiline}
+            placeholder={placeholder}
+            className={classes.lookupField}
+            disabled
+            value={value}
+            variant="filled"
+          />
+          <FieldMessage
+            isValid={isValid}
+            errorMessages={errorMessages}
+          />
         </div>
-        <div className={classes.lookupFieldWrapper}>
-          <div className={classes.lookupField}>
-            <TextField
-              key={id}
-              name={name}
-              multiline={multiline}
-              placeholder={placeholder}
-              className={classes.lookupField}
-              disabled
-              value={value}
-              variant="filled"
-            />
-            <FieldMessage
-              isValid={isValid}
-              errorMessages={errorMessages}
-            />
-          </div>
-          <ActionButton
-            data-test={id}
-            onClick={handleEditorClick}
-            className={classes.exitButton}
-            disabled={isFilterIconDisabled}>
-            <FilterIcon />
-          </ActionButton>
-        </div>
-      </FormControl>
-    </>
-  );
+        <ActionButton
+          data-test={id}
+          onClick={handleEditorClick}
+          className={classes.exitButton}
+          disabled={isFilterIconDisabled}>
+          <FilterIcon />
+        </ActionButton>
+      </div>
+    </FormControl>
+  </>;
 }

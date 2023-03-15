@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { ClickAwayListener, MenuItem } from '@material-ui/core';
+import { ClickAwayListener, MenuItem } from '@mui/material';
 import ArrowPopper from '../../../../components/ArrowPopper';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import { TextButton } from '../../../../components/Buttons';

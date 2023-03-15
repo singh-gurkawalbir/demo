@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import getForm from './formMeta';

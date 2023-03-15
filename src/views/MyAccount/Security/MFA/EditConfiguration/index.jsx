@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import QRCode from 'react-qr-code';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';

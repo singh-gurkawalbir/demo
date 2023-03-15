@@ -1,8 +1,9 @@
 import React, { useMemo, Fragment, useEffect, useCallback, StrictMode } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
-import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -245,32 +246,34 @@ export default function App() {
   );
 
   return (
-    <MuiThemeProvider theme={theme}>
-      <CrashReporter>
-        <DndProvider backend={HTML5Backend}>
-          <Fragment key={reloadCount}>
-            <ConfirmDialogProvider>
-              <FormOnCancelProvider>
-                <SnackbarProvider
-                  classes={snackbarClasses} maxSnack={3} ContentProps={{
-                    classes: { root: classes.root },
-                  }}>
-                  <FontStager />
-                  <CssBaseline />
-                  {/* Define empty call back for getUserConfirmation to not let Prompt
-                * get triggered when history.block is defined in any specific component
-                * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
-                */}
-                  <BrowserRouter getUserConfirmation={() => {}}>
-                    <AppRenderer />
-                  </BrowserRouter>
-                  <ConflictAlertDialog />
-                </SnackbarProvider>
-              </FormOnCancelProvider>
-            </ConfirmDialogProvider>
-          </Fragment>
-        </DndProvider>
-      </CrashReporter>
-    </MuiThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CrashReporter>
+          <DndProvider backend={HTML5Backend}>
+            <Fragment key={reloadCount}>
+              <ConfirmDialogProvider>
+                <FormOnCancelProvider>
+                  <SnackbarProvider
+                    classes={snackbarClasses} maxSnack={3} ContentProps={{
+                      classes: { root: classes.root },
+                    }}>
+                    <FontStager />
+                    <CssBaseline />
+                    {/* Define empty call back for getUserConfirmation to not let Prompt
+                  * get triggered when history.block is defined in any specific component
+                  * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
+                  */}
+                    <BrowserRouter getUserConfirmation={() => {}}>
+                      <AppRenderer />
+                    </BrowserRouter>
+                    <ConflictAlertDialog />
+                  </SnackbarProvider>
+                </FormOnCancelProvider>
+              </ConfirmDialogProvider>
+            </Fragment>
+          </DndProvider>
+        </CrashReporter>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
