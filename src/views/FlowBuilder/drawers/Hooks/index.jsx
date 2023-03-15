@@ -18,6 +18,7 @@ export default function HooksDrawer({ flowId, integrationId }) {
         helpKey="export.hooks"
         helpTitle="Hooks"
         disableClose={disabled}
+        contentId="exportHooks"
         handleClose={setCancelTriggered} />
       <HooksForm flowId={flowId} integrationId={integrationId} formKey={formKey} />
       <EditorDrawer />
