@@ -1957,6 +1957,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   let url2Info;
 
   if (importAdaptorSubSchema.relativeURI) {
+    if (!isArray(importAdaptorSubSchema.relativeURI)) { importAdaptorSubSchema.relativeURI = [importAdaptorSubSchema.relativeURI]; }
     url1Info = getMatchingRoute(
       [
         isArray(operationDetails.url)
