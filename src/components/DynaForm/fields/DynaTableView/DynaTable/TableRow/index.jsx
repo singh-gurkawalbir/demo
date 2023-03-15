@@ -73,7 +73,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, isSubFormTable}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, invalidateParentFieldOnError, setIsValid, isVirtualizedTable}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -87,9 +87,11 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       value,
       optionsMap,
       onRowChange,
-      isSubFormTable,
+      invalidateParentFieldOnError,
+      isVirtualizedTable,
+      setIsValid,
     });
-  }, [id, onRowChange, optionsMap, rowIndex, setTableState, isSubFormTable]);
+  }, [id, onRowChange, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid, isVirtualizedTable]);
 
   const fieldTestAttr = `text-suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -151,7 +153,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
         {...op}
         /* When the staticMap is being used and it has an type property as exportSelect in the optionMap
         we are setting the isRequiredProperty to false in order to avoid the allignement issue between the table cells */
-        required={isSubFormTable ? false : (op.required || basicProps.required)}
+        required={invalidateParentFieldOnError ? false : (op.required || basicProps.required)}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
@@ -219,14 +221,16 @@ const RowCellMemo = ({
   tableSize,
   setTableState,
   onRowChange,
-  isSubFormTable,
+  invalidateParentFieldOnError,
+  setIsValid,
+  isVirtualizedTable,
 }) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
     <RowCell
-      isSubFormTable={isSubFormTable}
+      invalidateParentFieldOnError={invalidateParentFieldOnError}
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
@@ -235,11 +239,13 @@ const RowCellMemo = ({
       setTableState={setTableState}
       onRowChange={onRowChange}
       colIndex={colIndex}
+      setIsValid={setIsValid}
+      isVirtualizedTable={isVirtualizedTable}
   />
-  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, isSubFormTable]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid, isVirtualizedTable]);
 };
 
-const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes, isSubFormTable, optionsMap}) =>
+const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes, invalidateParentFieldOnError, optionsMap}) =>
   useMemo(() => (
     <ActionButton
       tooltip=""
@@ -247,12 +253,12 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes, 
       data-test={`deleteTableRow-${rowIndex}`}
       aria-label="delete"
       onClick={() => {
-        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex, isSubFormTable, optionsMap });
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex, invalidateParentFieldOnError, optionsMap });
       }}
       className={classes.margin}>
       <DeleteIcon fontSize="small" />
     </ActionButton>
-  ), [classes.margin, disableDeleteRows, rowIndex, setTableState, isSubFormTable, optionsMap]);
+  ), [classes.margin, disableDeleteRows, rowIndex, setTableState, invalidateParentFieldOnError, optionsMap]);
 export default function TableRow({
   rowValue,
   rowIndex,
@@ -262,8 +268,10 @@ export default function TableRow({
   setTableState,
   onRowChange,
   ignoreEmptyRow,
-  isSubFormTable,
+  invalidateParentFieldOnError,
   disableDeleteRows,
+  setIsValid,
+  isVirtualizedTable,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -277,7 +285,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
-              isSubFormTable={isSubFormTable}
+              invalidateParentFieldOnError={invalidateParentFieldOnError}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
@@ -287,6 +295,8 @@ export default function TableRow({
               tableSize={tableSize}
               setTableState={setTableState}
               onRowChange={onRowChange}
+              setIsValid={setIsValid}
+              isVirtualizedTable={isVirtualizedTable}
           />
           </div>
         )
@@ -302,7 +312,7 @@ export default function TableRow({
           rowIndex={rowIndex}
           optionsMap={optionsMap}
           setTableState={setTableState}
-          isSubFormTable={isSubFormTable}
+          invalidateParentFieldOnError={invalidateParentFieldOnError}
           classes={classes}
         />
       </div>

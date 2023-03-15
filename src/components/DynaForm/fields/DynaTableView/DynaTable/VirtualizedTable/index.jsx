@@ -18,7 +18,8 @@ const VirtualizedListRow = ({index, style, data}) => {
     setTableState,
     onRowChange,
     disableDeleteRows,
-    isSubFormTable,
+    invalidateParentFieldOnError,
+    setIsValid,
   } = data;
 
   const { value, key } = items[index];
@@ -29,7 +30,7 @@ const VirtualizedListRow = ({index, style, data}) => {
     >
       <TableRow
         isVirtualizedTable
-        isSubFormTable={isSubFormTable}
+        invalidateParentFieldOnError={invalidateParentFieldOnError}
         rowValue={value}
         rowIndex={index}
         tableSize={items.length}
@@ -39,6 +40,7 @@ const VirtualizedListRow = ({index, style, data}) => {
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        setIsValid={setIsValid}
       />
     </div>
   );
@@ -90,7 +92,8 @@ const VirtualizedTable = ({
   setTableState,
   onRowChange,
   disableDeleteRows,
-  isSubFormTable }) => {
+  invalidateParentFieldOnError,
+  setIsValid }) => {
   const listRef = React.createRef();
 
   const [, setItemCount] = useState(items.length);
@@ -119,8 +122,9 @@ const VirtualizedTable = ({
     setTableState,
     onRowChange,
     disableDeleteRows,
-    isSubFormTable,  // Add the isSubFormTable property in the rowProps so that VariableSizeList component could pass the property to it's children
-  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, isSubFormTable]);
+    setIsValid,
+    invalidateParentFieldOnError,  // Add the invalidateParentFieldOnError property in the rowProps so that VariableSizeList component could pass the property to it's children
+  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, invalidateParentFieldOnError, setIsValid]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders
