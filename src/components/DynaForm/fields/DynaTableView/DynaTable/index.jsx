@@ -36,6 +36,10 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
   },
+  tableViewWrapper: {
+    maxHeight: theme.spacing(30),
+    overflowY: 'auto',
+  },
 }));
 
 const generateEmptyRow = optionsMap => optionsMap.reduce((acc, curr) => {
@@ -188,7 +192,7 @@ const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
           {/* do all multicolumn entry tables need to be redacted ? */}
-          <span {...isLoggableAttr(isLoggable)}>
+          <div {...isLoggableAttr(isLoggable)} className={classes.tableViewWrapper}>
             <BaseTable
               isLoading={isLoading}
               isVirtualizedTable={isVirtualizedTable}
@@ -201,7 +205,7 @@ const DynaTable = props => {
               ignoreEmptyRow={ignoreEmptyRow}
               value={value}
           />
-          </span>
+          </div>
         </div>
       </div>
     </div>
