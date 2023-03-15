@@ -164,7 +164,7 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
     exportOnly: true,
-    helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/13668167418779',
   },
   {
     id: 'graph_ql',
