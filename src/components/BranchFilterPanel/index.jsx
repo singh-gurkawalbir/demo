@@ -669,7 +669,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                 lhsValue === 'currentExportDateTime')
             ) {
               r.lhs.dataType = 'epochtime';
-            } else if (lhsValue?.endsWith('.length')) {
+            } else if (typeof lhsValue === 'string' && lhsValue.endsWith('.length')) {
               const fieldType = filtersMetadata.find(
                 metadata => metadata.id === lhsValue
               ).type;
@@ -706,7 +706,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                 rhsValue === 'currentExportDateTime')
             ) {
               r.rhs.dataType = 'epochtime';
-            } else if (rhsValue?.endsWith('.length')) {
+            } else if (typeof rhsValue === 'string' && rhsValue.endsWith('.length')) {
               const fieldType = filtersMetadata.find(
                 metadata => metadata.id === rhsValue
               ).type;
@@ -757,7 +757,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                   lhsValue === 'currentExportDateTime')
               ) {
                 r.lhs.dataType = 'epochtime';
-              } else if (lhsValue?.endsWith('.length')) {
+              } else if (typeof lhsValue === 'string' && lhsValue.endsWith('.length')) {
                 const fieldType = filtersMetadata.find(
                   metadata => metadata.id === lhsValue
                 ).type;
@@ -790,7 +790,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                   rhsValue === 'currentExportDateTime')
               ) {
                 r.rhs.dataType = 'epochtime';
-              } else if (rhsValue?.endsWith('.length')) {
+              } else if (typeof rhsValue === 'string' && rhsValue.endsWith('.length')) {
                 const fieldType = filtersMetadata.find(
                   metadata => metadata.id === rhsValue
                 ).type;

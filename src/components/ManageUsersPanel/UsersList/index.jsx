@@ -21,6 +21,7 @@ export default function UsersList({ integrationId, childId, className }) {
     !!selectors.integrationUsers(state, integrationId)
   );
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+  const isAccountOwnerMFAEnabled = useSelector(state => selectors.isAccountOwnerMFAEnabled(state));
 
   useEffect(() => {
     if (integrationId) {
@@ -39,7 +40,8 @@ export default function UsersList({ integrationId, childId, className }) {
       accessLevel,
       isUserInErrMgtTwoDotZero,
       isSSOEnabled,
-    }), [integrationId, childId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled]);
+      isAccountOwnerMFAEnabled,
+    }), [integrationId, childId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled, isAccountOwnerMFAEnabled]);
 
   const requiredResources = ['integrations', 'connections', 'notifications'];
 
