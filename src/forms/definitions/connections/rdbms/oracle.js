@@ -6,12 +6,6 @@ export default {
       '/rdbms/type': 'oracle',
     };
 
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-
-    delete newValues['/mode'];
-
     return newValues;
   },
 
@@ -32,11 +26,13 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
       required: true,
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     'rdbms.host': { fieldId: 'rdbms.host' },
     'rdbms.user': {

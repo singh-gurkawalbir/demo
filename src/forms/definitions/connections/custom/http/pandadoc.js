@@ -17,7 +17,6 @@ export default {
       retValues['/http/auth/oauth/clientCredentialsLocation'] = undefined;
       retValues['/http/auth/token/refreshMethod'] = undefined;
       retValues['/http/auth/token/refreshMediaType'] = undefined;
-      retValues['/http/_iClientId'] = undefined;
     } else {
       retValues['/http/auth/oauth/authURI'] = 'https://app.pandadoc.com/oauth2/authorize';
       retValues['/http/auth/oauth/tokenURI'] = 'https://api.pandadoc.com/oauth2/access_token';
@@ -72,6 +71,7 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',

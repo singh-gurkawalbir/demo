@@ -8,9 +8,6 @@ export default {
   preSave: formValues => {
     const newValues = updatePGPFormValues(formValues);
 
-    if (newValues['/ftp/entryParser'] === '') {
-      newValues['/ftp/entryParser'] = undefined;
-    }
     if (!newValues['/ftp/usePgp']) {
       newValues['/ftp/pgpEncryptKey'] = undefined;
       newValues['/ftp/pgpDecryptKey'] = undefined;
@@ -72,7 +69,10 @@ export default {
     },
     'ftp.userDirectoryIsRoot': { fieldId: 'ftp.userDirectoryIsRoot' },
     'ftp.concurrencyLevel': { fieldId: 'ftp.concurrencyLevel' },
-    'ftp.entryParser': { fieldId: 'ftp.entryParser', required: false },
+    'ftp.entryParser': { fieldId: 'ftp.entryParser',
+      required: false,
+      removeWhen: [{field: 'ftp.entryParser', is: [''] }],
+    },
     'ftp.requireSocketReUse': {
       fieldId: 'ftp.requireSocketReUse',
       visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],

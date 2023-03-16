@@ -9,9 +9,7 @@ export default {
     if (newValues['/ftp/entryParser'] === '') {
       delete newValues['/ftp/entryParser'];
     }
-    if (newValues['/as2/partnerStationInfo/auth/type'] === 'none') {
-      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
-    }
+
     if (
       !newValues['/as2/contentBasedFlowRouter'] ||
       !newValues['/as2/contentBasedFlowRouter']._scriptId ||
@@ -125,6 +123,7 @@ export default {
 
         return output || 'none';
       },
+      removeWhen: [{field: 'as2.partnerStationInfo.auth.type', is: ['none'] }],
     },
     'as2.partnerStationInfo.auth.failStatusCode': {
       fieldId: 'as2.partnerStationInfo.auth.failStatusCode',
