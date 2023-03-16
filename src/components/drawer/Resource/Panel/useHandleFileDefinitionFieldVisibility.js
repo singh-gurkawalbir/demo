@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { selectors } from '../../../../../reducers';
-import { fileDefinitionFormatFieldsMap } from '../../../../../utils/file';
-import actions from '../../../../../actions';
+import { selectors } from '../../../../reducers';
+import { fileDefinitionFormatFieldsMap } from '../../../../utils/file';
+import actions from '../../../../actions';
 
 const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
 const FILE_DEFINITION_RULES_FIELD_ID = 'file.filedefinition.rules';
