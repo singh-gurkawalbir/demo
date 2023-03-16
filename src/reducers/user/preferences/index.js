@@ -77,6 +77,11 @@ export default (state = { environment: 'production' }, action) => {
 
         break;
 
+      case actionTypes.USER.PREFERENCES.UPDATE_IN_STATE:
+        updatePreferences(draft, preferences);
+
+        break;
+
       case actionTypes.USER.ACCOUNT.SWITCH:
         updatePreferences(draft, preferences);
 

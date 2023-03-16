@@ -1459,6 +1459,8 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    updateInState: preferences =>
+      action(actionTypes.USER.PREFERENCES.UPDATE_IN_STATE, { preferences }),
     pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
     unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },
