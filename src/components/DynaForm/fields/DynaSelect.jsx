@@ -1,4 +1,4 @@
-import { FormLabel, Input, ListSubheader } from '@material-ui/core';
+import { FormLabel, Input, ListSubheader, Typography } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
@@ -160,9 +160,14 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     display: 'flex',
   },
+  apiType: {
+    color: theme.palette.secondary.light,
+    lineHeight: 1.2,
+  },
 }));
 
 const APIData = ({ connInfo = {} }) => {
+  const classes = useStyles();
   const { httpConnectorId, httpConnectorApiId, httpConnectorVersionId } = connInfo;
   const connectorData = useSelector(state => selectors.connectorData(state, httpConnectorId) || {});
   const { versions = [], apis = [] } = connectorData;
@@ -173,8 +178,8 @@ const APIData = ({ connInfo = {} }) => {
 
   return (
     <>
-      {currApi?.name && <div style={{fontSize: '12px'}}><span style={{fontWeight: 'bold'}}>API type: </span><span>{currApi.name}</span></div>}
-      {currVersion?.name && <div style={{fontSize: '12px'}}><span style={{fontWeight: 'bold'}}>API version: </span><span>{currVersion.name}</span></div>}
+      {currApi?.name && <Typography variant="caption" className={classes.apiType}><span><b>API type:</b> </span><span>{currApi.name}</span></Typography>}
+      {currVersion?.name && <Typography variant="caption" className={classes.apiType}><span><b>API version:</b> </span><span>{currVersion.name}</span></Typography>}
     </>
   );
 };
