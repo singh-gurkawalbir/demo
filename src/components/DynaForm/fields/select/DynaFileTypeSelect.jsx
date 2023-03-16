@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import DynaSelect from '../../DynaSelect';
-import LoadResources from '../../../../LoadResources';
-import { selectors } from '../../../../../reducers';
-import actions from '../../../../../actions';
+import DynaSelect from '../DynaSelect';
+import LoadResources from '../../../LoadResources';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
 
 const FileTypeSelect = props => {
   const { userDefinitionId, onFieldChange, id, formKey } = props;
