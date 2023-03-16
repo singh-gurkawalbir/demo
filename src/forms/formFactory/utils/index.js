@@ -1041,67 +1041,6 @@ export const destinationOptions = {
     },
   ],
 };
-// TODO:consider forceFieldState instead of using optionsHandler to affect fileDefinitionRulesField and fileDefinitionFormatField
-export const alterFileDefinitionRulesVisibility = fields => {
-  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
-//   const fileDefinitionRulesField = fields.find(
-//     field => field.id === 'file.filedefinition.rules'
-//   );
-//   const fileType = fields.find(field => field.id === 'file.type');
-//   const fileDefinitionFieldsMap = {
-//     filedefinition: 'edix12.format',
-//     fixed: 'fixed.format',
-//     'delimited/edifact': 'edifact.format',
-//   };
-
-  //   // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
-  //   // Whether resource is in new or edit stage -- inferred by userDefinitionId
-
-  //   if (
-  //     fileType &&
-  //     fileType.value &&
-  //     !fileDefinitionRulesField.userDefinitionId
-  //   ) {
-  //     // Delete existing visibility rules
-  //     delete fileDefinitionRulesField.visibleWhenAll;
-  //     delete fileDefinitionRulesField.visibleWhen;
-
-  //     if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
-  //       const formatFieldType = fileDefinitionFieldsMap[fileType.value];
-  //       const fileDefinitionFormatField = fields.find(
-  //         fdField => fdField.id === formatFieldType
-  //       );
-
-  //       fileDefinitionRulesField.defaultVisible = !!fileDefinitionFormatField.value;
-  //     } else {
-  //       fileDefinitionRulesField.defaultVisible = false;
-  //     }
-  //     // defaultVisible forces a field to be invisible but it gets only registerd in the
-  //     // next getNextStateFromFields so we have to update that result over here as well
-  //     fileDefinitionRulesField.visible = fileDefinitionRulesField.defaultVisible;
-  //   }
-  //   // fileDefinitionRulesField should be hidden when there is no file type.
-
-  //   if (fileType && !fileType.value) {
-  //     fileDefinitionRulesField.defaultVisible = false;
-  //     fileDefinitionRulesField.visible = false;
-  //   }
-  //   // userDefinitionId exists only in edit mode.
-
-  //   if (fileDefinitionRulesField.userDefinitionId) {
-  //     // make visibility of format fields false incase of edit mode of file adaptors
-  //     Object.values(fileDefinitionFieldsMap).forEach(field => {
-  //       const fileDefinitionFormatField = fields.find(
-  //         fdField => fdField.id === field
-  //       );
-
-  //       delete fileDefinitionFormatField.visibleWhenAll;
-  //       fileDefinitionFormatField.defaultVisible = false;
-  //       fileDefinitionFormatField.visible = false;
-  //     });
-  //   }
-
-};
 
 // #END_REGION Integration App from utils
 

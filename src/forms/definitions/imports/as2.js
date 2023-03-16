@@ -1,5 +1,4 @@
 import { safeParse } from '../../../utils/string';
-import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 import { updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -13,8 +12,6 @@ export default {
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
-
-      alterFileDefinitionRulesVisibility(fields);
 
       return {
         format: definition && definition.format,
