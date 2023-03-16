@@ -53,9 +53,6 @@ export default {
     if (newValues['/oauth2/scheme'] === 'Custom') {
       newValues['/oauth2/scheme'] = newValues['/oauth2/customAuthScheme'];
     }
-    if (!newValues['/oauth2/failPath']) {
-      newValues['/oauth2/failValues'] = undefined;
-    }
 
     delete newValues['/oauth2/customAuthScheme'];
     delete newValues['/oauth2/callbackURL'];
@@ -84,7 +81,10 @@ export default {
     },
     'oauth2.failStatusCode': { fieldId: 'oauth2.failStatusCode' },
     'oauth2.failPath': { fieldId: 'oauth2.failPath' },
-    'oauth2.failValues': { fieldId: 'oauth2.failValues' },
+    'oauth2.failValues': {
+      fieldId: 'oauth2.failValues',
+      removeWhen: [{ field: 'oauth2.failPath', is: [false] }],
+    },
   },
   layout: {
     type: 'collapse',
