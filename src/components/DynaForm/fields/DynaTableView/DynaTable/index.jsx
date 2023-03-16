@@ -97,11 +97,13 @@ const BaseTable = ({
 
   // Adding the condition in the useEffect, so that when ever the isShowValidationBeforeTouched has been set to true, we will be triggering the below dispatch calls inorder to force state the following values to the form inorder to validate it based on the isValid property.
   useEffect(() => {
-    if ((isShowValidationBeforeTouched && tableValue.length === 1) || tableValue.length > 1) {
-      setIsValid(isValid);
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid, required: !isValid}));
+    if (invalidateParentFieldOnError) {
+      if ((isShowValidationBeforeTouched && tableValue.length === 1) || tableValue.length > 1) {
+        setIsValid(isValid);
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid, required: !isValid}));
+      }
     }
-  }, [isValid, rowIndex, isShowValidationBeforeTouched, dispatch, formKey, id, setIsValid, tableValue]);
+  }, [isValid, rowIndex, isShowValidationBeforeTouched, dispatch, formKey, id, setIsValid, tableValue, invalidateParentFieldOnError]);
 
   useEffect(() => {
     if (touched) {
@@ -198,7 +200,7 @@ const DynaTable = props => {
   return (
     <div className={clsx(classes.container, className)}>
       {!hideLabel && (
-      <FormLabel {...isLoggableAttr(isLoggable)} required={required} error={!isValid} >
+      <FormLabel {...isLoggableAttr(isLoggable)} required={invalidateParentFieldOnError ? required : ''} error={invalidateParentFieldOnError ? !isValid : ''} >
         {label}
       </FormLabel>
       )}

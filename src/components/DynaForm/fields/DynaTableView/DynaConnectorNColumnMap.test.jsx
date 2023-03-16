@@ -35,6 +35,7 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
       id: 'someid',
       _integrationId: 'someintegrationId',
       fieldType: 'somefieldtype',
+      formKey: 'form_key',
     };
 
     mutateStore(initialStore, draft => {
@@ -48,6 +49,9 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
             fieldType: 'somefieldtype',
           },
         },
+      };
+      draft.session.form[genralProps.formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
 
