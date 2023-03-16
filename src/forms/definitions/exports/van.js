@@ -50,16 +50,16 @@ export default {
       label: 'EDI x12 format',
       required: true,
       format: 'edi',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['filedefinition'],
-        },
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
+    //   visibleWhenAll: [
+    //     {
+    //       field: 'file.type',
+    //       is: ['filedefinition'],
+    //     },
+    //     {
+    //       field: 'outputMode',
+    //       is: ['records'],
+    //     },
+    //   ],
     },
     'edifact.format': {
       fieldId: 'edifact.format',
@@ -68,16 +68,16 @@ export default {
       label: 'EDIFACT format',
       required: true,
       format: 'ediFact',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['delimited/edifact'],
-        },
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
+    //   visibleWhenAll: [
+    //     {
+    //       field: 'file.type',
+    //       is: ['delimited/edifact'],
+    //     },
+    //     {
+    //       field: 'outputMode',
+    //       is: ['records'],
+    //     },
+    //   ],
     },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
@@ -85,16 +85,16 @@ export default {
       type: 'filedefinitioneditor',
       label: 'File parser helper',
       helpKey: 'export.file.filedefinition.rules',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['filedefinition', 'delimited/edifact'],
-        },
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
+      //   visibleWhenAll: [
+      //     {
+      //       field: 'file.type',
+      //       is: ['filedefinition', 'delimited/edifact'],
+      //     },
+      //     {
+      //       field: 'outputMode',
+      //       is: ['records'],
+      //     },
+      //   ],
       refreshOptionsOnChangesTo: [
         'edix12.format',
         'edifact.format',
