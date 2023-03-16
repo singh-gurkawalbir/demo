@@ -1,10 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import DynaSelect from '../DynaSelect';
-import LoadResources from '../../../LoadResources';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
+import DynaSelect from '../../DynaSelect';
+import LoadResources from '../../../../LoadResources';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
+import useHandleFileDefinitionFieldVisibility from './useHandleFileDefinitionFieldVisibility';
 
 const FileTypeSelect = props => {
   const { userDefinitionId, onFieldChange, id, formKey } = props;
@@ -71,6 +72,8 @@ const FileTypeSelect = props => {
 };
 
 export default function DynaFileTypeSelect(props) {
+  useHandleFileDefinitionFieldVisibility(props.formKey);
+
   return (
     <LoadResources resources="filedefinitions">
       <FileTypeSelect {...props} />

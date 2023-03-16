@@ -2,8 +2,8 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
-import DynaFileTypeSelect from './DynaFileTypeSelect';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
+import DynaFileTypeSelect from '.';
 
 const onFieldChange = jest.fn();
 const props = {userDefinitionId: '_userDefinitionId', onFieldChange, id: 'file.type', formKey: 'imports-_importId', value: 'filedefinition'};
