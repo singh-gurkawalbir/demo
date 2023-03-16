@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import CeligoLogo from '../CeligoLogo';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import MarketingContentWithIframe from '../LoginScreen/MarketingContentWithIframe';
 import UserSignInPageFooter from './UserSignInPageFooter';
 import { getDomain } from '../../utils/resource';
@@ -83,7 +83,8 @@ export default function UserSignInPage(props) {
     footerLinkLabel = '',
     footerLinkText = '',
     footerLink = '',
-    children} = props;
+    children,
+  } = props;
   const classes = useStyles();
 
   let contentUrl;
@@ -105,32 +106,37 @@ export default function UserSignInPage(props) {
               <CeligoLogo />
             </div>
             {pageTitle && (
-            <Typography variant="h3" className={classes.title}>
-              {pageTitle}
-            </Typography>
+              <Typography variant="h3" className={classes.title}>
+                {pageTitle}
+              </Typography>
             )}
             {(successMessage || alertMessage) && (
-            <Typography
-              variant="body2" className={clsx(classes.subHeading,
-                {[classes.successMsg]: successMessage},
-                {[classes.alertMsg]: alertMessage})}>
-              {successMessage || alertMessage}
-            </Typography>
+              <Typography
+                variant="body2"
+                className={clsx(
+                  classes.subHeading,
+                  { [classes.successMsg]: successMessage },
+                  { [classes.alertMsg]: alertMessage }
+                )}
+              >
+                {successMessage || alertMessage}
+              </Typography>
             )}
             {pageSubHeading && (
-            <Typography variant="body2" className={classes.subHeading}>
-              {pageSubHeading}
-            </Typography>
+              <Typography variant="body2" className={classes.subHeading}>
+                {pageSubHeading}
+              </Typography>
             )}
-
           </div>
 
-          <div className={classes.userSignInLeftBody}>
-            {children}
-          </div>
+          <div className={classes.userSignInLeftBody}>{children}</div>
 
           <div className={classes.userSignInLeftFooter}>
-            <UserSignInPageFooter linkLabel={footerLinkLabel} linkText={footerLinkText} link={footerLink} />
+            <UserSignInPageFooter
+              linkLabel={footerLinkLabel}
+              linkText={footerLinkText}
+              link={footerLink}
+            />
           </div>
         </div>
       </div>

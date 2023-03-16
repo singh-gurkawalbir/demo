@@ -3,12 +3,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import {EditableText} from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import ActionGroup from '../../../../components/ActionGroup';
 import { TextButton } from '../../../../components/Buttons';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
-import EditableText from '../../../../components/EditableText';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
@@ -190,27 +190,22 @@ export default function PageBar() {
               (hasIntegration && !isIntegrationApp) ? (
                 <EditableText
                   text={name}
+                  placeholder="Unnamed integration: Click to add name"
                   disabled={!canEdit}
-                  defaultText="Unnamed integration: Click to add name"
                   onChange={handleTitleChange}
-                  inputClassName={
-                    drawerOpened
-                      ? classes.editableTextInputShift
-                      : classes.editableTextInput
-                  }
                 />
               ) : (
                 pageTitle
               )
             }
       titleTag={isIntegrationApp && (
-      <ChipInput
-        disabled={!canEdit}
-        value={tag || 'tag'}
-        className={classes.tag}
-        variant="outlined"
-        onChange={handleTagChangeHandler}
-            />
+        <ChipInput
+          disabled={!canEdit}
+          value={tag || 'tag'}
+          className={classes.tag}
+          variant="outlined"
+          onChange={handleTagChangeHandler}
+        />
       )}
       infoText={
               hasIntegration ? (
@@ -218,7 +213,7 @@ export default function PageBar() {
                   multiline
                   allowOverflow
                   text={description}
-                  defaultText="Click to add a description"
+                  placeholder="Click to add a description"
                   onChange={handleDescriptionChange}
                 />
               ) : (

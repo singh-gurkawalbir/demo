@@ -3,11 +3,11 @@ import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../../reducers';
+import {SearchInput} from '@celigo/fuse-ui';
 import actions from '../../../../../../actions';
 import ActionGroup from '../../../../../ActionGroup';
 import CloseIcon from '../../../../../icons/CloseIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import HomeSearchInput from '../../../../../SearchInput/HomeSearchInput';
 import useDebouncedValue from '../../../../../../hooks/useDebouncedInput';
 import { emptyList } from '../../../../../../constants';
 import NotificationToaster from '../../../../../NotificationToaster';
@@ -86,8 +86,8 @@ export default function SearchBar() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, searchKey]);
 
-  const handleKeywordChange = useCallback(e => {
-    setText(e.target.value);
+  const handleKeywordChange = useCallback(value => {
+    setText(value);
   }, [setText]);
 
   const onCloseHandler = useCallback(() => {
@@ -97,11 +97,11 @@ export default function SearchBar() {
   return (
     <div className={classes.searchWrapper}>
       <ActionGroup>
-        <HomeSearchInput
+        <SearchInput
           value={text}
           onChange={handleKeywordChange}
           className={classes.searchField}
-          placeHolder="Search destination fields"
+          placeholder="Search destination fields"
           openWithFocus
         />
 

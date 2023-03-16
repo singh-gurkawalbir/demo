@@ -118,7 +118,7 @@ export default function AdminPanel({ integrationId, childId }) {
 
     return emptyObj;
   }, shallowEqual);
-  const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const children = useSelectorMemo(selectors.mkIntegrationTreeChildren, integrationId);
 
   const availableSections = useMemo(() => {
     const sectionsToShow = getAdminLevelTabs({

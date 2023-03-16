@@ -4,10 +4,10 @@ import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography, Paper, Grid, IconButton } from '@mui/material';
+import { InfoIconButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
-import InfoIconButton from '../InfoIconButton';
-import BackArrowIcon from '../icons/BackArrowIcon';
 import getRoutePath from '../../utils/routePaths';
+import BackArrowIcon from '../icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -57,7 +57,8 @@ export default function CeligoPageBar(props) {
   const handleOnClick = useCallback(() => {
     if (history.length > 2) {
       return history.goBack();
-    } if (parentUrl) {
+    }
+    if (parentUrl) {
       history.replace(parentUrl);
     } else {
       history.replace(getRoutePath('/'));
@@ -72,32 +73,34 @@ export default function CeligoPageBar(props) {
           [classes.pageHeaderShift]: drawerOpened,
         })}
         elevation={0}
-        square>
-
+        square
+      >
         <Grid item container wrap="nowrap" alignItems="center">
           {parentUrl && (
-          // eslint-disable-next-line react/jsx-handler-names
-          <IconButton size="small" onClick={handleOnClick}>
-            <BackArrowIcon />
-          </IconButton>
+            // eslint-disable-next-line react/jsx-handler-names
+            <IconButton size="small" onClick={handleOnClick}>
+              <BackArrowIcon />
+            </IconButton>
           )}
           <Typography className={classes.title} variant="h3">
             {title}
           </Typography>
           {titleTag && <span>{titleTag}</span>}
-          {infoText && <InfoIconButton info={infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} title={title} />}
+          {infoText && (
+            <InfoIconButton
+              title={title}
+              info={infoText}
+              escapeUnsecuredDomains={escapeUnsecuredDomains}
+            />
+          )}
           <div className={classes.emptySpace} />
           {children}
         </Grid>
-        <Typography
-          variant="caption"
-          className={classes.history}>
+        <Typography variant="caption" className={classes.history}>
           {subtitle}
         </Typography>
       </Paper>
-      <div
-        className={clsx(classes.pageBarOffset)}
-      />
+      <div className={clsx(classes.pageBarOffset)} />
     </>
   );
 }

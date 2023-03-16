@@ -4,8 +4,8 @@ import { Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/
 import makeStyles from '@mui/styles/makeStyles';
 import { sortableHandle } from 'react-sortable-hoc';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import {EditableText} from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
-import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
@@ -214,9 +214,8 @@ export default function BranchItem({
                   allowOverflow
                   disabled={isViewMode}
                   text={branchName}
-                  defaultText="Unnamed branch: Click to add name"
+                  placeholder="Unnamed branch: Click to add name"
                   onChange={title => handleNameChange(title, position)}
-                  inputClassName={classes.editableTextInput}
                 />
               </div>
 

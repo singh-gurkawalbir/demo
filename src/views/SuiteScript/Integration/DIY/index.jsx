@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Chip } from '@mui/material';
+import {EditableText} from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
@@ -10,7 +11,6 @@ import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
-import EditableText from '../../../../components/EditableText';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -112,11 +112,6 @@ export default function Integration({ match }) {
                 disabled={!canEdit}
                 text={integration.displayName}
                 onChange={handleTitleChange}
-                inputClassName={
-                  drawerOpened
-                    ? classes.editableTextInputShift
-                    : classes.editableTextInput
-                }
               />
             )
           }
