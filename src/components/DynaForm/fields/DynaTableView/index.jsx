@@ -60,9 +60,9 @@ export default function DynaTable(props) {
       )}
       {tableType === 'staticMap' && <DynaStaticMap {...propsWithVirtualization} />}
       {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...propsWithVirtualization} />}
-      {/* We are adding the isSubFormTable property inorder to fix the allignment issue which is causing by Asterisk
+      {/* We are adding the invalidateParentFieldOnError property inorder to fix the allignment issue which is causing by Asterisk
           when we are using the type as exportSelect in the custom settings form builder */}
-      {tableType === 'generic' && <DynaTableView {...updatedProps} isSubFormTable />}
+      {tableType === 'generic' && <DynaTableView {...updatedProps} invalidateParentFieldOnError />}
       <FieldMessage {...props} />
     </LoadResources>
   );

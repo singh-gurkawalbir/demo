@@ -49,7 +49,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: 'Name',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -80,7 +80,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: 'name',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -108,7 +108,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     await userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isSubFormTable: undefined, optionsMap: props.optionsMap});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 
   test('should test rows data by providing type as number data and test updating the text', () => {
@@ -138,7 +138,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: '110',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -166,7 +166,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: '120',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -194,7 +194,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isSubFormTable: undefined, optionsMap: props.optionsMap});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', () => {
     const props = {
@@ -229,7 +229,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: 'X',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -257,7 +257,7 @@ describe('Table Row UI test cases', () => {
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
     userEvent.click(moreJobActionMenuButtonNode);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isSubFormTable: undefined, optionsMap: props.optionsMap});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 
   test('should test rows data by providing type as select options at export fields and and multiselect at import fields', () => {
@@ -292,7 +292,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: 'op2',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -328,7 +328,7 @@ describe('Table Row UI test cases', () => {
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'import',
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       value: ['N'],
       optionsMap: [
         {
@@ -357,7 +357,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isSubFormTable: undefined, optionsMap: props.optionsMap});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', () => {
     const props = {
@@ -391,7 +391,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: ['N'],
-      isSubFormTable: undefined,
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -417,6 +417,6 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, isSubFormTable: undefined, optionsMap: props.optionsMap});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 });

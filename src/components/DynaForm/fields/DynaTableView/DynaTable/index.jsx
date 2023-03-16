@@ -1,7 +1,7 @@
 import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { generateNewId } from '../../../../../utils/resource';
@@ -86,27 +86,24 @@ const BaseTable = ({
   ignoreEmptyRow,
   value,
   formKey,
-  isSubFormTable,
+  invalidateParentFieldOnError,
+  isShowValidationBeforeTouched,
+  setIsValid,
 }) => {
   const dispatch = useDispatch();
-
-  // Fetching isShowValidationBeforeTouched property in order to forceState the isValid property to true when there are required fields from the settingsForm so that we could validate the form on the initial render
-  const isShowValidationBeforeTouched = useSelector(state => selectors.formState(state, formKey)?.showValidationBeforeTouched);
-
   const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit, ignoreEmptyRow));
   const {touched, tableStateValue: tableValue, isValid, rowIndex} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
 
-  // Adding the if-else condition in the useEffect, so that when ever the isShowValidationBeforeTouched has been set to true, we will be triggering the below dispatch calls inorder to force state the following values to the form inorder to validate it based on the isValid property.
+  // Adding the condition in the useEffect, so that when ever the isShowValidationBeforeTouched has been set to true, we will be triggering the below dispatch calls inorder to force state the following values to the form inorder to validate it based on the isValid property.
   useEffect(() => {
-    if (isShowValidationBeforeTouched) {
-      if (!isValid) {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, required: !isValid}));
-      } else {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true, required: !isValid}));
+    if (invalidateParentFieldOnError) {
+      if ((isShowValidationBeforeTouched && tableValue.length === 1) || tableValue.length > 1) {
+        setIsValid(isValid);
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid, required: !isValid}));
       }
     }
-  }, [isValid, rowIndex, isShowValidationBeforeTouched, dispatch, formKey, id]);
+  }, [isValid, rowIndex, isShowValidationBeforeTouched, dispatch, formKey, id, setIsValid, tableValue, invalidateParentFieldOnError]);
 
   useEffect(() => {
     if (touched) {
@@ -134,7 +131,8 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
-        isSubFormTable={isSubFormTable}
+        invalidateParentFieldOnError={invalidateParentFieldOnError}
+        setIsValid={setIsValid}
         rowHeight={64}
     />
     );
@@ -155,6 +153,7 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        isVirtualizedTable={isVirtualizedTable}
       />
     );
   }));
@@ -181,9 +180,14 @@ const DynaTable = props => {
     isLoggable,
     formKey,
     required,
-    isSubFormTable,
+    invalidateParentFieldOnError,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
+
+  const [isValid, setIsValid] = useState(true);
+
+  // Fetching isShowValidationBeforeTouched property in order to forceState the isValid property to true when there are required fields from the settingsForm so that we could validate the form on the initial render
+  const {showValidationBeforeTouched } = useSelector(state => selectors.formState(state, formKey));
 
   useEffect(
     () => () => {
@@ -197,7 +201,7 @@ const DynaTable = props => {
   return (
     <div className={clsx(classes.container, className)}>
       {!hideLabel && (
-      <FormLabel {...isLoggableAttr(isLoggable)} required={required} error={required} >
+      <FormLabel {...isLoggableAttr(isLoggable)} required={invalidateParentFieldOnError ? required : ''} error={invalidateParentFieldOnError ? !isValid : ''} >
         {label}
       </FormLabel>
       )}
@@ -225,7 +229,9 @@ const DynaTable = props => {
               ignoreEmptyRow={ignoreEmptyRow}
               value={value}
               formKey={formKey}
-              isSubFormTable={isSubFormTable}
+              invalidateParentFieldOnError={invalidateParentFieldOnError}
+              isShowValidationBeforeTouched={showValidationBeforeTouched}
+              setIsValid={setIsValid}
           />
           </div>
 

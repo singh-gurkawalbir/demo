@@ -5,6 +5,7 @@ import DynaStaticMapWidget from './DynaStaticMapWidget';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
+const formKey = 'form_key';
 const mockDispatchFn = jest.fn();
 const mockOnFieldChange = jest.fn();
 
@@ -40,6 +41,9 @@ describe('DynaStaticMapWidget UI test cases', () => {
           },
         },
       };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
+      };
     });
     const props = {
       id: 'someId',
@@ -56,6 +60,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
     const { utils: { unmount } } = initDynaStaticMapWidget(props);
 
@@ -101,6 +106,9 @@ describe('DynaStaticMapWidget UI test cases', () => {
           },
         },
       };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
+      };
     });
     const props = {
       id: 'someId',
@@ -114,6 +122,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
 
     initDynaStaticMapWidget(props);
@@ -145,6 +154,9 @@ describe('DynaStaticMapWidget UI test cases', () => {
           },
         },
       };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
+      };
     });
     const props = {
       id: 'someId',
@@ -158,6 +170,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
     const { utils: { unmount } } = initDynaStaticMapWidget(props);
 
@@ -201,6 +214,9 @@ describe('DynaStaticMapWidget UI test cases', () => {
           },
         },
       };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
+      };
     });
     const props = {
       id: 'someId',
@@ -217,6 +233,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
 
     initDynaStaticMapWidget(props);

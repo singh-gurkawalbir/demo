@@ -25,7 +25,9 @@ export default function reducer(state, action) {
     field,
     optionsMap,
     onRowChange,
-    isSubFormTable,
+    invalidateParentFieldOnError,
+    setIsValid,
+    isVirtualizedTable,
   } = action;
 
   return produce(state, draft => {
@@ -41,7 +43,7 @@ export default function reducer(state, action) {
           to false when there are required properties within option map orelse it will set the isValid to true so that
           user can save the form.
         */
-        if (isSubFormTable && tableStateValue === 1 && optionsMap.some(obj => obj.required)) {
+        if (invalidateParentFieldOnError && tableStateValue === 1 && optionsMap.some(obj => obj.required)) {
           draft.isValid = false;
         } else {
           draft.isValid = true;
@@ -66,10 +68,12 @@ export default function reducer(state, action) {
           The below if condition will calculate whether the all required fields are having the values
           and checking whether the last row is empty and setting the isValid property based on it.
         */
-        if (isSubFormTable && isAllValuesEntered && isLastRowEmpty) {
+        if (invalidateParentFieldOnError && isAllValuesEntered && isLastRowEmpty) {
           draft.isValid = true;
+          if (isVirtualizedTable) { setIsValid(true); }
         } else {
           draft.isValid = false;
+          if (isVirtualizedTable) { setIsValid(false); }
         }
 
         if (isAllValuesEntered && !isLastRowEmpty) {

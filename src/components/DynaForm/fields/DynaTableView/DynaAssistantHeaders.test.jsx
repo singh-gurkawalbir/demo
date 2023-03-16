@@ -3,9 +3,10 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
 import DynaAssistantHeaders from './DynaAssistantHeaders';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { reduxStore, renderWithProviders, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
+const initialStore = reduxStore;
 const mockDispatchFn = jest.fn();
 const mockOnFieldChange = jest.fn();
 
@@ -24,11 +25,16 @@ jest.mock('react-router-dom', () => ({
 }));
 
 function initDynaAssistantHeaders(props = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
   const ui = (
     <DynaAssistantHeaders {...props} />
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 
 describe('dynaAssistantHeaders UI test cases', () => {
