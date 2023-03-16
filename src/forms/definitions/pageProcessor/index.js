@@ -291,10 +291,6 @@ export default {
         expression.push({ _connectionId: connectionField.value });
       }
 
-      if (app.assistant && !(appField.value === 'zendesk' && adaptorType === `REST${adaptorTypeSuffix}`)) {
-        expression.push({ assistant: app.assistant });
-      }
-
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
       let importLabel = `Would you like to use an existing ${
