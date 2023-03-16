@@ -78,7 +78,7 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
     expect(screen.getByDisplayValue('Honeycomb Inc3')).toBeInTheDocument();
     expect(screen.getByDisplayValue('s4')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Honeycomb Inc4')).toBeInTheDocument();
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-12"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('subsidiary', 'someid', 'someintegrationId', {
       key: 'columnName',
     }));
