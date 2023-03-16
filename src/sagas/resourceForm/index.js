@@ -114,8 +114,8 @@ export function* createFormValuesPatchSet({
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
     newFields = fieldsWithRemoveDelete(formContext);
-    finalValues = valuesToDelete(finalValues, newFields);
     finalValues = valuesToRemove(finalValues, newFields);
+    finalValues = valuesToDelete(finalValues, newFields);
   }
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),

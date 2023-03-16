@@ -121,7 +121,7 @@ export default function FormView(props) {
       );
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }, formContext.fields),
+      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
