@@ -3,10 +3,6 @@ export default {
     const newValues = { ...formValues };
 
     newValues['/mongodb/host'] = [newValues['/mongodb/host']];
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-    delete newValues['/mode'];
 
     return newValues;
   },
@@ -26,10 +22,12 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     'mongodb.host': { fieldId: 'mongodb.host' },
     'mongodb.database': { fieldId: 'mongodb.database' },
