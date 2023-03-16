@@ -22,18 +22,16 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
-    marginBottom: theme.spacing(1),
+    alignItems: 'center',
   },
   refreshIcon: {
     cursor: 'pointer',
   },
-  dynaTableActions: {
-    alignSelf: 'flex-start',
-    marginTop: theme.spacing(1),
-  },
   bodyElementsWrapper: {
     display: 'flex',
     paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    alignItems: 'center',
   },
   child: {
     '& + div': {
@@ -287,9 +285,7 @@ export default function TableRow({
 
       </div>
       {isNotLastRow && !ignoreEmptyRow && (
-      <div
-        key="delete_button"
-        className={classes.dynaTableActions}>
+      <div key="delete_button">
         <ActionButtonMemo
           disableDeleteRows={disableDeleteRows}
           rowIndex={rowIndex}
