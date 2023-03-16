@@ -28,20 +28,6 @@ export default {
 
     return null;
   },
-  //   init: fieldMeta => {
-  //     const fileDefinitionRulesField =
-  //       fieldMeta.fieldMap['file.filedefinition.rules'];
-
-  //     if (fileDefinitionRulesField.userDefinitionId) {
-  //       // make visibility of format fields false incase of edit mode of file adaptors
-  //       const formatField = fieldMeta.fieldMap['edix12.format'];
-
-  //       delete formatField.visibleWhenAll;
-  //       formatField.visible = false;
-  //     }
-
-  //     return fieldMeta;
-  //   },
   preSave: formValues => {
     const newValues = updateFileProviderFormValues(formValues);
 
