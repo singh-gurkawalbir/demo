@@ -11,12 +11,12 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     maxWidth: 300,
-    gridTemplateColumns: props => `repeat(${props.cols}, ${props.pxSize}px)`,
-    '& > *': props => ({
+    // gridTemplateColumns: `repeat(${props.cols}, ${props.pxSize}px)`,
+    '& > *': {
       justifyContent: 'center',
       position: 'relative',
       display: 'flex',
-      height: props.pxSize,
+      // height: props.pxSize,
       border: '1px solid',
       borderColor: theme.palette.secondary.lightest,
       alignItems: 'center',
@@ -31,14 +31,14 @@ const useStyles = makeStyles(theme => ({
           borderColor: theme.palette.secondary.lightest,
         },
       },
-      [`&:nth-child(${props.columns}n+1)`]: {
-        borderLeft: '1px solid',
-        borderColor: theme.palette.secondary.lightest,
-      },
-      [`&:nth-child(n+${props.columns + 1})`]: {
-        borderTop: 'none',
-      },
-    }),
+      // [`&:nth-child(${columns}n+1)`]: {
+      //   borderLeft: '1px solid',
+      //   borderColor: theme.palette.secondary.lightest,
+      // },
+      // [`&:nth-child(n+${columns + 1})`]: {
+      //   borderTop: 'none',
+      // },
+    },
   },
 }));
 
@@ -57,17 +57,17 @@ export default function Applications({applications, children, className, columns
     // 'count' prop that only recognizes app count, and throws off the column count.
     cols += 1;
   }
-  const classes = useStyles(cols, pxSize, columns, appCount, hasChildren);
+  const classes = useStyles({pxSize, columns, count: appCount, hasChildren, cols});
 
   return (
-    <ul className={clsx(classes.logoStripWrapper, className)}>
-      {applications.map(application => (
+    <ul className={clsx(classes.logoStripWrapper, className)} style={{gridTemplateColumns: `repeat(${cols}, ${pxSize}px)`}}>
+      {applications.map((application, index) => (
         // TODO: Azhar, for some reason, the GetApp function does not contain all applications.
         // you may want to check with the dev who manages the /constants/applications.js file. There is a lot
         // or new code since i wrote the original. Possibly `getApp` is not working or not the correct fn to use
         // to get the application display name.
         <Tooltip title={getApp(null, application).name || 'other'} key={application || value}>
-          <li>
+          <li style={{height: pxSize, borderLeft: index === 0 || index === columns ? '1px solid #D6E4ED' : '', borderTop: index > (columns - 1) ? 'none' : ''}}>
             <ApplicationImg
               markOnly
               type={type || 'other'}

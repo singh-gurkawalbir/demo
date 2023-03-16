@@ -1,4 +1,3 @@
-/* global */
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';

@@ -133,9 +133,9 @@ function initFlowBuilderBody(props = {}) {
   renderWithProviders(ui, { initialStore });
 }
 
-jest.mock('react-flow-renderer', () => ({
+jest.mock('reactflow', () => ({
   __esModule: true,
-  ...jest.requireActual('react-flow-renderer'),
+  ...jest.requireActual('reactflow'),
   default: props => (
     <div>
       {/* eslint-disable-next-line react/button-has-type */}

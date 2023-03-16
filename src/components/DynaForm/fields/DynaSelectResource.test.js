@@ -690,6 +690,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     expect(addButtonNode).toBeInTheDocument();
     await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [{ path: '/_connectionId', op: 'add', value: {} },
+      { path: '/_connectorId', op: 'add', value: {} },
       { path: '/_httpConnectorId', op: 'add', value: {} },
       { path: '/adaptorType', op: 'add', value: {} },
       { path: '/application', op: 'add', value: {} },
@@ -704,6 +705,7 @@ describe('Testsuite for Dyna Select Resource', () => {
       { op: 'replace', path: '/assistant', value: 'acumatica' },
       { op: 'replace', path: '/_connectionId', value: undefined },
       { op: 'replace', path: '/integrationId', value: 'integration_id' },
+      { op: 'replace', path: '/_connectorId', value: 'connector_id' },
       { op: 'replace', path: '/statusExport', value: true },
     ],
     ));

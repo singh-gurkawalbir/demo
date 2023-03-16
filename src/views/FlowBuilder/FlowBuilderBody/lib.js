@@ -1,4 +1,4 @@
-import { isEdge, isNode } from 'react-flow-renderer';
+import { isEdge, isNode, getSmoothStepPath } from 'reactflow';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
@@ -148,7 +148,7 @@ export function layoutElements(elements = [], flow) {
   });
   rectifyPageGeneratorOrder(nodes, flow);
 
-  return { elements: [...nodes, ...edges], x: highestX, y: highestY };
+  return { nodes, edges, x: highestX, y: highestY };
 }
 
 export function getAllFlowBranches(flow) {
@@ -215,12 +215,35 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
   return getModulusVal(x2 - x1);
 };
 
+export const getEdgeStepPath = (data = {}) => {
+  const sp = getSmoothStepPath(data);
+  let points = sp;
+
+  if (Array.isArray(sp)) {
+    [points] = sp;
+
+    points = points.substr(0, 1) + points
+      .substr(1)
+      .split(/[LQ]/)
+      .map(cmd => cmd.trim())
+      .map(cmd => cmd.split(' ').join(','))
+      .join(' L');
+  }
+
+  return points;
+};
+
 export const getPositionInEdge = (
   edgeCommands,
   position = 'center',
   offset = 0
 ) => {
-  const linePlotsCoordinates = edgeCommands
+  let edge = edgeCommands;
+
+  if (Array.isArray(edgeCommands)) {
+    [edge] = edgeCommands;
+  }
+  const linePlotsCoordinates = edge
     .substr(1)
     .split(/[LQ]/)
     .map(cmd => cmd.trim())
@@ -235,7 +258,7 @@ export const getPositionInEdge = (
         );
       }
 
-      const isQuadratic = !!commandSplit[1];
+      const isQuadratic = !!commandSplit[1] && cmd.includes(',');
 
       if (isQuadratic) {
         return commandSplit[1];

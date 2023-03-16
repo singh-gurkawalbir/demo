@@ -41,11 +41,11 @@ function initSourceTitle(flowData) {
 
   return renderWithProviders(ui, {initialStore});
 }
-jest.mock('react-flow-renderer', () => ({
+jest.mock('reactflow', () => ({
   __esModule: true,
-  ...jest.requireActual('react-flow-renderer'),
+  ...jest.requireActual('reactflow'),
   // eslint-disable-next-line no-sparse-arrays
-  useStoreState: jest.fn().mockReturnValue([100, , 100]),
+  useStore: jest.fn().mockReturnValue([100, , 100]),
 }));
 jest.mock('../../Context', () => ({
   __esModule: true,
