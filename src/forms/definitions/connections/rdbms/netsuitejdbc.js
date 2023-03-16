@@ -117,6 +117,7 @@ export default {
       id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
       type: 'text',
+      required: true,
       defaultValue: r => {
         const properties = r?.jdbc?.properties || [];
         let value = null;
@@ -154,7 +155,7 @@ export default {
         const properties = r?.jdbc?.properties || [];
         let value = null;
 
-        properties.forEach(each => { if (each.name === 'roleId') value = each.value; });
+        properties.forEach(each => { if (each.name === 'RoleID') value = each.value; });
 
         return value;
       },
