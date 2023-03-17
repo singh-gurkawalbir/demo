@@ -3,10 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import { fileDefinitionFormatFieldsMap } from '../../../../utils/file';
 import actions from '../../../../actions';
-import { FILE_PROVIDER_ASSISTANTS } from '../../../../constants';
-import { isFileAdaptor, isAS2Resource } from '../../../../utils/resource';
 
-const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
 const FILE_DEFINITION_RULES_FIELD_ID = 'file.filedefinition.rules';
 
 const fileDefinitionTypes = Object.keys(fileDefinitionFormatFieldsMap);
@@ -44,19 +41,7 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
     return {...parentContext};
   }, shallowEqual);
 
-  const resourceHasFileDefinitions = useSelector(state => {
-    if (!ELIGIBLE_RESOURCE_TYPES.includes(resourceType)) {
-      return false;
-    }
-    const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
-
-    if (resource?.type === 'simple') {
-      // Data loaders do not have file definitions
-      return false;
-    }
-
-    return isFileAdaptor(resource) || isAS2Resource(resource) || FILE_PROVIDER_ASSISTANTS.includes(resource?.assistant);
-  });
+  const resourceCanHaveFileDefinitions = useSelector(state => selectors.resourceCanHaveFileDefinitions(state, resourceId, resourceType));
 
   const userDefinitionId = useSelector(state => {
     const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
@@ -68,7 +53,7 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
 
   // Below useEffect deals with file definition format fields visibility
   useEffect(() => {
-    if (!resourceHasFileDefinitions) { return; }
+    if (!resourceCanHaveFileDefinitions) { return; }
 
     if (userDefinitionId) {
       // Incase file definition rules are already set, we do not show format fields
@@ -85,11 +70,11 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
         dispatch(actions.form.forceFieldState(formKey)(fieldId, { visible }));
       });
     }
-  }, [fileType, userDefinitionId, mode, dispatch, formKey, resourceHasFileDefinitions]);
+  }, [fileType, userDefinitionId, mode, dispatch, formKey, resourceCanHaveFileDefinitions]);
 
   // Below useEffect deals with file definition rules field visibility
   useEffect(() => {
-    if (!resourceHasFileDefinitions) { return; }
+    if (!resourceCanHaveFileDefinitions) { return; }
     if (userDefinitionId) {
       const visible = fileDefinitionTypes.includes(fileType);
 
@@ -102,5 +87,5 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
       // we only show when user selects  file definition format and mode is records
       dispatch(actions.form.forceFieldState(formKey)(FILE_DEFINITION_RULES_FIELD_ID, { visible }));
     }
-  }, [fileType, userDefinitionId, resourceType, mode, dispatch, formKey, resourceHasFileDefinitions, stringifiedFormatFieldValues]);
+  }, [fileType, userDefinitionId, resourceType, mode, dispatch, formKey, resourceCanHaveFileDefinitions, stringifiedFormatFieldValues]);
 }
