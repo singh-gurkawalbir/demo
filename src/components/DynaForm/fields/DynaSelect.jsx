@@ -173,8 +173,8 @@ const APIData = ({ connInfo = {} }) => {
 
   return (
     <>
-      {currApi?.name && <div>API type: <span>{currApi.name}</span></div>}
-      {currVersion?.name && <div>API version: <span>{currVersion.name}</span></div>}
+      {currApi?.name && <div style={{fontSize: '12px'}}><span style={{fontWeight: 'bold'}}>API type: </span><span>{currApi.name}</span></div>}
+      {currVersion?.name && <div style={{fontSize: '12px'}}><span style={{fontWeight: 'bold'}}>API version: </span><span>{currVersion.name}</span></div>}
     </>
   );
 };
@@ -243,6 +243,7 @@ export default function DynaSelect(props) {
 
   const listRef = React.createRef();
   const [open, setOpen] = useState(false);
+  const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectorData = useSelector(selectors.httpConnector);
@@ -330,7 +331,11 @@ export default function DynaSelect(props) {
 
     return ITEM_SIZE;
   }, [items]);
-  const isConnForm = useMemo(() => options?.some(option => option.items?.some(item => item.connInfo?.httpConnectorId)), [options]);
+  const isConnForm = useMemo(() => options?.some(option =>
+    option.items?.some(item =>
+      item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId
+    )
+  ), [options]);
 
   useEffect(() => {
     if (items.length && isConnForm) {
@@ -343,18 +348,40 @@ export default function DynaSelect(props) {
       }, new Set());
 
       connectorIds?.forEach(httpConnectorId => {
-        if (!connectorData?.[httpConnectorId]) {
+        if (!connectorData?.[httpConnectorId] && !isConnectorCalled?.[httpConnectorId]) {
+          setIsConnectorCalled(connIds => ({ ...connIds, [httpConnectorId]: true }));
           dispatch(actions.httpConnectors.requestConnector({ httpConnectorId }));
         }
       });
     }
-  }, [items, dispatch, connectorData, isConnForm]);
+  }, [items, dispatch, connectorData, isConnForm, isConnectorCalled]);
 
+  const [itemSize2Count, itemSize3Count] = useMemo(() => (
+    options?.reduce(([count1, count2], option) => {
+      const [c1 = 0, c2 = 0] = option.items?.reduce(([c1, c2], item) => {
+        if (item.connInfo?.httpConnectorApiId && item.connInfo?.httpConnectorVersionId) return [c1, c2 + 1];
+        if (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId) return [c1 + 1, c2];
+
+        return [c1, c2];
+      }, [0, 0]);
+
+      return [count1 + c1, count2 + c2];
+    }, [0, 0])
+  ), [options]);
+  const getSize = useCallback(() => {
+    if (isConnForm) {
+      return ((items.length - itemSize2Count - itemSize3Count) * ITEM_SIZE) +
+        (itemSize2Count * ITEM_SIZE_WITH_1_OPTION) +
+        (itemSize3Count * ITEM_SIZE_WITH_2_OPTIONS);
+    }
+
+    return ITEM_SIZE * items.length;
+  }, [isConnForm, itemSize2Count, itemSize3Count, items.length]);
   // if there are fewer options the view port height then let height scale per number of options
 
   const maxHeightOfSelect = items.length > NO_OF_OPTIONS
     ? OPTIONS_VIEW_PORT_HEIGHT
-    : (isConnForm ? ITEM_SIZE_WITH_2_OPTIONS : ITEM_SIZE) * items.length;
+    : getSize();
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
