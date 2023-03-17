@@ -4,7 +4,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { Link } from 'react-router-dom';
-import ArrowPopper from '../../../components/ArrowPopper';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../constants';
@@ -14,20 +14,6 @@ import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import ActionGroup from '../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
-  profilePopper: {
-    zIndex: theme.zIndex.drawer + 1,
-    wordBreak: 'break-word',
-    minWidth: 318,
-    maxWidth: 320,
-    left: '18px !important',
-    top: '10px !important',
-  },
-  profilePopperArrow: {
-    left: '276px !important',
-  },
-  profilePaper: {
-    padding: '10px 8px',
-  },
   avatarButton: {
     padding: 0,
   },
@@ -53,9 +39,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.divider,
     borderRight: 'none',
     borderLeft: 'none',
-  },
-  profileArea: {
-    display: 'flex',
   },
   actionsBtn: {
     marginLeft: 13,
@@ -105,31 +88,35 @@ function ProfileMenuButton() {
   return (
     <>
       <IconButtonWithTooltip
-        tooltipProps={{title: 'Account'}}
+        tooltipProps={{ title: 'Account' }}
         data-test="profileMenu"
         size="small"
         aria-label="avatar"
         aria-owns={open ? 'profileOptions' : null}
         aria-haspopup="true"
         noPadding
-        onClick={handleMenu}>
+        onClick={handleMenu}
+      >
         <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
       </IconButtonWithTooltip>
+
       <ArrowPopper
         id="profileOptions"
-        classes={{
-          popper: classes.profilePopper,
-          paper: classes.profilePaper,
-          arrow: classes.profilePopperArrow,
-        }}
         anchorEl={anchorEl}
         placement="bottom-end"
         open={open}
-        onClose={handleClose}>
-        {/* private to logrocket because user email and avatar can be disclosed */}
-        <div className={classes.profileArea}>
+        onClose={handleClose}
+        {/* The top margin offsets the arrow to render without overlapping the avatar */}
+        sx={{ width: 320, mt: 1, p: '10px 8px'}}
+      >
+        <Box display="flex">
+          {/* private to logrocket because user email and avatar can be disclosed */}
           <div data-private>
-            <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
+            <Avatar
+              alt={name}
+              src={avatarUrl}
+              className={classes.bigAvatar}
+              />
           </div>
           <div>
             <span data-private>
@@ -154,19 +141,20 @@ function ProfileMenuButton() {
                 color="secondary"
                 component={Link}
                 disabled={isMFASetupIncomplete}
-                to={getRoutePath('/myAccount/profile')}>
+                to={getRoutePath('/myAccount/profile')}
+                >
                 {isAccountOwner ? 'My account' : 'My profile'}
               </OutlinedButton>
               <TextButton
                 data-test="signOut"
                 className={classes.actionsBtn}
-                onClick={handleUserLogout}>
+                onClick={handleUserLogout}
+                >
                 Sign out
               </TextButton>
             </ActionGroup>
           </div>
-
-        </div>
+        </Box>
         <div className={classes.bottomActions}>
           <TextButton
             data-test="uxFeedback"
