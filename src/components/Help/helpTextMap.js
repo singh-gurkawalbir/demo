@@ -853,7 +853,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'An optional flag that (if set) skips verifying the SSL certificate, allowing self-signed or expired certs.  It is highly recommended (for hopefully obvious reasons) that you never set this flag for any production data connections.  In general, use at your own risk.',
   'connection.rest._iClientId':
 'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own Integration App product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
-  'connection.http.apiType':
+  'connection.http._httpConnectorApiId':
 'This application supports multiple APIs. Select the specific API you would like to use for this connection.',
   'connection.http.mediaType':
 'Specify the data format to use in the HTTP request body and HTTP response body.',
