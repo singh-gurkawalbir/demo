@@ -9784,6 +9784,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.feedOptions": Object {
+        "fieldId": "unencrypted.feedOptions",
+      },
       "unencrypted.feedType": Object {
         "fieldId": "unencrypted.feedType",
       },
@@ -9900,6 +9903,7 @@ Object {
                 "http.lookups",
                 "http.batchSize",
                 "unencrypted.feedType",
+                "unencrypted.feedOptions",
                 "http.body",
                 "uploadFile",
               ],
