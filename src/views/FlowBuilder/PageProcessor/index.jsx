@@ -62,6 +62,9 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
+  const jdbcAppType = useSelector(
+    state => pending && selectors.jdbcConnectionType(state, pp._connectionId)
+  );
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const pendingBlockType = isDataLoaderFlow ? 'newImport' : 'newPP';
   const blockType = pending ? pendingBlockType : resourceCategory(resource, !!pp._exportId, !!pp._importId);
@@ -105,10 +108,18 @@ const PageProcessor = ({
         },
         // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
         // used to populate the same when user opens resource form
+        //
         {
           op: 'add',
           path: '/rdbmsAppType',
           value: rdbmsAppType,
+        },
+        // jdbcAppType refers to specific rdbms application inferred from connection of pending pp
+        // used to populate the same when user opens resource form
+        {
+          op: 'add',
+          path: '/jdbcAppType',
+          value: jdbcAppType,
         },
       ];
 

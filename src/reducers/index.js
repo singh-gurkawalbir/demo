@@ -682,7 +682,7 @@ selectors.mkTileApplications = () => {
 
               applications.push(app.id || 'http');
             } else {
-              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.type);
+              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.jdbc?.type || connection.type);
             }
           }
         });
@@ -704,14 +704,14 @@ selectors.mkTileApplications = () => {
           const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
           integrationConnections.forEach(c => {
-            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.jdbc?.type || c.type);
           });
         });
 
         const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
         parentIntegrationConnections.forEach(c => {
-          applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.jdbc?.type || c.http?.formType || c.jdbc?.type || c.type);
         });
         applications = uniq(applications);
       }
@@ -1676,6 +1676,13 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (connection.rdbms?.type) {
           return (
             this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+        if (connection.jdbc?.type) {
+          return (
+            this.jdbc?.type === connection.jdbc?.type &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );

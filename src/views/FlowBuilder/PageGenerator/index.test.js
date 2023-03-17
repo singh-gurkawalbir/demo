@@ -120,6 +120,7 @@ describe('PageGenerator UI tests', () => {
             value: '5e7068331c056a75e6df19b2',
           },
           { op: 'add', path: '/rdbmsAppType', value: undefined },
+          { op: 'add', path: '/jdbcAppType', value: undefined },
         ],
         id: 'somePGId',
       }
@@ -155,6 +156,7 @@ describe('PageGenerator UI tests', () => {
             value: '5e7068331c056a75e6df19b2',
           },
           { op: 'add', path: '/rdbmsAppType', value: undefined },
+          { op: 'add', path: '/jdbcAppType', value: undefined },
         ],
         id: 'somePGId',
       }

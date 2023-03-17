@@ -164,6 +164,7 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
     exportOnly: true,
+    icon: 'netsuite',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/13668167418779',
   },
   {
@@ -611,7 +612,7 @@ export const connectorsList = () => {
       connectors.push({
         value: asst.id,
         label: asst.name,
-        icon: asst.id,
+        icon: asst.icon || asst.id,
         type: asst.type,
       });
     }
