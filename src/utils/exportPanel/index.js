@@ -17,6 +17,7 @@ const applicationsWithPreviewPanel = [
   'rest',
   'mongodb',
   'rdbms',
+  'jdbc',
   'dynamodb',
   'netsuite',
   'salesforce',
