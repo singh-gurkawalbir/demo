@@ -153,7 +153,8 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(appType)) {
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
+        appType.indexOf('jdbc') > -1 ? expression.push({ 'jdbc.type': appType })
+          : expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
       } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (appType === 'graph_ql') {
