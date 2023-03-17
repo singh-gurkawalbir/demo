@@ -6,7 +6,6 @@ import EditorField from '../DynaEditor';
 import { validateMockDataField } from '../../../../utils/flowDebugger';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
 import PopulateWithPreviewData from '../../../PopulateWithPreviewData';
 import ActionGroup from '../../../ActionGroup';
 import CeligoDivider from '../../../CeligoDivider';
