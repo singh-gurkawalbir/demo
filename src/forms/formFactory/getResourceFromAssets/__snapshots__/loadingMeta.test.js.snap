@@ -5965,9 +5965,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -6971,9 +6968,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -7814,9 +7808,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
