@@ -79,17 +79,20 @@ const hasPatch = patches => patches && patches.length;
 const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
-export const getExportMetadata = (connectorMetadata, connectionVersion) => {
+export const getExportMetadata = (connectorMeta, connectionVersion, connectionAPI) => {
+  let connectorMetadata = customCloneDeep(connectorMeta);
   const { httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
   let { httpConnectorResources: httpResources} = connectorMetadata;
-
-  const versionLocation = connectorMetadata.versioning?.location;
-
   const exportData = {
     labels: {
       version: 'API version',
     },
   };
+
+  if (connectionAPI) {
+    connectorMetadata = connectorMetadata?.apis?.find(api => api._id === connectionAPI);
+  }
+  const versionLocation = connectorMetadata.versioning?.location;
 
   if (versionLocation === 'uri' && !connectionVersion) {
     exportData.addVersionToUrl = true;
@@ -112,6 +115,9 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
         version: 'v2',
         _id: '_v2id',
       }];
+  }
+  if (connectionAPI) {
+    httpResources = httpResources.filter(r => r._httpConnectorApiId === connectionAPI);
   }
   if (connectionVersion) {
     versions = versions.filter(v => v._id === connectionVersion);
@@ -185,8 +191,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   return exportData;
 };
-export const getImportMetadata = (connectorMetadata, connectionVersion) => {
-  const versionLocation = connectorMetadata.versioning?.location;
+export const getImportMetadata = (connectorMeta, connectionVersion, connectionAPI) => {
+  let connectorMetadata = customCloneDeep(connectorMeta);
   const { httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
   let { httpConnectorResources: httpResources } = connectorMetadata;
   const importData = {
@@ -194,6 +200,11 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
       version: 'API version',
     },
   };
+
+  if (connectionAPI) {
+    connectorMetadata = connectorMetadata?.apis?.find(api => api._id === connectionAPI);
+  }
+  const versionLocation = connectorMetadata.versioning?.location;
 
   if (versionLocation === 'uri' && !connectionVersion) {
     importData.addVersionToUrl = true;
@@ -215,6 +226,9 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
         version: 'v2',
         _id: '_v2id',
       }];
+  }
+  if (connectionAPI) {
+    httpResources = httpResources.filter(r => r._httpConnectorApiId === connectionAPI);
   }
 
   if (connectionVersion) {
@@ -345,7 +359,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
 
   return importData;
 };
-export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) => {
+export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion, connectionAPI) => {
   const { httpConnectorResources, httpConnectorEndpoints} = connectorMetadata;
 
   const resourceNames = {};
@@ -396,8 +410,8 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
 
   modifiedHttpConnectorEndpoints = [...modifiedHttpConnectorEndpoints, ...newEndpoints];
 
-  const exportData = getExportMetadata({...connectorMetadata, httpConnectorResources: modifiedHttpConnectorResources, httpConnectorEndpoints: modifiedHttpConnectorEndpoints }, connectionVersion);
-  const importData = getImportMetadata({...connectorMetadata, httpConnectorResources: modifiedHttpConnectorResources, httpConnectorEndpoints: modifiedHttpConnectorEndpoints }, connectionVersion);
+  const exportData = getExportMetadata({...connectorMetadata, httpConnectorResources: modifiedHttpConnectorResources, httpConnectorEndpoints: modifiedHttpConnectorEndpoints }, connectionVersion, connectionAPI);
+  const importData = getImportMetadata({...connectorMetadata, httpConnectorResources: modifiedHttpConnectorResources, httpConnectorEndpoints: modifiedHttpConnectorEndpoints }, connectionVersion, connectionAPI);
 
   return {export: exportData, import: importData};
 };
