@@ -7,7 +7,7 @@ import CeligoTruncate from '../CeligoTruncate';
 const useStyles = makeStyles(theme => ({
   apiListWrapper: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: theme.spacing(2),
   },
   apiItem: {
