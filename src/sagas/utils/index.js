@@ -415,10 +415,27 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion, c
 
   return {export: exportData, import: importData};
 };
-export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource, isGenericHTTP) => {
-  if (!connector || !connector.supportedBy) {
+export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnector, resource, isGenericHTTP, apiChange) => {
+  let connector = httpConnector;
+  const resetToDefaultValue = isNewId(resource?._id) || apiChange;
+
+  if (!connector) {
     return finalFieldMeta;
   }
+  if (connector.apis?.length) {
+    if (!resource?.http?._httpConnectorApiId) {
+      if (isGenericHTTP) { return finalFieldMeta; }
+
+      const tempFieldMap = Object.keys(finalFieldMeta.fieldMap).reduce((acc, field) => ({...acc, [field]: {...finalFieldMeta.fieldMap[field], visible: field === 'name' || field === 'http._httpConnectorApiId'}}), {});
+
+      return {...finalFieldMeta, fieldMap: tempFieldMap};
+    }
+    connector = httpConnector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
+  }
+  if (!connector.supportedBy) {
+    return null;
+  }
+
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = customCloneDeep(finalFieldMeta);
   let resourceVersion = resource?.http?.unencrypted?.version;
@@ -437,19 +454,25 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       preConfiguredFieldLists.forEach(field => {
         if (field._conditionIds?.length && field.values) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
       });
-      if (preConfiguredField && _conditionIdValuesMap.length) {
-        tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
-        tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
-      } else if (isNewId(resource?._id) && preConfiguredField) {
-        tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
+      if (preConfiguredField) {
+        if (_conditionIdValuesMap.length) {
+          tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
+          tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
+        }
+        if (resetToDefaultValue) {
+          tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
+        }
       }
       if (fieldUserMustSet) {
-        if (fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+        if (fieldUserMustSet._conditionIds?.length > 0) {
           tempFiledMeta.fieldMap[key]._conditionIds = fieldUserMustSet?._conditionIds;
           tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
         }
-        if (fieldUserMustSet?.inputType) {
+        if (fieldUserMustSet.inputType) {
           tempFiledMeta.fieldMap[key].inputType = fieldUserMustSet?.inputType;
+        }
+        if (resetToDefaultValue) {
+          tempFiledMeta.fieldMap[key].defaultValue = fieldUserMustSet?.values?.[0];
         }
       }
 
@@ -537,7 +560,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (key === 'http.auth.token.token' || key === 'http.auth.token.refreshToken') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
       } else if (key === 'http.baseURI') {
-        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resourceVersion) {
+        if (!tempFiledMeta.fieldMap[key].defaultValue || resetToDefaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resourceVersion) {
           tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
         }
         if (connector?.baseURIs?.length > 1) {
@@ -580,7 +603,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         type: 'select',
         visible: !(versions && versions.length <= 1),
         options: versionOptions,
-        defaultValue: isNewId(resource._id) ? versions?.[0] : resourceVersion,
+        defaultValue: resetToDefaultValue ? versions?.[0] : resourceVersion,
       },
     });
   }
@@ -617,7 +640,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           id: `http.unencrypted.${fld.id}`,
           fieldId: `http.unencrypted.${fld.id}`,
           type: fld.type || 'text',
-          defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
+          defaultValue: resetToDefaultValue ? fld.defaultValue : (resource?.http?.unencrypted?.[fld.id] || fld.defaultValue),
           conditions: connectionTemplate?.conditions,
           _conditionIdValuesMap,
           helpLink: fld.helpURL,
@@ -656,7 +679,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           fieldId: `http.encrypted.${fld.id}`,
           inputType: 'password',
           type: fld.type || 'text',
-          defaultValue: resource?.http?.encrypted?.[fld.id],
+          defaultValue: !resetToDefaultValue ? resource?.http?.encrypted?.[fld.id] : '',
           conditions: connectionTemplate?.conditions,
           helpLink: fld.helpURL,
           _conditionIdValuesMap,
@@ -721,7 +744,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           id: `settings.${value.id}`,
           fieldId: `settings.${value.id}`,
           type: value.type || 'text',
-          defaultValue: resource?.settings?.[value.id] || value.defaultValue,
+          defaultValue: resetToDefaultValue ? value.defaultValue : (resource?.settings?.[value.id] || value.defaultValue),
           conditions: connectionTemplate?.conditions,
           helpLink: value.helpURL,
           _conditionIdValuesMap,
@@ -740,7 +763,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         tempFiledMeta.fieldMap[fields[i].id] = fields[i];
         fieldIds.push(fields[i].id);
       }
-      if (isGenericHTTP && isNewId(resource._id)) {
+      if (isGenericHTTP && resetToDefaultValue) {
           tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
       } else if (!isGenericHTTP) {
         const baseURIFields = []; const authFields = [];

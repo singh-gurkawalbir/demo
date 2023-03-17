@@ -70,11 +70,10 @@ export default {
     defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
-  'http.apiType': {
-    type: 'MultiApiSelect',
+  'http._httpConnectorApiId': {
+    type: 'apiSelect',
     label: 'API type',
-    helpKey: 'connection.http.apiType',
-    defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
+    helpKey: 'connection.http._httpConnectorApiId',
     required: true,
   },
   application: {

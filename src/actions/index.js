@@ -1752,7 +1752,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId, options) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1763,6 +1763,7 @@ const resourceForm = {
       integrationId,
       fieldMeta,
       parentConnectionId,
+      options,
     }),
   initComplete: (
     resourceType,
