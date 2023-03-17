@@ -2508,6 +2508,7 @@ Object {
 }
 `;
 
+
 exports[`getResourceFromAssets load correct form connections rdbms within rdbms schema should load a oracle connection form 1`] = `
 Object {
   "fieldMeta": Object {
