@@ -5,7 +5,7 @@ import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 import {PASSWORD_MASK} from '../../../constants';
 
 export default {
-  init: (fieldMeta, resource, flow, httpConnector) => updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
+  init: (fieldMeta, resource, flow, httpConnector, formState, apiChange) => updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource, false, apiChange),
   preSave: (formValues, resource, options) => {
     let newValues = { ...formValues};
 
@@ -207,8 +207,8 @@ export default {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
-    'http.apiType': {
-      fieldId: 'http.apiType',
+    'http._httpConnectorApiId': {
+      fieldId: 'http._httpConnectorApiId',
     },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
@@ -386,7 +386,7 @@ export default {
           'name',
           'connectionFormView',
           'application',
-          'http.apiType',
+          'http._httpConnectorApiId',
           'mode',
           '_agentId',
         ],

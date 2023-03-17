@@ -19,26 +19,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 const desc = 'Access and manipulate a store\'s data using traditional RESTful methods.';
-const dummyData = [{
-  name: 'Shopify',
-  id: '63d94c4d8ba47f5fa4c00001',
-  description: 'Access and manipulate a store\'s data using traditional RESTful methods.',
-},
-{
-  name: 'Shopify Graph QL',
-  id: '63d94c4d8ba47f5fa4c00002',
-  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
-},
-{
-  name: 'Shopify Graph QL',
-  id: '63d94c4d8ba47f5fa4c00002',
-  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
-},
-{
-  name: 'Shopify Graph QL',
-  id: '63d94c4d8ba47f5fa4c00002',
-  description: 'Access and manipulate a store\'s data using the GraphQL query language.',
-}];
 
 export default function APISelect(props) {
   const {
@@ -100,8 +80,8 @@ export default function APISelect(props) {
     const newFinalValues = {...finalValues};
 
     if (val) {
-      stagedRes['/http/apiType'] = val;
-      newFinalValues['/http/apiType'] = val;
+      stagedRes['/http/_httpConnectorApiId'] = val;
+      newFinalValues['/http/_httpConnectorApiId'] = val;
     }
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
@@ -130,14 +110,18 @@ export default function APISelect(props) {
         false,
         false,
         '',
-        allTouchedFields
+        allTouchedFields,
+        '',
+        '',
+        '',
+        {apiChange: true}
       )
     );
   }, [accountOwner, dispatch, formContext?.fields, formContext?.value, id, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  // if (!data || !data.length) {
-  //   return null;
-  // }
+  if (!data || !data.length) {
+    return null;
+  }
 
   return (
     <div className={clsx(classes.fieldWrapper)}>
@@ -145,7 +129,7 @@ export default function APISelect(props) {
         {label}
       </FormLabel>
       <FieldHelp {...props} />
-      <MultiApiSelect items={dummyData} value={value} onClick={handleClick} />
+      <MultiApiSelect items={data} value={value} onClick={handleClick} />
     </div>
   );
 }

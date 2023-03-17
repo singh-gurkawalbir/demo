@@ -223,7 +223,7 @@ export default {
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
-  MultiApiSelect: DynaAPISelect,
+  apiSelect: DynaAPISelect,
   celigotable: DynaCeligoTable,
   previewcomponentstable: DynaPreviewComponentsTable,
   hook: DynaHook_afe,
