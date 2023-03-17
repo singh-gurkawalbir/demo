@@ -158,6 +158,12 @@ selectors.rdbmsConnectionType = (state, connectionId) => {
   return connection.rdbms && connection.rdbms.type;
 };
 
+selectors.jdbcConnectionType = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
+
+  return connection.jdbc && connection.jdbc.type;
+};
+
 selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
   if (type === 'generate') {
     /** generating generate Label */

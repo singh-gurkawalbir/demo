@@ -89,6 +89,26 @@ describe('connections utils test cases', () => {
 
       expect(getReplaceConnectionExpression({_id: 'conn123', type: 'rdbms', rdbms: { type: 'mysql' }}, true, 'childId', 'int-123', null, true)).toEqual(output);
     });
+    test('should return correct expression if connection type is jdbc and jdbcSubtype is mysql', () => {
+      const output = {
+        appType: 'netsuitejdbc',
+        filter: {
+          $and: [
+            { _id: {$ne: 'conn123'} },
+            {
+              'jdbc.type': 'netsuitejdbc',
+            },
+            {
+              _connectorId: {
+                $exists: false,
+              },
+            },
+          ],
+        },
+      };
+
+      expect(getReplaceConnectionExpression({_id: 'conn123', type: 'jdbc', jdbc: { type: 'netsuitejdbc' }}, true, 'childId', 'int-123', null, true)).toEqual(output);
+    });
   });
 
   describe('getParentResourceContext util', () => {
