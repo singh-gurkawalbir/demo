@@ -179,8 +179,8 @@ const APIData = ({ connInfo = {} }) => {
   return (
     <>
       <Typography variant="caption" className={classes.apiType}>
-        {currApi?.name && <><span><b>API type:</b></span> <span>test</span></>}
-        {currVersion?.name && <><br /><span><b>API version:</b> </span><span>test</span></>}
+        {currApi?.name && <><span><b>API type:</b></span> <span>{currApi.name}</span></>}
+        {currVersion?.name && <><br /><span><b>API version:</b> </span><span>{currVersion.name}</span></>}
       </Typography>
     </>
   );
@@ -250,7 +250,6 @@ export default function DynaSelect(props) {
 
   const listRef = React.createRef();
   const [open, setOpen] = useState(false);
-  const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectorData = useSelector(selectors.httpConnector);
@@ -355,13 +354,12 @@ export default function DynaSelect(props) {
       }, new Set());
 
       connectorIds?.forEach(httpConnectorId => {
-        if (!connectorData?.[httpConnectorId] && !isConnectorCalled?.[httpConnectorId]) {
-          setIsConnectorCalled(connIds => ({ ...connIds, [httpConnectorId]: true }));
+        if (!connectorData?.[httpConnectorId]) {
           dispatch(actions.httpConnectors.requestConnector({ httpConnectorId }));
         }
       });
     }
-  }, [items, dispatch, connectorData, isConnForm, isConnectorCalled]);
+  }, [items, dispatch, connectorData, isConnForm]);
 
   const [itemSize2Count, itemSize3Count] = useMemo(() => (
     options?.reduce(([count1, count2], option) => {
