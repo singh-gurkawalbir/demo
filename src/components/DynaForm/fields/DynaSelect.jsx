@@ -162,7 +162,7 @@ const useStyles = makeStyles(theme => ({
   },
   apiType: {
     color: theme.palette.secondary.light,
-    lineHeight: 1.2,
+    lineHeight: '14px',
   },
 }));
 
@@ -178,8 +178,10 @@ const APIData = ({ connInfo = {} }) => {
 
   return (
     <>
-      {currApi?.name && <Typography variant="caption" className={classes.apiType}><span><b>API type:</b> </span><span>{currApi.name}</span></Typography>}
-      {currVersion?.name && <Typography variant="caption" className={classes.apiType}><span><b>API version:</b> </span><span>{currVersion.name}</span></Typography>}
+      <Typography variant="caption" className={classes.apiType}>
+        {currApi?.name && <><span><b>API type:</b></span> <span>test</span></>}
+        {currVersion?.name && <><br /><span><b>API version:</b> </span><span>test</span></>}
+      </Typography>
     </>
   );
 };
