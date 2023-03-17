@@ -19,6 +19,10 @@ export default {
   'license.trialPeriod': 'Choose a trial period for this integration: 14 days, 30 days, or 60 days.',
   'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
+  'connection.jdbc.host': 'Enter the NetSuite SuiteAnalytics Connect server TCP/IP address. It is specified as a hostname.',
+  'connection.jdbc.port': 'This is the default server port number to connect.\nThe default value varies on the type of database you’re connecting to.',
+  'connection.jdbc.serverDataSource': 'Select the NetSuite SuiteAnalytics Connect server data source.',
+  'connection.jdbc.staticschemaexport': 'The Static Data Model option provides you with the structure and the name of all available record types and fields in the NetSuite2.com data source. To use the Static DataModel in your account, you must add the StaticSchema attribute and set it to 1.  For more information, see <a href="https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_164485063706.html" target="_blank">Working with the Static Data Model</a>',
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
 'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   'connection.partnerrequireasynchronousmdns':

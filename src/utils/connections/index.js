@@ -78,8 +78,10 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   const { _id, type, assistant } = connection || {};
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
-
-  if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
+  if (type === 'jdbc' && RDBMS_TYPES.includes(connection?.jdbc?.type)) {
+    // jdbc subtype is required to filter the connections
+    expression.push({ 'jdbc.type': connection.jdbc.type });
+  } else if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
     expression.push({ 'rdbms.type': connection.rdbms.type });
   } else if ((type === 'rest' && connection?.isHTTP !== true) || (type === 'http' && connection?.http?.formType === 'rest')) {
@@ -130,6 +132,11 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
     options = { filter: filterExpression, appType: assistant };
+  } else if (type === 'jdbc') {
+    options = {
+      filter: andingExpressions,
+      appType: connection?.jdbc?.type,
+    };
   } else {
     options = {
       filter: andingExpressions,
@@ -256,26 +263,27 @@ export const amazonSellerCentralAuthURI = {
   AMEN7PMS3EDWL: 'https://sellercentral.amazon.com.be/apps/authorize/consent',
 };
 export const amazonVendorCentralAuthURI = {
-  A2EUQ1WTGCTBG2: 'https://vendorcentral.amazon.ca/',
-  ATVPDKIKX0DER: 'https://vendorcentral.amazon.com/',
-  A1AM78C64UM0Y8: 'https://vendorcentral.amazon.com.mx/',
-  A2Q3Y263D00KWC: 'https://vendorcentral.amazon.com.br/',
-  A1RKKUPIHCS9HS: 'https://vendorcentral.amazon.es/',
-  A1F83G8C2ARO7P: 'https://vendorcentral.amazon.co.uk/',
-  A13V1IB3VIYZZH: 'https://vendorcentral.amazon.fr/',
-  A1805IZSGTT6HS: 'https://vendorcentral.amazon.nl/',
-  A1PA6795UKMFR9: 'https://vendorcentral.amazon.de/',
-  APJ6JRA9NG5V4: 'https://vendorcentral.amazon.it/',
-  A2NODRKZP88ZB9: 'https://vendorcentral.amazon.se/',
-  A1C3SOZRARQ6R3: 'https://vendorcentral.amazon.pl/',
-  A33AVAJ2PDY3EV: 'https://vendorcentral.amazon.com.tr/',
-  A2VIGQ35RCS4UG: 'https://vendorcentral.amazon.me/',
-  A21TJRUUN4KGV: 'https://vendorcentral.amazon.in/',
-  A19VAU5U5O7RUS: 'https://vendorcentral.amazon.com.sg/',
-  A39IBJ37TRP1C6: 'https://vendorcentral.amazon.com.au/',
-  A1VC38T7YXB528: 'https://vendorcentral.amazon.co.jp/',
-  ARBP9OOSHTCHU: 'https://vendorcentral.amazon.me/',
-  AMEN7PMS3EDWL: 'https://vendorcentral.amazon.com.be/',
+  A2EUQ1WTGCTBG2: 'https://vendorcentral.amazon.ca/apps/authorize/consent',
+  ATVPDKIKX0DER: 'https://vendorcentral.amazon.com/apps/authorize/consent',
+  A1AM78C64UM0Y8: 'https://vendorcentral.amazon.com.mx/apps/authorize/consent',
+  A2Q3Y263D00KWC: 'https://vendorcentral.amazon.com.br/apps/authorize/consent',
+  A1RKKUPIHCS9HS: 'https://vendorcentral.amazon.es/apps/authorize/consent',
+  A1F83G8C2ARO7P: 'https://vendorcentral.amazon.co.uk/apps/authorize/consent',
+  A13V1IB3VIYZZH: 'https://vendorcentral.amazon.fr/apps/authorize/consent',
+  A1805IZSGTT6HS: 'https://vendorcentral.amazon.nl/apps/authorize/consent',
+  A1PA6795UKMFR9: 'https://vendorcentral.amazon.de/apps/authorize/consent',
+  APJ6JRA9NG5V4: 'https://vendorcentral.amazon.it/apps/authorize/consent',
+  A2NODRKZP88ZB9: 'https://vendorcentral.amazon.se/apps/authorize/consent',
+  A1C3SOZRARQ6R3: 'https://vendorcentral.amazon.pl/apps/authorize/consent',
+  A33AVAJ2PDY3EV: 'https://vendorcentral.amazon.com.tr/apps/authorize/consent',
+  A2VIGQ35RCS4UG: 'https://vendorcentral.amazon.me/apps/authorize/consent',
+  A21TJRUUN4KGV: 'https://vendorcentral.amazon.in/apps/authorize/consent',
+  A19VAU5U5O7RUS: 'https://vendorcentral.amazon.com.sg/apps/authorize/consent',
+  A39IBJ37TRP1C6: 'https://vendorcentral.amazon.com.au/apps/authorize/consent',
+  A1VC38T7YXB528: 'https://vendorcentral.amazon.co.jp/apps/authorize/consent',
+  ARBP9OOSHTCHU: 'https://vendorcentral.amazon.me/apps/authorize/consent',
+  AMEN7PMS3EDWL: 'https://vendorcentral.amazon.com.be/apps/authorize/consent',
+  A17E79C6D8DWNP: 'https://vendorcentral.amazon.me/apps/authorize/consent',
 };
 
 export const amazonSellerCentralMarketPlaceOptions = {
@@ -325,6 +333,7 @@ export const amazonVendorCentralMarketPlaceOptions = {
     {label: 'Poland', value: 'A1C3SOZRARQ6R3'},
     {label: 'Egypt', value: 'ARBP9OOSHTCHU'},
     {label: 'Turkey', value: 'A33AVAJ2PDY3EV'},
+    {label: 'Saudi Arabia', value: 'A17E79C6D8DWNP'},
     {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
     {label: 'India', value: 'A21TJRUUN4KGV'},
     {label: 'Belgium', value: 'AMEN7PMS3EDWL'},
