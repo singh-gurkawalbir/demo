@@ -275,15 +275,12 @@ function DefaultEdge(props) {
 
     points.forEach((p, i) => {
       if (i === 0) {
-        console.log('1');
         path = `M${points[0].x},${points[0].y} `;
       } else if (i === 1 && isFirstPGEdge && isDraggingInProgress && showDropBox) {
-        console.log('2');
         drawLine(p, 'x');
         drawLine(p, 'y');
         drawLine({x: current.x, y: current.y - 100}, 'y');
       } else if (i === 1 && isSourceRouter) {
-        console.log('3');
         // first line
         // When the source is a router, we want to draw the lines vertically first to branch off
         // the edges asap. Not only for better looks, but also this prevents unwanted overlapping
@@ -291,12 +288,10 @@ function DefaultEdge(props) {
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else if (i === 1 && (isLastPGEdge && !isSubFlowView) && isDraggingInProgress && showDropBox) {
-        console.log('4');
         drawLine(p, 'x');
         drawLine(p, 'y');
         drawLine({x: current.x, y: current.y + 100}, 'y');
       } else if (i === points.length - 1 && !isTargetMerge) {
-        console.log('5');
         // last point
         // for the last point (that defines an edge), we want to draw the vertical line first so that
         // a node always connects to a horizontal line since our diagram is L-> R,
@@ -320,12 +315,10 @@ function DefaultEdge(props) {
             drawLine({x: p.x, y: p.y + (346 * (targetIndex - 1))}, 'y');
           }
         } else {
-          console.log('7');
           drawLine(p, 'y');
           drawLine(p, 'x');
         }
       } else {
-        console.log('8');
         drawLine(p, 'x');
         drawLine(p, 'y');
       }

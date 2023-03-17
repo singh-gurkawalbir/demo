@@ -20,8 +20,8 @@ const useStyles = makeStyles(theme => ({
   statusAppBlock: {
     display: 'flex',
     position: 'absolute',
-    top: theme.spacing(1),
-    left: theme.spacing(2),
+    top: '13px',
+    left: '93px',
     '& > button': {
       fontSize: 14,
     },
@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorStatus({ count, isNew, flowId, resourceId, subBlockSchema }) {
+export default function SubFlowErrorStatus({ count, isNew, flowId, resourceId, subBlockSchema }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
@@ -117,14 +117,14 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId, subBlock
    * Error status ( error / success ) is shown only if the user is in EM 2.0
    * If the flow has been run at least once (has at least one flow job)
    */
-  if (!shouldErrorStatusBeShown) {
-    return null;
-  }
+  // if (!shouldErrorStatusBeShown) {
+  //   return null;
+  // }
   const IconComponent = count ? <WarningIcon data-test="warningIcon" className={classes.warning} /> : <SuccessIcon className={classes.success} />;
 
   return (
     <div className={clsx(classes.statusAppBlock, {[classes.successWrapper]: !count })}>
-      { subBlockSchema && IconComponent}
+      {IconComponent}
       {/* <Status
         onClick={() => handleStatus('open')}
         variant={count ? 'error' : 'success'}> { count ? `${getTextAfterCount('error', count, subBlockSchema)}` : (subBlockSchema ? '' : 'Success') }

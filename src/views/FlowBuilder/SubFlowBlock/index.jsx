@@ -479,6 +479,11 @@ export default function AppBlock({
         className={classes.box}
       >
         <div className={classes.bubbleContainer}>
+          <SubFlowErrorStatus
+            count={openErrorCount}
+            isNew={isNew}
+            flowId={flowId}
+            resourceId={resource?._id} />
           {/* {onDelete && !isViewMode && !resource._connectorId && (
             <IconButton
               size="small"
