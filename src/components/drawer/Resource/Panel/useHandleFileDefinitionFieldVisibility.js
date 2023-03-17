@@ -4,7 +4,7 @@ import { selectors } from '../../../../reducers';
 import { fileDefinitionFormatFieldsMap } from '../../../../utils/file';
 import actions from '../../../../actions';
 
-const FILE_DEFINITION_RULES_FIELD_ID = 'file.filedefinition.rules';
+export const FILE_DEFINITION_RULES_FIELD_ID = 'file.filedefinition.rules';
 
 const fileDefinitionTypes = Object.keys(fileDefinitionFormatFieldsMap);
 const formatFieldIds = Object.values(fileDefinitionFormatFieldsMap);
