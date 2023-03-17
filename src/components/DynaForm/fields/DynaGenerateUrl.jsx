@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
@@ -51,7 +51,7 @@ export default function GenerateUrl(props) {
       webHookToken: formContext.value?.['/webhook/token'],
       webHookVerify: formContext.value?.['/webhook/verify'],
     };
-  });
+  }, shallowEqual);
 
   const [touched, setTouched] = useState(false);
   const formContext = useFormContext(formKey);
