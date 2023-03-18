@@ -6,7 +6,7 @@ import useHandleFileDefinitionFieldVisibility, { FILE_DEFINITION_RULES_FIELD_ID}
 import actions from '../../../../actions';
 import { fileDefinitionFormatFieldsMap } from '../../../../utils/file';
 
-async function initHook(resourceType = 'exports', resourceId, formValues = {}) {
+function initHook(resourceType = 'exports', resourceId, formValues = {}) {
   const DummyComponent = () => {
     useHandleFileDefinitionFieldVisibility('formKey');
 
@@ -55,7 +55,7 @@ async function initHook(resourceType = 'exports', resourceId, formValues = {}) {
     };
   });
 
-  await renderWithProviders(<DummyComponent />, {initialStore});
+  renderWithProviders(<DummyComponent />, {initialStore});
 }
 describe('useHandleFileDefinitionFieldVisibility tests', () => {
   let mockDispatchFn;
@@ -75,8 +75,8 @@ describe('useHandleFileDefinitionFieldVisibility tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should do nothing incase of any resource other than export or import', async () => {
-    await initHook('scripts', 's1');
+  test('should do nothing incase of any resource other than export or import', () => {
+    initHook('scripts', 's1');
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
   test('should do nothing incase of resource which do not have file definitions', () => {
