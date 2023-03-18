@@ -1,9 +1,10 @@
 /* eslint-disable camelcase */
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
@@ -45,13 +46,22 @@ export default function DynaSalesforceLookup_afe(props) {
     label,
     multiline,
     formKey,
-    options,
+    sObjectTypeFieldId = 'salesforce.sObjectType',
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
   const dispatch = useDispatch();
-  const isFilterIconDisabled = options?.disableFetch || false;
+  const sObjectTypeField = useSelector(state => selectors.formState(state, formKey)?.fields?.[sObjectTypeFieldId]);
+  const customOptions = {
+    disableFetch: !sObjectTypeField?.value,
+    commMetaPath: sObjectTypeField
+      ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+      : '',
+    resetValue: [],
+  };
+  const isFilterIconDisabled = customOptions?.disableFetch || false;
+
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
@@ -66,7 +76,7 @@ export default function DynaSalesforceLookup_afe(props) {
       fieldId: id,
       stage: 'importMappingExtract',
       onSave: handleSave,
-      customOptions: options,
+      customOptions,
     }));
 
     history.push(buildDrawerUrl({
@@ -74,7 +84,7 @@ export default function DynaSalesforceLookup_afe(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, customOptions]);
 
   return (
     <>

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import DynaNetSuiteLookupafe from './DynaNetSuiteLookup_afe';
-import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockHistoryPush = jest.fn();
@@ -19,11 +19,11 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = reduxStore;
 
-mutateStore(initialStore, draft => {
-  draft.session.metadata = {application: {someconnectionId: {somePath: {
-    data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
-  }}}};
-});
+initialStore.getState().session.form.someFormKey = {
+  fields: {
+    'netsuite_da.recordType': { value: 'account' },
+  },
+};
 
 const mockOnFieldChange = jest.fn();
 
@@ -39,7 +39,6 @@ function initDynaNetSuiteLookupafe() {
           onFieldChange={mockOnFieldChange}
           connectionId="someconnectionId"
           selectOptions={[{}]}
-          options={[]}
           filterKey="suitescript-recordTypes"
           errorMessages="someErrorMessage"
           formKey="someFormKey"
@@ -49,7 +48,7 @@ function initDynaNetSuiteLookupafe() {
           placeholder="someplaceholder"
       />
       </Route>
-    </MemoryRouter>);
+    </MemoryRouter>, {initialStore});
 }
 
 describe('DynaNetSuiteLookupafe test cases', () => {
@@ -91,7 +90,11 @@ describe('DynaNetSuiteLookupafe test cases', () => {
         fieldId: 'someID',
         onSave: saveFunction,
         stage: 'importMappingExtract',
-        customOptions: [],
+        customOptions: {
+          disableFetch: false,
+          commMetaPath: 'netsuite/metadata/suitescript/connections/undefined/recordTypes/account/searchFilters?includeJoinFilters=true',
+          resetValue: [],
+        },
       })
     );
     saveFunction({rule: 'somestring'});
@@ -105,5 +108,17 @@ describe('DynaNetSuiteLookupafe test cases', () => {
     userEvent.click(actionButton);
     saveFunction({rule: []});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', '');
+  });
+
+  test('should not be able to open filter AFE if recordTypeField is not selected', () => {
+    initialStore.getState().session.form.someFormKey = {
+      fields: {
+        'netsuite_da.recordType': { value: '' },
+      },
+    };
+    initDynaNetSuiteLookupafe();
+    const actionButton = screen.getByRole('button');
+
+    expect(actionButton).toBeDisabled();
   });
 });
