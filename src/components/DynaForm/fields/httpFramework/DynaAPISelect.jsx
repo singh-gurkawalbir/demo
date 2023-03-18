@@ -18,7 +18,6 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
 }));
-const desc = 'Access and manipulate a store\'s data using traditional RESTful methods.';
 
 export default function APISelect(props) {
   const {
@@ -44,7 +43,7 @@ export default function APISelect(props) {
   const stagedResource = merged || emptyObject;
 
   const httpConnectorData = useSelector(state => selectors.connectorData(state, stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId), shallowEqual);
-  const data = useMemo(() => httpConnectorData?.apis?.map(({name, _id, description}) => ({name, id: _id, description: description || desc })), [httpConnectorData?.apis]);
+  const data = useMemo(() => httpConnectorData?.apis?.map(({name, _id, description}) => ({name, id: _id, description})), [httpConnectorData?.apis]);
   const val = useMemo(() => {
     if (!stagedResource || !stagedResource.http || !stagedResource.http._httpConnectorApiId) return defaultValue;
 
@@ -62,7 +61,6 @@ export default function APISelect(props) {
 
   const handleClick = useCallback(val => {
     setValue(val);
-    // onFieldChange(id, val);
     const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = stagedResource[curr];
 

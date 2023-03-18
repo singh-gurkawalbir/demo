@@ -923,16 +923,8 @@ export function* initFormValues({
           httpConnectorId: httpPublishedConnector._id,
         });
       }
-      // if (httpConnectorData?.apis?.length && (resource?.http?._httpConnectorApiId || resource?.http?.apiType)) {
-      //   httpConnectorData = httpConnectorData.apis.find(api => api._id === (resource.http._httpConnectorApiId || resource?.http?.apiType));
-      // }
       // standard form init fn...
       finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value, options?.apiChange);
-      // if (httpConnectorData?.apis?.length && isNewId(resourceId) && !resource?.http?.apiType) {
-      //   const tempFieldMap = Object.keys(finalFieldMeta.fieldMap).reduce((acc, field) => ({...acc, [field]: {...finalFieldMeta.fieldMap[field], visible: field === 'name' || field === 'http.apiType'}}), {});
-
-      //   finalFieldMeta = {...finalFieldMeta, fieldMap: tempFieldMap};
-      // }
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);
