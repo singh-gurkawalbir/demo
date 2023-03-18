@@ -129,9 +129,17 @@ export function* onSuccessSaga(response, action) {
 
 export function* onErrorSaga(error, action) {
   const { path, method, origReq } = action.request.meta;
+  const {data} = error;
+  let code = [];
+  let message = [];
 
-  if (error?.data?.errors?.some(e => e.code === ('entitlement_reached' || 'subscription_required'))) {
-    yield call(handleLicenseErrors, error, path, method);
+  if (isJsonString(data)) {
+    code = JSON.parse(data)?.errors?.map(error => error.code) || [];
+    message = JSON.parse(data)?.errors?.map(error => error.message) || [];
+  }
+
+  if ((code?.includes('subscription_required') || code?.includes('entitlement_reached'))) {
+    yield call(handleLicenseErrors, error, path, method, code, message);
   }
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
