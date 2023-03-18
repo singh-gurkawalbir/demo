@@ -10,6 +10,7 @@ import {
 import { unauthenticateAndDeleteProfile } from '../..';
 import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
+import { handleLicenseErrors } from '../../handleLicenseErrors';
 import { RETRY_COUNT } from '../../../reducers/comms/networkComms';
 import { sendRequest } from '..';
 
@@ -128,27 +129,10 @@ export function* onSuccessSaga(response, action) {
 
 export function* onErrorSaga(error, action) {
   const { path, method, origReq } = action.request.meta;
-  const {data} = error;
-  let code = [];
 
-  if (isJsonString(data)) {
-    code = JSON.parse(data)?.errors?.map(error => error.code) || [];
+  if (error?.data?.errors?.some(e => e.code === ('entitlement_reached' || 'subscription_required'))) {
+    yield call(handleLicenseErrors, error, path, method);
   }
-
-  if (code.includes('subscription_required') || code.includes('entitlement_reached')) {
-    if (code.includes('subscription_required')) {
-      yield put(actions.license.receivedLicenseErrorMessage('subscription_required'));
-    } else {
-      yield put(actions.license.receivedLicenseErrorMessage('entitlement_reached'));
-    }
-    yield put(
-      actions.api.failure(path, method, error.data, true)
-    );
-    yield call(throwExceptionUsingTheResponse, error);
-
-    return {error};
-  }
-
   if (error.status >= 400 && error.status < 500) {
     // All api calls should have this behavior
     // & CSRF expiration failure should dispatch these actions
