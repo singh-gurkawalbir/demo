@@ -74,7 +74,6 @@ export default {
     type: 'apiSelect',
     label: 'API type',
     helpKey: 'connection.http._httpConnectorApiId',
-    required: true,
   },
   application: {
     isLoggable: true,

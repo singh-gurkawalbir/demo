@@ -337,11 +337,11 @@ export default function DynaSelect(props) {
 
     return ITEM_SIZE;
   }, [items]);
-  const isConnForm = useMemo(() => options?.some(option =>
+  const isConnForm = useMemo(() => id !== '_borrowConcurrencyFromConnectionId' && options?.some(option =>
     option.items?.some(item =>
       item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId
     )
-  ), [options]);
+  ), [id, options]);
 
   useEffect(() => {
     if (items.length && isConnForm) {
