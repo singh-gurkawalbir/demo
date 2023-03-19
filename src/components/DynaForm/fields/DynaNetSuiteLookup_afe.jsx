@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { selectors } from '../../../reducers';
@@ -47,6 +48,7 @@ export default function DynaNetSuiteLookup_afe(props) {
     resourceId,
     flowId,
     label,
+    options = {},
     recordTypeFieldId = 'netsuite_da.recordType',
     formKey,
     resourceType,
@@ -60,14 +62,20 @@ export default function DynaNetSuiteLookup_afe(props) {
   const editorId = getValidRelativePath(id);
 
   const recordTypeField = useSelector(state => selectors.formState(state, formKey)?.fields?.[recordTypeFieldId]);
-  const customOptions = {
-    disableFetch: !recordTypeField?.value,
-    commMetaPath: recordTypeField
-      ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
-      : '',
-    resetValue: [],
-  };
 
+  const customOptions = useMemo(() => {
+    if (!isEmpty(options)) return options;
+
+    return {
+      disableFetch: !recordTypeField?.value,
+      commMetaPath: recordTypeField
+        ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
+        : '',
+      resetValue: [],
+    };
+  }, [options, recordTypeField]);
+
+  console.log('customOptions', recordTypeField);
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
