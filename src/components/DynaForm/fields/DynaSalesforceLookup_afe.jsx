@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { selectors } from '../../../reducers';
@@ -46,6 +47,7 @@ export default function DynaSalesforceLookup_afe(props) {
     label,
     multiline,
     formKey,
+    options = {},
     sObjectTypeFieldId = 'salesforce.sObjectType',
   } = props;
   const history = useHistory();
@@ -53,13 +55,19 @@ export default function DynaSalesforceLookup_afe(props) {
   const editorId = getValidRelativePath(id);
   const dispatch = useDispatch();
   const sObjectTypeField = useSelector(state => selectors.formState(state, formKey)?.fields?.[sObjectTypeFieldId]);
-  const customOptions = {
-    disableFetch: !sObjectTypeField?.value,
-    commMetaPath: sObjectTypeField
-      ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
-      : '',
-    resetValue: [],
-  };
+
+  const customOptions = useMemo(() => {
+    if (!isEmpty(options)) return options;
+
+    return {
+      disableFetch: !sObjectTypeField?.value,
+      commMetaPath: sObjectTypeField
+        ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
+        : '',
+      resetValue: [],
+    };
+  }, [options, sObjectTypeField]);
+
   const isFilterIconDisabled = customOptions?.disableFetch || false;
 
   const handleSave = useCallback(editorValues => {

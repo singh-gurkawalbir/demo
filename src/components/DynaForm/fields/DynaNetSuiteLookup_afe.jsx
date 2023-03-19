@@ -75,7 +75,6 @@ export default function DynaNetSuiteLookup_afe(props) {
     };
   }, [options, recordTypeField]);
 
-  console.log('customOptions', recordTypeField);
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
