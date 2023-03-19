@@ -37,7 +37,7 @@ export default {
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
     ],
-    label: 'Operation xyz',
+    label: 'Operation',
     required: true,
     filterKey: 'suitescript-recordTypes',
     connectionId: r => r?._connectionId,
