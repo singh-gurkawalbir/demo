@@ -65,6 +65,7 @@ export default function DynaNetSuiteSubRecords(props) {
     resourceContext,
     connectionId,
     formKey,
+    options = {},
     recordTypeFieldId = 'netsuite_da.recordType',
     onFieldChange,
     id,
@@ -77,7 +78,12 @@ export default function DynaNetSuiteSubRecords(props) {
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
   const { resourceId } = resourceContext;
-  const recordType = useSelector(state => selectors.formState(state, formKey)?.fields?.[recordTypeFieldId]?.value);
+  const recordType = useSelector(state => {
+    // We still support options incase IA uses this field and feeds recordType through options
+    if (options?.recordType) return options.recordType;
+
+    return selectors.formState(state, formKey)?.fields?.[recordTypeFieldId]?.value;
+  });
 
   const {hasSubrecord, status} = useSelector(state => {
     const {data: recordTypes, status} = selectors.metadataOptionsAndResources(state, {
