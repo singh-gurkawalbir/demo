@@ -1,9 +1,11 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import MultiApiSelect from '.';
 
+const mockOnClick = jest.fn();
 const props = {
   items: [{
     name: 'Shopify',
@@ -16,7 +18,7 @@ const props = {
     description: 'Access and manipulate a store\'s data using the GraphQL query language.',
   }],
   value: '63d94c4d8ba47f5fa4c00002',
-  onClick: jest.fn(),
+  onClick: mockOnClick,
 };
 
 describe('MultiApiSelect UI tests', () => {
@@ -32,5 +34,12 @@ describe('MultiApiSelect UI tests', () => {
   test('should display none when items is []', () => {
     renderWithProviders(<MultiApiSelect {...props} items={[]} />);
     expect(screen.queryByText('Shopify')).not.toBeInTheDocument();
+  });
+  test('should call the click handler on clicking the radio icon', () => {
+    renderWithProviders(<MultiApiSelect {...props} />);
+    const radio = screen.getAllByRole('radio');
+
+    userEvent.click(radio[0]);
+    expect(mockOnClick).toHaveBeenCalled();
   });
 });

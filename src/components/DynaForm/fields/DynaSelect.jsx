@@ -1,4 +1,4 @@
-import { FormLabel, Input, ListSubheader } from '@material-ui/core';
+import { FormLabel, Input, ListSubheader, Typography } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
@@ -160,9 +160,14 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     display: 'flex',
   },
+  apiType: {
+    color: theme.palette.secondary.light,
+    lineHeight: '14px',
+  },
 }));
 
 const APIData = ({ connInfo = {} }) => {
+  const classes = useStyles();
   const { httpConnectorId, httpConnectorApiId, httpConnectorVersionId } = connInfo;
   const connectorData = useSelector(state => selectors.connectorData(state, httpConnectorId) || {});
   const { versions = [], apis = [] } = connectorData;
@@ -173,8 +178,10 @@ const APIData = ({ connInfo = {} }) => {
 
   return (
     <>
-      {currApi?.name && <div style={{fontSize: '12px'}}><span style={{fontWeight: 'bold'}}>API type: </span><span>{currApi.name}</span></div>}
-      {currVersion?.name && <div style={{fontSize: '12px'}}><span style={{fontWeight: 'bold'}}>API version: </span><span>{currVersion.name}</span></div>}
+      <Typography variant="caption" className={classes.apiType}>
+        {currApi?.name && <><span><b>API type:</b></span> <span>{currApi.name}</span></>}
+        {currVersion?.name && <><br /><span><b>API version:</b> </span><span>{currVersion.name}</span></>}
+      </Typography>
     </>
   );
 };
@@ -243,7 +250,6 @@ export default function DynaSelect(props) {
 
   const listRef = React.createRef();
   const [open, setOpen] = useState(false);
-  const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectorData = useSelector(selectors.httpConnector);
@@ -348,13 +354,12 @@ export default function DynaSelect(props) {
       }, new Set());
 
       connectorIds?.forEach(httpConnectorId => {
-        if (!connectorData?.[httpConnectorId] && !isConnectorCalled?.[httpConnectorId]) {
-          setIsConnectorCalled(connIds => ({ ...connIds, [httpConnectorId]: true }));
+        if (!connectorData?.[httpConnectorId]) {
           dispatch(actions.httpConnectors.requestConnector({ httpConnectorId }));
         }
       });
     }
-  }, [items, dispatch, connectorData, isConnForm, isConnectorCalled]);
+  }, [items, dispatch, connectorData, isConnForm]);
 
   const [itemSize2Count, itemSize3Count] = useMemo(() => (
     options?.reduce(([count1, count2], option) => {

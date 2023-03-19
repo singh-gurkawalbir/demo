@@ -2,11 +2,12 @@ import React, { useState, useCallback } from 'react';
 import { Typography, makeStyles, Radio } from '@material-ui/core';
 import RadioBtnUnselectedIcon from '../icons/RadioBtnUnselectedIcon';
 import RadioBtnSelectedIcon from '../icons/RadioBtnSelectedIcon';
+import CeligoTruncate from '../CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   apiListWrapper: {
     display: 'grid',
-    gridTemplateColumns: 'auto auto auto',
+    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: theme.spacing(2),
   },
   apiItem: {
@@ -17,13 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   apiTitle: {
     fontWeight: 'bold',
-    fontSize: 14,
     marginBottom: theme.spacing(0.5),
-  },
-  apiDescription: {
-    fontSize: 13,
-    overflow: 'auto',
-    maxHeight: theme.spacing(5),
   },
   apiRadio: {
     width: 18,
@@ -60,7 +55,11 @@ export default function MultiApiSelect({ items, value: val, onClick}) {
           data-test={name}
           onChange={handleClick}>
           <Typography variant="body2" className={classes.apiTitle}>{name}</Typography>
-          <Typography variant="subtitle2" component="div" className={classes.apiDescription}>{description}</Typography>
+          <Typography variant="subtitle2" component="div">
+            <CeligoTruncate lines={3}>
+              {description}
+            </CeligoTruncate>
+          </Typography>
           <Radio
             color="default"
             checked={value === id}
