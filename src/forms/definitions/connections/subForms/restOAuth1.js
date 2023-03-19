@@ -28,7 +28,7 @@ export default {
     },
     'rest.oauth.oauth1.realm': {
       fieldId: 'rest.oauth.oauth1.realm',
-      visibleWhen: [{ field: 'rest.oauth.oauth1.signatureMethod', is: ['hmac-sha1', 'hmac-sha256', 'hmac-sha512', 'plaintext', 'rsa-sha1', 'rsa-sha256', 'rsa-sha512'] }],
+      visibleWhenAll: [{ field: 'rest.oauth.oauth1.signatureMethod', is: ['hmac-sha1', 'hmac-sha256', 'hmac-sha512', 'plaintext', 'rsa-sha1', 'rsa-sha256', 'rsa-sha512'] }],
     },
   },
   layout: {
