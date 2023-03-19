@@ -58,9 +58,6 @@ const PageGenerator = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
   );
-  const jdbcAppType = useSelector(
-    state => pending && selectors.jdbcConnectionType(state, pg._connectionId)
-  );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
   const exportNeedsRouting = useSelector(state =>
@@ -132,11 +129,6 @@ const PageGenerator = ({
               op: 'add',
               path: '/rdbmsAppType',
               value: rdbmsAppType,
-            },
-            {
-              op: 'add',
-              path: '/jdbcAppType',
-              value: jdbcAppType,
             }
           );
         }
