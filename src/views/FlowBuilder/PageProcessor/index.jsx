@@ -105,6 +105,7 @@ const PageProcessor = ({
         },
         // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
         // used to populate the same when user opens resource form
+        //
         {
           op: 'add',
           path: '/rdbmsAppType',
