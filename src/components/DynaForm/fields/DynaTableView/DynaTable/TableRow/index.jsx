@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
-    alignItems: 'center',
   },
   refreshIcon: {
     cursor: 'pointer',

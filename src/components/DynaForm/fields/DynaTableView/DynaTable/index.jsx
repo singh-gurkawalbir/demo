@@ -227,7 +227,6 @@ const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
             required={required}
           />
-          {/* do all multicolumn entry tables need to be redacted ? */}
           <div {...isLoggableAttr(isLoggable)} className={classes.tableViewWrapper}>
             <BaseTable
               isLoading={isLoading}
