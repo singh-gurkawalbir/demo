@@ -15,6 +15,7 @@ import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
+import { getHttpConnector } from '../../../constants/applications';
 
 const AUTO_CLEAR_SEARCH = 500;
 
@@ -340,14 +341,14 @@ export default function DynaSelect(props) {
   }, [items]);
   const isConnForm = useMemo(() => id !== '_borrowConcurrencyFromConnectionId' && options?.some(option =>
     option.items?.some(item =>
-      item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId
+      getHttpConnector(item.connInfo?.httpConnectorId) && (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId)
     )
   ), [id, options]);
 
   useEffect(() => {
     if (items.length && isConnForm) {
       const connectorIds = items.reduce((connSet, item) => {
-        if (item.connInfo?.httpConnectorId) {
+        if (getHttpConnector(item.connInfo?.httpConnectorId)) {
           connSet.add(item.connInfo.httpConnectorId);
         }
 
@@ -366,8 +367,10 @@ export default function DynaSelect(props) {
   const [itemSize2Count, itemSize3Count] = useMemo(() => (
     options?.reduce(([count1, count2], option) => {
       const [c1 = 0, c2 = 0] = option.items?.reduce(([c1, c2], item) => {
-        if (item.connInfo?.httpConnectorApiId && item.connInfo?.httpConnectorVersionId) return [c1, c2 + 1];
-        if (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId) return [c1 + 1, c2];
+        if (getHttpConnector(item.connInfo?.httpConnectorId)) {
+          if (item.connInfo?.httpConnectorApiId && item.connInfo?.httpConnectorVersionId) return [c1, c2 + 1];
+          if (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId) return [c1 + 1, c2];
+        }
 
         return [c1, c2];
       }, [0, 0]) || [0, 0];
