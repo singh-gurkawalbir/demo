@@ -327,7 +327,10 @@ describe('all modal sagas', () => {
           put(actions.user.preferences.update({
             defaultAShareId: 'something',
             environment: 'production',
-          })),
+          }, true)),
+        );
+        expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
+          call(updatePreferences),
         );
         expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
           put(actions.auth.clearStore({ authenticated: true })),

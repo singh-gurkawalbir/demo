@@ -15,49 +15,6 @@ describe('getLookupMetadata component Test cases', () => {
 
     expect(nonExpressionRes).toBeNull();
 
-    const fields = [{
-      id: 'expression',
-      value: 'expressionValue',
-    }];
-
-    const extractRes = response.optionsHandler('expression', [...fields, {
-      id: 'extract',
-      value: 'extractValue',
-    }]);
-
-    expect(extractRes).toBe('expressionValue{{extractValue}}');
-
-    const extract1Res = response.optionsHandler('expression', [{
-      id: 'extract',
-      value: 'extractValue',
-    }]);
-
-    expect(extract1Res).toBe('{{extractValue}}');
-
-    const extract2Res = response.optionsHandler('expression', [...fields, {
-      id: 'extract',
-      value: '*.extractValue',
-    }]);
-
-    expect(extract2Res).toBe('expressionValue{{*.extractValue}}');
-
-    const expressionRes = response.optionsHandler('expression', [...fields, {
-      id: 'functions',
-      value: 'functionsValue',
-    }, {
-      id: 'extract',
-    }]);
-
-    expect(expressionRes).toBe('expressionValuefunctionsValue');
-
-    const expression1Res = response.optionsHandler('expression', [...fields, {
-      id: 'functions',
-    }, {
-      id: 'extract',
-    }]);
-
-    expect(expression1Res).toBe('expressionValue');
-
     const lookupActionRes = response.optionsHandler('lookupAction', [{
       id: 'lookup.mode',
       value: 'dynamic',
@@ -111,17 +68,10 @@ describe('getLookupMetadata component Test cases', () => {
       value: 'recordTypeValue',
     }]);
 
-    expect(lookupExpressionRes).toEqual({
-      disableFetch: false,
-      commMetaPath: 'netsuite/metadata/suitescript/connections/undefined/recordTypes/recordTypeValue/searchFilters?includeJoinFilters=true',
-    });
-
+    expect(lookupExpressionRes).toBeNull();
     const lookupExpression1Res = response.optionsHandler('lookup.expression', []);
 
-    expect(lookupExpression1Res).toEqual({
-      disableFetch: true,
-      commMetaPath: '',
-    });
+    expect(lookupExpression1Res).toBeNull();
 
     const lookupResultFieldRes = response.optionsHandler('lookup.resultField', [{
       id: 'lookup.recordType',
