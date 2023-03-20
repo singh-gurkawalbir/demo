@@ -8541,7 +8541,7 @@ Object {
       ],
     },
   },
-  "init": [Function],
+  "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
