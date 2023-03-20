@@ -250,6 +250,7 @@ export default function DynaSelect(props) {
 
   const listRef = React.createRef();
   const [open, setOpen] = useState(false);
+  const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectorData = useSelector(selectors.httpConnector);
@@ -354,12 +355,13 @@ export default function DynaSelect(props) {
       }, new Set());
 
       connectorIds?.forEach(httpConnectorId => {
-        if (!connectorData?.[httpConnectorId]) {
+        if (!connectorData?.[httpConnectorId] && !isConnectorCalled?.[httpConnectorId]) {
+          setIsConnectorCalled(connIds => ({ ...connIds, [httpConnectorId]: true }));
           dispatch(actions.httpConnectors.requestConnector({ httpConnectorId }));
         }
       });
     }
-  }, [items, dispatch, connectorData, isConnForm]);
+  }, [items, dispatch, connectorData, isConnForm, isConnectorCalled]);
 
   const [itemSize2Count, itemSize3Count] = useMemo(() => (
     options?.reduce(([count1, count2], option) => {

@@ -13,16 +13,26 @@ export default function DynaSelectAliasResource({ options = {}, ...props}) {
   const { id, formKey, aliasContextResourceId, aliasContextResourceType, value } = props;
   const resourceList = useSelector(state => selectors.aliasResources(state, aliasResourceType, aliasContextResourceType, aliasContextResourceId) || emptyList);
   const selectOptions = useMemo(() => ([{
-    items: resourceList.map(res => ({
-      label: res.name,
-      value: res._id,
-      connInfo: {
-        httpConnectorId: res?.http?._httpConnectorId,
-        httpConnectorApiId: res?.http?._httpConnectorApiId,
-        httpConnectorVersionId: res?.http?._httpConnectorVersionId,
-      },
-    })),
-  }]), [resourceList]);
+    items: resourceList.map(res => {
+      const result = {
+        label: res.name,
+        value: res._id,
+      };
+
+      if (aliasResourceType === 'connections') {
+        return ({
+          ...result,
+          connInfo: {
+            httpConnectorId: res?.http?._httpConnectorId,
+            httpConnectorApiId: res?.http?._httpConnectorApiId,
+            httpConnectorVersionId: res?.http?._httpConnectorVersionId,
+          },
+        });
+      }
+
+      return result;
+    }),
+  }]), [resourceList, aliasResourceType]);
 
   useEffect(() => {
     if (!resourceList.length && !value) {
