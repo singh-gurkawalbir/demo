@@ -51,15 +51,25 @@ export default function AddOrSelect(props) {
   const resourceList = useSelector(state =>
     selectors.filteredResourceList(state, resource, resourceType, environment, manageOnly)
   );
-  const options = resourceList.map(c => ({
-    label: c.offline ? `${c.name} - Offline` : c.name,
-    value: c._id,
-    connInfo: {
-      httpConnectorId: c?.http?._httpConnectorId,
-      httpConnectorApiId: c?.http?._httpConnectorApiId,
-      httpConnectorVersionId: c?.http?._httpConnectorVersionId,
-    },
-  }));
+  const options = resourceList.map(c => {
+    const result = {
+      label: c.offline ? `${c.name} - Offline` : c.name,
+      value: c._id,
+    };
+
+    if (resourceType === 'connections') {
+      return ({
+        ...result,
+        connInfo: {
+          httpConnectorId: c?.http?._httpConnectorId,
+          httpConnectorApiId: c?.http?._httpConnectorApiId,
+          httpConnectorVersionId: c?.http?._httpConnectorVersionId,
+        },
+      });
+    }
+
+    return result;
+  });
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
