@@ -112,6 +112,7 @@ export default function DynaAutocomplete(props) {
     dataTest,
     isLoggable,
     options: actualOptions,
+    skipListBoxComponent = false,
   } = props;
 
   const actualValueInString = `${actualValue || ''}`;
@@ -164,7 +165,7 @@ export default function DynaAutocomplete(props) {
             )}
             data-test={dataTest || id}
             value={value}
-            ListboxComponent={ListboxComponent}
+            ListboxComponent={!skipListBoxComponent ? ListboxComponent : undefined}
             inputValue={inputValue}
             onInputChange={handleInputOptionSelect}
             onChange={(event, newValue) => {

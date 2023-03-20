@@ -1,5 +1,4 @@
 import { isNewId } from '../../utils/resource';
-import { alterFileDefinitionRulesVisibility } from '../formFactory/utils';
 
 export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   outputMode: {
@@ -509,8 +508,6 @@ export const getFileProviderExportsOptionsHandler = (fieldId, fields) => {
       field => field.id === 'file.fileDefinition.resourcePath'
     );
 
-    alterFileDefinitionRulesVisibility(fields);
-
     return {
       format: definition && definition.format,
       definitionId: definition && definition.value,
@@ -653,9 +650,14 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
 
   return null;
 };
-export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+export const updateHTTPFrameworkFormValues = (formValues, resource, connector) => {
+  let httpConnector = connector;
+
   if (!httpConnector) {
     return formValues;
+  }
+  if (resource?.http?._httpConnectorApiId) {
+    httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
   }
   const retValues = { ...formValues };
 
@@ -687,7 +689,7 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
     retValues['/http/headers'] = httpHeaders;
   }
 
-  retValues['/http/_httpConnectorId'] = httpConnector?._id;
+  retValues['/http/_httpConnectorId'] = connector?._id;
   if (retValues['/http/unencrypted/version']) {
     const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
 
