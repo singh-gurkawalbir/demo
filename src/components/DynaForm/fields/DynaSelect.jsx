@@ -177,13 +177,15 @@ const APIData = ({ connInfo = {} }) => {
 
   currVersion = currVersion?.filter(ver => ver._id === httpConnectorVersionId)?.[0];
 
+  if (!httpConnectorId) {
+    return null;
+  }
+
   return (
-    <>
-      <Typography variant="caption" className={classes.apiType}>
-        {currApi?.name && <><span><b>API type:</b></span> <span>{currApi.name}</span></>}
-        {currVersion?.name && <><br /><span><b>API version:</b> </span><span>{currVersion.name}</span></>}
-      </Typography>
-    </>
+    <Typography component="div" variant="caption" className={classes.apiType}>
+      {currApi?.name && <div><span><b>API type:</b></span> <span>{currApi.name}</span></div>}
+      {currVersion?.name && <div><span><b>API version:</b> </span><span>{currVersion.name}</span></div>}
+    </Typography>
   );
 };
 
