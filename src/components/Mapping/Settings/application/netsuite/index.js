@@ -238,7 +238,7 @@ export default {
           label: 'NS filters',
           connectionId,
           required: true,
-          refreshOptionsOnChangesTo: ['lookup.recordType'],
+          recordTypeFieldId: 'lookup.recordType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -640,17 +640,6 @@ export default {
           );
 
           lookupExpressionTextField.value = lookupExpressionField.value;
-        } else if (fieldId === 'lookup.expression') {
-          const recordTypeField = fields.find(
-            field => field.id === 'lookup.recordType'
-          );
-
-          return {
-            disableFetch: !(recordTypeField && recordTypeField.value),
-            commMetaPath: recordTypeField
-              ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
-              : '',
-          };
         } else if (fieldId === 'lookup.resultField') {
           const recordTypeField = fields.find(
             field => field.id === 'lookup.recordType'
