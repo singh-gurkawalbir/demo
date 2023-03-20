@@ -426,7 +426,15 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
     if (!resource?.http?._httpConnectorApiId) {
       if (isGenericHTTP) { return finalFieldMeta; }
 
-      const tempFieldMap = Object.keys(finalFieldMeta.fieldMap).reduce((acc, field) => ({...acc, [field]: {...finalFieldMeta.fieldMap[field], visible: field === 'name' || field === 'http._httpConnectorApiId'}}), {});
+      const tempFieldMap = Object.keys(finalFieldMeta.fieldMap).reduce((acc, field) => {
+        if (field === 'http._httpConnectorApiId') {
+          return ({...acc, [field]: {...finalFieldMeta.fieldMap[field], required: true}});
+        }
+
+        return ({...acc, [field]: {...finalFieldMeta.fieldMap[field], visible: field === 'name'}});
+      },
+
+      {});
 
       return {...finalFieldMeta, fieldMap: tempFieldMap};
     }
@@ -478,8 +486,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
 
       if (resource?.http?._httpConnectorApiId && key === 'http._httpConnectorApiId') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true};
-      }
-      if (key === 'http.ping.relativeURI') {
+      } else if (key === 'http.ping.relativeURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
         } else if (connector.versioning?.location === 'uri' && connector?.baseURIs?.[0]?.includes('/:_version')) {
