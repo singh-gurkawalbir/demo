@@ -3,7 +3,7 @@ import {handleLicenseErrors} from './index';
 import { throwExceptionUsingTheResponse } from '../api/requestInterceptors/utils';
 import actions from '../../actions';
 
-describe('Testsuite for Handle License Errors', () => {
+describe('Handle License Errors Saga', () => {
   test('handles subscription_required error', () => {
     const error = { data: 'Error message', status: 400 };
     const path = '/api/license';

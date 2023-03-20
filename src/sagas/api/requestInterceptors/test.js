@@ -21,6 +21,7 @@ import { unauthenticateAndDeleteProfile } from '../..';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { sendRequest } from '..';
+import { handleLicenseErrors } from '../../handleLicenseErrors';
 
 const status401 = new APIException({
   status: 401,
@@ -521,6 +522,52 @@ describe('request interceptors...testing the various stages of an api request on
         );
 
         expect(saga.next().done).toBe(true);
+      });
+    });
+    describe('onErrorSaga when it includes license code', () => {
+      test('should test onErrorSage when the code includes entitlement_reached', () => {
+        const code = ['entitlement_reached'];
+        const message = ['You have reached the maximum number of trading partners for your subscription. Please contact sales to request an upgrade.'];
+        const action = {
+          request: {
+            meta: {
+              path: '/testPath',
+              method: 'put',
+            },
+          },
+        };
+        const error = {
+          data: '{"errors":[{"field":"_id","code":"entitlement_reached","message":"You have reached the maximum number of trading partners for your subscription. Please contact sales to request an upgrade."}]}',
+        };
+
+        const saga = onErrorSaga(
+          error,
+          action
+        );
+
+        expect(saga.next().value).toEqual(call(handleLicenseErrors, error, action.request.meta.path, action.request.meta.method, code, message));
+      });
+      test('should test onErrorSage when the code includes subscription_required', () => {
+        const code = ['subscription_required'];
+        const message = ['Subscription Required'];
+        const action = {
+          request: {
+            meta: {
+              path: '/testPath',
+              method: 'put',
+            },
+          },
+        };
+        const error = {
+          data: '{"errors":[{"field":"_id","code":"subscription_required","message":"Subscription Required"}]}',
+        };
+
+        const saga = onErrorSaga(
+          error,
+          action
+        );
+
+        expect(saga.next().value).toEqual(call(handleLicenseErrors, error, action.request.meta.path, action.request.meta.method, code, message));
       });
     });
   });
