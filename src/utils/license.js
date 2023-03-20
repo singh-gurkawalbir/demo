@@ -149,7 +149,7 @@ export function platformLicenseActionDetails(license) {
     if (!license.trialEndDate) {
       licenseActionDetails = {
         action: 'startTrial',
-        label: 'Get unlimited flows',
+        label: 'Start free trial',
         id: 'unlimited-flows-button',
       };
     }
@@ -179,13 +179,13 @@ export function platformLicenseActionDetails(license) {
     } else if (license.type === 'endpoint' && !license.trialEndDate) {
       licenseActionDetails = {
         action: 'startTrial',
-        label: 'Get unlimited flows',
+        label: 'Start free trial',
         id: 'unlimited-flows-button',
       };
     } else if (!license.trialEndDate && !license.expires) {
       licenseActionDetails = {
         action: 'startTrial',
-        label: 'Get unlimited flows',
+        label: 'Start free trial',
         id: 'unlimited-flows-button',
       };
     }

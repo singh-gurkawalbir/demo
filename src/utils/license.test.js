@@ -544,7 +544,7 @@ describe('platformLicenseActionDetails function test', () => {
       };
     const expected = {
       action: 'startTrial',
-      label: 'Get unlimited flows',
+      label: 'Start free trial',
       id: 'unlimited-flows-button',
     };
     const license = selectors.platformLicense(state);
