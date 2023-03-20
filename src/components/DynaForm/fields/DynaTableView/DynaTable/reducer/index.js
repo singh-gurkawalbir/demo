@@ -27,7 +27,6 @@ export default function reducer(state, action) {
     onRowChange,
     invalidateParentFieldOnError,
     setIsValid,
-    isVirtualizedTable,
   } = action;
 
   return produce(state, draft => {
@@ -70,10 +69,10 @@ export default function reducer(state, action) {
         */
         if (invalidateParentFieldOnError && isAllValuesEntered && isLastRowEmpty) {
           draft.isValid = true;
-          if (isVirtualizedTable) { setIsValid(true); }
+          if (invalidateParentFieldOnError) { setIsValid(true); }
         } else {
           draft.isValid = false;
-          if (isVirtualizedTable) { setIsValid(false); }
+          if (invalidateParentFieldOnError) { setIsValid(false); }
         }
 
         if (isAllValuesEntered && !isLastRowEmpty) {

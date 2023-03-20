@@ -64,8 +64,6 @@ const initializeTableState = (optionsMap, ignoreEmptyRow) => value => {
     return {
       touched: false,
       ignoreEmptyRow,
-      // isValid property is added to check whether the optionMap has required fields or not.
-      isValid: !optionsMap.some(obj => obj.required),
       tableStateValue: [
         emptyRow,
       ]};

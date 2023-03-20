@@ -49,7 +49,7 @@ describe('table reducer', () => {
       });
     });
     test('should not push a new row since a non first column value has been updated', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'l', rowIndex: 2, field: 'generate', invalidateParentFieldOnError: true});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'l', rowIndex: 2, field: 'generate', invalidateParentFieldOnError: true, setIsValid: jest.fn()});
 
       expect(state).toEqual({
         touched: true,
@@ -129,8 +129,8 @@ describe('table reducer', () => {
       });
     });
     test('should push a new row when last row is updated completely when invalidateParentFieldOnError is set to true and should check the isValid status', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'v', rowIndex: 2, field: 'generate', invalidateParentFieldOnError: true});
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'kz', rowIndex: 2, field: 'extract', invalidateParentFieldOnError: true});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'v', rowIndex: 2, field: 'generate', invalidateParentFieldOnError: true, setIsValid: jest.fn()});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'kz', rowIndex: 2, field: 'extract', invalidateParentFieldOnError: true, setIsValid: jest.fn()});
 
       expect(state).toEqual({
         touched: true,
@@ -155,7 +155,7 @@ describe('table reducer', () => {
       });
     });
     test('should update non last rows without adding a new row when invalidateParentFieldOnError is true and should check isValid should be true', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 0, field: 'extract', invalidateParentFieldOnError: true});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 0, field: 'extract', invalidateParentFieldOnError: true, setIsValid: jest.fn()});
 
       expect(state).toEqual({
         isValid: true,
@@ -181,7 +181,7 @@ describe('table reducer', () => {
       });
     });
     test('should update first column value and a new row is added since it is the first column value when invalidateParentFieldOnError is set to true and should check the isValid status', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 2, field: 'extract', invalidateParentFieldOnError: true});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 2, field: 'extract', invalidateParentFieldOnError: true, setIsValid: jest.fn()});
       expect(state).toEqual({
         touched: true,
         isValid: true,
@@ -205,7 +205,7 @@ describe('table reducer', () => {
       });
     });
     test('should test the isValid status set to true when the invalidateParentFieldOnError is set to true and when there is a lastEmptyRow', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, invalidateParentFieldOnError: true, value: 'k', rowIndex: 0, field: 'extract'});
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, invalidateParentFieldOnError: true, value: 'k', rowIndex: 0, field: 'extract', setIsValid: jest.fn()});
       expect(state).toEqual({
         touched: true,
         isValid: true,

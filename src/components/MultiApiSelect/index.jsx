@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
     marginBottom: theme.spacing(0.5),
   },
-  apiDescription:{
+  apiDescription: {
     height: theme.spacing(7),
   },
   apiRadio: {
@@ -60,7 +60,7 @@ export default function MultiApiSelect({ items, value: val, onClick}) {
           <Typography variant="body2" className={classes.apiTitle}>{name}</Typography>
           <Typography variant="subtitle2" component="div" className={classes.apiDescription}>
             <CeligoTruncate lines={3}>
-            {description}
+              {description}
             </CeligoTruncate>
           </Typography>
           <Radio
