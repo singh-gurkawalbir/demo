@@ -11,6 +11,7 @@ describe('dragHandleGridItem UI tests', () => {
 
     const {utils} = renderWithProviders(<DragHandleGridItem {...props} />);
 
-    expect(utils.container).toContainHTML('<div><div class="makeStyles-dragBar-1 makeStyles-dragBar-5"><div class="makeStyles-line-2 makeStyles-verticalLine-3" /></div></div>');
+    // Checking if the component renders as needed in the absence of area prop
+    expect(utils.container).toContainHTML('<div><div class="makeStyles-dragBar-1" style="cursor: ew-resize;"><div class="makeStyles-line-2 makeStyles-verticalLine-3" /></div></div>');
   });
 });
