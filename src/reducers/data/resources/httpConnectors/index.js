@@ -48,7 +48,7 @@ selectors.connectorData = (state, httpConnectorId) => {
   return state?.httpConnector?.[httpConnectorId];
 };
 
-selectors.httpConnector = state => state?.httpConnector;
+selectors.httpConnectorsList = state => state?.httpConnector;
 
 selectors.httpConnectorMetaData = (state, httpConnectorId = '', httpVersionId = '', httpConnectorApiId = '') => {
   if (!httpConnectorId) {

@@ -10,6 +10,12 @@ import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test
 import actions from '../../../actions';
 
 const initialStore = reduxStore;
+const mockOnFieldChange = jest.fn();
+
+jest.mock('.../../../constants/applications', () => ({
+  ...jest.requireActual('../../../constants/applications'),
+  getHttpConnector: () => ({}),
+}));
 
 mutateStore(initialStore, draft => {
   draft.data.httpConnectors.httpConnector = {
@@ -43,7 +49,6 @@ function initDynaSelect(props = {}) {
 
   return renderWithProviders(ui, { initialStore });
 }
-const mockOnFieldChange = jest.fn();
 
 describe('dynaSelect UI test cases', () => {
   let mockDispatchFn;

@@ -256,7 +256,7 @@ export default function DynaSelect(props) {
   const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
   const dispatch = useDispatch();
-  const connectorData = useSelector(selectors.httpConnector);
+  const connectorData = useSelector(selectors.httpConnectorsList);
 
   const isSubHeader =
     options &&
@@ -350,7 +350,7 @@ export default function DynaSelect(props) {
   useEffect(() => {
     if (items.length && isConnForm) {
       const connectorIds = items.reduce((connSet, item) => {
-        if (getHttpConnector(item.connInfo?.httpConnectorId)) {
+        if (item.connInfo?.httpConnectorId && getHttpConnector(item.connInfo?.httpConnectorId)) {
           connSet.add(item.connInfo.httpConnectorId);
         }
 
