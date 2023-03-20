@@ -134,3 +134,13 @@ export const USAGE_TIER_HOURS = {
   heavy: 4000,
   custom: 10000,
 };
+export const SIGNUP_SEARCH_PARAMS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_term',
+  'utm_content',
+  'session_id',
+  'referer',
+  'site_url',
+];

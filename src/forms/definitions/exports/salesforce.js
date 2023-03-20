@@ -16,22 +16,6 @@ export default {
 
       return value;
     }
-    if (fieldId === 'salesforce.distributed.qualifier') {
-      const sObjectTypeField = fields.find(
-        field => field.fieldId === 'salesforce.sObjectType'
-      );
-
-      return {
-        sObjectType: sObjectTypeField?.value,
-        hasSObjectType: !!sObjectTypeField?.value,
-        commMetaPath: sObjectTypeField
-          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
-          : '',
-        resetValue:
-          sObjectTypeField &&
-          sObjectTypeField.value !== sObjectTypeField.defaultValue,
-      };
-    }
     if (fieldId === 'salesforce.distributed.skipExportFieldId') {
       const sObjectTypeField = fields.find(
         field => field.fieldId === 'salesforce.sObjectType'
@@ -286,7 +270,6 @@ export default {
     },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: {
       formId: 'advancedSettings',
