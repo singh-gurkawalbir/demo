@@ -22,18 +22,16 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
-    marginBottom: theme.spacing(1),
+    alignItems: 'center',
   },
   refreshIcon: {
     cursor: 'pointer',
   },
-  dynaTableActions: {
-    alignSelf: 'flex-start',
-    marginTop: theme.spacing(1),
-  },
   bodyElementsWrapper: {
     display: 'flex',
     paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    alignItems: 'center',
   },
   child: {
     '& + div': {
@@ -183,6 +181,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
     const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
+    const skipListBox = optionsMap?.some(({skipListBoxComponent}) => skipListBoxComponent);
 
     return (
       <div
@@ -196,6 +195,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
           labelName="label"
           valueName="value"
           onBlur={onFieldChange}
+          skipListBoxComponent={skipListBox}
     />
       </div>
     );
@@ -304,9 +304,7 @@ export default function TableRow({
 
       </div>
       {isNotLastRow && !ignoreEmptyRow && (
-      <div
-        key="delete_button"
-        className={classes.dynaTableActions}>
+      <div key="delete_button">
         <ActionButtonMemo
           disableDeleteRows={disableDeleteRows}
           rowIndex={rowIndex}

@@ -43,12 +43,19 @@ export default function DynaWebHookSampleData(props) {
     label,
     id,
     onFieldChange,
-    options,
     resourceId,
     errorMessages,
     description,
     isValid,
+    formKey,
   } = props;
+
+  const webHookUrl = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+
+    return formContext.value?.['/webhook/url'];
+  });
+
   const sampleData = useSelector(state => {
     const resource = selectors.resource(state, 'exports', resourceId) || {};
 
@@ -61,7 +68,7 @@ export default function DynaWebHookSampleData(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);
   const generateSampleData = useCallback(() => {
-    if (!options.webHookUrl) {
+    if (!webHookUrl) {
       return enqueueSnackbar({
         message: 'Webhook url is mandatory.',
         variant: 'error',
@@ -69,7 +76,7 @@ export default function DynaWebHookSampleData(props) {
     }
 
     dispatch(actions.resource.request('exports', resourceId));
-  }, [dispatch, enqueueSnackbar, options.webHookUrl, resourceId]);
+  }, [dispatch, enqueueSnackbar, webHookUrl, resourceId]);
 
   const handleSampleDataChange = useCallback(
     value => {

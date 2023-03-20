@@ -7,17 +7,36 @@ import messageStore from '../../../../utils/messageStore';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import DynaSelect from '../DynaSelect';
 
-export default function DynaSelectAliasResource({ options = {}, ...props}) {
+export default function DynaSelectAliasResource(props) {
   const dispatch = useDispatch();
-  const { aliasResourceType } = options;
   const { id, formKey, aliasContextResourceId, aliasContextResourceType, value } = props;
+  const aliasResourceType = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+
+    return formContext?.value?.aliasResourceType;
+  });
   const resourceList = useSelector(state => selectors.aliasResources(state, aliasResourceType, aliasContextResourceType, aliasContextResourceId) || emptyList);
   const selectOptions = useMemo(() => ([{
-    items: resourceList.map(res => ({
-      label: res.name,
-      value: res._id,
-    })),
-  }]), [resourceList]);
+    items: resourceList.map(res => {
+      const result = {
+        label: res.name,
+        value: res._id,
+      };
+
+      if (aliasResourceType === 'connections') {
+        return ({
+          ...result,
+          connInfo: {
+            httpConnectorId: res?.http?._httpConnectorId,
+            httpConnectorApiId: res?.http?._httpConnectorApiId,
+            httpConnectorVersionId: res?.http?._httpConnectorVersionId,
+          },
+        });
+      }
+
+      return result;
+    }),
+  }]), [resourceList, aliasResourceType]);
 
   useEffect(() => {
     if (!resourceList.length && !value) {

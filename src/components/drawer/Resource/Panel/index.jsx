@@ -16,6 +16,7 @@ import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
+import useHandleFileDefinitionFieldVisibility from './useHandleFileDefinitionFieldVisibility';
 import { getParentResourceContext } from '../../../../utils/connections';
 import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
@@ -112,6 +113,7 @@ export default function Panel(props) {
   const formKey = getAsyncKey(resourceType, id);
   const isNew = operation === 'add';
 
+  useHandleFileDefinitionFieldVisibility(formKey);
   useHandleResourceFormFlowSampleData(formKey);
   useResourceFormRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
