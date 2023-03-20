@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import TablePagination from '@material-ui/core/TablePagination';
+import makeStyles from '@mui/styles/makeStyles';
+import TablePagination from '@mui/material/TablePagination';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -199,82 +199,80 @@ export default function JobErrorTable({
     setSelectedErrors(selected);
   };
 
-  return (
-    <>
-      <ul className={classes.statusWrapper}>
-        <li>
-          Success: <span className={classes.success}>{job.numSuccess}</span>
-        </li>
-        <li>
-          Ignore: <span>{job.numIgnore}</span>
-        </li>
-        <li>
-          Error: <span className={classes.error}>{job.numError}</span>
-        </li>
-        <li>
-          Duration: <span className={classes.darkGray}>{job.duration}</span>
-        </li>
-        <li>
-          Completed:
-          <span className={classes.darkGray}>
-            <DateTimeDisplay dateTime={job.endedAt} />
-          </span>
-        </li>
-      </ul>
-      {!jobErrors ? (
-        <Spinner centerAll size="medium">Loading</Spinner>
-      ) : (
-        <>
-          <ActionGroup className={classes.btnsWrappper}>
+  return <>
+    <ul className={classes.statusWrapper}>
+      <li>
+        Success: <span className={classes.success}>{job.numSuccess}</span>
+      </li>
+      <li>
+        Ignore: <span>{job.numIgnore}</span>
+      </li>
+      <li>
+        Error: <span className={classes.error}>{job.numError}</span>
+      </li>
+      <li>
+        Duration: <span className={classes.darkGray}>{job.duration}</span>
+      </li>
+      <li>
+        Completed:
+        <span className={classes.darkGray}>
+          <DateTimeDisplay dateTime={job.endedAt} />
+        </span>
+      </li>
+    </ul>
+    {!jobErrors ? (
+      <Spinner centerAll size="medium">Loading</Spinner>
+    ) : (
+      <>
+        <ActionGroup className={classes.btnsWrappper}>
+          <OutlinedButton
+            data-test="markResolvedJobs"
+            color="secondary"
+            onClick={handleResolveClick}
+            disabled={!hasUnresolvedErrors}>
+            {numSelectedResolvableErrors > 0
+              ? `Mark resolved ${numSelectedResolvableErrors} errors`
+              : 'Mark resolved'}
+          </OutlinedButton>
+          { job.errorFileId && (
             <OutlinedButton
-              data-test="markResolvedJobs"
               color="secondary"
-              onClick={handleResolveClick}
-              disabled={!hasUnresolvedErrors}>
-              {numSelectedResolvableErrors > 0
-                ? `Mark resolved ${numSelectedResolvableErrors} errors`
-                : 'Mark resolved'}
+              data-test="downloadAllErrors"
+              onClick={handleDownloadAllErrorsClick}>
+              Download all errors
             </OutlinedButton>
-            { job.errorFileId && (
-              <OutlinedButton
-                color="secondary"
-                data-test="downloadAllErrors"
-                onClick={handleDownloadAllErrorsClick}>
-                Download all errors
-              </OutlinedButton>
-            )}
-          </ActionGroup>
+          )}
+        </ActionGroup>
 
-          <>
-            <TablePagination
-              classes={{ root: classes.tablePaginationRoot }}
-              rowsPerPageOptions={[rowsPerPage]}
-              component="div"
-              rowsPerPage={rowsPerPage}
-              count={jobErrors.length}
-              page={currentPage}
-              backIconButtonProps={{
-                'aria-label': 'Previous Page',
-              }}
-              nextIconButtonProps={{
-                'aria-label': 'Next Page',
-              }}
-              onChangePage={handleChangePage}
-              // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            />
+        <>
+          <TablePagination
+            classes={{ root: classes.tablePaginationRoot }}
+            rowsPerPageOptions={[rowsPerPage]}
+            component="div"
+            rowsPerPage={rowsPerPage}
+            count={jobErrors.length}
+            page={currentPage}
+            backIconButtonProps={{
+              'aria-label': 'Previous Page',
+            }}
+            nextIconButtonProps={{
+              'aria-label': 'Next Page',
+            }}
+            onPageChange={handleChangePage}
+            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
 
-            <CeligoTable
-              data={jobErrorsInCurrentPage}
-              selectableRows={hasUnresolvedErrorsInCurrentPage}
-              isSelectableRow={r => !r.resolved}
-              onSelectChange={handleJobErrorSelectChange}
-              useColumns={useColumns}
-              className={classes.errorMessageTable}
-            />
-          </>
+          <CeligoTable
+            data={jobErrorsInCurrentPage}
+            selectableRows={hasUnresolvedErrorsInCurrentPage}
+            isSelectableRow={r => !r.resolved}
+            onSelectChange={handleJobErrorSelectChange}
+            useColumns={useColumns}
+            className={classes.errorMessageTable}
+          />
         </>
-      )}
-    </>
-  );
+      </>
+    )}
+  </>;
 }
 

@@ -1,6 +1,7 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import React, { useState } from 'react';
-import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
+import { Divider, Typography, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import clsx from 'clsx';
 import Help from '../../../../Help';

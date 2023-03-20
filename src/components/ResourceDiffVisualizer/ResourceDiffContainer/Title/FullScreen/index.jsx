@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
 import FullScreenModal from './FullScreenModal';
 

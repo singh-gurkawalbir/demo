@@ -12,7 +12,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import * as d3 from 'd3';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PanelHeader from '../../PanelHeader';
 import {
   getLabel,

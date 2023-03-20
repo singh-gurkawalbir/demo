@@ -1,5 +1,6 @@
 import React from 'react';
-import { MenuItem, Typography, makeStyles, Divider, ClickAwayListener } from '@material-ui/core';
+import { MenuItem, Typography, Divider, ClickAwayListener } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';

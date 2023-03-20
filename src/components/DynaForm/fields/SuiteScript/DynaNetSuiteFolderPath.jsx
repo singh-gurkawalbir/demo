@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Typography, Link } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, Link } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -39,7 +39,8 @@ export default function DynaNetSuiteFolderPath(props) {
       <Link
         className={classes.link}
         target="_blank"
-        href={`${netSuiteSystemDomain}/app/common/media/mediaitemfolders.nl?folder=${value[value.length - 1].id}`}>
+        href={`${netSuiteSystemDomain}/app/common/media/mediaitemfolders.nl?folder=${value[value.length - 1].id}`}
+        underline="hover">
         {value.map(v => v.name).join(' > ')}
       </Link>
     </Typography>

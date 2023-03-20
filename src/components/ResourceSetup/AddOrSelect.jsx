@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import DynaForm from '../DynaForm';
@@ -98,7 +98,6 @@ export default function AddOrSelect(props) {
 
   useFormInitWithPermissions({
     fieldMeta,
-    optionsHandler: fieldMeta.optionsHandler,
     formKey,
     remount: remountCount,
   });

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Typography, IconButton } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '../../icons/CloseIcon';
 import Help from '../../Help';
 import BackArrowIcon from '../../icons/BackArrowIcon';
@@ -69,7 +69,8 @@ export default function DrawerTitleBar({
           data-test="back"
           aria-label="back"
           onClick={handleClick}
-          className={classes.arrowLeft}>
+          className={classes.arrowLeft}
+          size="large">
           <BackArrowIcon />
         </IconButton>
       )}
@@ -91,7 +92,8 @@ export default function DrawerTitleBar({
         aria-label="Close"
         className={classes.closeButtonTitleBar}
         disabled={disableClose}
-        onClick={handleClick}>
+        onClick={handleClick}
+        size="large">
         <CloseIcon />
       </IconButton>
     </div>

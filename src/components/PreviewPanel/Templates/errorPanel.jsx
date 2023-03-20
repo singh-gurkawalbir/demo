@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import {shallowEqual, useSelector} from 'react-redux';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import { selectors } from '../../../reducers';

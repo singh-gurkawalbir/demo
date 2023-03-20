@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { isEqual } from 'lodash';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import InstallationStep from '../../../../../components/InstallStep';

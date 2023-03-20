@@ -1,5 +1,5 @@
-import { darken } from '@material-ui/core/styles/colorManipulator';
-import { fade } from '@material-ui/core/styles/';
+import { darken, alpha } from '@mui/material/styles';
+
 import colors from './colors';
 
 export default {
@@ -17,7 +17,7 @@ export default {
     separator: colors.celigoNeutral6,
   },
   palette: {
-    type: 'dark',
+    mode: 'dark',
     background: {
       paper: colors.celigoNeutral9,
       paper2: colors.celigoNeutral5,
@@ -334,7 +334,7 @@ export default {
         },
         '&.Mui-disabled': {
           backgroundColor: colors.celigoNeutral5,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
         },
       },
       input: {
@@ -345,7 +345,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral5,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
           '&:hover': {
             borderColor: colors.celigoNeutral7,
           },
@@ -359,7 +359,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral5,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
         },
       },
     },
@@ -376,7 +376,7 @@ export default {
         '&$disabled': {
           backgroundColor: colors.celigoNeutral5,
           borderColor: `${colors.celigoNeutral7} !important`,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
         },
       },
     },
@@ -407,7 +407,7 @@ export default {
     },
     MuiBackdrop: {
       root: {
-        backgroundColor: fade(colors.celigoNeutral6, 0.7),
+        backgroundColor: alpha(colors.celigoNeutral6, 0.7),
       },
     },
     MuiDivider: {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
 import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { CeligoLogo } from '@celigo/fuse-ui';
 import SigninForm from './SignInForm';
 import { getDomain, isSignUpAllowed } from '../../../utils/resource';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '100%',
     background: theme.palette.background.paper,
     height: '100vh',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '100%',
     },
   },
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   signInForm: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
   },

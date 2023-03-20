@@ -1,4 +1,5 @@
-import { makeStyles, MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -241,6 +242,7 @@ export default function PageBar() {
           </TextButton>
           <LoadResources integrationId={integrationId} required resources={resourcesToLoad}>
             <Select
+              variant="standard"
               displayEmpty
               data-test="select Child"
               className={classes.storeSelect}

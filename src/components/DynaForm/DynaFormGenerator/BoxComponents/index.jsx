@@ -1,6 +1,7 @@
 import React, { } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Paper from '@mui/material/Paper';
 import FormGenerator from '..';
 
 const useStyles = makeStyles(theme => ({

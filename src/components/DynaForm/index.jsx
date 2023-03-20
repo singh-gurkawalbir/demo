@@ -1,5 +1,5 @@
 /* eslint-disable react/state-in-constructor */
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { CeligoTabWrapper } from '../../../CeligoTabLayout/CeligoTabWrapper';

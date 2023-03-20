@@ -1,5 +1,5 @@
 import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
+import SvgIcon from '@mui/material/SvgIcon';
 
 const path = `M4.17761 4.68228C4.00304 4.41296 3.64652 4.35201 3.3813 4.54615C3.11608 4.74029 3.04261 5.11599 3.21717 
   5.38531L7.50424 11.9991L3.21585 18.615C3.04128 18.8843 3.11476 19.26 3.37998 19.4542C3.6452 19.6483 4.00171 19.5874 

@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import { Route, Router } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Checkbox, TableCell, TableRow } from '@material-ui/core';
+import { Checkbox, TableCell, TableRow } from '@mui/material';
 import { createMemoryHistory } from 'history';
 import JobTable from './JobTable';
 import { mutateStore, renderWithProviders } from '../../test/test-utils';

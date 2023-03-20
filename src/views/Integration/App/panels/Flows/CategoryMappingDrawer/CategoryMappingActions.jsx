@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { TextButton } from '../../../../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';

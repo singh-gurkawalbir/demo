@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import actions from '../../actions';
@@ -12,6 +12,7 @@ import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
+import { message } from '../../utils/messageStore';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -31,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     maxWidth: 500,
     marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       maxWidth: '100%',
     },
   },
@@ -124,14 +125,14 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
-      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErrorMsg(message.MFA.EMAIL_EMPTY);
       setShowErr(true);
     } else {
       if (validateEmail(email)) {
         setShowInvalidEmailError(false);
         handleAuthentication(email);
       } else {
-        setShowErrorMsg('INVALID_EMAIL');
+        setShowErrorMsg(message.MFA.INVALID_EMAIL);
         setShowInvalidEmailError(true);
       }
       setShowErr(false);

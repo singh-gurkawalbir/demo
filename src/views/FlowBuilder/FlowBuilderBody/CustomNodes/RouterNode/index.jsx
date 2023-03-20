@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { Position } from 'reactflow';
-import { Badge, IconButton, Tooltip } from '@material-ui/core';
+import { Badge, IconButton, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import Icon from '../../../../../components/icons/BranchIcon';
@@ -83,7 +83,7 @@ export default function RouterNode({id: routerId, data = {}}) {
             }}
             classes={{
               colorSecondary: classes.badgeColor,
-              anchorOriginBottomLeftRectangle: classes.badgeTextOverride,
+              anchorOriginBottomLeftRectangular: classes.badgeTextOverride,
             }}>
             <Icon className={classes.icon} />
           </Badge>

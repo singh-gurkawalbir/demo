@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { FormLabel, InputAdornment} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel, InputAdornment} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { endOfDay, addYears } from 'date-fns';
 import { selectors } from '../../../../reducers';
 import DateRangeSelector from '../../../DateRangeSelector';

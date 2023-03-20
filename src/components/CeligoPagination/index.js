@@ -1,9 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
@@ -86,6 +86,7 @@ export default function Pagination({
         <div className={classes.resultsLabel}>
           <Typography variant="body2">{resultPerPageLabel}</Typography>
           <Select
+            variant="standard"
             value={rowsPerPage}
             className={classes.selectRowsPage}
             IconComponent={ArrowDownIcon}

@@ -1,5 +1,5 @@
-import { Typography, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.background.paper,
     padding: theme.spacing(2),
-    height: `calc((100vh - ${250}px) - ${theme.spacing(2)}px)`,
+    height: `calc((100vh - ${250}px) - ${theme.spacing(2)})`,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',

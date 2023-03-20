@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { FormControl, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { get } from 'lodash';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
@@ -133,38 +133,36 @@ export default function (props) {
 
   const defaultAvailableScopes = excludeSelectedScopes(flattenedScopes, updatedScopes);
 
-  return (
-    <>
-      {showScopesModal && (
-        <TransferListModal
-          id={id}
-          scopesOrig={flattenedScopes}
-          subHeaderMap={subHeaderMap}
-          availableScopes={defaultAvailableScopes}
-          selectedScopes={updatedScopes}
-          onFieldChange={onFieldChange}
-          handleClose={() => {
-            setShowScopesModal(false);
-          }}
-          helpLink={helpLink}
-        />
-      )}
-      <FormControl className={classes.dynaSelectScopesContainer}>
-        <div className={classes.dynaTextLabelWrapper}>
-          <FormLabel htmlFor={id} className={classes.scopesLabel} required={required}>
-            {label}
-          </FormLabel>
-          <FieldHelp {...props} />
-        </div>
-        <OutlinedButton
-          data-test={id}
-          className={classes.scopesBtn}
-          onClick={() => setShowScopesModal(true)}>
+  return <>
+    {showScopesModal && (
+      <TransferListModal
+        id={id}
+        scopesOrig={flattenedScopes}
+        subHeaderMap={subHeaderMap}
+        availableScopes={defaultAvailableScopes}
+        selectedScopes={updatedScopes}
+        onFieldChange={onFieldChange}
+        handleClose={() => {
+          setShowScopesModal(false);
+        }}
+        helpLink={helpLink}
+      />
+    )}
+    <FormControl variant="standard" className={classes.dynaSelectScopesContainer}>
+      <div className={classes.dynaTextLabelWrapper}>
+        <FormLabel htmlFor={id} className={classes.scopesLabel} required={required}>
           {label}
-        </OutlinedButton>
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <OutlinedButton
+        data-test={id}
+        className={classes.scopesBtn}
+        onClick={() => setShowScopesModal(true)}>
+        {label}
+      </OutlinedButton>
 
-        <FieldMessage {...props} />
-      </FormControl>
-    </>
-  );
+      <FieldMessage {...props} />
+    </FormControl>
+  </>;
 }

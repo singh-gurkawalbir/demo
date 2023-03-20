@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, TextField, Typography, Button } from '@material-ui/core';
+import { TextField, Typography, Button } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { CeligoLogo } from '@celigo/fuse-ui';
 
@@ -44,13 +45,13 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       marginTop: 0,
     },
     [theme.breakpoints.up('md')]: {
       marginTop: 0,
     },
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('xl')]: {
       padding: theme.spacing(3),
     },
   },
@@ -67,7 +68,7 @@ const useStyles = makeStyles(theme => ({
       height: '100%',
       border: '1px solid',
       borderColor: theme.palette.divider,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('md')]: {
         display: 'none',
       },
     },
@@ -153,7 +154,7 @@ const useStyles = makeStyles(theme => ({
     background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
     padding: theme.spacing(2),
     backgroundOrigin: 'content-box, padding-box',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       display: 'none',
     },
   },

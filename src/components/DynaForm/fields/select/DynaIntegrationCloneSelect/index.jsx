@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import {useSelector } from 'react-redux';
-import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Select, { components } from 'react-select';
 import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
@@ -65,36 +66,35 @@ export const CloneSelect = props => {
     );
   };
 
-  return (
-    <>
-      <div className={classes.fullWidth}>
-        <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      <FormControl
-        className={classes.fullWidth}
-        error={!isValid}
-        disabled={disabled}
-        required={required}>
-        <span {...isLoggableAttr(isLoggable)}>
-          <Select
-            isDisabled={disabled}
-            placeholder="Please select"
-            components={{ DropdownIndicator, Option }}
-            options={options}
-            value={value}
-            onChange={handleChange}
-            styles={customStyles}
-            isSearchable={false}
-            defaultMenuIsOpen={options?.length}
-          />
-        </span>
-        { !!options?.length && <FieldMessage {...props} /> }
-      </FormControl>
-    </>
-  );
+  return <>
+    <div className={classes.fullWidth}>
+      <FormLabel htmlFor={id} required={required} error={!isValid}>
+        {label}
+      </FormLabel>
+      <FieldHelp {...props} />
+    </div>
+    <FormControl
+      variant="standard"
+      className={classes.fullWidth}
+      error={!isValid}
+      disabled={disabled}
+      required={required}>
+      <span {...isLoggableAttr(isLoggable)}>
+        <Select
+          isDisabled={disabled}
+          placeholder="Please select"
+          components={{ DropdownIndicator, Option }}
+          options={options}
+          value={value}
+          onChange={handleChange}
+          styles={customStyles}
+          isSearchable={false}
+          defaultMenuIsOpen={options?.length}
+        />
+      </span>
+      { !!options?.length && <FieldMessage {...props} /> }
+    </FormControl>
+  </>;
 };
 
 export default function DynaIntegrationCloneSelect(props) {

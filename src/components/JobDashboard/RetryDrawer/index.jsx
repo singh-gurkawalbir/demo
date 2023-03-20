@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { makeStyles, Button, Typography } from '@material-ui/core';
+import { Button, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import isEqual from 'lodash/isEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';

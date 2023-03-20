@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
 const useStyles = makeStyles(theme => ({

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useContext } from 'react';
-import { makeStyles, TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';

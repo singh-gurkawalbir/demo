@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Menu, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import useConfirmDialog from '../ConfirmDialog';

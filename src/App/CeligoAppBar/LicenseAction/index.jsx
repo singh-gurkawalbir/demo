@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
+import React, { useCallback, useEffect, Fragment, useState, useMemo } from 'react';
 import { Typography } from '@mui/material';
-import { PillButton } from '@celigo/fuse-ui';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
+import { PillButton } from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';

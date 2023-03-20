@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import DynaUploadFile from '../../../../DynaForm/fields/DynaUploadFile';

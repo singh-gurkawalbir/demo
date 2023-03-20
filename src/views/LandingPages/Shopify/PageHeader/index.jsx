@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import ActionGroup from '../../../../components/ActionGroup';
 import BackArrowIcon from '../../../../components/icons/BackArrowIcon';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';

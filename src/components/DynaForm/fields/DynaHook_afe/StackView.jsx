@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import React, {useMemo} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
+import makeStyles from '@mui/styles/makeStyles';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import DynaSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -45,9 +45,8 @@ export default function StackView({
   })) || emptyList }], [allStacks]);
 
   return (
-
     <div className={classes.field}>
-      <FormControl>
+      <FormControl variant="standard">
         <InputLabel htmlFor="stackId">Stack</InputLabel>
         <DynaSelect
           id="stackId"

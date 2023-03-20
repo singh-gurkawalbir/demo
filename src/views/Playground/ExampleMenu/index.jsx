@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
-import { TreeView, TreeItem} from '@material-ui/lab';
+import makeStyles from '@mui/styles/makeStyles';
+import { TreeView, TreeItem} from '@mui/lab';
 import { uniqBy } from 'lodash';
 import actions from '../../../actions';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';

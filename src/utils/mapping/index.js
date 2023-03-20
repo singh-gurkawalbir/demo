@@ -110,7 +110,7 @@ const setMappingData = (
         );
 
       if (mappings[key].lookups?.length) {
-        const allLookups = [...mappings[key]?.lookups || []];
+        const allLookups = [...(mappings[key]?.lookups || [])];
 
         if (category.children?.length) {
           category.children.forEach(child => {
@@ -446,6 +446,23 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
   }
 
   return modifiedExtract;
+}
+
+export function formattedMultiFieldExpression(expression, functionValue, extractValue) {
+  let expressionValue = '';
+
+  if (expression) expressionValue = expression;
+
+  if (extractValue) {
+    const isGroupedField = extractValue.indexOf('*.') === 0;
+    const extractFieldValue = isGroupedField ? extractValue.substring(2) : extractValue;
+
+    expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
+  } else if (functionValue) {
+    expressionValue += functionValue;
+  }
+
+  return expressionValue;
 }
 
 // #region Mapper2 utils
@@ -1684,7 +1701,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) =>
 
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);
-    let updatedChildren = [...parentNode.children || [], ...newChildren];
+    let updatedChildren = [...(parentNode.children || []), ...newChildren];
 
     if (parentNode.key === newNode.parentKey) {
       updatedChildren = updatedChildren.filter(childNode => {
@@ -3082,6 +3099,17 @@ export default {
             toReturn = 'Amazon Redshift';
           } else {
             toReturn = 'Snowflake';
+          }
+        }
+
+        return toReturn;
+      }
+      case adaptorTypeMap.JDBCExport: {
+        let toReturn;
+
+        if (conn) {
+          if (conn.jdbc?.type === 'netsuitejdbc') {
+            toReturn = 'NetSuite JDBC';
           }
         }
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { CeligoLogo } from '@celigo/fuse-ui';
 import MarketingContentWithIframe from '../LoginScreen/MarketingContentWithIframe';
@@ -13,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '30% 70%',
     background: theme.palette.background.paper,
     height: '100vh',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '100%',
     },
   },
@@ -54,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontSize: '29px',
-    lineHeight: `${theme.spacing(5)}px`,
+    lineHeight: theme.spacing(5),
     marginBottom: theme.spacing(2),
     textAlign: 'center',
   },
@@ -68,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.error.dark,
   },
   userSignInRightContainer: {
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       display: 'none',
     },
   },

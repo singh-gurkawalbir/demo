@@ -6,7 +6,7 @@ import {
   IconButton,
   MenuItem,
   Tooltip,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import ArrowPopper from '../../../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';

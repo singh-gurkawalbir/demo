@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { makeStyles, Chip } from '@material-ui/core';
+import { Chip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';

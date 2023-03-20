@@ -1,6 +1,6 @@
 /* eslint-disable jest/no-export */
 
-import { MuiThemeProvider } from '@material-ui/core';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material';
 import { fireEvent, render, configure } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import React from 'react';
@@ -29,11 +29,13 @@ configure({ testIdAttribute: 'data-test' });
 export function reduxWrappedComponent({ Component, store, componentProps }) {
   return (
     <Provider store={store}>
-      <MuiThemeProvider theme={theme}>
-        <SnackbarProvider>
-          <Component {...componentProps} />
-        </SnackbarProvider>
-      </MuiThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider>
+            <Component {...componentProps} />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>
   );
 }

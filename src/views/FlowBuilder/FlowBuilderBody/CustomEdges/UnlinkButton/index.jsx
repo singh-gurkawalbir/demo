@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch } from 'react-redux';
 import UnLinkIcon from '../../../../../components/icons/unLinkedIcon';
 import { useFlowContext } from '../../Context';
@@ -36,7 +37,7 @@ export default function UnlinkButton({edgeId}) {
         data-test={`unlink-${edgeId}`}
         className={classes.unlinkButton}
         onClick={handleDeleteEdge}
-    >
+        size="large">
         <UnLinkIcon />
       </IconButton>
     </Tooltip>

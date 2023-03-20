@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import ConditionalIcon from '../../icons/ConditionalIcon';
 import OptionalIcon from '../../icons/OptionalIcon';
 import PreferredIcon from '../../icons/PreferredIcon';

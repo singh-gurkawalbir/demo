@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { TableCell } from '@material-ui/core';
+import { TableCell } from '@mui/material';
 import userEvent from '@testing-library/user-event';
 import JobDetail from './JobDetail';
 import { renderWithProviders } from '../../test/test-utils';

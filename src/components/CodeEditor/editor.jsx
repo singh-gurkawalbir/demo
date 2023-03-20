@@ -2,7 +2,8 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import ace from 'ace-builds/src-noconflict/ace';
 import AceEditor from 'react-ace';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { alpha } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import ReactResizeDetector from 'react-resize-detector';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-handlebars';
@@ -30,7 +31,7 @@ ace.config.setModuleUrl('ace/mode/xml_worker', xmlWorkerUrl);
 
 const useStyles = makeStyles(theme => ({
   editorErrorWrapper: {
-    background: `${fade(theme.palette.error.light, 0.06)} !important`,
+    background: `${alpha(theme.palette.error.light, 0.06)} !important`,
     border: '1px solid',
     borderColor: theme.palette.error.dark,
     '& > .ace_gutter': {
@@ -38,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   editorWarningWrapper: {
-    background: `${fade(theme.palette.warning.main, 0.06)} !important`,
+    background: `${alpha(theme.palette.warning.main, 0.06)} !important`,
     border: '1px solid',
     borderColor: theme.palette.warning.main,
     '& > .ace_gutter': {
@@ -46,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   errorMarker: {
-    background: fade(theme.palette.error.dark, 0.3),
+    background: alpha(theme.palette.error.dark, 0.3),
     color: theme.palette.background.paper,
     position: 'relative',
   },

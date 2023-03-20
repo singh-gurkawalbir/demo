@@ -1,6 +1,6 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
+import Link from '@mui/material/Link';
+import makeStyles from '@mui/styles/makeStyles';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import Delete from '../commonActions/Delete';
 import Edit from '../commonActions/Edit';

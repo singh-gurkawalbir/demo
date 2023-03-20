@@ -5,7 +5,7 @@ import {
   TableRow,
   Typography,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import actions from '../../../actions';
 import useConfirmDialog from '../../ConfirmDialog';
 import DeleteIcon from '../../icons/TrashIcon';
@@ -93,7 +93,8 @@ export default function SharedUserRow({ user }) {
         <IconButton
           data-test="deleteStackShareInvite"
           aria-label="delete"
-          onClick={handleDeleteUserClick}>
+          onClick={handleDeleteUserClick}
+          size="large">
           <DeleteIcon />
         </IconButton>
       </TableCell>

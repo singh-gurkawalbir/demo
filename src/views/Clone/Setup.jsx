@@ -5,8 +5,8 @@ import {
   Typography,
   IconButton,
   Breadcrumbs,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';

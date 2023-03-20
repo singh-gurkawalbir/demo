@@ -7,10 +7,14 @@ import messageStore from '../../../../utils/messageStore';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import DynaSelect from '../DynaSelect';
 
-export default function DynaSelectAliasResource({ options = {}, ...props}) {
+export default function DynaSelectAliasResource(props) {
   const dispatch = useDispatch();
-  const { aliasResourceType } = options;
   const { id, formKey, aliasContextResourceId, aliasContextResourceType, value } = props;
+  const aliasResourceType = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+
+    return formContext?.value?.aliasResourceType;
+  });
   const resourceList = useSelector(state => selectors.aliasResources(state, aliasResourceType, aliasContextResourceType, aliasContextResourceId) || emptyList);
   const selectOptions = useMemo(() => ([{
     items: resourceList.map(res => ({

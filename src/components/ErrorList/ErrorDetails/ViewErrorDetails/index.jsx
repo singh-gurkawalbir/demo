@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { formatErrorDetails } from '../../../../utils/errorManagement';
 import CodeEditor from '../../../CodeEditor';
 import { selectors } from '../../../../reducers';

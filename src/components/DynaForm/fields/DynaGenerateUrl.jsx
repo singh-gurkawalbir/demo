@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
@@ -34,7 +34,6 @@ const webookRequiredFields = ['webhook.password', 'webhook.username', 'webhook.p
 
 export default function GenerateUrl(props) {
   const {
-    options = {},
     onFieldChange,
     resourceId,
     id,
@@ -44,13 +43,19 @@ export default function GenerateUrl(props) {
     formKey,
     provider: webHookProvider,
   } = props;
-  const { webHookToken } = options;
+
+  const { webHookToken, webHookVerify} = useSelector(state => {
+    const formContext = selectors.formState(state, formKey) || {};
+
+    return {
+      webHookToken: formContext.value?.['/webhook/token'],
+      webHookVerify: formContext.value?.['/webhook/verify'],
+    };
+  }, shallowEqual);
 
   const [touched, setTouched] = useState(false);
   const formContext = useFormContext(formKey);
   const { value: formValues, fields: fieldStates } = formContext;
-
-  const webHookVerify = fieldStates?.['webhook.verify']?.value;
   const classes = useStyles();
   const [url, setUrl] = useState(true);
   const dispatch = useDispatch();

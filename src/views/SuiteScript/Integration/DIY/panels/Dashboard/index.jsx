@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import JobDashboard from '../../../../../../components/SuiteScript/JobDashboard';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import infoText from '../../../../../../components/Help/infoText';

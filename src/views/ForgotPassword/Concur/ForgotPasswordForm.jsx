@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     maxWidth: 500,
     marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       maxWidth: '100%',
     },
   },

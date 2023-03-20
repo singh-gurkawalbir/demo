@@ -15,9 +15,9 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-jest.mock('@material-ui/core', () => ({
+jest.mock('@mui/material', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/core'),
+  ...jest.requireActual('@mui/material'),
   ClickAwayListener: props => (
     <div>
       <div onClick={props.onClickAway}>Outside</div>

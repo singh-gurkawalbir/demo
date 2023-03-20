@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 import React from 'react';
-import { FormControl, makeStyles, Typography } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { FormControl, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
@@ -50,6 +51,7 @@ export default function DynaCheckbox(props) {
 
   return (
     <FormControl
+      variant="standard"
       error={!isValid}
       required={required}
       disabled={disabled}

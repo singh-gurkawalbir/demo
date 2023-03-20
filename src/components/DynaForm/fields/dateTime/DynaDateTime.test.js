@@ -36,9 +36,9 @@ jest.mock('../../../icons/CalendarIcon', () => ({
   ,
 }));
 
-jest.mock('@material-ui/icons/AccessTime', () => ({
+jest.mock('@mui/icons-material/AccessTime', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/icons/AccessTime'),
+  ...jest.requireActual('@mui/icons-material/AccessTime'),
   default: () =>
     (
       <button type="button">AccessTimeIcon</button>

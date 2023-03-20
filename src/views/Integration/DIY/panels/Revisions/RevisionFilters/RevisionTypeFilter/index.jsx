@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem from '@mui/material/MenuItem';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import CeligoSelect from '../../../../../../../components/CeligoSelect';

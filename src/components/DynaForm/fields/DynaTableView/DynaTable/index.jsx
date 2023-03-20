@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useEffect, useReducer } from 'react';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';

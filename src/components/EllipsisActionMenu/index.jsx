@@ -1,6 +1,6 @@
 import React, { useCallback, useState} from 'react';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Menu, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
 import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
 import {TextButton} from '../Buttons';

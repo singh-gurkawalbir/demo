@@ -1,7 +1,7 @@
-import { ButtonBase, Chip } from '@material-ui/core';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
+import { ButtonBase, Chip } from '@mui/material';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ import MenuList from './MenuList';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
-    width: theme.drawerWidth,
+    width: parseInt(theme.drawerWidth, 10),
     borderRight: 0,
     flexShrink: 0,
     whiteSpace: 'nowrap',
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   drawerOpen: {
-    width: theme.drawerWidth,
+    width: parseInt(theme.drawerWidth, 10),
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
-    width: theme.spacing(7) + 4,
+    width: parseInt(theme.spacing(7), 10) + 4,
   },
   toolbar: theme.mixins.toolbar,
 
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& > div:last-child': {
       alignSelf: 'end',
-      margin: theme.spacing(0, 0, 2, 0.5),
+      margin: parseInt(theme.spacing(0, 0, 2, 0.5), 10),
     },
   },
   menuContainerSandbox: {
@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   toggleContainer: {
-    marginTop: theme.spacing(1),
+    marginTop: parseInt(theme.spacing(1), 10),
     textAlign: 'center',
     '& svg': {
       color: theme.palette.text.hint,
@@ -81,8 +81,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.background.drawer2,
     borderRadius: 4,
-    width: theme.spacing(3),
-    height: theme.spacing(3),
+    width: parseInt(theme.spacing(3), 10),
+    height: parseInt(theme.spacing(3), 10),
     padding: 0,
   },
   drawerToggleSandbox: {
@@ -125,7 +125,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.white,
     borderColor: theme.palette.common.white,
     height: 'unset',
-    marginTop: theme.spacing(1.5),
+    marginTop: parseInt(theme.spacing(1.5), 10),
     '& span': {
       padding: [[0, 5]],
     },
@@ -193,9 +193,8 @@ function CeligoDrawer({ drawerOpened, isSandbox }) {
                 color="inherit"
                 aria-label="close drawer"
                 onClick={handleDrawerToggle}
-                className={clsx({ [classes.iconHoverSandbox]: isSandbox })}
-                size="large"
-              >
+                className={clsx({[classes.iconHoverSandbox]: isSandbox })}
+                size="large">
                 <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
@@ -218,11 +217,8 @@ function CeligoDrawer({ drawerOpened, isSandbox }) {
               aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={clsx(classes.drawerToggle, {
-                [classes.drawerToggleSandbox]: isSandbox,
-              })}
-              size="large"
-            >
+              className={clsx(classes.drawerToggle, {[classes.drawerToggleSandbox]: isSandbox})}
+              size="large">
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import TrashIcon from '../../../components/icons/TrashIcon';

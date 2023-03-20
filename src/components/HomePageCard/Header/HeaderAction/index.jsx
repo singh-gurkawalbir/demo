@@ -1,9 +1,9 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import EllipsisIconVertical from '../../../icons/EllipsisVerticalIcon';
 import NotificationsIcon from '../../../icons/NotificationsIcon';
 
@@ -83,7 +83,8 @@ export default function HeaderAction(props) {
         aria-controls="long-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        className={classes.action}>
+        className={classes.action}
+        size="large">
         <EllipsisIconVertical />
       </IconButton>
       <Menu

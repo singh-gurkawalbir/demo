@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import AddOrSelectForm from './Form';
 import { applicationsList } from '../../../constants/applications';
 import { KBDocumentation } from '../../../utils/connections';

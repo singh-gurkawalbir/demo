@@ -1,8 +1,8 @@
 import React, {Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, Button } from '@mui/material';
 import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({

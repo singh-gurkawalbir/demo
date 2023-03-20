@@ -1,8 +1,8 @@
 import React, {useState, useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import QRCode from 'react-qr-code';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import ReAuthModal from './ReAuthModal';
 import HeaderWithHelpText from './HeaderWithHelpText';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';

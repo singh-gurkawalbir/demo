@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { FormControl, makeStyles, FormLabel } from '@material-ui/core';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import FieldHelp from '../FieldHelp';
 
@@ -54,6 +55,7 @@ export default function DynaSelectWithInput(props) {
         {helpKey && <FieldHelp {...props} helpKey={helpKey} />}
       </div>
       <FormControl
+        variant="standard"
         disabled={disabled}
         className={classes.formControl}
         key={value}>

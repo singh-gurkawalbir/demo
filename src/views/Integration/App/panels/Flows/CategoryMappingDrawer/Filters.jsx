@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   ClickAwayListener,
-  makeStyles,
   Checkbox,
   FormGroup,
   FormLabel,
@@ -10,7 +9,8 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import ArrowPopper from '../../../../../../components/ArrowPopper';
@@ -102,7 +102,7 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
           anchorEl={anchorEl}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
-              <FormControl component="fieldset" className={classes.formControl}>
+              <FormControl variant="standard" component="fieldset" className={classes.formControl}>
                 <FormLabel component="legend" className={classes.heading}>
                   {`${uiAssistant} attributes`}
                 </FormLabel>
@@ -154,7 +154,7 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
                 </FormGroup>
               </FormControl>
 
-              <FormControl component="fieldset" className={classes.formControl}>
+              <FormControl variant="standard" component="fieldset" className={classes.formControl}>
                 <FormLabel component="legend" className={classes.heading}>
                   Field mappings
                 </FormLabel>

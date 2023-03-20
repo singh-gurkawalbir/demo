@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import { useStyles } from '@material-ui/pickers/views/Calendar/SlideTransition';
+import { Typography } from '@mui/material';
+import { useStyles } from '@mui/lab';
 import clsx from 'clsx';
 import React from 'react';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';

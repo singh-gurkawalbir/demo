@@ -2,11 +2,11 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
-import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@mui/material/TextField';
+import FormHelperText from '@mui/material/FormHelperText';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import makeStyles from '@mui/styles/makeStyles';
 import { FilledButton, TextButton } from '../../components/Buttons';
 import Spinner from '../../components/Spinner';
 import actions from '../../actions';
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     maxWidth: 500,
     marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       maxWidth: '100%',
     },
   },
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(-1),
     display: 'flex',
     alignItems: 'center',
-    lineHeight: `${theme.spacing(2)}px`,
+    lineHeight: theme.spacing(2),
     color: theme.palette.secondary.light,
     marginBottom: theme.spacing(1),
   },

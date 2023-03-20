@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useLocation } from 'react-router-dom';
 import messageStore, { message } from '../../utils/messageStore';
 import { selectors } from '../../reducers';

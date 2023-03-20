@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
+import { useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoDivider from '../../../CeligoDivider';
 import Icon from '../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../Buttons';
@@ -21,26 +22,25 @@ export default function HandlebarGuide() {
   const classes = useStyles();
   const hasWideScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-  return (
-    <>
-      {hasWideScreen ? (
-        <TextButton
+  return <>
+    {hasWideScreen ? (
+      <TextButton
+        {...anchorProps}
+        className={classes.button}
+        startIcon={<Icon />}>
+        Handlebars guide
+      </TextButton>
+    ) : (
+      <Tooltip title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
+        <IconButton
           {...anchorProps}
           className={classes.button}
-          startIcon={<Icon />}>
-          Handlebars guide
-        </TextButton>
-      ) : (
-        <Tooltip title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
-          <IconButton
-            {...anchorProps}
-            className={classes.button}
-            aria-label="handlebars guide">
-            <Icon />
-          </IconButton>
-        </Tooltip>
-      )}
-      <CeligoDivider position="right" />
-    </>
-  );
+          aria-label="handlebars guide"
+          size="large">
+          <Icon />
+        </IconButton>
+      </Tooltip>
+    )}
+    <CeligoDivider position="right" />
+  </>;
 }

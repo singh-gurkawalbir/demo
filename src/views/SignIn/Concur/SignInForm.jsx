@@ -1,8 +1,8 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography} from '@material-ui/core';
+import { Typography} from '@mui/material';
 import { useLocation, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../../actions';
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     maxWidth: 500,
     marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       maxWidth: '100%',
     },
   },
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     marginTop: theme.spacing(-2),
     marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
+    lineHeight: theme.spacing(2),
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),
@@ -161,7 +161,7 @@ export default function SignIn({dialogOpen, className}) {
   const attemptedRoute = location.state?.attemptedRoute;
 
   return (
-  // user's email can be listed here ...type passwords is anyways redacted by logrocket
+    // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <div className={clsx(classes.editableFields, className)}>
       <form onSubmit={handleOnSubmit}>
         <TextField
@@ -216,12 +216,12 @@ export default function SignIn({dialogOpen, className}) {
         {!dialogOpen && (
         <form onSubmit={handleSignInWithGoogle}>
           <TextField
+            variant="standard"
             data-private
             type="hidden"
             id="attemptedRoute"
             name="attemptedRoute"
-            value={attemptedRoute || getRoutePath('/')}
-          />
+            value={attemptedRoute || getRoutePath('/')} />
 
           <OutlinedButton
             type="submit"

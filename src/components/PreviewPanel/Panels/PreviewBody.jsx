@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import Templates from '../Templates';
 import Spinner from '../../Spinner';
 import PreviewBodyTabs from './PreviewBodyTabs';

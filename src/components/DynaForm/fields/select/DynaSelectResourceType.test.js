@@ -97,5 +97,9 @@ describe('dynaSelectResourceType tests', () => {
     expect(screen.getByText('Export records from source application')).toBeInTheDocument();
     expect(screen.getByText('Listen for real-time data from source application')).toBeInTheDocument();
   });
+  test('should test dynaSelect for resourceTypes with mode source and nesuitejdbc', async () => {
+    await initDynaSelectResourceType({...props, mode: 'destination', options: {selectedApplication: {type: 'netsuitejdbc'}}});
+    expect(onFieldChange).toHaveBeenCalledWith('resourceType', 'lookupFiles', true);
+  });
 });
 

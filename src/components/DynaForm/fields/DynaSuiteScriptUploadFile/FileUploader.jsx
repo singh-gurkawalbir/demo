@@ -1,7 +1,7 @@
 import React, { useRef, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel } from '@material-ui/core';
+import Button from '@mui/material/Button';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, FormLabel } from '@mui/material';
 import clsx from 'clsx';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
@@ -72,7 +72,7 @@ export default function FileUploader(props) {
   }, []);
 
   return (
-    <FormControl className={classProps.root}>
+    <FormControl variant="standard" className={classProps.root}>
       <div className={classProps.actionContainer} >
         <div className={clsx(classes.fileUploadLabelWrapper, classProps.labelWrapper)}>
           <FormLabel required={required} className={classProps.label}>

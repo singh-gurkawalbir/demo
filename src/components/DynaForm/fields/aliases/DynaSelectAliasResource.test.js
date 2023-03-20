@@ -34,6 +34,11 @@ jest.mock('react-truncate-markup', () => ({
 function initDynaSelect(props = {}) {
   mutateStore(initialStore, draft => {
     draft.session.asyncTask = {'integration-alias': props.status};
+    draft.session.form = {'integration-alias': {
+      value: {
+        aliasResourceType: props.aliasResourceType,
+      },
+    }};
     draft.data.resources = {
       integrations: [
         {
@@ -156,7 +161,7 @@ describe('dynaAliasId UI tests', () => {
   });
   const props = {
     id: 'aliasId',
-    options: {aliasResourceType: 'flows'},
+    aliasResourceType: 'flows',
     aliasContextResourceId: '63368c92bb74b66e32ab05ee',
     aliasContextResourceType: 'integrations',
     formKey: 'integration-alias',
@@ -189,7 +194,7 @@ describe('dynaAliasId UI tests', () => {
     expect(screen.queryByText('flow4')).toBeNull();     // flow4 belongs to a different integration hence should not be shown //
   });
   test('should display the registered connectionIds of the integration passed when aliasResourceType is selected as "connections"', async () => {
-    initDynaSelect({...props, options: {aliasResourceType: 'connections'}});
+    initDynaSelect({...props, aliasResourceType: 'connections'});
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
@@ -201,7 +206,7 @@ describe('dynaAliasId UI tests', () => {
     expect(screen.queryByText('connection4')).toBeNull();     // connection4 is not registered with the passed integration hence should not be shown //
   });
   test('should display the imports belonging to the integration passed when aliasResourceType is selected as "imports"', async () => {
-    initDynaSelect({...props, options: {aliasResourceType: 'imports'}});
+    initDynaSelect({...props, aliasResourceType: 'imports'});
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
@@ -213,7 +218,7 @@ describe('dynaAliasId UI tests', () => {
     expect(screen.queryByText('import4')).toBeNull();     // import4 is not registered with the passed integration hence should not be shown //
   });
   test('should display the imports belonging to the integration passed when aliasResourceType is selected as "exports"', async () => {
-    initDynaSelect({...props, options: {aliasResourceType: 'exports'}});
+    initDynaSelect({...props, aliasResourceType: 'exports'});
     const dropBox = document.querySelector('[aria-haspopup="listbox"]');
 
     expect(dropBox).toBeInTheDocument();
@@ -225,7 +230,7 @@ describe('dynaAliasId UI tests', () => {
     expect(screen.queryByText('export4')).toBeNull();     // export4 is not registered with the passed integration hence should not be shown //
   });
   test('should make a dispatch call with an error message when no resource is available for the selected resourceType', async () => {
-    initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'scripts'}});
+    initDynaSelect({...props, value: undefined, aliasResourceType: 'scripts'});
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
       isValid: false,
       errorMessages: errorMessageStore('NO_ALIAS_RESOURCE_MESSAGE', {
@@ -235,7 +240,7 @@ describe('dynaAliasId UI tests', () => {
     })));
   });
   test('should make a dispatch call with an error message when no resource is selected for the passed resourceType', async () => {
-    initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'flows'}});
+    initDynaSelect({...props, value: undefined, aliasResourceType: 'flows'});
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
       isValid: false,
       errorMessages: message.REQUIRED_MESSAGE,

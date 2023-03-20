@@ -1,11 +1,10 @@
-import { InfoIconButton } from '@celigo/fuse-ui';
-import { Grid, IconButton, Paper, Typography } from '@mui/material';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
-
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, Paper, Grid, IconButton } from '@mui/material';
+import { InfoIconButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import BackArrowIcon from '../icons/BackArrowIcon';
@@ -15,12 +14,12 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.appBar - 1,
     padding: theme.spacing(3),
     height: theme.pageBarHeight,
-    width: `calc(100% - ${theme.spacing(2 * 3) + 4}px)`,
+    width: `calc(100% - calc(${theme.spacing(2 * 3)} + 4px))`,
     position: 'fixed',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   pageHeaderShift: {
-    width: `calc(100% - ${theme.drawerWidth - theme.spacing(1)}px)`,
+    width: `calc(100% - ${theme.drawerWidth}px - ${theme.spacing(1)})`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,

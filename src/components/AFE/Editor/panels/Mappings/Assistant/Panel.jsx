@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import actions from '../../../../../../actions';
 import {selectors} from '../../../../../../reducers';
 import SalesforceMappingAssistant from '../../../../../SalesforceMappingAssistant';

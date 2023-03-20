@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
-import { List, ListItem, makeStyles } from '@material-ui/core';
+import { List, ListItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({

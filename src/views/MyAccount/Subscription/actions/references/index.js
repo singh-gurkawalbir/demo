@@ -1,4 +1,4 @@
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import React, { useState, useCallback } from 'react';
 import ViewReferencesIcon from '../../../../../components/icons/ViewReferencesIcon';
 import ResourceReferences from '../../../../../components/ResourceReferences';

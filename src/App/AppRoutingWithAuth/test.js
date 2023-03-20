@@ -6,7 +6,7 @@ import { withRouter } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-import { MuiThemeProvider } from '@material-ui/core';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material';
 import { createMemoryHistory } from 'history';
 import { render, cleanup, waitFor } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
@@ -38,11 +38,13 @@ function reduxRouterWrappedComponent({
 }) {
   return (
     <Provider store={store}>
-      <MuiThemeProvider theme={theme}>
-        <Router history={history}>
-          <Component {...componentProps} />
-        </Router>
-      </MuiThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Router history={history}>
+            <Component {...componentProps} />
+          </Router>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>
   );
 }

@@ -4681,6 +4681,20 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
+selectors.resourceCanHaveFileDefinitions = (state, resourceId, resourceType) => {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return false;
+  }
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resource?.type === 'simple') {
+    // Data loaders do not have file definitions
+    return false;
+  }
+
+  return isFileAdaptor(resource) || isAS2Resource(resource) || FILE_PROVIDER_ASSISTANTS.includes(resource?.assistant);
+};
+
 // #endregion SAMPLE DATA selectors
 
 // #region  SUITESCRIPT Selectors
@@ -5576,6 +5590,15 @@ selectors.applicationType = (state, resourceType, id) => {
     );
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
+  }
+  if (adaptorType?.toUpperCase().startsWith('JDBC')) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+
+    return connection && connection.jdbc && connection.jdbc.type;
   }
   if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(

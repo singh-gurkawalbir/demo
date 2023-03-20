@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { selectors } from '../../../../reducers';
 import DynaForm from '../../../DynaForm';
 import defaultMetadata from '../../../Lookup/Manage/metadata/default';

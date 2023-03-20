@@ -1,4 +1,4 @@
-import { MenuItem, Tooltip } from '@material-ui/core';
+import { MenuItem, Tooltip } from '@mui/material';
 import React from 'react';
 import { useGetAllActionProps } from '../hooks';
 

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { Handle } from 'reactflow';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   defaultHandle: {

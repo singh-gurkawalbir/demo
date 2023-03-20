@@ -3,7 +3,7 @@ import React from 'react';
 import {
   screen, waitFor,
 } from '@testing-library/react';
-import { Chip } from '@material-ui/core';
+import { Chip } from '@mui/material';
 import userEvent from '@testing-library/user-event';
 import {GenericTypeableSelect} from './GenericTypeableSelect';
 import { getCreatedStore } from '../../../../../store';

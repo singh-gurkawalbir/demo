@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { alpha } from '@mui/material/styles';
 import Help from '../../../../components/Help';
 import helpTextMap from '../../../../components/Help/helpTextMap';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   toggleContainer: {
-    backgroundColor: fade(theme.palette.error.main, 0.3),
+    backgroundColor: alpha(theme.palette.error.main, 0.3),
     width: 175,
     padding: theme.spacing(1),
   },
@@ -34,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   loggable: {
-    backgroundColor: fade(theme.palette.success.main, 0.3),
+    backgroundColor: alpha(theme.palette.success.main, 0.3),
   },
   hasChange: {
     border: `solid 1px ${theme.palette.info.light}`,

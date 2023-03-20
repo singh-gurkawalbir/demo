@@ -1,6 +1,6 @@
 import React, { useCallback} from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { message } from '../../../../../utils/messageStore';
 import TextButton from '../../../../Buttons/TextButton';

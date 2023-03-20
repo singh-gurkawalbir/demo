@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import InputLabel from '@mui/material/InputLabel';
 import DynaText from './DynaText';
 
 const useStyles = makeStyles(theme => ({

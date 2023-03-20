@@ -170,6 +170,7 @@ import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
 import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
+import DynaMultiFieldExpression from './DynaMultiFieldExpression';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -352,4 +353,5 @@ export default {
   ianameselect: DynaIANameSelect,
   shopifyconnectionselect: DynaShopifyConnectionSelect,
   hashalgorithm: DynaHashAlgorithm,
+  multifieldexpression: DynaMultiFieldExpression,
 };

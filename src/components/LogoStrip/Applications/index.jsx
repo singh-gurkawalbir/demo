@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { getApp } from '../../../constants/applications';
 import { logoSizes } from '../index';

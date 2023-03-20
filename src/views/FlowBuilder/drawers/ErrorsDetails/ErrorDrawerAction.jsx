@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, Divider, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../../components/Spinner';
 import ErrorActionStatus from './ErrorActionStatus';

@@ -9,9 +9,9 @@ import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
-jest.mock('@material-ui/lab/TreeView', () => ({
+jest.mock('@mui/lab/TreeView', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/lab/TreeView'),
+  ...jest.requireActual('@mui/lab/TreeView'),
   default: props => <div>{props.children}<button type="button" onClick={() => props.onNodeToggle('click', ['newReference,newone,"parent2,ref1"'])}>Node</button></div>,
 }));
 

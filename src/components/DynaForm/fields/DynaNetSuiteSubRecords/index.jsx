@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';

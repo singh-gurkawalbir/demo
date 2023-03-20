@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Select, { components } from 'react-select';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel } from '@material-ui/core';
-import Chip from '@material-ui/core/Chip';
-import Checkbox from '@material-ui/core/Checkbox';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, FormLabel } from '@mui/material';
+import Chip from '@mui/material/Chip';
+import Checkbox from '@mui/material/Checkbox';
 import clsx from 'clsx';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
@@ -180,6 +180,7 @@ export default function MultiSelectApplication(props) {
         <FieldHelp {...props} />
       </div>
       <FormControl
+        variant="standard"
         error={!isValid}
         disabled={disabled}
         required={required}

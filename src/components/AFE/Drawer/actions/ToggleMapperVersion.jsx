@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../actions';
 import TextToggle from '../../../TextToggle';
 import { selectors } from '../../../../reducers';
@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
   mapperTextToggle: {
     '&>button': {
-      minWidth: `${theme.spacing(11)}px !important`,
+      minWidth: `${theme.spacing(11)} !important`,
     },
   },
 }));

@@ -19,9 +19,9 @@ jest.mock('../../../../CodeEditor', () => ({
 
 const mockReact = React;
 
-jest.mock('@material-ui/core/IconButton', () => ({
+jest.mock('@mui/material/IconButton', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/core/IconButton'),
+  ...jest.requireActual('@mui/material/IconButton'),
   default: props => {
     const mockProps = {...props};
 
@@ -63,6 +63,36 @@ describe('editorModal UI tests', () => {
     expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeNull();
     await userEvent.type(editorInputArea, 'a');
     expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeInTheDocument();
+  });
+  test('should display the error message when validateContent is true and mode is json for the editor content', async () => {
+    const editorProps = {...props, validateContent: true, editorProps: {...props.editorProps, id: 'mockoutput'}};
+
+    renderWithProviders(<EditorModal {...editorProps} />);
+    const editorInputArea = screen.getByRole('textbox');
+
+    expect(screen.queryByText(errorMessageStore('INVALID_JSON_VALUE', {label: 'form label'}))).toBeNull();
+    await userEvent.type(editorInputArea, 'a');
+    expect(screen.queryByText(errorMessageStore('INVALID_JSON_VALUE', {label: 'form label'}))).toBeInTheDocument();
+  });
+  test('should not display the error message when validateContent is true and mode is not json for the editor content', async () => {
+    const editorProps = {...props, validateContent: true, editorProps: {...props.editorProps, mode: 'java', id: 'mockoutput'}};
+
+    renderWithProviders(<EditorModal {...editorProps} />);
+    const editorInputArea = screen.getByRole('textbox');
+
+    expect(screen.queryByText(errorMessageStore('INVALID_JSON_VALUE', {label: 'form label'}))).toBeNull();
+    await userEvent.type(editorInputArea, 'a');
+    expect(screen.queryByText(errorMessageStore('INVALID_JSON_VALUE', {label: 'form label'}))).not.toBeInTheDocument();
+  });
+  test('should not display the error message when validateContent is false for the editor content', async () => {
+    const editorProps = {...props, validateContent: false, editorProps: {...props.editorProps, id: 'mockoutput'}};
+
+    renderWithProviders(<EditorModal {...editorProps} />);
+    const editorInputArea = screen.getByRole('textbox');
+
+    expect(screen.queryByText(errorMessageStore('INVALID_JSON_VALUE', {label: 'form label'}))).toBeNull();
+    await userEvent.type(editorInputArea, 'a');
+    expect(screen.queryByText(errorMessageStore('INVALID_JSON_VALUE', {label: 'form label'}))).not.toBeInTheDocument();
   });
   test('should not display the error message when validateContent returns no error for the editor content', async () => {
     const editorProps = {...props, validateContent: () => {}, editorProps: {...props.editorProps, id: 'mockoutput'}};

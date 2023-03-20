@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@mui/material';
 import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
@@ -241,10 +241,7 @@ export default function Mapper2ExtractsTypeableSelect({
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
 
   return (
-    <FormControl
-      data-test={id}
-      key={id}
-      >
+    <FormControl variant="standard" data-test={id} key={id}>
       <Tooltip
         disableFocusListener
         placement="bottom"

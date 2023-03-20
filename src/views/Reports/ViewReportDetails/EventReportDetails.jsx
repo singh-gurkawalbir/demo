@@ -1,7 +1,8 @@
-import { capitalize, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import { capitalize, Tab, Tabs, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import React, { Fragment } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';

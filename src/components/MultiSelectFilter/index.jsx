@@ -1,6 +1,6 @@
-import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
@@ -203,90 +203,88 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
     return expanded[node] ? <ArrowUpIcon /> : <ArrowDownIcon />;
   }
 
-  return (
-    <>
-      {ButtonLabel ? (
-        <OutlinedButton
-          onClick={toggleClick}
-          endIcon={<ArrowDownIcon />}
-          color="secondary"
-          className={classes.dateRangePopperBtn}>
-          {ButtonLabel}
-        </OutlinedButton>
-      ) : (
-        <ActionButton onClick={toggleClick}>
-          <Icon />
-        </ActionButton>
-      )}
-      <ArrowPopper
-        open={!!anchorEl}
-        anchorEl={anchorEl}
-        placement="bottom"
-        restrictToParent={false}
-        classes={{
-          popper: classes.multiSelectFilterPopper,
-          arrow: classes.multiSelectFilterPopperArrow,
-        }}
-        onClose={toggleClick}>
-        {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <FormControl component="fieldset" className={classes.formControl}>
-                  <FormGroup className={classes.formGroup}>
-                    {items.map(m => (
-                      <ul key={m._id} className={classes.checkAction}>
-                        {isChildExists && (
-                          <li>
-                            { m?.children?.length > 0 && (
-                            <IconButton
-                              data-test="toggleJobDetail"
-                              className={classes.moreIcon}
-                              size="small"
-                              onClick={() => { handleExpandCollapseClick(m._id); }}>
-                              <RowIcon expanded={expanded} node={m._id} />
-                            </IconButton>
-                          )}
-                          </li>
-                        )}
+  return <>
+    {ButtonLabel ? (
+      <OutlinedButton
+        onClick={toggleClick}
+        endIcon={<ArrowDownIcon />}
+        color="secondary"
+        className={classes.dateRangePopperBtn}>
+        {ButtonLabel}
+      </OutlinedButton>
+    ) : (
+      <ActionButton onClick={toggleClick}>
+        <Icon />
+      </ActionButton>
+    )}
+    <ArrowPopper
+      open={!!anchorEl}
+      anchorEl={anchorEl}
+      placement="bottom"
+      restrictToParent={false}
+      classes={{
+        popper: classes.multiSelectFilterPopper,
+        arrow: classes.multiSelectFilterPopperArrow,
+      }}
+      onClose={toggleClick}>
+      {anchorEl && (
+        <div className={classes.dateRangePickerWrapper}>
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <FormControl variant="standard" component="fieldset" className={classes.formControl}>
+                <FormGroup className={classes.formGroup}>
+                  {items.map(m => (
+                    <ul key={m._id} className={classes.checkAction}>
+                      {isChildExists && (
                         <li>
-                          <FormControlLabel
-                            className={classes.selectResourceItem}
-                            control={(
-                              <Checkbox
-                                color="primary"
-                                checked={checked.includes(m._id)}
-                                onChange={handleSelect(m._id)}
-                                value="required"
-                                className={classes.selectResourceCheck} />
-                                  )}
-                            label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
-                            key={m._id} />
-                          {expanded[m._id] && m.children && m.children.map(c => (
-                            <ChildDetails
-                              key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
-                              checked={checked} />
-                          ))}
+                          { m?.children?.length > 0 && (
+                          <IconButton
+                            data-test="toggleJobDetail"
+                            className={classes.moreIcon}
+                            size="small"
+                            onClick={() => { handleExpandCollapseClick(m._id); }}>
+                            <RowIcon expanded={expanded} node={m._id} />
+                          </IconButton>
+                        )}
                         </li>
-                      </ul>
-                    ))}
-                  </FormGroup>
-                </FormControl>
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <FilledButton onClick={handleSave} disabled={isEqual(checked, initialValue)}>
-                    Apply
-                  </FilledButton>
-                  <TextButton onClick={handleClose}>
-                    Cancel
-                  </TextButton>
-                </ActionGroup>
-              </div>
+                      )}
+                      <li>
+                        <FormControlLabel
+                          className={classes.selectResourceItem}
+                          control={(
+                            <Checkbox
+                              color="primary"
+                              checked={checked.includes(m._id)}
+                              onChange={handleSelect(m._id)}
+                              value="required"
+                              className={classes.selectResourceCheck} />
+                                )}
+                          label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
+                          key={m._id} />
+                        {expanded[m._id] && m.children && m.children.map(c => (
+                          <ChildDetails
+                            key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                            checked={checked} />
+                        ))}
+                      </li>
+                    </ul>
+                  ))}
+                </FormGroup>
+              </FormControl>
+            </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <FilledButton onClick={handleSave} disabled={isEqual(checked, initialValue)}>
+                  Apply
+                </FilledButton>
+                <TextButton onClick={handleClose}>
+                  Cancel
+                </TextButton>
+              </ActionGroup>
             </div>
           </div>
-        )}
-      </ArrowPopper>
-    </>
-  );
+        </div>
+      )}
+    </ArrowPopper>
+  </>;
 }

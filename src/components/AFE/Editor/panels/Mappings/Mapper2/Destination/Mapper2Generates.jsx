@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, TextField, Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, TextField, Tooltip } from '@mui/material';
 import clsx from 'clsx';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
@@ -119,10 +119,7 @@ export default function Mapper2Generates(props) {
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   return (
-    <FormControl
-      data-test={id}
-      key={id}
-      ref={containerRef} >
+    <FormControl variant="standard" data-test={id} key={id} ref={containerRef}>
       <div
         className={classes.mapField}>
         <Tooltip

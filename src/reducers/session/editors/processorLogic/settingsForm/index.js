@@ -10,7 +10,7 @@ export function generateScriptInput(parsedData, flowGrouping, resourceDocs, defa
 
   const input = {
     resource: {
-      ...resource || {},
+      ...(resource || {}),
       settingsForm: {
         form: parsedData || defaultMeta,
       },

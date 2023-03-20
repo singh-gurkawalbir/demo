@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { filterMap } from '../filterMeta';
 import GenericRow from './types/Generic';
 import ConnectedRow from './types/Connected';

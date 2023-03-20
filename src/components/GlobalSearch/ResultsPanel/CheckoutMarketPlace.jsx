@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import MarketplaceIcon from '../../icons/MarketplaceIcon';
 import TextButton from '../../Buttons/TextButton';
 import useResults from '../hooks/useResults';

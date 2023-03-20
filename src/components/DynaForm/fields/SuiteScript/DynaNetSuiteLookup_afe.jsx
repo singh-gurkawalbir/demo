@@ -2,8 +2,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
@@ -99,41 +99,39 @@ export default function DynaNetSuiteLookup_afe(props) {
     }));
   }, [dispatch, editorId, extractFields, formKey, flowId, handleSave, history, id, match.url, resourceContext.resourceType, resourceId, ssLinkedConnectionId]);
 
-  return (
-    <>
-      <FormControl className={classes.dynaNetsuiteLookupFormControl}>
-        <div className={classes.dynaNetsuiteLookupLabelWrapper}>
-          <FormLabel htmlFor={id} required={required} error={!isValid}>
-            {label}
-          </FormLabel>
-          <FieldHelp {...props} />
+  return <>
+    <FormControl variant="standard" className={classes.dynaNetsuiteLookupFormControl}>
+      <div className={classes.dynaNetsuiteLookupLabelWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <div className={classes.dynaNetsuiteFieldLookupWrapper}>
+        <div className={classes.dynaNetsuiteLookupField}>
+          <TextField
+            {...isLoggableAttr(isLoggable)}
+            key={id}
+            name={name}
+            className={classes.dynaNetsuiteLookupField}
+            placeholder={placeholder}
+            disabled
+            value={value}
+            variant="filled"
+          />
+          <FieldMessage
+            isValid={isValid}
+            description=""
+            errorMessages={errorMessages}
+          />
         </div>
-        <div className={classes.dynaNetsuiteFieldLookupWrapper}>
-          <div className={classes.dynaNetsuiteLookupField}>
-            <TextField
-              {...isLoggableAttr(isLoggable)}
-              key={id}
-              name={name}
-              className={classes.dynaNetsuiteLookupField}
-              placeholder={placeholder}
-              disabled
-              value={value}
-              variant="filled"
-            />
-            <FieldMessage
-              isValid={isValid}
-              description=""
-              errorMessages={errorMessages}
-            />
-          </div>
-          <ActionButton
-            data-test={id}
-            onClick={handleEditorClick}
-            className={classes.dynaNetsuiteLookupActionBtn}>
-            <FilterIcon />
-          </ActionButton>
-        </div>
-      </FormControl>
-    </>
-  );
+        <ActionButton
+          data-test={id}
+          onClick={handleEditorClick}
+          className={classes.dynaNetsuiteLookupActionBtn}>
+          <FilterIcon />
+        </ActionButton>
+      </div>
+    </FormControl>
+  </>;
 }

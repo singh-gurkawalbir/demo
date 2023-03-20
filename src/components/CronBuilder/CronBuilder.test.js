@@ -4,7 +4,7 @@ import { render, screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CronBuilder from '.';
 
-jest.mock('@material-ui/core/Slider', () => props => {
+jest.mock('@mui/material/Slider', () => props => {
   const {onChange, ...others } = props;
   const testid = 'testid';
 
