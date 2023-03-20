@@ -47,7 +47,7 @@ export default {
           connectionId,
           required: true,
           filterKey: 'salesforce-recordType',
-          refreshOptionsOnChangesTo: ['_sObjectType'],
+          sObjectTypeFieldId: '_sObjectType',
           isLoggable: true,
           visibleWhenAll: [
             { field: '_mode', is: ['dynamic'] },
@@ -140,18 +140,6 @@ export default {
         ],
       },
       optionsHandler: (fieldId, fields) => {
-        if (fieldId === '_whereClause') {
-          const sObjectTypeField = fields.find(
-            field => field.id === '_sObjectType'
-          );
-
-          return {
-            disableFetch: !(sObjectTypeField && sObjectTypeField.value),
-            commMetaPath: sObjectTypeField
-              ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
-              : '',
-          };
-        }
         if (fieldId === '_whereClauseText') {
           const whereClauseField = fields.find(
             field => field.id === '_whereClause'

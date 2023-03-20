@@ -54,17 +54,11 @@ describe('getLookupMetadata component Test cases', () => {
 
     const whereClauseRes = response.optionsHandler('_whereClause', fields);
 
-    expect(whereClauseRes).toEqual({
-      disableFetch: false,
-      commMetaPath: 'salesforce/metadata/connections/undefined/sObjectTypes/sObjectType',
-    });
+    expect(whereClauseRes).toBeNull();
 
     const whereClauseRes1 = response.optionsHandler('_whereClause', []);
 
-    expect(whereClauseRes1).toEqual({
-      disableFetch: true,
-      commMetaPath: '',
-    });
+    expect(whereClauseRes1).toBeNull();
 
     const whereClauseTextRes = response.optionsHandler('_whereClauseText', fields);
 

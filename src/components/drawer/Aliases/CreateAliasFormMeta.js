@@ -67,7 +67,6 @@ export default function getFieldMeta(resourceId, resourceType, aliasData, isEdit
         aliasContextResourceType: resourceType,
         required: true,
         noApi: true,
-        refreshOptionsOnChangesTo: ['aliasResourceType'],
         visibleWhen: [
           {
             field: 'aliasResourceType',
@@ -75,19 +74,6 @@ export default function getFieldMeta(resourceId, resourceType, aliasData, isEdit
           },
         ],
       },
-    },
-    optionsHandler: (fieldId, fields) => {
-      if (fieldId === 'aliasResourceName') {
-        const resourceType = fields.find(
-          field => field.id === 'aliasResourceType'
-        );
-
-        return {
-          aliasResourceType: resourceType?.value,
-        };
-      }
-
-      return null;
     },
     layout: {
       containers: [
