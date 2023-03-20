@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   screen, waitFor,
@@ -12,7 +11,26 @@ import { mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
 
-const initialStore = getCreatedStore();
+let initialStore = getCreatedStore();
+const mockOnFieldChange = jest.fn();
+const props = {
+  resourceContext: {
+    resourceId: '633dc83108cc753ca5688d34',
+    recordType: 'customer',
+  },
+  connectionId: '5efd8663a56953365bd28541',
+  onFieldChange: mockOnFieldChange,
+  id: 'demoId',
+  options: {
+    recordType: 'customer',
+  },
+  defaultValue: 'default value',
+  value: [],
+  formKey: 'form-123',
+  flowId: '5efd8663a56953365bd28542',
+  hasRecord: true,
+  subrecords: [{fieldId: 'fieldId1', name: 'subrecord1'}, {fieldId: 'fieldId2', name: 'subrecord2'}],
+};
 
 function initDynaNetSuiteSubRecords(props = {}) {
   mutateStore(initialStore, draft => {
@@ -207,25 +225,9 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
   afterEach(async () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    initialStore = getCreatedStore();
+    mockOnFieldChange.mockClear();
   });
-  const mockOnFieldChange = jest.fn();
-  const props = {
-    resourceContext: {
-      resourceId: '633dc83108cc753ca5688d34',
-      recordType: 'customer',
-    },
-    connectionId: '5efd8663a56953365bd28541',
-    onFieldChange: mockOnFieldChange,
-    id: 'demoId',
-    options: {
-      recordType: 'customer',
-    },
-    defaultValue: 'default value',
-    value: [],
-    flowId: '5efd8663a56953365bd28542',
-    hasRecord: true,
-    subrecords: [{fieldId: 'fieldId1', name: 'subrecord1'}, {fieldId: 'fieldId2', name: 'subrecord2'}],
-  };
 
   test('should pass the initial render', () => {
     initDynaNetSuiteSubRecords({...props, subrecords: undefined});

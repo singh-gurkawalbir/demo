@@ -372,7 +372,6 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
 
           // when editing rdms connection we lookup for the resource subtype
           if (jdbcSubType === 'netsuitejdbc') {
-            // TODO:both seems to be duplicated
             meta = meta.rdbms.netsuitejdbc;
           }
         } else if (
