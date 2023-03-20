@@ -12,6 +12,7 @@ import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
+import { message } from '../../utils/messageStore';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -124,14 +125,14 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
-      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErrorMsg(message.MFA.EMAIL_EMPTY);
       setShowErr(true);
     } else {
       if (validateEmail(email)) {
         setShowInvalidEmailError(false);
         handleAuthentication(email);
       } else {
-        setShowErrorMsg('INVALID_EMAIL');
+        setShowErrorMsg(message.MFA.INVALID_EMAIL);
         setShowInvalidEmailError(true);
       }
       setShowErr(false);

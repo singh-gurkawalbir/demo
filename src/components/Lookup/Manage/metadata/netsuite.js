@@ -46,7 +46,7 @@ export default {
           label: 'NS filters',
           required: true,
           connectionId,
-          refreshOptionsOnChangesTo: ['_recordType'],
+          recordTypeFieldId: '_recordType',
           visibleWhenAll: [
             { field: '_mode', is: ['dynamic'] },
             { field: '_recordType', isNot: [''] },
@@ -153,17 +153,6 @@ export default {
           );
 
           expressionTextField.value = expressionField.value;
-        } else if (fieldId === '_expression') {
-          const recordTypeField = fields.find(
-            field => field.id === '_recordType'
-          );
-
-          return {
-            disableFetch: !(recordTypeField && recordTypeField.value),
-            commMetaPath: recordTypeField
-              ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
-              : '',
-          };
         } else if (fieldId === '_resultField') {
           const recordTypeField = fields.find(
             field => field.id === '_recordType'

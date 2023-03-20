@@ -111,7 +111,7 @@ export default {
           connectionId,
           required: true,
           filterKey: 'salesforce-recordType',
-          refreshOptionsOnChangesTo: ['lookup.sObjectType'],
+          sObjectTypeFieldId: 'lookup.sObjectType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -505,18 +505,6 @@ export default {
           }
 
           return expressionValue;
-        }
-        if (fieldId === 'lookup.whereClause') {
-          const sObjectTypeField = fields.find(
-            field => field.id === 'lookup.sObjectType'
-          );
-
-          return {
-            disableFetch: !(sObjectTypeField && sObjectTypeField.value),
-            commMetaPath: sObjectTypeField
-              ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
-              : '',
-          };
         }
         if (fieldId === 'lookup.whereClauseText') {
           const whereClauseField = fields.find(

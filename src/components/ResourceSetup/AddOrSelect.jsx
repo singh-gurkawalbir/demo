@@ -98,7 +98,6 @@ export default function AddOrSelect(props) {
 
   useFormInitWithPermissions({
     fieldMeta,
-    optionsHandler: fieldMeta.optionsHandler,
     formKey,
     remount: remountCount,
   });
