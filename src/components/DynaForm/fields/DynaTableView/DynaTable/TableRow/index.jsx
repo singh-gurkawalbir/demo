@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
-    alignItems: 'center',
   },
   refreshIcon: {
     cursor: 'pointer',
@@ -53,6 +52,11 @@ const useStyles = makeStyles(theme => ({
         wordWrap: 'break-word',
         whiteSpace: 'normal',
       },
+    },
+  },
+  refreshButton: {
+    '& .MuiButtonBase-root': {
+      marginTop: 0,
     },
   },
 }));
@@ -155,7 +159,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
-        className={clsx(classes.root, classes.menuItemsWrapper)}
+        className={classes.refreshButton}
     />
     );
   }

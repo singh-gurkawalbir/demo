@@ -5,10 +5,6 @@ import { VariableSizeList } from 'react-window';
 import Spinner from '../../../../../Spinner';
 import TableRow, { isCellValid } from '../TableRow';
 
-const ITEM_SIZE = 46;
-const INVALID_ITEM_SIZE = 55;
-const NO_OF_ROWS = 10;
-const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
   const {
     items,
@@ -93,11 +89,20 @@ const VirtualizedTable = ({
   onRowChange,
   disableDeleteRows,
   invalidateParentFieldOnError,
-  setIsValid }) => {
+  setIsValid,
+  rowHeight = 46,
+  invalidRowHeight = 55,
+  maxRowCount = 10,
+  maxTableHeight = 480 }) => {
   const listRef = React.createRef();
 
   const [, setItemCount] = useState(items.length);
   const [scrollIndex, setScrollIndex] = useState(0);
+
+  const ITEM_SIZE = rowHeight;
+  const INVALID_ITEM_SIZE = invalidRowHeight;
+  const NO_OF_ROWS = maxRowCount;
+  const TABLE_VIEW_PORT_HEIGHT = maxTableHeight;
 
   const maxHeightOfSelect = items.length > NO_OF_ROWS
     ? TABLE_VIEW_PORT_HEIGHT
