@@ -1,9 +1,11 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import makeStyles from '@mui/styles/makeStyles';
 import { TextField, FormControl, FormLabel } from '@mui/material';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
@@ -46,7 +48,8 @@ export default function DynaNetSuiteLookup_afe(props) {
     resourceId,
     flowId,
     label,
-    options,
+    options = {},
+    recordTypeFieldId = 'netsuite_da.recordType',
     formKey,
     resourceType,
     isLoggable,
@@ -57,6 +60,21 @@ export default function DynaNetSuiteLookup_afe(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
+
+  const recordTypeField = useSelector(state => selectors.formState(state, formKey)?.fields?.[recordTypeFieldId]);
+
+  const customOptions = useMemo(() => {
+    if (!isEmpty(options)) return options;
+
+    return {
+      disableFetch: !recordTypeField?.value,
+      commMetaPath: recordTypeField
+        ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
+        : '',
+      resetValue: [],
+    };
+  }, [options, recordTypeField]);
+
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
@@ -80,7 +98,7 @@ export default function DynaNetSuiteLookup_afe(props) {
         fieldId: id,
         stage: 'importMappingExtract',
         onSave: handleSave,
-        customOptions: options,
+        customOptions,
       }));
 
       history.push(buildDrawerUrl({
@@ -89,44 +107,46 @@ export default function DynaNetSuiteLookup_afe(props) {
         params: { editorId },
       }));
     }
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, customOptions]);
 
-  return <>
-    <FormControl variant="standard" className={classes.dynaNetsuiteLookupFormControl}>
-      <div className={classes.dynaNetsuiteLookupLabelWrapper}>
-        <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-
-      <div className={classes.dynaNetsuiteFieldLookupWrapper}>
-        <div className={classes.dynaNetsuiteLookupField}>
-          <TextField
-            {...isLoggableAttr(isLoggable)}
-            key={id}
-            name={name}
-            className={classes.dynaNetsuiteLookupField}
-            placeholder={placeholder}
-            disabled
-            value={value}
-            variant="filled"
-          />
-          <FieldMessage
-            isValid={isValid}
-            description=""
-            errorMessages={errorMessages}
-          />
+  return (
+    <>
+      <FormControl className={classes.dynaNetsuiteLookupFormControl}>
+        <div className={classes.dynaNetsuiteLookupLabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
         </div>
-        <ActionButton
-          disabled={options?.disableFetch || disableFetch}
-          data-test={id}
-          onClick={handleEditorClick}
-          tooltip="Define lookup criteria"
-          className={classes.dynaNetsuiteLookupActionBtn}>
-          <FilterIcon />
-        </ActionButton>
-      </div>
-    </FormControl>
-  </>;
+
+        <div className={classes.dynaNetsuiteFieldLookupWrapper}>
+          <div className={classes.dynaNetsuiteLookupField}>
+            <TextField
+              {...isLoggableAttr(isLoggable)}
+              key={id}
+              name={name}
+              className={classes.dynaNetsuiteLookupField}
+              placeholder={placeholder}
+              disabled
+              value={value}
+              variant="filled"
+            />
+            <FieldMessage
+              isValid={isValid}
+              description=""
+              errorMessages={errorMessages}
+            />
+          </div>
+          <ActionButton
+            disabled={customOptions?.disableFetch || disableFetch}
+            data-test={id}
+            onClick={handleEditorClick}
+            tooltip="Define lookup criteria"
+            className={classes.dynaNetsuiteLookupActionBtn}>
+            <FilterIcon />
+          </ActionButton>
+        </div>
+      </FormControl>
+    </>
+  );
 }

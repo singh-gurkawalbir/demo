@@ -180,10 +180,7 @@ export default {
     'salesforce.attachment.isPrivate': {
       fieldId: 'salesforce.attachment.isPrivate',
     },
-    'salesforce.idLookup.whereClause': {
-      fieldId: 'salesforce.idLookup.whereClause',
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
-    },
+    'salesforce.idLookup.whereClause': { fieldId: 'salesforce.idLookup.whereClause' },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
       label: 'Ignore existing records',
@@ -286,20 +283,6 @@ export default {
     ],
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'salesforce.idLookup.whereClause') {
-      const sObjectTypeField = fields.find(
-        field => field.id === 'salesforce.sObjectType'
-      );
-
-      return {
-        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
-        commMetaPath: sObjectTypeField
-          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
-          : '',
-        resetValue: [],
-      };
-    }
-
     if (fieldId === 'salesforce.upsert.externalIdField') {
       const sObjectTypeField = fields.find(
         field => field.id === 'salesforce.sObjectType'
