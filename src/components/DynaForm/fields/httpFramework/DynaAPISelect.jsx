@@ -21,6 +21,7 @@ const useStyles = makeStyles(() => ({
 
 export default function APISelect(props) {
   const {
+    required,
     label,
     id,
     formKey,
@@ -122,7 +123,7 @@ export default function APISelect(props) {
 
   return (
     <div className={clsx(classes.fieldWrapper)}>
-      <FormLabel required htmlFor={label}>
+      <FormLabel required={required} htmlFor={label}>
         {label}
       </FormLabel>
       <FieldHelp {...props} />
