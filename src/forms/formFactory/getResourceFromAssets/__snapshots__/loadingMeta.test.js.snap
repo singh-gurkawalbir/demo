@@ -750,10 +750,6 @@ Object {
       },
       "ftp.port": Object {
         "fieldId": "ftp.port",
-        "refreshOptionsOnChangesTo": Array [
-          "ftp.type",
-          "ftp.useImplicitFtps",
-        ],
         "validWhen": Object {
           "matchesRegEx": Object {
             "message": "Must be a number.",
@@ -6451,10 +6447,6 @@ Object {
       },
       "webhook.sampledata": Object {
         "fieldId": "webhook.sampledata",
-        "refreshOptionsOnChangesTo": Array [
-          "webhook.url",
-          "webhook.provider",
-        ],
         "sampleData": [Function],
       },
       "webhook.slackKey": Object {
