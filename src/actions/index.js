@@ -1457,8 +1457,8 @@ const user = {
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),
-    update: preferences =>
-      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    update: (preferences, skipSaga) =>
+      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences, skipSaga }),
     pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
     unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },

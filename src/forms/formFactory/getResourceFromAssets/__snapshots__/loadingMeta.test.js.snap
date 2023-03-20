@@ -750,10 +750,6 @@ Object {
       },
       "ftp.port": Object {
         "fieldId": "ftp.port",
-        "refreshOptionsOnChangesTo": Array [
-          "ftp.type",
-          "ftp.useImplicitFtps",
-        ],
         "validWhen": Object {
           "matchesRegEx": Object {
             "message": "Must be a number.",
@@ -5966,9 +5962,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -6454,10 +6447,6 @@ Object {
       },
       "webhook.sampledata": Object {
         "fieldId": "webhook.sampledata",
-        "refreshOptionsOnChangesTo": Array [
-          "webhook.url",
-          "webhook.provider",
-        ],
         "sampleData": [Function],
       },
       "webhook.slackKey": Object {
@@ -6972,9 +6961,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -7815,9 +7801,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -8541,7 +8524,7 @@ Object {
       ],
     },
   },
-  "init": [Function],
+  "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
