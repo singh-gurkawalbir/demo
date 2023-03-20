@@ -1,5 +1,4 @@
 import { isNewId } from '../../utils/resource';
-import { alterFileDefinitionRulesVisibility } from '../formFactory/utils';
 
 export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   outputMode: {
@@ -508,8 +507,6 @@ export const getFileProviderExportsOptionsHandler = (fieldId, fields) => {
     const resourcePath = fields.find(
       field => field.id === 'file.fileDefinition.resourcePath'
     );
-
-    alterFileDefinitionRulesVisibility(fields);
 
     return {
       format: definition && definition.format,

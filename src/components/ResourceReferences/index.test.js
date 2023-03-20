@@ -7,17 +7,15 @@ import ResourceReferences from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 
-const mockReact = React;
+const mockLoadResources = jest.fn();
 
-jest.mock('@material-ui/core/IconButton', () => ({
+jest.mock('../LoadResources', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/core/IconButton'),
+  ...jest.requireActual('../LoadResources'),
   default: props => {
-    const mockProps = {...props};
+    mockLoadResources(props.resources);
 
-    delete mockProps.autoFocus;
-
-    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+    return <div>{props.children}</div>;
   },
 }));
 
@@ -52,6 +50,9 @@ describe('resourceReferences test cases', () => {
 
   beforeEach(() => {
     mockGetRequestOnce('/api/exports/resource_id/dependencies', {});
+  });
+  afterEach(() => {
+    mockLoadResources.mockClear();
   });
 
   test('should pass the initial render with default value', async () => {
@@ -132,5 +133,48 @@ describe('resourceReferences test cases', () => {
 
     expect(screen.queryByText(/Retrieving references/i)).toBeInTheDocument();
   });
-});
 
+  test('loadResources should get correct resourceType', async () => {
+    await initResourceReferences({
+      resource: {
+        references: {
+          exports: [{
+            id: 'id_1',
+            name: 'Name 1',
+          }],
+          connections: [{
+            id: 'id_2',
+            name: 'Name conn 1',
+          }],
+        },
+      },
+    });
+
+    expect(mockLoadResources).toHaveBeenCalledWith(
+      expect.objectContaining(['exports', 'connections'])
+    );
+  });
+
+  test('loadResources should get unique resourceType', async () => {
+    await initResourceReferences({
+      resource: {
+        references: {
+          exports: [
+            {
+              id: 'id_1',
+              name: 'Name 1',
+            },
+            {
+              id: 'id_2',
+              name: 'Name 2',
+            },
+          ],
+        },
+      },
+    });
+
+    expect(mockLoadResources).toHaveBeenCalledWith(
+      expect.objectContaining(['exports'])
+    );
+  });
+});

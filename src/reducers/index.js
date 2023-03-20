@@ -4681,6 +4681,20 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
+selectors.resourceCanHaveFileDefinitions = (state, resourceId, resourceType) => {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return false;
+  }
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resource?.type === 'simple') {
+    // Data loaders do not have file definitions
+    return false;
+  }
+
+  return isFileAdaptor(resource) || isAS2Resource(resource) || FILE_PROVIDER_ASSISTANTS.includes(resource?.assistant);
+};
+
 // #endregion SAMPLE DATA selectors
 
 // #region  SUITESCRIPT Selectors
