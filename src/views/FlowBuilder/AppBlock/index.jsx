@@ -267,7 +267,7 @@ export default function AppBlock({
       return resource.rdbms.type;
     }
 
-    if (resource.type && resource.type === 'jdbc' && resource.rdbms) {
+    if (resource.type && resource.type === 'jdbc' && resource.jdbc) {
       return resource.jdbc.type;
     }
   });

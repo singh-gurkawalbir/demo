@@ -95,18 +95,13 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
       })
     );
   });
-<<<<<<< HEAD
   test('should not call refresh dispatch when fetch is disabled', async () => {
-    initDynaNetSuiteLookupFiltersafe(true);
-=======
-  test('should not call refresh dispatch when fetch is disabled', () => {
     initDynaNetSuiteLookupFiltersafe({
       options: {
         disableFetch: true,
         commMetaPath: 'somePath',
       },
     });
->>>>>>> 958c6538b43908066eb74fb2222c4e4c9bb65ebe
     expect(screen.getByText('Refresh search filters')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).not.toHaveBeenCalledWith(
