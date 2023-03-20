@@ -8,6 +8,7 @@ import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
+import Spinner from '../../../../Spinner';
 import VirtualizedTable from './VirtualizedTable';
 
 const useStyles = makeStyles(theme => ({
@@ -34,6 +35,10 @@ const useStyles = makeStyles(theme => ({
   },
   rowContainer: {
     display: 'flex',
+  },
+  tableViewWrapper: {
+    maxHeight: theme.spacing(30),
+    overflowY: 'auto',
   },
 }));
 
@@ -116,6 +121,13 @@ const BaseTable = ({
     );
   }
 
+  // isLoading flag is generally used with Virtualized table
+  if (isAnyColumnFetching) {
+    return (
+      <Spinner centerAll />
+    );
+  }
+
   return (tableValue.map((arr, rowIndex) => {
     const {value, key} = arr;
 
@@ -180,7 +192,7 @@ const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
           {/* do all multicolumn entry tables need to be redacted ? */}
-          <span {...isLoggableAttr(isLoggable)}>
+          <div {...isLoggableAttr(isLoggable)} className={classes.tableViewWrapper}>
             <BaseTable
               isLoading={isLoading}
               isVirtualizedTable={isVirtualizedTable}
@@ -193,10 +205,8 @@ const DynaTable = props => {
               ignoreEmptyRow={ignoreEmptyRow}
               value={value}
           />
-          </span>
-
+          </div>
         </div>
-
       </div>
     </div>
   );
