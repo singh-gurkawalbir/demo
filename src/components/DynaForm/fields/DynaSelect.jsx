@@ -368,7 +368,7 @@ export default function DynaSelect(props) {
         if (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId) return [c1 + 1, c2];
 
         return [c1, c2];
-      }, [0, 0]);
+      }, [0, 0]) || [0, 0];
 
       return [count1 + c1, count2 + c2];
     }, [0, 0])
