@@ -863,7 +863,7 @@ export function getMergedImportOperationDetails({
   if (!createOperation || !createOperation.url || !updateOperation || !updateOperation.url) {
     return undefined;
   }
-  const lengthisIdentifier = createOperation.parameters.length;
+  const lengthisIdentifier = createOperation?.parameters?.length;
 
   const createorupdateoperation = customCloneDeep(createOperation);
 
@@ -879,6 +879,19 @@ export function getMergedImportOperationDetails({
     createorupdateoperation.body.push(...updateOperation.body);
   } else if (updateOperation.body) {
     createorupdateoperation.body = [...updateOperation.body, ...updateOperation.body];
+  }
+  const responseFields = ['successPath', 'successValues', 'failPath', 'failValues', 'resourceIdPath', 'resourcePath'];
+
+  if (updateOperation?.response && createOperation?.response) {
+    responseFields.forEach(element => {
+      if (updateOperation.response[element] && createOperation.response[element]) {
+        createorupdateoperation.response[element] = [...updateOperation.response[element], ...createOperation.response[element]];
+      }
+    });
+  } else if (updateOperation?.response && !createOperation?.response) {
+    responseFields.forEach(element => {
+      createorupdateoperation.response[element] = [...updateOperation.response[element]];
+    });
   }
   for (let i = 0; i < lengthisIdentifier; i += 1) {
     if (createOperation.parameters[i].isIdentifier === true) {
@@ -1957,6 +1970,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   let url2Info;
 
   if (importAdaptorSubSchema.relativeURI) {
+    if (!isArray(importAdaptorSubSchema.relativeURI)) { importAdaptorSubSchema.relativeURI = [importAdaptorSubSchema.relativeURI]; }
     url1Info = getMatchingRoute(
       [
         isArray(operationDetails.url)

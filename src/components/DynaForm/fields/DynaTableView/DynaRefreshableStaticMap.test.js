@@ -6,6 +6,7 @@ import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/t
 import actions from '../../../../actions';
 import * as mockEnqueSnackbar from '../../../../hooks/enqueueSnackbar';
 
+const formKey = 'form_key';
 const mockDispatchFn = jest.fn();
 const enqueueSnackbar = jest.fn();
 const mockOnFieldChange = jest.fn();
@@ -46,6 +47,10 @@ mutateStore(initialStore, draft => {
         },
       },
     },
+  };
+
+  draft.session.form[formKey] = {
+    showValidationBeforeTouched: true,
   };
 });
 function initDynaRefreshableStaticMap(props = {}) {
@@ -94,6 +99,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       valueResource: {virtual: { key: '_valuekey'}},
       filterKey: 'suitescript-recordTypes',
       disableFetch: true,
+      formKey: 'form_key',
     };
 
     initDynaRefreshableStaticMap(genralProps);
@@ -121,7 +127,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       { extract: 'name', generate: 'samplename' },
     ]);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-12"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
   });
   test('should test static map with number data by setting prefered value as num to true', () => {
@@ -149,6 +155,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       resourceContext: {resourceId: '_integrationId', resourceType: 'integrations'},
       filterKey: 'suitescript-recordTypes',
       disableFetch: false,
+      formKey: 'form_key',
     };
 
     initDynaRefreshableStaticMap(genralProps);

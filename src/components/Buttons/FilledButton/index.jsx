@@ -22,16 +22,23 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.error.main,
     },
   },
+  submitBtn: {
+    width: '100%',
+    borderRadius: 4,
+    height: 38,
+    fontSize: theme.spacing(2),
+    marginTop: theme.spacing(1),
+  },
 }));
 
 export default function FilledButton(props) {
   const classes = useStyles(props);
-  const { error, bold, className, ...rest} = props;
+  const { error, bold, className, submit, ...rest} = props;
 
   return (
     <Button
       variant="contained"
-      className={clsx(classes.root, {[classes.error]: error}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.submitBtn]: submit}, className)}
       {...rest} />
   );
 }
