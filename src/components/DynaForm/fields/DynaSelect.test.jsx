@@ -4,8 +4,41 @@ import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
+import * as reactRedux from 'react-redux';
 import DynaSelect from './DynaSelect';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
+import actions from '../../../actions';
+
+const initialStore = reduxStore;
+const mockOnFieldChange = jest.fn();
+
+jest.mock('.../../../constants/applications', () => ({
+  ...jest.requireActual('../../../constants/applications'),
+  getHttpConnector: () => ({}),
+}));
+
+mutateStore(initialStore, draft => {
+  draft.data.httpConnectors.httpConnector = {
+    connectorId1: {
+      versions: [{
+        _id: 'versionId1',
+        name: 'Version 1',
+      }],
+      apis: [],
+    },
+    connectorId2: {
+      versions: [],
+      apis: [{
+        _id: 'apiId1',
+        name: 'API 1',
+        versions: [{
+          _id: 'versionId2',
+          name: 'Version 2',
+        }],
+      }],
+    },
+  };
+});
 
 function initDynaSelect(props = {}) {
   const ui = (
@@ -14,9 +47,8 @@ function initDynaSelect(props = {}) {
       />
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, { initialStore });
 }
-const mockOnFieldChange = jest.fn();
 
 jest.mock('react-truncate-markup', () => ({
   __esModule: true,
@@ -37,8 +69,19 @@ jest.mock('react-truncate-markup', () => ({
 }));
 
 describe('dynaSelect UI test cases', () => {
+  let mockDispatchFn;
+
+  beforeAll(() => {
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default:
+      }
+    });
+    jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockDispatchFn);
+  });
   afterEach(() => {
     jest.clearAllMocks();
+    mockDispatchFn.mockClear();
   });
   test('connection field is updated after selecting netsuite connection from the dropdown', async () => {
     const data =
@@ -331,5 +374,82 @@ describe('dynaSelect UI test cases', () => {
     await userEvent.keyboard('{enter}');
     await fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', keyCode: 13});
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
+  });
+  describe('connection dropdown', () => {
+    test('the connection options should show api version and type if available', () => {
+      const data =
+      {
+        disabled: false,
+        id: '_connectionId',
+        name: '/_connectionId',
+        connectionId: '',
+        options: [{
+          items: [{
+            label: 'Test Connection 1',
+            optionSearch: 'Test Connection 1',
+            value: 'connectionId1',
+            connInfo: {
+              httpConnectorId: 'connectorId1',
+              httpConnectorVersionId: 'versionId1',
+              httpConnectorApiId: undefined,
+            },
+          }, {
+            label: 'Test Connection 2',
+            optionSearch: 'Test Connection 2',
+            value: 'connectionId2',
+            connInfo: {
+              httpConnectorId: 'connectorId2',
+              httpConnectorVersionId: 'versionId2',
+              httpConnectorApiId: 'apiId1',
+            },
+          }],
+        }],
+        required: true,
+        label: 'Connection',
+        onFieldChange: mockOnFieldChange,
+        isLoggable: true,
+        helpText: 'help text',
+        helpKey: 'pageProcessor.connection',
+      };
+
+      initDynaSelect(data);
+      userEvent.click(screen.getByText('Please select'));
+
+      expect(screen.getByText('Version 1')).toBeInTheDocument();
+      expect(screen.getByText('API 1')).toBeInTheDocument();
+      expect(screen.getByText('Version 2')).toBeInTheDocument();
+    });
+    test('should dispatch requestConnector when connectorId in not found in the state', () => {
+      const data =
+      {
+        disabled: false,
+        id: '_connectionId',
+        name: '/_connectionId',
+        connectionId: '',
+        options: [{
+          items: [{
+            label: 'Test Connection 1',
+            optionSearch: 'Test Connection 1',
+            value: 'connectionId1',
+            connInfo: {
+              httpConnectorId: 'connectorId3',
+              httpConnectorVersionId: 'versionId1',
+              httpConnectorApiId: undefined,
+            },
+          }],
+        }],
+        required: true,
+        label: 'Connection',
+        onFieldChange: mockOnFieldChange,
+        isLoggable: true,
+        helpText: 'help text',
+        helpKey: 'pageProcessor.connection',
+      };
+
+      initDynaSelect(data);
+      userEvent.click(screen.getByText('Please select'));
+
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.httpConnectors.requestConnector({ httpConnectorId: 'connectorId3' }));
+    });
   });
 });

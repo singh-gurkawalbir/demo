@@ -49,13 +49,14 @@ const genralProps = {
   disableDeleteRows: false,
   handleCleanupHandler: () => {},
   _integrationId: 'someintegrationId',
+  isVirtualizedTable: true,
 };
 
 mutateStore(initialStore, draft => {
   draft.session.connectors = {
     someintegrationId: {
       someid: {
-        isLoading: {export: false, import: false},
+        isLoading: false,
         shouldReset: false,
         data: {optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}, {id: 'subsidiary', label: 'Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}],
         },
@@ -77,7 +78,7 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
     expect(screen.getByDisplayValue('Honeycomb Inc3')).toBeInTheDocument();
     expect(screen.getByDisplayValue('s4')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Honeycomb Inc4')).toBeInTheDocument();
-    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-12"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('subsidiary', 'someid', 'someintegrationId', {
       key: 'columnName',
     }));
@@ -113,13 +114,14 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
       disableDeleteRows: false,
       handleCleanupHandler: () => {},
       _integrationId: 'someintegrationId',
+      isVirtualizedTable: true,
     };
 
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someintegrationId: {
           someid: {
-            isLoading: {export: false, import: false},
+            isLoading: false,
             shouldReset: false,
             data: {},
           },
