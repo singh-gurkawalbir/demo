@@ -20,8 +20,8 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
     marginBottom: theme.spacing(0.5),
   },
-  apiDescription:{
-    height: theme.spacing(7), // for content height
+  apiDescription: {
+    height: theme.spacing(7),
   },
   apiRadio: {
     width: 18,
