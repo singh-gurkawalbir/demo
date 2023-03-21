@@ -5,6 +5,7 @@ import cartrover from './cartrover';
 import practicepanther from './practicepanther';
 import outreach from './outreach';
 import amazonmws from './amazonmws';
+import amazonvendorcentral from './amazonvendorcentral';
 import autopilot from './autopilot';
 import ebayXml from './ebayXml';
 import openair from './openair';
@@ -289,6 +290,7 @@ export default {
   practicepanther,
   outreach,
   amazonmws,
+  amazonvendorcentral,
   autopilot,
   'ebay-xml': ebayXml,
   '3dcart': threedcart,

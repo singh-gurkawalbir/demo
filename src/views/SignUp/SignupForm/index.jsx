@@ -12,6 +12,7 @@ import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import getRoutePath from '../../../utils/routePaths';
 import useQuery from '../../../hooks/useQuery';
+import { SIGNUP_SEARCH_PARAMS } from '../../../constants/account';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -48,6 +49,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function validateQueryParam(params) {
+  const validatedParam = {};
+
+  Object.keys(params).forEach(key => {
+    if (SIGNUP_SEARCH_PARAMS.includes(key)) {
+      validatedParam[key] = params[key];
+    }
+  });
+
+  return validatedParam;
+}
+
 const formKey = 'signupForm';
 export default function SignUp() {
   const dispatch = useDispatch();
@@ -57,11 +70,13 @@ export default function SignUp() {
   const signupStatus = useSelector(state => selectors.signupStatus(state));
   const error = useSelector(state => selectors.signupMessage(state));
   const query = useQuery();
-  const params = Object.fromEntries(query);
+  const queryParams = Object.fromEntries(query);
+
+  const validatedParam = validateQueryParam(queryParams);
 
   const handleSignup = useCallback(values => {
-    dispatch(actions.auth.signup({...values, ...params}));
-  }, [dispatch, params]);
+    dispatch(actions.auth.signup({...values, ...validatedParam}));
+  }, [dispatch, validatedParam]);
 
   const handleOnSubmit = useCallback(values => {
     handleSignup(values);

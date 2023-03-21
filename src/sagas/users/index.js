@@ -54,7 +54,10 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences() {
+export function* updatePreferences({ skipSaga = false } = {}) {
+  if (skipSaga) {
+    return true;
+  }
   const updatedPayload = yield select(selectors.userOwnPreferences);
 
   try {
@@ -430,6 +433,13 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
     resourceType === 'account' &&
     userPreferences.defaultAShareId === ACCOUNT_IDS.OWN
   ) {
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: id,
+        environment: 'production',
+      }, true)
+    ); // incase the account which is accepted has mfa required. we need to update the preference first so that initSession can set requiredMfaSetUp to true.
+    yield call(updatePreferences); // we have wait till preference get updated in the DB to proceed further.
     yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {

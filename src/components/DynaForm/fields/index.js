@@ -146,6 +146,7 @@ import DynaManageAliases from './aliases/DynaManageAliases';
 import DynaAliasId from './aliases/DynaAliasId';
 import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
+import DynaAPISelect from './httpFramework/DynaAPISelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
 import DynaHFAssistantPathParams from './httpFramework/DynaHFAssistantPathParams';
@@ -170,6 +171,7 @@ import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
 import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
+import DynaMultiFieldExpression from './DynaMultiFieldExpression';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -222,6 +224,7 @@ export default {
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
+  apiSelect: DynaAPISelect,
   celigotable: DynaCeligoTable,
   previewcomponentstable: DynaPreviewComponentsTable,
   hook: DynaHook_afe,
@@ -352,4 +355,5 @@ export default {
   ianameselect: DynaIANameSelect,
   shopifyconnectionselect: DynaShopifyConnectionSelect,
   hashalgorithm: DynaHashAlgorithm,
+  multifieldexpression: DynaMultiFieldExpression,
 };

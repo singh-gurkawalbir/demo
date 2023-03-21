@@ -19,7 +19,7 @@ const requestBody = ({ rule, data }) => {
 const init = props => {
   const {options, fieldState, resource} = props;
   const value = fieldState?.value || {};
-  let rule = value;
+  let rule = {...value};
 
   if (!('trimSpaces' in value)) {
     rule = {...value, trimSpaces: true};

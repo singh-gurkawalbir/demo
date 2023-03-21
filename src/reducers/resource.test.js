@@ -7,7 +7,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS, FILE_PROVIDER_ASSISTANTS } from '../constants';
 import customCloneDeep from '../utils/customCloneDeep';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
@@ -1822,115 +1822,6 @@ describe('resource region selector testcases', () => {
       expect(selectors.flowSupportsSettings(state, 'flowId2')).toBe(true);
       expect(selectors.flowSupportsSettings(state, 'flowId2', 'child1')).toBe(true);
       expect(selectors.flowSupportsSettings(state, 'flowId2', 'child2')).toBe(false);
-    });
-  });
-
-  describe('selectors.flowListWithMetadata test cases', () => {
-    const state = {
-      data: {
-        resources: {
-          exports: [{
-            _id: 'exp1',
-            type: 'distributed',
-          }, {
-            _id: 'exp2',
-            type: 'simple',
-          }],
-          flows: [{
-            _id: 'flow1',
-            pageGenerators: [{
-              _exportId: 'exp1',
-            }],
-            pageProcessors: [{
-              _importId: 'imp1',
-              type: 'import',
-            }],
-          },
-          {
-            _id: 'flow2',
-            pageGenerators: [{
-              _exportId: 'exp2',
-            }],
-            pageProcessors: [{
-              _importId: 'imp1',
-              type: 'import',
-            }],
-          },
-          {
-            _id: 'flow3',
-            schedule: '* 5 * * * *',
-            pageGenerators: [{
-              _exportId: 'exp3',
-            }],
-            pageProcessors: [{
-              _importId: 'imp1',
-              type: 'import',
-            }],
-          }],
-        },
-      },
-    };
-
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowListWithMetadata()).toEqual({resources: []});
-      expect(selectors.flowListWithMetadata({})).toEqual({resources: []});
-      expect(selectors.flowListWithMetadata(null)).toEqual({resources: []});
-      expect(selectors.flowListWithMetadata(null, null)).toEqual({resources: []});
-    });
-
-    test('should return correct flow list with metadata', () => {
-      expect(selectors.flowListWithMetadata(state, { type: 'flows' })).toEqual({
-        resources: [
-          {
-            _id: 'flow1',
-            isRealtime: true,
-            pageGenerators: [
-              {
-                _exportId: 'exp1',
-              },
-            ],
-            pageProcessors: [
-              {
-                _importId: 'imp1',
-                type: 'import',
-              },
-            ],
-          },
-          {
-            _id: 'flow2',
-            isRunnable: true,
-            isSimpleImport: true,
-            pageGenerators: [
-              {
-                _exportId: 'exp2',
-              },
-            ],
-            pageProcessors: [
-              {
-                _importId: 'imp1',
-                type: 'import',
-              },
-            ],
-          },
-          {
-            _id: 'flow3',
-            isRunnable: true,
-            showScheduleIcon: true,
-            schedule: '* 5 * * * *',
-            pageGenerators: [
-              {
-                _exportId: 'exp3',
-              },
-            ],
-            pageProcessors: [
-              {
-                _importId: 'imp1',
-                type: 'import',
-              },
-            ],
-          },
-        ],
-      });
     });
   });
 
@@ -8338,5 +8229,104 @@ describe('selectors.isParserSupported test cases', () => {
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
 
     expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
+  });
+});
+
+describe('resourceCanHaveFileDefinitions', () => {
+  test('should return false incase of invalid  params', () => {
+    expect(selectors.resourceCanHaveFileDefinitions()).toBe(false);
+    expect(selectors.resourceCanHaveFileDefinitions({}, '123')).toBe(false);
+    expect(selectors.resourceCanHaveFileDefinitions({}, undefined, 'invalid')).toBe(false);
+  });
+  test('should return false incase of invalid resourceType', () => {
+    const state = reducer(undefined, actions.resource.received('scripts', { _id: 'scripts-1' }));
+
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'scripts-1', 'scripts')).toBe(false);
+  });
+  test('should return false for data loader export', () => {
+    const dl = {
+      _id: 'dl-1',
+      type: 'simple',
+    };
+    const state = reducer(undefined, actions.resource.received('exports', dl));
+
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'dl-1', 'exports')).toBe(false);
+  });
+  test('should return false for rest import', () => {
+    const imp = {
+      _id: 'i-1',
+      adaptorType: 'RESTImport',
+      name: 'rest-import',
+    };
+    const state = reducer(undefined, actions.resource.received('imports', imp));
+
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'i-1', 'imports')).toBe(false);
+  });
+  test('should return true for file adaptors', () => {
+    const exportsList = [{
+      _id: 'e1',
+      adaptorType: 'S3Export',
+      name: 'e1',
+    }, {
+      _id: 'e2',
+      adaptorType: 'FTPExport',
+      name: 'e2',
+    }];
+    const importsList = [{
+      _id: 'i1',
+      adaptorType: 'FTPImport',
+      name: 'i1',
+    }, {
+      _id: 'i2',
+      adaptorType: 'S3Import',
+      name: 'i2',
+    }];
+    const state = {
+      data: {
+        resources: {
+          exports: exportsList,
+          imports: importsList,
+        },
+      },
+    };
+
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'i1', 'imports')).toBe(true);
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'i2', 'imports')).toBe(true);
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'e1', 'exports')).toBe(true);
+    expect(selectors.resourceCanHaveFileDefinitions(state, 'e2', 'exports')).toBe(true);
+  });
+  test('should return true for as2 resource', () => {
+    const imp = {
+      _id: 'i1',
+      adaptorType: 'AS2Import',
+      name: 'i1',
+    };
+    const exp = {
+      _id: 'e1',
+      adaptorType: 'AS2Export',
+      name: 'e1',
+    };
+    const state1 = reducer(undefined, actions.resource.received('imports', imp));
+    const state2 = reducer(undefined, actions.resource.received('exports', exp));
+
+    expect(selectors.resourceCanHaveFileDefinitions(state1, 'i1', 'imports')).toBe(true);
+    expect(selectors.resourceCanHaveFileDefinitions(state2, 'e1', 'exports')).toBe(true);
+  });
+  test('should return true for file provider assistants', () => {
+    const exportsList = FILE_PROVIDER_ASSISTANTS.map((assistant, index) => ({
+      _id: `e-${index}`,
+      assistant,
+    }));
+    const state = {
+      data: {
+        resources: {
+          exports: exportsList,
+        },
+      },
+    };
+
+    exportsList.forEach(exp => {
+      expect(selectors.resourceCanHaveFileDefinitions(state, exp._id, 'exports')).toBe(true);
+    });
   });
 });

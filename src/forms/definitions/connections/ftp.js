@@ -19,29 +19,6 @@ export default {
 
     return newValues;
   },
-  optionsHandler(fieldId, fields) {
-    if (fieldId === 'ftp.port') {
-      const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
-
-      if (ftpTypeField.value === 'sftp') {
-        return 22;
-      }
-
-      if (ftpTypeField.value === 'ftps') {
-        const useImplicitFTPS = fields.find(
-          field => field.fieldId === 'ftp.useImplicitFtps'
-        );
-
-        if (useImplicitFTPS.value === true) {
-          return 990;
-        }
-      }
-
-      return 21;
-    }
-
-    return null;
-  },
   fieldMap: {
     name: { fieldId: 'name' },
     'ftp.hostURI': { fieldId: 'ftp.hostURI' },
@@ -58,7 +35,6 @@ export default {
     },
     'ftp.port': {
       fieldId: 'ftp.port',
-      refreshOptionsOnChangesTo: ['ftp.type', 'ftp.useImplicitFtps'],
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Must be a number.' },
       },

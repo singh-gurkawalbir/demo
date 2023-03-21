@@ -63,9 +63,6 @@ export default {
       ],
       removeWhen: [{ field: 'rdbms.queryType', is: ['BULK INSERT'] }],
     },
-    'rdbms.bulkInsert.tableName': {
-      fieldId: 'rdbms.bulkInsert.tableName',
-    },
     advancedSettings: { formId: 'advancedSettings' },
     'rdbms.queryType': {
       id: 'rdbms.queryType',
@@ -101,7 +98,6 @@ export default {
         fields: [
           'rdbms.queryType',
           'rdbms.lookups',
-          'rdbms.bulkInsert.tableName',
           'rdbms.query',
         ],
       },
