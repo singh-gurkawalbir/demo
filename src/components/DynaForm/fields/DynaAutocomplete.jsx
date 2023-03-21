@@ -30,6 +30,12 @@ const useStyles = makeStyles(theme => ({
       padding: '0px !important',
     },
   },
+  textareaInput: {
+    '& .MuiInputBase-input': {
+      height: `${theme.spacing(4.5)}px !important`,
+      lineHeight: 1,
+    },
+  },
 }));
 
 const Row = ({ data, index, style }) => React.cloneElement(data[index], {
@@ -174,6 +180,7 @@ export default function DynaAutocomplete(props) {
                 name={name}
                 id={id}
                 variant="filled"
+                className={classes.textareaInput}
               />
             )}
         />
