@@ -40,7 +40,7 @@ module.exports = {
       lines: 84,
     },
   },
-  testURL: 'http://localhost.io:4000',
+  testURL: 'http://localhost:4000',
   // these variables are injected through webpack definePlugin and
   // are not injected in out test case, hence generating undefined errors
   // through globals we are able to inject these variables
@@ -52,7 +52,6 @@ module.exports = {
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
     IO_SIGNUP_PROMOTION_URL: 'https://staging.celigo.com/integratorio/signup/',
     PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
-    IO_SIGNUP_PROMOTION_URL: 'https://staging.celigo.com/integratorio/signup/',
     SHOPIFY_USER_IDS: '',
     ALLOW_SIGNUP: 'true',
     ALLOW_GOOGLE_SIGNIN: 'true',
