@@ -17,6 +17,7 @@ const applicationsWithPreviewPanel = [
   'rest',
   'mongodb',
   'rdbms',
+  'jdbc',
   'dynamodb',
   'netsuite',
   'salesforce',
@@ -65,6 +66,8 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
+      return PREVIEW_STAGE;
+    case 'jdbc':
       return PREVIEW_STAGE;
     default:
       return emptyList;

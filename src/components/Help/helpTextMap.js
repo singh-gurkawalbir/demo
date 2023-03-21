@@ -19,6 +19,10 @@ export default {
   'license.trialPeriod': 'Choose a trial period for this integration: 14 days, 30 days, or 60 days.',
   'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
+  'connection.jdbc.host': 'Enter the NetSuite SuiteAnalytics Connect server TCP/IP address. It is specified as a hostname.',
+  'connection.jdbc.port': 'This is the default server port number to connect.\nThe default value varies on the type of database you’re connecting to.',
+  'connection.jdbc.serverDataSource': 'Select the NetSuite SuiteAnalytics Connect server data source.',
+  'connection.jdbc.staticschemaexport': 'The Static Data Model option provides you with the structure and the name of all available record types and fields in the NetSuite2.com data source. To use the Static DataModel in your account, you must add the StaticSchema attribute and set it to 1.  For more information, see <a href="https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_164485063706.html" target="_blank">Working with the Static Data Model</a>',
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
 'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   'connection.partnerrequireasynchronousmdns':
@@ -853,6 +857,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'An optional flag that (if set) skips verifying the SSL certificate, allowing self-signed or expired certs.  It is highly recommended (for hopefully obvious reasons) that you never set this flag for any production data connections.  In general, use at your own risk.',
   'connection.rest._iClientId':
 'The iClient resource type is used to register OAuth 2.0 client credentials that can be used to authorize connections.  iClients are typically only needed by developers that wish to build their own Integration App product for the integrator.io marketplace, where the OAuth 2.0 credentials for their product will be owned by them, and the iClient will be bundled in their app, and only resources in their app will be able to reference it.',
+  'connection.http._httpConnectorApiId':
+'This application supports multiple APIs. Select the specific API you would like to use for this connection.',
   'connection.http.mediaType':
 'Specify the data format to use in the HTTP request body and HTTP response body.',
   'connection.http.successMediaType':
@@ -1460,6 +1466,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
   'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'import.unencrypted.feedType': 'The type of the feed.',
+  'import.unencrypted.feedOptions': 'Additional options to control the feed. These vary by feed type.',
   'export.s3.region':
   'The default Amazon S3 region is [us-east-1]. To change the region, select the region for this S3 account',
   'export.webhook.provider':

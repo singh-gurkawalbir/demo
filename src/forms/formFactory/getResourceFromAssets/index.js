@@ -235,6 +235,11 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
             meta = meta[assistant];
           }
         }
+      } else if (resource && resource.type === 'jdbc') {
+        const jdbcSubType = resource.jdbc.type;
+
+        // when editing jdbc connection we lookup for the resource subtype
+        meta = formMeta.connections.rdbms[jdbcSubType];
       } else if (resource && resource.type === 'rdbms') {
         const rdbmsSubType = resource.rdbms.type;
 
@@ -360,6 +365,14 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
             meta = meta.rdbms.redshiftdatawarehouse;
           } else {
             meta = meta.rdbms.sql;
+          }
+        } else if (type === 'jdbc') {
+          const jdbcSubType =
+              connection && connection.jdbc && connection.jdbc.type;
+
+          // when editing rdms connection we lookup for the resource subtype
+          if (jdbcSubType === 'netsuitejdbc') {
+            meta = meta.rdbms.netsuitejdbc;
           }
         } else if (
           type === 'salesforce' ||
