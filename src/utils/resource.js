@@ -46,8 +46,11 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   users: 'User',
 });
 
-export const convertResourceLabelToLowercase = resourceLabel => resourceLabel.toLowerCase();
+export const convertResourceLabelToLowercase = resourceLabel => {
+  if (resourceLabel === 'iClient') return 'iClient';
 
+  return resourceLabel.toLowerCase();
+};
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
   mongodb: 'Mongodb',
