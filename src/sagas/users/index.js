@@ -12,6 +12,7 @@ import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../constants';
 import { getResourceCollection } from '../resources';
+import { checkAndUpdateDefaultSetId } from '../authentication';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -335,6 +336,14 @@ export function* deleteUser({ _id }) {
     });
   } catch (e) {
     return true;
+  }
+  const { defaultAShareId } = yield select(selectors.userPreferences);
+
+  // user delete his own user in userList we should reinitialise the session and set the defaultAShareId to next valid accountId or as own(if no other shared account present)
+  if (defaultAShareId === _id) {
+    yield call(checkAndUpdateDefaultSetId);
+    yield put(actions.auth.clearStore({ authenticated: true }));
+    yield put(actions.auth.initSession());
   }
 
   yield put(actions.user.org.users.deleted(_id));
