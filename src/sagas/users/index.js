@@ -339,6 +339,7 @@ export function* deleteUser({ _id }) {
   }
   const { defaultAShareId } = yield select(selectors.userPreferences);
 
+  // user delete his own user in userList we should reinitialise the session and set the defaultAShareId to next valid accountId or as own(if no other shared account present)
   if (defaultAShareId === _id) {
     yield call(checkAndUpdateDefaultSetId);
     yield put(actions.auth.clearStore({ authenticated: true }));
