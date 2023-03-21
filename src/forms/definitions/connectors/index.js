@@ -39,14 +39,14 @@ export default {
       omitWhenHidden: true,
       visibleWhen: [{ field: 'trialEnabled', is: [true] }],
       requiredWhen: [{ field: 'trialEnabled', is: [true] }],
-      removedWhen: [{ field: 'trialEnabled', is: [true] }],
+      removedWhen: [{ field: 'trialEnabled', is: [''] }],
     },
     _trialLicenseId: {
       fieldId: '_trialLicenseId',
       omitWhenHidden: true,
       visibleWhen: [{ field: 'trialEnabled', is: [true] }],
       requiredWhen: [{ field: 'trialEnabled', is: [true] }],
-      removedWhen: [{ field: 'trialEnabled', is: [true] }],
+      removedWhen: [{ field: 'trialEnabled', is: [''] }],
     },
   },
   layout: {

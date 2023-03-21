@@ -344,9 +344,25 @@ Object {
       },
       "as2.partnerStationInfo.auth.basic.password": Object {
         "fieldId": "as2.partnerStationInfo.auth.basic.password",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "token",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.basic.username": Object {
         "fieldId": "as2.partnerStationInfo.auth.basic.username",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "token",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.failPath": Object {
         "fieldId": "as2.partnerStationInfo.auth.failPath",
@@ -359,43 +375,147 @@ Object {
       },
       "as2.partnerStationInfo.auth.token.headerName": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.headerName",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.location": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.location",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.paramName": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.paramName",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshBody": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshBody",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshHeaders": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshHeaders",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshMediaType": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshMediaType",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshMethod": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshMethod",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshRelativeURI": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshRelativeURI",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshToken": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshToken",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshTokenPath": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshTokenPath",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.scheme": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.scheme",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.token": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.token",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.type": Object {
         "defaultValue": [Function],
         "fieldId": "as2.partnerStationInfo.auth.type",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "none",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.encoding": Object {
         "fieldId": "as2.partnerStationInfo.encoding",
@@ -740,6 +860,14 @@ Object {
       },
       "ftp.entryParser": Object {
         "fieldId": "ftp.entryParser",
+        "removeWhen": Array [
+          Object {
+            "field": "ftp.entryParser",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "required": false,
       },
       "ftp.hostURI": Object {
@@ -873,6 +1001,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -887,6 +1023,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -1103,6 +1240,14 @@ Object {
           "provider": "netsuite",
         },
         "ignoreEnvironmentFilter": true,
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
         "requiredWhen": [Function],
         "type": "dynaiclient",
         "visibleWhen": Array [
@@ -1146,6 +1291,14 @@ Object {
       },
       "netsuite.email": Object {
         "fieldId": "netsuite.email",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "basic",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1180,6 +1333,14 @@ Object {
       },
       "netsuite.password": Object {
         "fieldId": "netsuite.password",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "basic",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1217,6 +1378,7 @@ Object {
       },
       "netsuite.token.auto.account": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "netsuite.token.auto.account",
         "label": "Account ID",
         "required": true,
@@ -1234,6 +1396,7 @@ Object {
       "netsuite.token.auto.roleId": Object {
         "defaultDisabled": true,
         "defaultValue": [Function],
+        "delete": true,
         "fieldId": "netsuite.token.auto.roleId",
         "isLoggable": true,
         "label": "Role",
@@ -1257,6 +1420,7 @@ Object {
         ],
       },
       "netsuite.tokenEnvironment": Object {
+        "delete": true,
         "fieldId": "netsuite.tokenEnvironment",
         "visibleWhen": Array [
           Object {
@@ -1269,6 +1433,14 @@ Object {
       },
       "netsuite.tokenId": Object {
         "fieldId": "netsuite.tokenId",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "token",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1280,6 +1452,14 @@ Object {
       },
       "netsuite.tokenSecret": Object {
         "fieldId": "netsuite.tokenSecret",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "token",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1486,6 +1666,14 @@ Object {
       },
       "salesforce.username": Object {
         "fieldId": "salesforce.username",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.oauth2FlowType",
+            "is": Array [
+              "refreshToken",
+            ],
+          },
+        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -1616,6 +1804,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -1630,6 +1826,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -1728,6 +1925,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -1742,6 +1947,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -1854,6 +2060,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "required": true,
         "visibleWhen": Array [
           Object {
@@ -1873,6 +2087,7 @@ Object {
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2005,6 +2220,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2019,6 +2242,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2277,6 +2501,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2291,6 +2523,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2389,6 +2622,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2403,6 +2644,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2515,6 +2757,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "required": true,
         "visibleWhen": Array [
           Object {
@@ -2534,6 +2784,7 @@ Object {
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2666,6 +2917,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2680,6 +2939,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -8566,9 +8826,37 @@ Object {
       },
       "dynamodb.expressionAttributeNames": Object {
         "fieldId": "dynamodb.expressionAttributeNames",
+        "removeWhenAll": Array [
+          Object {
+            "field": "dynamodb.method",
+            "is": Array [
+              "putItem",
+            ],
+          },
+          Object {
+            "field": "dynamodb.conditionExpression",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "dynamodb.expressionAttributeValues": Object {
         "fieldId": "dynamodb.expressionAttributeValues",
+        "removeWhenAll": Array [
+          Object {
+            "field": "dynamodb.method",
+            "is": Array [
+              "putItem",
+            ],
+          },
+          Object {
+            "field": "dynamodb.conditionExpression",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "dynamodb.ignoreExtract": Object {
         "fieldId": "dynamodb.ignoreExtract",
@@ -8589,6 +8877,14 @@ Object {
       },
       "dynamodb.itemDocument": Object {
         "fieldId": "dynamodb.itemDocument",
+        "removeWhen": Array [
+          Object {
+            "field": "dynamodb.method",
+            "isNot": Array [
+              "putItem",
+            ],
+          },
+        ],
       },
       "dynamodb.method": Object {
         "fieldId": "dynamodb.method",
@@ -10029,9 +10325,45 @@ Object {
       },
       "mongodb.ignoreExtract": Object {
         "fieldId": "mongodb.ignoreExtract",
+        "removeWhen": Array [
+          Object {
+            "AND": Array [
+              Object {
+                "field": "mongodb.ignoreLookupFilter",
+                "isNot": Array [
+                  "",
+                ],
+              },
+              Object {
+                "field": "mongodb.lookupType",
+                "is": Array [
+                  "source",
+                ],
+              },
+            ],
+          },
+        ],
       },
       "mongodb.ignoreLookupFilter": Object {
         "fieldId": "mongodb.ignoreLookupFilter",
+        "removeWhen": Array [
+          Object {
+            "AND": Array [
+              Object {
+                "field": "mongodb.ignoreExtract",
+                "isNot": Array [
+                  "",
+                ],
+              },
+              Object {
+                "field": "mongodb.lookupType",
+                "is": Array [
+                  "lookup",
+                ],
+              },
+            ],
+          },
+        ],
       },
       "mongodb.lookupType": Object {
         "fieldId": "mongodb.lookupType",
@@ -12427,6 +12759,14 @@ Object {
         "defaultValue": [Function],
         "id": "rdbms.query",
         "label": "SQL query",
+        "removeWhen": Array [
+          Object {
+            "field": "rdbms.queryType",
+            "is": Array [
+              "BULK INSERT",
+            ],
+          },
+        ],
         "required": true,
         "type": "sqlquerybuilder",
         "visibleWhen": Array [
@@ -12720,6 +13060,14 @@ Object {
       },
       "autoPurgeAt": Object {
         "fieldId": "autoPurgeAt",
+        "removeWhen": Array [
+          Object {
+            "field": "autoPurgeAt",
+            "is": Array [
+              "never",
+            ],
+          },
+        ],
       },
       "description": Object {
         "fieldId": "description",
@@ -12813,6 +13161,7 @@ Object {
     "fieldMap": Object {
       "apiIdentifier": Object {
         "defaultValue": [Function],
+        "delete": true,
         "helpKey": "apiIdentifier",
         "id": "apiIdentifier",
         "label": "Invoke",
@@ -12842,6 +13191,7 @@ Object {
       },
       "script": Object {
         "defaultValue": [Function],
+        "delete": true,
         "hookStage": "handleRequest",
         "hookType": "script",
         "id": "script",
@@ -12851,6 +13201,14 @@ Object {
       },
       "shipworks.password": Object {
         "defaultValue": "",
+        "deleteWhen": Array [
+          Object {
+            "field": "enableShipworksAuthentication",
+            "is": Array [
+              false,
+            ],
+          },
+        ],
         "description": "Note: for security reasons this field must always be re-entered.",
         "id": "shipworks.password",
         "inputType": "password",
@@ -12874,6 +13232,14 @@ Object {
         ],
       },
       "shipworks.username": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "enableShipworksAuthentication",
+            "is": Array [
+              false,
+            ],
+          },
+        ],
         "id": "shipworks.username",
         "label": "Username",
         "requiredWhen": Array [
@@ -12896,6 +13262,7 @@ Object {
       },
       "shipworksApiIdentifier": Object {
         "defaultValue": [Function],
+        "delete": true,
         "helpKey": "apiIdentifier",
         "id": "shipworksApiIdentifier",
         "label": "Invoke",
@@ -13091,6 +13458,14 @@ Object {
       "_trialLicenseId": Object {
         "fieldId": "_trialLicenseId",
         "omitWhenHidden": true,
+        "removedWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "trialEnabled",
@@ -13135,6 +13510,14 @@ Object {
       "trialPeriod": Object {
         "fieldId": "trialPeriod",
         "omitWhenHidden": true,
+        "removedWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "trialEnabled",
@@ -13238,6 +13621,14 @@ Object {
       },
       "oauth2.failValues": Object {
         "fieldId": "oauth2.failValues",
+        "removeWhen": Array [
+          Object {
+            "field": "oauth2.failPath",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "oauth2.grantType": Object {
         "fieldId": "oauth2.grantType",
@@ -13894,6 +14285,14 @@ Object {
     "fieldMap": Object {
       "export.netsuite.realtime.checkboxField": Object {
         "fieldId": "export.netsuite.realtime.checkboxField",
+        "removeWhen": Array [
+          Object {
+            "field": "export.netsuite.realtime.exportType",
+            "is": Array [
+              "always",
+            ],
+          },
+        ],
       },
       "export.netsuite.realtime.executionContext": Object {
         "fieldId": "export.netsuite.realtime.executionContext",
@@ -14139,6 +14538,14 @@ Object {
     "fieldMap": Object {
       "export.salesforce.booleanField": Object {
         "fieldId": "export.salesforce.booleanField",
+        "removeWhen": Array [
+          Object {
+            "field": "export.salesforce.exportType",
+            "isNot": Array [
+              "once",
+            ],
+          },
+        ],
       },
       "export.salesforce.exportType": Object {
         "fieldId": "export.salesforce.exportType",

@@ -26,7 +26,7 @@ export const fieldsWithRemoveDelete = fields => {
   Object.keys(fields).forEach(key => {
     const field = fields[key];
 
-    fieldsNew[key] = {...field, removeWhen: isRemoved(field, fields), deleteWhen: isDeleted(field, fields)};
+    fieldsNew[key] = {...field, isRemove: isRemoved(field, fields), deleteWhen: isDeleted(field, fields)};
   });
 
   return fieldsNew;
@@ -49,7 +49,7 @@ export const valuesToRemove = (values, fields) => {
     const valueKeys = valkey.replaceAll('/', '.');
 
     // eslint-disable-next-line no-self-assign
-    (valueKeys in fields && (fields[valueKeys].remove || fields[valueKeys].removeWhen)) ? newValues[key] = undefined : newValues[key] = newValues[key];
+    (valueKeys in fields && (fields[valueKeys].remove || fields[valueKeys].isRemove)) ? newValues[key] = undefined : newValues[key] = newValues[key];
   });
 
   return newValues;

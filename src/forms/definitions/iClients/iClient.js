@@ -83,7 +83,7 @@ export default {
     'oauth2.failPath': { fieldId: 'oauth2.failPath' },
     'oauth2.failValues': {
       fieldId: 'oauth2.failValues',
-      removeWhen: [{ field: 'oauth2.failPath', is: [false] }],
+      removeWhen: [{ field: 'oauth2.failPath', is: [''] }],
     },
   },
   layout: {
