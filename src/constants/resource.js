@@ -34,7 +34,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   export: 'Export',
   filedefinition: 'File definition',
   flow: 'Flow',
-  iclient: 'IClient',
+  iclient: 'iClient',
   import: 'Import',
   integration: 'Integration',
   script: 'Script',
