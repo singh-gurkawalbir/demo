@@ -12,6 +12,7 @@ import {useHFSetInitializeFormData} from './DynaHFAssistantOptions';
 import getResourceFormAssets from '../../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../../forms/formFactory/utils';
 import MultiApiSelect from '../../../MultiApiSelect';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles(() => ({
   fieldWrapper: {
@@ -22,6 +23,8 @@ const useStyles = makeStyles(() => ({
 export default function APISelect(props) {
   const {
     required,
+    isValid,
+    errorMessages,
     label,
     id,
     formKey,
@@ -123,11 +126,12 @@ export default function APISelect(props) {
 
   return (
     <div className={clsx(classes.fieldWrapper)}>
-      <FormLabel required={required} htmlFor={label}>
+      <FormLabel required={required} htmlFor={label} error={!isValid}>
         {label}
       </FormLabel>
       <FieldHelp {...props} />
       <MultiApiSelect items={data} value={value} onClick={handleClick} />
+      <FieldMessage errorMessages={errorMessages} isValid={isValid} />
     </div>
   );
 }
