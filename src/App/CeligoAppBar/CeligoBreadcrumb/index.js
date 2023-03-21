@@ -181,28 +181,44 @@ const routes = [
     ],
   },
   {
-    path: getRoutePath('/templates/:integrationAppName(!add|!edit)/:integrationId'),
-    breadcrumb: IntegrationCrumb,
+    path: getRoutePath('/templates'),
+    breadcrumb: 'Templates',
+    skipLink: true,
     childRoutes: [
       {
-        path: '/flows/sections/:sectionId',
-        breadcrumb: FlowGroupCrumb,
+        path: buildDrawerUrl({path: drawerPaths.RESOURCE.ADD}),
+        breadcrumb: AddResourceTypeCrumb,
+      },
+      {
+        path: buildDrawerUrl({path: drawerPaths.RESOURCE.EDIT}),
+        breadcrumb: EditResourceTypeCrumb,
         childRoutes: [
+          { path: '/logs', breadcrumb: FlowStepDebugLogs },
+        ],
+      },
+      {
+        path: getRoutePath('/:integrationAppName/:integrationId'),
+        breadcrumb: IntegrationCrumb,
+        childRoutes: [
+          {
+            path: '/flows/sections/:sectionId',
+            breadcrumb: FlowGroupCrumb,
+            childRoutes: [
+              ...flowBuilderRoutes,
+            ],
+          },
+          { path: '/dashboard', breadcrumb: 'Dashboard' },
+          { path: '/connections', breadcrumb: 'Connections' },
+          { path: '/users', breadcrumb: 'Users' },
+          { path: '/auditlog', breadcrumb: 'Audit log' },
+          { path: '/notifications', breadcrumb: 'Notifications' },
+          { path: '/admin', breadcrumb: 'Admin' },
+          { path: '/analytics', breadcrumb: 'Analytics' },
           ...flowBuilderRoutes,
         ],
       },
-      { path: '/dashboard', breadcrumb: 'Dashboard' },
-      { path: '/connections', breadcrumb: 'Connections' },
-      { path: '/users', breadcrumb: 'Users' },
-      { path: '/auditlog', breadcrumb: 'Audit log' },
-      { path: '/notifications', breadcrumb: 'Notifications' },
-      { path: '/admin', breadcrumb: 'Admin' },
-      { path: '/analytics', breadcrumb: 'Analytics' },
-      ...flowBuilderRoutes,
     ],
   },
-  { path: getRoutePath('/templates'), breadcrumb: 'Templates' },
-
   {
     path: getRoutePath('/connectors/:integrationId/settings'),
     breadcrumb: IntegrationAppCrumb,
