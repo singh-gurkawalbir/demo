@@ -27,17 +27,28 @@ describe('connections utils test cases', () => {
       const output = {
         appType: 'http',
         filter: {
-          $and: [{
-            'http.formType': {
-              $ne: 'rest',
+          $and: [
+            {
+              $or: [
+                {
+                  type: 'rest',
+                },
+                {
+                  type: 'http',
+                },
+              ],
             },
-          }, {
-            type: 'http',
-          }, {
-            _connectorId: {
-              $exists: false,
+            {
+              isHTTP: {
+                $ne: false,
+              },
             },
-          }],
+            {
+              _connectorId: {
+                $exists: false,
+              },
+            },
+          ],
         },
       };
 
