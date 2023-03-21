@@ -1213,8 +1213,7 @@ describe('resource util tests', () => {
 
       expect(getHelpUrlForConnector('5656f5e3bebf89c03f5dd77e')).toBe(
         'https://docs.celigo.com/hc/en-us/categories/203963787'
-        
-        );
+      );
       expect(getHelpUrlForConnector('5666865f67c1650309224904')).toBe(
         'https://docs.celigo.com/hc/en-us/categories/203958808'
       );
