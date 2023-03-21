@@ -212,13 +212,13 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual(['Reset MFA']);
     const resetMfaButton = screen.getByRole('menuitem', {name: 'Reset MFA'});
 
-    userEvent.click(resetMfaButton);
+    await userEvent.click(resetMfaButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mfa.resetOwnerMFA());
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.asyncTask.clear('MFA_OWNER_RESET_ASYNC_KEY')));
     expect(mockResolverFunction).toHaveBeenCalledTimes(1);
@@ -237,6 +237,7 @@ describe('test suite for orgOwnerUsers', () => {
       return res(ctx.json([]));
     });
 
+    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -276,6 +277,7 @@ describe('test suite for orgOwnerUsers', () => {
       return res.once(ctx.status(404), ctx.json({message: errorMessage}));
     });
 
+    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -309,6 +311,7 @@ describe('test suite for orgOwnerUsers', () => {
       return res(ctx.json([]));
     });
 
+    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -348,6 +351,7 @@ describe('test suite for orgOwnerUsers', () => {
       return res.once(ctx.status(404), ctx.json({message: errorMessage}));
     });
 
+    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -491,6 +495,7 @@ describe('test suite for orgOwnerUsers', () => {
       return res(ctx.json([]));
     });
 
+    delete mockTableContext.integrationId;
     const data = [{
       sharedWithUser: {
         name: 'sampleName',
@@ -558,6 +563,8 @@ describe('test suite for orgOwnerUsers', () => {
   });
 
   test('should not be able to modify MFA settings if SSO enabled', async () => {
+    delete mockTableContext.integrationId;
+    mockTableContext.isSSOEnabled = true;
     const data = [{
       sharedWithUser: {
         name: 'sampleName',
@@ -572,11 +579,12 @@ describe('test suite for orgOwnerUsers', () => {
     initOrgOwnerUsers(data);
     const disableMfaButton = document.querySelector('[data-test="ssoRequired"]');
 
-    userEvent.hover(disableMfaButton.parentElement);
-    await waitFor(() => expect(screen.getByRole('tooltip', { name: 'You can’t require both MFA and SSO for a user.'})).toBeInTheDocument());
+    await userEvent.hover(disableMfaButton.parentElement);
+    waitFor(() => expect(screen.getByRole('tooltip', { name: 'You can’t require both MFA and SSO for a user.'})).toBeInTheDocument());
   });
 
   test('should show SSO status if SSO service is enabled for account', () => {
+    delete mockTableContext.integrationId;
     mockTableContext.isSSOEnabled = true;
     const data = [{
       sharedWithUser: {
@@ -620,6 +628,8 @@ describe('test suite for orgOwnerUsers', () => {
   });
 
   test('should be able to toggle SSO', async () => {
+    delete mockTableContext.integrationId;
+    mockTableContext.isSSOEnabled = true;
     const mockResolverFunction = jest.fn();
 
     mockPutRequestOnce('/api/ashares/user123', (req, res, ctx) => {
@@ -669,6 +679,8 @@ describe('test suite for orgOwnerUsers', () => {
   });
 
   test('should not be able to toggle SSO if MFA enabled', async () => {
+    delete mockTableContext.integrationId;
+    mockTableContext.isSSOEnabled = true;
     const data = [{
       sharedWithUser: {
         name: 'sampleName',
@@ -684,7 +696,7 @@ describe('test suite for orgOwnerUsers', () => {
     const requireSsoButton = document.querySelector('[data-test="ssoRequired"]');
 
     expect(requireSsoButton).toBeDisabled();
-    userEvent.hover(requireSsoButton.parentElement);
+    await userEvent.hover(requireSsoButton.parentElement);
     await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('You can’t require both MFA and SSO for a user.'));
   });
 
