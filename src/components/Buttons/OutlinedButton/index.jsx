@@ -14,16 +14,29 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.error.dark,
     },
   },
+  googleBtn: {
+    borderRadius: 4,
+    border: '1px solid',
+    borderColor: theme.palette.divider,
+    width: '100%',
+    // eslint-disable-next-line no-undef
+    background: `url(${CDN_BASE_URI}images/googlelogo.png) 10% center no-repeat`,
+    backgroundSize: theme.spacing(2),
+    height: 38,
+    fontSize: theme.spacing(2),
+    backgroundColor: theme.palette.background.paper,
+  },
+
 }));
 
 export default function OutlinedButton(props) {
   const classes = useStyles();
-  const {children, className, error, ...rest} = props;
+  const {children, className, error, googleBtn, ...rest} = props;
 
   return (
     <Button
       variant="outlined"
-      className={clsx({[classes.error]: error}, className)}
+      className={clsx({[classes.error]: error}, {[classes.googleBtn]: googleBtn}, className)}
       color="primary"
       disableElevation
       {...rest}>
@@ -38,6 +51,7 @@ OutlinedButton.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   error: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
+  googleBtn: PropTypes.bool,
 };
 
 OutlinedButton.defaultProps = {

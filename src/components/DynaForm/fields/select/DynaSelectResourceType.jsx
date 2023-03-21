@@ -27,6 +27,12 @@ const importOption = [
     value: 'importRecords',
   },
 ];
+const lookupOption = [
+  {
+    label: 'Look up additional files (per record)',
+    value: 'lookupFiles',
+  },
+];
 
 /**
  * @param { Object } application : Details of selected application
@@ -56,6 +62,10 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
   // Incase of a webhook assistant
   if (mode === 'source' && (assistant || _httpConnectorId) && webhook) {
     return webhookAssistantOptions;
+  }
+
+  if (mode === 'destination' && type === 'netsuitejdbc') {
+    return lookupOption;
   }
 
   // If it passes none of the above cases, show common options
