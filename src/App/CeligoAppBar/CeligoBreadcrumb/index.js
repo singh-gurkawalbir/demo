@@ -181,7 +181,7 @@ const routes = [
     ],
   },
   {
-    path: getRoutePath('/templates/:integrationAppName/:integrationId'),
+    path: getRoutePath('/templates/:integrationAppName(!add|!edit)/:integrationId'),
     breadcrumb: IntegrationCrumb,
     childRoutes: [
       {
