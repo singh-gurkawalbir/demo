@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(0.5),
   },
   apiDescription:{
-    height: theme.spacing(7),
+    height: theme.spacing(7), // for content height
   },
   apiRadio: {
     width: 18,
