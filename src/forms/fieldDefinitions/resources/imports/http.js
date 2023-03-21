@@ -179,7 +179,7 @@ export default {
       },
     ],
     defaultValue: r =>
-      r && r.http && r.http.relativeURI && r.http.relativeURI[0],
+      r && r.http && r.http.relativeURI && (Array.isArray(r.http.relativeURI) ? r.http.relativeURI[0] : r.http.relativeURI),
   },
   'http.body': {
     isLoggable: true,
