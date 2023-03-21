@@ -314,7 +314,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the dyna select options and it should render connection name when there is no options and no filters and when offline set to false and check permission has set to false', () => {
@@ -358,7 +358,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the dyna select options and it should render connection id followed by offline when there is no options and no filters and when offline set to true and check permission has set to false and when there is no connection name', () => {
@@ -402,7 +402,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id - offline","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -447,7 +447,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -495,7 +495,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -541,7 +541,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the Dyna Multi Select when there are resource', () => {
@@ -588,7 +588,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna multi select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"label":"test connection - offline","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"label":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
   });
   test('should test the connection loading chip when the resourcetype is connection and when there is value and set skipPingConnection to false', () => {

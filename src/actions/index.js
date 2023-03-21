@@ -1457,8 +1457,8 @@ const user = {
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),
-    update: preferences =>
-      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    update: (preferences, skipSaga) =>
+      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences, skipSaga }),
     pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
     unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },
@@ -1498,7 +1498,7 @@ const license = {
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
   clearActionMessage: () =>
     action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
-  receivedLicenseErrorMessage: code => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code }),
+  receivedLicenseErrorMessage: (code, message) => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code, message }),
   clearErrorMessage: () => action(actionTypes.LICENSE.CLEAR_ERROR_MESSAGE),
 
 };
@@ -1752,7 +1752,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId, options) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1763,6 +1763,7 @@ const resourceForm = {
       integrationId,
       fieldMeta,
       parentConnectionId,
+      options,
     }),
   initComplete: (
     resourceType,

@@ -169,7 +169,8 @@ export default {
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
     },
     _borrowConcurrencyFromConnectionId: {fieldId: '_borrowConcurrencyFromConnectionId'},
-    'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
+    'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel',
+      defaultValue: r => r?.jdbc?.concurrencyLevel },
     'rdbms.options': {
       fieldId: 'rdbms.options',
       defaultValue: r => r?.jdbc?.properties?.filter(property => ![
