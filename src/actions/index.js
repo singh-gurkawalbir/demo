@@ -1498,7 +1498,7 @@ const license = {
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
   clearActionMessage: () =>
     action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
-  receivedLicenseErrorMessage: code => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code }),
+  receivedLicenseErrorMessage: (code, message) => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code, message }),
   clearErrorMessage: () => action(actionTypes.LICENSE.CLEAR_ERROR_MESSAGE),
 
 };
