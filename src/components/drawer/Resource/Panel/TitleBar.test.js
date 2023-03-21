@@ -65,6 +65,6 @@ describe('TitleBar tests', () => {
   });
   test('Should able to test the TitleBar is there with iClients', async () => {
     await initTitleBar(props, 'iClients');
-    expect(screen.getByRole('heading', {name: 'Edit iClient'})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'Edit iclient'})).toBeInTheDocument();
   });
 });
