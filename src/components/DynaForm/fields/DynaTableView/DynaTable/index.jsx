@@ -163,7 +163,6 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
-        isVirtualizedTable={isVirtualizedTable}
       />
     );
   }));

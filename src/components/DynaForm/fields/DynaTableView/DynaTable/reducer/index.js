@@ -67,12 +67,14 @@ export default function reducer(state, action) {
           The below if condition will calculate whether the all required fields are having the values
           and checking whether the last row is empty and setting the isValid property based on it.
         */
-        if (invalidateParentFieldOnError && isAllValuesEntered && isLastRowEmpty) {
-          draft.isValid = true;
-          if (invalidateParentFieldOnError) { setIsValid(true); }
-        } else {
-          draft.isValid = false;
-          if (invalidateParentFieldOnError) { setIsValid(false); }
+        if (invalidateParentFieldOnError) {
+          if (isAllValuesEntered && isLastRowEmpty) {
+            draft.isValid = true;
+            setIsValid(true);
+          } else {
+            draft.isValid = false;
+            setIsValid(false);
+          }
         }
 
         if (isAllValuesEntered && !isLastRowEmpty) {

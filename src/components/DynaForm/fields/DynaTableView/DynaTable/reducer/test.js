@@ -30,7 +30,6 @@ describe('table reducer', () => {
       state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', rowIndex: 0, field: 'extract'});
 
       expect(state).toEqual({
-        isValid: false,
         touched: true,
         tableStateValue: [
           {
@@ -250,7 +249,6 @@ describe('table reducer', () => {
         field: 'generate'});
 
       expect(state).toEqual({
-        isValid: false,
         touched: true,
         tableStateValue: [
           {
@@ -277,7 +275,6 @@ describe('table reducer', () => {
 
       expect(state).toEqual({
         touched: true,
-        isValid: false,
         tableStateValue: [
           {
             key: 'abc',
@@ -303,7 +300,6 @@ describe('table reducer', () => {
 
       expect(state).toEqual({
         touched: true,
-        isValid: false,
         tableStateValue: [
           {
             key: 'abc',

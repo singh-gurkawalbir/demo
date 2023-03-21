@@ -75,7 +75,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, invalidateParentFieldOnError, setIsValid, isVirtualizedTable}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, invalidateParentFieldOnError, setIsValid}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -90,10 +90,9 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       optionsMap,
       onRowChange,
       invalidateParentFieldOnError,
-      isVirtualizedTable,
       setIsValid,
     });
-  }, [id, onRowChange, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid, isVirtualizedTable]);
+  }, [id, onRowChange, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid]);
 
   const fieldTestAttr = `text-suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -227,7 +226,6 @@ const RowCellMemo = ({
   onRowChange,
   invalidateParentFieldOnError,
   setIsValid,
-  isVirtualizedTable,
 }) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
@@ -244,9 +242,8 @@ const RowCellMemo = ({
       onRowChange={onRowChange}
       colIndex={colIndex}
       setIsValid={setIsValid}
-      isVirtualizedTable={isVirtualizedTable}
   />
-  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid, isVirtualizedTable]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes, invalidateParentFieldOnError, optionsMap}) =>
@@ -275,7 +272,6 @@ export default function TableRow({
   invalidateParentFieldOnError,
   disableDeleteRows,
   setIsValid,
-  isVirtualizedTable,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -300,7 +296,6 @@ export default function TableRow({
               setTableState={setTableState}
               onRowChange={onRowChange}
               setIsValid={setIsValid}
-              isVirtualizedTable={isVirtualizedTable}
           />
           </div>
         )
