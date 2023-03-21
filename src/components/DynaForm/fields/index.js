@@ -68,6 +68,7 @@ import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaPassword from './DynaPassword';
+import DynaForgotPassword from './DynaForgotPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe from './DynaNetSuiteQualifier_afe';
 import DynaSalesforceQualifier_afe from './DynaSalesforceQualifier_afe';
@@ -298,6 +299,7 @@ export default {
   ...SuiteScript,
   exportSelect: DynaExportSelect,
   signinpassword: DynaPassword,
+  forgotpassword: DynaForgotPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,

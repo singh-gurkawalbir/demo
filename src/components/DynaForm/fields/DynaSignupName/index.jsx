@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { FULL_NAME_WITH_TWO_WORDS } from '../../../../constants';
-import errorMessageStore from '../../../../utils/errorStore';
+import messageStore, { message } from '../../../../utils/messageStore';
 import DynaText from '../DynaText';
 
 export default function DynaSignupName(props) {
@@ -17,7 +17,7 @@ export default function DynaSignupName(props) {
       } else {
         dispatch(actions.form.forceFieldState(formKey)(id, {
           isValid: false,
-          errorMessages: 'Please enter your first and last name.',
+          errorMessages: message.USER_SIGN_IN.INVALID_FIRST_LAST_NAME,
         }));
       }
 
@@ -26,7 +26,7 @@ export default function DynaSignupName(props) {
 
     dispatch(actions.form.forceFieldState(formKey)(id, {
       isValid: false,
-      errorMessages: errorMessageStore('SIGN_UP_NAME'),
+      errorMessages: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Name'}),
     }));
   }, [dispatch, formKey, id, isValidName, value]);
 
