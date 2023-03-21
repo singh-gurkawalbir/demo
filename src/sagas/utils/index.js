@@ -467,9 +467,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
           tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
         }
-        if (resetToDefaultValue) {
-          tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
-        }
       }
       if (fieldUserMustSet) {
         if (fieldUserMustSet._conditionIds?.length > 0) {
@@ -478,9 +475,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
         }
         if (fieldUserMustSet.inputType) {
           tempFiledMeta.fieldMap[key].inputType = fieldUserMustSet?.inputType;
-        }
-        if (resetToDefaultValue) {
-          tempFiledMeta.fieldMap[key].defaultValue = fieldUserMustSet?.values?.[0];
         }
       }
 
@@ -527,6 +521,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
       } else if (fieldUserMustSet) {
+        if (resetToDefaultValue) {
+          tempFiledMeta.fieldMap[key].defaultValue = fieldUserMustSet?.values?.[0];
+        }
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true, visible: true};
         if (fieldUserMustSet.values?.length > 1) {
           const options = [
@@ -546,6 +543,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], label: fieldUserMustSet?.labelOverride};
         }
       } else if (preConfiguredField) {
+        if (resetToDefaultValue) {
+          tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
+        }
         if (preConfiguredField.values?.length > 1) {
           const options = [
             {
