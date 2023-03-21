@@ -50,8 +50,6 @@ export default function MfaVerify() {
   }
   useEffect(() => {
     dispatch(actions.auth.validateSession());
-    dispatch(actions.user.profile.request('Retrieving profile info'));
-    dispatch(actions.user.preferences.request('Retrieving preferences info'));
   }, [dispatch]);
 
   useEffect(() => {
