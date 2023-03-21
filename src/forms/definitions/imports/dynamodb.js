@@ -89,17 +89,17 @@ export default {
     },
     'dynamodb.expressionAttributeNames': {
       fieldId: 'dynamodb.expressionAttributeNames',
-      removeWhen: [{AND: [
+      removeWhenAll: [
         { field: 'dynamodb.method', is: ['putItem'] },
         { field: 'dynamodb.conditionExpression', is: [''] },
-      ]}],
+      ],
     },
     'dynamodb.expressionAttributeValues': {
       fieldId: 'dynamodb.expressionAttributeValues',
-      removeWhen: [{AND: [
+      removeWhenAll: [
         { field: 'dynamodb.method', is: ['putItem'] },
         { field: 'dynamodb.conditionExpression', is: [''] },
-      ]}],
+      ],
     },
     'dynamodb.ignoreExtract': {
       fieldId: 'dynamodb.ignoreExtract',

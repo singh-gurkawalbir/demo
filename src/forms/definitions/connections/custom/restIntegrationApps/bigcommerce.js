@@ -6,8 +6,6 @@ export default {
       retValues['/rest/tokenLocation'] = 'header';
       retValues['/rest/authHeader'] = 'X-Auth-Token';
       retValues['/rest/authScheme'] = ' ';
-      retValues['/rest/basicAuth/password'] = undefined;
-      retValues['/rest/basicAuth/username'] = undefined;
       retValues['/rest/headers'] = [
         {
           name: 'X-Auth-Client',
@@ -15,7 +13,6 @@ export default {
         },
       ];
     } else {
-      retValues['/rest/bearerToken'] = undefined;
       retValues['/rest/headers'] = [
         {
           name: 'X-Auth-Token',
@@ -58,10 +55,12 @@ export default {
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
+      removeWhen: [{field: 'rest.authType', is: ['token']}],
     },
     'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
+      removeWhen: [{field: 'rest.authType', is: ['token']}],
     },
     'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
@@ -69,6 +68,7 @@ export default {
       label: 'Access token',
       required: true,
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
+      removeWhen: [{field: 'rest.authType', isNot: ['token']}],
     },
     'rest.unencrypted.clientId': {
       id: 'rest.unencrypted.clientId',
