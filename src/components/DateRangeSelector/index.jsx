@@ -281,7 +281,7 @@ export default function DateRangeSelector({
         open={!!anchorEl}
         anchorEl={anchorEl}
         restrictToParent={false}
-        placement={placement || 'top-end'}
+        placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
