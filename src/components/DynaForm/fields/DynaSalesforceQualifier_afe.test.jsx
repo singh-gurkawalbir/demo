@@ -166,7 +166,7 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
   });
 
   describe('dynaSalesforceQualifier_afe sObjectTypeFieldId test cases', () => {
-    test('should open the AFE editor on clicking filter Icon with value with sObjectTypeFieldId default value', () => {
+    test('should open the AFE editor on clicking filter Icon with value with sObjectTypeFieldId default value', async () => {
       mutateStore(initialStore, draft => {
         draft.session.form = {
           form_key_1: {
@@ -184,7 +184,7 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
       };
 
       initDynaSalesforceQualifiersafe(props);
-      userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
+      await userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('salesforcequalifierwhereClause', 'salesforceQualificationCriteria', {
         formKey: 'form_key_1',
         flowId: '63947b4ffc58924d43aec619',
@@ -204,7 +204,7 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949/editor/salesforcequalifierwhereClause');
     });
 
-    test('should open the AFE editor on clicking filter Icon with value with sObjectTypeFieldId with value', () => {
+    test('should open the AFE editor on clicking filter Icon with value with sObjectTypeFieldId with value', async () => {
       mutateStore(initialStore, draft => {
         draft.session.form = {
           form_key_1: {
@@ -223,7 +223,7 @@ describe('dynaSalesforceQualifier_afe UI test cases', () => {
       };
 
       initDynaSalesforceQualifiersafe(props);
-      userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
+      await userEvent.click(document.querySelector('[data-test="salesforce.qualifier.whereClause"]'));
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('salesforcequalifierwhereClause', 'salesforceQualificationCriteria', {
         formKey: 'form_key_1',
         flowId: '63947b4ffc58924d43aec619',

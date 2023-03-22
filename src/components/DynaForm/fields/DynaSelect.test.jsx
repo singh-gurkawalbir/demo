@@ -376,7 +376,7 @@ describe('dynaSelect UI test cases', () => {
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
   });
   describe('connection dropdown', () => {
-    test('the connection options should show api version and type if available', () => {
+    test('the connection options should show api version and type if available', async () => {
       const data =
       {
         disabled: false,
@@ -413,13 +413,13 @@ describe('dynaSelect UI test cases', () => {
       };
 
       initDynaSelect(data);
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
 
       expect(screen.getByText('Version 1')).toBeInTheDocument();
       expect(screen.getByText('API 1')).toBeInTheDocument();
       expect(screen.getByText('Version 2')).toBeInTheDocument();
     });
-    test('should dispatch requestConnector when connectorId in not found in the state', () => {
+    test('should dispatch requestConnector when connectorId in not found in the state', async () => {
       const data =
       {
         disabled: false,
@@ -447,7 +447,7 @@ describe('dynaSelect UI test cases', () => {
       };
 
       initDynaSelect(data);
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
 
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.httpConnectors.requestConnector({ httpConnectorId: 'connectorId3' }));
     });
