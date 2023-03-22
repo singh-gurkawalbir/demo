@@ -5,9 +5,10 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTrueFixedWidthColmnMapper from './DynaTrueFixedWidthColumnMapper';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
+  const initialStore = reduxStore;
   const mockOnFieldChange = jest.fn();
   const props = {
     maxNumberOfColumns: 3,
@@ -49,8 +50,14 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
     isLoggable: true,
   };
 
-  test('should pass the initial render', async () => {
-    await renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
+
+  test('should pass the initial render', () => {
+    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />, {initialStore});
 
     expect(screen.getByText('Field Description')).toBeInTheDocument();
     expect(screen.getByText('Start')).toBeInTheDocument();
@@ -89,7 +96,7 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
       },
     ];
 
-    await renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
+    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />, {initialStore});
     const fields = screen.getAllByRole('textbox');
 
     await userEvent.type(fields[0], 'a');

@@ -55,10 +55,10 @@ async function initActionButton({
       userLoggedInDifferentTab,
     };
     draft.user = {
+      preferences: {
+        defaultAShareId,
+      },
       profile: {
-        preferences: {
-          defaultAShareId,
-        },
         authTypeSSO: {
           _ssoClientId: 'sso_client_id',
         },
@@ -92,6 +92,16 @@ async function initActionButton({
   return renderWithProviders(ui, {initialStore});
 }
 
+jest.mock('../../views/SignIn/SigninForm', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../views/SignIn/SigninForm'),
+  default: () => (
+    <>
+      <div>Mocking Signin Form</div>
+      <button type="button">Mock Sign in</button>
+    </>
+  ),
+}));
 describe('alertDialog component', () => {
   runServer();
   let initialStore;
@@ -129,7 +139,7 @@ describe('alertDialog component', () => {
     test('should pass the render with session expires true', async () => {
       await initActionButton({sessionExpired: true, initialStore});
       expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: 'Sign in'});
+      const buttonRef = screen.getByRole('button', {name: 'Mock Sign in'});
 
       expect(buttonRef).toBeInTheDocument();
     });

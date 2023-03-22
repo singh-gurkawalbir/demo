@@ -6332,46 +6332,6 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.getScriptContext test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getScriptContext({}, {})).toEqual();
-    });
-    const state = reducer(
-      {
-        data: {
-          resources: {
-            flows: [{
-              name: 'flow name 1',
-              _id: 'flow1',
-            }, {
-              name: 'flow name 2',
-              _id: 'flow2',
-              _integrationId: 'integrationId1',
-            }],
-          },
-        },
-      },
-      'some action'
-    );
-
-    test('should return expected script context for valid state and flow id', () => {
-      expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook', _flowId: 'flow2'});
-    });
-    test('should return undefined if given flow does not contains integrtion id', () => {
-      expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow1'})).toBeUndefined();
-    });
-    test('should return undefined if given input does not contains context type', () => {
-      expect(selectors.getScriptContext(state, {
-        flowId: 'flow2'})).toBeUndefined();
-    });
-    test('should return undefined if given input does not contains flow id', () => {
-      expect(selectors.getScriptContext(state, {contextType: 'hook',
-      })).toBeUndefined();
-    });
-  });
-
   describe('selectors.mkChildIntegration test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkChildIntegration();

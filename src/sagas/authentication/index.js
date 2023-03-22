@@ -170,27 +170,13 @@ export function* fetchUIVersion() {
   }
 }
 
-export function* retrieveAppInitializationResources() {
-  // yield call(requestMFASessionInfo);
-  const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
-
+export function* checkAndUpdateDefaultSetId() {
   yield call(retrievingUserDetails);
 
-  if (isMFASetupIncomplete) {
-    // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
-    // all other APIs are evaded
-    return yield call(
-      getResourceCollection,
-      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
-    );
-  }
-  yield all([
-    call(retrievingOrgDetails),
-    call(retrievingAssistantDetails),
-    call(retrievingHttpConnectorDetails),
-  ]);
-
-  yield put(actions.app.fetchUiVersion());
+  yield call(
+    getResourceCollection,
+    actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+  );
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -211,9 +197,29 @@ export function* retrieveAppInitializationResources() {
         environment: 'production',
       })
     );
-    // we need to get httpConnectors details once the defaultAShareId has been updated
-    yield call(retrievingHttpConnectorDetails);
   }
+}
+
+export function* retrieveAppInitializationResources() {
+  // yield call(requestMFASessionInfo);
+  const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
+
+  if (isMFASetupIncomplete) {
+    // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
+    // all other APIs are evaded
+    return yield call(
+      getResourceCollection,
+      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+    );
+  }
+
+  yield put(actions.app.fetchUiVersion());
+  yield call(checkAndUpdateDefaultSetId);
+  yield all([
+    call(retrievingOrgDetails),
+    call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
+  ]);
 
   yield put(actions.auth.defaultAccountSet());
 }

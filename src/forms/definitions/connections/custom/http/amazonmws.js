@@ -255,7 +255,7 @@ export default {
       id: 'http._iClientId',
       resourceType: 'iClients',
       filter: { provider: 'amazonmws' },
-      label: 'IClient',
+      label: 'iClient',
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
