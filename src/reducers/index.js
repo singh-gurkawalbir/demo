@@ -2523,15 +2523,34 @@ selectors.getScriptContext = createSelector(
 
       return flow._integrationId;
     },
+    (state, { resourceType }) => resourceType,
+    (state, { resourceId }) => resourceId,
   ],
-  (contextType, _flowId, _integrationId) => {
-    if (contextType === 'hook' && _integrationId) {
-      return {
-        type: 'hook',
-        container: 'integration',
-        _integrationId,
-        _flowId,
-      };
+  (contextType, _flowId, _integrationId, resourceType, resourceId) => {
+    if (contextType === 'hook') {
+      if (_integrationId) {
+        return {
+          type: 'hook',
+          container: 'integration',
+          _integrationId,
+          _flowId,
+        };
+      }
+      if (_flowId) {
+        return {
+          type: 'hook',
+          container: 'flow',
+          _integrationId,
+          _flowId,
+        };
+      }
+      if (resourceType === 'apis' && !isNewId(resourceId)) {
+        return {
+          type: 'hook',
+          container: 'api',
+          _apiId: resourceId,
+        };
+      }
     }
   }
 );

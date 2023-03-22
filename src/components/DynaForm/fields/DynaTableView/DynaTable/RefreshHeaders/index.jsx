@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel } from '@mui/material';
 import Spinner from '../../../../../Spinner';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
@@ -60,7 +61,9 @@ export default function RefreshHeaders({
     <div className={classes.columnsWrapper}>
       {optionsMap.map(header => (
         <div className={classes.header} key={header.id}>
-          <span {...isLoggableAttr(isLoggable)} className={classes.label}>{header.label || header.name}</span>
+          <FormLabel {...isLoggableAttr(isLoggable)} required={header.required} >
+            {header.label || header.name}
+          </FormLabel>
           <RefreshComponent
             isLoading={isLoading}
             header={header}

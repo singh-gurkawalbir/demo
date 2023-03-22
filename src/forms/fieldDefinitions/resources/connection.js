@@ -70,6 +70,11 @@ export default {
     defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
+  'http._httpConnectorApiId': {
+    type: 'apiSelect',
+    label: 'API type',
+    helpKey: 'connection.http._httpConnectorApiId',
+  },
   application: {
     isLoggable: true,
     id: 'application',
@@ -823,7 +828,7 @@ export default {
   },
   'http._iClientId': {
     isLoggable: true,
-    label: 'IClient',
+    label: 'iClient',
     type: 'selectresource',
     resourceType: 'iClients',
     allowNew: true,
@@ -2247,7 +2252,7 @@ export default {
   },
   'netsuite._iClientId': {
     isLoggable: true,
-    label: 'IClient',
+    label: 'iClient',
     type: 'selectresource',
     resourceType: 'iClients',
   },

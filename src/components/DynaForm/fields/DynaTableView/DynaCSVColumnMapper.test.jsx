@@ -5,18 +5,24 @@ import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaCSVColumnMapper from './DynaCSVColumnMapper';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
+const initialStore = reduxStore;
 const mockOnFieldChange = jest.fn();
 
 function initDynaCSVColumnMapper(props = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
   const ui = (
     <DynaCSVColumnMapper
       {...props}
     />
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 
 describe('dynaCSVColumnMapper UI test cases', () => {
@@ -38,6 +44,7 @@ describe('dynaCSVColumnMapper UI test cases', () => {
         },
       ],
       onFieldChange: mockOnFieldChange,
+      formKey: 'form_key',
     };
 
     initDynaCSVColumnMapper(genralProps);
@@ -74,6 +81,7 @@ describe('dynaCSVColumnMapper UI test cases', () => {
           fieldName: 'Check Amount',
         },
       ],
+      formKey: 'form_key',
     };
 
     initDynaCSVColumnMapper(genralProps);

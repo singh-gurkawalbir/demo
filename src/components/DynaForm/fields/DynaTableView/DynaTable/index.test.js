@@ -3,19 +3,26 @@ import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTable from './index';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import actionTypes from './actionTypes';
+
+const initialStore = reduxStore;
 
 const mockOnFieldChange = jest.fn();
 
-async function initDynaTable(props = {}) {
+function initDynaTable(props = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
   const ui = (
     <DynaTable
       {...props}
     />
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 
 describe('dynaTable UI test cases', () => {
@@ -57,6 +64,7 @@ describe('dynaTable UI test cases', () => {
       disableDeleteRows: false,
       isVirtualizedTable: true,
       isLoggable: false,
+      formKey: 'formKey',
     };
 
     await initDynaTable(props);
@@ -91,6 +99,7 @@ describe('dynaTable UI test cases', () => {
         required: false,
         supportsRefresh: false,
         type: 'input',
+        formKey: 'form_key',
       }],
       id: 'lookup.mapList',
       ignoreEmptyRow: () => {},
@@ -115,5 +124,33 @@ describe('dynaTable UI test cases', () => {
     await userEvent.type(inputs[4], 'TextChanged');
     expect(inputs[4]).toHaveValue('TextChanged');
     expect(mockOnFieldChange).toHaveBeenCalledWith('lookup.mapList', [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'TextChanged', import: 'type'}, {export: 'Invoice', import: 'invoice'}]);
+  });
+
+  test('should show spinner when isLoading is present for non virtualized table', () => {
+    const props = {
+      isLoading: {id: true},
+      optionsMap: [{
+        id: 'export',
+        label: 'Export field value',
+        options: undefined,
+        readOnly: false,
+        required: false,
+        supportsRefresh: false,
+        type: 'input',
+      }, {
+        id: 'import',
+        label: 'Import field value',
+        options: undefined,
+        readOnly: false,
+        required: false,
+        supportsRefresh: false,
+        type: 'input',
+      }],
+      id: 'lookup.mapList',
+      isVirtualizedTable: false,
+    };
+
+    initDynaTable(props);
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

@@ -32,9 +32,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
-  // todo - Why this is in lowercase
-  // iclients: 'IClient',
-  iClients: 'IClient',
+  iClients: 'iClient',
   imports: 'Import',
   integrations: 'Integration',
   scripts: 'Script',
@@ -49,11 +47,10 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
 });
 
 export const convertResourceLabelToLowercase = resourceLabel => {
-  if (resourceLabel === 'IClient') return 'iClient';
+  if (resourceLabel === 'iClient') return 'iClient';
 
   return resourceLabel.toLowerCase();
 };
-
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
   mongodb: 'Mongodb',

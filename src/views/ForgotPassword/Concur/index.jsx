@@ -9,6 +9,7 @@ import { TextButton } from '../../../components/Buttons';
 import actions from '../../../actions';
 import messageStore, { message } from '../../../utils/messageStore';
 import getImageUrl from '../../../utils/image';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 /* Todo: (Azhar) Concur form should be in a separate component */
 const useStyles = makeStyles(theme => ({
@@ -51,21 +52,6 @@ const useStyles = makeStyles(theme => ({
     '& > p': {
       margin: '0 auto 15px auto',
       width: '327px',
-    },
-  },
-  alertMsg: {
-    width: '100%',
-    fontSize: 14,
-    textAlign: 'left',
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(2),
-    lineHeight: theme.spacing(2),
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
     },
   },
   title: {
@@ -156,14 +142,7 @@ export default function ConcurForgotPassword(props) {
           </Typography>
           )}
           { showError && resetRequestErrorMsg && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            {resetRequestErrorMsg}
-          </Typography>
+            <ShowErrorMessage error={resetRequestErrorMsg} />
           )}
           <div className={classes.mfaInfo}>
             <span className={classes.infoText}>

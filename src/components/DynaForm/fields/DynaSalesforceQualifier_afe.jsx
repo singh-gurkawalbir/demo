@@ -113,7 +113,7 @@ export default function DynaSalesforceQualifier_afe(props) {
           <TextField
             key={id}
             name={name}
-            className={classes.textField}
+            fullWidth
             placeholder={placeholder}
             disabled
             required={required}
