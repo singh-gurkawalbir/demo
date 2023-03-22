@@ -1,8 +1,9 @@
 import React, { useRef, useCallback, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@mui/material';
+import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider, ClickAwayListener } from '@mui/material';
 import clsx from 'clsx';
+import { Box } from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
@@ -77,7 +78,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   sourceDataTypeButton: {
-    marginLeft: -theme.spacing(10),
+    marginLeft: '-80px', // theme.spacing with negative value results in "NaN"
     '&>.MuiDivider-root': {
       display: 'none',
     },
@@ -165,9 +166,7 @@ export default function Mapper2ExtractsTypeableSelect({
   isDynamicLookup,
   isHardCodedValue,
   isHandlebarExp,
-  editorLayout,
   className,
-  popperClassName,
   sourceDataType,
   displaySourceDataType,
 }) {
@@ -181,7 +180,7 @@ export default function Mapper2ExtractsTypeableSelect({
     dataTypeSelector: false,
   });
 
-  const {cursorPosition, isTruncated, isFocused, dataTypeSelector, anchorEl} = mapper2ExtractsState;
+  const {cursorPosition, isTruncated, isFocused, dataTypeSelector} = mapper2ExtractsState;
 
   const setIsFocused = value => dispatchLocalAction({type: 'onFocused', value});
 
@@ -245,24 +244,33 @@ export default function Mapper2ExtractsTypeableSelect({
       <Tooltip
         disableFocusListener
         placement="bottom"
-        title={(isFocused || (!inputValue && !isDynamicLookup)) ? '' : (
-          <TooltipTitle
-            isTruncated={isTruncated}
-            inputValue={inputValue}
-            hideSourceDropdown={hideSourceDropdown}
-            isDynamicLookup={isDynamicLookup}
-            isHardCodedValue={isHardCodedValue}
-            isHandlebarExp={isHandlebarExp}
-            isSource
-            fieldType="Source field"
-            sourceDataTypes={sourceDataType}
-        />
-        )} >
+        title={
+            isFocused || (!inputValue && !isDynamicLookup) ? (
+              ''
+            ) : (
+              <TooltipTitle
+                isTruncated={isTruncated}
+                inputValue={inputValue}
+                hideSourceDropdown={hideSourceDropdown}
+                isDynamicLookup={isDynamicLookup}
+                isHardCodedValue={isHardCodedValue}
+                isHandlebarExp={isHandlebarExp}
+                isSource
+                fieldType="Source field"
+                sourceDataTypes={sourceDataType}
+              />
+            )
+          }
+        >
         <TextField
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={clsx(classes.customTextField, {[classes.sourceCustomTextField]: hideSourceDropdown}, className)}
+          className={clsx(
+            classes.customTextField,
+            { [classes.sourceCustomTextField]: hideSourceDropdown },
+            className
+          )}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -273,18 +281,23 @@ export default function Mapper2ExtractsTypeableSelect({
           placeholder={disabled ? '' : 'Source field'}
           onClick={handleOnClick}
           InputProps={{
-            endAdornment: !hideSourceDropdown &&
-              (
-                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={() => { setIsFocused(true); }}>
-                  <ArrowDownIcon />
-                </InputAdornment>
-              ),
+            endAdornment: !hideSourceDropdown && (
+            <InputAdornment
+              className={classes.autoSuggestDropdown}
+              position="start"
+              onClick={() => {
+                setIsFocused(true);
+              }}
+                >
+              <ArrowDownIcon />
+            </InputAdornment>
+            ),
             inputProps: {
               ref: inputFieldRef,
             },
           }}
-           />
-      </Tooltip >
+          />
+      </Tooltip>
 
       {displaySourceDataType && (
       <SourceDataType
@@ -296,32 +309,24 @@ export default function Mapper2ExtractsTypeableSelect({
         isDynamicLookup={isDynamicLookup}
         nodeKey={nodeKey}
         sourceDataTypes={sourceDataType}
-        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}
-        isFocused={isFocused} />
+        className={clsx({
+          [classes.sourceDataTypeButton]: hideSourceDropdown,
+        })}
+        isFocused={isFocused}
+          />
       )}
 
-      {/* only render tree component if field is focussed and not disabled.
-      Here we are wrapping tree component with ArrowPopper to correctly handle the
-      dropdown placement logic
-      */}
-
-      <ArrowPopper
-        placement="bottom"
-        id="extractPopper"
-        open={isFocused}
-        anchorEl={anchorEl}
-        onClose={handleBlur}
-        preventOverflow={false}
-        offsetPopper="0,6"
-        classes={{
-          popper: clsx(classes.extractListPopper, {
-            [classes.extractListPopperCompact]: editorLayout === 'compact2',
-          }, popperClassName),
-          arrow: classes.extractPopperArrow,
-          paper: classes.extractPopperPaper,
-        }}
-        >
-        {isFocused && !disabled && !hideSourceDropdown && (
+      {isFocused && !disabled && !hideSourceDropdown && (
+      <ClickAwayListener onClickAway={handleBlur}>
+        <Box
+          position="absolute"
+          zIndex={1300}
+          border="solid 1px"
+          borderColor="secondary.lightest"
+          width="100%"
+          top={59} // This value should match the textField height. This is to align the dropdown with the input field
+          bgcolor="background.paper"
+            >
           <ExtractsTree
             key={id}
             nodeKey={nodeKey}
@@ -332,10 +337,10 @@ export default function Mapper2ExtractsTypeableSelect({
             setInputValue={setInputValue}
             setIsFocused={setIsFocused}
             cursorPosition={cursorPosition}
-          />
-        )}
-      </ArrowPopper>
-
+              />
+        </Box>
+      </ClickAwayListener>
+      )}
     </FormControl>
   );
 }
