@@ -206,7 +206,7 @@ describe('resourceFormWithStatusPanel UI test', () => {
 
     expect(message).toBeInTheDocument();
     expect(message).toHaveAttribute('href',
-      'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
+      'https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
     );
   });
   test('should test for bundle install notification', async () => {
