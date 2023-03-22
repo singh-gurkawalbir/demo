@@ -275,9 +275,7 @@ export default {
           });
         }
 
-        if (connectionField.value && app.assistant) {
-          expression.push({$or: [{$and: [{ _connectionId: connectionField.value }, { assistant: app.assistant }]}, {$and: [{ _connectionId: connectionField.value }, { assistant: {$exists: false} }]}]});
-        } else if (connectionField.value) {
+        if (connectionField.value) {
           expression.push({ _connectionId: connectionField.value });
         } else if (app.assistant) {
           expression.push({ assistant: app.assistant });
