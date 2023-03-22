@@ -192,6 +192,12 @@ export default function (state = defaultState, action) {
       case actionTypes.AUTH.ACCEPT_INVITE.CLEAR:
         delete draft.acceptInvite;
         break;
+      case actionTypes.USER.DELETE:
+        draft.userDeleted = 'requested';
+        break;
+      case actionTypes.USER.DELETED:
+        draft.userDeleted = 'completed';
+        break;
       default:
     }
   });
@@ -254,4 +260,5 @@ selectors.isMFAAuthVerified = state => {
 
   return state.mfaAuth.status === 'success';
 };
+selectors.isUserDeleteRequested = state => state?.userDeleted === 'requested';
 // #endregion Selectors

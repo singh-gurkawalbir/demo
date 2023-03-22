@@ -5,6 +5,7 @@ import DynaStaticMapWidget from './DynaStaticMapWidget';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
+const formKey = 'form_key';
 const mockDispatchFn = jest.fn();
 const mockOnFieldChange = jest.fn();
 
@@ -51,13 +52,16 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {optionsMap: [{id: 'extracts', label: 'extract header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'generates', label: 'generate header', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
             },
             fieldType: 'somefieldtype',
           },
         },
+      };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
     const props = {
@@ -75,6 +79,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
     const { utils: { unmount } } = initDynaStaticMapWidget(props);
 
@@ -85,7 +90,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {allowFailures: true, default: 'defaultValue', map: {id: 'Id', name: 'samplename'}}, true);
-    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-14"]'));
+    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-15"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('extracts', 'someId', 'someIntegrationId'));
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('radio')[0]);
@@ -113,12 +118,15 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {generates: [{id: 'extracts', text: 'extract header'}], extracts: [{id: 'generates', label: 'generate header'}]},
             fieldType: 'somefieldtype',
           },
         },
+      };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
     const props = {
@@ -133,6 +141,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
 
     initDynaStaticMapWidget(props);
@@ -157,12 +166,15 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {},
             fieldType: 'somefieldtype',
           },
         },
+      };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
     const props = {
@@ -177,6 +189,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
     const { utils: { unmount } } = initDynaStaticMapWidget(props);
 
@@ -212,13 +225,16 @@ describe('DynaStaticMapWidget UI test cases', () => {
       draft.session.connectors = {
         someIntegrationId: {
           someId: {
-            isLoading: {extracts: false, generates: false},
+            isLoading: false,
             shouldReset: false,
             data: {generates: [{text: 'exportop1', id: 'op1'}, {text: 'exportop2', id: 'op2'}],
             },
             fieldType: 'somefieldtype',
           },
         },
+      };
+      draft.session.form[formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
     const props = {
@@ -236,6 +252,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       supportsGeneratesRefresh: true,
       isLoggable: true,
       allowFailures: true,
+      formKey,
     };
 
     initDynaStaticMapWidget(props);

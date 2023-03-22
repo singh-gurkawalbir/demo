@@ -12,9 +12,6 @@ import FieldHelp from '../FieldHelp';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    width: '100%',
-  },
   actionBtnSearchInternalID: {
     float: 'right',
     marginTop: theme.spacing(1),

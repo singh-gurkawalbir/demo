@@ -1,10 +1,11 @@
-import { FormLabel, Input, ListSubheader } from '@mui/material';
+import { FormLabel, Input, ListSubheader, Typography } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FixedSizeList } from 'react-window';
+import { FixedSizeList, VariableSizeList } from 'react-window';
+import { useSelector, useDispatch } from 'react-redux';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
@@ -12,11 +13,16 @@ import CeligoTruncate from '../../CeligoTruncate';
 import HelpLink from '../../HelpLink';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import { getHttpConnector } from '../../../constants/applications';
 
 const AUTO_CLEAR_SEARCH = 500;
 
 const NO_OF_OPTIONS = 6;
 const ITEM_SIZE = 48;
+const ITEM_SIZE_WITH_1_OPTION = 60;
+const ITEM_SIZE_WITH_2_OPTIONS = 80;
 const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 const getLabel = (items, value, classes) => {
@@ -141,6 +147,9 @@ const useStyles = makeStyles(theme => ({
   },
   dynaSelectMenuItem: {
     wordBreak: 'break-word',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   textInfo: {
     color: theme.palette.secondary.light,
@@ -152,11 +161,37 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     display: 'flex',
   },
+  apiType: {
+    color: theme.palette.secondary.light,
+    lineHeight: '14px',
+  },
 }));
+
+const APIData = ({ connInfo = {} }) => {
+  const classes = useStyles();
+  const { httpConnectorId, httpConnectorApiId, httpConnectorVersionId } = connInfo;
+  const connectorData = useSelector(state => selectors.connectorData(state, httpConnectorId) || {});
+  const { versions = [], apis = [] } = connectorData;
+  const currApi = apis?.filter(api => api._id === httpConnectorApiId)?.[0];
+  let currVersion = currApi?.versions?.length ? currApi.versions : versions;
+
+  currVersion = currVersion?.filter(ver => ver._id === httpConnectorVersionId)?.[0];
+
+  if (!httpConnectorId) {
+    return null;
+  }
+
+  return (
+    <Typography component="div" variant="caption" className={classes.apiType}>
+      {currApi?.name && <div><span><b>API type:</b></span> <span>{currApi.name}</span></div>}
+      {currVersion?.name && <div><span><b>API version:</b> </span><span>{currVersion.name}</span></div>}
+    </Typography>
+  );
+};
 
 const Row = ({ index, style, data }) => {
   const {classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, isLoggable, id} = data;
-  const { label, value, subHeader, disabled = false, itemInfo } = items[index];
+  const { label, value, subHeader, disabled = false, itemInfo, connInfo } = items[index];
 
   if (subHeader) {
     return (
@@ -189,6 +224,7 @@ const Row = ({ index, style, data }) => {
         {label}
       </CeligoTruncate>
       {value && itemInfo ? <div className={classes.textInfo}>| {itemInfo}</div> : null}
+      <APIData connInfo={connInfo} />
     </MenuItem>
   );
 };
@@ -217,7 +253,11 @@ export default function DynaSelect(props) {
 
   const listRef = React.createRef();
   const [open, setOpen] = useState(false);
+  const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const connectorData = useSelector(selectors.httpConnectorsList);
+
   const isSubHeader =
     options &&
     options.length &&
@@ -293,12 +333,67 @@ export default function DynaSelect(props) {
   const rowProps = useMemo(() => ({ classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id, isLoggable}),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
+  const getItemSize = useCallback(rowIndex => {
+    const { connInfo } = items[rowIndex];
 
+    if (connInfo?.httpConnectorApiId && connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_2_OPTIONS;
+    if (connInfo?.httpConnectorApiId || connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_1_OPTION;
+
+    return ITEM_SIZE;
+  }, [items]);
+  const isConnForm = useMemo(() => id !== '_borrowConcurrencyFromConnectionId' && options?.some(option =>
+    option.items?.some(item =>
+      getHttpConnector(item.connInfo?.httpConnectorId) && (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId)
+    )
+  ), [id, options]);
+
+  useEffect(() => {
+    if (items.length && isConnForm) {
+      const connectorIds = items.reduce((connSet, item) => {
+        if (item.connInfo?.httpConnectorId && getHttpConnector(item.connInfo?.httpConnectorId)) {
+          connSet.add(item.connInfo.httpConnectorId);
+        }
+
+        return connSet;
+      }, new Set());
+
+      connectorIds?.forEach(httpConnectorId => {
+        if (!connectorData?.[httpConnectorId] && !isConnectorCalled?.[httpConnectorId]) {
+          setIsConnectorCalled(connIds => ({ ...connIds, [httpConnectorId]: true }));
+          dispatch(actions.httpConnectors.requestConnector({ httpConnectorId }));
+        }
+      });
+    }
+  }, [items, dispatch, connectorData, isConnForm, isConnectorCalled]);
+
+  const [itemSize2Count, itemSize3Count] = useMemo(() => (
+    options?.reduce(([count1, count2], option) => {
+      const [c1 = 0, c2 = 0] = option.items?.reduce(([c1, c2], item) => {
+        if (getHttpConnector(item.connInfo?.httpConnectorId)) {
+          if (item.connInfo?.httpConnectorApiId && item.connInfo?.httpConnectorVersionId) return [c1, c2 + 1];
+          if (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId) return [c1 + 1, c2];
+        }
+
+        return [c1, c2];
+      }, [0, 0]) || [0, 0];
+
+      return [count1 + c1, count2 + c2];
+    }, [0, 0])
+  ), [options]);
+  const getSize = useCallback(() => {
+    if (isConnForm) {
+      return ((items.length - itemSize2Count - itemSize3Count) * ITEM_SIZE) +
+        (itemSize2Count * ITEM_SIZE_WITH_1_OPTION) +
+        (itemSize3Count * ITEM_SIZE_WITH_2_OPTIONS);
+    }
+
+    return ITEM_SIZE * items.length;
+  }, [isConnForm, itemSize2Count, itemSize3Count, items.length]);
   // if there are fewer options the view port height then let height scale per number of options
 
   const maxHeightOfSelect = items.length > NO_OF_OPTIONS
     ? OPTIONS_VIEW_PORT_HEIGHT
-    : ITEM_SIZE * items.length;
+    : getSize();
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -329,18 +424,33 @@ export default function DynaSelect(props) {
           disabled={disabled}
           // TODO: memoize this
           input={<Input name={name} id={id} />}>
-          <FixedSizeList
-            className={className}
-            ref={listRef}
-            itemSize={ITEM_SIZE}
-            height={
-              maxHeightOfSelect
+          {
+              isConnForm ? (
+                <VariableSizeList
+                  className={className}
+                  ref={listRef}
+                  itemSize={getItemSize}
+                  height={maxHeightOfSelect}
+                  itemCount={items.length}
+                  itemData={rowProps}
+                >
+                  {Row}
+                </VariableSizeList>
+              ) : (
+                <FixedSizeList
+                  className={className}
+                  ref={listRef}
+                  itemSize={ITEM_SIZE}
+                  height={
+                    maxHeightOfSelect
+                  }
+                  itemCount={items.length}
+                  itemData={rowProps}
+                  >
+                  {Row}
+                </FixedSizeList>
+              )
             }
-            itemCount={items.length}
-            itemData={rowProps}
-            >
-            {Row}
-          </FixedSizeList>
         </CeligoSelect>
       </FormControl>
 

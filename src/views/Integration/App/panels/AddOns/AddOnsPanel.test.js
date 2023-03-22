@@ -72,7 +72,7 @@ describe('AddOnsPanel UI tests', () => {
         options: { addOnName: 'someName', licenseId: 'someLicenseId' },
       }
     );
-    expect(screen.getByText('Check out our Marketplace')).toBeInTheDocument();
+    expect(screen.getByText(/Check out our Marketplace/)).toBeInTheDocument();
   });
   test('should click on cancel button', async () => {
     initialStoreAndRender(

@@ -1,3 +1,5 @@
+import messageStore from '../../../utils/messageStore';
+
 export default function getFieldMeta(email) {
   const fieldMeta = {
     fieldMap: {
@@ -17,6 +19,7 @@ export default function getFieldMeta(email) {
         defaultValue: email,
         required: true,
         noApi: true,
+        errorMessage: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Business email'}),
       },
       company: {
         id: 'company',

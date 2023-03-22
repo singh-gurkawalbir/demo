@@ -2,28 +2,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
-import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { FilledButton} from '../../../components/Buttons';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 
 const useStyles = makeStyles(theme => ({
-  submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('md')]: {
-      maxWidth: '100%',
-    },
-  },
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
@@ -60,7 +44,7 @@ export default function ForgotPassword({setShowError, email, className}) {
   }, []);
 
   return (
-    <div className={clsx(classes.editableFields, className)}>
+    <LoginFormWrapper className={className}>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -76,12 +60,12 @@ export default function ForgotPassword({setShowError, email, className}) {
         <FilledButton
           data-test="submit"
           type="submit"
-          className={classes.submit}
+          submit
           value="Submit">
           Request password reset
         </FilledButton>
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }
 

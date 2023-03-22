@@ -46,7 +46,6 @@ describe('Table Row UI test cases', () => {
         import: 'id',
       },
       rowIndex: 0,
-      tableSize: 2,
       optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: false, supportsRefresh: false, type: 'input', multiline: false}, {id: 'import', label: 'Import field value', options: undefined, readOnly: false, required: false, supportsRefresh: false, type: 'input', multiline: false}],
       touched: true,
       setTableState: tableState,
@@ -61,16 +60,14 @@ describe('Table Row UI test cases', () => {
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     const inputs = screen.getAllByRole('textbox');
 
-    fireEvent.change(inputs[0], { target: { value: '' } });
+    await fireEvent.change(inputs[0], { target: { value: '' } });
     await userEvent.type(inputs[0], 'Name');
-    fireEvent.change(inputs[1], { target: { value: '' } });
-    await userEvent.type(inputs[1], 'name');
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'export',
       value: 'Name',
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -94,10 +91,14 @@ describe('Table Row UI test cases', () => {
         },
       ],
       onRowChange: {onRowChange} });
+    fireEvent.change(inputs[1], { target: { value: '' } });
+    await userEvent.type(inputs[1], 'name');
+    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'import',
       value: 'name',
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -125,7 +126,7 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     await userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 
   test('should test rows data by providing type as number data and test updating the text', async () => {
@@ -135,7 +136,6 @@ describe('Table Row UI test cases', () => {
         import: 44,
       },
       rowIndex: 0,
-      tableSize: 2,
       optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: false, supportsRefresh: false, type: 'number', multiline: false}, {id: 'import', label: 'Import field value', options: undefined, readOnly: false, required: false, supportsRefresh: false, type: 'number', multiline: false}],
       touched: true,
       setTableState: tableState,
@@ -156,6 +156,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: '110',
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -183,6 +184,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: '120',
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -209,8 +211,8 @@ describe('Table Row UI test cases', () => {
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleterow).toBeInTheDocument();
-    await userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    userEvent.click(deleterow);
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', async () => {
     const props = {
@@ -218,7 +220,6 @@ describe('Table Row UI test cases', () => {
         export: 'text',
       },
       rowIndex: 0,
-      tableSize: 2,
       optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: false, supportsRefresh: false, type: 'input', multiline: false}, {id: 'import', label: 'Import field value', options: [{label: 'N', value: 'N'}, {label: 'X', value: 'X'}, {label: 'Y', value: 'Y'}], readOnly: false, required: false, supportsRefresh: false, type: 'select', multiline: false}],
       touched: true,
       setTableState: tableState,
@@ -246,6 +247,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: 'X',
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -273,7 +275,7 @@ describe('Table Row UI test cases', () => {
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
     await userEvent.click(moreJobActionMenuButtonNode);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 
   test('should test rows data by providing type as select options at export fields and and multiselect at import fields', async () => {
@@ -281,7 +283,6 @@ describe('Table Row UI test cases', () => {
       rowValue: {
       },
       rowIndex: 0,
-      tableSize: 2,
       optionsMap: [{id: 'export', label: 'Export field value', options: [{text: 'exportop1', id: 'op1'}, {text: 'exportop2', id: 'op2'}, {text: 'exportop3', id: 'op3'}], readOnly: false, required: false, supportsRefresh: false, type: 'select', multiline: false}, {id: 'import', label: 'Import field value', options: [{label: 'N', value: 'N'}, {label: 'X', value: 'X'}, {label: 'Y', value: 'Y'}], readOnly: false, required: false, supportsRefresh: false, type: 'multiselect', multiline: false}],
       touched: false,
       setTableState: tableState,
@@ -309,6 +310,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'export',
       value: 'op2',
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -344,6 +346,7 @@ describe('Table Row UI test cases', () => {
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'import',
+      invalidateParentFieldOnError: undefined,
       value: ['N'],
       optionsMap: [
         {
@@ -372,14 +375,13 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     await userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', async () => {
     const props = {
       rowValue: {
       },
       rowIndex: 0,
-      tableSize: 2,
       optionsMap: [{id: 'export', label: 'Export field value', options: [{text: 'exportop1', id: 'op1'}, {text: 'exportop2', id: 'op2'}, {text: 'exportop3', id: 'op3'}], readOnly: false, supportsRefresh: false, type: 'autosuggest', multiline: false}, {id: 'import', label: 'Import field value', options: [{label: 'N', value: 'N'}, {label: 'X', value: 'X'}, {label: 'Y', value: 'Y'}], readOnly: false, supportsRefresh: false, type: 'multiselect', multiline: false}],
       touched: false,
       setTableState: tableState,
@@ -407,6 +409,7 @@ describe('Table Row UI test cases', () => {
       rowIndex: 0,
       field: 'import',
       value: ['N'],
+      invalidateParentFieldOnError: undefined,
       optionsMap: [
         {
           id: 'export',
@@ -432,6 +435,6 @@ describe('Table Row UI test cases', () => {
 
     expect(deleterow).toBeInTheDocument();
     await userEvent.click(deleterow);
-    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
+    expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 });
