@@ -116,7 +116,6 @@ function Notifications() {
 
       <ArrowPopper
         id="notifications"
-        className={classes.popper}
         open={open}
         anchorEl={anchorEl}
         placement="bottom-end"
