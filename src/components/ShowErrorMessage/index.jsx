@@ -1,4 +1,5 @@
-import { makeStyles, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import clsx from 'clsx';
 import React from 'react';
 import ErrorIcon from '../icons/ErrorIcon';

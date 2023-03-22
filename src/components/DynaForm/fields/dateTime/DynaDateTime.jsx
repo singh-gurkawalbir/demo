@@ -1,12 +1,17 @@
-import MomentDateFnsUtils from '@date-io/moment';
+// import MomentDateFnsUtils from '@date-io/moment';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-  KeyboardTimePicker,
-} from '@mui/lab';
+// import {
+//   MuiPickersUtilsProvider,
+//   KeyboardDatePicker,
+//   KeyboardTimePicker,
+// } from '@mui/lab';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import {FormLabel} from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -69,16 +74,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const useDatePickerProps = removePickerDialog => {
-  const classes = useStyles();
+// const useDatePickerProps = removePickerDialog => {
+//   const classes = useStyles();
 
-  return removePickerDialog ? {
-    InputAdornmentProps: {disablePointerEvents: true},
-    keyboardIcon: null,
-  } : {
-    keyboardIcon: <CalendarIcon className={classes.iconWrapper} />,
-  };
-};
+//   return removePickerDialog ? {
+//     InputAdornmentProps: {disablePointerEvents: true},
+//     keyboardIcon: null,
+//   } : {
+//     keyboardIcon: <CalendarIcon className={classes.iconWrapper} />,
+//   };
+// };
 const useTimePickerProps = removePickerDialog => {
   const classes = useStyles();
 
@@ -182,7 +187,7 @@ export default function DateTimePicker(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
-  const datePickerProps = useDatePickerProps(removePickerDialog);
+  // const datePickerProps = useDatePickerProps(removePickerDialog);
   const timePickerProps = useTimePickerProps(removePickerDialog);
 
   return (
@@ -195,49 +200,50 @@ export default function DateTimePicker(props) {
         </>
         )}
       </div>
-      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
+      <LocalizationProvider dateAdapter={AdapterMoment} variant="filled">
         <div className={classes.dateTimeWrapper}>
           <div className={classes.fieldWrapper}>
-            <KeyboardDatePicker
-              {...isLoggableAttr(isLoggable)}
-              disabled={disabled}
-              variant="inline"
-              data-test="date"
-              format={dateFormat}
-              placeholder={dateFormat}
-              value={dateValue}
-              label={dateLabel || 'Date'}
-              onKeyDown={e => {
-                // this is specifically for qa to inject their date time string
-                // they should alter the input dom to add a qa attribute prior to injection for date time
-                if (e.target.hasAttribute('qa')) return;
+            <DatePicker
+              // maxDate={doNotAllowFutureDates && moment()}
+              // {...isLoggableAttr(isLoggable)}
+              // disabled={disabled}
+              // // variant="inline"
+              // // data-test="date"
+              // format={dateFormat}
+              // // placeholder={dateFormat}
+              // value={dateValue}
+              // onChange={setFormatDateValue}
+              // label={dateLabel || 'Date'}
+              // onKeyDown={e => {
+              //   // this is specifically for qa to inject their date time string
+              //   // they should alter the input dom to add a qa attribute prior to injection for date time
+              //   if (e.target.hasAttribute('qa')) return;
 
-                e.preventDefault();
-              }}
-              onKeyPress={e => {
-                if (e.target.hasAttribute('qa')) return;
+              //   e.preventDefault();
+              // }}
+              // onKeyPress={e => {
+              //   if (e.target.hasAttribute('qa')) return;
 
-                e.preventDefault();
-              }}
-              onChange={setFormatDateValue}
-              disableToolbar
-              className={classes.keyBoardDateTimeWrapper}
-              fullWidth
-              InputProps={{ className: classes.inputDateTime, readOnly: true}}
-              {...datePickerProps}
-              maxDate={doNotAllowFutureDates && moment()}
-      />
+              //   e.preventDefault();
+              // }}
+              // slots={{openPickerIcon: CalendarIcon }}
+              // // disableToolbar
+              // // className={classes.keyBoardDateTimeWrapper}
+              // // fullWidth
+              // // InputProps={{ className: classes.inputDateTime, readOnly: true}}
+              // // {...datePickerProps}
+            />
           </div>
           <div className={classes.fieldWrapper}>
-            <KeyboardTimePicker
+            <MobileTimePicker
               {...isLoggableAttr(isLoggable)}
               disabled={disabled}
-              variant="inline"
+              // variant="inline"
               data-test="time"
               label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
               format={timeFormat}
-              placeholder={timeFormat}
+              // placeholder={timeFormat}
               onKeyDown={e => {
                 // this is specifically for qa to inject their date time string
                 // they should alter the input dom to add a qa attribute prior to injection for date time
@@ -252,15 +258,15 @@ export default function DateTimePicker(props) {
               }}
               value={timeValue}
               onChange={setFormatTimeValue}
-              fullWidth
-              className={classes.keyBoardDateTimeWrapper}
-              InputProps={{ className: classes.inputDateTime, readOnly: true}}
+              // fullWidth
+              // className={classes.keyBoardDateTimeWrapper}
+              // InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...timePickerProps}
       />
           </div>
         </div>
         <FieldMessage {...props} />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
     </>
   );
 }

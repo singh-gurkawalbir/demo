@@ -597,7 +597,7 @@ export default {
         },
         '&.Mui-disabled': {
           backgroundColor: colors.celigoNeutral2,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
         },
       },
     },
