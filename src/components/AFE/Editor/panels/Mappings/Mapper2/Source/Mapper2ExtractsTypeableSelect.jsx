@@ -8,7 +8,6 @@ import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
 import { DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
-import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
 import SourceDataType from './SourceDataType';
@@ -48,34 +47,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     cursor: 'pointer',
   },
-  textFieldWithDataType: {
-    '&> * .MuiFilledInput-input': {
-      paddingRight: theme.spacing(10),
-    },
-  },
   divider: {
     margin: theme.spacing(1, 0),
-  },
-  extractListPopper: {
-    width: theme.spacing(50),
-    borderRadius: 0,
-    top: '2px !important',
-    border: 'none',
-  },
-  extractListPopperCompact: {
-    width: theme.spacing(38),
-    marginLeft: 0,
-  },
-  extractPopperArrow: {
-    display: 'none',
-  },
-  extractPopperPaper: {
-    boxShadow: 'none',
-    borderRadius: 0,
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    '&:empty': {
-      display: 'none',
-    },
   },
   sourceDataTypeButton: {
     marginLeft: '-80px', // theme.spacing with negative value results in "NaN"
