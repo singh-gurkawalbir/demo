@@ -177,7 +177,6 @@ describe('javaScriptPanel UI tests', () => {
     await userEvent.click(screen.getByText('script 2'));
     await waitFor(() => expect(screen.queryByText('script 1')).toBeNull());
     await waitFor(() => expect(screen.queryByText('script 3')).toBeNull());
-    // await userEvent.click(screen.getByText('Insert pre save page stub'));
   });
   test('should make the repective dispatch call when changes are made in code panel', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
