@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   edgePath: {
     strokeDasharray: 4,
     strokeWidth: 2,
-    stroke: theme.palette.secondary.lightest, // celigo neutral 3
+    stroke: theme.palette.primary.light, // celigo neutral 3
     fill: 'transparent',
     '&:hover': {
       // animation: 'dashdraw .5s linear infinite',
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   edgeAnimatedLine: {
     strokeDasharray: 4,
     strokeWidth: 2,
-    stroke: theme.palette.primary.light, // celigo neutral 3
+    stroke: theme.palette.secondary.light,
     fill: 'transparent',
     animation: 'dashdraw .8s linear infinite',
   },
@@ -53,13 +53,13 @@ function getPositionAndOffset(
   let offset = 10;
 
   if (
-    targetType === GRAPH_ELEMENTS_TYPE.PP_STEP &&
-    sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP
+    (targetType === GRAPH_ELEMENTS_TYPE.PP_STEP || targetType === GRAPH_ELEMENTS_TYPE.ICON_PP) &&
+    (sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP || sourceType !== GRAPH_ELEMENTS_TYPE.ICON_PP)
   ) {
     // we want the add button to be positioned close to the pp,
     // not close to the merge/router nodes.
     position = 'right';
-    offset = 30;
+    offset = 60;
   } else if (
     targetType === GRAPH_ELEMENTS_TYPE.ROUTER &&
     sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP
@@ -181,7 +181,7 @@ function DefaultEdge(props) {
   const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
-  const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
+  const isSourceGenerator = (sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP || sourceType === GRAPH_ELEMENTS_TYPE.ICON_PG);
 
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon =
@@ -257,6 +257,8 @@ function DefaultEdge(props) {
       edgePoints
     );
 
+    console.log({points});
+
     let path;
     const current = { x: points[0].x, y: points[0].y };
 
@@ -310,10 +312,13 @@ function DefaultEdge(props) {
         // and the horizontal line of the edge will be skipped, so that the line will not overlap the pg-dropbox
         if (targetIndex > 1) {
           if (iconView === 'icon') {
-            drawLine({x: p.x, y: p.y + (130 * (targetIndex - 1))}, 'y');
+            drawLine({x: p.x - 5, y: p.y + (130 * (targetIndex - 1))}, 'y');
           } else {
             drawLine({x: p.x, y: p.y + (346 * (targetIndex - 1))}, 'y');
           }
+        } else if (targetIndex === 0) {
+          drawLine(p, 'x');
+          drawLine(p, 'y');
         } else {
           drawLine(p, 'y');
           drawLine(p, 'x');
@@ -407,7 +412,7 @@ function DefaultEdge(props) {
       }
 
       {!isDragging && showAddIcon && (
-        <ForeignObject edgePath={edgePath} position={position} offset={45}>
+        <ForeignObject edgePath={edgePath} position={position} offset={offset}>
           <AddNewButton edgeId={id} disabled={maxRoutersLimitReached} />
         </ForeignObject>
       )}

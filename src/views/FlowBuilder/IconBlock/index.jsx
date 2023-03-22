@@ -122,6 +122,9 @@ const useStyles = makeStyles(theme => ({
   actionIsNew: {
     color: theme.palette.primary.main,
   },
+  invert: {
+    transform: 'scaleX(-1)',
+  },
   actionUsed: {
     color: theme.palette.primary.main,
     '&:before': {
@@ -604,7 +607,8 @@ export default function AppBlock({
               <ActionIconButton
                 onClick={() => upstreamHighlighter(id)}
                 data-test="flowBranching1"
-                helpText="Upstream expansion">
+                helpText="Upstream expansion"
+                className={classes.invert}>
                 <BranchIcon />
               </ActionIconButton>
             </div>

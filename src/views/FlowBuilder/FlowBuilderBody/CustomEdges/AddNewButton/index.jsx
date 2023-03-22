@@ -24,13 +24,15 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
+    height: '15px',
+    width: '15px',
     '& > span': {
       width: 18,
       height: 18,
     },
     '& * svg': {
-      width: 20,
-      height: 20,
+      width: 15,
+      height: 15,
     },
   },
   listItemIcon: {

@@ -60,11 +60,13 @@ const options = {
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',
   // ranker: 'longest-path', // seems worst
-  ranksep: 117,
+  ranksep: 92,
   nodesep: 40,
   marginx: 50,
   marginy: 50,
 };
+
+const subFlowOptions = {...options, ranksep: 136};
 
 export function generateNewNode() {
   const newId = generateId();
@@ -91,7 +93,7 @@ export function rectifyPageGeneratorOrder(nodes = [], flow) {
   });
 }
 
-export function newlayoutElements(newelements = [], flow, hoveredEdges) {
+export function newlayoutElements(newelements = [], flow, isSubFlowView) {
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));
@@ -105,7 +107,9 @@ export function newlayoutElements(newelements = [], flow, hoveredEdges) {
     return el;
   });
 
-  graph.setGraph({ rankdir: 'LR', ...options });
+  if (isSubFlowView) { graph.setGraph({ rankdir: 'LR', ...subFlowOptions }); } else {
+    graph.setGraph({ rankdir: 'LR', ...options });
+  }
 
   elements.forEach(el => {
     if (isNode(el)) {
@@ -159,11 +163,11 @@ export function newlayoutElements(newelements = [], flow, hoveredEdges) {
         position.x = node.x;
         position.y = node.y - 31;
       } else if (el.type === 'terminal') {
-        position.x = node.x - 5;
+        position.x = node.x + 12;
         position.y = node.y + 7;
       } else if (el.type === 'iconpg' && !el.isSubFlow) {
         position.x = node.x - 35;
-        position.y = node.y;
+        position.y = node.y - 1;
       } else if (el.type === 'iconpg' && el.isSubFlow) {
         position.x = node.x - 35;
         position.y = node.y - 25;

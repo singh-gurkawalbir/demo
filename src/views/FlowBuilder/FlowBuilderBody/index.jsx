@@ -227,9 +227,9 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     setSubFlowElements(newElements);
   };
 
-  const layouts = isSubFlowView ? subFlowElements : (render || elements);
+  const layouts = isSubFlowView ? subFlowElements : elements;
 
-  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(layouts, mergedFlow) : newlayoutElements(layouts, mergedFlow, hoveredEdges), [hoveredEdges, iconView, layouts, mergedFlow]);
+  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(layouts, mergedFlow) : newlayoutElements(layouts, mergedFlow, isSubFlowView), [hoveredEdges, iconView, layouts, mergedFlow]);
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {

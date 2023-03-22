@@ -16,13 +16,15 @@ const useStyles = makeStyles(theme => ({
   },
   newpgContainer: {
     paddingTop: 0,
+    paddingRight: 0,
   },
   root: {
-    width: 250,
+    width: 210,
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },
   newroot: {
+    width: 106,
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },

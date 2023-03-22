@@ -13,7 +13,7 @@ import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
-import ActionIconButton from '../ActionIconButton';
+import SubFlowActionIconButton from '../SubFlowActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import SubFlowResourceButton from '../SubFlowResourceButton';
 import ArrowPopper from '../../../components/ArrowPopper';
@@ -104,21 +104,25 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     alignSelf: 'center',
     marginBottom: '20px',
+    top: 9,
+    left: -7,
   },
   sideActionContainer: {
     position: 'relative',
   },
   leftActions: {
     position: 'absolute',
+    // backgroundColor: theme.palette.primary.lightest2,
     display: 'flex',
     left: -16,
     top: 28,
   },
   rightActions: {
     position: 'absolute',
+    // backgroundColor: theme.palette.primary.lightest2,
     display: 'flex',
-    left: 140,
-    top: 28,
+    left: 137,
+    top: 32,
   },
   isNotOverActions: {
     width: 0,
@@ -152,6 +156,8 @@ const useStyles = makeStyles(theme => ({
   bubbleContainer: {
     position: 'relative',
     display: 'flex',
+    backgroundColor: theme.palette.primary.main,
+
   },
   bubble: {
     position: 'absolute',
@@ -159,7 +165,9 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent',
   },
   bubbleBG: {
-    fill: 'white',
+    fill: theme.palette.primary.main,
+
+    // fill: 'white',
   },
   bubbleActive: {
     fill: theme.palette.primary.main,
@@ -415,19 +423,19 @@ export default function AppBlock({
 
     return flowActions.map(a => (
       <Fragment key={a.name}>
-        <ActionIconButton
+        <SubFlowActionIconButton
           variant={a.position !== 'middle' ? 'contained' : undefined}
           helpKey={a.helpKey}
           helpText={a.helpText}
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
-            [classes.actionUsed]: expanded && a.isUsed,
+            // [classes.actionUsed]: expanded && a.isUsed,
           })}
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
           <a.Icon />
-        </ActionIconButton>
+        </SubFlowActionIconButton>
         <a.Component
           open={activeAction === a.name}
           flowId={flowId}
@@ -548,12 +556,12 @@ export default function AppBlock({
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
-              <ActionIconButton
+              <SubFlowActionIconButton
                 onClick={handleExpandClick}
                 data-test="addDataProcessor"
                 helpText="Define options">
                 <AddIcon />
-              </ActionIconButton>
+              </SubFlowActionIconButton>
             ) : null}
           </div>
         </div>
