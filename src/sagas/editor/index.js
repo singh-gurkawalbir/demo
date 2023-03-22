@@ -659,7 +659,7 @@ export function* requestEditorSampleData({
       delete body.sampleData;
       delete body.templateVersion;
     } else if (resourceType === 'iClients') {
-      body.type = 'iClient';
+      body.type = 'iclient';
       body.iClient = resource || {};
 
       if (!isNewId(editor.connectionId)) {
