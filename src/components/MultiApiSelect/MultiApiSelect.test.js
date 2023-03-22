@@ -35,11 +35,11 @@ describe('MultiApiSelect UI tests', () => {
     renderWithProviders(<MultiApiSelect {...props} items={[]} />);
     expect(screen.queryByText('Shopify')).not.toBeInTheDocument();
   });
-  test('should call the click handler on clicking the radio icon', () => {
+  test('should call the click handler on clicking the radio icon', async () => {
     renderWithProviders(<MultiApiSelect {...props} />);
     const radio = screen.getAllByRole('radio');
 
-    userEvent.click(radio[0]);
+    await userEvent.click(radio[0]);
     expect(mockOnClick).toHaveBeenCalled();
   });
 });

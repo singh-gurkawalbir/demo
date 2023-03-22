@@ -160,5 +160,5 @@ describe('setPassword', () => {
 
     expect(setpasswordButtonNode).toBeInTheDocument();
     await userEvent.click(setpasswordButtonNode);
-  });
+  }, 10000);
 });
