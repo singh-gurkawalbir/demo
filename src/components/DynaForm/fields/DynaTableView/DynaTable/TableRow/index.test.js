@@ -211,7 +211,7 @@ describe('Table Row UI test cases', () => {
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleterow).toBeInTheDocument();
-    userEvent.click(deleterow);
+    await userEvent.click(deleterow);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
   test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', async () => {
