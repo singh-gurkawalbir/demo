@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     paddingRight: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    alignItems: 'center',
   },
   child: {
     '& + div': {
@@ -58,6 +57,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiButtonBase-root': {
       marginTop: 0,
     },
+  },
+  deleteButton: {
+    marginTop: theme.spacing(1.5),
   },
 }));
 const TYPE_TO_ERROR_MESSAGE = {
@@ -303,7 +305,7 @@ export default function TableRow({
 
       </div>
       {isNotLastRow && !ignoreEmptyRow && (
-      <div key="delete_button">
+      <div key="delete_button" className={classes.deleteButton}>
         <ActionButtonMemo
           disableDeleteRows={disableDeleteRows}
           rowIndex={rowIndex}
