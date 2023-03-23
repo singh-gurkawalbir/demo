@@ -6,8 +6,6 @@ export default {
 
     if (newValues['/rdbms/queryType'] === 'MERGE') {
       newValues['/rdbms/bulkInsert'] = undefined;
-      delete newValues['/rdbms/bulkInsert/tableName'];
-      delete newValues['/rdbms/bulkInsert/batchSize'];
     }
 
     newValues['/rdbms/queryType'] = [newValues['/rdbms/queryType']];
@@ -36,6 +34,7 @@ export default {
           is: ['BULK INSERT'],
         },
       ],
+      deleteWhen: [{field: 'rdbms.queryType', is: ['MERGE']}],
     },
     'rdbms.query': {
       id: 'rdbms.query',
@@ -60,6 +59,7 @@ export default {
     },
     'rdbms.bulkInsert.tableName': {
       fieldId: 'rdbms.bulkInsert.tableName',
+      deleteWhen: [{field: 'rdbms.queryType', is: ['MERGE']}],
     },
     advancedSettings: { formId: 'advancedSettings' },
     'rdbms.queryType': {

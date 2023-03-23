@@ -46,10 +46,10 @@ export default {
     },
     'mongodb.ignoreLookupFilter': {
       fieldId: 'mongodb.ignoreLookupFilter',
-      removeWhen: [{AND: [
+      removeWhenAll: [
         { field: 'mongodb.ignoreExtract', isNot: [''] },
-        { field: 'mongodb.lookupType', is: ['lookup'] },
-      ]}],
+        { field: 'mongodb.lookupType', is: ['source'] },
+      ],
     },
     'mongodb.filter': {
       fieldId: 'mongodb.filter',
@@ -59,10 +59,10 @@ export default {
     },
     'mongodb.ignoreExtract': {
       fieldId: 'mongodb.ignoreExtract',
-      removeWhen: [{AND: [
+      removeWhenAll: [
         { field: 'mongodb.ignoreLookupFilter', isNot: [''] },
-        { field: 'mongodb.lookupType', is: ['source'] },
-      ]}],
+        { field: 'mongodb.lookupType', is: ['lookup'] },
+      ],
     },
     dataMappings: {
       formId: 'dataMappings',
