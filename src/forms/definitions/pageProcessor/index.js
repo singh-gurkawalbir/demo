@@ -288,9 +288,7 @@ export default {
 
       if (connectionField.value) {
         expression.push({ _connectionId: connectionField.value });
-      }
-
-      if (app.assistant) {
+      } else if (app.assistant) {
         expression.push({ assistant: app.assistant });
       }
 
