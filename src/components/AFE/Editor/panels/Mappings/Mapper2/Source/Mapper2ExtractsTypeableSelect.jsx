@@ -1,9 +1,8 @@
 import React, { useRef, useCallback, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider, ClickAwayListener } from '@mui/material';
+import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@mui/material';
 import clsx from 'clsx';
-import { Box } from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
@@ -13,6 +12,7 @@ import actions from '../../../../../../../actions';
 import SourceDataType from './SourceDataType';
 import reducer from './stateReducer';
 import messageStore from '../../../../../../../utils/messageStore';
+import ExtractMenu from './ExtractMenu';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -166,6 +166,7 @@ export default function Mapper2ExtractsTypeableSelect({
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const inputFieldRef = useRef();
+  const textFieldRef = useRef();
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
   }, [setInputValue]);
@@ -211,6 +212,7 @@ export default function Mapper2ExtractsTypeableSelect({
   }, []);
 
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
+  const menuOpen = isFocused && !disabled && !hideSourceDropdown;
 
   return (
     <FormControl variant="standard" data-test={id} key={id}>
@@ -236,6 +238,7 @@ export default function Mapper2ExtractsTypeableSelect({
           }
         >
         <TextField
+          ref={textFieldRef}
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
@@ -289,31 +292,19 @@ export default function Mapper2ExtractsTypeableSelect({
           />
       )}
 
-      {isFocused && !disabled && !hideSourceDropdown && (
-      <ClickAwayListener onClickAway={handleBlur}>
-        <Box
-          position="absolute"
-          zIndex={1300}
-          border="solid 1px"
-          borderColor="secondary.lightest"
-          width="100%"
-          top={59} // This value should match the textField height. This is to align the dropdown with the input field
-          bgcolor="background.paper"
-            >
-          <ExtractsTree
-            key={id}
-            nodeKey={nodeKey}
-            destDataType={destDataType}
-            propValue={propValue}
-            inputValue={inputValue}
-            patchField={patchField}
-            setInputValue={setInputValue}
-            setIsFocused={setIsFocused}
-            cursorPosition={cursorPosition}
-              />
-        </Box>
-      </ClickAwayListener>
-      )}
+      <ExtractMenu open={menuOpen} onClickAway={handleBlur} anchorRef={textFieldRef}>
+        <ExtractsTree
+          key={id}
+          nodeKey={nodeKey}
+          destDataType={destDataType}
+          propValue={propValue}
+          inputValue={inputValue}
+          patchField={patchField}
+          setInputValue={setInputValue}
+          setIsFocused={setIsFocused}
+          cursorPosition={cursorPosition}
+        />
+      </ExtractMenu>
     </FormControl>
   );
 }
