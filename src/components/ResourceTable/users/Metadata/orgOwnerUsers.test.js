@@ -212,13 +212,13 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual(['Reset MFA']);
     const resetMfaButton = screen.getByRole('menuitem', {name: 'Reset MFA'});
 
-    userEvent.click(resetMfaButton);
+    await userEvent.click(resetMfaButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mfa.resetOwnerMFA());
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.asyncTask.clear('MFA_OWNER_RESET_ASYNC_KEY')));
     expect(mockResolverFunction).toHaveBeenCalledTimes(1);
@@ -572,8 +572,8 @@ describe('test suite for orgOwnerUsers', () => {
     initOrgOwnerUsers(data);
     const disableMfaButton = document.querySelector('[data-test="ssoRequired"]');
 
-    userEvent.hover(disableMfaButton.parentElement);
-    await waitFor(() => expect(screen.getByRole('tooltip', { name: 'You can’t require both MFA and SSO for a user.'})).toBeInTheDocument());
+    await userEvent.hover(disableMfaButton.parentElement);
+    waitFor(() => expect(screen.getByRole('tooltip', { name: 'You can’t require both MFA and SSO for a user.'})).toBeInTheDocument());
   });
 
   test('should show SSO status if SSO service is enabled for account', () => {
@@ -684,7 +684,7 @@ describe('test suite for orgOwnerUsers', () => {
     const requireSsoButton = document.querySelector('[data-test="ssoRequired"]');
 
     expect(requireSsoButton).toBeDisabled();
-    userEvent.hover(requireSsoButton.parentElement);
+    await userEvent.hover(requireSsoButton.parentElement);
     await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('You can’t require both MFA and SSO for a user.'));
   });
 

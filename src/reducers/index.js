@@ -680,7 +680,7 @@ selectors.mkTileApplications = () => {
 
               applications.push(app.id || 'http');
             } else {
-              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.type);
+              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.jdbc?.type || connection.type);
             }
           }
         });
@@ -702,14 +702,14 @@ selectors.mkTileApplications = () => {
           const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
           integrationConnections.forEach(c => {
-            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.jdbc?.type || c.type);
           });
         });
 
         const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
         parentIntegrationConnections.forEach(c => {
-          applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.jdbc?.type || c.http?.formType || c.jdbc?.type || c.type);
         });
         applications = uniq(applications);
       }
@@ -1669,6 +1669,13 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
+        if (connection.jdbc?.type) {
+          return (
+            this.jdbc?.type === connection.jdbc?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
 
         if (connection.type === 'http') {
           if (connection.http?.formType) {
@@ -2516,15 +2523,34 @@ selectors.getScriptContext = createSelector(
 
       return flow._integrationId;
     },
+    (state, { resourceType }) => resourceType,
+    (state, { resourceId }) => resourceId,
   ],
-  (contextType, _flowId, _integrationId) => {
-    if (contextType === 'hook' && _integrationId) {
-      return {
-        type: 'hook',
-        container: 'integration',
-        _integrationId,
-        _flowId,
-      };
+  (contextType, _flowId, _integrationId, resourceType, resourceId) => {
+    if (contextType === 'hook') {
+      if (_integrationId) {
+        return {
+          type: 'hook',
+          container: 'integration',
+          _integrationId,
+          _flowId,
+        };
+      }
+      if (_flowId) {
+        return {
+          type: 'hook',
+          container: 'flow',
+          _integrationId,
+          _flowId,
+        };
+      }
+      if (resourceType === 'apis' && !isNewId(resourceId)) {
+        return {
+          type: 'hook',
+          container: 'api',
+          _apiId: resourceId,
+        };
+      }
     }
   }
 );
@@ -4681,6 +4707,20 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
+selectors.resourceCanHaveFileDefinitions = (state, resourceId, resourceType) => {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return false;
+  }
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resource?.type === 'simple') {
+    // Data loaders do not have file definitions
+    return false;
+  }
+
+  return isFileAdaptor(resource) || isAS2Resource(resource) || FILE_PROVIDER_ASSISTANTS.includes(resource?.assistant);
+};
+
 // #endregion SAMPLE DATA selectors
 
 // #region  SUITESCRIPT Selectors
@@ -5576,6 +5616,15 @@ selectors.applicationType = (state, resourceType, id) => {
     );
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
+  }
+  if (adaptorType?.toUpperCase().startsWith('JDBC')) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+
+    return connection && connection.jdbc && connection.jdbc.type;
   }
   if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(

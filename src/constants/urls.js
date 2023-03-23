@@ -83,3 +83,5 @@ export const MOCK_RESPONSE_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/e
 export const BUNDLE_DEPRICATION_URL = 'https://docs.celigo.com/hc/en-us/articles/360050643132';
 // This needs to be updated once integrator app is published in shopify marketplace.
 export const SHOPIFY_APP_URL = 'https://apps.shopify.com';
+
+export const HTTP_IMPORT_CREATE_FEED_RELATIVE_URI = '/feeds/2021-06-30/documents';

@@ -3,6 +3,8 @@ import { TextField, Typography, Button } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { CeligoLogo } from '@celigo/fuse-ui';
+import { OutlinedButton } from '../../Buttons';
+import FilledButton from '../../Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   signUpForm: {
@@ -118,18 +120,6 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
     },
   },
-  googleBtn: {
-    borderRadius: 4,
-    border: '1px solid',
-    borderColor: theme.palette.divider,
-    width: '100%',
-    // eslint-disable-next-line no-undef
-    background: `url(${CDN_BASE_URI}images/googlelogo.png) 10% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
-  },
   googleBtnForm: {
     width: '100%',
   },
@@ -181,6 +171,7 @@ export default function LoginForm() {
           <TextField
             className={clsx(classes.fieldWrappe, classes.passwordTextField)}
             htmlFor="password"
+            fullWidth
             placeholder="Password*"
             variant="filled"
             type="password" />
@@ -189,25 +180,26 @@ export default function LoginForm() {
               Forgot password?
             </Button>
           </div>
-          <Button
+          <FilledButton
             variant="contained"
             fullWidth
             color="primary"
             value="Submit"
+            submitBtn
             onClick={() => 'Form Submitted!'}
             className={classes.submitBtn}>Sign in
-          </Button>
+          </FilledButton>
           <div className={classes.or}>
             <Typography variant="body1">or</Typography>
           </div>
           <form className={classes.googleBtnForm}>
-            <Button
+            <OutlinedButton
               type="button"
               color="secondary"
               onClick={() => 'sign in with google'}
-              className={classes.googleBtn}>
+              googleBtn>
               Sign in with Google
-            </Button>
+            </OutlinedButton>
           </form>
         </div>
         <Typography component="div" className={classes.signuplinkWrapper}>

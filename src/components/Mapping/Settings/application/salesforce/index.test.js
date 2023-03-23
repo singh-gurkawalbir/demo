@@ -67,17 +67,11 @@ describe('getLookupMetadata component Test cases', () => {
       value: 'extractValue',
     }]);
 
-    expect(lookupWhereClauseRes).toEqual({
-      disableFetch: false,
-      commMetaPath: 'salesforce/metadata/connections/undefined/sObjectTypes/extractValue',
-    });
+    expect(lookupWhereClauseRes).toBeNull();
 
     const lookupWhereClause1Res = response.optionsHandler('lookup.whereClause', []);
 
-    expect(lookupWhereClause1Res).toEqual({
-      disableFetch: true,
-      commMetaPath: '',
-    });
+    expect(lookupWhereClause1Res).toBeNull();
 
     const textFields = [{
       id: 'lookup.whereClause',

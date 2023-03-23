@@ -448,6 +448,23 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
   return modifiedExtract;
 }
 
+export function formattedMultiFieldExpression(expression, functionValue, extractValue) {
+  let expressionValue = '';
+
+  if (expression) expressionValue = expression;
+
+  if (extractValue) {
+    const isGroupedField = extractValue.indexOf('*.') === 0;
+    const extractFieldValue = isGroupedField ? extractValue.substring(2) : extractValue;
+
+    expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
+  } else if (functionValue) {
+    expressionValue += functionValue;
+  }
+
+  return expressionValue;
+}
+
 // #region Mapper2 utils
 export const isMapper2HandlebarExpression = (extractValue, isHardCodedValue) => handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
 
@@ -3082,6 +3099,17 @@ export default {
             toReturn = 'Amazon Redshift';
           } else {
             toReturn = 'Snowflake';
+          }
+        }
+
+        return toReturn;
+      }
+      case adaptorTypeMap.JDBCExport: {
+        let toReturn;
+
+        if (conn) {
+          if (conn.jdbc?.type === 'netsuitejdbc') {
+            toReturn = 'NetSuite JDBC';
           }
         }
 

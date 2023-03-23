@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
 
-export default function RunIcon(props) {
+export default function HideContentIcon(props) {
   return (
     <SvgIcon {...props}>
       <path

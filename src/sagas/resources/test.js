@@ -2046,9 +2046,9 @@ describe('deleteIntegration saga', () => {
       [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
-    .put(actions.resource.requestCollection('integrations', null, true))
+    .put(actions.resource.clearCollection('integrations'))
     .put(actions.resource.requestCollection('tiles', null, true))
-    .put(actions.resource.requestCollection('scripts', null, true))
+    .put(actions.resource.clearCollection('scripts'))
     .put(actions.resource.integrations.redirectTo('123', HOME_PAGE_PATH))
     .run());
 });

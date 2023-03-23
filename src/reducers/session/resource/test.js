@@ -146,6 +146,32 @@ describe('session.resource reducers', () => {
       expect(state.licenseEntitlementUsage).toEqual(response);
     });
   });
+  describe('LICENSE.ERROR_MESSAGE_RECEIVED action', () => {
+    test('should store the license error messages info', () => {
+      const code = 'test_code';
+      const message = 'test message';
+
+      const state = reducer(
+        undefined,
+        actions.license.receivedLicenseErrorMessage(code, message),
+      );
+
+      expect(state).toEqual({code, message});
+    });
+  });
+  describe('LICENSE.CLEAR_ERROR_MESSAGE action', () => {
+    test('should clear the license error messages info', () => {
+      const code = 'test_code';
+      const message = 'test message';
+
+      const state = reducer(
+        undefined,
+        actions.license.clearErrorMessage(),
+      );
+
+      expect(state).not.toEqual({code, message});
+    });
+  });
   describe('RESOURCE.UPDATE_CHILD_INTEGRATION action', () => {
     test('should store the parent child integration map info', () => {
       const parentId = 'parentId';
@@ -346,6 +372,24 @@ describe('session.resource reducers', () => {
       );
 
       expect(selectors.getLicenseEntitlementUsage(state)).toEqual(response);
+    });
+  });
+  describe('licenseErrorCode', () => {
+    test('should return null when no match found.', () => {
+      expect(selectors.licenseErrorCode(undefined)).toBeUndefined();
+      expect(selectors.licenseErrorCode({})).toBeUndefined();
+    });
+    test('should return licenseErrorCode', () => {
+      expect(selectors.licenseErrorCode({code: 'test_code'})).toBe('test_code');
+    });
+  });
+  describe('licenseErrorMessage', () => {
+    test('should return null when no match found.', () => {
+      expect(selectors.licenseErrorMessage(undefined)).toBeUndefined();
+      expect(selectors.licenseErrorMessage({})).toBeUndefined();
+    });
+    test('should return licenseErrorMessage', () => {
+      expect(selectors.licenseErrorMessage({message: 'test_message'})).toBe('test_message');
     });
   });
 });

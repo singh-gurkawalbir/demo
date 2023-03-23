@@ -78,24 +78,29 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   const { _id, type, assistant } = connection || {};
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
-
-  if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
+  if (type === 'jdbc' && RDBMS_TYPES.includes(connection?.jdbc?.type)) {
+    // jdbc subtype is required to filter the connections
+    expression.push({ 'jdbc.type': connection.jdbc.type });
+  } else if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
     expression.push({ 'rdbms.type': connection.rdbms.type });
   } else if ((type === 'rest' && connection?.isHTTP !== true) || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
-  } else if (type === 'http' || (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId)) {
-    const httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId);
+  } else if (type === 'http' || (type === 'rest' && connection?.isHTTP === true)) {
+    if (connection.http?._httpConnectorId) {
+      const httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId);
 
-    if (httpConnectorId) {
-      expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
+      if (httpConnectorId) {
+        expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
+      }
     }
-    if (type === 'rest' && connection?.isHTTP === true && httpConnectorId) {
+
+    if (type === 'rest' && connection?.isHTTP === true) {
       expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
       expression.push({ isHTTP: { $ne: false } });
-    } else if (type === 'http' && httpConnectorId) {
+    } else if (type === 'http') {
       expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
       expression.push({ isHTTP: { $ne: false } });
     } else {
@@ -130,6 +135,11 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
     options = { filter: filterExpression, appType: assistant };
+  } else if (type === 'jdbc') {
+    options = {
+      filter: andingExpressions,
+      appType: connection?.jdbc?.type,
+    };
   } else {
     options = {
       filter: andingExpressions,

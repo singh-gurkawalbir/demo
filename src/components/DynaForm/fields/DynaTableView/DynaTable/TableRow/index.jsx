@@ -23,18 +23,14 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
-    marginBottom: theme.spacing(1),
   },
   refreshIcon: {
     cursor: 'pointer',
   },
-  dynaTableActions: {
-    alignSelf: 'flex-start',
-    marginTop: theme.spacing(1),
-  },
   bodyElementsWrapper: {
     display: 'flex',
     paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   child: {
     '& + div': {
@@ -58,6 +54,14 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  refreshButton: {
+    '& .MuiButtonBase-root': {
+      marginTop: 0,
+    },
+  },
+  deleteButton: {
+    marginTop: theme.spacing(1.5),
+  },
 }));
 const TYPE_TO_ERROR_MESSAGE = {
   input: 'Please enter a value',
@@ -65,6 +69,7 @@ const TYPE_TO_ERROR_MESSAGE = {
   text: 'Please enter a value',
   autosuggest: 'Please select a value',
   select: 'Please select a value',
+  exportSelect: 'Please select a value',
 };
 
 const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
@@ -73,7 +78,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setTableState, onRowChange, invalidateParentFieldOnError, setIsValid}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -87,8 +92,10 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       value,
       optionsMap,
       onRowChange,
+      invalidateParentFieldOnError,
+      setIsValid,
     });
-  }, [id, onRowChange, optionsMap, rowIndex, setTableState]);
+  }, [id, onRowChange, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid]);
 
   const fieldTestAttr = `text-suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -148,10 +155,13 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
       <DynaExportSelect
         {...basicProps}
         {...op}
+        /* When the staticMap is being used and it has an type property as exportSelect in the optionMap
+        we are setting the isRequiredProperty to false in order to avoid the allignement issue between the table cells */
+        required={invalidateParentFieldOnError ? false : (op.required || basicProps.required)}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
-        className={clsx(classes.root, classes.menuItemsWrapper)}
+        className={classes.refreshButton}
     />
     );
   }
@@ -177,6 +187,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
     const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
+    const skipListBox = optionsMap?.some(({skipListBoxComponent}) => skipListBoxComponent);
 
     return (
       <div
@@ -190,6 +201,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
           labelName="label"
           valueName="value"
           onBlur={onFieldChange}
+          skipListBoxComponent={skipListBox}
     />
       </div>
     );
@@ -215,12 +227,15 @@ const RowCellMemo = ({
   tableSize,
   setTableState,
   onRowChange,
+  invalidateParentFieldOnError,
+  setIsValid,
 }) => {
   const {required } = op;
   const isValid = isCellValid({fieldValue, required, rowIndex, tableSize, touched});
 
   return useMemo(() => (
     <RowCell
+      invalidateParentFieldOnError={invalidateParentFieldOnError}
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
@@ -229,11 +244,12 @@ const RowCellMemo = ({
       setTableState={setTableState}
       onRowChange={onRowChange}
       colIndex={colIndex}
+      setIsValid={setIsValid}
   />
-  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  ), [colIndex, fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState, invalidateParentFieldOnError, setIsValid]);
 };
 
-const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
+const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes, invalidateParentFieldOnError, optionsMap}) =>
   useMemo(() => (
     <ActionButton
       tooltip=""
@@ -241,12 +257,12 @@ const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes})
       data-test={`deleteTableRow-${rowIndex}`}
       aria-label="delete"
       onClick={() => {
-        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex });
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, rowIndex, invalidateParentFieldOnError, optionsMap });
       }}
       className={classes.margin}>
       <DeleteIcon fontSize="small" />
     </ActionButton>
-  ), [classes.margin, disableDeleteRows, rowIndex, setTableState]);
+  ), [classes.margin, disableDeleteRows, rowIndex, setTableState, invalidateParentFieldOnError, optionsMap]);
 export default function TableRow({
   rowValue,
   rowIndex,
@@ -256,7 +272,9 @@ export default function TableRow({
   setTableState,
   onRowChange,
   ignoreEmptyRow,
+  invalidateParentFieldOnError,
   disableDeleteRows,
+  setIsValid,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -270,6 +288,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
+              invalidateParentFieldOnError={invalidateParentFieldOnError}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
@@ -279,6 +298,7 @@ export default function TableRow({
               tableSize={tableSize}
               setTableState={setTableState}
               onRowChange={onRowChange}
+              setIsValid={setIsValid}
           />
           </div>
         )
@@ -286,13 +306,13 @@ export default function TableRow({
 
       </div>
       {isNotLastRow && !ignoreEmptyRow && (
-      <div
-        key="delete_button"
-        className={classes.dynaTableActions}>
+      <div key="delete_button" className={classes.deleteButton}>
         <ActionButtonMemo
           disableDeleteRows={disableDeleteRows}
           rowIndex={rowIndex}
+          optionsMap={optionsMap}
           setTableState={setTableState}
+          invalidateParentFieldOnError={invalidateParentFieldOnError}
           classes={classes}
         />
       </div>

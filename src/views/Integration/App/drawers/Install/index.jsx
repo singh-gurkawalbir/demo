@@ -26,7 +26,7 @@ import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import jsonUtil from '../../../../../utils/json';
-import { INSTALL_STEP_TYPES, emptyObject, HOME_PAGE_PATH,
+import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
@@ -319,7 +319,6 @@ export default function ConnectorInstallation() {
           onClick: () => {
             if (!_connectorId) {
               dispatch(actions.resource.integrations.delete(integrationId));
-              history.push(HOME_PAGE_PATH);
 
               return;
             }

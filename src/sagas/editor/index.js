@@ -659,7 +659,7 @@ export function* requestEditorSampleData({
       delete body.sampleData;
       delete body.templateVersion;
     } else if (resourceType === 'iClients') {
-      body.type = 'iclient';
+      body.type = 'iClient';
       body.iClient = resource || {};
 
       if (!isNewId(editor.connectionId)) {
@@ -871,7 +871,7 @@ export function* initEditor({ id, editorType, options }) {
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
     } else {
-      const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
+      const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook', resourceType, resourceId });
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
     }

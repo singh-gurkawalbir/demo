@@ -15,7 +15,7 @@ module.exports = {
   },
   transformIgnorePatterns: [
     '^.+\\.module\\.(css|sass|scss)$',
-    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder|d3|d3-array|internmap|delaunator|robust-predicates)',
+    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder|d3|d3-array|internmap|delaunator|robust-predicates|reactflow)',
     // '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx|mjs|cjs)$',
   ],
   collectCoverageFrom: [
