@@ -1,22 +1,22 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useRouteMatch } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { isNewId, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
 import { isNestedDrawer } from '../../components/drawer/Resource/Panel';
 
 export default function useLoadUIFields({ flowId, resourceId, resourceType }) {
-  // given flow id check for resource in flowResources
-  const flowResourcesStatus = useSelector(state => selectors.flowResourcesStatus(state, flowId));
   const dispatch = useDispatch();
-  const match = useRouteMatch();
+  const location = useLocation();
 
   // nested drawer indicates, it has a parent resource, hence this is not a flow resource
   // so fetch the resource UI fields at resource level instead of flow level
-  const hasParentResource = isNestedDrawer(match.url);
+  const hasParentResource = isNestedDrawer(location?.pathname);
 
+  const flowResourcesStatus = useSelector(state => selectors.flowResourcesStatus(state, flowId));
   const resourceUIFields = useSelector(state => selectors.resourceUIFields(state, resourceId));
+
   const hasUIFieldsDependency = !isNewId(resourceId) && RESOURCES_WITH_UI_FIELDS.includes(resourceType);
 
   useEffect(() => {
