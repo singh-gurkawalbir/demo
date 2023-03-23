@@ -162,6 +162,7 @@ export default function SignIn({dialogOpen, className}) {
       {isAuthenticating ? <Spinner />
         : (
           <DynaSubmit
+            id="submit"
             fullWidth
             submit
             formKey={formKey}

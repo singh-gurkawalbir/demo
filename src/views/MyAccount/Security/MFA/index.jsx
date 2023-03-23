@@ -129,6 +129,8 @@ function MFADetails() {
     if (!areUserSettingsLoaded) {
       dispatch(actions.mfa.requestUserSettings());
     }
+    dispatch(actions.user.preferences.request('Retrieving user profile Info'));
+    dispatch(actions.user.profile.request('Retrieving user profile Info'));
   }, [areUserSettingsLoaded, dispatch]);
 
   if (isAccountOwnerOrAdmin && !isMFASetupIncomplete) {

@@ -51,7 +51,7 @@ describe('keyColumnsDeprecationNotification UI testing', () => {
 
     expect(message).toHaveAttribute(
       'href',
-      'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
+      'https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
     );
   });
   test('should not show notification because of adaptor type', async () => {

@@ -3,7 +3,7 @@
  * account to access help center. So redirect user to integrator.io when he try to access help center from
  * the non-production domains.
  */
-export const HELP_CENTER_BASE_URL = `${['integrator.io', 'eu.integrator.io'].includes(window.document.location.hostname.replace('www.', '')) ? '' : 'https://integrator.io'}/zendesk/sso?return_to=https://docs.celigo.com`;
+export const HELP_CENTER_BASE_URL = 'https://docs.celigo.com';
 export const SUBMIT_TICKET_URL =
    `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =

@@ -102,12 +102,12 @@ describe('DynaAPISelect UI tests', () => {
     initDynaHFAssistantOptions({ ...props });
     expect(screen.getByText(props.label)).toBeInTheDocument();
   });
-  test('should be able to select the fields', () => {
+  test('should be able to select the fields', async () => {
     initDynaHFAssistantOptions({ ...props });
     const boxRadio = screen.getAllByRole('radio')?.[0];
 
     expect(boxRadio).not.toBeChecked();
-    userEvent.click(boxRadio);
+    await userEvent.click(boxRadio);
     expect(boxRadio).toBeChecked();
   });
 });
