@@ -24,10 +24,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  helpButton: {
-    padding: 0,
-    margin: 2,
-  },
   actions: {
     '& > .MuiButtonBase-root': {
       padding: 0,
@@ -107,8 +103,8 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
       <OutputFormatsList disabled={disabled} />
       {helpKey && (
         <Help
-          className={classes.helpButton}
           helpKey={helpKey}
+          sx={{margin: 0.5}}
         />
       )}
       <ActionGroup position="right" className={classes.actions}>

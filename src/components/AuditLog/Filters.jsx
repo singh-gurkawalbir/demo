@@ -63,10 +63,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: 0,
     },
   },
-
-  helpTextButton: {
-    padding: 0,
-  },
   tablePaginationRoot: {
     display: 'flex',
   },
@@ -302,7 +298,6 @@ export default function Filters(props) {
          />
           <Help
             title="Download"
-            className={classes.helpTextButton}
             helpKey="auditlogs.download"
       />
         </ActionGroup>

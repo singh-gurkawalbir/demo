@@ -31,9 +31,6 @@ const useStyles = makeStyles(theme => ({
   titleContainer: {
     display: 'flex',
   },
-  helpTextButton: {
-    padding: 0,
-  },
   loggable: {
     backgroundColor: alpha(theme.palette.success.main, 0.3),
   },
@@ -68,7 +65,7 @@ export default function FieldDetails({id, resourceType, field}) {
       <div className={classes.fieldInfoContainer}>
         <div className={classes.titleContainer}>
           <Typography><b>{field.label}</b></Typography>
-          <Help className={classes.helpTextButton} title={field.label} helpText={field.helpText || helpTextMap[helpKey]} />
+          <Help title={field.label} helpText={field.helpText || helpTextMap[helpKey]} />
         </div>
 
         {field.description && (

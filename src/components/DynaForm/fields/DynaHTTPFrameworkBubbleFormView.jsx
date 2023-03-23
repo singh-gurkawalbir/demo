@@ -14,9 +14,6 @@ import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   connectorTextToggle: {
     flexGrow: 100,
     marginLeft: theme.spacing(-2),
@@ -165,7 +162,6 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       />
       <Help
         title="Formview"
-        className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
     </div>

@@ -12,10 +12,6 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
   },
-  helpButton: {
-    padding: 0,
-    margin: 2,
-  },
   refreshicon: {
     position: 'absolute',
     right: '30px',
@@ -79,8 +75,8 @@ export default function MappingAssistantTitle({editorId}) {
       {helpKey && (
         <Help
           title={title}
-          className={classes.helpButton}
           helpKey={helpKey}
+          sx={{margin: 0.5}}
         />
       )}
       {showRefreshIconForSalesforce && (
