@@ -7,14 +7,13 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
-import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { StyledEngineProvider } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppShell } from '@celigo/fuse-ui';
-import themeProvider from '../theme/themeProvider';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
@@ -257,12 +256,7 @@ export default function App() {
   const isSandbox = useSelector(
     state => selectors.userPreferences(state).environment === 'sandbox'
   );
-  const themeName = useSelector(state =>
-    selectors.userPreferences(state).environment === 'sandbox'
-      ? 'sandbox'
-      : currentTheme
-  );
-  const theme = useMemo(() => themeProvider(themeName), [themeName]);
+
   const toggleDebugMode = useCallback(() => {
     dispatch(actions.user.toggleDebug());
   }, [dispatch]);
