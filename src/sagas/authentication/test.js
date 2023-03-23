@@ -34,6 +34,7 @@ import {
   fetchUIVersion,
   validateSession,
   checkAndUpdateDefaultSetId,
+  submitAcceptInvite,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../constants';
@@ -718,6 +719,58 @@ describe('auth saga flow', () => {
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(initializeApp, { reload: false }));
     expect(saga.next().done).toBe(true);
+  });
+});
+
+describe('submitAcceptInvite saga', () => {
+  test('should put the errror message in redux store when api call for accepr invite fails', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const payload = { email, password };
+    const saga = submitAcceptInvite({payload});
+    const {value} = saga.next();
+
+    expect(value).toEqual(
+      call(apiCallWithRetry, {
+        path: '/accept-invite?no_redirect=true',
+        opts: {
+          body: payload,
+          method: 'POST',
+        },
+        message: 'Accept invite',
+        hidden: true,
+      })
+    );
+    expect(saga.throw({errors: [{message: 'somemeesage'}]}).value).toEqual(
+      put(actions.auth.acceptInvite.failure({message: ['somemeesage'], type: 'error'}))
+    );
+  });
+  test('should put the response message in redux store when api call for accepr invite gets success', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const payload = { email, password };
+    const response = {message: 'someMessage', success: true};
+    const saga = submitAcceptInvite({payload});
+    const {value} = saga.next();
+
+    expect(value).toEqual(
+      call(apiCallWithRetry, {
+        path: '/accept-invite?no_redirect=true',
+        opts: {
+          body: payload,
+          method: 'POST',
+        },
+        message: 'Accept invite',
+        hidden: true,
+      })
+    );
+
+    expect((saga.next(response)).value).toEqual(
+      put(actions.auth.acceptInvite.success(response))
+    );
+    expect((saga.next()).value).toEqual(
+      put(actions.auth.signupStatus('done', response.message))
+    );
   });
 });
 
