@@ -2373,7 +2373,7 @@ export default {
       },
     },
   },
-  'jdbc.staticSchema': {
+  'jdbc.StaticSchema': {
     isLoggable: true,
     type: 'checkbox',
     label: 'Static schema export',
