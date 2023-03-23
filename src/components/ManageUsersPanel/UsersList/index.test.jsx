@@ -48,7 +48,7 @@ describe('users List Test Cases', () => {
       </MemoryRouter>
     );
 
-    store.dispatch(actions.user.org.users.delete('id_1'));
+    act(() => { store.dispatch(actions.user.org.users.delete('id_1')); });
 
     expect(utils.container).toBeEmptyDOMElement();
   });

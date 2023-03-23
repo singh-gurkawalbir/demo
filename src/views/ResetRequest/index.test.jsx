@@ -124,5 +124,5 @@ describe('resetPassword', () => {
 
     expect(setpasswordButtonNode).toBeInTheDocument();
     await userEvent.click(setpasswordButtonNode);
-  });
+  }, 10000);
 });

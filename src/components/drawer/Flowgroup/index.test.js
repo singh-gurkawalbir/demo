@@ -189,7 +189,7 @@ describe('FlowgroupDrawer tests', () => {
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes).toHaveLength(2);
-    await waitFor(() => userEvent.click(checkboxes[0]));
+    await userEvent.click(checkboxes[0]);
     const nameInput = document.querySelector('input');
 
     await userEvent.click(nameInput);
