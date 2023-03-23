@@ -6,6 +6,7 @@ import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import useLoadUIFields from '.';
 import actions from '../../actions';
+import * as panelUtils from '../../components/drawer/Resource/Panel';
 
 const mockHistoryReplace = jest.fn();
 const flowId = 'flow-123';
@@ -92,7 +93,18 @@ describe('useLoadUIFields tests', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.request('exports', resourceId));
     expect(screen.queryByText('children')).not.toBeInTheDocument();
   });
+  test('should dispatch resource level ui fields action when there is flow id but it is a nested drawer, hence considered a resource level', async () => {
+    jest.spyOn(panelUtils, 'isNestedDrawer').mockReturnValue(true);
+    const flowStatus = {
+      status: 'received',
+      resources: [],
+    };
 
+    await initUseLoadUIFields(flowId, resourceId, 'exports', undefined, flowStatus);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.request('exports', resourceId));
+    expect(screen.queryByText('children')).not.toBeInTheDocument();
+  });
   test('should render children incase the resource is a new one', async () => {
     await initUseLoadUIFields(undefined, 'new-123', 'exports');
     expect(mockDispatchFn).toHaveBeenCalledTimes(0);

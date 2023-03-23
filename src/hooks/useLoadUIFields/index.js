@@ -14,6 +14,7 @@ export default function useLoadUIFields({ flowId, resourceId, resourceType }) {
   // so fetch the resource UI fields at resource level instead of flow level
   const hasParentResource = isNestedDrawer(location?.pathname);
 
+  // selectors for flow level and resource ui fields
   const flowResourcesStatus = useSelector(state => selectors.flowResourcesStatus(state, flowId));
   const resourceUIFields = useSelector(state => selectors.resourceUIFields(state, resourceId));
 
