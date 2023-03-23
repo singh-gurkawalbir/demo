@@ -151,16 +151,16 @@ describe('ping connection saga', () => {
       .run();
   });
 });
-describe('request IClients saga', () => {
+describe('request iClients saga', () => {
   const connectionId = 'C1';
 
-  test('should be able to to get IClients successfully', () => expectSaga(requestIClients, { connectionId })
+  test('should be able to to get iClients successfully', () => expectSaga(requestIClients, { connectionId })
     .provide([
     ])
     .call.fn(newIAFrameWorkPayload)
     .call.fn(apiCallWithRetry)
     .run());
-  test('should be able to to get IClients correctly if it is assistant connection', () => {
+  test('should be able to to get iClients correctly if it is assistant connection', () => {
     const saga = requestIClients({ connectionId });
 
     const path = '/integrations/1234/iclients?type=rest&assistant=shopify';
@@ -181,7 +181,7 @@ describe('request IClients saga', () => {
     );
     expect(saga.next().done).toBe(true);
   });
-  test('should be able to to get IClients correctly if connection has type and does not have assistant', () => {
+  test('should be able to to get iClients correctly if connection has type and does not have assistant', () => {
     const saga = requestIClients({ connectionId });
 
     const path = '/integrations/1234/iclients?type=netsuite';

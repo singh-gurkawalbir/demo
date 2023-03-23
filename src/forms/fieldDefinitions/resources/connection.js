@@ -828,7 +828,7 @@ export default {
   },
   'http._iClientId': {
     isLoggable: true,
-    label: 'IClient',
+    label: 'iClient',
     type: 'selectresource',
     resourceType: 'iClients',
     allowNew: true,
@@ -2252,7 +2252,7 @@ export default {
   },
   'netsuite._iClientId': {
     isLoggable: true,
-    label: 'IClient',
+    label: 'iClient',
     type: 'selectresource',
     resourceType: 'iClients',
   },
