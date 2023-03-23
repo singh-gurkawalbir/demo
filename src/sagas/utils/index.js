@@ -481,7 +481,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
       if (resource?.http?._httpConnectorApiId && key === 'http._httpConnectorApiId') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true};
       } else if (key === 'http.ping.relativeURI') {
-        if (!tempFiledMeta.fieldMap[key].defaultValue) {
+        if (!tempFiledMeta.fieldMap[key].defaultValue || apiChange) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
         } else if (connector.versioning?.location === 'uri' && connector?.baseURIs?.[0]?.includes('/:_version')) {
           if (resourceVersion) {
