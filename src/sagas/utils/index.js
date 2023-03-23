@@ -565,6 +565,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
         }
       } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
+        if (apiChange) {
+          tempFiledMeta.fieldMap[key].defaultValue = undefined;
+        }
       } else if (key === 'http._iClientId') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: !!fieldUserMustSet};
       } else if (key === 'http.auth.token.token' || key === 'http.auth.token.refreshToken') {
