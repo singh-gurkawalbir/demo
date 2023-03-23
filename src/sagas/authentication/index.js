@@ -17,6 +17,7 @@ import {
   getCSRFToken,
   removeCSRFToken,
 } from '../../utils/session';
+import { safeParse } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -360,7 +361,11 @@ export function* submitAcceptInvite({payload}) {
       yield put(actions.auth.signupStatus('done', response.message));
     }
   } catch (e) {
-    yield put(actions.auth.acceptInvite.failure(e));
+    const errJSON = safeParse(e);
+
+    const errorMsg = errJSON?.errors?.[0]?.message;
+
+    yield put(actions.auth.acceptInvite.failure({message: [errorMsg], type: 'error'}));
   }
 }
 export function* resetRequest({ email }) {
