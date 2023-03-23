@@ -27,7 +27,7 @@ export default {
     childLicenses: { fieldId: 'childLicenses' },
     _changeEditionId: {
       fieldId: '_changeEditionId',
-      removedWhen: [{ field: '_changeEditionId', is: [false] }],
+      removedWhen: [{ field: '_changeEditionId', is: [''] }],
     },
   },
   layout: {

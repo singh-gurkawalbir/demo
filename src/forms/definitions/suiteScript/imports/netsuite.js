@@ -59,11 +59,10 @@ export default {
     'import.netsuite.internalIdLookup.expression': {
       fieldId: 'import.netsuite.internalIdLookup.expression',
       defaultValue: r => JSON.stringify(r?.import?.netsuite?.internalIdLookup?.expression),
-      removeWhen: [{
-        AND: [
-          { field: 'import.netsuite.operation', is: ['add'] },
-          { field: 'import.netsuite.ignoreExisting', is: [false] },
-        ]}],
+      removeWhenAll: [
+        { field: 'import.netsuite.operation', is: ['add'] },
+        { field: 'import.netsuite.ignoreExisting', is: [''] },
+      ],
     },
   },
   layout: {

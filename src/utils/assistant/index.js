@@ -1957,6 +1957,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   let url2Info;
 
   if (importAdaptorSubSchema.relativeURI) {
+    if (!isArray(importAdaptorSubSchema.relativeURI)) { importAdaptorSubSchema.relativeURI = [importAdaptorSubSchema.relativeURI]; }
     url1Info = getMatchingRoute(
       [
         isArray(operationDetails.url)
@@ -2104,9 +2105,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               operation: assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.operation || operationDetails.lookupOperationDetails?.id,
               assistantData,
             });
+            let luEndpointUrl = luEndpoint.url;
 
-            if (luEndpoint.url?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
-            lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
+            if (luEndpointUrl?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { luEndpointUrl = luEndpointUrl.split('?')?.[0]; }
+            lookupUrlInfo = getMatchingRoute([luEndpointUrl], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
               assistantData.export.urlResolution,
@@ -2386,6 +2388,9 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
 
       let lookupOperationRelativeURI = lookupOperationDetails.url;
 
+      if (lookupOperationRelativeURI?.includes('?') && lookupOperationDetails?._httpConnectorResourceIds?.length) {
+        lookupOperationRelativeURI = lookupOperationRelativeURI.split('?')?.[0];
+      }
       if (luConfig.method === 'GET') {
         const queryString = qs.stringify(lookupQueryParams, {
           encode: false,
@@ -2393,7 +2398,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         }); /* indices should be false to handle IO-1776 */
 
         if (queryString) {
-          lookupOperationRelativeURI += (lookupOperationRelativeURI?.includes('?') ? '&' : '?') + queryString;
+          lookupOperationRelativeURI += `?${queryString}`;
         }
       } else if (luConfig.method === 'POST') {
         luConfig.postBody = lookupQueryParams;

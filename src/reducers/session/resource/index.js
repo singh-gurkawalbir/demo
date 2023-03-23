@@ -18,6 +18,7 @@ export default function reducer(state = {}, action) {
     code,
     feature,
     isTwoDotZero,
+    message: errorMessage,
   } = action;
 
   return produce(state, draft => {
@@ -55,9 +56,11 @@ export default function reducer(state = {}, action) {
         break;
       case actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED:
         draft.code = code;
+        draft.message = errorMessage;
         break;
       case actionTypes.LICENSE.CLEAR_ERROR_MESSAGE:
         delete draft.code;
+        delete draft.message;
         break;
       case actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED:
         draft.numEnabledFlows = response;
@@ -144,6 +147,14 @@ selectors.licenseErrorCode = state => {
   }
 
   return state.code;
+};
+
+selectors.licenseErrorMessage = state => {
+  if (!state) {
+    return;
+  }
+
+  return state.message;
 };
 
 selectors.getChildIntegrationId = (state, parentId) => {

@@ -177,6 +177,7 @@ describe('Mappings region selector testcases', () => {
     {_id: 7, type: 'http'},
     {_id: 8, type: 'rdbms', rdbms: {type: 'rdbmsconnection'}},
     {_id: 9, type: 'http', http: {_httpConnectorId: 'id2'}},
+    {_id: 11, type: 'jdbc', jdbc: {type: 'netsuitejdbc'}},
   ];
   let state = reducer(
     undefined,
@@ -454,6 +455,9 @@ describe('Mappings region selector testcases', () => {
       });
       test('should return connection http type if connection is of type http and http connectorId exists', () => {
         expect(selectors.applicationType(newState, 'connections', 9)).toBe('http');
+      });
+      test('should return connection http type if connection is of type nestuite jdbc', () => {
+        expect(selectors.applicationType(newState, 'connections', 11)).toBe('netsuitejdbc');
       });
     });
 

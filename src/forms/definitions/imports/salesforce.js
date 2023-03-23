@@ -13,16 +13,11 @@ export default {
     } else if (newValues['/salesforce/api'] === 'compositerecord') {
       newValues['/salesforce/operation'] =
         newValues['/salesforce/compositeOperation'];
-      newValues['/salesforce/blobOperation'] = undefined;
-      newValues['/salesforce/blobsObjectType'] = undefined;
 
       if (newValues['/salesforce/compositeOperation'] === 'insert') {
         newValues['/ignoreMissing'] = false;
 
         if (newValues['/ignoreExisting'] === false) {
-          delete newValues['/salesforce/idLookup/whereClause'];
-          delete newValues['/salesforce/idLookup/extract'];
-          delete newValues['/salesforce/upsert/externalIdField'];
           newValues['/salesforce/upsert'] = undefined;
           newValues['/salesforce/idLookup'] = undefined;
         }
@@ -63,7 +58,6 @@ export default {
     }
 
     if (newValues['/inputMode'] !== 'blob') {
-      delete newValues['/blobKeyPath'];
       delete newValues['/blob'];
     } else {
       newValues['/blob'] = true;
@@ -168,22 +162,30 @@ export default {
       fieldId: 'salesforce.contentVersion.pathOnClient',
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
-    blobKeyPath: { fieldId: 'blobKeyPath' },
+    blobKeyPath: {
+      fieldId: 'blobKeyPath',
+      deleteWhen: [{field: 'inputMode', isNot: ['blob']}],
+    },
     'salesforce.operation': { fieldId: 'salesforce.operation' },
     'salesforce.compositeOperation': {
       fieldId: 'salesforce.compositeOperation',
     },
-    'salesforce.idLookup.extract': { fieldId: 'salesforce.idLookup.extract' },
-    'salesforce.blobsObjectType': { fieldId: 'salesforce.blobsObjectType' },
-    'salesforce.blobOperation': { fieldId: 'salesforce.blobOperation' },
+    'salesforce.idLookup.extract': { fieldId: 'salesforce.idLookup.extract',
+      deleteWhenAll: [
+        { field: 'salesforce.compositeOperation', is: ['insert'] },
+        { field: 'ignoreExisting', is: ['false'] },
+      ] },
+    'salesforce.blobsObjectType': { fieldId: 'salesforce.blobsObjectType', removeWhen: [{field: 'salesforce.api', is: ['compositerecord']}] },
+    'salesforce.blobOperation': { fieldId: 'salesforce.blobOperation', removeWhen: [{field: 'salesforce.api', is: ['compositerecord']}] },
     'salesforce.blobContentVersionOperation': {fieldId: 'salesforce.blobContentVersionOperation'},
     'salesforce.attachment.isPrivate': {
       fieldId: 'salesforce.attachment.isPrivate',
     },
-    'salesforce.idLookup.whereClause': {
-      fieldId: 'salesforce.idLookup.whereClause',
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
-    },
+    'salesforce.idLookup.whereClause': { fieldId: 'salesforce.idLookup.whereClause',
+      deleteWhenAll: [
+        { field: 'salesforce.compositeOperation', is: ['insert'] },
+        { field: 'ignoreExisting', is: ['false'] },
+      ] },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
       label: 'Ignore existing records',
@@ -206,6 +208,10 @@ export default {
     'salesforce.upsert.externalIdField': {
       fieldId: 'salesforce.upsert.externalIdField',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      deleteWhenAll: [
+        { field: 'salesforce.compositeOperation', is: ['insert'] },
+        { field: 'ignoreExisting', is: ['false'] },
+      ],
     },
     dataMappings: { formId: 'dataMappings' },
     deleteAfterImport: {
@@ -286,20 +292,6 @@ export default {
     ],
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'salesforce.idLookup.whereClause') {
-      const sObjectTypeField = fields.find(
-        field => field.id === 'salesforce.sObjectType'
-      );
-
-      return {
-        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
-        commMetaPath: sObjectTypeField
-          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
-          : '',
-        resetValue: [],
-      };
-    }
-
     if (fieldId === 'salesforce.upsert.externalIdField') {
       const sObjectTypeField = fields.find(
         field => field.id === 'salesforce.sObjectType'

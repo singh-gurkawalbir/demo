@@ -18,23 +18,6 @@ export default {
     }
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'sampleData') {
-      const webHookUrlField = fields.find(field => field.id === 'webhook.url');
-
-      return {
-        webHookUrl: webHookUrlField.value,
-      };
-    }
-
-    if (fieldId === 'webhook.url') {
-      const webHookTokenField = fields.find(
-        field => field.id === 'webhook.token'
-      );
-
-      return {
-        webHookToken: webHookTokenField.value,
-      };
-    }
     if (fieldId !== 'webhook.successBody') {
       return null;
     }
@@ -96,7 +79,6 @@ export default {
     'webhook.sampledata': {
       fieldId: 'webhook.sampledata',
       sampleData: r => r && r.sampleData,
-      refreshOptionsOnChangesTo: ['webhook.url', 'webhook.provider'],
     },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
