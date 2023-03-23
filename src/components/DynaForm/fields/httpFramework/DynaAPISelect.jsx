@@ -104,6 +104,7 @@ export default function APISelect(props) {
       ...allTouchedFields,
       { id, value: val },
     ];
+    allTouchedFields = allTouchedFields.filter(field => ['name', 'http._httpConnectorApiId'].includes(field.id));
     dispatch(
       actions.resourceForm.init(
         resourceType,
