@@ -275,14 +275,10 @@ export default {
           });
         }
 
-        if (app.assistant) {
-          expression.push({ assistant: app.assistant });
-        }
-
         if (connectionField.value) {
-          expression.push({
-            _connectionId: connectionField.value,
-          });
+          expression.push({ _connectionId: connectionField.value });
+        } else if (app.assistant) {
+          expression.push({ assistant: app.assistant });
         }
       }
 
