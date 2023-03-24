@@ -209,4 +209,20 @@ describe('SigninForm UI testcases', () => {
     initfunction(initialStore);
     expect(screen.queryByText('Sign in with Google')).not.toBeInTheDocument();
   });
+
+  test('should redirect mfa set up page when mfaSetUpCompleted is false', () => {
+    initialStore = getCreatedStore();
+    mutateStore(initialStore, draft => {
+      draft.session.mfa = {sessionInfo: {
+        data: {
+          mfaVerified: false,
+          mfaSetupRequired: true,
+          mfaRequired: true,
+        },
+      }};
+    });
+
+    initfunction(initialStore);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/myAccount/security/mfa', 'someState');
+  });
 });
