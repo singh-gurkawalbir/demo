@@ -17,8 +17,8 @@ retry(() => import(/* webpackChunkName: "HelpTextMap", webpackPreload: true */ '
 export default function HelpWrapper({ fieldId, resourceType, helpKey, helpText, supportFeedback = true, title, ...rest }) {
   const id = fieldId || helpKey || title;
   const dispatch = useDispatch();
-  const onHelpfulClick = useCallback(wasHelpful => {
-    dispatch(actions.app.postFeedback(resourceType, id, wasHelpful));
+  const onHelpfulClick = useCallback(() => {
+    dispatch(actions.app.postFeedback(resourceType, id, true));
   }, [dispatch, id, resourceType]);
   const onSupportFeedback = useCallback(feedback => {
     dispatch(
