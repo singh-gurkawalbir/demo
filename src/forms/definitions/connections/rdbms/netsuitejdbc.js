@@ -85,7 +85,11 @@ export default {
         return value;
       },
     },
-    'jdbc.port': { fieldId: 'jdbc.port', defaultDisabled: true, defaultValue: 1708 },
+    'jdbc.port': {
+      fieldId: 'jdbc.port',
+      defaultDisabled: true,
+      defaultValue: r => r?.jdbc?.port || 1708,
+    },
     'jdbc.StaticSchema': {
       id: 'jdbc.StaticSchema',
       isLoggable: true,
