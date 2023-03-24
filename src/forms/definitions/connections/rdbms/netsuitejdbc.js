@@ -1,9 +1,8 @@
-import { deepClone } from 'fast-json-patch';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => {
-    const newValues = deepClone(formValues);
+    const newValues = {formValues};
 
     const roleId = newValues['/netsuite/token/auto/roleId'];
     const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
