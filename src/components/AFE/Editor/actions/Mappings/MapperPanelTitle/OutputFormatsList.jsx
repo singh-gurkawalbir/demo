@@ -3,13 +3,13 @@ import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { List, ListItem, ListItemText } from '@mui/material';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import TextButton from '../../../../../Buttons/TextButton';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import { isCsvOrXlsxResourceForMapper2, ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../../utils/mapping';
-import ArrowPopper from '../../../../../ArrowPopper';
 
 const useStyles = makeStyles(theme => ({
   currentContainer: {

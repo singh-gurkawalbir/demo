@@ -6,13 +6,13 @@ import makeStyles from '@mui/styles/makeStyles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import RawHtml from '../../../../../../RawHtml';
 import { message } from '../../../../../../../utils/messageStore';
 import useConfirmDialog from '../../../../../../ConfirmDialog';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
-import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -32,10 +32,6 @@ const useStyles = makeStyles(theme => ({
       height: 38,
       backgroundColor: theme.palette.background.paper2,
     },
-  },
-  listPopper: {
-    maxWidth: theme.spacing(31),
-    top: '5px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -184,9 +180,6 @@ export default function DestinationDataType({
         id="dataTypesList"
         open={open}
         anchorEl={anchorEl}
-        classes={{
-          popper: classes.listPopper,
-        }}
         placement="bottom-end"
         onClose={handleClose}>
         <List

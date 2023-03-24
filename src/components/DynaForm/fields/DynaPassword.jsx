@@ -3,13 +3,13 @@ import makeStyles from '@mui/styles/makeStyles';
 import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import ShowContentIcon from '../../icons/ShowContentIcon';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import CheckmarkIcon from '../../icons/CheckmarkIcon';
 import CloseIcon from '../../icons/CloseIcon';
 import HideContentIcon from '../../icons/HideContentIcon';
 import TooltipContent from '../../TooltipContent';
-import ArrowPopper from '../../ArrowPopper';
 import FieldMessage from './FieldMessage';
 // import { validateMockResponseField } from '../../../utils/flowDebugger';
 import actions from '../../../actions';
@@ -58,9 +58,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.error.dark,
   },
   arrowPopperPassword: {
-    position: 'absolute',
-    left: '50px !important',
-    top: '0px !important',
     [theme.breakpoints.down('md')]: {
       display: 'none',
     },
@@ -179,7 +176,7 @@ export default function DynaPassword(props) {
           open={open}
           anchorEl={anchorEl}
           placement="right"
-          classes={{ popper: classes.arrowPopperPassword }}
+          className={classes.arrowPopperPassword}
           preventOverflow>
           <TooltipContent className={classes.infoText}>
             <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>

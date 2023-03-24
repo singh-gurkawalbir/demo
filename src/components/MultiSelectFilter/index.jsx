@@ -3,7 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
-import ArrowPopper from '../ArrowPopper';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
@@ -48,8 +48,6 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '100%',
   },
   dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
     padding: theme.spacing(2),
     maxWidth: 600,
     '&>div': {
@@ -82,9 +80,6 @@ const useStyles = makeStyles(theme => ({
   selectResourceCheck: {
     marginTop: theme.spacing(-0.5),
     marginRight: theme.spacing(0.5),
-  },
-  multiSelectFilterPopper: {
-    top: '5px !important',
   },
   checkAction: {
     listStyle: 'none',
@@ -203,32 +198,29 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
     return expanded[node] ? <ArrowUpIcon /> : <ArrowDownIcon />;
   }
 
-  return <>
-    {ButtonLabel ? (
-      <OutlinedButton
-        onClick={toggleClick}
-        endIcon={<ArrowDownIcon />}
-        color="secondary"
-        className={classes.dateRangePopperBtn}>
-        {ButtonLabel}
-      </OutlinedButton>
-    ) : (
-      <ActionButton onClick={toggleClick}>
-        <Icon />
-      </ActionButton>
-    )}
-    <ArrowPopper
-      open={!!anchorEl}
-      anchorEl={anchorEl}
-      placement="bottom"
-      restrictToParent={false}
-      classes={{
-        popper: classes.multiSelectFilterPopper,
-        arrow: classes.multiSelectFilterPopperArrow,
-      }}
-      onClose={toggleClick}>
-      {anchorEl && (
-        <div className={classes.dateRangePickerWrapper}>
+  return (
+    <>
+      {ButtonLabel ? (
+        <OutlinedButton
+          onClick={toggleClick}
+          endIcon={<ArrowDownIcon />}
+          color="secondary"
+          className={classes.dateRangePopperBtn}>
+          {ButtonLabel}
+        </OutlinedButton>
+      ) : (
+        <ActionButton onClick={toggleClick}>
+          <Icon />
+        </ActionButton>
+      )}
+      <ArrowPopper
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        placement="bottom"
+        restrictToParent={false}
+        onClose={toggleClick}>
+        {anchorEl && (
+        <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
               <FormControl variant="standard" component="fieldset" className={classes.formControl}>
@@ -236,17 +228,17 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                   {items.map(m => (
                     <ul key={m._id} className={classes.checkAction}>
                       {isChildExists && (
-                        <li>
-                          { m?.children?.length > 0 && (
-                          <IconButton
-                            data-test="toggleJobDetail"
-                            className={classes.moreIcon}
-                            size="small"
-                            onClick={() => { handleExpandCollapseClick(m._id); }}>
-                            <RowIcon expanded={expanded} node={m._id} />
-                          </IconButton>
+                      <li>
+                        { m?.children?.length > 0 && (
+                        <IconButton
+                          data-test="toggleJobDetail"
+                          className={classes.moreIcon}
+                          size="small"
+                          onClick={() => { handleExpandCollapseClick(m._id); }}>
+                          <RowIcon expanded={expanded} node={m._id} />
+                        </IconButton>
                         )}
-                        </li>
+                      </li>
                       )}
                       <li>
                         <FormControlLabel
@@ -283,8 +275,9 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
               </ActionGroup>
             </div>
           </div>
-        </div>
-      )}
-    </ArrowPopper>
-  </>;
+        </Box>
+        )}
+      </ArrowPopper>
+    </>
+  );
 }

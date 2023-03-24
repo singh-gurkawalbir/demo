@@ -1,7 +1,7 @@
 import { IconButton, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useState } from 'react';
-import ArrowPopper from '../../ArrowPopper';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import MultipleAction from './MultipleAction';
 import TextButton from '../../Buttons/TextButton';
@@ -52,7 +52,7 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
       <ArrowPopper
         placement="bottom-end"
         restrictToParent={false}
-        classes={{ popper: classes.actionsMenuPopper }}
+        className={classes.actionsMenuPopper}
         open={open}
         anchorEl={anchorEl}
         id={actionsPopoverId}
