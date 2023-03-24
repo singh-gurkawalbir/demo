@@ -104,20 +104,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     display: 'flex',
   },
-  helpTextButtonCategroryMapping: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& svg': {
-      fontSize: theme.spacing(3),
-      marginTop: theme.spacing(-0.5),
-    },
-    '&:hover': {
-      background: 'none',
-      '& svg': {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
   fieldFilterIcon: {
     marginRight: 0,
   },
@@ -127,18 +113,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FieldHelp = ({id, name, description = 'No Description available.' }) => {
-  const classes = useStyles();
-
-  return (
-    <Help
-      title={name}
-      className={classes.helpTextButtonCategroryMapping}
-      helpKey={`categoryMappings-${id}`}
-      helpText={description}
+const FieldHelp = ({id, name, description = 'No Description available.' }) => (
+  <Help
+    title={name}
+    helpKey={`categoryMappings-${id}`}
+    helpText={description}
+    size="medium"
+    sx={{
+      ml: 0.5,
+      '& svg': {
+        mt: -0.5,
+      },
+    }}
     />
-  );
-};
+);
 
 const MappingRow = ({
   mapping,

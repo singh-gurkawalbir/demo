@@ -18,14 +18,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
   },
-  helpTextButton: {
-    float: 'left',
-    padding: 0,
-    position: 'relative',
-    marginRight: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    top: 3,
-  },
   titleWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -81,7 +73,6 @@ export default function DrawerTitleBar({
         {helpKey && (
         <Help
           title={helpTitle || title}
-          className={classes.helpTextButton}
           helpKey={helpKey}
           fieldId={helpKey}
         />

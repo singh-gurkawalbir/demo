@@ -37,9 +37,6 @@ const useStyles = makeStyles(theme => ({
   branchingType: {
     marginBottom: theme.spacing(1),
   },
-  helpButton: {
-    padding: 0,
-  },
   grabbing: {
     cursor: 'grabbing',
   },
@@ -73,7 +70,6 @@ const BranchHeading = ({ helpKey, children, classes }) => (
     <Typography variant="h5">{children}</Typography>
     <Help
       title={children}
-      className={classes.helpButton}
       helpKey={helpKey}
     />
   </div>

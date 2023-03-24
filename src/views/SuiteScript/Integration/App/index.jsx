@@ -22,12 +22,6 @@ import SettingsPanel from './panels/Settings';
 import TabContent from '../../../../components/TabContent';
 
 const useStyles = makeStyles(theme => ({
-  editableTextInput: {
-    width: `calc(60vw - ${52 + 24}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
-  },
   tag: {
     marginLeft: theme.spacing(1),
   },
@@ -55,7 +49,6 @@ export default function Integration({ match }) {
   const dispatch = useDispatch();
   const { ssLinkedConnectionId, integrationId } = match.params;
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const integration = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'integrations',

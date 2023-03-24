@@ -28,16 +28,7 @@ import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 
-const calcPageBarTitleStyles = makeStyles(theme => ({
-  editableTextInput: {
-    width: `calc(100vw - ${52 + 410}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
-  },
-}));
 const CalcPageBarTitle = ({integrationId, flowId}) => {
-  const classes = calcPageBarTitleStyles();
   const patchFlow = usePatchFlow(flowId);
   const handleTitleChange = useCallback(
     title => {
@@ -53,7 +44,6 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
   )?.merged || emptyObject;
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <EditableText
@@ -292,10 +282,18 @@ export default function PageBar({flowId, integrationId}) {
 
     return flow?.description;
   });
+  const flowName = useSelector(state => {
+    const flow = selectors.resourceData(state, 'flows',
+      flowId
+    ).merged;
+
+    return flow?.name;
+  });
 
   return (
     <CeligoPageBar
       title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
+      infoTitleName={flowName}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
       infoText={description}
       escapeUnsecuredDomains

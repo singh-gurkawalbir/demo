@@ -7,9 +7,6 @@ import { selectors } from '../../../../reducers';
 import Help from '../../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   mapperTextToggle: {
     '&>button': {
       minWidth: `${theme.spacing(11)} !important`,
@@ -56,7 +53,6 @@ export default function ToggleMapperVersion({ editorId }) {
       />
       <Help
         title="Mapper"
-        className={classes.helpTextButton}
         helpKey="afe.mappings.toggle"
       />
     </>
