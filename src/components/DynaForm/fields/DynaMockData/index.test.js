@@ -189,6 +189,7 @@ describe('Mock output editor field UI tests', () => {
 
     expect(screen.getByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeInTheDocument();
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockOutputFieldProps.id, {isValid: false, errorMessages: errorMessageStore('MOCK_OUTPUT_INVALID_JSON')})
     );
@@ -196,6 +197,7 @@ describe('Mock output editor field UI tests', () => {
   test('should dispatch correct action for valid mock output', () => {
     initMockDataEditorField();
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockOutputFieldProps.id, {isValid: true})
     );
@@ -259,6 +261,7 @@ describe('Mock response editor field UI tests', () => {
 
     expect(screen.getByText(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'))).toBeInTheDocument();
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockResponseFieldProps.id, {isValid: false, errorMessages: errorMessageStore('MOCK_RESPONSE_INVALID_JSON')})
     );
@@ -266,6 +269,7 @@ describe('Mock response editor field UI tests', () => {
   test('should dispatch correct action for valid mock response', () => {
     initMockDataEditorField({resourceType: 'imports'});
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockResponseFieldProps.id, {isValid: true})
     );
