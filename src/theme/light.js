@@ -584,8 +584,8 @@ export default {
     MuiTextField: {
       root: {
         background: colors.celigoWhite,
-        border: '1px solid',
-        borderColor: colors.celigoNeutral2,
+        // border: '1px solid',
+        // borderColor: colors.celigoNeutral2,
 
         '&:hover': {
           backgroundColor: colors.celigoWhite,
