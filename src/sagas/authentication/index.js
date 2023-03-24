@@ -495,6 +495,7 @@ export function* auth({ email, password }) {
       hidden: true,
     });
 
+    yield call(validateSession);
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
@@ -508,7 +509,6 @@ export function* auth({ email, password }) {
     }
     const isExpired = yield select(selectors.isSessionExpired);
 
-    yield call(validateSession);
     yield call(setCSRFToken, apiAuthentications._csrf);
 
     yield call(setLastLoggedInLocalStorage);

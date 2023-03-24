@@ -515,16 +515,13 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-
-    expect(
-      saga.next({
-        _csrf: _csrfAfterSignIn,
-      }).value
-    ).toEqual(select(selectors.isSessionExpired));
-    const validateSessionEffect = saga.next(false).value;
+    const validateSessionEffect = saga.next({
+      _csrf: _csrfAfterSignIn,
+    }).value;
 
     expect(validateSessionEffect).toEqual(call(validateSession));
-    const setCSRFEffect = saga.next().value;
+    expect(saga.next().value).toEqual(select(selectors.isSessionExpired));
+    const setCSRFEffect = saga.next(false).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
@@ -593,8 +590,10 @@ describe('auth saga flow', () => {
       mfaRequired: true,
       _csrf,
     };
+    const validateSessionEffect = saga.next(authResponse).value;
 
-    expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
+    expect(validateSessionEffect).toEqual(call(validateSession));
+    expect(saga.next(true).value).toEqual(call(setCSRFToken, _csrf));
     expect(saga.next().value).toEqual(call(getResourceCollection, actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')));
     expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
   });
@@ -653,15 +652,15 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-
-    expect(
-      saga.next({
-        _csrf: _csrfAfterSignIn,
-      }).value
-    ).toEqual(select(selectors.isSessionExpired));
-    const validateSessionEffect = saga.next(true).value;
+    const validateSessionEffect = saga.next({
+      _csrf: _csrfAfterSignIn,
+    }).value;
 
     expect(validateSessionEffect).toEqual(call(validateSession));
+
+    expect(
+      saga.next().value
+    ).toEqual(select(selectors.isSessionExpired));
     // pass in session expired returned value
     const setCSRFEffect = saga.next(true).value;
 
@@ -698,16 +697,16 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-
-    expect(
-      saga.next({
-        _csrf: _csrfAfterSignIn,
-      }).value
-    ).toEqual(select(selectors.isSessionExpired));
-    // pass in session expired returned value
-    const validateSessionEffect = saga.next(false).value;
+    const validateSessionEffect = saga.next({
+      _csrf: _csrfAfterSignIn,
+    }).value;
 
     expect(validateSessionEffect).toEqual(call(validateSession));
+
+    expect(
+      saga.next().value
+    ).toEqual(select(selectors.isSessionExpired));
+    // pass in session expired returned value
     const setCSRFEffect = saga.next(false).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
