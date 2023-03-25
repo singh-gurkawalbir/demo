@@ -93,6 +93,7 @@ export default function DynaRefreshableStaticMap(props) {
       options: eOptions,
       type: eOptions.length ? 'autosuggest' : 'input',
       supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
+      skipListBoxComponent: true,
       ...fixedListOptions(keyOptions),
     }, {
       id: valueName,
@@ -102,6 +103,7 @@ export default function DynaRefreshableStaticMap(props) {
       optionsChangeIdentifer: 0,
       options: gOptions,
       supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
+      skipListBoxComponent: true,
       ...fixedListOptions(valueOptions),
     }];
   },
@@ -197,6 +199,7 @@ export default function DynaRefreshableStaticMap(props) {
       value={computedValue}
       onFieldChange={handleFieldChange}
       handleRefreshClickHandler={handleRefreshClick}
+      isVirtualizedTable={false}
     />
   );
 }

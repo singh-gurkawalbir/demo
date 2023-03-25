@@ -133,7 +133,8 @@ describe('PageProcessor test cases', () => {
       op: 'add',
       path: '/rdbmsAppType',
       value: undefined,
-    }]));
+    },
+    ]));
     expect(mockHistoryReplace).toBeCalledWith('/add/pageProcessor/id_1');
   });
 
@@ -173,7 +174,8 @@ describe('PageProcessor test cases', () => {
       op: 'add',
       path: '/rdbmsAppType',
       value: undefined,
-    }]));
+    },
+    ]));
     expect(mockHistoryReplace).toBeCalledWith('/add/pageProcessor/id_1');
   });
 

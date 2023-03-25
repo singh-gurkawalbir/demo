@@ -20,7 +20,7 @@ export default function (state = defaultState, action) {
       ...auth,
     };
   }
-  const { type, showAuthError, mfaError, mfaAuthInfo, payload, response } = action;
+  const { type, showAuthError, mfaError, mfaAuthInfo, payload, response, error } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -181,6 +181,10 @@ export default function (state = defaultState, action) {
         if (!draft.acceptInvite) draft.acceptInvite = {};
         draft.acceptInvite = {...payload, status: 'received'};
         break;
+      case actionTypes.AUTH.ACCEPT_INVITE.FAILED:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite = {...error, status: 'errored'};
+        break;
       case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR:
         if (!draft.acceptInvite) draft.acceptInvite = {};
         draft.acceptInvite = { status: 'errored'};
@@ -191,6 +195,12 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.CLEAR:
         delete draft.acceptInvite;
+        break;
+      case actionTypes.USER.DELETE:
+        draft.userDeleted = 'requested';
+        break;
+      case actionTypes.USER.DELETED:
+        draft.userDeleted = 'completed';
         break;
       default:
     }
@@ -254,4 +264,5 @@ selectors.isMFAAuthVerified = state => {
 
   return state.mfaAuth.status === 'success';
 };
+selectors.isUserDeleteRequested = state => state?.userDeleted === 'requested';
 // #endregion Selectors

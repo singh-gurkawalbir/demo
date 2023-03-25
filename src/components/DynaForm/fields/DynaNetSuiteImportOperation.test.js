@@ -1,10 +1,10 @@
-
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
-import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
+import { renderWithProviders, mutateStore } from '../../../test/test-utils';
+import { getCreatedStore } from '../../../store';
 
-const initialStore = reduxStore;
+const initialStore = getCreatedStore();
 
 const items = [
   {name: 'name1', value: 'add'},
@@ -15,12 +15,30 @@ const items = [
 ];
 const mockOnFieldChange = jest.fn();
 
-function initDynaNetSuiteImportOperation(items = {}, supports) {
+function initDynaNetSuiteImportOperation(items = {}, supports = {}) {
   mutateStore(initialStore, draft => {
-    draft.session.metadata = {application: {someconnectionId: {somePath: {
-      data: [{name: 'someName', scriptId: 'once', ...supports}],
-    }}}};
+    draft.session.form = {
+      'form-123': {
+        fields: {
+          'netsuite_da.recordType': { value: 'once' },
+        },
+      },
+    };
+    draft.session.metadata = {
+      application: {
+        someconnectionId: {
+          'netsuite/metadata/suitescript/connections/someconnectionId/recordTypes': {
+            data: [{
+              name: 'someName',
+              scriptId: 'once',
+              ...supports,
+            }],
+          },
+        },
+      },
+    };
   });
+
   const ui = (
     <DynaNetSuiteImportOperation
       value="once"
@@ -29,7 +47,7 @@ function initDynaNetSuiteImportOperation(items = {}, supports) {
       onFieldChange={mockOnFieldChange}
       connectionId="someconnectionId"
       selectOptions={[{items}]}
-      options={{commMetaPath: 'somePath', recordType: 'once'}}
+      formKey="form-123"
       filterKey="suitescript-recordTypes"
   />
   );
@@ -42,19 +60,27 @@ describe('dynaNetSuiteImportOperation UI test cases', () => {
     jest.clearAllMocks();
   });
   test('should not show value add,addupdate and delete options when search delete and create is not supported', () => {
-    initDynaNetSuiteImportOperation(items, {
-      doesNotSupportCreate: true, doesNotSupportSearch: true, doesNotSupportDelete: true,
-    });
+    const supports = {
+      doesNotSupportCreate: true,
+      doesNotSupportSearch: true,
+      doesNotSupportDelete: true,
+    };
+
+    initDynaNetSuiteImportOperation(items, supports);
 
     const radioButtons = screen.getAllByRole('radio');
 
     expect(radioButtons).toHaveLength(1);
     expect(screen.getByText('someLabel')).toBeInTheDocument();
   });
-  test('should show add and delete option when create is not suported', () => {
-    initDynaNetSuiteImportOperation(items, {
-      doesNotSupportCreate: true, doesNotSupportSearch: false, doesNotSupportDelete: false,
-    });
+  test('should show add and delete option when create is not supported', () => {
+    const supports = {
+      doesNotSupportCreate: true,
+      doesNotSupportSearch: false,
+      doesNotSupportDelete: false,
+    };
+
+    initDynaNetSuiteImportOperation(items, supports);
     const radioButtons = screen.getAllByRole('radio');
 
     expect(radioButtons).toHaveLength(3);
@@ -62,10 +88,14 @@ describe('dynaNetSuiteImportOperation UI test cases', () => {
     expect(screen.getByText('delete')).toBeInTheDocument();
     expect(screen.getByText('update')).toBeInTheDocument();
   });
-  test('should show add and delete option when search is not suported', () => {
-    initDynaNetSuiteImportOperation(items, {
-      doesNotSupportCreate: false, doesNotSupportSearch: true, doesNotSupportDelete: false,
-    });
+  test('should show add and delete option when search is not supported', () => {
+    const supports = {
+      doesNotSupportCreate: false,
+      doesNotSupportSearch: true,
+      doesNotSupportDelete: false,
+    };
+
+    initDynaNetSuiteImportOperation(items, supports);
 
     const radioButtons = screen.getAllByRole('radio');
 
@@ -75,7 +105,7 @@ describe('dynaNetSuiteImportOperation UI test cases', () => {
     expect(screen.getByText('delete')).toBeInTheDocument();
   });
   test('should show all option list when search update create and delete is supported', () => {
-    initDynaNetSuiteImportOperation(items, {});
+    initDynaNetSuiteImportOperation(items);
     const radioButtons = screen.getAllByRole('radio');
 
     expect(radioButtons).toHaveLength(5);

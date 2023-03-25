@@ -2,18 +2,24 @@ import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaStaticMap from './DynaStaticMap';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
+const initialStore = reduxStore;
 const mockonFieldChange = jest.fn();
 
 function initDynaStaticMap(props = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
   const ui = (
     <DynaStaticMap
       {...props}
     />
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 
 describe('DynaStaticMap UI test cases', () => {
@@ -30,6 +36,7 @@ describe('DynaStaticMap UI test cases', () => {
       onFieldChange: mockonFieldChange,
       keyOptions: undefined,
       valueOptions: undefined,
+      formKey: 'form_key',
     };
 
     initDynaStaticMap(genralProps);
@@ -67,6 +74,7 @@ describe('DynaStaticMap UI test cases', () => {
   });
   test('should display data for provided mappings', () => {
     const genralProps = {
+      formKey: 'form_key',
       keyName: 'export',
       keyLabel: 'Export field value',
       valueLabel: 'Import field value',
@@ -87,6 +95,7 @@ describe('DynaStaticMap UI test cases', () => {
   });
   test('should test static lookup for provided numeric data with keyoptions', () => {
     const genralProps = {
+      formKey: 'form_key',
       keyName: 'export',
       keyLabel: 'Export field value',
       valueLabel: 'Import field value',
@@ -110,6 +119,7 @@ describe('DynaStaticMap UI test cases', () => {
   });
   test('should test static lookup for provided numeric data with valueoptions', () => {
     const genralProps = {
+      formKey: 'form_key',
       keyName: 'export',
       keyLabel: 'Export field value',
       valueLabel: 'Import field value',
@@ -133,6 +143,7 @@ describe('DynaStaticMap UI test cases', () => {
   });
   test('should test the static mappings provided before saved', () => {
     const genralProps = {
+      formKey: 'form_key',
       keyName: 'export',
       keyLabel: 'Export field value',
       valueLabel: 'Import field value',

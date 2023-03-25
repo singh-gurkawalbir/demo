@@ -14,25 +14,9 @@ import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import { NUMBER_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
+import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
-/** ***TODO (Azhar): forms CSS Optimization needed*** */
 const useStyles = makeStyles(theme => ({
-  submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
-  },
   message: {
     position: 'relative',
     top: theme.spacing(-1),
@@ -113,7 +97,7 @@ export default function OneTimePassCodeForm() {
   }, [history, isMFAVerified]);
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -162,12 +146,12 @@ export default function OneTimePassCodeForm() {
             <FilledButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
+              submit
               value="Submit">
               Submit
             </FilledButton>
           )}
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }

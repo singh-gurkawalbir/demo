@@ -187,6 +187,46 @@ describe('test suite for orgOwnerUsers', () => {
 
     expect(snackBar).toHaveTextContent('MFA reset for User 1');
   });
+  test('should be able to reset owner MFA if user is an admin', async () => {
+    const mockResolverFunction = jest.fn();
+
+    mockPostRequestOnce('/api/owner/mfa/reset', (req, res, ctx) => {
+      mockResolverFunction();
+
+      return res(ctx.json([]));
+    });
+
+    delete mockTableContext.integrationId;
+    mockTableContext.isAccountOwnerMFAEnabled = true;
+    mockTableContext.accessLevel = 'administrator';
+    const data = [{
+      _id: 'own',
+      sharedWithUser: {
+        name: 'User 1',
+        email: 'mail@user.in',
+        _id: '123',
+      },
+      accessLevel: 'owner',
+      accepted: true,
+      disabled: false,
+    }];
+
+    initOrgOwnerUsers(data);
+    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+
+    expect(actionItems).toEqual(['Reset MFA']);
+    const resetMfaButton = screen.getByRole('menuitem', {name: 'Reset MFA'});
+
+    userEvent.click(resetMfaButton);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mfa.resetOwnerMFA());
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.asyncTask.clear('MFA_OWNER_RESET_ASYNC_KEY')));
+    expect(mockResolverFunction).toHaveBeenCalledTimes(1);
+
+    const snackBar = screen.getByRole('alert');
+
+    expect(snackBar).toHaveTextContent('MFA reset for User 1');
+  });
 
   test('should be able to remove a user from the account', async () => {
     const mockResolverFunction = jest.fn();

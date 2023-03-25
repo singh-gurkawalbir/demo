@@ -863,7 +863,7 @@ export function getMergedImportOperationDetails({
   if (!createOperation || !createOperation.url || !updateOperation || !updateOperation.url) {
     return undefined;
   }
-  const lengthisIdentifier = createOperation.parameters.length;
+  const lengthisIdentifier = createOperation?.parameters?.length;
 
   const createorupdateoperation = customCloneDeep(createOperation);
 
@@ -879,6 +879,19 @@ export function getMergedImportOperationDetails({
     createorupdateoperation.body.push(...updateOperation.body);
   } else if (updateOperation.body) {
     createorupdateoperation.body = [...updateOperation.body, ...updateOperation.body];
+  }
+  const responseFields = ['successPath', 'successValues', 'failPath', 'failValues', 'resourceIdPath', 'resourcePath'];
+
+  if (updateOperation?.response && createOperation?.response) {
+    responseFields.forEach(element => {
+      if (updateOperation.response[element] && createOperation.response[element]) {
+        createorupdateoperation.response[element] = [...updateOperation.response[element], ...createOperation.response[element]];
+      }
+    });
+  } else if (updateOperation?.response && !createOperation?.response) {
+    responseFields.forEach(element => {
+      createorupdateoperation.response[element] = [...updateOperation.response[element]];
+    });
   }
   for (let i = 0; i < lengthisIdentifier; i += 1) {
     if (createOperation.parameters[i].isIdentifier === true) {
@@ -1957,6 +1970,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   let url2Info;
 
   if (importAdaptorSubSchema.relativeURI) {
+    if (!isArray(importAdaptorSubSchema.relativeURI)) { importAdaptorSubSchema.relativeURI = [importAdaptorSubSchema.relativeURI]; }
     url1Info = getMatchingRoute(
       [
         isArray(operationDetails.url)
@@ -2104,9 +2118,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               operation: assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.operation || operationDetails.lookupOperationDetails?.id,
               assistantData,
             });
+            let luEndpointUrl = luEndpoint.url;
 
-            if (luEndpoint.url?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { lookupUrl = lookupUrl.replace('&', '?'); }
-            lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
+            if (luEndpointUrl?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { luEndpointUrl = luEndpointUrl.split('?')?.[0]; }
+            lookupUrlInfo = getMatchingRoute([luEndpointUrl], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
               assistantData.export.urlResolution,
@@ -2386,6 +2401,9 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
 
       let lookupOperationRelativeURI = lookupOperationDetails.url;
 
+      if (lookupOperationRelativeURI?.includes('?') && lookupOperationDetails?._httpConnectorResourceIds?.length) {
+        lookupOperationRelativeURI = lookupOperationRelativeURI.split('?')?.[0];
+      }
       if (luConfig.method === 'GET') {
         const queryString = qs.stringify(lookupQueryParams, {
           encode: false,
@@ -2393,7 +2411,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         }); /* indices should be false to handle IO-1776 */
 
         if (queryString) {
-          lookupOperationRelativeURI += (lookupOperationRelativeURI?.includes('?') ? '&' : '?') + queryString;
+          lookupOperationRelativeURI += `?${queryString}`;
         }
       } else if (luConfig.method === 'POST') {
         luConfig.postBody = lookupQueryParams;

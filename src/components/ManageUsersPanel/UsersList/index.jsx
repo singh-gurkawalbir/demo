@@ -21,6 +21,9 @@ export default function UsersList({ integrationId, childId, className }) {
     !!selectors.integrationUsers(state, integrationId)
   );
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+  const isAccountOwnerMFAEnabled = useSelector(state => selectors.isAccountOwnerMFAEnabled(state));
+  const isUserDeleteRequested = useSelector(state => selectors.isUserDeleteRequested(state));
+  const requiredResources = useMemo(() => ['integrations', 'connections', 'notifications'], []);
 
   useEffect(() => {
     if (integrationId) {
@@ -28,9 +31,9 @@ export default function UsersList({ integrationId, childId, className }) {
         dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
       }
     } else {
-      dispatch(actions.user.org.users.requestCollection('Retrieving org users'));
+      requiredResources.push('ashares');
     }
-  }, [isIntegrationUsersRequested, dispatch, integrationId]);
+  }, [isIntegrationUsersRequested, dispatch, integrationId, requiredResources]);
 
   const actionProps = useMemo(() => (
     {
@@ -39,12 +42,15 @@ export default function UsersList({ integrationId, childId, className }) {
       accessLevel,
       isUserInErrMgtTwoDotZero,
       isSSOEnabled,
-    }), [integrationId, childId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled]);
-
-  const requiredResources = ['integrations', 'connections', 'notifications'];
+      isAccountOwnerMFAEnabled,
+    }), [integrationId, childId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled, isAccountOwnerMFAEnabled]);
 
   if (isAccountOwner) {
     requiredResources.push('ssoclients');
+  }
+
+  if (isUserDeleteRequested) {
+    return null;
   }
 
   return (
