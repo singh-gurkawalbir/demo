@@ -25,6 +25,20 @@ export default {
       label: 'Tenant hostname',
       helpKey: 'sapbydesign.connection.http.unencrypted.tenantHostname',
       required: true,
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[\\S]+$',
+          message: 'Subdomain should not contain spaces.',
+        },
+      },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.replace('https://', '');
+
+        return subdomain;
+      },
     },
     application: {
       fieldId: 'application',
