@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import Menu from '@mui/material/Menu';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import { MenuItem } from '@mui/material';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import actions from '../../actions';
@@ -35,9 +35,9 @@ export default function AgentDownloadInstaller({ agentId }) {
 
   return (
     <>
-      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleMenuClose}>
+      <ArrowPopper anchorEl={anchorEl} open={!!anchorEl} onClose={handleMenuClose}>
         <MenuItem onClick={handleInstallerClick('windows')}>Windows</MenuItem>
-      </Menu>
+      </ArrowPopper>
       <TextButton
         endIcon={<ArrowDownIcon />}
         className={classes.donwloadInstallerBtn}

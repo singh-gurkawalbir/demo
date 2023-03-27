@@ -1,6 +1,6 @@
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import MenuItem from '@mui/material/MenuItem';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@mui/styles';
@@ -12,15 +12,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  menu: {
-    width: 180,
-    '& MuiMenu-paper': {
-      maxHeight: '250px',
-    },
-    '& ul': {
-      padding: 0,
-    },
   },
   menuitem: {
     minWidth: 145,
@@ -87,12 +78,9 @@ export default function HeaderAction(props) {
         size="large">
         <EllipsisIconVertical />
       </IconButton>
-      <Menu
-        className={classes.menu}
-        elevation={2}
+      <ArrowPopper
         id="long-menu"
         anchorEl={anchorEl}
-        keepMounted
         open={open}
         onClose={handleClose}>
         {options.map(option => (
@@ -104,7 +92,7 @@ export default function HeaderAction(props) {
             {option}
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
     </div>
   );
 }
