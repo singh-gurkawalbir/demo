@@ -61,57 +61,6 @@ const useStyles = makeStyles({
   },
 });
 
-export const useSnackbarStyles = makeStyles({
-  variantInfo: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoAccent2,
-    },
-    '& div > span > svg': {
-      color: colors.celigoAccent2,
-    },
-  },
-  variantSuccess: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoSuccess,
-    },
-    '& div > span > svg': {
-      color: colors.celigoSuccess,
-    },
-  },
-  variantWarning: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoWarning,
-    },
-    '& div > span > svg': {
-      color: colors.celigoWarning,
-    },
-  },
-  variantError: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoError,
-    },
-    '& div > span > svg': {
-      color: colors.celigoError,
-    },
-  },
-  message: {
-    marginLeft: 40,
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
-    wordBreak: 'break-word',
-    paddingTop: '6px',
-    '& > svg': {
-      position: 'fixed',
-      left: 16,
-      top: 16,
-    },
-  },
-});
-
 function NonSigninHeaderComponents() {
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
   const isUserAuthenticated = useSelector(
@@ -239,7 +188,6 @@ const PageContentWrapper = () => {
 export default function App() {
   const env = process.env.NODE_ENV;
   const classes = useStyles();
-  const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const preferences = useSelector(
@@ -335,8 +283,56 @@ export default function App() {
               <ConfirmDialogProvider>
                 <FormOnCancelProvider>
                   <SnackbarProvider
-                    classes={snackbarClasses} maxSnack={3} ContentProps={{
-                      classes: { root: classes.root },
+                    sx={{
+                      // '& .SnackbarItem-variantInfo': {
+                      //   bgcolor: colors.celigoWhite,
+                      //   '&:before': {
+                      //     bgcolor: colors.celigoAccent2,
+                      //   },
+                      //   '& div > span > svg': {
+                      //     color: colors.celigoAccent2,
+                      //   },
+                      // },
+                      // '& .SnackbarItem-variantSuccess': {
+                      //   bgcolor: colors.celigoWhite,
+                      //   '&:before': {
+                      //     bgcolor: colors.celigoSuccess,
+                      //   },
+                      //   '& div > span > svg': {
+                      //     color: colors.celigoSuccess,
+                      //   },
+                      // },
+                      // '& .SnackbarItem-variantWarning': {
+                      //   bgcolor: colors.celigoWhite,
+                      //   '&:before': {
+                      //     bgcolor: colors.celigoWarning,
+                      //   },
+                      //   '& div > span > svg': {
+                      //     color: colors.celigoWarning,
+                      //   },
+                      // },
+                      '& .SnackbarItem-variantError': {
+                        bgcolor: colors.celigoWhite,
+                        color: colors.celigoNeutral8,
+                        '&:before': {
+                          bgcolor: colors.celigoError,
+                        },
+                        '& div > svg': {
+                          color: colors.celigoError,
+                        },
+                      },
+                      '& .SnackbarItem-message': {
+                        marginLeft: 40,
+                        display: 'grid',
+                        gridTemplateColumns: 'auto 1fr',
+                        wordBreak: 'break-word',
+                        paddingTop: '6px',
+                        '& > svg': {
+                          position: 'fixed',
+                          left: 16,
+                          top: 16,
+                        },
+                      },
                     }}>
                     <FontStager />
                     <CssBaseline />
