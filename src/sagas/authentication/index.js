@@ -17,6 +17,7 @@ import {
   getCSRFToken,
   removeCSRFToken,
 } from '../../utils/session';
+import { safeParse } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -360,7 +361,11 @@ export function* submitAcceptInvite({payload}) {
       yield put(actions.auth.signupStatus('done', response.message));
     }
   } catch (e) {
-    yield put(actions.auth.acceptInvite.failure(e));
+    const errJSON = safeParse(e);
+
+    const errorMsg = errJSON?.errors?.[0]?.message;
+
+    yield put(actions.auth.acceptInvite.failure({message: [errorMsg], type: 'error'}));
   }
 }
 export function* resetRequest({ email }) {
@@ -490,6 +495,7 @@ export function* auth({ email, password }) {
       hidden: true,
     });
 
+    yield call(validateSession);
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
@@ -503,7 +509,6 @@ export function* auth({ email, password }) {
     }
     const isExpired = yield select(selectors.isSessionExpired);
 
-    yield call(validateSession);
     yield call(setCSRFToken, apiAuthentications._csrf);
 
     yield call(setLastLoggedInLocalStorage);
