@@ -59,7 +59,7 @@ describe('AccessTokenList test cases', () => {
   test('should pass the initial render', async () => {
     mockGetRequestOnce('/api/accesstokens', []);
     await initAccessTokenList();
-    const createToken = await screen.getByRole('button', {name: /Create API token/i});
+    const createToken = await screen.getByRole('link', {name: /Create API token/i});
 
     expect(screen.queryByText(/API tokens/i)).toBeInTheDocument();
     expect(createToken).toBeInTheDocument();
