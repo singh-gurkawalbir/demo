@@ -59,7 +59,7 @@ export const resourceButtonStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceButton({ onClick, variant, disabled}) {
+export default function IconViewResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
   const {flowId} = useFlowContext();
   const block = blockMap[variant];

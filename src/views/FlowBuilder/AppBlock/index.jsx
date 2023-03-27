@@ -15,7 +15,7 @@ import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-import OldResourceButton from '../OldResourceButton';
+import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import GripperIcon from '../../../components/icons/GripperIcon';
@@ -498,7 +498,7 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <OldResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (

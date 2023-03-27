@@ -39,7 +39,7 @@ export const resourceButtonStyles = makeStyles(theme => ({
   },
 }));
 
-export default function OldResourceButton({ onClick, variant, disabled}) {
+export default function ResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
