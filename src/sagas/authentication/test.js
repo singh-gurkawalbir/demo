@@ -590,10 +590,8 @@ describe('auth saga flow', () => {
       mfaRequired: true,
       _csrf,
     };
-    const validateSessionEffect = saga.next(authResponse).value;
 
-    expect(validateSessionEffect).toEqual(call(validateSession));
-    expect(saga.next(true).value).toEqual(call(setCSRFToken, _csrf));
+    expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
     expect(saga.next().value).toEqual(call(getResourceCollection, actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')));
     expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
   });
