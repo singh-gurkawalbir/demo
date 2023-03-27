@@ -13,6 +13,7 @@ import Spinner from '../../../../Spinner';
 import VirtualizedTable from './VirtualizedTable';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { emptyObject } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -163,6 +164,8 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        invalidateParentFieldOnError={invalidateParentFieldOnError}
+        setIsValid={setIsValid}
       />
     );
   }));
@@ -196,7 +199,7 @@ const DynaTable = props => {
   const [isValid, setIsValid] = useState(true);
 
   // Fetching isShowValidationBeforeTouched property in order to forceState the isValid property to true when there are required fields from the settingsForm so that we could validate the form on the initial render
-  const {showValidationBeforeTouched } = useSelector(state => selectors.formState(state, formKey));
+  const {showValidationBeforeTouched } = useSelector(state => selectors.formState(state, formKey) || emptyObject);
 
   useEffect(
     () => () => {

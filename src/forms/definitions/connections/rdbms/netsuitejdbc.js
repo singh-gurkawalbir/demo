@@ -1,9 +1,8 @@
-import { deepClone } from 'fast-json-patch';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => {
-    const newValues = deepClone(formValues);
+    const newValues = {...formValues};
 
     const roleId = newValues['/netsuite/token/auto/roleId'];
     const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
@@ -28,7 +27,7 @@ export default {
 
     let properties = [
       {name: 'ServerDataSource', value: newValues['/jdbc/serverDataSource']},
-      {name: 'staticSchema', value: newValues['/jdbc/staticSchema'] ? 1 : 0 },
+      {name: 'StaticSchema', value: newValues['/jdbc/StaticSchema'] ? 1 : 0 },
     ];
 
     if (roleId) {
@@ -54,7 +53,7 @@ export default {
     delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
     delete newValues['/netsuite/tokenEnvironment'];
-    delete newValues['/jdbc/staticSchema'];
+    delete newValues['/jdbc/StaticSchema'];
     delete newValues['/jdbc/serverDataSource'];
     delete newValues['/rdbms/concurrencyLevel'];
     delete newValues['/rdbms/options'];
@@ -85,9 +84,13 @@ export default {
         return value;
       },
     },
-    'jdbc.port': { fieldId: 'jdbc.port', defaultDisabled: true, defaultValue: 1708 },
-    'jdbc.staticSchema': {
-      id: 'jdbc.staticSchema',
+    'jdbc.port': {
+      fieldId: 'jdbc.port',
+      defaultDisabled: true,
+      defaultValue: r => r?.jdbc?.port || 1708,
+    },
+    'jdbc.StaticSchema': {
+      id: 'jdbc.StaticSchema',
       isLoggable: true,
       type: 'checkbox',
       label: 'Static schema export',
@@ -101,7 +104,7 @@ export default {
         const properties = r?.jdbc?.properties || [];
         let value = null;
 
-        properties.forEach(each => { if (each.name === 'staticSchema') value = each.value; });
+        properties.forEach(each => { if (each.name === 'StaticSchema') value = each.value; });
 
         if (value === '1') { return true; }
 
@@ -174,7 +177,7 @@ export default {
     'rdbms.options': {
       fieldId: 'rdbms.options',
       defaultValue: r => r?.jdbc?.properties?.filter(property => ![
-        'AccountID', 'RoleID', 'staticSchema', 'ServerDataSource',
+        'AccountID', 'RoleID', 'StaticSchema', 'ServerDataSource',
       ].includes(property.name)),
     },
     application: {
@@ -207,7 +210,7 @@ export default {
           {
             type: 'indent',
             containers: [
-              {fields: ['jdbc.staticSchema']},
+              {fields: ['jdbc.StaticSchema']},
             ],
           },
           { fields: [

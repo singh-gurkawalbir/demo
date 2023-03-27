@@ -164,7 +164,17 @@ describe('dynaEditor UI tests', () => {
     const textBoxNode = screen.getByRole('textbox');
 
     expect(textBoxNode).toBeInTheDocument();
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.form.forceFieldState(formKey)('feedOptions', {isValid: false, errorMessages: 'Invalid format'})
+    );
 
+    // should dispatch forceFieldState action when value changes
+    const editorArea = document.querySelector('textarea[data-test="code-editor"]');
+
+    userEvent.type(editorArea, 'abcd');
+
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)('feedOptions', {isValid: false, errorMessages: 'Invalid format'})
     );

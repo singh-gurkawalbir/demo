@@ -35,6 +35,7 @@ const CONFIRM_REMOVE = 'Are you sure you want to remove this resource?';
 const NO_DEBUG_LOG = 'You don’t have any debug log entries.';
 const COMPONENT_INFO = 'The following components are created with this integration:';
 const KEY_COLUMN_DEPRECATION = 'You’re using a deprecated option “Key Columns” to group your records. Use the new and improved option in the “How would you like to sort and group records” section. Your group settings may be affected when you use the new sorting and grouping option.';
+const PREVIEW_FAILED = 'Failed to fetch preview data.';
 
 const MARKETPLACE = {
   HELPINFO: 'Jump-start your integrations with our Quickstart integration templates. Explore new or install your existing licensed integration apps.',
@@ -425,6 +426,7 @@ const messages = {
   RESOURCE,
   ADDONS,
   KEY_COLUMN_DEPRECATION,
+  PREVIEW_FAILED,
   CONNECTION,
   NO_RESULT,
   PLAYGROUND,

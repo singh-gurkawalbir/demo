@@ -77,7 +77,8 @@ const useValidateContent = ({
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }
-  }, [dispatch, formKey, id, label, mode, validateContent, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 };
 
 export default function DynaEditor(props) {
