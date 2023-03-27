@@ -84,7 +84,6 @@ function MockDataDrawerContent() {
     isLoggable,
     flowId,
     required,
-    isValid,
     label,
     helpKey,
     errorMessages,
@@ -102,7 +101,7 @@ function MockDataDrawerContent() {
 
   const handleUpdate = useCallback(newVal => {
     setEditorContent(newVal);
-    setErrorMessage(validateMockDataField(resourceType)(newVal));
+    setErrorMessage(validateMockDataField(resourceType, newVal));
   }, [resourceType]);
 
   const handleDone = () => {
@@ -136,7 +135,7 @@ function MockDataDrawerContent() {
           </div>
           <div className={classes.container}>
             <div className={classes.dynaEditorTextLabelWrapper}>
-              <FormLabel required={required} error={!isValid} >{label}</FormLabel>
+              <FormLabel required={required} error={!!errorMessage} >{label}</FormLabel>
               <FieldHelp
                 id={fieldId}
                 helpKey={helpKey}
