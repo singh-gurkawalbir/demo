@@ -130,7 +130,6 @@ describe('MFAVerify', () => {
     status: 'received'}
     );
     await initMFAVerify();
-
     mutateStore(initialStore, draft => {
       draft.session.mfa.sessionInfo = {data: {
         authenticated: true,
