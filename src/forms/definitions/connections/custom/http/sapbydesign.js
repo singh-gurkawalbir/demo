@@ -35,7 +35,7 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
-          baseUri.replace('https://', '');
+          baseUri.substring(baseUri.indexOf('https://') + 8);
 
         return subdomain;
       },
