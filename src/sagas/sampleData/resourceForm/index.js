@@ -27,6 +27,7 @@ import { processJsonSampleData } from '../../../utils/sampleData';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { safeParse } from '../../../utils/string';
+import { message } from '../../../utils/messageStore';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -65,6 +66,11 @@ export function* _handlePreviewError({ e, resourceId }) {
 
     return yield put(
       actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedError)
+    );
+  }
+  if (e.status === 500) {
+    return yield put(
+      actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED})
     );
   }
 }
