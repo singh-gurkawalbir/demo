@@ -81,7 +81,6 @@ export default function SignIn({dialogOpen, className}) {
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
-  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
   const error = useSelector(state => {
@@ -132,12 +131,10 @@ export default function SignIn({dialogOpen, className}) {
     reInitializeSession();
   };
   useEffect(() => {
-    if (isMFASetupIncomplete) {
-      history.push(getRoutePath('/myAccount/security/mfa'), location.state);
-    } else if (isMFAAuthRequired) {
+    if (isMFAAuthRequired) {
       history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired, isMFASetupIncomplete, location.state]);
+  }, [history, isMFAAuthRequired, location.state]);
   const attemptedRoute = location.state?.attemptedRoute;
 
   const fieldMeta = useMemo(() => getFieldMeta(), []);
