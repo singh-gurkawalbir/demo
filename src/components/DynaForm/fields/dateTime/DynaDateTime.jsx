@@ -1,14 +1,7 @@
-// import MomentDateFnsUtils from '@date-io/moment';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-// import {
-//   MuiPickersUtilsProvider,
-//   KeyboardDatePicker,
-//   KeyboardTimePicker,
-// } from '@mui/lab';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
@@ -74,29 +67,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// const useDatePickerProps = removePickerDialog => {
-//   const classes = useStyles();
-
-//   return removePickerDialog ? {
-//     InputAdornmentProps: {disablePointerEvents: true},
-//     keyboardIcon: null,
-//   } : {
-//     keyboardIcon: <CalendarIcon className={classes.iconWrapper} />,
-//   };
-// };
-const useTimePickerProps = removePickerDialog => {
-  const classes = useStyles();
-
-  return removePickerDialog ? {
-    InputAdornmentProps: {disablePointerEvents: true},
-    keyboardIcon: null,
-  } : {
-    keyboardIcon: <AccessTimeIcon className={classes.iconWrapper} />,
-  };
-};
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, doNotAllowFutureDates} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, doNotAllowFutureDates} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -189,9 +162,6 @@ export default function DateTimePicker(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
-  // const datePickerProps = useDatePickerProps(removePickerDialog);
-  const timePickerProps = useTimePickerProps(removePickerDialog);
-
   return (
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
@@ -207,12 +177,10 @@ export default function DateTimePicker(props) {
           <div className={classes.fieldWrapper}>
             <DatePicker
               maxDate={doNotAllowFutureDates && moment()}
-              // {...isLoggableAttr(isLoggable)}
+              {...isLoggableAttr(isLoggable)}
               disabled={disabled}
-              // // variant="inline"
-              // // data-test="date"
+              data-test="date"
               format={dateFormat}
-              // // placeholder={dateFormat}
               value={(typeof dateValue === 'string' || dateValue instanceof String) ? convertUtcToTimezone(dateValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}) : dateValue}
               onChange={setFormatDateValue}
               label={dateLabel || 'Date'}
@@ -229,23 +197,16 @@ export default function DateTimePicker(props) {
                 e.preventDefault();
               }}
               slots={{openPickerIcon: CalendarIcon }}
-              // // disableToolbar
-              // // className={classes.keyBoardDateTimeWrapper}
-              // // fullWidth
-              // // InputProps={{ className: classes.inputDateTime, readOnly: true}}
-              // // {...datePickerProps}
             />
           </div>
           <div className={classes.fieldWrapper}>
             <MobileTimePicker
               {...isLoggableAttr(isLoggable)}
               disabled={disabled}
-              // variant="inline"
               data-test="time"
               label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
               format={timeFormat}
-              // placeholder={timeFormat}
               onKeyDown={e => {
                 // this is specifically for qa to inject their date time string
                 // they should alter the input dom to add a qa attribute prior to injection for date time
@@ -260,11 +221,8 @@ export default function DateTimePicker(props) {
               }}
               value={(typeof timeValue === 'string' || timeValue instanceof String) ? convertUtcToTimezone(timeValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}) : timeValue}
               onChange={setFormatTimeValue}
-              // fullWidth
-              // className={classes.keyBoardDateTimeWrapper}
-              // InputProps={{ className: classes.inputDateTime, readOnly: true}}
-              {...timePickerProps}
-      />
+              slots={{openPickerIcon: AccessTimeIcon}}
+            />
           </div>
         </div>
         <FieldMessage {...props} />
