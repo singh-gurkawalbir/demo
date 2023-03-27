@@ -6,27 +6,20 @@ import React, {
   useMemo,
 } from 'react';
 import { useDrag } from 'react-dnd';
-import Menu, { Typography, IconButton } from '@material-ui/core';
-import MenuItem from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ArrowPopper from '../../../components/ArrowPopper';
 import { selectors } from '../../../reducers';
-import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import BranchIcon from '../../../components/icons/BranchIcon';
-import GripperIcon from '../../../components/icons/GripperIcon';
-import ErrorStatus from '../ErrorStatus';
-import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
 import {getHttpConnector} from '../../../constants/applications';
-import PPDropbox from '../FlowBuilderBody/CustomEdges/PPDropbox';
 import itemTypes from '../itemTypes';
 import { useSelectorMemo } from '../../../hooks';
 import { useIsDragInProgress } from '../hooks';
@@ -34,10 +27,8 @@ import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
-import EllipsisActionMenu from '../../../components/EllipsisActionMenu';
 import { useFlowContext } from '../FlowBuilderBody/Context';
 
-const blockHeight = 50;
 const blockWidth = 50;
 const useStyles = makeStyles(theme => ({
   root: {
@@ -217,19 +208,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const blockMap = {
-  newPG: { label: 'Add source'},
-  newPP: { label: 'Add destination / lookup'},
-  newImport: { label: 'Add destination'},
-  export: { label: 'Export'},
-  import: { label: 'Import'},
-  lookup: { label: 'Lookup'},
-  listener: { label: 'Listener'},
-  dataLoader: { label: 'Data loader'},
-  exportTransfer: { label: 'Transfer'},
-  importTransfer: { label: 'Transfer'},
-};
-
 export default function AppBlock({
   className,
   onDelete,
@@ -263,15 +241,7 @@ export default function AppBlock({
   const [anchorEl, setAnchorEl] = useState(null);
   const [activeAction, setActiveAction] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isNew = blockType.startsWith('new');
-  const isActive = useSelector(state => {
-    const activeConn = selectors.activeConnection(state);
-
-    if (!activeConn || !resource) return false;
-
-    return activeConn === resource?._id || activeConn === resource?._connectionId;
-  });
-  const {flowHighlighter, upstreamHighlighter} = useFlowContext();
+  const {downstreamHighlighter, upstreamHighlighter} = useFlowContext();
   const flowOriginal =
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
@@ -380,7 +350,7 @@ export default function AppBlock({
     handleClose();
     setActiveAction(null);
     setExpanded();
-  }, []);
+  }, [handleClose]);
   const handleMouseHover = useCallback(val => () => setIsHover(val), []);
 
   const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
@@ -494,59 +464,6 @@ export default function AppBlock({
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
         className={classes.box}
       >
-        {/* <div className={classes.bubbleContainer}> */}
-        {/* {onDelete && !isViewMode && !resource._connectorId && (
-            <IconButton
-              size="small"
-              className={classes.deleteButton}
-              onClick={handleDelete(id)}
-              data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <CloseIcon />
-            </IconButton>
-          )}
-          {isDraggable && (
-            <IconButton
-              size="small"
-              className={clsx(classes.grabButton)}
-              data-test={`move-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <GripperIcon />
-            </IconButton>
-          )}
-          <div className={clsx(classes.dropbox, classes.left)}>
-            <PPDropbox
-              show={rest.showLeft}
-              position="left"
-              targetIndex={rest.pageProcessorIndex}
-              id={id}
-              path={rest.path} />
-          </div>
-          <BubbleSvg
-            height={blockHeight}
-            width={blockWidth}
-            classes={{ bubble: clsx(classes.bubble, {[classes.bubbleActive]: isActive}),
-              bubbleBG: classes.bubbleBG,
-            }}
-          />
-          <div className={clsx(classes.dropbox, classes.right)}>
-            <PPDropbox
-              show={rest.showRight}
-              position="right"
-              targetIndex={rest.pageProcessorIndex}
-              id={id}
-              path={rest.path}
-              />
-          </div>
-        </div>
-        <div className={classes.sideActionContainer}>
-          <div className={classes.leftActions}>
-            {renderActions(leftActions, isDragInProgress)}
-          </div>
-        </div>
-        <div className={classes.sideActionContainer}>
-          <div className={classes.rightActions}>
-            {renderActions(rightActions, isDragInProgress)}
-          </div>
-        </div> */}
         <div className={classes.appLogoContainer}>
           <IconButton
             size="small"
@@ -574,32 +491,13 @@ export default function AppBlock({
             classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, classes.applicationsMenuPaper) }}
             id="additionalApps"
             onClose={handleClose} >
-            {/* <div className={classes.middleActionContainer}>
-              <div className={classes.leftActions}>
-                {renderActions(leftActions, isDragInProgress)}
-              </div>
-              <div className={classes.rightActions}>
-                {renderActions(rightActions, isDragInProgress)}
-              </div>
-            </div>
-            <div className={classes.middleActionContainer}>
-              {renderActions(middleActions)}
-              {!expanded && hasActions ? (
-                <ActionIconButton
-                  onClick={handleExpandClick}
-                  data-test="addDataProcessor"
-                  helpText="Define options">
-                  <AddIcon />
-                </ActionIconButton>
-              ) : null}
-            </div> */}
             <div>
               {renderActions(leftActions, isDragInProgress)}
               {renderActions(rightActions, isDragInProgress)}
               {renderActions(middleActions)}
               <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
               <ActionIconButton
-                onClick={() => flowHighlighter(id)}
+                onClick={() => downstreamHighlighter(id)}
                 data-test="flowBranching"
                 helpText="DownStream expansion">
                 <BranchIcon />
@@ -613,29 +511,8 @@ export default function AppBlock({
               </ActionIconButton>
             </div>
           </ArrowPopper>
-          {/* <div className={classes.middleActionContainer}>
-            {renderActions(middleActions)}
-            {!expanded && hasActions ? (
-              <ActionIconButton
-                onClick={handleExpandClick}
-                data-test="addDataProcessor"
-                helpText="Define options">
-                <AddIcon />
-              </ActionIconButton>
-            ) : null}
-          </div> */}
         </div>
-        {/* <ErrorStatus
-          count={openErrorCount}
-          isNew={isNew}
-          flowId={flowId}
-          resourceId={resource?._id} /> */}
       </div>
-      {/* <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
-        <Typography className={classes.containerName}>
-          <CeligoTruncate isLoggable lines={2}>{name}</CeligoTruncate>
-        </Typography>
-      </div> */}
     </div>
   );
 }

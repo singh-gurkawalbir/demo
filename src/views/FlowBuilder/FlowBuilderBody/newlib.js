@@ -107,7 +107,9 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
     return el;
   });
 
-  if (isSubFlowView) { graph.setGraph({ rankdir: 'LR', ...subFlowOptions }); } else {
+  if (isSubFlowView) {
+    graph.setGraph({ rankdir: 'LR', ...subFlowOptions });
+  } else {
     graph.setGraph({ rankdir: 'LR', ...options });
   }
 
@@ -136,7 +138,6 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
       } else {
         size = nodeSize[el.type];
       }
-      const offsetY = 0;
 
       if (node.x > highestX) {
         highestX = node.x + size.width / 2;
@@ -158,7 +159,6 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
       // This maters when nodes are of various sizes.
       const position = {};
 
-      console.log({elements});
       if (el.type === 'iconpp') {
         position.x = node.x;
         position.y = node.y - 31;
@@ -166,8 +166,8 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
         position.x = node.x + 12;
         position.y = node.y + 7;
       } else if (el.type === 'iconpg' && !el.isSubFlow) {
-        position.x = node.x - 35;
-        position.y = node.y - 1;
+        position.x = node.x - 45;
+        position.y = node.y + 1;
       } else if (el.type === 'iconpg' && el.isSubFlow) {
         position.x = node.x - 35;
         position.y = node.y - 25;
@@ -187,15 +187,10 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
       // these are the edges...
       const { points } = graph.edge({ v: el.source, w: el.target });
 
-      console.log({points});
       const source = elements.find(n => n.id === el.source);
       const target = elements.find(n => n.id === el.target);
       const edge = elements.find(n => n.id === `${el.source}-${el.target}`);
 
-      if (source.type === 'pg') {
-        // points.splice(2, 1);
-        console.log(points);
-      }
       let highlighted = false;
 
       if (source.isSubFlow && target.isSubFlow) {
@@ -204,6 +199,7 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
 
       edges.push({
         ...el,
+        type: 'iconEdge',
         data: {
           ...edge.data,
           highlight: highlighted,
@@ -338,8 +334,6 @@ export const getPositionInEdge = (
     // right
     lengthFromStart = lengthOFEdges - offset;
   }
-
-  // console.log(lengthOFEdges, lengthFromStart, position, offset);
 
   for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
     const coord1 = linePlotsCoordinates[i];

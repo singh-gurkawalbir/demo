@@ -75,7 +75,6 @@ export function rectifyPageGeneratorOrder(nodes = [], flow) {
 }
 
 export function layoutElements(elements = [], flow) {
-  console.log('calling');
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));

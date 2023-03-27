@@ -4,9 +4,11 @@ import { useStoreState } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import Title from '../Title';
 import { useFlowContext } from '../../Context';
-// import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
+import { FB_SOURCE_COLUMN_WIDTH, FB_ICON_VIEW_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useHandleAddGenerator } from '../../../hooks';
 import { selectors } from '../../../../../reducers';
+
+const minTitleWidth = 80;
 
 const useStyles = makeStyles(theme => ({
   sourceTitle: {
@@ -20,16 +22,13 @@ const useStyles = makeStyles(theme => ({
 const SourceTitle = () => {
   // we don't care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const { flowId } = useFlowContext();
   const [x, , scale] = useStoreState(s => s.transform);
+  const {flowId} = useFlowContext();
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
-  const constant = iconView === 'icon' ? 250 : 450;
-  const minTitleWidth = iconView === 'icon' ? 80 : 140;
-
-  console.log({width: constant});
-  const columnWidth = Math.max(0, constant * scale + x);
+  const width = iconView === 'icon' ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
+  const columnWidth = Math.max(0, width * scale + x);
   const titleWidth = Math.max(columnWidth, minTitleWidth);
   let xOffset = (columnWidth - titleWidth) / 2; // + menuWidth;
 

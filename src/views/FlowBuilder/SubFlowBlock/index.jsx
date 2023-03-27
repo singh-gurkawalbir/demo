@@ -16,12 +16,8 @@ import AddIcon from '../../../components/icons/AddIcon';
 import SubFlowActionIconButton from '../SubFlowActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import SubFlowResourceButton from '../SubFlowResourceButton';
-import ArrowPopper from '../../../components/ArrowPopper';
-import BubbleSvg from '../BubbleSvg';
 import BubbleSmallSvg from '../BubbleSmallSvg';
-import CloseIcon from '../../../components/icons/CloseIcon';
 import GripperIcon from '../../../components/icons/GripperIcon';
-import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
 import {getHttpConnector} from '../../../constants/applications';
@@ -32,10 +28,9 @@ import { useIsDragInProgress } from '../hooks';
 import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
-import SubFlowErrorStatus from '../SubFlowErrorStatus';
 import { message } from '../../../utils/messageStore';
+import SubFlowErrorStatus from '../SubFlowErrorStatus';
 
-const blockHeight = 86;
 const blockWidth = 137;
 const useStyles = makeStyles(theme => ({
   root: {
@@ -251,10 +246,9 @@ export default function AppBlock({
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const isNew = blockType.startsWith('new');
   const [activeAction, setActiveAction] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
 
@@ -279,9 +273,6 @@ export default function AppBlock({
 
   const classes = useStyles({ isHover, noDragInfo });
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
-  const isSubFlowView = useSelector(state =>
-    selectors.fbSubFlowView(state, flowId)
-  );
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
@@ -346,7 +337,6 @@ export default function AppBlock({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelete = useCallback(id => () => onDelete(id), [onDelete]);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
   const handleMouseOver = useCallback(
     isOver => () => {
@@ -417,7 +407,6 @@ export default function AppBlock({
     // This disables the default preview image, so that we can render our own custom drag layer.
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
-  // alert('came')
   function renderActions(flowActions, hide) {
     if (!flowActions || !flowActions.length || hide) return null;
 
@@ -430,7 +419,6 @@ export default function AppBlock({
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
-            // [classes.actionUsed]: expanded && a.isUsed,
           })}
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
@@ -456,19 +444,6 @@ export default function AppBlock({
     ));
   }
 
-  const handleClick = useCallback(
-    event => {
-      handleExpandClick();
-      setAnchorEl(!anchorEl ? event.currentTarget : null);
-    },
-    [anchorEl, handleExpandClick]
-  );
-
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-  const open = !!anchorEl;
-
   return (
     <div
       ref={drag}
@@ -488,19 +463,11 @@ export default function AppBlock({
       >
         <div className={classes.bubbleContainer}>
           <SubFlowErrorStatus
-            count={openErrorCount}
+            count={2}
+            subBlockSchema
             isNew={isNew}
             flowId={flowId}
             resourceId={resource?._id} />
-          {/* {onDelete && !isViewMode && !resource._connectorId && (
-            <IconButton
-              size="small"
-              className={classes.deleteButton}
-              onClick={handleDelete(id)}
-              data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <CloseIcon />
-            </IconButton>
-          )} */}
           {isDraggable && (
             <IconButton
               size="small"

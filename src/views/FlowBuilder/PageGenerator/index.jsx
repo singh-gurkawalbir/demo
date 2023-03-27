@@ -22,7 +22,6 @@ import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
-import NewBlock from '../NewBlock';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
@@ -310,7 +309,6 @@ const PageGenerator = ({
 
   // eslint-disable-next-line no-nested-ternary
   const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (iconView === 'icon' ? IconBlock : AppBlock);
-  // const Component = NewBlock;
 
   return (
     <div className={clsx(classes.pgContainer, className)} >

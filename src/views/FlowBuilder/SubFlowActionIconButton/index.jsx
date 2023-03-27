@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   newiconButtonRoot: {
     padding: theme.spacing(0.1),
-    backgroundColor: theme.palette.primary.lightest,
+    // backgroundColor: theme.palette.primary.lightest,
     '&:hover': {
       backgroundColor: theme.palette.background.paper,
       '& svg': {
@@ -79,8 +79,8 @@ export default function ActionIconButton({
         size="small"
         className={clsx(classes.button, className, classes[variant])}
         classes={{
-          root: iconView === 'icon' ? classes.newiconButtonRoot : classes.iconButtonRoot,
-          label: iconView === 'icon' ? classes.subFlowButtonLabel : classes.iconButtonLabel,
+          root: clsx({[classes.newiconButtonRoot]: iconView === 'icon', [classes.iconButtonRoot]: iconView !== 'icon'}),
+          label: clsx({[classes.subFlowButtonLabel]: iconView === 'icon', [classes.iconButtonLabel]: iconView !== 'icon'}),
         }}
         {...props}>
         {children}

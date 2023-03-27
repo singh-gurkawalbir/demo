@@ -27,7 +27,6 @@ import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
-import BranchIcon from '../../../../components/icons/BranchIcon';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -177,7 +176,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, iconView, isSubFlowView}) => {
+const PageBarChildren = ({integrationId, flowId, iconView}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -224,24 +223,16 @@ const PageBarChildren = ({integrationId, flowId, iconView, isSubFlowView}) => {
       dispatch(actions.flow.iconView(flowId, 'icon'));
     }
   };
-  // const handleSubFlowClose = () => {
-  //   dispatch(actions.flow.toggleSubFlowView(flowId, false));
-  // };
 
   return (
     <div className={classes.actions}>
-      {/* {isSubFlowView && (
-      <IconButtonWithTooltip
-        onClick={handleSubFlowClose}
-        data-test="toggleSubFlowView">
-        <BranchIcon />
-      </IconButtonWithTooltip>
-      )} */}
+      {(['development', 'staging'].includes(process.env.NODE_ENV) && process.env.NODE_ENV !== 'qa.staging' && (
       <IconButtonWithTooltip
         onClick={handleViewChange}
         data-test="flowSettings">
         <RefreshIcon />
       </IconButtonWithTooltip>
+      ))}
       {isUserInErrMgtTwoDotZero && (
       <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}

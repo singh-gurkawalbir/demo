@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import DefaultHandle from './Handles/DefaultHandle';
 import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   pgContainer: {
     paddingTop: 60,
   },
-  newpgContainer: {
+  iconLayoutPgContainer: {
     paddingTop: 0,
     paddingRight: 0,
   },
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },
-  newroot: {
+  iconLayoutRoot: {
     width: 106,
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
@@ -48,16 +49,13 @@ export default function PageGeneratorNode(props) {
   }, [dispatch, flowId]);
   const handleMove = useHandleMovePG(flowId);
 
-  // alert(isSubFlow);
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
 
-  // const isSubFlow = false;
-
   return (
-    <div className={iconView === 'icon' ? classes.newroot : classes.root}>
-      <div className={iconView === 'icon' ? classes.newpgContainer : classes.pgContainer}>
+    <div className={clsx({[classes.iconLayoutRoot]: iconView === 'icon', [classes.root]: iconView !== 'icon'})}>
+      <div className={clsx({[classes.iconLayoutPgContainer]: iconView === 'icon', [classes.pgContainer]: iconView !== 'icon'})}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}

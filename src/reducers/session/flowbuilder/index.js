@@ -11,7 +11,7 @@ export default function reducer(state = {}, action) {
     switch (type) {
       case actionTypes.FLOW.INIT_FLOW_GRAPH:
         if (!draft[flowId]) {
-          draft[flowId] = {iconView: 'bubble'};
+          draft[flowId] = {};
         }
         draft[flowId].elements = generateReactFlowGraph(flow, isViewMode, isDataLoader);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');

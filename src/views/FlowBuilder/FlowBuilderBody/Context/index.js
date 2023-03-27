@@ -3,10 +3,10 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 
 const FlowContext = React.createContext();
 
-export const FlowProvider = ({ children, elements, elementsMap, flow, flowId, dragNodeId, translateExtent, flowHighlighter, upstreamHighlighter }) => (
+export const FlowProvider = ({ children, elements, elementsMap, flow, flowId, dragNodeId, translateExtent, downstreamHighlighter, upstreamHighlighter }) => (
   <ReactFlowProvider>
     <FlowContext.Provider
-      value={{ elements, elementsMap, flow, dragNodeId, flowId, translateExtent, flowHighlighter, upstreamHighlighter }}>
+      value={{ elements, elementsMap, flow, dragNodeId, flowId, translateExtent, downstreamHighlighter, upstreamHighlighter }}>
       {children}
     </FlowContext.Provider>
   </ReactFlowProvider>

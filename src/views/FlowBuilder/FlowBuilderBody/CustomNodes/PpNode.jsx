@@ -90,7 +90,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function PageProcessorNode({ data = {}}) {
   const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {}, showLeft = false, showRight = false, isSubFlow } = data;
-  // const isSubFlow = false;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
@@ -143,10 +142,10 @@ export default function PageProcessorNode({ data = {}}) {
   console.log('subFlow', isSubFlow);
 
   return (
-    <div className={iconView === 'icon' ? classes.newroot : classes.root}>
+    <div className={clsx({[classes.newroot]: iconView === 'icon', [classes.root]: iconView !== 'icon'})}>
       <DefaultHandle type="target" position={Position.Left} />
 
-      <div className={iconView === 'icon' ? classes.newcontentContainer : classes.contentContainer} >
+      <div className={clsx({[classes.newcontentContainer]: iconView === 'icon', [classes.contentContainer]: iconView !== 'icon'})} >
         <div>
           { (iconView !== 'icon' || (isSubFlow && !isSubFlowView)) && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
@@ -176,15 +175,6 @@ export default function PageProcessorNode({ data = {}}) {
             iconView={iconView}
             pageProcessorIndex={pageProcessorIndex}
           />
-          {/* { iconView === 'icon' && !isSubFlow && (
-          <div className={clsx(classes.newbranchContainer, {[classes.firstBranchStep]: isFirst})}>
-            {!isVirtual && (
-            <Typography variant="overline" className={classes.newbranchName}>
-              {branch.name}
-            </Typography>
-            )}
-          </div>
-          )} */}
         </div>
       </div>
 

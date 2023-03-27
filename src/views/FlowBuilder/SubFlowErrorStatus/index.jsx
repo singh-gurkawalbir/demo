@@ -2,19 +2,14 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Divider, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-import Status from '../../../components/Buttons/Status';
-import Spinner from '../../../components/Spinner';
 import actions from '../../../actions';
-import WarningIcon from '../../../components/icons/WarningIcon';
-import SuccessIcon from '../../../components/icons/SuccessIcon';
-import { FILTER_KEYS } from '../../../utils/errorManagement';
 import TextButton from '../../../components/Buttons/TextButton';
+import SuccessIcon from '../../../components/icons/SuccessIcon';
+import WarningIcon from '../../../components/icons/WarningIcon';
 import { isNewId } from '../../../utils/resource';
-import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   statusAppBlock: {
@@ -72,22 +67,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SubFlowErrorStatus({ count, isNew, flowId, resourceId, subBlockSchema }) {
+export default function SubFlowErrorStatus({ count, isNew, flowId, resourceId }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  const dispatch = useDispatch();
   const shouldErrorStatusBeShown = useSelector(state => {
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
     const latestFlowJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     return !isNew && isUserInErrMgtTwoDotZero && latestFlowJobs.length;
   });
-  const retryStatus = useSelector(
-    state => selectors.retryStatus(state, flowId, resourceId)
-  );
 
-  const handleStatus = useCallback(
+  const handleErrorClick = useCallback(
     errorType => {
       history.push(buildDrawerUrl({
         path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
@@ -120,33 +112,27 @@ export default function SubFlowErrorStatus({ count, isNew, flowId, resourceId, s
   // if (!shouldErrorStatusBeShown) {
   //   return null;
   // }
-  const IconComponent = count ? <WarningIcon data-test="warningIcon" className={classes.warning} /> : <SuccessIcon className={classes.success} />;
+  const IconComponent = count ? (
+    <>
+      <WarningIcon data-test="warningIcon" className={classes.warning} />
+      <TextButton
+        color="primary"
+        className={classes.statusButtonContainer}
+        onClick={handleErrorClick}
+        data-test="openErrors"
+        >
+        {count}
+      </TextButton>
+    </>
+  ) : <SuccessIcon className={classes.success} />;
+
+  if (!shouldErrorStatusBeShown) {
+    return null;
+  }
 
   return (
     <div className={clsx(classes.statusAppBlock, {[classes.successWrapper]: !count })}>
       {IconComponent}
-      {/* <Status
-        onClick={() => handleStatus('open')}
-        variant={count ? 'error' : 'success'}> { count ? `${getTextAfterCount('error', count, subBlockSchema)}` : (subBlockSchema ? '' : 'Success') }
-
-      </Status> */}
-      {/* { retryStatus === 'inProgress' && (
-      <div className={classes.retryContainer}>
-        <Divider orientation="vertical" className={classes.divider} />
-        <Spinner size={16} className={classes.spinner} />
-        <Typography variant="caption" component="div" >
-          Retrying
-        </Typography>
-      </div>
-      )}
-      { retryStatus === 'completed' && (
-        <div className={classes.retryContainer}>
-          <Divider orientation="vertical" className={classes.divider} />
-          <TextButton size="small" color="primary" className={classes.retryCompleteButton} onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
-            Retry completed
-          </TextButton>
-        </div>
-      )} */}
     </div>
   );
 }
