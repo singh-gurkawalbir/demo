@@ -1360,6 +1360,56 @@ describe('sampleData selectors', () => {
 
       expect(selectors.getAllParsableErrors(newState, resourceId)).toEqual(previewError.errors);
     });
+    test('should return errors when there are errors even though all stages are given', () => {
+      const previewError = {
+        errors: [{
+          classification: 'value',
+          code: 'cannot_evaluate_static_lookup',
+          message: 'Cannot evaluate the static lookup: "lookupName" using searchKey: "test".',
+          occurredAt: 1671780841390,
+          resolved: false,
+          source: 'application',
+        }],
+
+        stages: [{
+          name: 'request',
+          data: [{
+            body: { name: 'test', email: 'test', Name: '' },
+            headers: { 'content-type': 'application/json', accept: 'application/json'},
+            method: 'POST',
+            url: 'http://demo0822471.mockable.io/abcd',
+          }],
+        },
+        {
+          name: 'raw',
+          data: [{
+            body: { name: 'test', email: 'test', Name: '' },
+            headers: { 'content-type': 'application/json', accept: 'application/json'},
+            method: 'POST',
+            url: 'http://demo0822471.mockable.io/abcd',
+          }],
+        }, {
+          name: 'parse',
+          data: [{
+            body: { name: 'test', email: 'test', Name: '' },
+            headers: { 'content-type': 'application/json', accept: 'application/json'},
+            method: 'POST',
+            url: 'http://demo0822471.mockable.io/abcd',
+          }],
+        }],
+      };
+
+      const initialState = {
+        [resourceId]: { preview: {status: 'requested'} },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, previewError)
+      );
+
+      expect(selectors.getAllParsableErrors(newState, resourceId)).toEqual(previewError.errors);
+    });
 
     test('should return no errors when there are stages in the response, this scenario occurs when the endpoint errors out', () => {
       const error = {
