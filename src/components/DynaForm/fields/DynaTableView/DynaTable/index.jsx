@@ -164,6 +164,8 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        invalidateParentFieldOnError={invalidateParentFieldOnError}
+        setIsValid={setIsValid}
       />
     );
   }));
