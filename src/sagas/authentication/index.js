@@ -25,6 +25,7 @@ import { message } from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { updatePreferences } from '../users';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -196,8 +197,9 @@ export function* checkAndUpdateDefaultSetId() {
       actions.user.preferences.update({
         defaultAShareId: calculatedDefaultAShareId,
         environment: 'production',
-      })
+      }, true)
     );
+    yield call(updatePreferences); // we have wait till preference get updated in the BE to proceed further.
   }
 }
 

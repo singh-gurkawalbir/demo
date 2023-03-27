@@ -269,7 +269,7 @@ describe('checkAndUpdateDefaultSetId test suite', () => {
         actions.user.preferences.update({
           defaultAShareId: 'ashare2',
           environment: 'production',
-        })
+        }, true)
       )
     );
   });
@@ -311,7 +311,7 @@ describe('checkAndUpdateDefaultSetId test suite', () => {
         actions.user.preferences.update({
           defaultAShareId: 'own',
           environment: 'production',
-        })
+        }, true)
       )
     );
   });
