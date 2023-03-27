@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-// TODO: Karthik togle background not showing
 const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: 24,
