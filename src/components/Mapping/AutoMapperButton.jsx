@@ -12,10 +12,6 @@ const useStyles = makeStyles(theme => ({
   spinner: {
     marginRight: theme.spacing(1),
   },
-  helpTextButton: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-  },
   betaLabel: {
     border: '1px solid',
     borderColor: theme.palette.background.paper,
@@ -75,7 +71,7 @@ export default function AutoMapperButton({disabled}) {
         </span>
       </FilledButton>
 
-      <Help title="Auto-map fields" helpKey="autoMapFields" className={classes.helpTextButton} />
+      <Help title="Auto-map fields" helpKey="autoMapFields" sx={{ml: 0.5}} />
     </>
   );
 }

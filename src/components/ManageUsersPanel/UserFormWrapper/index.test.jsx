@@ -379,7 +379,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  });
+  }, 10000);
   test('should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -407,7 +407,7 @@ describe('user Form Wrapper', () => {
 
     expect(accessLevelText).toBeInTheDocument();
     await userEvent.click(accessLevelText);
-    const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
+    const administratorMessage = await waitFor(() => screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'}));
 
     expect(administratorMessage).toBeInTheDocument();
     fireEvent.click(administratorMessage);

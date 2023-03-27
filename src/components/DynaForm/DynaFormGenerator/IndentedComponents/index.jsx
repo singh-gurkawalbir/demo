@@ -24,13 +24,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
     fontSize: '15px',
   },
-  helpButton: {
-    padding: 0,
-    margin: 2,
-    '&:hover': {
-      background: 'none',
-    },
-  },
 }));
 
 export default function IndentedComponents(props) {
@@ -60,9 +53,9 @@ export default function IndentedComponents(props) {
             <Typography variant="body2" className={classes.indentTitle}>
               {heading}
               <Help
-                className={classes.helpButton}
                 title={heading}
                 helpKey={helpKey}
+                sx={{margin: 0.5}}
               />
             </Typography >
           )}

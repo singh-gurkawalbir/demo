@@ -116,7 +116,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     width: theme.spacing(9),
-    marginLeft: -theme.spacing(13),
+    marginLeft: '-106px', // using theme.spacing for negative values results in "NaN"
     justifyContent: 'end',
     zIndex: 1,
   },

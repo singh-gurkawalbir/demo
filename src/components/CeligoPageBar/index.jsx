@@ -45,6 +45,7 @@ export default function CeligoPageBar(props) {
     parentUrl,
     children,
     title,
+    infoTitleName,
     infoText,
     subtitle,
     titleTag,
@@ -88,7 +89,7 @@ export default function CeligoPageBar(props) {
           {titleTag && <span>{titleTag}</span>}
           {infoText && (
             <InfoIconButton
-              title={title}
+              title={infoTitleName || title}
               info={infoText}
               escapeUnsecuredDomains={escapeUnsecuredDomains}
             />

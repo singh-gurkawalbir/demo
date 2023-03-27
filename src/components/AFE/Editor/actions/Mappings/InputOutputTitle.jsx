@@ -11,10 +11,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  helpButton: {
-    padding: 0,
-    margin: 2,
-  },
   message: {
     backgroundColor: theme.palette.secondary.lightest,
     borderRadius: 4,
@@ -45,8 +41,8 @@ export default function InputOutputTitle({title, helpKey}) {
         {helpKey && (
         <Help
           title={title}
-          className={classes.helpButton}
           helpKey={helpKey}
+          sx={{margin: 0.5}}
         />
         )}
       </>
@@ -58,8 +54,8 @@ export default function InputOutputTitle({title, helpKey}) {
       <Typography variant="body1" component="div">{title}</Typography>
       <Help
         title={title}
-        className={classes.helpButton}
         helpKey={title === 'Input' ? 'afe.mappings.v2.input' : 'afe.mappings.v2.output'}
+        sx={{margin: 0.5}}
         />
 
       <ActionGroup position="right">

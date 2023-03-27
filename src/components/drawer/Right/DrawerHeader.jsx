@@ -25,13 +25,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
   },
-  helpTextButton: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& svg': {
-      fontSize: 20,
-    },
-  },
 }));
 
 const CloseIconButton = ({CloseButton, disableClose, onClose, closeDataTest}) => {
@@ -90,11 +83,12 @@ export default function DrawerHeader({
         {title}
         {helpKey && (
           <Help
+            size="small"
             title={helpTitle}
-            className={classes.helpTextButton}
             helpKey={helpKey}
             fieldId={helpKey}
-      />
+            sx={{ml: 0.5}}
+          />
         )}
         {infoText && <InfoIconButton info={infoText} title={title} />}
       </Typography>

@@ -35,13 +35,6 @@ const useStyles = makeStyles(theme => ({
   content: {
     fontSize: '14px',
   },
-  helpTextButton: {
-    marginLeft: theme.spacing(1),
-    height: theme.spacing(2),
-    width: theme.spacing(2),
-    padding: 0,
-    marginRight: theme.spacing(2),
-  },
   mfaConfig: {
     marginTop: theme.spacing(1),
   },
@@ -107,7 +100,10 @@ function MyUserSettings() {
           className={classes.mfaSwitch}
           tooltip="Off / On"
           data-test="mfa-switch-button" />
-        <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
+        <Help
+          title="Enable MFA"
+          helpKey="mfa.enable"
+          sx={{ml: 0.5}} />
       </ActionGroup>
       { isMFAEnabled || isMFASetupIncomplete ? (
         <div className={classes.mfaConfig}>

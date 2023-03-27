@@ -11,7 +11,7 @@ const formatFieldIds = Object.values(fileDefinitionFormatFieldsMap);
 
 export default function useHandleFileDefinitionFieldVisibility(formKey) {
   const dispatch = useDispatch();
-  const { fileType, inputMode, outputMode } = useSelector(state => {
+  const { fileType, inputMode, outputMode, connectionId } = useSelector(state => {
     const formContext = selectors.formState(state, formKey) || {};
     const formValues = formContext.value || {};
 
@@ -19,6 +19,7 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
       fileType: formValues['/file/type'],
       outputMode: formValues['/outputMode'],
       inputMode: formValues['/inputMode'],
+      connectionId: formValues['/_connectionId'],
     };
   }, shallowEqual);
 
@@ -70,7 +71,7 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
         dispatch(actions.form.forceFieldState(formKey)(fieldId, { visible }));
       });
     }
-  }, [fileType, userDefinitionId, mode, dispatch, formKey, resourceCanHaveFileDefinitions]);
+  }, [fileType, userDefinitionId, mode, dispatch, formKey, resourceCanHaveFileDefinitions, connectionId]);
 
   // Below useEffect deals with file definition rules field visibility
   useEffect(() => {
@@ -87,5 +88,5 @@ export default function useHandleFileDefinitionFieldVisibility(formKey) {
       // we only show when user selects  file definition format and mode is records
       dispatch(actions.form.forceFieldState(formKey)(FILE_DEFINITION_RULES_FIELD_ID, { visible }));
     }
-  }, [fileType, userDefinitionId, resourceType, mode, dispatch, formKey, resourceCanHaveFileDefinitions, stringifiedFormatFieldValues]);
+  }, [fileType, userDefinitionId, resourceType, mode, dispatch, formKey, resourceCanHaveFileDefinitions, stringifiedFormatFieldValues, connectionId]);
 }

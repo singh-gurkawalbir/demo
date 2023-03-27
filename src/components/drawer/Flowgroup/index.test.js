@@ -152,7 +152,9 @@ describe('FlowgroupDrawer tests', () => {
   test('Should able to test the FlowGroup drawer with create flowgroup having flows with close after save', async () => {
     await initFlowgroupDrawer({props, isEdit: false, addFlow: true});
     expect(screen.getByText(/Create flow group/i)).toBeInTheDocument();
-    await waitFor(() => userEvent.click(screen.getAllByRole('checkbox')[0]));
+    const checkbox = await waitFor(() => screen.getAllByRole('checkbox')[0]);
+
+    await userEvent.click(checkbox);
     const nameInput = document.querySelector('input');
 
     await userEvent.click(nameInput);
@@ -163,7 +165,9 @@ describe('FlowgroupDrawer tests', () => {
   test('Should able to test the FlowGroup drawer with create flowgroup having flows and move to edit drawer', async () => {
     await initFlowgroupDrawer({props, isEdit: false, addFlow: true});
     expect(screen.getByText(/Create flow group/i)).toBeInTheDocument();
-    await waitFor(() => userEvent.click(screen.getAllByRole('checkbox')[0]));
+    const checkbox = await waitFor(() => screen.getAllByRole('checkbox')[0]);
+
+    await userEvent.click(checkbox);
     const nameInput = document.querySelector('input');
 
     await userEvent.click(nameInput);

@@ -58,6 +58,10 @@ const useStyles = makeStyles(theme => ({
   inputDateTime: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    borderRadius: 2,
+    '&:hover': {
+      border: `1px solid ${theme.palette.primary.main}`,
+    },
   },
   iconWrapper: {
     '&:hover': {
