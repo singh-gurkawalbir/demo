@@ -14,9 +14,6 @@ const useStyles = makeStyles({
     alignItems: 'center',
     whiteSpace: 'nowrap',
   },
-  helpIcon: {
-    padding: 0,
-  },
 });
 const emptyArr = [];
 
@@ -107,8 +104,7 @@ export default function MultiSelectColumnFilter({
         <Help
           title={title}
           helpKey={helpKey}
-          caption={helpKey}
-          className={classes.helpIcon}
+          fieldPath={helpKey}
           disablePortal={false}
           placement="left-end" />
       )}

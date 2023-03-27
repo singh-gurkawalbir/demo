@@ -115,6 +115,8 @@ export default function DateTimePicker(props) {
     }
     setTimeValue(dateTimeValue);
   };
+  const preferences = useSelector(state => selectors.userOwnPreferences(state));
+  const timeZone = useSelector(state => selectors.userTimezone(state));
 
   const setFormatDateValue = dateTimeValue => {
     if (dateTimeValue) {
@@ -208,29 +210,29 @@ export default function DateTimePicker(props) {
         <div className={classes.dateTimeWrapper}>
           <div className={classes.fieldWrapper}>
             <DatePicker
-              // maxDate={doNotAllowFutureDates && moment()}
+              maxDate={doNotAllowFutureDates && moment()}
               // {...isLoggableAttr(isLoggable)}
-              // disabled={disabled}
+              disabled={disabled}
               // // variant="inline"
               // // data-test="date"
-              // format={dateFormat}
+              format={dateFormat}
               // // placeholder={dateFormat}
-              // value={dateValue}
-              // onChange={setFormatDateValue}
-              // label={dateLabel || 'Date'}
-              // onKeyDown={e => {
-              //   // this is specifically for qa to inject their date time string
-              //   // they should alter the input dom to add a qa attribute prior to injection for date time
-              //   if (e.target.hasAttribute('qa')) return;
+              value={(typeof dateValue === 'string' || dateValue instanceof String) ? convertUtcToTimezone(dateValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}) : dateValue}
+              onChange={setFormatDateValue}
+              label={dateLabel || 'Date'}
+              onKeyDown={e => {
+                // this is specifically for qa to inject their date time string
+                // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
 
-              //   e.preventDefault();
-              // }}
-              // onKeyPress={e => {
-              //   if (e.target.hasAttribute('qa')) return;
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
 
-              //   e.preventDefault();
-              // }}
-              // slots={{openPickerIcon: CalendarIcon }}
+                e.preventDefault();
+              }}
+              slots={{openPickerIcon: CalendarIcon }}
               // // disableToolbar
               // // className={classes.keyBoardDateTimeWrapper}
               // // fullWidth
@@ -260,7 +262,7 @@ export default function DateTimePicker(props) {
 
                 e.preventDefault();
               }}
-              value={timeValue}
+              value={(typeof timeValue === 'string' || timeValue instanceof String) ? convertUtcToTimezone(timeValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}) : timeValue}
               onChange={setFormatTimeValue}
               // fullWidth
               // className={classes.keyBoardDateTimeWrapper}

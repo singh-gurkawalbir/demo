@@ -19,9 +19,6 @@ import { drawerPaths } from '../../../utils/rightDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   appLogo: {
     paddingRight: theme.spacing(2),
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
@@ -46,7 +43,6 @@ function RouterWrappedContent({ flowId, resourceType, resourceId, handleClose })
         <ActionGroup>
           <Help
             title="Debug logs"
-            className={classes.helpTextButton}
             helpKey="resource.debugLogs" />
         </ActionGroup>
         <ActionGroup position="right">

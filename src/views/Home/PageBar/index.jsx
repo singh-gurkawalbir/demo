@@ -65,7 +65,7 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      <KeywordSearch isHomeSearch filterKey={FILTER_KEY} />
+      <KeywordSearch placeholder="Search integrations & flows" size="large" filterKey={FILTER_KEY} />
 
       <ActionGroup>
         {permission.create && (

@@ -106,15 +106,6 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(5, 0, 0, 5),
     maxWidth: 450,
   },
-  // NOTE: 52px is collapsed left side bar. 410px is right page header action buttons + padding
-  // we use these to force the input to be as large as possible in the pageBar
-  // without causing any weird wrapping.
-  editableTextInput: {
-    width: `calc(100vw - ${52 + 410}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
-  },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },

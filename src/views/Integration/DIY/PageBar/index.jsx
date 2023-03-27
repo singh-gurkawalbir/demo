@@ -28,12 +28,6 @@ const useStyles = makeStyles(theme => ({
   tag: {
     marginLeft: theme.spacing(1),
   },
-  editableTextInput: {
-    width: `calc(60vw - ${52 + 24}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
-  },
 }));
 
 const emptyObj = {};
@@ -107,7 +101,6 @@ export default function PageBar() {
       canDelete: permission.delete,
     };
   }, shallowEqual);
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   const patchIntegration = useCallback(
     (path, value) => {
@@ -207,6 +200,7 @@ export default function PageBar() {
           onChange={handleTagChangeHandler}
         />
       )}
+      infoTitleName={pageTitle}
       infoText={
               hasIntegration ? (
                 <EditableText

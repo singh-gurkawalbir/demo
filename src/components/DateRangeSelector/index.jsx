@@ -10,7 +10,7 @@ import 'react-date-range/dist/theme/default.css'; // theme css file
 import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import { useSelector } from 'react-redux';
-import ArrowPopper from '../ArrowPopper';
+import {ArrowPopper, Box} from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ActionButton from '../ActionButton';
@@ -77,10 +77,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-  parentPicker: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   listBtn: {
     background: theme.palette.background.paper,
     marginBottom: theme.spacing(1),
@@ -110,9 +106,6 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.background.paper,
       },
     },
-  },
-  rightCalendar: {
-    marginLeft: theme.spacing(2),
   },
   dateRangePopperBtnFull: {
     width: '100%',
@@ -177,7 +170,6 @@ export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
-  classProps = {},
   customPresets = [],
   showTime = true,
   clearable = false,
@@ -287,43 +279,36 @@ export default function DateRangeSelector({
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        classes={{
-          popper: clsx(classProps.filterTimeStampPopper, {[classProps.filterTimeStampPopperExpand]: selectedRange.preset === 'custom' }),
-          arrow: clsx(classProps.filterTimeStampPopperArrow, {[classProps.filterTimeStampArrowPopperExpand]: selectedRange.preset === 'custom'}),
-        }}
         restrictToParent={false}
         placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.parentPicker}>
-              <div className={classes.leftItems}>
-                <List className={classes.leftItemsList}>
-                  {presets.map((m, i) => (
-                    <div key={m.id}>
-                      {!!i}
-                      <ListItem
-                        button
-                        className={classes.listBtn}
-                        selected={selectedRange.preset === m.id}
-                        onClick={event => handleListItemClick(event, m.id)}
+            <Box display="flex" flexDirection="column">
+              <List className={classes.leftItemsList}>
+                {presets.map((m, i) => (
+                  <div key={m.id}>
+                    {!!i}
+                    <ListItem
+                      button
+                      className={classes.listBtn}
+                      selected={selectedRange.preset === m.id}
+                      onClick={event => handleListItemClick(event, m.id)}
                       >
-                        <ListItemText secondary={m.label} />
-                      </ListItem>
-                    </div>
-                  ))}
+                      <ListItemText secondary={m.label} />
+                    </ListItem>
+                  </div>
+                ))}
 
-                </List>
-                {selectedRange.preset === 'custom' &&
+              </List>
+              {selectedRange.preset === 'custom' &&
                 CustomTextFields && (
                 <CustomTextFields
                   reset={reset}
                   setReset={setReset} selectedRange={selectedRange}
                   setSelectedRange={setSelectedRange} />
-                )}
-              </div>
+              )}
               {selectedRange.preset === 'custom' && (
-              <div className={classes.rightCalendar}>
                 <DateRange
                   isCalendar={isCalendar}
                   setSelectedRange={setSelectedRangeWithConstraint}
@@ -342,9 +327,8 @@ export default function DateRangeSelector({
                   inputRanges={[]}
                   showPreview={false}
                 />
-              </div>
               )}
-            </div>
+            </Box>
             <ActionGroup className={classes.actions}>
               <FilledButton onClick={handleSave}>
                 {primaryButtonLabel || 'Apply'}
