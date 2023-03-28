@@ -155,7 +155,7 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [_httpConnectorId, accountOwner, data.fields, dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!_httpConnectorId || !sourceForm || stagedResource?._connectorId) {
     return null;

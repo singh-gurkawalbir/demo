@@ -124,7 +124,7 @@ export default function APISelect(props) {
         {apiChange: true}
       )
     );
-  }, [accountOwner, dispatch, formContext?.fields, formContext?.value, id, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [accountOwner, dispatch, fieldData.fields, formContext.fields, formContext.value, id, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!data || !data.length) {
     return null;
