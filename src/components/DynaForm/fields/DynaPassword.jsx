@@ -206,7 +206,7 @@ export default function DynaPassword(props) {
         </ArrowPopper>
 
         <div className={classes.passwordStrongSteps}>
-          <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+          <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>
           <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
           <div className={classes.passwordListItem}>
             {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
