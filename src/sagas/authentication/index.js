@@ -25,6 +25,7 @@ import { message } from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { updatePreferences } from '../users';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -196,8 +197,9 @@ export function* checkAndUpdateDefaultSetId() {
       actions.user.preferences.update({
         defaultAShareId: calculatedDefaultAShareId,
         environment: 'production',
-      })
+      }, true)
     );
+    yield call(updatePreferences); // we have wait till preference get updated in the BE to proceed further.
   }
 }
 
@@ -495,7 +497,6 @@ export function* auth({ email, password }) {
       hidden: true,
     });
 
-    yield call(validateSession);
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
@@ -507,6 +508,7 @@ export function* auth({ email, password }) {
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
+    yield call(validateSession);
     const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);
