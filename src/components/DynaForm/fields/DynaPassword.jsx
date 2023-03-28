@@ -24,12 +24,15 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     background: theme.palette.background.paper,
     border: `1px solid ${theme.palette.secondary.lightest}`,
+
     paddingRight: theme.spacing(1),
     '& > div': {
       '& >.MuiFilledInput-input': {
         border: 'none',
+        letterSpacing: '0.5px',
       },
     },
+
   },
   fieldWrapper: {
     display: 'flex',
