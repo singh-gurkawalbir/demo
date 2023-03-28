@@ -1,5 +1,5 @@
 export default {
-  preSave: (formValues, resource) => {
+  preSave: formValues => {
     const retValues = { ...formValues };
 
     return {
