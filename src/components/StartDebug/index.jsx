@@ -146,7 +146,7 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
         disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
         <Box display="flex" flexDirection="column" sx={{padding: 2}}>

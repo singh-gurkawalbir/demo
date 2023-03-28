@@ -51,7 +51,7 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
       {open && (
       <ArrowPopper
         placement="bottom-end"
-        restrictToParent={false}
+        preventOverflow={false}
         className={classes.actionsMenuPopper}
         open={open}
         anchorEl={anchorEl}

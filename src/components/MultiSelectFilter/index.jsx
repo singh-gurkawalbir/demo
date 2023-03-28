@@ -217,7 +217,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom"
-        restrictToParent={false}
+        preventOverflow={false}
         onClose={toggleClick}>
         {anchorEl && (
         <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>

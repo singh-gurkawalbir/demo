@@ -87,7 +87,7 @@ export default function LogoStrip(props) {
             placement="bottom-end"
             open={open}
             anchorEl={anchorEl}
-            restrictToParent={false}
+            preventOverflow={false}
             classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, appsPaper) }}
             id="additionalApps"
             onClose={handleClose}>

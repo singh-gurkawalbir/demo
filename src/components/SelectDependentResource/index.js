@@ -144,7 +144,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
         <Box display="flex" flexDirection="column">

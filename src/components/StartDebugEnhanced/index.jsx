@@ -183,7 +183,7 @@ export default function StartDebugEnhanced({
         disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
         <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>

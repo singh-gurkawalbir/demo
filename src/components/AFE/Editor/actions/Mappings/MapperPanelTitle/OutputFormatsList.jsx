@@ -138,7 +138,7 @@ export default function OutputFormatsList({disabled}) {
         id="outputFormats"
         onClose={handleClose}
         placement="bottom-center"
-        restrictToParent={false}
+        preventOverflow={false}
         open={open}
         anchorEl={anchorEl}
           >

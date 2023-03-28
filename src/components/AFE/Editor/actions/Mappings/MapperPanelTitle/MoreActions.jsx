@@ -102,7 +102,7 @@ export default function MoreActions({importId, disabled}) {
       {open && (
         <ArrowPopper
           placement="bottom-end"
-          restrictToParent={false}
+          preventOverflow={false}
           open={open}
           anchorEl={anchorEl}
           id={actionsPopoverId}
