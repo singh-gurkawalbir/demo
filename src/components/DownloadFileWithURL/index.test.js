@@ -1,7 +1,7 @@
 import React from 'react';
 import DownloadFileWithURL from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 
 async function initDownloadFileWithURL({
   downloadUrl = '',
@@ -10,9 +10,11 @@ async function initDownloadFileWithURL({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    defaultAShareId,
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      defaultAShareId,
+    };
+  });
   const ui = (
     <DownloadFileWithURL downloadUrl={downloadUrl}>
       {children}
@@ -58,6 +60,6 @@ describe('DownloadFileWithURL component test cases', () => {
     );
 
     expect(downloadLink).toBeInTheDocument();
-    expect(downloadLink).toHaveAttribute('href', '/download/link&integrator-ashareid=123456');
+    expect(downloadLink).toHaveAttribute('href', '/download/link?integrator-ashareid=123456');
   });
 });

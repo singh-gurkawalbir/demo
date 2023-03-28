@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../../../store';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import * as mockEnqueSnackbar from '../../../../hooks/enqueueSnackbar';
 
@@ -24,11 +24,13 @@ function SomeComponent() {
 }
 
 async function initUseNotifySetupSuccess(context) {
-  initialStore.getState().session.asyncTask[asyncTaskKey] = {
-    status: 'complete',
-  };
-  initialStore.getState().data.mfa = {userSettings: {enabled: false}};
-  initialStore.getState().session.mfa = context;
+  mutateStore(initialStore, draft => {
+    draft.session.asyncTask[asyncTaskKey] = {
+      status: 'complete',
+    };
+    draft.data.mfa = {userSettings: {enabled: false}};
+    draft.session.mfa = context;
+  });
   const ui = (
     <MemoryRouter>
       <SomeComponent />

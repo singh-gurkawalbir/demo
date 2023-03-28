@@ -4,14 +4,14 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import cloneDeep from 'lodash/cloneDeep';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import AlertDialog from '.';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import actions from '../../actions';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initActionButton({
   defaultAShareId = 'own',
@@ -26,45 +26,47 @@ async function initActionButton({
   initialStore = reduxStore,
 } = {}) {
   /* eslint no-param-reassign: "error" */
-  initialStore.getState().app = {
-    initVersion,
-    version: 'release-v8.6.1.0.10-06-13-52',
-    userAcceptedAccountTransfer,
-  };
-  initialStore.getState().auth = {
-    authenticated,
-    commStatus: 'error',
-    authTimestamp, // timestamp
-    sessionExpired, // true, false
-    warning,
-    userLoggedInDifferentTab,
-  };
-  initialStore.getState().user = {
-    profile: {
+  mutateStore(initialStore, draft => {
+    draft.app = {
+      initVersion,
+      version: 'release-v8.6.1.0.10-06-13-52',
+      userAcceptedAccountTransfer,
+    };
+    draft.auth = {
+      authenticated,
+      commStatus: 'error',
+      authTimestamp, // timestamp
+      sessionExpired, // true, false
+      warning,
+      userLoggedInDifferentTab,
+    };
+    draft.user = {
       preferences: {
         defaultAShareId,
       },
-      authTypeSSO: {
-        _ssoClientId: 'sso_client_id',
-      },
-    },
-    notifications: {
-
-    },
-    org: {
-      accounts: [{
-        _id: 'not_own',
-        accessLevel: 'manage',
-        accountSSORequired,
-        ownerUser: {
+      profile: {
+        authTypeSSO: {
           _ssoClientId: 'sso_client_id',
         },
-      }, {
-        _id: 'own',
-        accessLevel: 'owner',
-      }],
-    },
-  };
+      },
+      notifications: {
+
+      },
+      org: {
+        accounts: [{
+          _id: 'not_own',
+          accessLevel: 'manage',
+          accountSSORequired,
+          ownerUser: {
+            _ssoClientId: 'sso_client_id',
+          },
+        }, {
+          _id: 'own',
+          accessLevel: 'owner',
+        }],
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ConfirmDialogProvider>
@@ -76,6 +78,16 @@ async function initActionButton({
   return renderWithProviders(ui, {initialStore});
 }
 
+jest.mock('../../views/SignIn/SigninForm', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../views/SignIn/SigninForm'),
+  default: () => (
+    <>
+      <div>Mocking Signin Form</div>
+      <button type="button">Mock Sign in</button>
+    </>
+  ),
+}));
 describe('alertDialog component', () => {
   runServer();
   let initialStore;
@@ -83,19 +95,21 @@ describe('alertDialog component', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'RESOURCE_REQUEST_COLLECTION':
-          initialStore.getState().session.loadResources.ssoclients = 'received';
-          initialStore.getState().data.resources.ssoclients = [];
-          initialStore.getState().comms.networkComms['GET:/ssoclients'] = {
-            status: 'success',
-            hidden: false,
-            refresh: false,
-            method: 'GET',
-          };
+          mutateStore(initialStore, draft => {
+            draft.session.loadResources.ssoclients = 'received';
+            draft.data.resources.ssoclients = [];
+            draft.comms.networkComms['GET:/ssoclients'] = {
+              status: 'success',
+              hidden: false,
+              refresh: false,
+              method: 'GET',
+            };
+          });
           break;
         default:
       }
@@ -111,7 +125,7 @@ describe('alertDialog component', () => {
     test('should pass the render with session expires true', async () => {
       await initActionButton({sessionExpired: true, initialStore});
       expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: 'Sign in'});
+      const buttonRef = screen.getByRole('button', {name: 'Mock Sign in'});
 
       expect(buttonRef).toBeInTheDocument();
     });

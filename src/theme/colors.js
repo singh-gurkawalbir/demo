@@ -31,6 +31,10 @@ export default {
   celigoSandbox4: '#806A4B',
   celigoSandbox5: '#625544',
 
+  celigoOrionNeutral1: '#091928',
+  celigoOrionNeutral2: '#0D2841',
+  celigoOrionNeutral3: '#071D32',
+
   // Below is a re-structured set of colors
   // @Azhar, Do yu like this better?
   white: '#FFFFFF',
@@ -77,5 +81,11 @@ export default {
     3: '#A58559',
     4: '#806A4B',
     5: '#625544',
+  },
+
+  orion: {
+    1: '#091928',
+    2: '#0D2841',
+    3: '#071D32',
   },
 };

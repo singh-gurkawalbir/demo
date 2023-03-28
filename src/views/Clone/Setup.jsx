@@ -64,7 +64,7 @@ export default function Clone() {
 
   useEffect(() => {
     if (!installSteps.length) {
-      history.push(`/clone/flows/${resourceId}/preview`);
+      history.push(`/clone/${resourceType}/${resourceId}/preview`);
     }
   });
 
@@ -211,7 +211,8 @@ export default function Clone() {
             step,
             { _id: step.options._connectionId },
             templateId,
-            netsuitePackageType
+            netsuitePackageType,
+            true                                  // true here sets the isManualVerification flag to true which means the user has triggered the verification
           )
         );
       }

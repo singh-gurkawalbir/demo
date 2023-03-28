@@ -10,6 +10,7 @@ export default {
     }.com`,
     '/http/ping/relativeURI': '/v1.0/api/people',
     '/http/ping/method': 'GET',
+    '/http/headers': [{ name: 'content-type', value: 'application/json' }],
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Accesskey',
     '/http/auth/token/scheme': ' ',

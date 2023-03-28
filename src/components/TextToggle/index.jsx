@@ -9,7 +9,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     borderRadius: 24,
     padding: 2,
-    backgroundColor: theme.palette.secondary.lightest,
     '& button': {
       marginLeft: 0,
       height: 22,
@@ -17,7 +16,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'transparent',
       minWidth: 100,
       '& span': {
-        color: theme.palette.secondary.main,
         lineHeight: '0px',
       },
     },
@@ -25,7 +23,7 @@ const useStyles = makeStyles(theme => ({
       borderRadius: 24,
       backgroundColor: theme.palette.background.toggle,
       '& span': {
-        color: theme.palette.background.paper,
+        color: theme.palette.common.white,
       },
     },
     '& button:hover': {

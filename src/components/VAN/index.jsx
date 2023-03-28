@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { Tooltip, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
@@ -10,16 +10,16 @@ import FilledButton from '../Buttons/FilledButton';
 import useConfirmDialog from '../ConfirmDialog';
 import { useSelectorMemo } from '../../hooks';
 import { emptyObject } from '../../constants';
+import ButtonWithTooltip from '../Buttons/ButtonWithTooltip';
+import {message} from '../../utils/messageStore';
+import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
-  fixConnectionBtn: {
-    fontSize: 15,
-    lineHeight: '17px',
-    padding: 6,
-  },
   titleStatusPanel: {
-    color: theme.palette.secondary.main,
-    fontFamily: 'Roboto400',
+    marginTop: theme.spacing(0.5),
+  },
+  upgradeButton: {
+    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -69,29 +69,26 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
     <div className={className}>
       {licenseActionDetails.van === false ? (
         <NotificationToaster variant="info" size="large">
-          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
-            <a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN Connector</a>(Value Added Network) is not included in your accounts current subscription plan.
-            <br /><b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>
-            <br />
-            <br />
-            <Tooltip title={upgradeRequested ? 'We have received your request and will be in touch soon.' : ''} placement="bottom-start" >
-              <span>
-                <FilledButton
-                  onClick={onRequestUpgradeClick}
-                  disabled={upgradeRequested}
-                  id="request-van-upgrade-buttton"
-            >
-                  {!upgradeRequested ? 'Request upgrade' : 'Access Requested'}
-                </FilledButton>
-              </span>
-            </Tooltip>
+          <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
+            <RawHtml html={message.SUBSCRIPTION.REQUEST_RECEIVED_VAN} />
+            <ButtonWithTooltip
+              tooltipProps={{
+                title: upgradeRequested ? message.SUBSCRIPTION.VAN_LICENSE_UPGRADE_TOOLTIP_MESSAGE : '',
+                placement: 'bottom-start'}}>
+              <FilledButton
+                onClick={onRequestUpgradeClick}
+                disabled={upgradeRequested}
+                id="request-van-upgrade-buttton"
+                className={classes.upgradeButton}>
+                {!upgradeRequested ? 'Request upgrade' : 'Access Requested'}
+              </FilledButton>
+            </ButtonWithTooltip>
           </Typography>
         </NotificationToaster>
       ) : (
         <NotificationToaster variant="warning" size="large">
-          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
-            <b>Additional action required after saving</b>
-            <br />You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.
+          <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
+            <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />
           </Typography>
         </NotificationToaster>
       )}

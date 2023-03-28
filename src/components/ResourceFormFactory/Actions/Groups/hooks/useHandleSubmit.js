@@ -34,7 +34,7 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = { ...values };
+      const newValues = {...values};
 
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {

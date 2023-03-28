@@ -76,15 +76,16 @@ export default function AuditLog({
 
   const auditResourcePath = commKeyGenerator(`/${auditResourceTypePath(resourceType, resourceId)}`, 'GET');
   const isLoadingAuditLog = useSelector(state => selectors.isLoading(state, auditResourcePath));
+  const resourcesToLoad = ['connections',
+    'flows', 'exports', 'imports', 'scripts', 'agents', 'stacks', ...(
+      !resourceId ? ['apis', 'accesstokens'] : []
+    )];
 
   return (
     <LoadResources
       required
       integrationId={integrationId}
-      resources={['connections',
-        'integrations', 'flows', 'exports', 'imports', 'scripts', 'agents', 'stacks', ...(
-          !resourceId ? ['apis', 'accesstokens'] : []
-        )].join(',')}>
+      resources={integrationId ? resourcesToLoad : [...resourcesToLoad, 'integrations']}>
       <>
         {isLoadingAuditLog
           ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (

@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ErrorDetailsDrawer from '.';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initErrorDetailsDrawer({
   props = {
@@ -16,53 +16,56 @@ async function initErrorDetailsDrawer({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.errorManagement.errorDetails = {
-    flow_id: {
-      export_id: {
-        open: {
-          errors: [{
-            _id: 'job_id_1',
-          }],
-          status: 'received',
+  mutateStore(initialStore, draft => {
+    draft.session.errorManagement.errorDetails = {
+      flow_id: {
+        export_id: {
+          open: {
+            errors: [{
+              _id: 'job_id_1',
+            }],
+            status: 'received',
+          },
+        },
+        export_id_1: {
+          open: {
+            errors: [],
+            status: 'received',
+          },
+        },
+        export_id_2: {
+          open: {
+            errors: [{
+              _id: 'job_id_3',
+            }],
+            status: 'received',
+          },
         },
       },
-      export_id_1: {
-        open: {
-          errors: [],
-          status: 'received',
+    };
+    draft.session.filters = {
+      'flow_id-flow_job_id-export_id_1': {
+        numOpenError: 1,
+        endedAt: Date.now(),
+      },
+      'flow_id-flow_job_id-export_id_2': {
+        numOpenError: 1001,
+        endedAt: Date.now(),
+      },
+    };
+    draft.data.resources = {
+      exports: [
+        {
+          _id: 'export_id',
         },
-      },
-      export_id_2: {
-        open: {
-          errors: [{
-            _id: 'job_id_3',
-          }],
-          status: 'received',
+        {
+          _id: 'export_id_1',
+          name: 'export name 1',
         },
-      },
-    },
-  };
-  initialStore.getState().session.filters = {
-    'flow_id-flow_job_id-export_id_1': {
-      numOpenError: 1,
-      endedAt: Date.now(),
-    },
-    'flow_id-flow_job_id-export_id_2': {
-      numOpenError: 1001,
-      endedAt: Date.now(),
-    },
-  };
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: 'export_id',
-      },
-      {
-        _id: 'export_id_1',
-        name: 'export name 1',
-      },
-    ],
-  };
+      ],
+    };
+  });
+
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/flow_id/errors/${resourceId}${errortType ? `/${errortType}` : ''}`}]}

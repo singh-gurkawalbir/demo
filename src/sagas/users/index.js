@@ -12,6 +12,7 @@ import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../constants';
 import { getResourceCollection } from '../resources';
+import { checkAndUpdateDefaultSetId } from '../authentication';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -54,7 +55,10 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences() {
+export function* updatePreferences({ skipSaga = false } = {}) {
+  if (skipSaga) {
+    return true;
+  }
   const updatedPayload = yield select(selectors.userOwnPreferences);
 
   try {
@@ -262,7 +266,7 @@ export function* leaveAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
   if (userPreferences.defaultAShareId === id) {
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else {
     yield put(actions.resource.requestCollection('shared/ashares'));
@@ -332,6 +336,14 @@ export function* deleteUser({ _id }) {
     });
   } catch (e) {
     return true;
+  }
+  const { defaultAShareId } = yield select(selectors.userPreferences);
+
+  // user delete his own user in userList we should reinitialise the session and set the defaultAShareId to next valid accountId or as own(if no other shared account present)
+  if (defaultAShareId === _id) {
+    yield call(checkAndUpdateDefaultSetId);
+    yield put(actions.auth.clearStore({ authenticated: true }));
+    yield put(actions.auth.initSession());
   }
 
   yield put(actions.user.org.users.deleted(_id));
@@ -430,7 +442,14 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
     resourceType === 'account' &&
     userPreferences.defaultAShareId === ACCOUNT_IDS.OWN
   ) {
-    yield put(actions.auth.clearStore());
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: id,
+        environment: 'production',
+      }, true)
+    ); // incase the account which is accepted has mfa required. we need to update the preference first so that initSession can set requiredMfaSetUp to true.
+    yield call(updatePreferences); // we have wait till preference get updated in the DB to proceed further.
+    yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {
     if (isAccountTransfer) {

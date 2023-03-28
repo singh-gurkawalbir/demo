@@ -185,6 +185,7 @@ export default function InstallationStep(props) {
           connectionId: step.connectionId,
           revisionId,
           variant: netsuitePackageType,
+          isManualVerification: false,
         }));
 
         setVerified(true);
@@ -203,7 +204,8 @@ export default function InstallationStep(props) {
             step,
             connection,
             templateId,
-            netsuitePackageType
+            netsuitePackageType,
+            false           // false here indicates auto verification
           )
         );
         setVerified(true);
@@ -225,7 +227,8 @@ export default function InstallationStep(props) {
             step._connId,
             step.installerFunction,
             isFrameWork2,
-            netsuitePackageType
+            netsuitePackageType,
+            false           // false here indicates auto verification
           )
         );
         setVerified(true);
@@ -241,6 +244,8 @@ export default function InstallationStep(props) {
   const onStepClick = () => {
     handleStepClick(step, connection, index);
   };
+
+  const isNsBundleOrSuiteAppStep = (step?.name?.startsWith('Integrator Bundle') || step?.name?.startsWith('Integrator SuiteApp'));
 
   return (
 
@@ -271,13 +276,13 @@ export default function InstallationStep(props) {
               src={getImageUrl(step.imageURL)}
             />
             )}
-            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection) && (
+            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection || isNsBundleOrSuiteAppStep) && (
             <ApplicationImg
               size="small"
               type={
-                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || ''
+                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || (isNsBundleOrSuiteAppStep ? 'netsuite' : '')
               }
-              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId}
+              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId || step?.sourceConnection?.jdbc?.type}
             />
             )}
           </div>

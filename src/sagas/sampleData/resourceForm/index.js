@@ -10,7 +10,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   isNewId } from '../../../utils/resource';
-import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import { getFormattedResourceForPreview, updateHTTP2Metadata } from '../../../utils/flowData';
 import {
   _fetchResourceInfoFromFormKey,
   extractFileSampleDataProps,
@@ -27,6 +27,7 @@ import { processJsonSampleData } from '../../../utils/sampleData';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { safeParse } from '../../../utils/string';
+import { message } from '../../../utils/messageStore';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -65,6 +66,11 @@ export function* _handlePreviewError({ e, resourceId }) {
 
     return yield put(
       actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedError)
+    );
+  }
+  if (e.status === 500) {
+    return yield put(
+      actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED})
     );
   }
 }
@@ -116,10 +122,12 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
     body.test = { limit: recordSize };
   }
 
+  const finalBody = updateHTTP2Metadata(body, formKey);
+
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
-      opts: { method: 'POST', body },
+      opts: { method: 'POST', body: finalBody },
       hidden: true,
     });
 

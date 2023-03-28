@@ -3,14 +3,16 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import metadata from '../../../metadata';
 import CeligoTable from '../../../../../CeligoTable';
 import * as useHandleDelete from '../../../../../../views/Integration/hooks/useHandleDelete';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.preferences = {defaultAShareId: 'own'};
+mutateStore(initialStore, draft => {
+  draft.user.preferences = {defaultAShareId: 'own'};
+});
 
 function initHomeTiles(data = {}, initialStore = null) {
   const ui = (

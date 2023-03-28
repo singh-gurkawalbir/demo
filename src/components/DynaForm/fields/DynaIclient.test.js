@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import DynaIclient from './DynaIclient';
@@ -48,7 +48,7 @@ describe('test suite for DynaIclient field', () => {
       resourceId: 'connection123',
       resourceType: 'iClients',
       connectorId: 'connector123',
-      label: 'IClient',
+      label: 'iClient',
       connectionId: 'connection123',
       id: 'http._iClientId',
       name: '/http/_iClientId',
@@ -56,12 +56,14 @@ describe('test suite for DynaIclient field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.connections.iClients = {
-      [props.connectionId]: [
-        {name: 'Client 1', _id: 'client1'},
-        {_id: 'client2'},
-      ],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.connections.iClients = {
+        [props.connectionId]: [
+          {name: 'Client 1', _id: 'client1'},
+          {_id: 'client2'},
+        ],
+      };
+    });
 
     renderWithProviders(<DynaIclient {...props} />, {initialStore});
     expect(mockDispatchFn).not.toHaveBeenCalled();
@@ -79,7 +81,7 @@ describe('test suite for DynaIclient field', () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'iClients',
-      label: 'IClient',
+      label: 'iClient',
       allowNew: true,
       allowEdit: true,
       connectionId: 'connection123',
@@ -101,7 +103,7 @@ describe('test suite for DynaIclient field', () => {
       resourceId: 'connection123',
       resourceType: 'iClients',
       connectorId: 'connector123',
-      label: 'IClient',
+      label: 'iClient',
       allowNew: true,
       allowEdit: true,
       connectionId: 'connection123',

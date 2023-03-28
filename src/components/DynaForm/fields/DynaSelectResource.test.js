@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaSelectResource from './DynaSelectResource';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import * as Resource from '../../../utils/resource';
 import actions from '../../../actions';
@@ -18,12 +18,14 @@ const mockGetItemInfo = jest.fn();
 const mockHistoryPush = jest.fn();
 
 function initDynaSelectResource({props, loadResources, resourcesData}) {
-  initialStore.getState().session.loadResources = loadResources;
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().data.resources = resourcesData;
+  mutateStore(initialStore, draft => {
+    draft.session.loadResources = loadResources;
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.data.resources = resourcesData;
+  });
   const ui = (
     <MemoryRouter>
       <Route>
@@ -312,7 +314,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the dyna select options and it should render connection name when there is no options and no filters and when offline set to false and check permission has set to false', () => {
@@ -356,7 +358,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the dyna select options and it should render connection id followed by offline when there is no options and no filters and when offline set to true and check permission has set to false and when there is no connection name', () => {
@@ -400,7 +402,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id - offline","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -445,7 +447,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -493,7 +495,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -539,7 +541,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the Dyna Multi Select when there are resource', () => {
@@ -586,7 +588,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna multi select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"label":"test connection - offline","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"label":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
   });
   test('should test the connection loading chip when the resourcetype is connection and when there is value and set skipPingConnection to false', () => {
@@ -688,6 +690,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     expect(addButtonNode).toBeInTheDocument();
     userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [{ path: '/_connectionId', op: 'add', value: {} },
+      { path: '/_connectorId', op: 'add', value: {} },
       { path: '/_httpConnectorId', op: 'add', value: {} },
       { path: '/adaptorType', op: 'add', value: {} },
       { path: '/application', op: 'add', value: {} },
@@ -702,6 +705,7 @@ describe('Testsuite for Dyna Select Resource', () => {
       { op: 'replace', path: '/assistant', value: 'acumatica' },
       { op: 'replace', path: '/_connectionId', value: undefined },
       { op: 'replace', path: '/integrationId', value: 'integration_id' },
+      { op: 'replace', path: '/_connectorId', value: 'connector_id' },
       { op: 'replace', path: '/statusExport', value: true },
     ],
     ));

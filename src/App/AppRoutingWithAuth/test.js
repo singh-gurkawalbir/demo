@@ -356,6 +356,12 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     expect(history.location.pathname).toBe(getRoutePath('/agreeTOSAndPP'));
   });
   test('should redirect the user to the agreeTOSAndPP route when the user has not agreed to TOS1', () => {
+    jest.spyOn(window, 'location', 'get').mockReturnValue({
+      value: {
+        href: '',
+      },
+      writable: true,
+    });
     const history = createMemoryHistory({
       initialEntries: [
         {

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, FormLabel } from '@material-ui/core';
 import Spinner from '../../../../../Spinner';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
   columnsWrapper: {
-    width: '95%',
+    width: `calc(100% - ${theme.spacing(4)}px)`,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
@@ -60,7 +60,9 @@ export default function RefreshHeaders({
     <div className={classes.columnsWrapper}>
       {optionsMap.map(header => (
         <div className={classes.header} key={header.id}>
-          <span {...isLoggableAttr(isLoggable)} className={classes.label}>{header.label || header.name}</span>
+          <FormLabel {...isLoggableAttr(isLoggable)} required={header.required} >
+            {header.label || header.name}
+          </FormLabel>
           <RefreshComponent
             isLoading={isLoading}
             header={header}

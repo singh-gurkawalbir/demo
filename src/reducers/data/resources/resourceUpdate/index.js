@@ -2,6 +2,7 @@ import produce from 'immer';
 import { isEqual, uniqBy } from 'lodash';
 import actionTypes from '../../../../actions/types';
 import { convertOldFlowSchemaToNewOne, populateRestSchema } from '../../../../utils/flows';
+import { resourceWithoutUIFields } from '../../../../utils/resource';
 import { getHttpConnector } from '../../../../constants/applications';
 
 export const initializationResources = ['profile', 'preferences'];
@@ -48,6 +49,8 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
 
       delete resource.rest;
     }
+    // remove UI heavy fields from the resource
+    resource = resourceWithoutUIFields(resource);
   }
   if (!draft[type]) {
     draft[type] = [resource];

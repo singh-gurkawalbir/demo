@@ -91,13 +91,6 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  {
-    id: 'van',
-    name: 'VAN (Value Added Network)',
-    type: 'van',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
   // Database connectors
   {
     id: 'mongodb',
@@ -163,6 +156,15 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042875872-Set-up-a-connection-to-Amazon-Redshift',
+  },
+  {
+    id: 'netsuitejdbc',
+    name: 'Netsuite JDBC',
+    type: 'netsuitejdbc',
+    keywords: 'database,db',
+    group: 'db',
+    exportOnly: true,
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/13668167418779',
   },
   {
     id: 'graph_ql',
@@ -447,6 +449,12 @@ export const groupApplications = (
       // Do not show FTP/S3 import for DataLoader flows
       if (resourceType === 'pageProcessor' && isSimpleImport) {
         return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
+      }
+
+      // connector having exportOnly true as property should not be shown in the list of standalone imports
+      // It is different from webhookOnly because it has option to create connections also.
+      if (resourceType === 'imports' && connector.exportOnly) {
+        return false;
       }
 
       // Webhooks are shown only for exports and for page generators in flow context

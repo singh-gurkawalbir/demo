@@ -70,6 +70,12 @@ export default function assistantDefinition(
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }
+
+      if (importDoc && (importDoc['/ignoreExisting'] === true || importDoc['/ignoreMissing'] === true) && importDoc['/http']?.existingExtract && !importDoc['/http']?.ignoreExtract) {
+        importDoc['/http/ignoreExtract'] = importDoc['/http'].existingExtract;
+        importDoc['/http'].existingExtract = undefined;
+        delete importDoc['/http'].existingExtract;
+      }
       otherFormValues['/mockResponse'] = safeParse(otherFormValues['/mockResponse']);
       if (Array.isArray(importDoc?.['/assistantMetadata']?.operation)) {
         importDoc['/http/_httpConnectorEndpointIds'] = importDoc['/assistantMetadata'].operation;
@@ -79,13 +85,6 @@ export default function assistantDefinition(
         importDoc['/http/_httpConnectorEndpointIds'] = [formValues['/assistantMetadata/operation']];
         importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
-      }
-      if (importDoc?.['/assistantMetadata'] && importDoc?.['/http/_httpConnectorResourceId']) {
-        importDoc['/assistantMetadata'] = undefined;
-        delete importDoc['/assistantMetadata/resource'];
-        delete importDoc['/assistantMetadata/version'];
-        delete importDoc['/assistantMetadata/operation'];
-        delete importDoc['/assistantMetadata/lookups'];
       }
 
       return { ...otherFormValues, ...importDoc };

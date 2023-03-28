@@ -15,6 +15,17 @@ import FieldHelp from '../../FieldHelp';
 
 const emptySet = {};
 
+const RemoveButton = ({icon, index, disabled, r, keyName, valueName, handleDelete}) => (
+  <ActionButton
+    disabled={disabled || (!(r[keyName] || r[valueName]))}
+    id={`delete-${index}`}
+    data-test={`delete-${index}`}
+    tooltip="Delete"
+    onClick={handleDelete(r.key)}>
+    {icon}
+  </ActionButton>
+);
+
 const useStyles = makeStyles(theme => ({
   rowWrapper: {
     display: 'flex',
@@ -84,24 +95,14 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
-  const dataFields = useMemo(() =>
-    props?.paramMeta?.fields.map(({id, description}) => ({
-      id,
-      description,
-    })), [props?.paramMeta?.fields]);
+  const dataFields = useMemo(() => props?.paramMeta?.fields.reduce((dataMap, {id, description}) => ({...dataMap, [id]: description}), {}), [props?.paramMeta?.fields]);
 
-  const RemoveButton = ({icon}) => (
-    <ActionButton
-      disabled={disabled || (!(r[keyName] || r[valueName]))}
-      id={`delete-${index}`}
-      data-test={`delete-${index}`}
-      tooltip="Delete"
-      onClick={handleDelete(r.key)}>
-      {icon}
-    </ActionButton>
-  );
-
-  const closeComponent = isInlineClose ? (<RemoveButton icon={<CloseIcon />} />) : undefined;
+  const closeComponent = isInlineClose ? (
+    <RemoveButton
+      icon={<CloseIcon />} index={index} disabled={disabled} r={r}
+      keyName={keyName}
+      valueName={valueName} handleDelete={handleDelete} />
+  ) : undefined;
 
   return (
     <div
@@ -118,7 +119,7 @@ export default function KeyValueRow(props) {
           value={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
-                    // autoFocus={r.row === rowInd && isKey}
+          autoFocus={index === rowInd && isKey && dataFields && !dataFields[r[keyName]]}
           placeholder={keyPlaceholder || keyName}
           variant="filled"
           onFieldChange={(_, _value) =>
@@ -129,7 +130,7 @@ export default function KeyValueRow(props) {
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
           isEndSearchIcon={isEndSearchIcon}
-          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={dataFields[index].id} helpText={dataFields[index].description} /></ActionButton>}
+          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={r.name} helpText={dataFields[r.name]} /></ActionButton>}
           />
 
         )}
@@ -210,7 +211,13 @@ export default function KeyValueRow(props) {
         </CeligoSelect>
         )}
 
-        {showDelete && <RemoveButton icon={<TrashIcon />} />}
+        {showDelete && (
+        <RemoveButton
+          icon={<TrashIcon />}
+          index={index} disabled={disabled} r={r} keyName={keyName}
+          valueName={valueName} handleDelete={handleDelete}
+          />
+        )}
         {handleEditorClick && (
           <ActionButton
             id={`handleBar-${index}`}

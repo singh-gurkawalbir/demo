@@ -60,6 +60,10 @@ const useStyles = makeStyles(theme => ({
   inputDateTime: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    borderRadius: 2,
+    '&:hover': {
+      border: `1px solid ${theme.palette.primary.main}`,
+    },
   },
   iconWrapper: {
     '&:hover': {
@@ -91,7 +95,7 @@ const useTimePickerProps = removePickerDialog => {
 };
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, doNotAllowFutureDates} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -153,6 +157,8 @@ export default function DateTimePicker(props) {
     let formattedDate = null;
     const dataTimeValueFormatted = moment();
 
+    // eslint-disable-next-line no-bitwise
+    doNotAllowFutureDates && (dateValue ^ timeValue) && setComponentMounted(true);
     if (!dateValue || !timeValue) {
       onFieldChange(id, '', !componentMounted);
 
@@ -223,6 +229,7 @@ export default function DateTimePicker(props) {
               fullWidth
               InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...datePickerProps}
+              maxDate={doNotAllowFutureDates && moment()}
       />
           </div>
           <div className={classes.fieldWrapper}>

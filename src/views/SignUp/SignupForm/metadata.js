@@ -1,3 +1,5 @@
+import messageStore from '../../../utils/messageStore';
+
 export default function getFieldMeta(email) {
   const fieldMeta = {
     fieldMap: {
@@ -17,6 +19,7 @@ export default function getFieldMeta(email) {
         defaultValue: email,
         required: true,
         noApi: true,
+        errorMessage: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Business email'}),
       },
       company: {
         id: 'company',
@@ -39,9 +42,9 @@ export default function getFieldMeta(email) {
         placeholder: 'Phone',
         noApi: true,
       },
-      consent: {
-        id: 'consent',
-        name: 'consent',
+      agreeTOSAndPP: {
+        id: 'agreeTOSAndPP',
+        name: 'agreeTOSAndPP',
         type: 'signupconsent',
         required: true,
         label: 'Changes required',
@@ -54,7 +57,7 @@ export default function getFieldMeta(email) {
         'company',
         'role',
         'phone',
-        'consent',
+        'agreeTOSAndPP',
       ],
     },
   };

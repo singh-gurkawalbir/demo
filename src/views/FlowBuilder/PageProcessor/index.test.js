@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import PageProcessor from '.';
 import actions from '../../../actions';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 const mockHistoryPush = jest.fn();
 const mockHistoryReplace = jest.fn();
@@ -28,35 +28,37 @@ async function initPageProcessor({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [
-      {
-        _id: 'import_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    exports: [
-      {
-        _id: 'export_id_1',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    connections: [
-      {
-        _id: 'connection_id',
-        type: 'type',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    flows: [
-      {
-        _id: 'flow_id',
-        _connectorId: 'connector_id_1',
-      },
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [
+        {
+          _id: 'import_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      exports: [
+        {
+          _id: 'export_id_1',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      connections: [
+        {
+          _id: 'connection_id',
+          type: 'type',
+          adaptorType: 'NetSuiteExport',
+        },
+      ],
+      flows: [
+        {
+          _id: 'flow_id',
+          _connectorId: 'connector_id_1',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter>
@@ -131,7 +133,8 @@ describe('PageProcessor test cases', () => {
       op: 'add',
       path: '/rdbmsAppType',
       value: undefined,
-    }]));
+    },
+    ]));
     expect(mockHistoryReplace).toBeCalledWith('/add/pageProcessor/id_1');
   });
 
@@ -171,7 +174,8 @@ describe('PageProcessor test cases', () => {
       op: 'add',
       path: '/rdbmsAppType',
       value: undefined,
-    }]));
+    },
+    ]));
     expect(mockHistoryReplace).toBeCalledWith('/add/pageProcessor/id_1');
   });
 

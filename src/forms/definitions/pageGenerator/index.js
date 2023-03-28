@@ -173,12 +173,13 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(appType)) {
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
+        appType.indexOf('jdbc') > -1 ? expression.push({ 'jdbc.type': appType })
+          : expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
       } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (appType === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
-      } else if (appType === 'http') {
+      } else if (appType === 'http' || (appType === 'rest' && app?.isHTTP === true && app._httpConnectorId)) {
         if (app._httpConnectorId) {
           // get all possible applications with same type (global and local connectors)
           const apps = applications.filter(a => a.id === appField.value) || [];
@@ -190,10 +191,13 @@ export default {
           });
 
           expression.push({ 'http._httpConnectorId': {$in: allConnectorIds} });
+          expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+          expression.push({ isHTTP: { $ne: false } });
+        } else {
+          expression.push({ type: appType });
         }
 
         expression.push({ 'http.formType': { $ne: 'rest' } });
-        expression.push({ type: appType });
       } else {
         expression.push({ type: appType });
       }

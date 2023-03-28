@@ -10,12 +10,6 @@ Object.defineProperty(window, 'open', { value() {}, writable: true });
 // Hence ignoring console.warn for now and should remove this mock once material-ui is updated to mui@v5
 Object.defineProperty(console, 'warn', { value() {}, writable: true });
 Object.defineProperty(window, 'prompt', { value() {}, writable: true });
-Object.defineProperty(window, 'location', {
-  value: {
-    href: '',
-  },
-  writable: true,
-});
 Object.defineProperty(window, 'ResizeObserver', { value() {
   return {
     observe() {

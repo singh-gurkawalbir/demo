@@ -65,6 +65,22 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       helpKey: 'sapbydesign.connection.http.encrypted.password',
     },
+    'http.unencrypted.apiType': {
+      id: 'http.unencrypted.apiType',
+      type: 'radiogroup',
+      label: 'Mode',
+      helpKey: 'sapbydesign.connection.http.unencrypted.apiType',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'SOAP API', value: 'soap' },
+            { label: 'OData', value: 'odata' },
+          ],
+        },
+      ],
+      defaultValue: r => (r?.http?.unencrypted?.apiType) || 'odata',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -75,7 +91,7 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.tenantHostname',
           'http.unencrypted.username',
-          'http.encrypted.password'] },
+          'http.encrypted.password', 'http.unencrypted.apiType'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

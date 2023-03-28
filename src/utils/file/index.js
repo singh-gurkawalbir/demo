@@ -12,6 +12,13 @@ export const fileTypeToApplicationTypeMap = {
   xlsx: 'application/vnd.ms-excel',
 };
 
+// file type to its corresponding file definition format
+export const fileDefinitionFormatFieldsMap = {
+  filedefinition: 'edix12.format',
+  fixed: 'fixed.format',
+  'delimited/edifact': 'edifact.format',
+};
+
 /*
  * Validates file type against all possible file types when user uploads a file
  * validFileTypes - Took reference from 'integrator' Repository
@@ -31,6 +38,7 @@ export function isValidFileType(fileType, file) {
     xlsx: [
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'application/vnd.ms-excel',
+      'application/vnd.ms-excel.sheet.macroenabled.12',
     ],
   };
 

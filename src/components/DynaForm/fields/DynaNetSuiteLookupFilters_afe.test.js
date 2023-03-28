@@ -3,7 +3,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaNetSuiteLookupFiltersafe from './DynaNetSuiteLookupFilters_afe';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockDispatch = jest.fn();
@@ -33,13 +33,20 @@ jest.mock('../../AFE/Editor/panels/NetSuiteLookupFilter', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-  data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {somePath: {
+    data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
+  }}}};
+});
 
 const mockOnFieldChange = jest.fn();
 
-function initDynaNetSuiteLookupFiltersafe(disableFetch = false) {
+function initDynaNetSuiteLookupFiltersafe(extraProp = {
+  options: {
+    commMetaPath: 'somePath',
+    disableFetch: false,
+  },
+}) {
   const ui = (
     <DynaNetSuiteLookupFiltersafe
       value="once" selectOptions={[]}
@@ -47,9 +54,9 @@ function initDynaNetSuiteLookupFiltersafe(disableFetch = false) {
       id="someID"
       onFieldChange={mockOnFieldChange}
       connectionId="someconnectionId"
-      options={{commMetaPath: 'somePath', disableFetch}}
       filterKey="suitescript-searchFilters"
       data="someData"
+      {...extraProp}
   />
   );
 
@@ -90,7 +97,12 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
     );
   });
   test('should not call refresh dispatch when fetch is disabled', () => {
-    initDynaNetSuiteLookupFiltersafe(true);
+    initDynaNetSuiteLookupFiltersafe({
+      options: {
+        commMetaPath: 'somePath',
+        disableFetch: true,
+      },
+    });
     expect(screen.getByText('Refresh search filters')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).not.toHaveBeenCalledWith(
@@ -100,12 +112,64 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
     );
   });
   test('should call onFieldChangeButton function when editor is initialised', () => {
-    initialStore.getState().session.editors = {'ns-mappingLookupFilter': {fieldId: 'someFieldID'}};
-    initDynaNetSuiteLookupFiltersafe(true, initialStore);
+    mutateStore(initialStore, draft => {
+      draft.session.editors = {'ns-mappingLookupFilter': {fieldId: 'someFieldID'}};
+    });
+    initDynaNetSuiteLookupFiltersafe({
+      options: {
+        commMetaPath: 'somePath',
+        disableFetch: true,
+      },
+    });
     expect(screen.getByText('id: someID')).toBeInTheDocument();
     expect(screen.getByText('editorId: ns-mappingLookupFilter')).toBeInTheDocument();
 
     userEvent.click(screen.getByText('onFieldChangeButton'));
     expect(mockOnFieldChange).toHaveBeenCalledTimes(1);
+  });
+
+  describe('dynaNetSuiteLookupFiltersafe with recordTypeFieldId', () => {
+    test('should verify useEffect dispatch call when recordTypeFieldId is present', () => {
+      mutateStore(initialStore, draft => {
+        draft.session.form = {form_key_1: {fields: { field_1: {value: 'record_type_1'}}}};
+      });
+      initDynaNetSuiteLookupFiltersafe({
+        recordTypeFieldId: 'field_1',
+        formKey: 'form_key_1',
+      });
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.editor.init('ns-mappingLookupFilter', 'netsuiteLookupFilter', {
+          fieldId: 'someID',
+          rule: 'once',
+          stage: 'importMappingExtract',
+          data: 'someData',
+          wrapData: true,
+        })
+      );
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.metadata.request('someconnectionId', 'netsuite/metadata/suitescript/connections/someconnectionId/recordTypes/record_type_1/searchFilters?includeJoinFilters=true')
+      );
+    });
+
+    test('should verify useEffect dispatch call when recordTypeFieldId is not present', () => {
+      mutateStore(initialStore, draft => {
+        draft.session.form = {form_key_1: {fields: { field_1: {value: 'record_type_1'}}}};
+      });
+      initDynaNetSuiteLookupFiltersafe({
+        formKey: 'form_key_1',
+      });
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.editor.init('ns-mappingLookupFilter', 'netsuiteLookupFilter', {
+          fieldId: 'someID',
+          rule: 'once',
+          stage: 'importMappingExtract',
+          data: 'someData',
+          wrapData: true,
+        })
+      );
+      expect(mockDispatch).not.toHaveBeenCalledWith(
+        actions.metadata.request('someconnectionId', 'netsuite/metadata/suitescript/connections/someconnectionId/recordTypes/record_type_1/searchFilters?includeJoinFilters=true')
+      );
+    });
   });
 });

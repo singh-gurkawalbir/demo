@@ -17,6 +17,7 @@ const applicationsWithPreviewPanel = [
   'rest',
   'mongodb',
   'rdbms',
+  'jdbc',
   'dynamodb',
   'netsuite',
   'salesforce',
@@ -24,6 +25,7 @@ const applicationsWithPreviewPanel = [
   's3',
   'simple',
   'as2',
+  'van',
 ];
 
 const emptyList = [];
@@ -43,7 +45,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const appType = adaptorTypeMap[adaptorType];
 
   // Handles File based preview stage
-  const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
+  const fileAdaptorAppTypes = ['ftp', 's3', 'as2', 'van'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType) || FILE_PROVIDER_ASSISTANTS.includes(assistant)) {
     return PREVIEW_STAGE;
@@ -64,6 +66,8 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
+      return PREVIEW_STAGE;
+    case 'jdbc':
       return PREVIEW_STAGE;
     default:
       return emptyList;

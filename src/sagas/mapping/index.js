@@ -205,7 +205,13 @@ export function* mappingInit({
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
-    const { operation, resource, version } = importResource.assistantMetadata || {};
+    let { operation, resource, version } = importResource.assistantMetadata || {};
+
+    if (getHttpConnector(connection?.http?._httpConnectorId)) {
+      operation = importResource.http?._httpConnectorEndpointIds?.[0];
+      resource = importResource.http?._httpConnectorResourceId;
+      version = importResource.http?._httpConnectorVersionId;
+    }
 
     const assistantData = yield select(
       selectors.assistantData, {

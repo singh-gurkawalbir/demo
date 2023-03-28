@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React, {
   useRef,
   useState,
@@ -87,10 +86,10 @@ export function SalesforceLookupFilterPanelData({
   );
   const salesforceFilterDataTypes = useMemo(
     () =>
-      filters.reduce((obj, sf) => {
-        obj[sf.value] = sf.type;
+      filters.reduce((acc, cur) => {
+        acc[cur.value] = cur.type;
 
-        return obj;
+        return acc;
       }, {}),
     [filters]
   );
@@ -313,7 +312,8 @@ export function SalesforceLookupFilterPanelData({
           return `<input class="form-control" name="${name}" value="${rhsValue}">${
             disabled
               ? ''
-              : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+              // eslint-disable-next-line no-undef
+              : `<img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`
           }`;
         },
         valueGetter(rule) {
@@ -338,6 +338,7 @@ export function SalesforceLookupFilterPanelData({
 
           r.lhs[r.lhs.type || 'field'] = lhsValue;
           r.rhs[r.rhs.type || 'value'] = rhsValue;
+          // eslint-disable-next-line no-param-reassign
           rule.data = r;
 
           return rhsValue;
@@ -368,6 +369,7 @@ export function SalesforceLookupFilterPanelData({
 
             r.lhs[r.lhs.type || 'field'] = lhsValue;
             r.rhs[r.rhs.type || 'value'] = rhsValue;
+            // eslint-disable-next-line no-param-reassign
             rule.data = r;
 
             const vr = validateRule(rule);

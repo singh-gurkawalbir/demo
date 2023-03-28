@@ -1,5 +1,5 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
-import { cloneDeep, isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -32,6 +32,7 @@ import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
 import { addPageProcessor, getFlowAsyncKey } from '../../utils/flows/flowbuilder';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* createFormValuesPatchSet({
   resourceType,
@@ -465,7 +466,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
     return [];
   }
-  const flowDocClone = cloneDeep(flowDoc);
+  const flowDocClone = customCloneDeep(flowDoc);
 
   const observer = jsonPatch.observe(flowDocClone);
 
@@ -809,6 +810,7 @@ export function* initFormValues({
   integrationId,
   fieldMeta: customFieldMeta,
   parentConnectionId,
+  options,
 }) {
   const applicationFieldState = yield select(selectors.fieldState, getAsyncKey('connections', parentConnectionId), 'application');
   const developerMode = yield select(selectors.developerMode);
@@ -922,7 +924,7 @@ export function* initFormValues({
         });
       }
       // standard form init fn...
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value);
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value, options?.apiChange);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);

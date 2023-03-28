@@ -5,7 +5,7 @@ import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaMultiSubsidiaryMapping from './DynaMultiSubsidiaryMapping';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 
 const mockDispatchFn = jest.fn();
@@ -49,18 +49,25 @@ const genralProps = {
   disableDeleteRows: false,
   handleCleanupHandler: () => {},
   _integrationId: 'someintegrationId',
+  formKey: 'form_key',
 };
 
-initialStore.getState().session.connectors = {
-  someintegrationId: {
-    someid: {
-      isLoading: {export: false, import: false},
-      shouldReset: false,
-      data: {optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}, {id: 'subsidiary', label: 'Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}],
+mutateStore(initialStore, draft => {
+  draft.session.connectors = {
+    someintegrationId: {
+      someid: {
+        isLoading: false,
+        shouldReset: false,
+        data: {optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}, {id: 'subsidiary', label: 'Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}],
+        },
+        fieldType: 'somefieldtype',
       },
-      fieldType: 'somefieldtype',
     },
-  }};
+  };
+  draft.session.form[genralProps.formKey] = {
+    showValidationBeforeTouched: true,
+  };
+});
 describe('dynaMultiSubsidiaryMapping UI test cases', () => {
   test('should populate the saved values and refreshing the fields of exports', () => {
     initDynaMultiSubsidiaryMapping(genralProps);
@@ -74,7 +81,7 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
     expect(screen.getByDisplayValue('Honeycomb Inc3')).toBeInTheDocument();
     expect(screen.getByDisplayValue('s4')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Honeycomb Inc4')).toBeInTheDocument();
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-12"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('subsidiary', 'someid', 'someintegrationId', {
       key: 'columnName',
     }));
@@ -110,18 +117,24 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
       disableDeleteRows: false,
       handleCleanupHandler: () => {},
       _integrationId: 'someintegrationId',
+      formKey: 'formKey',
     };
 
-    initialStore.getState().session.connectors = {
-      someintegrationId: {
-        someid: {
-          isLoading: {export: false, import: false},
-          shouldReset: false,
-          data: {},
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someintegrationId: {
+          someid: {
+            isLoading: false,
+            shouldReset: false,
+            data: {},
+          },
+          fieldType: 'somefieldtype',
         },
-        fieldType: 'somefieldtype',
-      },
-    };
+      };
+      draft.session.form[genralProps.formKey] = {
+        showValidationBeforeTouched: true,
+      };
+    });
     initDynaMultiSubsidiaryMapping(genralProps);
     expect(screen.getByText('Export field value')).toBeInTheDocument();
     expect(screen.getByText('Import field value')).toBeInTheDocument();

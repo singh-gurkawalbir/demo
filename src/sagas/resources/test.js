@@ -58,6 +58,7 @@ import { COMM_STATES } from '../../reducers/comms/networkComms';
 import {HOME_PAGE_PATH} from '../../constants';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
+import { RESOURCES_WITH_UI_FIELDS, UI_FIELDS } from '../../utils/resource';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import { AUDIT_LOG_FILTER_KEY, getAuditLogFilterKey } from '../../constants/auditLog';
@@ -1365,7 +1366,11 @@ availableResources.forEach(type => {
       const saga = getResourceCollection(
         actions.resource.requestCollection(type)
       );
-      const path = `/${type}`;
+      let path = `/${type}`;
+
+      if (RESOURCES_WITH_UI_FIELDS.includes(type)) {
+        path = `${path}?exclude=${UI_FIELDS.join(',')}`;
+      }
       let mockCollection = [{ id: 1 }, { id: 2 }];
       let mockSharedStacks = [{ id: 3 }, { id: 4 }];
       let effect;
@@ -1407,7 +1412,11 @@ availableResources.forEach(type => {
       const saga = getResourceCollection(
         actions.resource.requestCollection(type)
       );
-      const path = `/${type}`;
+      let path = `/${type}`;
+
+      if (RESOURCES_WITH_UI_FIELDS.includes(type)) {
+        path = `${path}?exclude=${UI_FIELDS.join(',')}`;
+      }
       const effect = saga.next().value;
 
       expect(effect).toEqual(
@@ -1705,7 +1714,7 @@ describe('getResourceCollection saga', () => {
   test('should dispatch received collection action if api call succeeds and resourceType is tree/metadata with empty response', () => {
     const resourceType = 'tree/metadata';
     const refresh = 'true';
-    const path = '/integrations/integrationId/tree/metadata?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps';
+    const path = '/integrations/integrationId/tree/metadata?additionalFields=createdAt,_parentId';
     const collection = { id: 1 };
     const integrationId = 'integrationId';
 
@@ -1719,15 +1728,15 @@ describe('getResourceCollection saga', () => {
         }), collection],
       ])
       .put(actions.resource.collectionRequestSent(resourceType, integrationId, refresh))
-      .put(actions.resource.receivedCollection('integrations', [], 'integrationId'))
-      .returns(collection)
+      .put(actions.resource.receivedCollection('tree/metadata', [], 'integrationId'))
+      .returns([])
       .run();
   });
 
   test('should dispatch received collection action if api call succeeds and resourceType is tree/metadata with proper response', () => {
     const resourceType = 'tree/metadata';
     const refresh = 'true';
-    const path = '/integrations/integrationId/tree/metadata?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps';
+    const path = '/integrations/integrationId/tree/metadata?additionalFields=createdAt,_parentId';
     const collection = { id: 1, childIntegrations: [{_id: 'child_id_1', name: 'name1'}] };
     const integrationId = 'integrationId';
 
@@ -1741,8 +1750,8 @@ describe('getResourceCollection saga', () => {
         }), collection],
       ])
       .put(actions.resource.collectionRequestSent(resourceType, integrationId, refresh))
-      .put(actions.resource.receivedCollection('integrations', collection.childIntegrations, 'integrationId'))
-      .returns(collection)
+      .put(actions.resource.receivedCollection('tree/metadata', collection.childIntegrations, 'integrationId'))
+      .returns(collection.childIntegrations)
       .run();
   });
 });
@@ -2037,9 +2046,9 @@ describe('deleteIntegration saga', () => {
       [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
-    .put(actions.resource.requestCollection('integrations', null, true))
+    .put(actions.resource.clearCollection('integrations'))
     .put(actions.resource.requestCollection('tiles', null, true))
-    .put(actions.resource.requestCollection('scripts', null, true))
+    .put(actions.resource.clearCollection('scripts'))
     .put(actions.resource.integrations.redirectTo('123', HOME_PAGE_PATH))
     .run());
 });

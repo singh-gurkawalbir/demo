@@ -16,11 +16,12 @@ export default {
       ];
 
       if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(r.type))) {
-        // rdbms subtype is required to filter the connections
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
+        // rdbms or JDBC subtype is required to filter the connections
+        r.type.indexOf('jdbc') > -1 ? expression.push({ 'jdbc.type': r.type })
+          : expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
-        const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
+        const destinationType = ['ftp', 'as2', 's3', 'van'].includes(r.type) ? '' : r.type;
 
         if (r?.http?.formType === 'rest' || r.type === 'rest') {
           expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
@@ -69,6 +70,11 @@ export default {
     defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
+  'http._httpConnectorApiId': {
+    type: 'apiSelect',
+    label: 'API type',
+    helpKey: 'connection.http._httpConnectorApiId',
+  },
   application: {
     isLoggable: true,
     id: 'application',
@@ -82,7 +88,8 @@ export default {
       }
       const applications = applicationsList();
       let application = getAssistantFromResource(r) ||
-      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
+      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : null) ||
+      (r.type === 'jdbc' ? r.jdbc.type : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
@@ -425,6 +432,13 @@ export default {
     helpKey: 'http.auth.oauth.oauth1.consumerPrivateKey',
     required: true,
     description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'rest.oauth.oauth1.realm': {
+    type: 'uri',
+    label: 'Realm',
+    helpKey: 'http.auth.oauth.oauth1.realm',
+    showExtract: false,
+    showLookup: false,
   },
   'rest.authScheme': {
     isLoggable: true,
@@ -814,7 +828,7 @@ export default {
   },
   'http._iClientId': {
     isLoggable: true,
-    label: 'IClient',
+    label: 'iClient',
     type: 'selectresource',
     resourceType: 'iClients',
     allowNew: true,
@@ -1175,6 +1189,13 @@ export default {
     helpKey: 'http.auth.oauth.oauth1.consumerPrivateKey',
     required: true,
     description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'http.auth.oauth.oauth1.realm': {
+    type: 'uri',
+    label: 'Realm',
+    helpKey: 'http.auth.oauth.oauth1.realm',
+    showExtract: false,
+    showLookup: false,
   },
   // #endregion http
   // #region ftp
@@ -2231,7 +2252,7 @@ export default {
   },
   'netsuite._iClientId': {
     isLoggable: true,
-    label: 'IClient',
+    label: 'iClient',
     type: 'selectresource',
     resourceType: 'iClients',
   },
@@ -2333,6 +2354,42 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Net suite distributed adaptor URI',
+  },
+  // netsuite JDBC fields
+  'jdbc.host': {
+    type: 'text',
+    required: true,
+    label: 'Server Name',
+    defaultValue: r => r?.jdbc?.host,
+  },
+  'jdbc.port': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Port number',
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
+      },
+    },
+  },
+  'jdbc.StaticSchema': {
+    isLoggable: true,
+    type: 'checkbox',
+    label: 'Static schema export',
+    visibleWhen: [
+      {
+        field: 'jdbc.serverDataSource',
+        is: ['Netsuite2.com'],
+      },
+    ],
+  },
+  'jdbc.authType': {
+    id: 'netsuite.authType',
+    label: 'Authentication type',
+    type: 'nsauthtype',
+    required: true,
+    skipSort: true,
   },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce

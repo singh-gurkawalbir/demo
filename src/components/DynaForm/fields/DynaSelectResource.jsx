@@ -96,7 +96,8 @@ const handleAddNewResource = args => {
         values = { ...values, '/http/_asyncHelperId': generateNewId() };
       }
       if (resourceType === 'connections' && integrationId && integrationId !== 'none') {
-        values = { ...values, '/integrationId': integrationId};
+        values = { ...values, '/integrationId': integrationId, '/_connectorId': connectorId,
+        };
       }
 
       if (statusExport) {
@@ -252,6 +253,7 @@ export default function DynaSelectResource(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
+
   const optionRef = useRef(options);
 
   useEffect(() => {
@@ -268,6 +270,8 @@ export default function DynaSelectResource(props) {
   );
 
   const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
+
+  const isHTTPVersionUpdated = useSelector(state => selectors.isHTTPConnectionVersionModified(state));
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -318,11 +322,26 @@ export default function DynaSelectResource(props) {
       filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
     }
 
-    return filteredResources.map(conn => ({
-      label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
-      value: conn._id,
-      itemInfo: getItemInfo?.(conn),
-    }));
+    return filteredResources.map(conn => {
+      const result = {
+        label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
+        value: conn._id,
+        itemInfo: getItemInfo?.(conn),
+      };
+
+      if (resourceType === 'connections') {
+        return ({
+          ...result,
+          connInfo: {
+            httpConnectorId: conn?.http?._httpConnectorId,
+            httpConnectorApiId: conn?.http?._httpConnectorApiId,
+            httpConnectorVersionId: conn?.http?._httpConnectorVersionId,
+          },
+        });
+      }
+
+      return result;
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { merged } =
@@ -338,7 +357,7 @@ export default function DynaSelectResource(props) {
     }),
     [merged]
   );
-  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', expConnId)?.merged || emptyObj;
+  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
   const handleAddNewResourceMemo = useCallback(
@@ -426,8 +445,16 @@ export default function DynaSelectResource(props) {
       optionSearch: i.label,
       value: i.value,
       itemInfo: i.itemInfo,
+      connInfo: i.connInfo,
     }));
 
+  useEffect(() => {
+    if (isHTTPVersionUpdated && _httpConnectorId) {
+      onFieldChange(value, value);
+      dispatch(actions.connection.clearUpdatedVersion());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHTTPVersionUpdated]);
   useEffect(() => {
     if (!appTypeIsStatic && value && !Array.isArray(value) && isValueValid) {
       const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);

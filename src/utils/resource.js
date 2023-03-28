@@ -1,10 +1,27 @@
-import { values, keyBy, cloneDeep } from 'lodash';
+import { values, keyBy } from 'lodash';
 import parseLinkHeader from 'parse-link-header';
 import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import { message } from './messageStore';
+import customCloneDeep from './customCloneDeep';
+
+export const UI_FIELDS = ['mockOutput', 'mockResponse'];
+export const RESOURCES_WITH_UI_FIELDS = ['exports', 'imports'];
+// accumulates all the UI fields from the resource
+export const fetchUIFields = (resource = {}) =>
+  UI_FIELDS.reduce((uiFields, field) => ({ ...uiFields, [field]: resource[field] }), {});
+
+export const resourceWithoutUIFields = resource => {
+  if (!resource || typeof resource !== 'object') return resource;
+
+  return Object.keys(resource).reduce((acc, key) => {
+    if (!UI_FIELDS.includes(key)) acc[key] = resource[key];
+
+    return acc;
+  }, {});
+};
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -15,9 +32,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
-  // todo - Why this is in lowercase
-  // iclients: 'IClient',
-  iClients: 'IClient',
+  iClients: 'iClient',
   imports: 'Import',
   integrations: 'Integration',
   scripts: 'Script',
@@ -32,11 +47,10 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
 });
 
 export const convertResourceLabelToLowercase = resourceLabel => {
-  if (resourceLabel === 'IClient') return 'iClient';
+  if (resourceLabel === 'iClient') return 'iClient';
 
   return resourceLabel.toLowerCase();
 };
-
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
   mongodb: 'Mongodb',
@@ -57,6 +71,8 @@ export const appTypeToAdaptorType = {
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
+  van: 'VAN',
+  netsuitejdbc: 'JDBC',
 };
 
 // the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
@@ -80,6 +96,7 @@ export const rdbmsAppTypeToSubType = appType => {
   if (appType === 'redshiftdatawarehouse') {
     return 'redshift';
   }
+  //
 
   return appType;
 };
@@ -116,10 +133,12 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  VANExport: 'van',
   MongodbImport: 'mongodb',
   S3Import: 's3',
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
+  VANImport: 'van',
   RDBMSImport: 'rdbms',
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
@@ -127,6 +146,7 @@ export const adaptorTypeMap = {
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
   SimpleExport: 'file',
+  JDBCExport: 'jdbc',
 };
 
 export const multiStepSaveResourceTypes = [
@@ -347,6 +367,9 @@ export const isScriptIdUsedInResource = (resource, scriptId) => {
 
   return !!selectedHooks.find(hook => hook._scriptId === scriptId);
 };
+
+export const isSignUpAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_SIGNUP_EU : ALLOW_SIGNUP) === 'true';
+export const isGoogleSignInAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_GOOGLE_SIGNIN_EU : ALLOW_GOOGLE_SIGNIN) === 'true';
 
 /*
  * Returns Boolean
@@ -739,9 +762,9 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
   mappingOriginal,
   subrecords
 ) => {
-  let mapping = cloneDeep(mappingOriginal);
+  let mapping = customCloneDeep(mappingOriginal);
 
-  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
+  const subrecordsMap = customCloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {

@@ -235,6 +235,8 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
+  updatedVersion: () => action(actionTypes.CONNECTION.UPDATED_VERSION),
+  clearUpdatedVersion: () => action(actionTypes.CONNECTION.CLEAR_UPDATED_VERSION),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -322,8 +324,8 @@ const resource = {
       integrationId,
       isNextPageCollection,
     }),
-  clearCollection: resourceType =>
-    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
+  clearCollection: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType, integrationId }),
   patch: (resourceType, id, patchSet, asyncKey) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>
@@ -1081,24 +1083,26 @@ const integrationApp = {
   },
   templates: {
     installer: {
-      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification) =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,
           connectionId,
           installerFunction,
           isFrameWork2,
           variant,
+          isManualVerification,
         }),
     },
     upgrade: {
       installer: {
-        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification) =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
             id,
             connectionId,
             installerFunction,
             isFrameWork2,
             variant,
+            isManualVerification,
           }),
       },
     },
@@ -1324,12 +1328,13 @@ const template = {
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
-  verifyBundleOrPackageInstall: (step, connection, templateId, variant) =>
+  verifyBundleOrPackageInstall: (step, connection, templateId, variant, isManualVerification) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,
       connection,
       templateId,
       variant,
+      isManualVerification,
     }),
   publish: {
     request: (templateId, isPublished) =>
@@ -1452,8 +1457,8 @@ const user = {
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),
-    update: preferences =>
-      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    update: (preferences, skipSaga) =>
+      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences, skipSaga }),
     pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
     unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },
@@ -1493,7 +1498,7 @@ const license = {
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
   clearActionMessage: () =>
     action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
-  receivedLicenseErrorMessage: code => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code }),
+  receivedLicenseErrorMessage: (code, message) => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code, message }),
   clearErrorMessage: () => action(actionTypes.LICENSE.CLEAR_ERROR_MESSAGE),
 
 };
@@ -1577,6 +1582,7 @@ const flowData = {
       branchIndex,
       responseMapping,
     }),
+  clear: flowId => action(actionTypes.FLOW_DATA.CLEAR, { flowId }),
 };
 const resourceFormSampleData = {
   request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
@@ -1746,7 +1752,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId, options) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1757,6 +1763,7 @@ const resourceForm = {
       integrationId,
       fieldMeta,
       parentConnectionId,
+      options,
     }),
   initComplete: (
     resourceType,
@@ -2591,12 +2598,13 @@ const integrationLCM = {
         connectionId,
         openOauthConnection,
       }),
-    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, variant}) =>
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, variant, isManualVerification}) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
         revisionId,
         connectionId,
         integrationId,
         variant,
+        isManualVerification,
       }),
   },
   revisions: {
@@ -2617,6 +2625,7 @@ const mfa = {
   showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
   secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
   resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
+  resetOwnerMFA: () => action(actionTypes.MFA.OWNER_ACCOUNT_RESET),
   deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
   verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
   mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
@@ -2633,6 +2642,12 @@ const accountSettings = {
   request: () => action(actionTypes.ACCOUNT_SETTINGS.REQUEST),
   update: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.UPDATE, {accountSettings}),
   received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
+};
+
+const uiFields = {
+  requestFlowLevel: flowId => action(actionTypes.UI_FIELDS.FLOW_LEVEL.REQUEST, { flowId }),
+  receivedFlowLevel: (flowId, resources) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.RECEIVED, { flowId, resources }),
+  updateFlowResources: (flowId, resourceIds) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.UPDATE_RESOURCES, { flowId, resourceIds }),
 };
 
 export default {
@@ -2688,4 +2703,5 @@ export default {
   bottomDrawer,
   integrationLCM,
   httpConnectors,
+  uiFields,
 };

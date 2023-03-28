@@ -1,7 +1,9 @@
 import isObject from 'lodash/isObject';
 import set from 'lodash/set';
-import cloneDeep from 'lodash/cloneDeep';
 import jsonPatch from 'fast-json-patch';
+import customCloneDeep from './customCloneDeep';
+import { safeParse } from './string';
+import errorMessageStore from './errorStore';
 
 export default {
   /*
@@ -127,7 +129,7 @@ export function getChangesPatchSet(updateFn, ...args) {
   if (!args.length) return [];
   try {
     const [object, ...remainingArgs] = args;
-    const clonedObject = cloneDeep(object);
+    const clonedObject = customCloneDeep(object);
     const observer = jsonPatch.observe(clonedObject);
 
     updateFn.apply(null, [clonedObject, ...remainingArgs]);
@@ -137,3 +139,10 @@ export function getChangesPatchSet(updateFn, ...args) {
     return [];
   }
 }
+
+export const isJsonValue = (value, label) => {
+  // value is parsable
+  if (!value || safeParse(value)) return;
+
+  return errorMessageStore('INVALID_JSON_VALUE', {label});
+};

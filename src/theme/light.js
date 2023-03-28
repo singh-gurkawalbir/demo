@@ -212,6 +212,19 @@ export default {
         minHeight: appBarHeight,
       },
     },
+    MuiToggleButtonGroup: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+      },
+    },
+    MuiToggleButton: {
+      label: {
+        color: colors.celigoNeutral8,
+        '& .MuiTypography-root': {
+          color: colors.celigoNeutral8,
+        },
+      },
+    },
     MuiList: {
       padding: {
         paddingTop: 0,
@@ -566,6 +579,23 @@ export default {
       },
       inputAdornedEnd: {
         paddingRight: 30,
+      },
+    },
+    MuiTextField: {
+      root: {
+        background: colors.celigoWhite,
+        '&:hover': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&$focused': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&.Mui-disabled': {
+          backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
+        },
       },
     },
     MuiInputAdornment: {

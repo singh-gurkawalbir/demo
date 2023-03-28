@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import InstallBase from '.';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initMarketplace({
   props = {
@@ -22,28 +22,30 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    connectors: [
-      {
-        name: 'Mock Connector 1',
-        _id: 'connector_id_1',
-        framework: 'twoDotZero',
-      },
-      {
-        name: 'Mock Connector 2',
-        _id: 'connector_id_2',
-      },
-    ],
-    connectorInstallBase,
-    connectorLicenses,
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      connectors: [
+        {
+          name: 'Mock Connector 1',
+          _id: 'connector_id_1',
+          framework: 'twoDotZero',
+        },
+        {
+          name: 'Mock Connector 2',
+          _id: 'connector_id_2',
+        },
+      ],
+      connectorInstallBase,
+      connectorLicenses,
+    };
 
-  initialStore.getState().session.filters = {
-    connectorInstallBase: {
-      keyword,
-      take: 100,
-    },
-  };
+    draft.session.filters = {
+      connectorInstallBase: {
+        keyword,
+        take: 100,
+      },
+    };
+  });
 
   const ui = (
     <MemoryRouter>
@@ -102,9 +104,9 @@ describe('installBase test cases', () => {
   });
 
   test('should pass the initial render with default value/pass the wrong id', async () => {
-    const { utils } = await initMarketplace();
+    await initMarketplace();
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   test('should pass the initial render with right id', async () => {

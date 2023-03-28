@@ -5,6 +5,7 @@ import LoadResources from '../../../../../../components/SuiteScript/LoadResource
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/suiteScript/connections/metadata';
 import { selectors } from '../../../../../../reducers';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,7 +39,7 @@ export default function ConnectionPanel({ ssLinkedConnectionId, flowId }) {
         integrationId={integrationId}
         resources="connections">
         <CeligoTable
-          data={flowConnections}
+          data={customCloneDeep(flowConnections)}
           {...metadata}
           actionProps={{ ssLinkedConnectionId, integrationId }}
         />

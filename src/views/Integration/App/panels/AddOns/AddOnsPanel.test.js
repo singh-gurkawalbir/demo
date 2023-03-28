@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import { ConfirmDialogProvider } from '../../../../../components/ConfirmDialog';
 import AddOnsPanel from './index';
@@ -23,29 +23,30 @@ describe('AddOnsPanel UI tests', () => {
   function initialStoreAndRender(settings) {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: '5ff579d745ceef7dcd797c15',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5cd51efd3607fe7d8eda9c97',
-        '5ff57a8345ceef7dcd797c21',
-      ],
-      installSteps: [],
-      uninstallSteps: [],
-      flowGroupings: [],
-      createdAt: '2021-01-06T08:50:31.935Z',
-    }];
-
-    initialStore.getState().session.integrationApps.settings['5ff579d745ceef7dcd797c15-addOns'] = settings;
-    initialStore.getState().user.preferences = {defaultAShareId: '5e27eb7fe2f22b579b581228'};
-    initialStore.getState().user.org.accounts = [{_id: '5e27eb7fe2f22b579b581228',
-      ownerUser: {licenses: [
-        {_id: 'someLicenseId', _integrationId: '5ff579d745ceef7dcd797c15'},
-      ]},
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: '5ff579d745ceef7dcd797c15',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5cd51efd3607fe7d8eda9c97',
+          '5ff57a8345ceef7dcd797c21',
+        ],
+        installSteps: [],
+        uninstallSteps: [],
+        flowGroupings: [],
+        createdAt: '2021-01-06T08:50:31.935Z',
+      }];
+      draft.session.integrationApps.settings['5ff579d745ceef7dcd797c15-addOns'] = settings;
+      draft.user.preferences = {defaultAShareId: '5e27eb7fe2f22b579b581228'};
+      draft.user.org.accounts = [{_id: '5e27eb7fe2f22b579b581228',
+        ownerUser: {licenses: [
+          {_id: 'someLicenseId', _integrationId: '5ff579d745ceef7dcd797c15'},
+        ]},
+      }];
+    });
 
     renderWithProviders(
       <ConfirmDialogProvider><MemoryRouter><AddOnsPanel integrationId="5ff579d745ceef7dcd797c15" /></MemoryRouter></ConfirmDialogProvider>,
@@ -71,7 +72,7 @@ describe('AddOnsPanel UI tests', () => {
         options: { addOnName: 'someName', licenseId: 'someLicenseId' },
       }
     );
-    expect(screen.getByText('Check out our Marketplace')).toBeInTheDocument();
+    expect(screen.getByText(/Check out our Marketplace/)).toBeInTheDocument();
   });
   test('should click on cancel button', () => {
     initialStoreAndRender(

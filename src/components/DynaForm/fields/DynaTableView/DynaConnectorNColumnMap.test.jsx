@@ -6,7 +6,7 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaConnectorNColumnMap from './DynaConnectorNColumnMap';
 import actions from '../../../../actions';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 
 const mockDispatchFn = jest.fn();
 
@@ -35,18 +35,25 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
       id: 'someid',
       _integrationId: 'someintegrationId',
       fieldType: 'somefieldtype',
+      formKey: 'form_key',
     };
 
-    initialStore.getState().session.connectors = {
-      someintegrationId: {
-        someid: {
-          isLoading: {connectorexport: false, connectorimport: false},
-          shouldReset: false,
-          data: {optionsMap: [{id: 'connectorexport', label: 'Connector Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'connectorimport', label: 'Connector Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
+    mutateStore(initialStore, draft => {
+      draft.session.connectors = {
+        someintegrationId: {
+          someid: {
+            isLoading: false,
+            shouldReset: false,
+            data: {optionsMap: [{id: 'connectorexport', label: 'Connector Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'connectorimport', label: 'Connector Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
+            },
+            fieldType: 'somefieldtype',
           },
-          fieldType: 'somefieldtype',
         },
-      }};
+      };
+      draft.session.form[genralProps.formKey] = {
+        showValidationBeforeTouched: true,
+      };
+    });
 
     initDynaConnectorNColumnMap(genralProps);
     expect(screen.getByText('Connector Export field value')).toBeInTheDocument();
@@ -55,7 +62,7 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
     expect(screen.getByDisplayValue('connector Test1')).toBeInTheDocument();
     expect(screen.getByDisplayValue('connector2')).toBeInTheDocument();
     expect(screen.getByDisplayValue('connector Test2')).toBeInTheDocument();
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-12"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('connectorexport', 'someid', 'someintegrationId'));
   });
 });

@@ -5,14 +5,17 @@ import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import ApiTokenSection from './ApiTokens';
-import {renderWithProviders} from '../../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 
 async function initApiTokenSection(props = {}) {
   const initialStore = getCreatedStore();
 
-  initialStore.getState().data.resources.accesstokens = props.accesstokens;
-  initialStore.getState().data.resources.integrations = [{_id: '60e6f83f3499084a689178cc', _connectorId: '5656f5e3bebf89c03f5dd77e'}];
+  mutateStore(initialStore, draft => {
+    draft.data.resources.accesstokens = props.accesstokens;
+    draft.data.resources.integrations = [{_id: '60e6f83f3499084a689178cc', _connectorId: '5656f5e3bebf89c03f5dd77e'}];
+  });
+
   const ui = (<MemoryRouter><ApiTokenSection {...props} /></MemoryRouter>);
 
   return renderWithProviders(ui, {initialStore});

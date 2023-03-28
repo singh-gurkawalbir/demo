@@ -5,202 +5,204 @@ import { screen, cleanup, within } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Clone from './Setup';
-import { reduxStore, renderWithProviders } from '../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 
 let initialStore;
 
 function initStore(integrationSession, integrationApps) {
-  initialStore.getState().data.resources.integrations = [
-    {
-      _id: '5fc5e0e66cfe5b44bb95de70',
-      lastModified: '2022-07-27T11:14:41.700Z',
-      name: '3PL Central',
-      description: 'Testing Integration description',
-      sandbox: false,
-      installSteps: [{
-        name: 'FTP Connection',
-        _connectionId: '5d529bfbdb0c7b14a6011a57',
-        description: 'Please configure FTP connection',
-        type: 'Connection',
-        completed: false,
-        options: {
-          connectionType: 'ftp',
+  mutateStore(initialStore, draft => {
+    draft.data.resources.integrations = [
+      {
+        _id: '5fc5e0e66cfe5b44bb95de70',
+        lastModified: '2022-07-27T11:14:41.700Z',
+        name: '3PL Central',
+        description: 'Testing Integration description',
+        sandbox: false,
+        installSteps: [{
+          name: 'FTP Connection',
+          _connectionId: '5d529bfbdb0c7b14a6011a57',
+          description: 'Please configure FTP connection',
+          type: 'Connection',
+          completed: false,
+          options: {
+            connectionType: 'ftp',
+          },
+          isCurrentStep: true,
         },
-        isCurrentStep: true,
+        {
+          name: '3PL Central Connection',
+          _connectionId: '5fc5e4a46cfe5b44bb95df44',
+          description: 'Please configure 3PL Central connection',
+          type: 'Connection',
+          completed: false,
+          options: {
+            connectionType: '3plcentral',
+          },
+        }],
       },
       {
-        name: '3PL Central Connection',
-        _connectionId: '5fc5e4a46cfe5b44bb95df44',
-        description: 'Please configure 3PL Central connection',
-        type: 'Connection',
-        completed: false,
-        options: {
-          connectionType: '3plcentral',
-        },
-      }],
-    },
-    {
-      _id: '619249e805f85b2022e086bd',
-      lastModified: '2021-11-15T11:53:47.337Z',
-      name: 'Test Export to Test Import',
-      description: 'Test Integration',
-      readme: 'testing',
-      mode: 'settings',
-      sandbox: false,
-      _templateId: '5c261974e53d9a2ecf6ad887',
-      installSteps: [
-        {
-          name: 'NetSuite Connection',
-          completed: true,
-          type: 'connection',
-          sourceConnection: {
-            type: 'netsuite',
+        _id: '619249e805f85b2022e086bd',
+        lastModified: '2021-11-15T11:53:47.337Z',
+        name: 'Test Export to Test Import',
+        description: 'Test Integration',
+        readme: 'testing',
+        mode: 'settings',
+        sandbox: false,
+        _templateId: '5c261974e53d9a2ecf6ad887',
+        installSteps: [
+          {
             name: 'NetSuite Connection',
+            completed: true,
+            type: 'connection',
+            sourceConnection: {
+              type: 'netsuite',
+              name: 'NetSuite Connection',
+            },
           },
-        },
-        {
-          name: 'Salesforce Connection',
-          completed: true,
-          type: 'connection',
-          sourceConnection: {
-            type: 'salesforce',
+          {
             name: 'Salesforce Connection',
+            completed: true,
+            type: 'connection',
+            sourceConnection: {
+              type: 'salesforce',
+              name: 'Salesforce Connection',
+            },
           },
-        },
-        {
-          name: 'Integrator Bundle',
-          description: 'Please install Integrator bundle in NetSuite account',
-          completed: true,
-          type: 'url',
-          url: 'https://tstdrv1934805.app.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-        },
-        {
-          name: 'Integrator Adaptor Package',
-          description: 'Please install Integrator bundle in Salesforce account',
-          completed: true,
-          type: 'url',
-          url: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000002Komn',
-        },
-        {
-          name: 'Copy resources now from template zip',
-          completed: true,
-          type: 'template_zip',
-          templateZip: true,
-        },
-      ],
-    },
-  ];
-  initialStore.getState().data.resources.flows = [
-    {
-      _id: '60db46af9433830f8f0e0fe7',
-      lastModified: '2021-06-30T02:36:49.734Z',
-      name: '3PL Central - FTP',
-      description: 'Testing Flows Description',
-    },
-    {
-      _id: '60db46af9433830f8f0e0fe8',
-      lastModified: '2021-06-30T02:36:49.734Z',
-      description: 'Testing Flows Description',
-      disabled: false,
-      sandbox: false,
-      skipRetries: false,
-    },
-    {
-      _id: '61924a4aaba738048023c161',
-      lastModified: '2021-11-15T11:53:47.252Z',
-      name: 'Test flow 2',
-      description: 'This description.',
-      disabled: true,
-      _integrationId: '619249e805f85b2022e086bd',
-      skipRetries: false,
-      free: false,
-      _templateId: '5c261974e53d9a2ecf6ad887',
-      _sourceId: '61506aa61ac0cc69b5be2670',
-      wizardState: 'done',
-      autoResolveMatchingTraceKeys: true,
-    },
-  ];
-  initialStore.getState().data.resources.exports = [
-    {
-      _id: '60dbc5a8a706701ed4a148ac',
-      name: 'Test 3pl central export',
-      description: 'Test 3PL central export description',
-      _connectionId: '5fc5e4a46cfe5b44bb95df44',
-      assistant: '3plcentral',
-      adaptorType: 'HTTPExport',
-    },
-    {
-      _id: '61924a46aba738048023c0df',
-      name: 'Test export',
-      description: 'Test export description.',
-      _connectionId: '5f573f1a87fe9d2ebedd30e5',
-      _sourceId: '61506aa31ac0cc69b5be2602',
-      type: 'delta',
-      _templateId: '5c261974e53d9a2ecf6ad887',
-      adaptorType: 'SalesforceExport',
-    },
-  ];
-  initialStore.getState().data.resources.imports = [
-    {
-      _id: '605b30767904202f31742092',
-      name: 'FTP Import 1',
-      description: 'Test FTP import description',
-      _connectionId: '5d529bfbdb0c7b14a6011a57',
-      sandbox: false,
-      adaptorType: 'FTPImport',
-    },
-    {
-      _id: '61924a47aba738048023c0f7',
-      name: 'Test Import',
-      description: 'Test Import Description',
-      _connectionId: '5d4017fb5663022451fdf1ad',
-      _sourceId: '61506aa41ac0cc69b5be2610',
-      _templateId: '5c261974e53d9a2ecf6ad887',
-      adaptorType: 'NetSuiteDistributedImport',
-    },
-  ];
-  initialStore.getState().data.resources.connections = [
-    {
-      _id: '5d529bfbdb0c7b14a6011a57',
-      type: 'ftp',
-      name: 'FTP Connection',
-      offline: true,
-      sandbox: false,
-    },
-    {
-      _id: '5fc5e4a46cfe5b44bb95df44',
-      type: 'http',
-      name: '3PL Central Connection',
-      assistant: '3plcentral',
-      offline: false,
-      sandbox: false,
-    },
-    {
-      _id: '5d4017fb5663022451fdf1ad',
-      type: 'netsuite',
-      name: 'Test Connection 1',
-      offline: false,
-      sandbox: false,
-    },
-    {
-      _id: '5f573f1a87fe9d2ebedd30e5',
-      type: 'salesforce',
-      name: 'Test Connection 2',
-      offline: false,
-      sandbox: false,
-    },
-  ];
-  initialStore.getState().session.templates = integrationSession;
-  initialStore.getState().session.integrationApps = integrationApps;
-  initialStore.getState().data.scripts = [{
-    _id: '61924a2caba738048023c093',
-    lastModified: '2021-11-15T11:53:16.445Z',
-    createdAt: '2021-11-15T11:53:16.272Z',
-    name: 'SFNSIOContent-Type1.js',
-    description: '',
-    _sourceId: '61506a881ac0cc69b5be25c3',
-  }];
+          {
+            name: 'Integrator Bundle',
+            description: 'Please install Integrator bundle in NetSuite account',
+            completed: true,
+            type: 'url',
+            url: 'https://tstdrv1934805.app.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+          },
+          {
+            name: 'Integrator Adaptor Package',
+            description: 'Please install Integrator bundle in Salesforce account',
+            completed: true,
+            type: 'url',
+            url: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000002Komn',
+          },
+          {
+            name: 'Copy resources now from template zip',
+            completed: true,
+            type: 'template_zip',
+            templateZip: true,
+          },
+        ],
+      },
+    ];
+    draft.data.resources.flows = [
+      {
+        _id: '60db46af9433830f8f0e0fe7',
+        lastModified: '2021-06-30T02:36:49.734Z',
+        name: '3PL Central - FTP',
+        description: 'Testing Flows Description',
+      },
+      {
+        _id: '60db46af9433830f8f0e0fe8',
+        lastModified: '2021-06-30T02:36:49.734Z',
+        description: 'Testing Flows Description',
+        disabled: false,
+        sandbox: false,
+        skipRetries: false,
+      },
+      {
+        _id: '61924a4aaba738048023c161',
+        lastModified: '2021-11-15T11:53:47.252Z',
+        name: 'Test flow 2',
+        description: 'This description.',
+        disabled: true,
+        _integrationId: '619249e805f85b2022e086bd',
+        skipRetries: false,
+        free: false,
+        _templateId: '5c261974e53d9a2ecf6ad887',
+        _sourceId: '61506aa61ac0cc69b5be2670',
+        wizardState: 'done',
+        autoResolveMatchingTraceKeys: true,
+      },
+    ];
+    draft.data.resources.exports = [
+      {
+        _id: '60dbc5a8a706701ed4a148ac',
+        name: 'Test 3pl central export',
+        description: 'Test 3PL central export description',
+        _connectionId: '5fc5e4a46cfe5b44bb95df44',
+        assistant: '3plcentral',
+        adaptorType: 'HTTPExport',
+      },
+      {
+        _id: '61924a46aba738048023c0df',
+        name: 'Test export',
+        description: 'Test export description.',
+        _connectionId: '5f573f1a87fe9d2ebedd30e5',
+        _sourceId: '61506aa31ac0cc69b5be2602',
+        type: 'delta',
+        _templateId: '5c261974e53d9a2ecf6ad887',
+        adaptorType: 'SalesforceExport',
+      },
+    ];
+    draft.data.resources.imports = [
+      {
+        _id: '605b30767904202f31742092',
+        name: 'FTP Import 1',
+        description: 'Test FTP import description',
+        _connectionId: '5d529bfbdb0c7b14a6011a57',
+        sandbox: false,
+        adaptorType: 'FTPImport',
+      },
+      {
+        _id: '61924a47aba738048023c0f7',
+        name: 'Test Import',
+        description: 'Test Import Description',
+        _connectionId: '5d4017fb5663022451fdf1ad',
+        _sourceId: '61506aa41ac0cc69b5be2610',
+        _templateId: '5c261974e53d9a2ecf6ad887',
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+    ];
+    draft.data.resources.connections = [
+      {
+        _id: '5d529bfbdb0c7b14a6011a57',
+        type: 'ftp',
+        name: 'FTP Connection',
+        offline: true,
+        sandbox: false,
+      },
+      {
+        _id: '5fc5e4a46cfe5b44bb95df44',
+        type: 'http',
+        name: '3PL Central Connection',
+        assistant: '3plcentral',
+        offline: false,
+        sandbox: false,
+      },
+      {
+        _id: '5d4017fb5663022451fdf1ad',
+        type: 'netsuite',
+        name: 'Test Connection 1',
+        offline: false,
+        sandbox: false,
+      },
+      {
+        _id: '5f573f1a87fe9d2ebedd30e5',
+        type: 'salesforce',
+        name: 'Test Connection 2',
+        offline: false,
+        sandbox: false,
+      },
+    ];
+    draft.session.templates = integrationSession;
+    draft.session.integrationApps = integrationApps;
+    draft.data.scripts = [{
+      _id: '61924a2caba738048023c093',
+      lastModified: '2021-11-15T11:53:16.445Z',
+      createdAt: '2021-11-15T11:53:16.272Z',
+      name: 'SFNSIOContent-Type1.js',
+      description: '',
+      _sourceId: '61506a881ac0cc69b5be25c3',
+    }];
+  });
 }
 
 async function initClone(props) {
@@ -1288,5 +1290,108 @@ describe('clone Setup', () => {
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     await userEvent.click(configureNode[1]);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+  });
+
+  test('should able to access the setup page without install steps', async () => {
+    const integrationSession = {
+      'imports-60db46af9433830f8f0e0fe8': {
+        preview: {
+          components: {
+            objects: [
+              {
+                model: 'Flow',
+                doc: {
+                  _id: '60db46af9433830f8f0e0fe8',
+                  description: 'Testing Flow',
+                  disabled: false,
+                  _integrationId: '5fc5e0e66cfe5b44bb95de70',
+                  skipRetries: false,
+                },
+              },
+              {
+                model: 'Export',
+                doc: {
+                  _id: '60dbc5a8a706701ed4a148ac',
+                  name: 'Test 3pl central export',
+                  description: 'Test 3PL central export description',
+                  _connectionId: '5fc5e4a46cfe5b44bb95df44',
+                  assistant: '3plcentral',
+                  sandbox: false,
+                  adaptorType: 'HTTPExport',
+                },
+              },
+              {
+                model: 'Import',
+                doc: {
+                  _id: '605b30767904202f31742092',
+                  name: 'FTP Import 1',
+                  description: 'Test FTP Import description',
+                  _connectionId: '5d529bfbdb0c7b14a6011a57',
+                  sandbox: false,
+                  adaptorType: 'FTPImport',
+                },
+              },
+              {
+                model: 'Connection',
+                doc: {
+                  _id: '5d529bfbdb0c7b14a6011a57',
+                  type: 'ftp',
+                  name: 'FTP Connection',
+                  offline: true,
+                },
+              },
+              {
+                model: 'Connection',
+                doc: {
+                  _id: '5fc5e4a46cfe5b44bb95df44',
+                  type: 'http',
+                  name: '3PL Central Connection',
+                  assistant: '3plcentral',
+                  offline: false,
+                  sandbox: false,
+                },
+              },
+            ],
+            stackRequired: false,
+            _stackId: null,
+          },
+          status: 'success',
+        },
+        connectionMap: {
+          '5d529bfbdb0c7b14a6011a57': {
+            _id: '5d529bfbdb0c7b14a6011a57',
+            type: 'ftp',
+            name: 'FTP Connection',
+            offline: true,
+            sandbox: false,
+          },
+          '5fc5e4a46cfe5b44bb95df44': {
+            _id: '5fc5e4a46cfe5b44bb95df44',
+            type: 'http',
+            name: '3PL Central Connection',
+            assistant: '3plcentral',
+            offline: false,
+            sandbox: false,
+          },
+        },
+        data: {
+          name: 'Clone - 3PL Central - FTP',
+          sandbox: false,
+          _integrationId: '5fc5e0e66cfe5b44bb95de70',
+          _flowGroupingId: null,
+        },
+      },
+    };
+    const props = {
+      pathname: '/clone/imports/60db46af9433830f8f0e0fe8/setup',
+      resourceId: '60db46af9433830f8f0e0fe8',
+      resourceType: 'flows',
+
+    };
+
+    await initStore(integrationSession);
+
+    await initClone(props);
+    expect(mockHistoryPush).toBeCalledWith('/clone/imports/60db46af9433830f8f0e0fe8/preview');
   });
 });

@@ -6,6 +6,7 @@ import { OutlinedButton } from '../../../../Buttons';
 import FieldMessage from '../../FieldMessage';
 import { isJsonString } from '../../../../../utils/string';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
+import { isJsonValue } from '../../../../../utils/json';
 
 const useStyles = makeStyles(() => ({
   editorContainer: {
@@ -30,6 +31,15 @@ export default function EditorModal(props) {
   }, [content, handleClose, handleUpdate]);
 
   useEffect(() => {
+    // if value of the field changes in the background (triggered by onFieldChange)
+    // overwrite the content of the modal
+    // used by mock response field in imports
+    if (value) {
+      setContent(value);
+    }
+  }, [value]);
+
+  useEffect(() => {
     if (id === 'settings') {
       if (content && typeof content === 'string' && !isJsonString(content)) {
         setErrorMessage('Settings must be a valid JSON');
@@ -38,6 +48,8 @@ export default function EditorModal(props) {
       }
     } else if (typeof validateContent === 'function') {
       setErrorMessage(validateContent(content));
+    } else if (validateContent && mode === 'json') {
+      setErrorMessage(isJsonValue(content, label));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, id]);

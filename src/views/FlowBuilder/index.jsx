@@ -14,20 +14,14 @@ import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
-import loadable from '../../utils/loadable';
-import retry from '../../utils/retry';
 import { selectors } from '../../reducers';
 import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
 import actions from '../../actions';
 import { STANDALONE_INTEGRATION } from '../../constants';
-
-const FlowBuilderBody = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
-);
-
-const Redirection = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
-);
+import useLoadUIFields from '../../hooks/useLoadUIFields';
+import FlowBuilderBody from './FlowBuilderBody';
+import Redirection from './Redirection';
+import LoadingNotification from '../../App/LoadingNotification';
 
 function FBComponent({flowId, integrationId, childId}) {
   return (
@@ -45,10 +39,16 @@ function FBComponent({flowId, integrationId, childId}) {
     </>
   );
 }
+
+const spinner = <LoadingNotification message="Loading" />;
+
 export default function FlowBuilder() {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { flowId, integrationId, childId } = match.params;
+
+  // takes care of loading UI fields for the flow resources
+  useLoadUIFields({ flowId });
 
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
@@ -75,7 +75,7 @@ export default function FlowBuilder() {
   if (!integrationLoaded) return null;
 
   return (
-    <LoadResources integrationId={__integrationId} required resources="connections,imports,exports,flows,scripts">
+    <LoadResources integrationId={__integrationId} required resources="connections,imports,exports,flows,scripts" spinner={spinner} >
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />

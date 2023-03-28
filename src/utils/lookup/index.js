@@ -1,4 +1,4 @@
-import deepClone from 'lodash/cloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 export default {
   getLookupFromResource: (resourceObj = {}) => {
@@ -24,6 +24,7 @@ export default {
       case 'FTPImport':
       case 'S3Import':
       case 'AS2Import':
+      case 'VANImport':
         lookup = resourceObj.file?.lookups;
         break;
       case 'WrapperImport':
@@ -39,7 +40,7 @@ export default {
     }
 
     // returning deep cloned lookup object to avoid resource object manipulation
-    return deepClone(lookup);
+    return customCloneDeep(lookup);
   },
   getLookupPath: (adaptorType, isMapping) => {
     switch (adaptorType) {
@@ -50,6 +51,7 @@ export default {
       case 'NetSuiteImport':
         return '/netsuite/lookups';
       case 'AS2Import':
+      case 'VANImport':
       case 'S3Import':
       case 'FTPImport':
         return '/file/lookups';

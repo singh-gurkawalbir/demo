@@ -5,7 +5,19 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ResourceReferences from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
+
+const mockLoadResources = jest.fn();
+
+jest.mock('../LoadResources', () => ({
+  __esModule: true,
+  ...jest.requireActual('../LoadResources'),
+  default: props => {
+    mockLoadResources(props.resources);
+
+    return <div>{props.children}</div>;
+  },
+}));
 
 async function initResourceReferences({
   props = {
@@ -16,7 +28,9 @@ async function initResourceReferences({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.resource = resource;
+  mutateStore(initialStore, draft => {
+    draft.session.resource = resource;
+  });
 
   const ui = (
     <MemoryRouter>
@@ -36,6 +50,9 @@ describe('resourceReferences test cases', () => {
 
   beforeEach(() => {
     mockGetRequestOnce('/api/exports/resource_id/dependencies', {});
+  });
+  afterEach(() => {
+    mockLoadResources.mockClear();
   });
 
   test('should pass the initial render with default value', async () => {
@@ -114,5 +131,48 @@ describe('resourceReferences test cases', () => {
 
     expect(screen.queryByText(/Retrieving references/i)).toBeInTheDocument();
   });
-});
 
+  test('loadResources should get correct resourceType', async () => {
+    await initResourceReferences({
+      resource: {
+        references: {
+          exports: [{
+            id: 'id_1',
+            name: 'Name 1',
+          }],
+          connections: [{
+            id: 'id_2',
+            name: 'Name conn 1',
+          }],
+        },
+      },
+    });
+
+    expect(mockLoadResources).toHaveBeenCalledWith(
+      expect.objectContaining(['exports', 'connections'])
+    );
+  });
+
+  test('loadResources should get unique resourceType', async () => {
+    await initResourceReferences({
+      resource: {
+        references: {
+          exports: [
+            {
+              id: 'id_1',
+              name: 'Name 1',
+            },
+            {
+              id: 'id_2',
+              name: 'Name 2',
+            },
+          ],
+        },
+      },
+    });
+
+    expect(mockLoadResources).toHaveBeenCalledWith(
+      expect.objectContaining(['exports'])
+    );
+  });
+});

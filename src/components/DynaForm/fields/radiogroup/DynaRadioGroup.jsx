@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  label: {
+  warningLabelWrapper: {
     display: 'flex',
   },
   warning: {
@@ -84,9 +84,9 @@ export default function DynaRadio(props) {
     const customLabel = `${item.label}${HTML_SPACING}`;
 
     return (
-      <div className={classes.label}>
+      <div className={classes.warningLabelWrapper}>
         <RawHtml html={customLabel} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
-        <span className={classes.label} >
+        <span className={classes.warningLabelWrapper}>
           { item.isWarningMessage && <WarningIcon data-test="warningIcon" className={classes.warning} /> }
           <RawHtml data-test="description" html={item.description} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
         </span>

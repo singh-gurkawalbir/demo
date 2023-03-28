@@ -8,7 +8,6 @@ import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
 import dateTimezones from '../../utils/dateTimezones';
-import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
@@ -16,16 +15,9 @@ import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
 import infoText from '../../components/Help/infoText';
 import { isProduction } from '../../forms/formFactory/utils';
+import { isGoogleSignInAllowed } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
-  googleBtn: {
-    background: `url(${getImageUrl(
-      'images/googlelogo.png'
-    )}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-  },
   label: {
     marginRight: theme.spacing(1),
   },
@@ -39,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   saveBtnProfile: {
     marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   profilePanelHeader: {
     padding: theme.spacing(2),
@@ -138,7 +131,7 @@ export default function ProfilePanel() {
           },
           {
             label: 'Orion',
-            value: 'sandbox',
+            value: 'orion',
           },
         ],
       },
@@ -365,8 +358,7 @@ export default function ProfilePanel() {
           {defaultLabels.saveLabel}
         </DynaSubmit>
         {
-        // eslint-disable-next-line no-undef
-        ALLOW_GOOGLE_SIGNIN === 'true' && (
+        isGoogleSignInAllowed() && (
         <div className={classes.googleSignInPanel}>
           <PanelHeader
             title="Sign in via Google"
@@ -380,7 +372,7 @@ export default function ProfilePanel() {
                 <OutlinedButton
                   data-test="linkWithGoogle"
                   color="secondary"
-                  className={classes.googleBtn}
+                  googleBtn
                   onClick={handleLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
                 </OutlinedButton>
@@ -394,7 +386,7 @@ export default function ProfilePanel() {
                 <OutlinedButton
                   data-test="unlinkWithGoogle"
                   color="secondary"
-                  className={classes.googleBtn}
+                  googleBtn
                   onClick={handleUnLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
                 </OutlinedButton>
