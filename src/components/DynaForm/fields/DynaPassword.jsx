@@ -105,7 +105,6 @@ export default function DynaPassword(props) {
 
   const handleOnChangePassword = useCallback(e => {
     const password = e.target.value;
-    // const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
     onFieldChange(id, password);
     setContainCapitalLetter(/[A-Z]/.test(password));
