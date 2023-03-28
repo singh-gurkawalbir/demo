@@ -7,6 +7,7 @@ import { selectors } from '../../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
+  fieldsWithRemoveDelete,
 } from '../../../forms/formFactory/utils';
 import { commitStagedChangesWrapper, requestSuiteScriptMetadata } from '../resources';
 import connectionSagas from './connections';
@@ -72,6 +73,7 @@ export function* createFormValuesPatchSet({
     // stock preSave handler present...
 
     finalValues = preSave(values, resource);
+    finalValues = fieldsWithRemoveDelete(formState.fieldMeta.fieldMap, finalValues);
   }
 
   const patchSet = sanitizePatchSet({

@@ -20,7 +20,7 @@ const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
 
   return null;
 };
-export const fieldsWithRemoveDelete = fields => {
+export const fieldsWithRemoveDelete = (fields, values) => {
   const fieldsNew = {};
 
   Object.keys(fields).forEach(key => {
@@ -29,19 +29,6 @@ export const fieldsWithRemoveDelete = fields => {
     fieldsNew[key] = {...field, isRemove: isRemoved(field, fields), deleteWhen: isDeleted(field, fields)};
   });
 
-  return fieldsNew;
-};
-
-export const valuesToDelete = (values, fields) => {
-  const newValues = {...values};
-
-  Object.keys(fields).forEach(key => {
-    (fields[key].delete || fields[key].deleteWhen) ? delete newValues[`/${(key.replaceAll('.', '/'))}`] : '';
-  });
-
-  return newValues;
-};
-export const valuesToRemove = (values, fields) => {
   const newValues = {...values};
 
   Object.keys(values).forEach(key => {
@@ -49,10 +36,16 @@ export const valuesToRemove = (values, fields) => {
     const valueKeys = valkey.replaceAll('/', '.');
 
     // eslint-disable-next-line no-self-assign
-    (valueKeys in fields && (fields[valueKeys].remove || fields[valueKeys].isRemove)) ? newValues[key] = undefined : newValues[key] = newValues[key];
+    (valueKeys in fieldsNew && (fieldsNew[valueKeys].remove || fieldsNew[valueKeys].isRemove)) ? newValues[key] = undefined : newValues[key] = newValues[key];
   });
 
-  return newValues;
+  const newValuesAfterDeleting = {...newValues};
+
+  Object.keys(fieldsNew).forEach(key => {
+    (fieldsNew[key].delete || fieldsNew[key].deleteWhen) ? delete newValuesAfterDeleting[`/${(key.replaceAll('.', '/'))}`] : '';
+  });
+
+  return newValuesAfterDeleting;
 };
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
