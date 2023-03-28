@@ -271,7 +271,8 @@ export const sanitizePatchSet = ({
           (field.defaultValue === patch.value && field.defaultValue !== '')
         ) {
           valuePatches.push(patch);
-        } else if (fieldValueOnResource && fieldValueOnResource !== patch.value) {
+        } else if (fieldValueOnResource && patch.value === '') {
+          // if the field on resource has value but patch.value is an empty string, the value on the resource should be patched
           valuePatches.push(patch);
         }
       }
