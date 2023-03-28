@@ -144,35 +144,36 @@ export default function SignIn({dialogOpen, className}) {
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <LoginFormWrapper className={className}>
-      {!isAuthenticating && !showError && query.get('msg') && (
-      <Typography
-        data-private
-        color="error"
-        component="div"
-        variant="h4"
-        className={classes.errorMsg}>
-        {query.get('msg')}
-      </Typography>
-      )}
-      <DynaForm formKey={formKey} />
-
-      {!isAuthenticating && showError && error && (
-        <ShowErrorMessage error={error} />
-      )}
-      {isAuthenticating ? <Spinner />
-        : (
-          <DynaSubmit
-            id="submit"
-            fullWidth
-            submit
-            formKey={formKey}
-            className={classes.submit}
-            onClick={handleOnSubmit}
-            ignoreFormTouchedCheck>
-            Sign in
-          </DynaSubmit>
+      <form>
+        {!isAuthenticating && !showError && query.get('msg') && (
+        <Typography
+          data-private
+          color="error"
+          component="div"
+          variant="h4"
+          className={classes.errorMsg}>
+          {query.get('msg')}
+        </Typography>
         )}
+        <DynaForm formKey={formKey} />
 
+        {!isAuthenticating && showError && error && (
+        <ShowErrorMessage error={error} />
+        )}
+        {isAuthenticating ? <Spinner />
+          : (
+            <DynaSubmit
+              id="submit"
+              fullWidth
+              submit
+              formKey={formKey}
+              className={classes.submit}
+              onClick={handleOnSubmit}
+              ignoreFormTouchedCheck>
+              Sign in
+            </DynaSubmit>
+          )}
+      </form>
       { !isAuthenticating && (
       <div>
         {!dialogOpen &&
