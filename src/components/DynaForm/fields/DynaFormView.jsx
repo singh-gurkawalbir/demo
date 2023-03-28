@@ -30,8 +30,6 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
-  const data = useSelector(
-    state => selectors.formState(state, formKey));
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
@@ -98,7 +96,7 @@ export default function FormView(props) {
     });
     let finalValues = preSave(formContext.value, staggedRes, { connection });
 
-    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
+    finalValues = fieldsWithRemoveDelete(formContext.fields, finalValues);
 
     const newFinalValues = {...finalValues};
 

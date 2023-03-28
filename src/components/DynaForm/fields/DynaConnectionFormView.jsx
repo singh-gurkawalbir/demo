@@ -54,8 +54,6 @@ export default function FormView(props) {
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
 
-  const data = useSelector(
-    state => selectors.formState(state, formKey));
   const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
@@ -98,7 +96,7 @@ export default function FormView(props) {
     });
     let finalValues = preSave(formContext.value, stagedRes);
 
-    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
+    finalValues = fieldsWithRemoveDelete(formContext.fields, finalValues);
     const newFinalValues = {...finalValues};
 
     // if assistant is selected back again assign it to the export to the export obj as well
@@ -155,7 +153,7 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [_httpConnectorId, accountOwner, data.fields, dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [_httpConnectorId, accountOwner, dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!_httpConnectorId || !sourceForm || stagedResource?._connectorId) {
     return null;
