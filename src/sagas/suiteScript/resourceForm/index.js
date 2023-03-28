@@ -50,6 +50,12 @@ export function* createFormValuesPatchSet({
     resourceType,
     resourceId,
   });
+  const formKey = yield select(
+    selectors.formKey,
+    resourceType,
+    resourceId
+  );
+  const data = yield select(selectors.formState, formKey);
   let finalValues = values;
   let connection;
 
@@ -73,7 +79,7 @@ export function* createFormValuesPatchSet({
     // stock preSave handler present...
 
     finalValues = preSave(values, resource);
-    finalValues = fieldsWithRemoveDelete(formState.fieldMeta.fieldMap, finalValues);
+    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
   }
 
   const patchSet = sanitizePatchSet({

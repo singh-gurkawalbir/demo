@@ -10,7 +10,7 @@ import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../constants';
 import {useHFSetInitializeFormData} from './DynaHFAssistantOptions';
 import getResourceFormAssets from '../../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, fieldsWithRemoveDelete, sanitizePatchSet } from '../../../../forms/formFactory/utils';
 import MultiApiSelect from '../../../MultiApiSelect';
 import FieldMessage from '../FieldMessage';
 
@@ -58,6 +58,8 @@ export default function APISelect(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObject
   );
+  const fieldData = useSelector(
+    state => selectors.formState(state, formKey));
   const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   useHFSetInitializeFormData({...props, isHTTPFramework: stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId});
@@ -77,7 +79,10 @@ export default function APISelect(props) {
       isNew: false,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, stagedRes);
+    let finalValues = preSave(formContext.value, stagedRes);
+
+    finalValues = fieldsWithRemoveDelete(fieldData.fields, finalValues);
+
     const newFinalValues = {...finalValues};
 
     if (val) {

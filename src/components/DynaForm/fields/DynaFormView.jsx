@@ -9,7 +9,7 @@ import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, fieldsWithRemoveDelete, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isSapByDesignSoapConnection, isEbayFinanceConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
@@ -30,6 +30,8 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const data = useSelector(
+    state => selectors.formState(state, formKey));
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
@@ -94,7 +96,10 @@ export default function FormView(props) {
       assistantData,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, staggedRes, { connection });
+    let finalValues = preSave(formContext.value, staggedRes, { connection });
+
+    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
+
     const newFinalValues = {...finalValues};
 
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
@@ -116,7 +121,7 @@ export default function FormView(props) {
       }
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues } ),
+      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });

@@ -9,7 +9,7 @@ import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, fieldsWithRemoveDelete, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
@@ -53,6 +53,9 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+
+  const data = useSelector(
+    state => selectors.formState(state, formKey));
   const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
@@ -93,7 +96,9 @@ export default function FormView(props) {
       isNew: false,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, stagedRes);
+    let finalValues = preSave(formContext.value, stagedRes);
+
+    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
     const newFinalValues = {...finalValues};
 
     // if assistant is selected back again assign it to the export to the export obj as well

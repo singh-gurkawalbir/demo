@@ -9,7 +9,7 @@ import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, fieldsWithRemoveDelete, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
@@ -46,6 +46,8 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const data = useSelector(
+    state => selectors.formState(state, formKey));
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', stagedResource._connectionId) ||
@@ -105,7 +107,10 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       connection,
       assistantData: connectorMetaData,
     });
-    const finalValues = preSave(formContext.value, staggedRes, { connection });
+    let finalValues = preSave(formContext.value, staggedRes, { connection });
+
+    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
+
     const newFinalValues = {...finalValues};
 
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
