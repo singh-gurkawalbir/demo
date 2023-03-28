@@ -56,7 +56,9 @@ export default function ResetPassword() {
     return errorMessage;
   });
 
-  const handleOnSubmit = useCallback(() => {
+  const handleOnSubmit = useCallback(e => {
+    e.preventDefault();
+
     if (!passwordVal) {
       setShowError(true);
     } else if (!showError) {

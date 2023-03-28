@@ -93,16 +93,16 @@ describe('flowdebugger -', () => {
   });
   describe('validateMockDataField util test cases', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(validateMockDataField()()).toBeUndefined();
+      expect(validateMockDataField()).toBeUndefined();
     });
     test('should validate mock output if resource type is exports', () => {
-      expect(validateMockDataField('exports')('value')).toEqual(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'));
+      expect(validateMockDataField('exports', 'value')).toEqual(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'));
     });
     test('should validate mock response if resource type is imports', () => {
-      expect(validateMockDataField('imports')('value')).toEqual(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'));
+      expect(validateMockDataField('imports', 'value')).toEqual(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'));
     });
     test('should validate mock response if resource type is not passed', () => {
-      expect(validateMockDataField()('value')).toEqual(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'));
+      expect(validateMockDataField(undefined, 'value')).toEqual(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'));
     });
   });
   describe('getMockOutputFromResource util test cases', () => {

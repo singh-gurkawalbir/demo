@@ -1,9 +1,8 @@
-import { deepClone } from 'fast-json-patch';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => {
-    const newValues = deepClone(formValues);
+    const newValues = {...formValues};
 
     const roleId = newValues['/netsuite/token/auto/roleId'];
     const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
@@ -85,7 +84,11 @@ export default {
         return value;
       },
     },
-    'jdbc.port': { fieldId: 'jdbc.port', defaultDisabled: true, defaultValue: 1708 },
+    'jdbc.port': {
+      fieldId: 'jdbc.port',
+      defaultDisabled: true,
+      defaultValue: r => r?.jdbc?.port || 1708,
+    },
     'jdbc.StaticSchema': {
       id: 'jdbc.StaticSchema',
       isLoggable: true,

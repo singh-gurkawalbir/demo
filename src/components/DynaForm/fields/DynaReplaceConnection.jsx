@@ -9,6 +9,7 @@ import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import { MULTIPLE_AUTH_TYPE_ASSISTANTS } from '../../../constants';
 import useUpdateGroupingVisibility from './DynaSortAndGroup/useUpdateGroupingVisibility';
+import useHandleFileDefinitionFieldVisibility from '../../drawer/Resource/Panel/useHandleFileDefinitionFieldVisibility';
 
 const emptyObj = {};
 export default function DynaReplaceConnection(props) {
@@ -65,9 +66,10 @@ export default function DynaReplaceConnection(props) {
     isHTTPFramework: connection?.http?._httpConnectorId,
   });
 
-  // this hook needs to be added in some component
+  // these hooks needed to be added in some component
   // which would always be visible on export form
   useUpdateGroupingVisibility({formKey, resourceId, resourceType: parentResourceType});
+  useHandleFileDefinitionFieldVisibility(formKey);
 
   const onFieldChangeHandler = useCallback((id, newConnectionId) => {
     const patch = [];
