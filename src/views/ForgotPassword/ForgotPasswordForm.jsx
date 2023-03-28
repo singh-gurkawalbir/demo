@@ -17,6 +17,7 @@ import messageStore, { message } from '../../utils/messageStore';
 const useStyles = makeStyles(theme => ({
   submit: {
     marginTop: theme.spacing(4),
+    fontSize: 16,
   },
   textField: {
     width: '100%',
