@@ -127,7 +127,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       { extract: 'name', generate: 'samplename' },
     ]);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-12"]'));
+    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
   });
   test('should test static map with number data by setting prefered value as num to true', () => {
@@ -177,4 +177,3 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     );
   });
 });
-
