@@ -27,6 +27,11 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 const emptyObj = {};
 const useStyles = makeStyles({
   pgContainer: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  iconViewPgContainer: {
     width: '137px',
     display: 'flex',
     alignItems: 'flex-start',
@@ -311,7 +316,7 @@ const PageGenerator = ({
   const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (iconView === 'icon' ? IconBlock : AppBlock);
 
   return (
-    <div className={clsx(classes.pgContainer, className)} >
+    <div className={clsx({[classes.iconViewPgContainer]: iconView === 'icon', [classes.pgContainer]: iconView !== 'icon'})} >
       <Component
         integrationId={integrationId}
         name={blockName}

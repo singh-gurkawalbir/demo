@@ -135,19 +135,13 @@ export default function PageProcessorNode({ data = {}}) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, flowId]);
 
-  const isSubFlowView = useSelector(state =>
-    selectors.fbSubFlowView(state, flowId)
-  );
-
-  console.log('subFlow', isSubFlow);
-
   return (
     <div className={clsx({[classes.newroot]: iconView === 'icon', [classes.root]: iconView !== 'icon'})}>
       <DefaultHandle type="target" position={Position.Left} />
 
       <div className={clsx({[classes.newcontentContainer]: iconView === 'icon', [classes.contentContainer]: iconView !== 'icon'})} >
         <div>
-          { (iconView !== 'icon' || (isSubFlow && !isSubFlowView)) && (
+          {iconView !== 'icon' && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
             {!isVirtual && (
             <Typography variant="overline" className={classes.branchName}>

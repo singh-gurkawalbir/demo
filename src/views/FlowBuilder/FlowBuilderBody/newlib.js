@@ -5,6 +5,10 @@ import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 import { generateId } from '../../../utils/string';
 import { stringCompare } from '../../../utils/sort';
+import { isNewId } from '../../../utils/resource';
+
+// TODO : Flowbuiler duplicate code
+// Can be combined with exisitng lib.js file
 
 // react-flow handles by default sit just outside of the node boundary.
 // this offset is the number of pixels the left or right handle is offset from
@@ -60,8 +64,8 @@ const options = {
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',
   // ranker: 'longest-path', // seems worst
-  ranksep: 92,
-  nodesep: 40,
+  ranksep: 86,
+  nodesep: 32,
   marginx: 50,
   marginy: 50,
 };
@@ -131,13 +135,7 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
   elements.forEach(el => {
     if (isNode(el)) {
       const node = graph.node(el.id);
-      let size;
-
-      if (el.isSubFlow && (el.type === 'iconpp' || el.type === 'iconpg')) {
-        size = nodeSize[el.type] * 2;
-      } else {
-        size = nodeSize[el.type];
-      }
+      const size = nodeSize[el.type];
 
       if (node.x > highestX) {
         highestX = node.x + size.width / 2;
@@ -158,6 +156,9 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
       const position = {};
+      const isNewBubble = isNewId(el.id);
+
+      console.log(isNewBubble);
 
       if (el.type === 'iconpp') {
         position.x = node.x;
@@ -165,9 +166,12 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
       } else if (el.type === 'terminal') {
         position.x = node.x + 12;
         position.y = node.y + 7;
+      } else if (el.type === 'iconpg' && !el.isSubFlow && isNewBubble) {
+        position.x = node.x - 45;
+        position.y = node.y - 11;
       } else if (el.type === 'iconpg' && !el.isSubFlow) {
         position.x = node.x - 45;
-        position.y = node.y + 1;
+        position.y = node.y - 6;
       } else if (el.type === 'iconpg' && el.isSubFlow) {
         position.x = node.x - 35;
         position.y = node.y - 25;

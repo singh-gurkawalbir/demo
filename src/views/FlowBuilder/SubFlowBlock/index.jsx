@@ -13,10 +13,10 @@ import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
-import SubFlowActionIconButton from '../SubFlowActionIconButton';
+import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-import SubFlowResourceButton from '../SubFlowResourceButton';
-import BubbleSmallSvg from '../BubbleSmallSvg';
+import IconViewResourceButton from '../IconViewResourceButton';
+import SubFlowBubbleSvg from '../SubFlowBubbleSvg';
 import GripperIcon from '../../../components/icons/GripperIcon';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
@@ -30,6 +30,9 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
 import SubFlowErrorStatus from '../SubFlowErrorStatus';
+
+// TODO : Flowbuiler duplicate code
+// Can be combined with exisitng Appblock
 
 const blockWidth = 137;
 const useStyles = makeStyles(theme => ({
@@ -111,6 +114,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     left: -16,
     top: 28,
+    '& .MuiButtonBase-root': {
+      backgroundColor: theme.palette.background.paper,
+    },
   },
   rightActions: {
     position: 'absolute',
@@ -118,6 +124,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     left: 137,
     top: 32,
+    '& .MuiButtonBase-root': {
+      backgroundColor: theme.palette.background.paper,
+    },
   },
   isNotOverActions: {
     width: 0,
@@ -412,7 +421,7 @@ export default function AppBlock({
 
     return flowActions.map(a => (
       <Fragment key={a.name}>
-        <SubFlowActionIconButton
+        <ActionIconButton
           variant={a.position !== 'middle' ? 'contained' : undefined}
           helpKey={a.helpKey}
           helpText={a.helpText}
@@ -423,7 +432,7 @@ export default function AppBlock({
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
           <a.Icon />
-        </SubFlowActionIconButton>
+        </ActionIconButton>
         <a.Component
           open={activeAction === a.name}
           flowId={flowId}
@@ -463,7 +472,7 @@ export default function AppBlock({
       >
         <div className={classes.bubbleContainer}>
           <SubFlowErrorStatus
-            count={2}
+            errorCount={openErrorCount}
             subBlockSchema
             isNew={isNew}
             flowId={flowId}
@@ -484,7 +493,7 @@ export default function AppBlock({
               id={id}
               path={rest.path} />
           </div>
-          <BubbleSmallSvg
+          <SubFlowBubbleSvg
             classes={{ bubble: clsx(classes.bubble, {[classes.bubbleActive]: isActive}),
               bubbleBG: classes.bubbleBG,
             }}
@@ -519,16 +528,16 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <SubFlowResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          <IconViewResourceButton onClick={onBlockClick} variant={blockType} isSubFlow disabled={isFlowSaveInProgress} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
-              <SubFlowActionIconButton
+              <ActionIconButton
                 onClick={handleExpandClick}
                 data-test="addDataProcessor"
                 helpText="Define options">
                 <AddIcon />
-              </SubFlowActionIconButton>
+              </ActionIconButton>
             ) : null}
           </div>
         </div>

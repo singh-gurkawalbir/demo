@@ -15,7 +15,8 @@ import ArrowPopper from '../../../components/ArrowPopper';
 import { selectors } from '../../../reducers';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-import ResourceButton from '../ResourceButton';
+import IconViewResourceButton from '../IconViewResourceButton';
+import EmptyResourceButton from '../EmptyResourceButton';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import BranchIcon from '../../../components/icons/BranchIcon';
 import actions from '../../../actions';
@@ -115,6 +116,7 @@ const useStyles = makeStyles(theme => ({
   },
   invert: {
     transform: 'scaleX(-1)',
+    color: theme.palette.primary.main,
   },
   actionUsed: {
     color: theme.palette.primary.main,
@@ -192,19 +194,22 @@ const useStyles = makeStyles(theme => ({
   pgContainerName: {
     background: theme.palette.background.paper,
   },
-  applicationsMenuPopper: {
-    border: 'none',
-  },
-  applicationsMenuPaper: {
-    right: styleProps => styleProps.additionalAppsCount >= styleProps.columns - 1 ? styleProps.pxSize : styleProps.pxSize / 2,
-  },
-  applicationsMenuPaperMax: {
-    right: styleProps => styleProps.pxSize * 1.5,
-  },
   applicationsMenuPaperPlaceholder: {
     position: 'relative',
     maxHeight: styleProps => styleProps.pxSize * 4,
     overflowY: 'auto',
+    '& .MuiButtonBase-root': {
+      border: 'none',
+    },
+  },
+  resourceIconButtons: {
+    color: theme.palette.primary.main,
+    '& .MuiButton-startIcon': {
+      margin: 0,
+    },
+  },
+  downStreamIconButton: {
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -351,7 +356,12 @@ export default function AppBlock({
     setActiveAction(null);
     setExpanded();
   }, [handleClose]);
-  const handleMouseHover = useCallback(val => () => setIsHover(val), []);
+  const handleMouseHover = useCallback(val => () => {
+    if (!val) {
+      setAnchorEl(null);
+    }
+    setIsHover(val);
+  }, []);
 
   const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
@@ -465,6 +475,7 @@ export default function AppBlock({
         className={classes.box}
       >
         <div className={classes.appLogoContainer}>
+          {onDelete && !isViewMode && !resource._connectorId && (
           <IconButton
             size="small"
             className={classes.deleteButton}
@@ -472,34 +483,42 @@ export default function AppBlock({
             data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
             <CloseIcon />
           </IconButton>
+          )}
           {iconType && (
             <ApplicationImg
               className={classes.appLogo}
               type={iconType}
-              assistant={connAssistant || assistant}
-            />
+              markOnly={!(['http', 'ftp'].includes(iconType))}
+              assistant={connAssistant || assistant} />
+          )}
+          {!iconType && (
+            <EmptyResourceButton variant={blockType} onClick={onBlockClick} />
           )}
 
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={!iconType ? onBlockClick : handleClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          {iconType && <IconViewResourceButton onClick={!iconType ? onBlockClick : handleClick} variant={blockType} disabled={isFlowSaveInProgress} />}
           <ArrowPopper
             placement="bottom"
             open={open}
             anchorEl={anchorEl}
             restrictToParent={false}
-            classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, classes.applicationsMenuPaper) }}
-            id="additionalApps"
+            classes={{paper: classes.applicationsMenuPaperPlaceholder}}
+            id="bubbleActions"
             onClose={handleClose} >
             <div>
               {renderActions(leftActions, isDragInProgress)}
               {renderActions(rightActions, isDragInProgress)}
               {renderActions(middleActions)}
-              <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+              <IconViewResourceButton
+                title={`Open ${blockType}`} showTooltip onClick={onBlockClick} variant={blockType}
+                disabled={isFlowSaveInProgress}
+                className={classes.resourceIconButtons} />
               <ActionIconButton
                 onClick={() => downstreamHighlighter(id)}
                 data-test="flowBranching"
-                helpText="DownStream expansion">
+                helpText="DownStream expansion"
+                className={classes.downStreamIconButton}>
                 <BranchIcon />
               </ActionIconButton>
               <ActionIconButton

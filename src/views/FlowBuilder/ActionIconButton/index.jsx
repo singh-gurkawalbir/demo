@@ -49,6 +49,14 @@ const useStyles = makeStyles(theme => ({
       height: 20,
     },
   },
+  subFlowButtonLabel: {
+    width: 18,
+    height: 18,
+    '& svg': {
+      width: 16,
+      height: 16,
+    },
+  },
   contained: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -69,6 +77,9 @@ export default function ActionIconButton({
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
 
   return (
     <Tooltip title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
@@ -77,7 +88,7 @@ export default function ActionIconButton({
         className={clsx(classes.button, className, classes[variant])}
         classes={{
           root: clsx({[classes.newiconButtonRoot]: iconView === 'icon', [classes.newiconButtonRoot]: iconView !== 'icon'}),
-          label: clsx({[classes.newiconButtonLabel]: iconView === 'icon', [classes.iconButtonLabel]: iconView === 'icon'}),
+          label: clsx({[classes.newiconButtonLabel]: (iconView === 'icon' && !isSubFlowView), [classes.iconButtonLabel]: iconView !== 'icon', [classes.subFlowButtonLabel]: isSubFlowView}),
         }}
         {...props}>
         {children}

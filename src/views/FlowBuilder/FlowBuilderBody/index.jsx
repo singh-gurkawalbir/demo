@@ -181,6 +181,20 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     selectors.fbSubFlowView(state, flowId)
   );
 
+  // const graphNodes = elements.filter(ele => isNode(ele));
+
+  const iconViewElements = isSubFlowView ? subFlowElements : elements;
+
+  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(iconViewElements, mergedFlow, isSubFlowView), [elements, iconView, iconViewElements, isSubFlowView, mergedFlow]);
+  const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
+
+  useEffect(() => {
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
+    if (iconView !== 'icon') {
+      dispatch(actions.flow.iconView(flowId, 'bubble'));
+    }
+  }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow, iconView]);
+
   const getAllOutgoingNodes = (node, elements) => getOutgoers(node, elements).reduce(
     (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, elements)],
     []
@@ -221,18 +235,6 @@ export function Canvas({ flowId, fullscreen, iconView}) {
 
     setSubFlowElements(newElements);
   };
-
-  const iconViewElements = isSubFlowView ? subFlowElements : elements;
-
-  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(iconViewElements, mergedFlow, isSubFlowView), [elements, iconView, iconViewElements, isSubFlowView, mergedFlow]);
-  const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
-
-  useEffect(() => {
-    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
-    if (iconView !== 'icon') {
-      dispatch(actions.flow.iconView(flowId, 'bubble'));
-    }
-  }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow, iconView]);
 
   const handleNodeDragStart = useCallback((evt, source) => {
     dispatch(actions.flow.dragStart(flowId, source.id));

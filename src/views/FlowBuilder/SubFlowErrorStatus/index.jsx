@@ -65,9 +65,16 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'left',
     lineHeight: 1,
   },
+  errorCountButton: {
+    padding: 0,
+    minWidth: 'auto',
+    '& .MuiButton-startIcon': {
+      margin: 0,
+    },
+  },
 }));
 
-export default function SubFlowErrorStatus({ count, isNew, flowId, resourceId }) {
+export default function SubFlowErrorStatus({ errorCount, isNew, flowId, resourceId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -109,30 +116,23 @@ export default function SubFlowErrorStatus({ count, isNew, flowId, resourceId })
    * Error status ( error / success ) is shown only if the user is in EM 2.0
    * If the flow has been run at least once (has at least one flow job)
    */
-  // if (!shouldErrorStatusBeShown) {
-  //   return null;
-  // }
-  const IconComponent = count ? (
-    <>
-      <WarningIcon data-test="warningIcon" className={classes.warning} />
-      <TextButton
-        color="primary"
-        className={classes.statusButtonContainer}
-        onClick={handleErrorClick}
-        data-test="openErrors"
-        >
-        {count}
-      </TextButton>
-    </>
-  ) : <SuccessIcon className={classes.success} />;
 
   if (!shouldErrorStatusBeShown) {
     return null;
   }
 
   return (
-    <div className={clsx(classes.statusAppBlock, {[classes.successWrapper]: !count })}>
-      {IconComponent}
+    <div className={clsx(classes.statusAppBlock, {[classes.successWrapper]: !errorCount })}>
+      { errorCount ? (
+        <TextButton
+          color="primary"
+          className={classes.errorCountButton}
+          onClick={handleErrorClick}
+          data-test="openErrors"
+          startIcon={<WarningIcon data-test="warningIcon" className={classes.warning} />}>
+          {errorCount}
+        </TextButton>
+      ) : <SuccessIcon className={classes.success} />}
     </div>
   );
 }

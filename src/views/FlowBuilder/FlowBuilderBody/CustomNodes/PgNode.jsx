@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 0,
   },
   root: {
-    width: 210,
+    width: 250,
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },

@@ -27,6 +27,7 @@ import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import Help from '../../../../components/Help';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -151,6 +152,21 @@ const pageChildreUseStyles = makeStyles(theme => ({
       },
     },
   },
+  helpIcon: {
+    padding: 0,
+    '& svg': {
+      fontSize: theme.spacing(3),
+      color: theme.palette.secondary.light,
+    },
+    '&:hover': {
+      background: 'none',
+      '& svg': {
+        color: theme.palette.primary.main,
+      },
+
+    },
+  },
+
 }));
 
 const RunFlowButtonWrapper = ({flowId}) => {
@@ -187,6 +203,8 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
 
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
 
+  const showIconViewToggle = Boolean(process.env.ICON_VIEW_FLOWBUILDER);
+
   const pushOrReplaceHistory = usePushOrReplaceHistory();
 
   const handleDrawerOpen = useCallback(
@@ -216,6 +234,10 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
     title: `${flowDetails?.schedule ? 'Edit' : 'Add'} schedule`,
     placement: 'bottom',
   };
+  const tooltipIconView = {
+    title: iconView !== 'icon' ? 'Swith to iconic view' : 'Swith to bubble view',
+    placement: 'bottom',
+  };
 
   const handleViewChange = () => {
     dispatch(actions.flow.toggleSubFlowView(flowId, false));
@@ -226,12 +248,20 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
 
   return (
     <div className={classes.actions}>
-      {(['development', 'staging'].includes(process.env.NODE_ENV) && process.env.NODE_ENV !== 'qa.staging' && (
-      <IconButtonWithTooltip
-        onClick={handleViewChange}
-        data-test="flowSettings">
-        <RefreshIcon />
-      </IconButtonWithTooltip>
+      {(showIconViewToggle && (
+        <>
+          {(iconView === 'icon' && (
+          <Help
+            title="How to operate?" className={classes.helpIcon} disablePortal={false} placement="left-start"
+            helpKey="flowbuilder.iconView" />
+          ))}
+          <IconButtonWithTooltip
+            onClick={handleViewChange}
+            data-test="flowSettings"
+            tooltipProps={tooltipIconView}>
+            <RefreshIcon />
+          </IconButtonWithTooltip>
+        </>
       ))}
       {isUserInErrMgtTwoDotZero && (
       <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
@@ -315,9 +345,6 @@ export default function PageBar({flowId, integrationId}) {
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
-  const isSubFlowView = useSelector(state =>
-    selectors.fbSubFlowView(state, flowId)
-  );
 
   return (
     <CeligoPageBar
@@ -328,7 +355,7 @@ export default function PageBar({flowId, integrationId}) {
     >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
-        flowId={flowId} integrationId={integrationId} iconView={iconView} isSubFlowView={isSubFlowView}
+        flowId={flowId} integrationId={integrationId} iconView={iconView}
       />
     </CeligoPageBar>
   );

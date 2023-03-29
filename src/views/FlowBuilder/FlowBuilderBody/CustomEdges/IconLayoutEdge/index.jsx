@@ -23,6 +23,9 @@ import PGDropbox from '../PGDropbox';
 import itemTypes from '../../../itemTypes';
 import SubFlowButton from '../SubFlowButton';
 
+// TODO : Flowbuiler duplicate code
+// Can be combined with exisitng DefaultEdge
+
 const useStyles = makeStyles(theme => ({
   edgePath: {
     strokeDasharray: 4,
@@ -58,7 +61,7 @@ function getPositionAndOffset(
     // we want the add button to be positioned close to the pp,
     // not close to the merge/router nodes.
     position = 'right';
-    offset = 60;
+    offset = 30;
   } else if (
     targetType === GRAPH_ELEMENTS_TYPE.ROUTER &&
     sourceType === GRAPH_ELEMENTS_TYPE.ICON_PG
@@ -97,8 +100,8 @@ function getPositionAndOffset(
     targetType === GRAPH_ELEMENTS_TYPE.TERMINAL &&
     sourceType === GRAPH_ELEMENTS_TYPE.ROUTER
   ) {
-    position = 'right';
-    offset = 105;
+    position = 'left';
+    offset = 45;
   }
 
   if (processorCount > 0) {
@@ -131,9 +134,18 @@ function DefaultEdge(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { elements, dragNodeId, flow, flowId } = useFlowContext();
+  const transformedElements = elements.map(ele => {
+    if (ele.type === 'pg') {
+      return {...ele, type: 'iconpg'};
+    } if (ele.type === 'pp') {
+      return {...ele, type: 'iconpp'};
+    }
+
+    return ele;
+  });
   const hasSiblingEdges = useMemo(
-    () => areMultipleEdgesConnectedToSameEdgeTarget(id, elements),
-    [id, elements]
+    () => areMultipleEdgesConnectedToSameEdgeTarget(id, transformedElements),
+    [id, transformedElements]
   );
 
   const isDraggingInProgress = useIsDragInProgress();
@@ -155,7 +167,7 @@ function DefaultEdge(props) {
   const hoveredEdges = useSelector(state =>
     selectors.fbEdgeHovered(state, flowId)
   );
-  const selectedSubFlowNode = useSelector(state =>
+  const selectedSubFlowNodeId = useSelector(state =>
     selectors.fbSelectedSubFlow(state, flowId)
   );
   const isFlowSaveInProgress = useSelector(state =>
@@ -168,9 +180,10 @@ function DefaultEdge(props) {
     selectors.fbSubFlowView(state, flowId)
   );
 
-  const edge = elements.find(ele => ele?.id === id);
+  const edge = transformedElements.find(ele => ele?.id === id);
+  const selectedSubFlowNode = transformedElements.find(ele => ele?.id === selectedSubFlowNodeId);
 
-  const subFlowIcon = (edge?.target === selectedSubFlowNode) && isSubFlowView;
+  const showSubFlowIcon = (edge?.target === selectedSubFlowNodeId) && isSubFlowView;
 
   const {
     sourceType,
@@ -186,6 +199,7 @@ function DefaultEdge(props) {
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.ICON_PG;
+  const showSubFlowIconForPG = selectedSubFlowNode?.type === GRAPH_ELEMENTS_TYPE.ICON_PG && isSubFlowView && isFirstPGEdge;
 
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon =
@@ -196,7 +210,7 @@ function DefaultEdge(props) {
     !isViewMode &&
     !isFlowSaveInProgress &&
     !isDataLoaderFlow &&
-    (targetIndex <= 1) &&
+    (targetIndex <= 0) &&
     !isSourceEmptyNode;
   const isMergableEdge =
     mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
@@ -288,8 +302,8 @@ function DefaultEdge(props) {
 
         // For pg edges (i.e. targetIndex > 1), the vertical line of the edge will be drawn upto the previous step,
         // and the horizontal line of the edge will be skipped, so that the line will not overlap the pg-dropbox
-        if (targetIndex > 1) {
-          drawLine({x: p.x, y: p.y + (130 * (targetIndex - 1))}, 'y');
+        if (targetIndex > 0) {
+          drawLine({x: p.x, y: p.y + (122 * (targetIndex - 1))}, 'y');
         } else {
           drawLine(p, 'y');
           drawLine(p, 'x');
@@ -321,11 +335,11 @@ function DefaultEdge(props) {
   return (
     <>
       <path id={id} className={(hoveredEdges && hoveredEdges?.includes(id)) || highlight ? classes.edgeAnimatedLine : classes.edgePath} d={edgePath} />
-      {subFlowIcon && isFirstPGEdge && isSubFlowView && (
+      {showSubFlowIconForPG && (
       <ForeignObject
         edgePath={edgePath}
         position="right"
-        offset={10}
+        offset={65}
       >
         <SubFlowButton edgeId={id} />
       </ForeignObject>
@@ -395,7 +409,7 @@ function DefaultEdge(props) {
           <UnlinkButton edgeId={id} />
         </ForeignObject>
       )}
-      {subFlowIcon && !isFirstPGEdge && (
+      {showSubFlowIcon && !isFirstPGEdge && (
       <ForeignObject
         edgePath={edgePath}
         position={position}
