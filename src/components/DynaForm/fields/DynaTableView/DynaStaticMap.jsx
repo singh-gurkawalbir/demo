@@ -27,7 +27,6 @@ export default function DynaStaticMap(props) {
       readOnly: disabled,
       type: keyOptions ? 'autosuggest' : 'input',
       supportsRefresh: false,
-      skipListBoxComponent: true,
     },
     {
       id: valueName,
@@ -37,7 +36,6 @@ export default function DynaStaticMap(props) {
       readOnly: disabled,
       type: valueOptions ? 'autosuggest' : 'input',
       supportsRefresh: false,
-      skipListBoxComponent: true,
     },
   ], [columns, disabled, keyLabel, keyName, keyOptions, valueLabel, valueName, valueOptions]);
 
@@ -63,7 +61,7 @@ export default function DynaStaticMap(props) {
   return (
     <DynaTableView
       {...props}
-      isVirtualizedTable={false}
+      isVirtualizedTable
       optionsMap={optionsMap}
       disableDeleteRows={disabled}
       value={computedValue}

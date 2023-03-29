@@ -22,14 +22,18 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',
+    marginBottom: theme.spacing(1),
   },
   refreshIcon: {
     cursor: 'pointer',
   },
+  dynaTableActions: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(1),
+  },
   bodyElementsWrapper: {
     display: 'flex',
     paddingRight: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
   },
   child: {
     '& + div': {
@@ -57,9 +61,6 @@ const useStyles = makeStyles(theme => ({
     '& .MuiButtonBase-root': {
       marginTop: 0,
     },
-  },
-  deleteButton: {
-    marginTop: theme.spacing(1.5),
   },
 }));
 const TYPE_TO_ERROR_MESSAGE = {
@@ -186,7 +187,6 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
   if (['input', 'text', 'autosuggest'].includes(type)) {
     const multiline = optionsMap?.find(({id}) => id === colIndex)?.multiline;
-    const skipListBox = optionsMap?.some(({skipListBoxComponent}) => skipListBoxComponent);
 
     return (
       <div
@@ -200,7 +200,6 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
           labelName="label"
           valueName="value"
           onBlur={onFieldChange}
-          skipListBoxComponent={skipListBox}
     />
       </div>
     );
@@ -305,7 +304,7 @@ export default function TableRow({
 
       </div>
       {isNotLastRow && !ignoreEmptyRow && (
-      <div key="delete_button" className={classes.deleteButton}>
+      <div key="delete_button" className={classes.dynaTableActions}>
         <ActionButtonMemo
           disableDeleteRows={disableDeleteRows}
           rowIndex={rowIndex}
