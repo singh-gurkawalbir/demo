@@ -208,7 +208,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         </Route>
         <Route path={viewAliasesDrawerUrl} >
           <DrawerHeader
-            title="View Aliases"
+            title="View aliases"
             infoText={message.ALIAS.VIEW_ALIASES_HELPINFO} />
           <DrawerContent>
             <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
