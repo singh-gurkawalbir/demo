@@ -112,10 +112,6 @@ export default {
       },
     },
     'jdbc.authType': { fieldId: 'jdbc.authType'},
-    'netsuite.tokenEnvironment': {
-      fieldId: 'netsuite.tokenEnvironment',
-      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
-    },
     'netsuite.tokenAccount': {
       id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
@@ -215,7 +211,6 @@ export default {
           },
           { fields: [
             'jdbc.authType',
-            'netsuite.tokenEnvironment',
             'netsuite.tokenAccount',
             'netsuite.token.auto.account',
             'netsuite.token.auto.roleId',
