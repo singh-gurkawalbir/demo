@@ -52,10 +52,6 @@ const useStyles = makeStyles(theme => ({
       height: 16,
     },
   },
-  contained: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
 }));
 
 // dupli

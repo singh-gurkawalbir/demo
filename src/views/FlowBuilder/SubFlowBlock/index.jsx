@@ -225,7 +225,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AppBlock({
+export default function SubFlowBlock({
   className,
   onDelete,
   onErrors,

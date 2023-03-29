@@ -12,6 +12,9 @@ import TransferUpIcon from '../../../components/icons/TransferUpIcon';
 import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
+  newPG: { label: 'Add source', Icon: ExportIcon },
+  newPP: { label: 'Add destination / lookup', Icon: ImportIcon },
+  newImport: { label: 'Add destination', Icon: ImportIcon },
   export: { label: 'Export', Icon: ExportIcon },
   import: { label: 'Import', Icon: ImportIcon },
   lookup: { label: 'Lookup', Icon: LookupIcon },

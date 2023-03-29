@@ -29,6 +29,8 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
 import { useFlowContext } from '../FlowBuilderBody/Context';
+import GripperIcon from '../../../components/icons/GripperIcon';
+import PPDropbox from '../FlowBuilderBody/CustomEdges/PPDropbox';
 
 const blockWidth = 50;
 const useStyles = makeStyles(theme => ({
@@ -53,51 +55,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-end',
   },
-  name: {
-    height: 150,
-    overflow: 'hidden',
-    width: '100%',
-    justifyContent: 'center',
-    display: 'flex',
-    textAlign: 'center',
-    marginTop: -85,
-    background: theme.palette.background.default,
-    borderRadius: [[0, 0, 20, 20]],
-    position: 'relative',
-    zIndex: theme.zIndex.bubbleName,
-    padding: theme.spacing(2),
-
-  },
-  containerName: {
-    fontSize: 15,
-    lineHeight: '19px',
-    wordBreak: 'break-word',
-    paddingTop: 84,
-    width: '100%',
-    color: theme.palette.secondary.main,
-  },
   buttonContainer: {
     display: 'flex',
     justifyContent: 'center',
-  },
-  middleActionContainer: {
-    position: 'relative',
-    alignSelf: 'center',
-  },
-  sideActionContainer: {
-    position: 'relative',
-  },
-  leftActions: {
-    position: 'absolute',
-    display: 'flex',
-    left: -16,
-    top: 68,
-  },
-  rightActions: {
-    position: 'absolute',
-    display: 'flex',
-    left: 280,
-    top: 68,
   },
   isNotOverActions: {
     width: 0,
@@ -132,21 +92,6 @@ const useStyles = makeStyles(theme => ({
       display: 'block',
       zIndex: 1,
     },
-  },
-  bubbleContainer: {
-    position: 'right',
-    display: 'flex',
-  },
-  bubble: {
-    position: 'absolute',
-    fill: theme.palette.secondary.lightest,
-    background: 'transparent',
-  },
-  bubbleBG: {
-    fill: 'white',
-  },
-  bubbleActive: {
-    fill: theme.palette.primary.main,
   },
   appLogoContainer: {
     marginTop: theme.spacing(1),
@@ -213,7 +158,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AppBlock({
+export default function IconBlock({
   className,
   onDelete,
   onErrors,
@@ -484,6 +429,22 @@ export default function AppBlock({
             <CloseIcon />
           </IconButton>
           )}
+          {isDraggable && (
+            <IconButton
+              size="small"
+              className={clsx(classes.grabButton)}
+              data-test={`move-${isPageGenerator ? 'pg' : 'pp'}`}>
+              <GripperIcon />
+            </IconButton>
+          )}
+          <div className={clsx(classes.dropbox, classes.left)}>
+            <PPDropbox
+              show={rest.showLeft}
+              position="left"
+              targetIndex={rest.pageProcessorIndex}
+              id={id}
+              path={rest.path} />
+          </div>
           {iconType && (
             <ApplicationImg
               className={classes.appLogo}

@@ -40,8 +40,6 @@ export const resourceButtonStyles = makeStyles(theme => ({
   },
 }));
 
-// dupli
-
 export default function SubFlowResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
