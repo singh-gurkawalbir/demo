@@ -40,6 +40,10 @@ export const getApplication = conn => {
       return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);
     }
 
+    if (conn.type === 'jdbc' && conn.jdbc) {
+      return a.id === conn.jdbc.type;
+    }
+
     if (conn.type === 'http' && conn.http?.formType) {
       return a.id === conn.http.formType;
     }
@@ -118,43 +122,39 @@ export default {
       });
     });
     (exportDocs || []).forEach(exp => {
-      const conn = connections?.find(c => c._id === exp._connectionId);
+      const conn = connections?.find(c => c?._id === exp?._connectionId);
+      const suiteappVersions = ['suiteapp1.0', 'suiteapp2.0'];
 
-      if (
-        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
-          (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.restlet?.restletVersion) || exp.netsuite.restlet.useSS2Restlets)) ||
-          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.distributed?.frameworkVersion) || exp?.netsuite?.distributed?.useSS2Framework))) &&
-          conn?.type === 'netsuite' &&
-          !netsuiteSuiteAppNeededForConnections.includes(conn)) {
-        netsuiteSuiteAppNeededForConnections.push(conn);
-      }
-      if (
-        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
-          (exp?.netsuite?.restlet?.restletVersion === 'suitebundle' || !exp.netsuite.restlet.useSS2Restlets)) ||
-          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (exp?.netsuite?.distributed?.frameworkVersion === 'suitebundle' || !exp?.netsuite?.distributed?.useSS2Framework))) &&
-          conn?.type === 'netsuite' &&
-          !netsuiteBundleNeededForConnections.includes(conn)) {
-        netsuiteBundleNeededForConnections.push(conn);
-      }
-      if (
-        (((exp?.netsuite || {}).type === 'restlet' &&
-          exp?.netsuite?.restlet?.recordType) ||
-          (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
-          (!netsuiteBundleNeededForConnections.includes(conn))
-      ) {
-        netsuiteBundleNeededForConnections.push(conn);
-      }
-
-      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn)) {
+      if (conn?.type === 'netsuite') {
+        if (exp?.type === 'distributed') {
+          if (exp?.netsuite?.distributed?.useSS2Framework || suiteappVersions.includes(exp?.netsuite?.distributed?.frameworkVersion)) {
+            if (!netsuiteSuiteAppNeededForConnections.includes(conn)) {
+              netsuiteSuiteAppNeededForConnections.push(conn);
+            }
+          } else if (!netsuiteBundleNeededForConnections.includes(conn)) {
+            netsuiteBundleNeededForConnections.push(conn);
+          }
+        } else if (exp?.netsuite?.type === 'restlet' && exp?.netsuite?.restlet?.recordType) {
+          if (exp?.netsuite?.restlet?.useSS2Restlets || suiteappVersions.includes(exp?.netsuite?.restlet?.restletVersion)) {
+            if (!netsuiteSuiteAppNeededForConnections.includes(conn)) {
+              netsuiteSuiteAppNeededForConnections.push(conn);
+            }
+          } else if (!netsuiteBundleNeededForConnections.includes(conn)) {
+            netsuiteBundleNeededForConnections.push(conn);
+          }
+        }
+      } else if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn)) {
         salesforceBundleNeededForConnections.push(conn);
       }
     });
     (importDocs || []).forEach(imp => {
-      const conn = connections?.find(c => c._id === imp._connectionId);
+      const conn = connections?.find(c => c?._id === imp?._connectionId);
 
-      if (conn?.type === 'netsuite' && (imp.netsuite_da?.restletVersion === 'suitebundle' || imp.netsuite_da?.useSS2Restlets === false) && (!netsuiteBundleNeededForConnections.includes(conn))) {
+      // eslint-disable-next-line camelcase
+      if (conn?.type === 'netsuite' && (imp?.netsuite_da?.restletVersion === 'suitebundle' || imp?.netsuite_da?.useSS2Restlets === false) && (!netsuiteBundleNeededForConnections.includes(conn))) {
         netsuiteBundleNeededForConnections.push(conn);
-      } else if (conn?.type === 'netsuite' && (['suiteapp1.0', 'suiteapp2.0'].includes(imp.netsuite_da?.restletVersion) || imp.netsuite_da?.useSS2Restlets === true) && (!netsuiteSuiteAppNeededForConnections.includes(conn))) {
+      // eslint-disable-next-line camelcase
+      } else if (conn?.type === 'netsuite' && (['suiteapp1.0', 'suiteapp2.0'].includes(imp?.netsuite_da?.restletVersion) || imp?.netsuite_da?.useSS2Restlets === true) && !netsuiteSuiteAppNeededForConnections.includes(conn)) {
         netsuiteSuiteAppNeededForConnections.push(conn);
       }
     });
@@ -162,7 +162,6 @@ export default {
     netsuiteBundleNeededForConnections.forEach((conn, index) => installSteps.push({
       key: `NetSuite account ${index + 1}`,
       installURL: NETSUITE_BUNDLE_URL,
-      imageURL: 'images/company-logos/netsuite.png',
       completed: false,
       description: `Please install Integrator bundle in ${
         netsuiteBundleNeededForConnections.length > 1 ? conn.name : 'NetSuite'
@@ -170,12 +169,12 @@ export default {
       name: `Integrator Bundle ${index + 1}`,
       application: 'netsuite',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      sourceConnId: conn._id,
       options: {},
     }));
     netsuiteSuiteAppNeededForConnections.forEach((conn, index) => installSteps.push({
       key: `NetSuite account ${index + 1}`,
       installURL: NETSUITE_SUITEAPP_URL,
-      imageURL: 'images/company-logos/netsuite.png',
       completed: false,
       description: `Please install Integrator suiteapp in ${
         netsuiteSuiteAppNeededForConnections.length > 1 ? conn.name : 'NetSuite'
@@ -183,6 +182,7 @@ export default {
       name: `Integrator SuiteApp ${index + 1}`,
       application: 'netsuite',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      sourceConnId: conn._id,
       options: {},
     }));
 

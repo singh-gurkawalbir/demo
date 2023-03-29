@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RunDashboardActions from './RunDashboardActions';
 import { runServer } from '../../../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import actions from '../../../../../../actions';
 import { ConfirmDialogProvider } from '../../../../../../components/ConfirmDialog';
 
@@ -17,43 +17,46 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.errorManagement = {
-    latestFlowJobs: {
-      flow_id_1: {
-        status: 'received',
-        data: [
-          {
-            _id: 'job_id_1',
-            status: 'completed',
-          },
-          {
-            _id: 'job_id_2',
-            status: 'running',
-          },
-        ],
+  mutateStore(initialStore, draft => {
+    draft.session.errorManagement = {
+      latestFlowJobs: {
+        flow_id_1: {
+          status: 'received',
+          data: [
+            {
+              _id: 'job_id_1',
+              status: 'completed',
+            },
+            {
+              _id: 'job_id_2',
+              status: 'running',
+            },
+          ],
+        },
+        flow_id_2: {
+          status: 'received',
+          data: [
+            {
+              _id: 'job_id_3',
+              status: 'completed',
+              files: [{}],
+            },
+          ],
+        },
+        flow_id_3: {
+          status: 'received',
+          data: [
+            {
+              _id: 'job_id_4',
+              status: 'completed',
+              files: [{id: 'file_1'}, {id: 'file_2'}],
+            },
+          ],
+        },
       },
-      flow_id_2: {
-        status: 'received',
-        data: [
-          {
-            _id: 'job_id_3',
-            status: 'completed',
-            files: [{}],
-          },
-        ],
-      },
-      flow_id_3: {
-        status: 'received',
-        data: [
-          {
-            _id: 'job_id_4',
-            status: 'completed',
-            files: [{id: 'file_1'}, {id: 'file_2'}],
-          },
-        ],
-      },
-    },
-  };
+    };
+  });
+
   const ui = (
     <MemoryRouter>
       <ConfirmDialogProvider>

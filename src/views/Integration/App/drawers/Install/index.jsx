@@ -34,7 +34,6 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import { message } from '../../../../../utils/messageStore';
@@ -267,6 +266,7 @@ export default function ConnectorInstallation() {
             getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
           );
         } else if (parentId) {
+          dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, parentId));
           history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
           );
@@ -299,7 +299,9 @@ export default function ConnectorInstallation() {
     integrationChildAppName,
     initChild,
     parentId,
-    integrationInstallSteps]);
+    integrationInstallSteps,
+    isFrameWork2,
+  ]);
 
   if (!installSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
@@ -387,7 +389,7 @@ export default function ConnectorInstallation() {
       return false;
     }
 
-    if (_connectionId || type === 'connection' || sourceConnection) {
+    if (_connectionId || type === 'connection' || (sourceConnection && !(step?.name.startsWith('Integrator Bundle') || step?.name.startsWith('Integrator SuiteApp')))) {
       if (step.isTriggered) {
         return false;
       }
@@ -475,7 +477,8 @@ export default function ConnectorInstallation() {
               step._connId,
               installerFunction,
               isFrameWork2,
-              netsuitePackageType
+              netsuitePackageType,
+              true                               // true here sets the isManualVerification flag to true which means the user has triggered the verification
             )
           );
         } else if (isFrameWork2) {
@@ -568,24 +571,15 @@ export default function ConnectorInstallation() {
               View help guide
             </TextButton>
           )}
-          {_connectorId ? (
-            <TextButton
-              data-test="uninstall"
-              component={Link}
-              onClick={handleUninstall}
-              startIcon={<CloseIcon />}
+
+          <TextButton
+            data-test="uninstall"
+            component={Link}
+            onClick={handleUninstall}
+            startIcon={<CloseIcon />}
              >
-              Uninstall
-            </TextButton>
-          )
-            : (
-              <TextButton
-                data-test="deleteIntegration"
-                onClick={handleUninstall}
-                startIcon={<TrashIcon />}>
-                Delete integration
-              </TextButton>
-            )}
+            Uninstall
+          </TextButton>
 
         </div>
       </CeligoPageBar>

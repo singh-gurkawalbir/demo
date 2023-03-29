@@ -1,4 +1,4 @@
-import { getReplaceConnectionExpression, getParentResourceContext, getFilterExpressionForAssistant, getConstantContactVersion, getAssistantFromConnection } from './index';
+import { getReplaceConnectionExpression, getParentResourceContext, getFilterExpressionForAssistant, getConstantContactVersion, getAssistantFromConnection, getConnectionApi } from './index';
 
 describe('connections utils test cases', () => {
   describe('getReplaceConnectionExpression util', () => {
@@ -27,17 +27,28 @@ describe('connections utils test cases', () => {
       const output = {
         appType: 'http',
         filter: {
-          $and: [{
-            'http.formType': {
-              $ne: 'rest',
+          $and: [
+            {
+              $or: [
+                {
+                  type: 'rest',
+                },
+                {
+                  type: 'http',
+                },
+              ],
             },
-          }, {
-            type: 'http',
-          }, {
-            _connectorId: {
-              $exists: false,
+            {
+              isHTTP: {
+                $ne: false,
+              },
             },
-          }],
+            {
+              _connectorId: {
+                $exists: false,
+              },
+            },
+          ],
         },
       };
 
@@ -88,6 +99,26 @@ describe('connections utils test cases', () => {
       };
 
       expect(getReplaceConnectionExpression({_id: 'conn123', type: 'rdbms', rdbms: { type: 'mysql' }}, true, 'childId', 'int-123', null, true)).toEqual(output);
+    });
+    test('should return correct expression if connection type is jdbc and jdbcSubtype is mysql', () => {
+      const output = {
+        appType: 'netsuitejdbc',
+        filter: {
+          $and: [
+            { _id: {$ne: 'conn123'} },
+            {
+              'jdbc.type': 'netsuitejdbc',
+            },
+            {
+              _connectorId: {
+                $exists: false,
+              },
+            },
+          ],
+        },
+      };
+
+      expect(getReplaceConnectionExpression({_id: 'conn123', type: 'jdbc', jdbc: { type: 'netsuitejdbc' }}, true, 'childId', 'int-123', null, true)).toEqual(output);
     });
   });
 
@@ -166,6 +197,16 @@ describe('connections utils test cases', () => {
         parentType: 'imports',
         iClientId: 'i-123',
       });
+
+      const url6 = '/clone/flows/flowId/setup/configure/connections/connId/edit/iClients/iClientId';
+
+      expect(getParentResourceContext(url6, 'iClients')).toEqual({
+        0: 'clone/flows/flowId/setup',
+        1: '',
+        connId: 'connId',
+        operation: 'edit',
+        iClientId: 'iClientId',
+      });
     });
   });
   describe('getFilterExpressionForAssistant test cases', () => {
@@ -242,6 +283,32 @@ describe('connections utils test cases', () => {
     });
     test('should return zoom if assistant is zoom', () => {
       expect(getAssistantFromConnection('zoom')).toBe('zoom');
+    });
+  });
+
+  describe('getConnectionApi test cases', () => {
+    const restConn = {type: 'rest', rest: {baseURI: 'https://{{{connection.settings.storeName}}}.com'}, settings: {storeName: 'store'}};
+    const httpConn = {type: 'http', http: {baseURI: 'https://{{{connection.settings.storeName}}}.com'}, settings: {storeName: 'store'}};
+    const restConnWithoutSettings = {type: 'rest', rest: {baseURI: 'https://{{{connection.settings.storeName}}}.com' }};
+    const httpConnWithoutSettings = {type: 'http', http: {baseURI: 'https://{{{connection.settings.storeName}}}.com'}};
+    const restConnwithMultipleHandlebars = {type: 'rest', rest: {baseURI: 'https://{{{connection.settings.storeName}}}{{{connection.settings.storeName2}}}.com'}, settings: {storeName: 'store', storeName2: 'store1'}};
+    const httpConnwithMultipleHandlebars = {type: 'http', http: {baseURI: 'https://{{{connection.settings.storeName}}}{{{connection.settings.storeName2}}}.com'}, settings: {storeName: 'store', storeName2: 'store1'}};
+    const NSConn = {type: 'netsuite', baseURI: 'https://{{{connection.settings.storeName}}}.com', settings: {storeName: 'store'}};
+
+    test('should not throw error for invalid arguments', () => {
+      expect(getConnectionApi()).toBeNull();
+    });
+    test('should return the evaluated uri', () => {
+      expect(getConnectionApi(restConn)).toBe('https://store.com');
+      expect(getConnectionApi(httpConn)).toBe('https://store.com');
+      expect(getConnectionApi(restConnWithoutSettings)).toBe('https://{{{connection.settings.storeName}}}.com');
+      expect(getConnectionApi(httpConnWithoutSettings)).toBe('https://{{{connection.settings.storeName}}}.com');
+
+      expect(getConnectionApi(restConnwithMultipleHandlebars)).toBe('https://storestore1.com');
+
+      expect(getConnectionApi(httpConnwithMultipleHandlebars)).toBe('https://storestore1.com');
+
+      expect(getConnectionApi(NSConn, {id: 234})).toBeNull();
     });
   });
 });

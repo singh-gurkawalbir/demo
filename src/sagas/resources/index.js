@@ -5,11 +5,11 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
-import { isNewId } from '../../utils/resource';
+import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
-import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
+import { convertConnJSONObjHTTPtoREST } from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
 import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
@@ -185,7 +185,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'connections' && !isNew) {
     // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
     // number of active tokens on netsuite, revoking token when user updates token-auto connection.
-    if (merged.type === 'netsuite') {
+    if (merged.type === 'netsuite' || merged?.jdbc?.type === 'netsuitejdbc') {
       const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
       if (isTokenToBeRevoked) {
@@ -209,7 +209,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
     merged.assistant && !getHttpConnector(merged?.http?._httpConnectorId) &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
-    merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+    merged = convertConnJSONObjHTTPtoREST(merged);
   }
 
   // Forimports convert the lookup structure and rest placeholders to support http structure
@@ -225,7 +225,22 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
-  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
+  // Added below check for http2.0 when metadata ids are compound
+  if (['exports', 'imports'].includes(resourceType) &&
+    merged?.http?._httpConnectorResourceId && merged?.assistantMetadata
+  ) {
+    if (merged?.http?._httpConnectorResourceId?.includes('+')) {
+      merged.http._httpConnectorResourceId = merged.http._httpConnectorResourceId.split('+')?.[0];
+    }
+    if (resourceType === 'exports' && merged?.http?._httpConnectorEndpointId?.includes('+')) {
+      merged.http._httpConnectorEndpointId = merged.http._httpConnectorEndpointId.split('+')?.[0];
+    }
+    if (resourceType === 'imports' && merged.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
+      merged.http._httpConnectorEndpointIds = [merged.http._httpConnectorEndpointIds[0].split('+')?.[0]];
+    }
+    merged.assistantMetadata = undefined;
+  }
+  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
     if (merged.restToHTTPConverted) {
       merged.adaptorType = resourceType === 'exports' ? 'RESTExport' : 'RESTImport';
@@ -418,6 +433,10 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
 
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));
+  } else if (resourceType === 'connections') {
+    if (updated.http?._httpConnectorId && updated.http?.unencrypted?.version !== master?.http?.unencrypted?.version) {
+      yield put(actions.connection.updatedVersion());
+    }
   }
 
   if (resourceType === 'connections' && merged.type === 'netsuite') {
@@ -730,13 +749,12 @@ export function* deleteIntegration({ integrationId }) {
   if (resourceReferences && Object.keys(resourceReferences).length > 0) {
     return;
   }
-
+  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
   yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
-  yield put(actions.resource.requestCollection('integrations', null, true));
-  yield put(actions.resource.requestCollection('tiles', null, true));
-  yield put(actions.resource.requestCollection('scripts', null, true));
-  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
+  yield put(actions.resource.clearCollection('integrations'));
+  yield put(actions.resource.requestCollection('tiles', null, true)); // redirect to home so we can keep this.
+  yield put(actions.resource.clearCollection('scripts'));
 }
 
 export function* getResourceCollection({ resourceType, refresh, integrationId }) {
@@ -774,6 +792,15 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     if (!integration && integrationId !== STANDALONE_INTEGRATION.id) {
       yield call(getResource, {resourceType: 'integrations', id: integrationId});
     }
+  }
+
+  if (RESOURCES_WITH_UI_FIELDS.includes(resourceType)) {
+    const excludePath = `?exclude=${UI_FIELDS.join(',')}`;
+
+    path = `${path}${excludePath}`;
+  }
+  if (resourceType === 'tree/metadata') {
+    path += '?additionalFields=createdAt,_parentId';
   }
   let updatedResourceType = resourceType;
 
@@ -818,14 +845,10 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       collection = undefined;
     }
 
-    if (resourceType.startsWith('/integrations') && resourceType.endsWith('/tree/metadata')) {
-      const _integrationId = resourceType?.split('/')?.[1];
-      const newCollection = collection?.childIntegrations || [];
-
-      yield put(actions.resource.receivedCollection('integrations', newCollection, _integrationId));
-    } else {
-      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    if (resourceType === 'tree/metadata') {
+      collection = collection?.childIntegrations || [];
     }
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
 
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
@@ -1032,8 +1055,11 @@ export function* authorizedConnection({ connectionId }) {
 
   if (
     connectionResource &&
-    (connectionResource.type === 'netsuite' ||
-      connectionResource.type === 'salesforce' || isOauthOfflineResource)
+    (
+      connectionResource.type === 'netsuite' ||
+      connectionResource.type === 'salesforce' ||
+      connectionResource?.jdbc?.type === 'netsuitejdbc' ||
+      isOauthOfflineResource)
   ) {
     yield put(actions.resource.request('connections', connectionId));
   }

@@ -1,3 +1,4 @@
+
 module.exports = {
   bail: false,
   testRegex: undefined,
@@ -12,7 +13,7 @@ module.exports = {
   },
   transformIgnorePatterns: [
     '^.+\\.module\\.(css|sass|scss)$',
-    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder)',
+    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder|d3|d3-array|internmap|delaunator|robust-predicates)',
     // '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx|mjs|cjs)$',
 
   ],
@@ -49,9 +50,12 @@ module.exports = {
     LOGROCKET_IDENTIFIER_EU: 'some logrocket identifier europe',
     CDN_BASE_URI: 'CDN_BASE_URI',
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
+    IO_SIGNUP_PROMOTION_URL: 'https://staging.celigo.com/integratorio/signup/',
     PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
     SHOPIFY_USER_IDS: '',
     ALLOW_SIGNUP: 'true',
     ALLOW_GOOGLE_SIGNIN: 'true',
+    ALLOW_SIGNUP_EU: 'true',
+    ALLOW_GOOGLE_SIGNIN_EU: 'true',
   },
 };

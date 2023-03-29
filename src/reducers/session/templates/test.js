@@ -5,7 +5,7 @@ import { INSTALL_STEP_TYPES } from '../../../constants';
 import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 describe('template test cases', () => {
-  const installSteps = [
+  let installSteps = [
     {
       name: 'installStep',
       description: 'something',
@@ -957,15 +957,19 @@ describe('template test cases', () => {
           verifyBundleStep: 'netsuite',
         };
 
-        installSteps.push({
-          name: 'installBundle',
-          description: 'something',
-          installURL: 'connectionId',
-          type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
-          application: 'netsuite',
-          completed: false,
-          options: {},
-        });
+        installSteps = [...installSteps,
+          {
+            name: 'installBundle',
+            description: 'something',
+            installURL: 'connectionId',
+            type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+            application: 'netsuite',
+            sourceConnectionId: 'connectionId',
+            completed: false,
+            options: {},
+          },
+        ];
+
         const state = reducer(
           { [testTemplateId]: { installSteps } },
           actions.template.updateStep(step, testTemplateId)
@@ -998,7 +1002,8 @@ describe('template test cases', () => {
                 installURL: 'connectionId',
                 name: 'installBundle',
                 type: 'installPackage',
-                options: {_connectionId: 'new-conn'},
+                sourceConnectionId: 'connectionId',
+                options: {},
               },
             ],
           },

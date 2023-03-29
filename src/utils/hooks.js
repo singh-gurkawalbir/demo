@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-const externalScripts = ['transform', 'filter', 'handleRequest', 'router'];
+const externalScripts = ['transform', 'filter', 'handleRequest', 'router', 'formInit'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -45,6 +45,7 @@ export const hooksToFunctionNamesMap = {
   transform: 'transform',
   filter: 'filter',
   handleRequest: 'handleRequest',
+  formInit: 'formInit',
   router: 'branching',
 };
 
@@ -91,6 +92,7 @@ export function getSupportedHooksForResource(resource) {
       break;
     case 'ftp':
     case 'as2':
+    case 'van':
     case 's3':
       unSupportedHooks = [];
       break;
@@ -160,11 +162,11 @@ export const isSuiteScriptHooksSupportedForResource = (
   return true;
 };
 
-export const getSelectedHooksPatchSet = (selectedHooks, resource) => {
+export const getSelectedHooksPatchSet = (selectedHooks, resource, resourceType) => {
   const { hooks, suiteScriptHooks } = selectedHooks;
   const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
 
-  if (isSuiteScriptHooksSupportedForResource(resource)) {
+  if (isSuiteScriptHooksSupportedForResource(resource, resourceType)) {
     // Sample Paths for NS Export is : netsuite/distributed/hooks incase of real time NS Export
     // Path for NS Import is : '/netsuite_da/hooks' as netsuite_da is the only sub doc for NS Import
     // eslint-disable-next-line camelcase

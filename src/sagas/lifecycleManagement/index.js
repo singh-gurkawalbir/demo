@@ -222,6 +222,7 @@ export function* verifyBundleOrPackageInstall({
   connectionId,
   revisionId,
   variant,
+  isManualVerification = true,
 }) {
   const path = variant ? `/connections/${connectionId}/distributed?type=${variant}` : `/connections/${connectionId}/distributed`;
   let response;
@@ -242,6 +243,7 @@ export function* verifyBundleOrPackageInstall({
   } else if (
     response &&
       !response.success &&
+      isManualVerification &&
       (response.resBody || response.message)
   ) {
     // TODO @Raghu: Why do we need this condition to be handled?

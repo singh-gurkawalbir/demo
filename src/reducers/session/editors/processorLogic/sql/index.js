@@ -1,4 +1,4 @@
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import util from '../../../../../utils/json';
 import { dataAsString } from '../../../../../utils/editor';
 import handlebars from '../handlebars';
@@ -6,6 +6,7 @@ import { getDefaultData } from '../../../../../utils/sampleData';
 import { getUnionObject } from '../../../../../utils/jsonPaths';
 import { safeParse } from '../../../../../utils/string';
 import { isNewId } from '../../../../../utils/resource';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 export function _hasDefaultMetaData({fieldId, resourceType}) {
   const hideDefaultDataFields = [
@@ -48,7 +49,7 @@ export default {
     const parsedData = safeParse(sampleData);
 
     if (modelMetadata) {
-      const newMeta = cloneDeep(modelMetadata);
+      const newMeta = customCloneDeep(modelMetadata);
 
       return {
         data: sampleData,
@@ -65,12 +66,12 @@ export default {
     let temp = {};
 
     if (Array.isArray(parsedData) && parsedData.length && typeof parsedData[0] === 'object') {
-      temp = cloneDeep(getUnionObject(parsedData));
+      temp = customCloneDeep(getUnionObject(parsedData));
     } else if (parsedData) {
       const {data, rows, record} = parsedData;
       const sampleDataToClone = record || rows?.[0] || data?.[0] || data;
 
-      temp = cloneDeep(sampleDataToClone);
+      temp = customCloneDeep(sampleDataToClone);
     }
     const defaultData = getDefaultData(temp);
 

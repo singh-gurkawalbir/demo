@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   invert,
   isBoolean,
@@ -9,6 +8,7 @@ import {
   filter,
 } from 'lodash';
 import { message } from '../../../../../utils/messageStore';
+import { isNumber as isNumberString } from '../../../../../utils/string';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -37,10 +37,34 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function convertIOFilterExpression(filterExpression = [], context) {
-  const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
-  const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase', 'abs'];
+const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
+const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase', 'abs'];
 
+export function checkExpression(rule) {
+  // check if expression has nested datatypes
+  // this is an invalid case for the UI, but it needs to be handled
+  // for ex: the expression
+  // ["string",["string",["extract","myField"]]]
+  if (!rule || !Array.isArray(rule)) return false;
+
+  if (dataTypes.includes(rule[0].toLowerCase()) &&
+      Array.isArray(rule[1]) &&
+      dataTypes.includes(rule[1][0].toLowerCase())) {
+    return true;
+  }
+
+  if (transformations.includes(rule[0].toLowerCase()) &&
+      Array.isArray(rule[1]) &&
+      transformations.includes(rule[1][0].toLowerCase())) {
+    return true;
+  }
+
+  return !dataTypes.includes(rule[0].toLowerCase()) &&
+  !transformations.includes(rule[0].toLowerCase());
+}
+
+export function convertIOFilterExpression(filterExpression = [], context) {
+  /* eslint-disable no-param-reassign */
   function iterate(exp) {
     const toReturn = {};
     let oneRule = {};
@@ -87,8 +111,7 @@ export function convertIOFilterExpression(filterExpression = [], context) {
 
           if (isArray(exp[i])) {
             if (
-              !dataTypes.includes(exp[i][0].toLowerCase()) &&
-                !transformations.includes(exp[i][0].toLowerCase())
+              checkExpression(exp[i])
             ) {
               temp.type = 'expression';
               temp.expression = exp[i];
@@ -151,6 +174,7 @@ export function convertIOFilterExpression(filterExpression = [], context) {
 
     return toReturn;
   }
+  /* eslint-disable no-param-reassign */
 
   let tr = iterate(filterExpression);
 
@@ -228,6 +252,34 @@ export function generateRulesState(rules) {
   return rulesState;
 }
 
+const validBooleanValues = {
+  TRUE: ['true', 't', '1', 1],
+  FALSE: ['false', 'f', '0', 0],
+};
+
+export const convertBoolean = value => {
+  if (value === true) return true;
+  if (value === false) return false;
+
+  if (value && typeof value === 'string') {
+    // if the value coming has prepended or appended spaces ex: ' false '
+    value = value.trim();
+    value = value.toLowerCase();
+  }
+
+  // Check values against validBooleanValues map.
+  if (validBooleanValues.TRUE.indexOf(value) !== -1) {
+    return true;
+  } if (validBooleanValues.FALSE.indexOf(value) !== -1) {
+    return false;
+  }
+
+  // invalid values: throw error
+  if (isNumberString(value)) return message.FILTER_PANEL.INVALID_BOOLEAN_CONVERSION_FOR_NUMBER;
+
+  return message.FILTER_PANEL.INVALID_BOOLEAN_CONVERSION_FOR_STRING;
+};
+
 export function generateIOFilterExpression(rules, context) {
   function iterate(r) {
     let exp = [];
@@ -274,9 +326,12 @@ export function generateIOFilterExpression(rules, context) {
             case 'number':
               lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
-            case 'boolean':
-              lhs = !['0', 'false'].includes(lhs?.toString()?.toLowerCase());
+            case 'boolean': {
+              const convertedValue = convertBoolean(lhs?.toString()?.toLowerCase());
+
+              lhs = typeof convertedValue === 'boolean' ? convertedValue : lhs;
               break;
+            }
             default:
           }
         } else if (rr.data.lhs.type === 'expression') {
@@ -319,9 +374,12 @@ export function generateIOFilterExpression(rules, context) {
               case 'number':
                 rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
-              case 'boolean':
-                rhs = !['0', 'false'].includes(rhs?.toString()?.toLowerCase());
+              case 'boolean': {
+                const convertedValue = convertBoolean(rhs?.toString()?.toLowerCase());
+
+                rhs = typeof convertedValue === 'boolean' ? convertedValue : rhs;
                 break;
+              }
               case 'epochtime':
                 rhs = ['epochtime', rhs];
                 break;
@@ -445,6 +503,43 @@ export function validateFilterRule(rule) {
     return toReturn;
   }
 
+  if (r.rhs.type === 'value' || r.lhs.type === 'value') {
+    const {dataType: dataTypeRhs, value: valueRhs, type: typeRhs} = r.rhs;
+    const {dataType: dataTypeLhs, value: valueLhs, type: typeLhs} = r.lhs;
+
+    // skipping check for other data types because
+    // string: value will always be a string
+    // datetime: we don't have validations for datetime
+    if ((typeRhs === 'value' && dataTypeRhs === 'number' && !isNumber(valueRhs)) ||
+        (typeLhs === 'value' && dataTypeLhs === 'number' && !isNumber(valueLhs))) {
+      toReturn.isValid = false;
+      toReturn.error = message.FILTER_PANEL.INVALID_DATATYPE;
+
+      return toReturn;
+    }
+
+    if (typeRhs === 'value' && dataTypeRhs === 'boolean') {
+      const convertedValue = convertBoolean(valueRhs);
+
+      if (typeof convertedValue !== 'boolean') {
+        toReturn.isValid = false;
+        toReturn.error = convertedValue;
+
+        return toReturn;
+      }
+    }
+
+    if (typeLhs === 'value' && dataTypeLhs === 'boolean') {
+      const convertedValue = convertBoolean(valueLhs);
+
+      if (typeof convertedValue !== 'boolean') {
+        toReturn.isValid = false;
+        toReturn.error = convertedValue;
+
+        return toReturn;
+      }
+    }
+  }
   /*
     if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
       r.lhs.dataType = r.rhs.dataType = 'epochtime'

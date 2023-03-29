@@ -643,6 +643,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -674,6 +675,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -775,6 +777,7 @@ describe('getHTTPConnectorMetadata', () => {
                 'delta',
                 'test',
               ],
+              supportsAsyncHelper: false,
               url: '/customers.json',
             },
             {
@@ -798,6 +801,7 @@ describe('getHTTPConnectorMetadata', () => {
               response: {
                 resourcePath: 'customers',
               },
+              supportsAsyncHelper: false,
               url: '/customers/search.json',
             },
             {
@@ -813,13 +817,14 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
               response: {
                 resourcePath: 'customer',
               },
+              supportsAsyncHelper: false,
               url: '/customers/:_customerId.json',
             },
             {
@@ -835,13 +840,14 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
               response: {
                 resourcePath: 'metafields',
               },
+              supportsAsyncHelper: false,
               url: '/customers/:_customerId/metafields.json',
             },
           ],
@@ -938,6 +944,7 @@ describe('getHTTPConnectorMetadata', () => {
                 'customer.email',
               ],
               supportIgnoreExisting: true,
+              supportsAsyncHelper: false,
               url: '/customers.json',
             },
           ],
@@ -1040,6 +1047,7 @@ describe('getHTTPConnectorMetadata', () => {
               response: {
                 resourcePath: 'customers',
               },
+              supportsAsyncHelper: false,
               supportedExportTypes: [
                 'delta',
                 'test',
@@ -1052,6 +1060,7 @@ describe('getHTTPConnectorMetadata', () => {
               ],
               doesNotSupportPaging: false,
               hidden: false,
+              supportsAsyncHelper: false,
               id: '62cffbff0c804009663faa60',
               method: 'GET',
               name: 'Searches for customers that match a supplied query',
@@ -1078,11 +1087,12 @@ describe('getHTTPConnectorMetadata', () => {
               id: '62cffbff9b51830e4d641daf',
               method: 'GET',
               name: 'Retrieves a single customer',
+              supportsAsyncHelper: false,
               pathParameters: [
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1097,6 +1107,7 @@ describe('getHTTPConnectorMetadata', () => {
               ],
               doesNotSupportPaging: true,
               hidden: false,
+              supportsAsyncHelper: false,
               id: '62cffbff0c804009663faa62',
               method: 'GET',
               name: 'Retrieves a list of metafields that belong to a customer',
@@ -1104,7 +1115,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1183,6 +1194,7 @@ describe('getHTTPConnectorMetadata', () => {
                 '62cffbf70c804009663faa2b',
               ],
               hidden: false,
+              supportsAsyncHelper: false,
               howToFindIdentifier: {
                 lookup: {
                   extract: 'customers[0].id',
@@ -1266,7 +1278,7 @@ describe('getHTTPConnectorMetadata', () => {
     expect(metaData).toEqual(output1);
   });
   test('should return correct metadata if version set on connection level', () => {
-    const metaData = getHTTPConnectorMetadata(input1, '2022-01');
+    const metaData = getHTTPConnectorMetadata(input1, '62cffbf79b51830e4d641d6d');
 
     expect(metaData).toEqual(output2);
   });
@@ -1556,7 +1568,6 @@ describe('updateFinalMetadataWithHttpFramework', () => {
               {
                 label: '2022-01',
                 value: '2022-01',
-
               },
 
             ],

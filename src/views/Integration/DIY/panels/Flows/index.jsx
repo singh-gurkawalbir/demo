@@ -35,6 +35,7 @@ import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
 import NoResultTypography from '../../../../../components/NoResultTypography';
 import InfoIcon from '../../../../../components/icons/InfoIcon';
 import infoText from '../infoText';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -265,7 +266,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
       section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
     );
 
-    return newFlowGroups?.length ? newFlowGroups : undefined;
+    return newFlowGroups?.length ? newFlowGroups : undefined; // @TODO: maintain one variable one datatype
   }, [flowGroupingsSections, flows, isIntegrationApp]);
 
   const searchFilteredFlowGroups = useMemo(() => {
@@ -559,7 +560,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             filterKey={filterKey}
             searchFilterKey={searchFilterKey}
             actionProps={actionProps}
-            flows={flows}
+            flows={customCloneDeep(flows)}
         />
         </LoadResources>
       </div>

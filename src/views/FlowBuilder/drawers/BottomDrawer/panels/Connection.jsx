@@ -10,6 +10,7 @@ import {
   isTradingPartnerSupported,
 } from '../../../../../utils/resource';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,7 +56,7 @@ export default function ConnectionPanel({ flowId }) {
     <div className={classes.root}>
       <LoadResources integrationId={integrationId} required resources="connections">
         <CeligoTable
-          data={flowConnections}
+          data={customCloneDeep(flowConnections)}
           filterKey="connections"
           {...metadata}
           actionProps={actionProps}

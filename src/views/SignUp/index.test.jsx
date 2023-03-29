@@ -3,7 +3,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import Signup from '.';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
@@ -11,7 +11,9 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function store(auth) {
-  initialStore.getState().auth = auth;
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
+  });
 }
 
 async function initSignUp() {
@@ -66,12 +68,14 @@ describe('signUp', () => {
     const company = screen.getByPlaceholderText('Company');
     const role = screen.getByPlaceholderText('Role');
     const phone = screen.getByPlaceholderText('Phone');
+    const alreadyHaveAcc = screen.getByText('Already have an account?');
 
     expect(name).toBeInTheDocument();
     expect(businessEmail).toBeInTheDocument();
     expect(company).toBeInTheDocument();
     expect(role).toBeInTheDocument();
     expect(phone).toBeInTheDocument();
+    expect(alreadyHaveAcc).toBeInTheDocument();
   });
 
   test('should able to test the  signin link', async () => {

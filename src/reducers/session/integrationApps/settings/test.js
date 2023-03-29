@@ -1,11 +1,11 @@
 /* eslint-disable jest/no-identical-title */
 
-import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
 import * as GenerateId from '../../../../utils/string';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const amazonCategoryMappings = {
   uiAssistant: 'amazon',
@@ -1799,7 +1799,7 @@ describe('integrationApps reducer test cases', () => {
           sectionId: 'autoaccessorymisc',
           variation: 'itempackagequantity',
         }));
-        let state1 = cloneDeep(state);
+        let state1 = customCloneDeep(state);
 
         state1['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].mappings = [{
           extract: 'yes',
@@ -10257,7 +10257,7 @@ describe('integrationApps selectors test cases', () => {
 
     test('should return correct data for amazon category mappings', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
-      const state1 = cloneDeep(state);
+      const state1 = customCloneDeep(state);
 
       state1['flow-integration'].mappings = {
         'flow-commonAttributes-0': {
@@ -10363,7 +10363,7 @@ describe('integrationApps selectors test cases', () => {
 
     test('should return true when mappings changed', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
-      const state1 = cloneDeep(state);
+      const state1 = customCloneDeep(state);
 
       state1['flow-integration'].mappings = {
         'flow-commonAttributes-0': {

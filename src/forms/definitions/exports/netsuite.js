@@ -1,4 +1,3 @@
-import { BUNDLE_DEPRICATION_URL } from '../../../constants';
 import { isNewId } from '../../../utils/resource';
 import { safeParse } from '../../../utils/string';
 
@@ -16,7 +15,7 @@ export default {
       newValues['/netsuite/searches'] = undefined;
       newValues['/netsuite/webservices'] = undefined;
       delete newValues['/netsuite/restlet/criteria'];
-      delete newValues['/netsuite/restlet/useSS2Restlets'];
+      delete newValues['/netsuite/restlet/restletVersion'];
       delete newValues['/netsuite/webservices/criteria'];
       delete newValues['/netsuite/searches/criteria'];
     }
@@ -78,6 +77,7 @@ export default {
       delete newValues['/restlet/once/booleanField'];
       newValues['/netsuite/distributed'] = undefined;
       delete newValues['/netsuite/distributed/executionContext'];
+      delete newValues['/netsuite/distributed/frameworkVersion'];
       delete newValues['/netsuite/distributed/forceReload'];
       delete newValues['/netsuite/distributed/executionType'];
 
@@ -298,9 +298,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
+            { label: 'SuiteApp SuiteScript 2.x (Recommended)', value: 'suiteapp2.0'},
             { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
-            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: `To be deprecated.<a target="_blank" rel="noreferrer" href=${BUNDLE_DEPRICATION_URL}><u>Learn more.</u></a>`, isWarningMessage: true },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: 'To be deprecated', isWarningMessage: true },
           ],
         },
       ],
@@ -343,9 +343,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
+            { label: 'SuiteApp SuiteScript 2.x (Recommended)', value: 'suiteapp2.0'},
             { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
-            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: `To be deprecated.<a target="_blank" rel="noreferrer" href=${BUNDLE_DEPRICATION_URL}><u>Learn more.</u></a>`, isWarningMessage: true },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: 'To be deprecated', isWarningMessage: true },
           ],
         },
       ],
@@ -642,7 +642,7 @@ export default {
         fields: ['mockOutput'],
       },
       {
-        collapsed: id => !isNewId(id),
+        collapsed: true,
         label: 'Advanced',
         containers: [
           {

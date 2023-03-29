@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import ButtonWrapper from './MappingsButtonGroup';
 import actions from '../../../actions';
 
@@ -12,38 +12,40 @@ const mockClose = jest.fn();
 async function initButtonWrapper(props = {editorId: 'responseMappings', onClose: mockClose}, saveStatus, validationErrMsg) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors = {
-    responseMappings: {
-      editorType: 'responseMappings',
-    },
-    mappings: {
-      editorType: 'mappings',
-    },
-  };
-  initialStore.getState().session.responseMapping = {
-    mapping: {
-      mappings: [
-        {generate: 'a', extract: 'b', key: 'k1'},
-      ],
-      mappingsCopy: [
-        {generate: 'c', extract: 'd', key: 'k5'},
-        {generate: 'e', extract: 'f', key: 'k6'},
-      ],
-      saveStatus,
-    },
-  };
-  initialStore.getState().session.mapping = {
-    mapping: {
-      mappings: [
-        {generate: 'a', extract: 'b', key: 'k1'},
-      ],
-      mappingsCopy: [
-        {generate: 'e', extract: 'f', key: 'k2'},
-      ],
-      saveStatus,
-      validationErrMsg,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {
+      responseMappings: {
+        editorType: 'responseMappings',
+      },
+      mappings: {
+        editorType: 'mappings',
+      },
+    };
+    draft.session.responseMapping = {
+      mapping: {
+        mappings: [
+          {generate: 'a', extract: 'b', key: 'k1'},
+        ],
+        mappingsCopy: [
+          {generate: 'c', extract: 'd', key: 'k5'},
+          {generate: 'e', extract: 'f', key: 'k6'},
+        ],
+        saveStatus,
+      },
+    };
+    draft.session.mapping = {
+      mapping: {
+        mappings: [
+          {generate: 'a', extract: 'b', key: 'k1'},
+        ],
+        mappingsCopy: [
+          {generate: 'e', extract: 'f', key: 'k2'},
+        ],
+        saveStatus,
+        validationErrMsg,
+      },
+    };
+  });
 
   return renderWithProviders(<MemoryRouter><ButtonWrapper {...props} /></MemoryRouter>, { initialStore });
 }

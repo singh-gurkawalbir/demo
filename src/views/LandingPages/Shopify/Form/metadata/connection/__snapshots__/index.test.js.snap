@@ -34,8 +34,6 @@ Object {
         "read_shipping",
         "write_shipping",
         "read_analytics",
-        "read_checkouts",
-        "write_checkouts",
         "read_reports",
         "write_reports",
         "read_price_rules",
@@ -46,7 +44,6 @@ Object {
         "write_resource_feedbacks",
         "read_shopify_payments_payouts",
         "unauthenticated_read_product_listings",
-        "unauthenticated_write_checkouts",
         "unauthenticated_write_customers",
         "unauthenticated_read_content",
         "read_assigned_fulfillment_orders",
@@ -55,6 +52,7 @@ Object {
         "write_merchant_managed_fulfillment_orders",
         "read_third_party_fulfillment_orders",
         "write_third_party_fulfillment_orders",
+        "read_shopify_payments_disputes",
       ],
       "helpKey": "connection.http.auth.oauth.scope",
       "id": "http.auth.oauth.scope",
@@ -180,7 +178,7 @@ Object {
       "visible": false,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -189,16 +187,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },
@@ -329,8 +327,6 @@ Object {
         "read_shipping",
         "write_shipping",
         "read_analytics",
-        "read_checkouts",
-        "write_checkouts",
         "read_reports",
         "write_reports",
         "read_price_rules",
@@ -341,7 +337,6 @@ Object {
         "write_resource_feedbacks",
         "read_shopify_payments_payouts",
         "unauthenticated_read_product_listings",
-        "unauthenticated_write_checkouts",
         "unauthenticated_write_customers",
         "unauthenticated_read_content",
         "read_assigned_fulfillment_orders",
@@ -350,6 +345,7 @@ Object {
         "write_merchant_managed_fulfillment_orders",
         "read_third_party_fulfillment_orders",
         "write_third_party_fulfillment_orders",
+        "read_shopify_payments_disputes",
       ],
       "helpKey": "connection.http.auth.oauth.scope",
       "id": "http.auth.oauth.scope",
@@ -590,7 +586,7 @@ Object {
       "visible": true,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -599,16 +595,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },
@@ -737,7 +733,7 @@ Object {
       "visible": false,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -746,16 +742,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },
@@ -1053,7 +1049,7 @@ Object {
       "visible": true,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -1062,16 +1058,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },

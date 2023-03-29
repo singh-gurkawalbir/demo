@@ -270,6 +270,7 @@ describe('netsuite suitebundle verifyBundleOrPackageInstall sagas', () => {
   };
   const templateId = '123';
   const variant = 'suitebundle';
+  const isManualVerification = true;
 
   test('the status should be completed if response.success is true on successfull api call', () => {
     const response = { success: true };
@@ -279,6 +280,7 @@ describe('netsuite suitebundle verifyBundleOrPackageInstall sagas', () => {
       connection,
       templateId,
       variant,
+      isManualVerification,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
@@ -290,7 +292,7 @@ describe('netsuite suitebundle verifyBundleOrPackageInstall sagas', () => {
       )
       .run();
   });
-  test('the status should be failed if response.success is false on successfull api call', () => {
+  test('the status should be failed if response.success is false on successfull api call only when user verifies manually', () => {
     const path = `/connections/${connection._id}/distributed?type=suitebundle`;
     const response = {
       success: false,
@@ -304,10 +306,40 @@ describe('netsuite suitebundle verifyBundleOrPackageInstall sagas', () => {
       connection,
       templateId,
       variant,
+      isManualVerification,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
       .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('should not make the api failure dispatch call when auto verification is done and response.success is false', () => {
+    const path = `/connections/${connection._id}/distributed?type=suitebundle`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+    const isManualVerification = false;
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .not.put(
         actions.api.failure(
           path,
           'GET',
@@ -366,6 +398,7 @@ describe('netsuite suiteapp variant verifyBundleOrPackageInstall sagas', () => {
   };
   const templateId = '123';
   const variant = 'suiteapp';
+  const isManualVerification = true;
 
   test('the status should be completed if response.success is true on successfull api call', () => {
     const response = { success: true };
@@ -375,6 +408,7 @@ describe('netsuite suiteapp variant verifyBundleOrPackageInstall sagas', () => {
       connection,
       templateId,
       variant,
+      isManualVerification,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
@@ -386,7 +420,7 @@ describe('netsuite suiteapp variant verifyBundleOrPackageInstall sagas', () => {
       )
       .run();
   });
-  test('the status should be failed if response.success is false on successfull api call', () => {
+  test('the status should be failed if response.success is false on successfull api call only when user verifies manually', () => {
     const path = `/connections/${connection._id}/distributed?type=suiteapp`;
     const response = {
       success: false,
@@ -400,10 +434,40 @@ describe('netsuite suiteapp variant verifyBundleOrPackageInstall sagas', () => {
       connection,
       templateId,
       variant,
+      isManualVerification,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
       .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('should not make the api failure dispatch call when auto verification is done and response.success is false', () => {
+    const path = `/connections/${connection._id}/distributed?type=suiteapp`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+    const isManualVerification = false;
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+      isManualVerification,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .not.put(
         actions.api.failure(
           path,
           'GET',

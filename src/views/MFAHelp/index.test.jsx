@@ -3,7 +3,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 import { screen, cleanup} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import MfaHelp from '.';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
@@ -11,7 +11,9 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function store(auth) {
-  initialStore.getState().auth = auth;
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
+  });
 }
 
 async function initMFAHelp() {

@@ -2,46 +2,30 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography, InputAdornment} from '@material-ui/core';
-import { useLocation, Link, useHistory } from 'react-router-dom';
+import { Typography, InputAdornment } from '@material-ui/core';
+import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
-import actions from '../../actions';
-import { selectors } from '../../reducers';
-import ErrorIcon from '../../components/icons/ErrorIcon';
-import ShowContentIcon from '../../components/icons/ShowContentIcon';
-import HideContentIcon from '../../components/icons/HideContentIcon';
-import SecurityIcon from '../../components/icons/SecurityIcon';
-import { AUTH_FAILURE_MESSAGE } from '../../constants';
-import getRoutePath from '../../utils/routePaths';
-import Spinner from '../../components/Spinner';
-import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
-import getImageUrl from '../../utils/image';
-import useQuery from '../../hooks/useQuery';
-
-const path = getImageUrl('images/googlelogo.png');
+import actions from '../../../actions';
+import { selectors } from '../../../reducers';
+import { getDomain, isGoogleSignInAllowed } from '../../../utils/resource';
+import { AUTH_FAILURE_MESSAGE } from '../../../constants';
+import getRoutePath from '../../../utils/routePaths';
+import Spinner from '../../../components/Spinner';
+import { FilledButton, OutlinedButton, TextButton } from '../../../components/Buttons';
+import useQuery from '../../../hooks/useQuery';
+import ShowContentIcon from '../../../components/icons/ShowContentIcon';
+import HideContentIcon from '../../../components/icons/HideContentIcon';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(1, 0, 2, 0),
   },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
-  },
-  relatedContent: {
-    textDecoration: 'none',
+  switchDomain: {
+    margin: theme.spacing(5, 0, 3),
+    display: 'inline-block',
   },
   textField: {
     width: '100%',
@@ -60,22 +44,6 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
   errorMsg: {
     fontSize: 16,
     marginBottom: theme.spacing(2),
@@ -88,15 +56,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
-  },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
   },
   ssoBtn: {
     borderRadius: 4,
@@ -130,16 +89,6 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
     },
   },
-  hidden: {
-    display: 'none',
-  },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
-  },
   passwordTextField: {
     '& * >.MuiFilledInput-input': {
       letterSpacing: '2px',
@@ -148,14 +97,13 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-
   iconPassword: {
     cursor: 'pointer',
     marginRight: theme.spacing(1),
   },
 }));
 
-export default function SignIn({dialogOpen, className}) {
+export default function SignIn({ dialogOpen, className, queryParam }) {
   const dispatch = useDispatch();
   const location = useLocation();
   const classes = useStyles();
@@ -173,26 +121,22 @@ export default function SignIn({dialogOpen, className}) {
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
+
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
   const error = useSelector(state => {
     const errorMessage = selectors.authenticationErrored(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
-    if (window.signInError) {
+    if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
     }
 
     return errorMessage;
   });
-  const userEmail = useSelector(state => selectors.userProfileEmail(state));
-  const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
-  const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
-
-  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
 
   const handleOnChangeEmail = useCallback(e => {
     setEmail(e.target.value);
@@ -211,16 +155,6 @@ export default function SignIn({dialogOpen, className}) {
     dispatch(actions.auth.signInWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value));
   }, [dispatch]);
 
-  const handleReSignInWithGoogle = useCallback(e => {
-    e.preventDefault();
-    dispatch(actions.auth.reSignInWithGoogle(userEmail));
-  }, [dispatch, userEmail]);
-
-  const handleReSignInWithSSO = e => {
-    e.preventDefault();
-    dispatch(actions.auth.reSignInWithSSO());
-  };
-
   const handleShowPassword = () => setShowPassword(showPassword => !showPassword);
 
   window.signedInWithGoogle = () => {
@@ -229,16 +163,17 @@ export default function SignIn({dialogOpen, className}) {
   window.signedInWithSSO = () => {
     reInitializeSession();
   };
+
   useEffect(() => {
     if (isMFAAuthRequired) {
       history.push(getRoutePath('/mfa/verify'), location.state);
     }
   }, [history, isMFAAuthRequired, location.state]);
-  const attemptedRoute = location.state?.attemptedRoute;
+  const attemptedRoute = location && location.state && location.state.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
-    <div className={clsx(classes.editableFields, className)}>
+    <LoginFormWrapper className={className}>
       {!isAuthenticating && !showError && query.get('msg') && (
       <Typography
         data-private
@@ -253,24 +188,24 @@ export default function SignIn({dialogOpen, className}) {
         <TextField
           data-private
           data-test="email"
+          required
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email*"
-          required
-          value={dialogOpen ? userEmail : email}
+          placeholder="Email *"
+          value={email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
           disabled={dialogOpen}
-            />
+        />
         <TextField
           data-private
           data-test="password"
           id="password"
           variant="filled"
-          type={showPassword ? 'text' : 'password'}
           required
-          placeholder="Password*"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password *"
           className={clsx(classes.textField, classes.passwordTextField)}
           InputProps={{
             endAdornment: (true) &&
@@ -289,7 +224,7 @@ export default function SignIn({dialogOpen, className}) {
                 </InputAdornment>
               ),
           }}
-            />
+        />
 
         <div className={classes.forgotPass}>
           <TextButton
@@ -302,16 +237,8 @@ export default function SignIn({dialogOpen, className}) {
           </TextButton>
         </div>
         {!isAuthenticating && showError && error && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            <ErrorIcon /> {error}
-          </Typography>
+          <ShowErrorMessage error={error} />
         )}
-
         { isAuthenticating ? <Spinner />
           : (
             <FilledButton
@@ -319,66 +246,40 @@ export default function SignIn({dialogOpen, className}) {
               type="submit"
               role="button"
               className={classes.submit}
+              submit
               value="Submit">
               Sign in
             </FilledButton>
           )}
       </form>
-      { !isAuthenticating && (
+
+      {!isAuthenticating && (
       <div>
-        {!dialogOpen &&
-        // eslint-disable-next-line no-undef
-        ALLOW_GOOGLE_SIGNIN === 'true' && (
-          <form onSubmit={handleSignInWithGoogle}>
-            <TextField
-              data-private
-              type="hidden"
-              id="attemptedRoute"
-              name="attemptedRoute"
-              value={attemptedRoute || getRoutePath('/')}
-                />
+        {!dialogOpen && isGoogleSignInAllowed() && (
+          <div>
             <div className={classes.or}>
               <Typography variant="body1">or</Typography>
             </div>
-            <OutlinedButton
-              type="submit"
-              color="secondary"
-              className={classes.googleBtn}>
-              Sign in with Google
-            </OutlinedButton>
-          </form>
-        )}
-        {dialogOpen && userHasOtherLoginOptions && (
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
+            <form onSubmit={handleSignInWithGoogle}>
+              <TextField
+                data-private
+                type="hidden"
+                id="attemptedRoute"
+                name="attemptedRoute"
+                value={attemptedRoute || getRoutePath('/')}
+              />
+              <OutlinedButton
+                type="submit"
+                color="secondary"
+                googleBtn>
+                Sign in with Google
+              </OutlinedButton>
+            </form>
           </div>
         )}
-        {dialogOpen && canUserLoginViaSSO && (
-          <form onSubmit={handleReSignInWithSSO}>
-            <OutlinedButton
-              type="submit"
-              className={classes.ssoBtn}
-              startIcon={<SecurityIcon />}
-              color="secondary">
-              Sign in with SSO
-            </OutlinedButton>
-          </form>
-        )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
-        // eslint-disable-next-line no-undef
-        ALLOW_GOOGLE_SIGNIN === 'true' && (
-        <form onSubmit={handleReSignInWithGoogle}>
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
-        )}
+        {getDomain() !== 'eu.integrator.io' && <a data-test="euSignIn" className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
       )}
-    </div>
+    </LoginFormWrapper>
   );
 }
-

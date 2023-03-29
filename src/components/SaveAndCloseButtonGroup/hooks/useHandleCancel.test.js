@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import useHandleCancel from './useHandleCancel';
 import { getCreatedStore } from '../../../store';
 
@@ -35,11 +35,13 @@ describe('test suite for useHandleCancelBasic hook', () => {
     const touched = true;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      fields: {
-        tempField: { touched },
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        fields: {
+          tempField: { touched },
+        },
+      };
+    });
 
     const handleCanceClick = await inituseHandleCancel({ formKey, onClose, handleSave }, initialStore);
 

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import useQuery from '../../hooks/useQuery';
 
 export function AppRoutingWithAuth({ children }) {
   const location = useLocation();
@@ -12,6 +13,8 @@ export function AppRoutingWithAuth({ children }) {
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
   const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
   const isSignInRoute = location.pathname.split('?')[0] === getRoutePath('signin');
+  const query = useQuery();
+  const isShopifySignIn = isSignInRoute && query.get('application') === 'shopify';
   const isConcurPage = location.pathname.startsWith('/concurconnect');
   const shouldShowAppRouting = useSelector(selectors.shouldShowAppRouting);
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
@@ -28,21 +31,31 @@ export function AppRoutingWithAuth({ children }) {
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
       if (!isSignInRoute) {
+        try {
+          history.replace({
+            search,
+            state: { attemptedRoute: currentRoute, search },
+          });
+        } catch (e) {
+          // In case of incorrect formatted urls like `https://integrator.io///[https://integrator.io/home]` redirect user back to default page.
+          history.replace(getRoutePath('/'));
+        }
+
+        dispatch(actions.auth.initSession());
+      } else if (isShopifySignIn) {
         history.replace({
           search,
-          state: { attemptedRoute: currentRoute, search },
+          state: { attemptedRoute: '/connection/shopify/oauth2callback', search },
         });
-        dispatch(actions.auth.initSession());
       } else {
         dispatch(actions.auth.validateAndInitSession());
       }
     }
-
     if (!hasPageReloaded) {
       dispatch(actions.app.clearError());
     }
     setHasPageReloaded(true);
-  }, [hasPageReloaded, currentRoute, history, search, isAuthInitialized, dispatch, isSignInRoute, isConcurPage]);
+  }, [hasPageReloaded, currentRoute, history, search, isAuthInitialized, dispatch, isSignInRoute, isConcurPage, isShopifySignIn]);
   const agreeTOSAndPPPage = getRoutePath('/agreeTOSAndPP') === location.pathname;
 
   if (agreeTOSAndPPRequired && !agreeTOSAndPPPage) {
@@ -62,6 +75,12 @@ export function AppRoutingWithAuth({ children }) {
     if (isSignInRoute) {
       const { state: routeState } = location;
       const redirectedTo = (routeState && routeState.attemptedRoute) || getRoutePath('');
+
+      if (isShopifySignIn) {
+        window.location.href = `${redirectedTo}${routeState?.search}`;
+
+        return null;
+      }
 
       return <Redirect push={false} to={{ pathname: redirectedTo, search: routeState?.search }} />;
     }

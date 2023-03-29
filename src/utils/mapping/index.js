@@ -1,4 +1,3 @@
-import deepClone from 'lodash/cloneDeep';
 import { uniqBy, isEmpty, isEqual, forEach, flattenDeep, uniq } from 'lodash';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor, isAS2Resource} from '../resource';
 // eslint-disable-next-line import/no-self-import
@@ -16,6 +15,7 @@ import {generateCSVFields} from '../file';
 import jsonUtils from '../json';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../../constants';
 import errorMessageStore from '../errorStore';
+import customCloneDeep from '../customCloneDeep';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -448,6 +448,23 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
   return modifiedExtract;
 }
 
+export function formattedMultiFieldExpression(expression, functionValue, extractValue) {
+  let expressionValue = '';
+
+  if (expression) expressionValue = expression;
+
+  if (extractValue) {
+    const isGroupedField = extractValue.indexOf('*.') === 0;
+    const extractFieldValue = isGroupedField ? extractValue.substring(2) : extractValue;
+
+    expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
+  } else if (functionValue) {
+    expressionValue += functionValue;
+  }
+
+  return expressionValue;
+}
+
 // #region Mapper2 utils
 export const isMapper2HandlebarExpression = (extractValue, isHardCodedValue) => handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
 
@@ -762,7 +779,7 @@ export const buildExtractsHelperFromExtract = ({
 // mark non active tabs children as hidden
 export const hideOtherTabRows = (node, newTabExtract = '', hidden, useOriginalNode) => {
   // ToDo (Yaser): check if we can remove the deep clone completely
-  const clonedNode = useOriginalNode ? node : deepClone(node);
+  const clonedNode = useOriginalNode ? node : customCloneDeep(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
 
@@ -1176,7 +1193,7 @@ export const buildTreeFromV2Mappings = ({
   const v2Mappings = importResource.mappings || [];
 
   // creating deep copy of mapping object to avoid alteration to resource mapping object
-  const v2MappingsCopy = deepClone(v2Mappings);
+  const v2MappingsCopy = customCloneDeep(v2Mappings);
 
   const treeData = [];
   const emptyRowKey = generateId();
@@ -3048,6 +3065,8 @@ export default {
         return 'FTP';
       case adaptorTypeMap.AS2Import:
         return 'AS2';
+      case adaptorTypeMap.VANImport:
+        return 'VAN';
       case adaptorTypeMap.S3Import:
         return 'Amazon S3';
       case adaptorTypeMap.SalesforceImport:
@@ -3080,6 +3099,17 @@ export default {
             toReturn = 'Amazon Redshift';
           } else {
             toReturn = 'Snowflake';
+          }
+        }
+
+        return toReturn;
+      }
+      case adaptorTypeMap.JDBCExport: {
+        let toReturn;
+
+        if (conn) {
+          if (conn.jdbc?.type === 'netsuitejdbc') {
+            toReturn = 'NetSuite JDBC';
           }
         }
 
@@ -3191,7 +3221,7 @@ export default {
     }
 
     // creating deep copy of mapping object to avoid alteration to resource mapping object
-    const mappingCopy = deepClone(mappings);
+    const mappingCopy = customCloneDeep(mappings);
 
     if (!mappingCopy.fields) {
       mappingCopy.fields = [];
@@ -3259,6 +3289,7 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.VANImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:

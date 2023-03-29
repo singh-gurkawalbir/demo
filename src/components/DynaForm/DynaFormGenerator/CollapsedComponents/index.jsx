@@ -69,10 +69,9 @@ export default function CollapsedComponents(props) {
 }
 
 const ExpansionPanelExpandOnInValidState = props => {
-  const { collapsed, layout, classes, header, fieldMap, formKey, resourceId} = props;
-  const hideContainer = typeof collapsed === 'function' ? collapsed(resourceId) : collapsed;
+  const { collapsed, layout, classes, header, fieldMap, formKey} = props;
   const revalidationIdentifier = useSelector(state => selectors.formState(state, formKey)?.validationOnSaveIdentifier);
-  const [shouldExpand, setShouldExpand] = useState(!hideContainer);
+  const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [expandOnce, setExpandOnce] = useState(false);
   const isPanelErrored = useSelector(state =>
     selectors.isExpansionPanelErroredForMetaForm(state, formKey, {

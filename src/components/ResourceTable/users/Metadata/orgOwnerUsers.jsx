@@ -14,6 +14,7 @@ import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 import ResetMFA from '../actions/ResetMFA';
+import ResetOwnerMFA from '../actions/ResetOwnerMFA';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
@@ -113,11 +114,16 @@ export default {
   },
   useRowActions: user => {
     const tableContext = useGetTableContext();
-    const { integrationId, accessLevel } = tableContext;
+    const { integrationId, accessLevel, isAccountOwnerMFAEnabled } = tableContext;
     const { sharedWithUser } = user;
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
+      if (!integrationId && accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN && isAccountOwnerMFAEnabled) {
+        // An admin can reset owner's MFA setup at account level
+        return [ResetOwnerMFA];
+      }
+
       return [];
     }
 

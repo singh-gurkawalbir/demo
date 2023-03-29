@@ -12,6 +12,7 @@ import { generateNewId } from '../../../../utils/resource';
 import LoadResources from '../../../LoadResources';
 import { TextButton } from '../../../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -106,7 +107,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
       <div>
         <LoadResources required resources="integrations,connectors" >
           <CeligoTable
-            data={childLicenses}
+            data={customCloneDeep(childLicenses)}
             {...metadata}
             filterKey={sortFilterKey}
             actionProps={{

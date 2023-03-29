@@ -108,7 +108,7 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters.map(pathParam => {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
-      label: pathParam.name,
+      label: pathParam.label || pathParam.name,
       type: 'hfpathparams',
       showLookup: false,
       value: values[pathParam.id],
@@ -288,6 +288,7 @@ export function fieldMeta({ resource, assistantData }) {
   let exportTypeFields = [];
   let searchParameterFields = [];
   let headerFields = [];
+  let supportsEndpointLevelAsyncHelper = false;
 
   if (assistantData && assistantData.export) {
     const assistantConfig = convertFromExport({
@@ -305,6 +306,7 @@ export function fieldMeta({ resource, assistantData }) {
     const { operationDetails = {} } = assistantConfig;
 
     if (operationDetails) {
+      supportsEndpointLevelAsyncHelper = operationDetails.supportsAsyncHelper;
       headerFields = headerFieldsMeta({
         headers,
         operationDetails,
@@ -384,11 +386,12 @@ export function fieldMeta({ resource, assistantData }) {
     },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
-      defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
-      visible: r => !(r && r.statusExport),
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId) || supportsEndpointLevelAsyncHelper,
+      visible: r => !(r && r.statusExport) && !supportsEndpointLevelAsyncHelper,
     },
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
+      required: supportsEndpointLevelAsyncHelper,
     },
   };
   const fieldIds = [];
@@ -411,6 +414,11 @@ export function fieldMeta({ resource, assistantData }) {
   };
 
   fieldMap.mockOutput = {fieldId: 'mockOutput'};
+  if (supportsEndpointLevelAsyncHelper) {
+    const index = fieldIds.findIndex(fld => fld === 'assistantMetadata.version');
+
+    fieldIds.splice(index + 1, 0, 'http._asyncHelperId');
+  }
 
   return {
     fieldMap,
@@ -441,9 +449,9 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['configureAsyncHelper',
-            'http._asyncHelperId',
-            'advancedSettings'],
+          fields: [...(!supportsEndpointLevelAsyncHelper ? ['configureAsyncHelper',
+            'http._asyncHelperId'] : ['configureAsyncHelper']),
+          'advancedSettings'],
         },
       ],
     },

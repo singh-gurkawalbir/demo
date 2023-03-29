@@ -295,8 +295,8 @@ export function getFirstExportFromFlow(flow = {}, exports = []) {
 export function isRealtimeExport(exp) {
   if (!exp) return false;
 
-  // AS2 Exports are real-time.
-  if (exp.adaptorType === 'AS2Export') return true;
+  // AS2 and VAN Exports are real-time.
+  if (exp.adaptorType === 'AS2Export' || exp.adaptorType === 'VANExport') return true;
 
   // webhook and distributed are realtime.
   if (exp.type && ['distributed', 'webhook'].includes(exp.type)) {
@@ -565,30 +565,6 @@ export function getImportsFromFlow(flow, imports) {
   if (!importIds.length) return emptyList;
 
   return imports.filter(i => importIds.indexOf(i._id) > -1);
-}
-
-export function getFlowListWithMetadata(flows = [], exports = []) {
-  // TODO are we not mutating state here in getter and should we not return a clone.
-  flows.forEach((f, i) => {
-    if (isRealtimeFlow(f, exports)) {
-      /* eslint-disable no-param-reassign */
-      flows[i].isRealtime = true;
-    }
-
-    if (isSimpleImportFlow(f, exports)) {
-      flows[i].isSimpleImport = true;
-    }
-
-    if (isRunnable(f, exports)) {
-      flows[i].isRunnable = true;
-    }
-
-    if (showScheduleIcon(f, exports)) {
-      flows[i].showScheduleIcon = true;
-    }
-  });
-
-  return { resources: flows };
 }
 
 export function getNextDataFlows(flows = emptyList, exports = emptyList, flow = emptyObject) {
@@ -925,6 +901,7 @@ export function populateRestSchema(exportDoc = {}) {
   } = exportDoc;
 
   if (adaptorType === 'RESTExport') {
+    // eslint-disable-next-line no-param-reassign
     exportDoc._rest = deepClone(exportDoc.rest);
 
     return exportDoc;
@@ -1030,6 +1007,7 @@ export function populateRestSchema(exportDoc = {}) {
       }
     }
 
+    // eslint-disable-next-line no-param-reassign
     exportDoc._rest = restSubDoc;
   } catch (e) {
     // eslint-disable-next-line no-console

@@ -22,12 +22,13 @@ export function* getConnectorMetadata({ connectionId, httpConnectorId, httpVersi
   const path = `/httpconnectors/${httpConnectorId}?returnEverything=true`;
   const connection = yield select(selectors.resource, 'connections', connectionId);
 
-  const connectionVersion = connection?.http?.unencrypted?.version;
+  const connectionVersion = connection?.http?._httpConnectorVersionId;
+  const connectionAPI = connection?.http?._httpConnectorApiId;
 
   try {
     const connectorMetadata = yield call(apiCallWithRetry, { path, message, hidden });
 
-    const metadata = getHTTPConnectorMetadata(connectorMetadata, connectionVersion);
+    const metadata = getHTTPConnectorMetadata(connectorMetadata, connectionVersion, connectionAPI);
 
     yield put(actions.httpConnectors.receivedMetadata({httpConnectorId, httpVersionId, httpConnectorApiId, metadata}));
 

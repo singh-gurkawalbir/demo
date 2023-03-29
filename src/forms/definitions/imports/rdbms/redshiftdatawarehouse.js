@@ -65,9 +65,6 @@ export default {
         },
       ],
     },
-    'rdbms.bulkInsert.tableName': {
-      fieldId: 'rdbms.bulkInsert.tableName',
-    },
     advancedSettings: { formId: 'advancedSettings' },
     'rdbms.queryType': {
       id: 'rdbms.queryType',
@@ -103,7 +100,6 @@ export default {
         fields: [
           'rdbms.queryType',
           'rdbms.lookups',
-          'rdbms.bulkInsert.tableName',
           'rdbms.query',
         ],
       },
