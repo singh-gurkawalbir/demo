@@ -8,8 +8,6 @@ export default {
     const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
 
     if (newValues['/netsuite/authType'] === 'token') {
-      newValues['/netsuite/environment'] =
-        newValues['/netsuite/tokenEnvironment'];
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
 
@@ -52,7 +50,6 @@ export default {
     delete newValues['/netsuite/roleId'];
     delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
-    delete newValues['/netsuite/tokenEnvironment'];
     delete newValues['/jdbc/StaticSchema'];
     delete newValues['/jdbc/serverDataSource'];
     delete newValues['/rdbms/concurrencyLevel'];
