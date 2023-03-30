@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import CeligoSwitch from '../../../../CeligoSwitch';
+import { Switch } from '@celigo/fuse-ui';
 import { ACCOUNT_IDS } from '../../../../../constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
@@ -82,13 +82,12 @@ export default function EnableUser({ user }) {
   }
 
   return (
-    <CeligoSwitch
+    <Switch
       data-test="disableUser"
       disabled={!accepted || userId === ACCOUNT_IDS.OWN}
       checked={!disabled}
       onChange={handleSwitch}
       tooltip="Disable / Enable"
-      noPadding
       />
   );
 }

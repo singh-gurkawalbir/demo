@@ -6,10 +6,10 @@ import {
   Typography,
   IconButton,
 } from '@mui/material';
+import { Switch } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useConfirmDialog from '../../ConfirmDialog';
 import DeleteIcon from '../../icons/TrashIcon';
-import CeligoSwitch from '../../CeligoSwitch';
 import { TextButton } from '../../Buttons';
 
 export default function SharedUserRow({ user }) {
@@ -79,7 +79,7 @@ export default function SharedUserRow({ user }) {
       </TableCell>
       <TableCell>
         {user.accepted && (
-          <CeligoSwitch
+          <Switch
             data-test="disableUser"
             checked={!user.disabled}
             onChange={handleToggleSharingClick}

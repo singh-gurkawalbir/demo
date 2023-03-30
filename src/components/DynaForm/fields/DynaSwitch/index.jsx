@@ -2,7 +2,8 @@
 import React, { useCallback } from 'react';
 import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import CeligoSwitch from '../../../CeligoSwitch';
+import { Switch } from '@celigo/fuse-ui';
+// import CeligoSwitch from '../../../CeligoSwitch';
 import FieldHelp from '../../FieldHelp';
 import ActionGroup from '../../../ActionGroup';
 
@@ -32,12 +33,11 @@ export default function DynaSwitch(props) {
       <FormLabel htmlFor={id} className={classes.dynaSwitchLabel}>
         {label}
       </FormLabel>
-      <CeligoSwitch
-        {...rest}
+      <Switch
+        disabled={rest.disabled}
         onChange={onChange}
         checked={value}
-        tooltip={rest.disabled ? tooltip : ''}
-        className={classes.dynaSwitch} />
+        tooltip={rest.disabled ? tooltip : ''} />
       <FieldHelp {...props} />
     </ActionGroup>
   );
