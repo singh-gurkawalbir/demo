@@ -119,7 +119,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, iconView }) => 
         title={isConnectedToRouterOrTerminal ? 'Add destination / lookup' : ''}
         placement="top"
       >
-        <IconButton onClick={handleAddNode} className={clsx({[classes.iconViewAddButton]: iconView === 'icon', [classes.addButton]: iconView !== 'icon'})}>
+        <IconButton onClick={handleAddNode} className={clsx({[classes.iconViewAddButton]: iconView === 'icon'}, {[classes.addButton]: iconView !== 'icon'})}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -127,7 +127,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, iconView }) => 
   }
 
   return (
-    <IconButton className={clsx({[classes.iconViewAddButton]: iconView === 'icon', [classes.addButton]: iconView !== 'icon'})} onClick={handleOpenMenu}>
+    <IconButton className={clsx({[classes.iconViewAddButton]: iconView === 'icon'}, {[classes.addButton]: iconView !== 'icon'})} onClick={handleOpenMenu}>
       <AddIcon />
     </IconButton>
   );

@@ -77,8 +77,8 @@ export default function ActionIconButton({
         size="small"
         className={clsx(classes.button, className, classes[variant])}
         classes={{
-          root: clsx({[classes.newiconButtonRoot]: iconView === 'icon', [classes.iconButtonRoot]: iconView !== 'icon'}),
-          label: clsx({[classes.subFlowButtonLabel]: iconView === 'icon', [classes.iconButtonLabel]: iconView !== 'icon'}),
+          root: clsx({[classes.newiconButtonRoot]: iconView === 'icon'}, {[classes.iconButtonRoot]: iconView !== 'icon'}),
+          label: clsx({[classes.subFlowButtonLabel]: iconView === 'icon'}, {[classes.iconButtonLabel]: iconView !== 'icon'}),
         }}
         {...props}>
         {children}

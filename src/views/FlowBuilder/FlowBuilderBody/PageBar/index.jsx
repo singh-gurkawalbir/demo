@@ -166,7 +166,24 @@ const pageChildreUseStyles = makeStyles(theme => ({
 
     },
   },
-
+  profilePopper: {
+    zIndex: theme.zIndex.drawer + 1,
+    wordBreak: 'break-word',
+    minWidth: 318,
+    maxWidth: 320,
+    left: '18px !important',
+    top: '10px !important',
+  },
+  profilePopperArrow: {
+    left: '276px !important',
+  },
+  profilePaper: {
+    padding: '10px 8px',
+  },
+  helptextContent: {
+    minWidth: 'unset',
+    maxWidth: 'unset',
+  },
 }));
 
 const RunFlowButtonWrapper = ({flowId}) => {

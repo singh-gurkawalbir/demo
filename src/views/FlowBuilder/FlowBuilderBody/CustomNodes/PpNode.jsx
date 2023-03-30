@@ -126,10 +126,10 @@ export default function PageProcessorNode({ data = {}}) {
   }, [dispatch, flowId]);
 
   return (
-    <div className={clsx({[classes.newroot]: iconView === 'icon', [classes.root]: iconView !== 'icon'})}>
+    <div className={clsx({[classes.newroot]: iconView === 'icon'}, {[classes.root]: iconView !== 'icon'})}>
       <DefaultHandle type="target" position={Position.Left} />
 
-      <div className={clsx({[classes.newcontentContainer]: iconView === 'icon', [classes.contentContainer]: iconView !== 'icon'})} >
+      <div className={clsx({[classes.newcontentContainer]: iconView === 'icon'}, {[classes.contentContainer]: iconView !== 'icon'})} >
         <div>
           {iconView !== 'icon' && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>

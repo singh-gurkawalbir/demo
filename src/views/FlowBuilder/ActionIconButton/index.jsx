@@ -85,10 +85,10 @@ export default function ActionIconButton({
     <Tooltip title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
       <IconButton
         size="small"
-        className={clsx(classes.button, className, classes[variant])}
+        className={clsx(classes.button, classes[variant], className)}
         classes={{
-          root: clsx({[classes.newiconButtonRoot]: iconView === 'icon', [classes.newiconButtonRoot]: iconView !== 'icon'}),
-          label: clsx({[classes.newiconButtonLabel]: (iconView === 'icon' && !isSubFlowView), [classes.iconButtonLabel]: iconView !== 'icon', [classes.subFlowButtonLabel]: isSubFlowView}),
+          root: clsx({[classes.newiconButtonRoot]: iconView === 'icon'}, {[classes.iconButtonRoot]: iconView !== 'icon'}),
+          label: clsx({[classes.newiconButtonLabel]: (iconView === 'icon' && !isSubFlowView)}, {[classes.iconButtonLabel]: iconView !== 'icon'}, {[classes.subFlowButtonLabel]: isSubFlowView}),
         }}
         {...props}>
         {children}

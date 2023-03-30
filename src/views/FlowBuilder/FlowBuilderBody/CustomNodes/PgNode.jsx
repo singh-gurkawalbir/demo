@@ -54,8 +54,8 @@ export default function PageGeneratorNode(props) {
   );
 
   return (
-    <div className={clsx({[classes.iconLayoutRoot]: iconView === 'icon', [classes.root]: iconView !== 'icon'})}>
-      <div className={clsx({[classes.iconLayoutPgContainer]: iconView === 'icon', [classes.pgContainer]: iconView !== 'icon'})}>
+    <div className={clsx({[classes.iconLayoutRoot]: iconView === 'icon'}, {[classes.root]: iconView !== 'icon'})}>
+      <div className={clsx({[classes.iconLayoutPgContainer]: iconView === 'icon'}, {[classes.pgContainer]: iconView !== 'icon'})}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
