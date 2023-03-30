@@ -472,7 +472,7 @@ export default function SubFlowBlock({
       >
         <div className={classes.bubbleContainer}>
           <SubFlowErrorStatus
-            errorCount={openErrorCount}
+            errorCount={2}
             subBlockSchema
             isNew={isNew}
             flowId={flowId}

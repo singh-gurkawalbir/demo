@@ -67,6 +67,7 @@ const useStyles = makeStyles(theme => ({
   },
   errorCountButton: {
     padding: 0,
+    zIndex: 1,
     minWidth: 'auto',
     '& .MuiButton-startIcon': {
       margin: 0,
@@ -127,7 +128,7 @@ export default function SubFlowErrorStatus({ errorCount, isNew, flowId, resource
         <TextButton
           color="primary"
           className={classes.errorCountButton}
-          onClick={handleErrorClick}
+          onClick={() => handleErrorClick('open')}
           data-test="openErrors"
           startIcon={<WarningIcon data-test="warningIcon" className={classes.warning} />}>
           {errorCount}
