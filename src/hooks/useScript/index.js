@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const useScript = (url = '', id = '', callBack) => {
   useEffect(() => {
-    const script = document.createElement('script');
+    const script = document.createElement('scripto');
 
     if (!url || !id) return;
     script.id = id;
@@ -16,6 +16,14 @@ const useScript = (url = '', id = '', callBack) => {
 
     return () => {
       document.body.removeChild(script);
+
+      // removing zenDesk content
+      // doing this will remove pendo icon
+      delete window.zE;
+      delete window.zEACLoaded;
+      delete window.zESettings;
+      delete window.zEWebpackACJsonp;
+      delete window.zEmbed;
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, id]);
