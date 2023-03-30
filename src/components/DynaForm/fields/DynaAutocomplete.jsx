@@ -30,6 +30,12 @@ const useStyles = makeStyles(theme => ({
       padding: '0px !important',
     },
   },
+  textareaInput: {
+    '& .MuiInputBase-input': {
+      height: `${theme.spacing(4.5)}px !important`,
+      lineHeight: 1,
+    },
+  },
 }));
 
 const Row = ({ data, index, style }) => React.cloneElement(data[index], {
@@ -106,7 +112,6 @@ export default function DynaAutocomplete(props) {
     dataTest,
     isLoggable,
     options: actualOptions,
-    skipListBoxComponent = false,
   } = props;
 
   const actualValueInString = `${actualValue || ''}`;
@@ -160,7 +165,7 @@ export default function DynaAutocomplete(props) {
             )}
             data-test={dataTest || id}
             value={value}
-            ListboxComponent={!skipListBoxComponent ? ListboxComponent : undefined}
+            ListboxComponent={ListboxComponent}
             inputValue={inputValue}
             onInputChange={handleInputOptionSelect}
             onChange={(event, newValue) => {
@@ -175,6 +180,7 @@ export default function DynaAutocomplete(props) {
                 name={name}
                 id={id}
                 variant="filled"
+                className={classes.textareaInput}
               />
             )}
         />
