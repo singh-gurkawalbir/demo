@@ -182,7 +182,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
       <Switch>
         <Route path={manageAliasesDrawerUrl} >
           <DrawerHeader
-            title="Manage Aliases"
+            title="Manage aliases"
             infoText={message.ALIAS.MANAGE_ALIASES_HELPINFO}>
             {hasManageAccess ? (
               <>

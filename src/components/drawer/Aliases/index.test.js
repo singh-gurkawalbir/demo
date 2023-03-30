@@ -88,7 +88,7 @@ describe('AliasDrawerWrapper tests', () => {
   });
   test('Should able to test the alias drawer with Manage alias', async () => {
     await initAliasDrawerWrapper({props});
-    expect(screen.getByRole('heading', {name: 'Manage Aliases'})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'Manage aliases'})).toBeInTheDocument();
     const infoText = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo');
 
     userEvent.click(infoText);
