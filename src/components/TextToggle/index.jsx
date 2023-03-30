@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -64,7 +63,6 @@ export default function TextToggle({
   return (
     <ToggleButtonGroup
       {...rest}
-      className={clsx(className)}
       sx={[rootCss, className]}
       value={value}
       onChange={handleChange}>
