@@ -7,7 +7,7 @@ export default function DynaNetsuiteAuthType(props) {
   const formValues = useFormContext(formKey)?.value;
 
   const wsdlVersion = formValues['/netsuite/wsdlVersion'];
-  const isNetsuiteJdbc = formValues['/application'] === 'Netsuite JDBC';
+  const isNetsuiteJdbc = formValues['/application'] === 'NetSuite JDBC';
 
   useEffect(() => {
     if (value === 'basic' && wsdlVersion === '2020.2') {
@@ -30,4 +30,3 @@ export default function DynaNetsuiteAuthType(props) {
     <DynaSelect {...props} options={availableAuthOptions} />
   );
 }
-
