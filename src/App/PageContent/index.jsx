@@ -7,7 +7,6 @@ import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { message } from '../../utils/messageStore';
-// import ChatbotWidget from '../../components/ChatbotWidget';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import actions from '../../actions';
@@ -104,7 +103,6 @@ export default function PageContent() {
         // page content below the app/page bars.
         className={clsx({[classes.toolbar]: !agreeTOSAndPPRequired })}
       />
-      {/* <ChatbotWidget /> */}
       <AppRouting />
     </main>
   );
