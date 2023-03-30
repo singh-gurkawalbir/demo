@@ -83,6 +83,16 @@ describe('MFAVerify', () => {
     status: 'received'}
     );
     await initMFAVerify();
+    mutateStore(initialStore, draft => {
+      draft.session.mfa.sessionInfo = {data: {
+        authenticated: true,
+        mfaRequired: true,
+        mfaSetupRequired: false,
+        mfaVerified: false,
+      },
+      status: 'received'};
+    });
+
     expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
 
     expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
@@ -120,6 +130,15 @@ describe('MFAVerify', () => {
     status: 'received'}
     );
     await initMFAVerify();
+    mutateStore(initialStore, draft => {
+      draft.session.mfa.sessionInfo = {data: {
+        authenticated: true,
+        mfaRequired: true,
+        mfaSetupRequired: false,
+        mfaVerified: false,
+      },
+      status: 'received'};
+    });
 
     expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
 
@@ -154,6 +173,15 @@ describe('MFAVerify', () => {
     status: 'received'}
     );
     await initMFAVerify();
+    mutateStore(initialStore, draft => {
+      draft.session.mfa.sessionInfo = {data: {
+        authenticated: true,
+        mfaRequired: true,
+        mfaSetupRequired: false,
+        mfaVerified: false,
+      },
+      status: 'received'};
+    });
     const headingNode = screen.getByRole('heading', {name: 'Authenticate with one-time passcode'});
 
     expect(headingNode).toBeInTheDocument();
@@ -172,32 +200,4 @@ describe('MFAVerify', () => {
 
     expect(warningMessageNode).toBeInTheDocument();
   });
-  // eslint-disable-next-line jest/no-commented-out-tests
-  // test('Should able to test the signup link', async () => {
-  //   store({
-  //     initialized: true,
-  //     commStatus: 'success',
-  //     authenticated: true,
-  //     authTimestamp: 1661250286856,
-  //     defaultAccountSet: true,
-  //     mfaRequired: true,
-  //     isMFASetupIncomplete: true,
-  //   }, {data: {
-  //     authenticated: true,
-  //     mfaRequired: true,
-  //     mfaSetupRequired: false,
-  //     mfaVerified: false,
-  //   },
-  //   status: 'received'}
-  //   );
-  //   await initMFAVerify();
-  //   const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
-
-  //   expect(dontHaveAnAccountTextNode).toBeInTheDocument();
-  //   const signUpLinkNode = screen.getByRole('button', {name: 'Sign up'});
-
-  //   expect(signUpLinkNode).toBeInTheDocument();
-  //   await userEvent.click(signUpLinkNode);
-  //   expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
-  // });
 });
