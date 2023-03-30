@@ -5,7 +5,6 @@ export default function getImageUrl(url) {
     // If invalid argument passed
     return '';
   }
-  if (url === 'empty') { return 'https://d142hkd03ds8ug.cloudfront.net/images/react/application-logos/large/integratorio.png'; }
 
   if (/^https?:\/\//.test(url)) {
     // If it is an absolute url return as is
@@ -15,4 +14,3 @@ export default function getImageUrl(url) {
   // In all other cases, append cdn base uri to the relative uri
   return `${CDN_BASE_URL}${url.replace(/^\//, '')}`;
 }
-
