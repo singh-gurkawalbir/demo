@@ -191,7 +191,7 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.SUCCESS:
         if (!draft.acceptInvite) draft.acceptInvite = {};
-        draft.acceptInvite.redirectUrl = response.ssoRedirectURL || '/signin';
+        draft.acceptInvite.redirectUrl = response.ssoRedirectURL || '/home';
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.CLEAR:
         delete draft.acceptInvite;
