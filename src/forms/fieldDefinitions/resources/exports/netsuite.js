@@ -16,7 +16,7 @@ export default {
   },
   'netsuite.restlet.recordType': {
     isLoggable: true,
-    label: 'Record type 1',
+    label: 'Record type',
     required: true,
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
