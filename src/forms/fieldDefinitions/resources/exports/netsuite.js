@@ -56,6 +56,9 @@ export default {
       r.netsuite.searches &&
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].recordType,
+    OperationsOnItems: {
+      filterBy: value => !value?.doesNotSupportSearch,
+    },
   },
   // execution context
   'netsuite.distributed.executionContext': {
