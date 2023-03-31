@@ -83,7 +83,6 @@ export default function DynaStaticMapWidget(props) {
       // extracts can be a string we have safely type cast it to an array
       options: Array.isArray(extracts) ? extracts : [],
       supportsRefresh: supportsExtractsRefresh,
-      skipListBoxComponent: true,
     },
     {
       id: 'generates',
@@ -94,7 +93,6 @@ export default function DynaStaticMapWidget(props) {
       multiline: false,
       type: generates.length ? 'autosuggest' : 'input',
       supportsRefresh: supportsGeneratesRefresh,
-      skipListBoxComponent: true,
     },
   ], [extractFieldHeader, extracts, generateFieldHeader, generates, supportsExtractsRefresh, supportsGeneratesRefresh]);
   const { isLoading, shouldReset, data, fieldType } = useSelector(
@@ -196,7 +194,6 @@ export default function DynaStaticMapWidget(props) {
         onFieldChange={handleMapChange}
         handleRefreshClickHandler={handleRefreshClick}
         handleCleanupHandler={handleCleanup}
-        isVirtualizedTable={false}
       />
       <Divider className={classes.margin} />
       {!hideLookupAllowFailures && (
