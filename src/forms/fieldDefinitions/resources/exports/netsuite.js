@@ -16,7 +16,7 @@ export default {
   },
   'netsuite.restlet.recordType': {
     isLoggable: true,
-    label: 'Record type',
+    label: 'Record type 1',
     required: true,
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
@@ -30,6 +30,9 @@ export default {
       { field: 'netsuite.api.type', is: ['restlet'] },
       { field: 'netsuite.execution.type', is: ['scheduled'] },
     ],
+    OperationsOnItems: {
+      filterBy: value => !value?.doesNotSupportSearch,
+    },
   },
   'netsuite.webservices.recordType': {
     isLoggable: true,

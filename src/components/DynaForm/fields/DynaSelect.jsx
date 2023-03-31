@@ -249,6 +249,7 @@ export default function DynaSelect(props) {
     skipSort,
     dataTest,
     isLoggable,
+    OperationsOnItems,
   } = props;
 
   const listRef = React.createRef();
@@ -294,6 +295,10 @@ export default function DynaSelect(props) {
         []
       );
 
+    if (OperationsOnItems?.filterBy && typeof OperationsOnItems.filterBy === 'function') {
+      items = items.filter(item => OperationsOnItems.filterBy(item));
+    }
+
     if (!isSubHeader && !skipSort) {
       items = items.sort(stringCompare('label'));
     }
@@ -308,7 +313,7 @@ export default function DynaSelect(props) {
     }
 
     return items;
-  }, [options, isSubHeader, skipSort, placeholder, skipDefault]);
+  }, [options, OperationsOnItems?.filterBy, isSubHeader, skipSort, placeholder, skipDefault]);
 
   const matchMenuIndex = useAutoScrollOption(items, open, setOpen, listRef, id, value, onFieldChange);
   let finalTextValue;
