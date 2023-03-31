@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/sap/byd/odata',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/http/unencrypted/tenantHostname']}.sapbydesign.com`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/tenantHostname']}`,
     '/http/headers': [
       {
         name: 'Authorization',
@@ -21,7 +21,6 @@ export default {
     'http.unencrypted.tenantHostname': {
       id: 'http.unencrypted.tenantHostname',
       startAdornment: 'https://',
-      endAdornment: '.sapbydesign.com',
       type: 'text',
       label: 'Tenant hostname',
       helpKey: 'sapbydesign.connection.http.unencrypted.tenantHostname',
@@ -36,10 +35,7 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
           baseUri &&
-          baseUri.substring(
-            baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.sapbydesign.com')
-          );
+          baseUri.substring(baseUri.indexOf('https://') + 8);
 
         return subdomain;
       },
