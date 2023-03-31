@@ -17,7 +17,7 @@ export default {
       '/http/auth/type': 'oauth',
       '/http/mediaType': 'json',
       '/http/baseURI': `${
-        formValues['/http/unencrypted/companyId'] === 'sandbox'
+        formValues['/http/unencrypted/environment'] === 'sandbox'
           ? 'https://box.secure-wms.com/'
           : 'https://secure-wms.com/'
       }`,
@@ -29,7 +29,7 @@ export default {
       '/http/auth/oauth/grantType': 'clientcredentials',
       '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
       '/http/auth/oauth/tokenURI': `${
-        formValues['/http/unencrypted/companyId'] === 'sandbox'
+        formValues['/http/unencrypted/environment'] === 'sandbox'
           ? 'https://box.secure-wms.com/AuthServer/api/Token'
           : 'https://secure-wms.com/AuthServer/api/Token'
       }`,
