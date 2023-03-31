@@ -38,9 +38,9 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return 'false';
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return 'false';
 
-    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
   }, [stagedResource]);
   const resourceFormState = useSelector(
     state =>
@@ -115,12 +115,12 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       staggedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/formType'] = 'assistant';
-        newFinalValues['/http/formType'] = 'assistant';
+        staggedRes['/http/sessionFormType'] = 'assistant';
+        newFinalValues['/http/sessionFormType'] = 'assistant';
       } else {
         // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/formType'] = 'http';
-        newFinalValues['/http/formType'] = 'http';
+        staggedRes['/http/sessionFormType'] = 'http';
+        newFinalValues['/http/sessionFormType'] = 'http';
       }
     }
     const allPatches = sanitizePatchSet({
