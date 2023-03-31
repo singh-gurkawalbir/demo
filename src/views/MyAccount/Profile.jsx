@@ -52,6 +52,9 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(0, 2),
     },
   },
+  googleBtn: {
+    width: 'unset',
+  },
 }));
 
 const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
@@ -373,6 +376,7 @@ export default function ProfilePanel() {
                   data-test="linkWithGoogle"
                   color="secondary"
                   googleBtn
+                  className={classes.googleBtn}
                   onClick={handleLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
                 </OutlinedButton>
@@ -385,6 +389,7 @@ export default function ProfilePanel() {
                 <span className={classes.label}>Unlink from:</span>
                 <OutlinedButton
                   data-test="unlinkWithGoogle"
+                  className={classes.googleBtn}
                   color="secondary"
                   googleBtn
                   onClick={handleUnLinkWithGoogle}>
