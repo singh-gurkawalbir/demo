@@ -17,7 +17,7 @@ export default {
       '/http/auth/type': 'oauth',
       '/http/mediaType': 'json',
       '/http/baseURI': `${
-        formValues['/environment'] === 'sandbox'
+        formValues['/http/unencrypted/companyId'] === 'sandbox'
           ? 'https://box.secure-wms.com/'
           : 'https://secure-wms.com/'
       }`,
@@ -29,7 +29,7 @@ export default {
       '/http/auth/oauth/grantType': 'clientcredentials',
       '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
       '/http/auth/oauth/tokenURI': `${
-        formValues['/environment'] === 'sandbox'
+        formValues['/http/unencrypted/companyId'] === 'sandbox'
           ? 'https://box.secure-wms.com/AuthServer/api/Token'
           : 'https://secure-wms.com/AuthServer/api/Token'
       }`,
@@ -41,12 +41,12 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    environment: {
-      id: 'environment',
+    'http.unencrypted.environment': {
+      id: 'http.unencrypted.environment',
       type: 'select',
       label: 'Environment',
       required: true,
-      helpKey: '3plcentral.connection.environment',
+      helpKey: '3plcentral.connection.http.unencrypted.environment',
       options: [
         {
           items: [
@@ -101,7 +101,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['environment',
+        fields: ['http.unencrypted.environment',
           'http.unencrypted.tpl',
           'http.unencrypted.userLoginId',
           'http._iClientId'] },
