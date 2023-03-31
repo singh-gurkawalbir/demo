@@ -91,7 +91,7 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
 
     // selecting the other option
     const {id} = props;
-    const staggedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+    const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = stagedResource[curr];
 
       return acc;
@@ -105,26 +105,26 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       connection,
       assistantData: connectorMetaData,
     });
-    const finalValues = preSave(formContext.value, staggedRes, { connection });
+    const finalValues = preSave(formContext.value, stagedRes, { connection });
     const newFinalValues = {...finalValues};
 
-    staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
+    stagedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
     if (_httpConnectorId) {
-      staggedRes['/isHttpConnector'] = true;
+      stagedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/sessionFormType'] = 'assistant';
+        stagedRes['/http/sessionFormType'] = 'assistant';
         newFinalValues['/http/sessionFormType'] = 'assistant';
       } else {
         // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/sessionFormType'] = 'http';
+        stagedRes['/http/sessionFormType'] = 'http';
         newFinalValues['/http/sessionFormType'] = 'http';
       }
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
+      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
