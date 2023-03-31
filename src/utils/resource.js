@@ -1,10 +1,11 @@
-import { values, keyBy, cloneDeep } from 'lodash';
+import { values, keyBy } from 'lodash';
 import parseLinkHeader from 'parse-link-header';
 import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import { message } from './messageStore';
+import customCloneDeep from './customCloneDeep';
 
 export const UI_FIELDS = ['mockOutput', 'mockResponse'];
 export const RESOURCES_WITH_UI_FIELDS = ['exports', 'imports'];
@@ -31,9 +32,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
-  // todo - Why this is in lowercase
-  // iclients: 'IClient',
-  iClients: 'IClient',
+  iClients: 'iClient',
   imports: 'Import',
   integrations: 'Integration',
   scripts: 'Script',
@@ -48,11 +47,10 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
 });
 
 export const convertResourceLabelToLowercase = resourceLabel => {
-  if (resourceLabel === 'IClient') return 'iClient';
+  if (resourceLabel === 'iClient') return 'iClient';
 
   return resourceLabel.toLowerCase();
 };
-
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
   mongodb: 'Mongodb',
@@ -74,6 +72,7 @@ export const appTypeToAdaptorType = {
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
   van: 'VAN',
+  netsuitejdbc: 'JDBC',
 };
 
 // the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
@@ -97,6 +96,7 @@ export const rdbmsAppTypeToSubType = appType => {
   if (appType === 'redshiftdatawarehouse') {
     return 'redshift';
   }
+  //
 
   return appType;
 };
@@ -146,6 +146,7 @@ export const adaptorTypeMap = {
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
   SimpleExport: 'file',
+  JDBCExport: 'jdbc',
 };
 
 export const multiStepSaveResourceTypes = [
@@ -761,9 +762,9 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
   mappingOriginal,
   subrecords
 ) => {
-  let mapping = cloneDeep(mappingOriginal);
+  let mapping = customCloneDeep(mappingOriginal);
 
-  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
+  const subrecordsMap = customCloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {

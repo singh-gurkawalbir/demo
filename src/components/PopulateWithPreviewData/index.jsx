@@ -27,7 +27,7 @@ export default function PopulateWithPreviewData({
   resourceId,
   flowId,
   resourceType,
-  updateMockOutputContent,
+  updateMockDataContent,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -110,13 +110,16 @@ export default function PopulateWithPreviewData({
       // get first 10 records from preview data
       const previewData = getParsedData(resourceType, previewStageDataList, DEFAULT_RECORD_SIZE);
 
-      if (updateMockOutputContent) {
-        updateMockOutputContent(previewData);
+      // updateMockDataContent updates the content of mock data drawer
+      // when populate with preview data is requested
+      if (typeof updateMockDataContent === 'function') {
+        updateMockDataContent(previewData);
+      } else {
+        dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));
       }
-      dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));
       enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName, dataType: 'preview data'})});
     }
-  }, [dispatch, enquesnackbar, fieldId, fieldName, formKey, isImport, isPreviewRequested, previewStageDataList, resourceSampleDataStatus, resourceType, updateMockOutputContent]);
+  }, [dispatch, enquesnackbar, fieldId, fieldName, formKey, isImport, isPreviewRequested, previewStageDataList, resourceSampleDataStatus, resourceType, updateMockDataContent]);
 
   // if preview panel is not supported for export, populate with preview cannot be supported
   if (!isImport && !isPreviewPanelAvailableForResource) return null;

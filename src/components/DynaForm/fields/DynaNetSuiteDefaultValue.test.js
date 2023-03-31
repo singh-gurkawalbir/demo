@@ -5,7 +5,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaNetSuiteDefaultValue from './DynaNetSuiteDefaultValue';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockDispatch = jest.fn();
@@ -26,12 +26,14 @@ jest.mock('./DynaRefreshableSelect', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-  data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
-    {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
-  ],
-  status: 'someStatus',
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {somePath: {
+    data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
+      {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
+    ],
+    status: 'someStatus',
+  }}}};
+});
 
 const genralProps = {
   value: 'once',
@@ -65,9 +67,11 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should show a spinner when status is requested', () => {
-    initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-      data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}], status: 'requested',
-    }}}};
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {application: {someconnectionId: {somePath: {
+        data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}], status: 'requested',
+      }}}};
+    });
 
     const props = { onFieldChange: {mockOnFieldChange}};
 
@@ -76,9 +80,11 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should show a spinner when status is refreshed', () => {
-    initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-      data: [{name: 'someName', scriptId: 'once'}], status: 'refreshed',
-    }}}};
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {application: {someconnectionId: {somePath: {
+        data: [{name: 'someName', scriptId: 'once'}], status: 'refreshed',
+      }}}};
+    });
     const props = { onFieldChange: {mockOnFieldChange}, label: 'PropsLabel'};
 
     initDynaNetSuiteDefaultValue({...genralProps, ...props}, initialStore);
@@ -87,12 +93,14 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should show call the onField change when field is changed', () => {
-    initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-      data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
-        {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
-      ],
-      status: 'someStatus',
-    }}}};
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {application: {someconnectionId: {somePath: {
+        data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
+          {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
+        ],
+        status: 'someStatus',
+      }}}};
+    });
     const props = { onFieldChange: mockOnFieldChange, label: 'PropsLabel'};
 
     initDynaNetSuiteDefaultValue({...genralProps, ...props}, initialStore);
@@ -101,12 +109,14 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', 'somevalue12');
   });
   test('should click on refresh button', () => {
-    initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-      data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
-        {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
-      ],
-      status: 'someStatus',
-    }}}};
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {application: {someconnectionId: {somePath: {
+        data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
+          {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
+        ],
+        status: 'someStatus',
+      }}}};
+    });
     const props = { onFieldChange: mockOnFieldChange, label: 'PropsLabel'};
 
     initDynaNetSuiteDefaultValue({...genralProps, ...props}, initialStore);
@@ -122,12 +132,14 @@ describe('dynaNetSuiteDefaultValue UI test cases', () => {
     );
   });
   test('should show the multi select textbox', () => {
-    initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-      data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
-        {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
-      ],
-      status: 'someStatus',
-    }}}};
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {application: {someconnectionId: {somePath: {
+        data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
+          {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},
+        ],
+        status: 'someStatus',
+      }}}};
+    });
     const props = { onFieldChange: mockOnFieldChange, label: 'PropsLabel', multiselect: true };
 
     initDynaNetSuiteDefaultValue({...genralProps, ...props}, initialStore);

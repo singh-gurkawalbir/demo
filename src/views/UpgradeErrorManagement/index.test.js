@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
 import actions from '../../actions';
 import { ERROR_MANAGEMENT_DOC_URL } from '../../constants';
@@ -65,14 +65,18 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should redirect to Home Page if account owner but already in EM2.0', async () => {
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
-    initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
+    mutateStore(initialStore, draft => {
+      draft.user.org.accounts.push({ accessLevel: 'owner' });
+      draft.user.profile.useErrMgtTwoDotZero = true;
+    });
     await initUpgradeErrorManagement(initialStore);
     expect(mockReplaceFn).toHaveBeenLastCalledWith('/');
   });
 
   test('should show the consequences of upgrading and the option to upgrade or cancel', async () => {
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
+    mutateStore(initialStore, draft => {
+      draft.user.org.accounts.push({ accessLevel: 'owner' });
+    });
     await initUpgradeErrorManagement(initialStore);
     const Title = screen.getByRole('heading', { name: "We've a new and enhanced way to manage errors!" });
     const featureLink = screen.getByRole('link', { name: /features/i});
@@ -94,7 +98,9 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should redirect to Home Page on cancelling', async () => {
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
+    mutateStore(initialStore, draft => {
+      draft.user.org.accounts.push({ accessLevel: 'owner' });
+    });
     await initUpgradeErrorManagement(initialStore);
     const cancelButton = document.querySelector('[data-test="em2.0_later"]');
 
@@ -103,7 +109,9 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should display a dialog on attempting upgrade', async () => {
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
+    mutateStore(initialStore, draft => {
+      draft.user.org.accounts.push({ accessLevel: 'owner' });
+    });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
 
@@ -126,7 +134,9 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('dialog should disappear on clicking close button', async () => {
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
+    mutateStore(initialStore, draft => {
+      draft.user.org.accounts.push({ accessLevel: 'owner' });
+    });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
 
@@ -142,7 +152,9 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('dialog should disappear on clicking "No, Cancel" option', async () => {
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
+    mutateStore(initialStore, draft => {
+      draft.user.org.accounts.push({ accessLevel: 'owner' });
+    });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
 
@@ -160,10 +172,12 @@ describe('test suite for UpgradeErrorManagement', () => {
   test('dialog should disappear on clicking "Yes, upgrade" option', async () => {
     const userId = '626qwerty';
 
-    initialStore.getState().user.preferences.defaultAShareId = userId;
-    initialStore.getState().user.org.accounts.push({
-      _id: userId,
-      accessLevel: 'owner',
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.defaultAShareId = userId;
+      draft.user.org.accounts.push({
+        _id: userId,
+        accessLevel: 'owner',
+      });
     });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = document.querySelector('[data-test="em2.0_upgrade"]');

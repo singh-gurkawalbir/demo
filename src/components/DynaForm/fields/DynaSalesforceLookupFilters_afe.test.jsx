@@ -1,11 +1,9 @@
 
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaSalesforceLookupFiltersAfe from './DynaSalesforceLookupFilters_afe';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockDispatch = jest.fn();
@@ -35,13 +33,20 @@ jest.mock('../../AFE/Editor/panels/SalesforceLookupFilter', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-  data: [{name: 'someName', value: 12, type: 'Type'}],
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {somePath: {
+    data: [{name: 'someName', value: 12, type: 'Type'}],
+  }}}};
+});
 
 const mockOnFieldChange = jest.fn();
 
-function initDynaNetSuiteLookupFiltersafe(disableFetch = false) {
+function initDynaNetSuiteLookupFiltersafe(extraProps = {
+  options: {
+    disableFetch: false,
+    commMetaPath: 'somePath',
+  },
+}) {
   const ui = (
     <DynaSalesforceLookupFiltersAfe
       id="salesforce.operation"
@@ -49,13 +54,9 @@ function initDynaNetSuiteLookupFiltersafe(disableFetch = false) {
       connectionId="someconnectionId"
       filterKey="salesforce-recordType"
       onFieldChange={mockOnFieldChange}
-      options={{
-        disableFetch,
-        commMetaPath: 'somePath',
-        resetValue: [],
-      }}
       data="someData"
-  />
+      {...extraProps}
+    />
   );
 
   return renderWithProviders(ui, {initialStore});
@@ -95,7 +96,12 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
     );
   });
   test('should not call refresh dispatch when fetch is disabled', () => {
-    initDynaNetSuiteLookupFiltersafe(true);
+    initDynaNetSuiteLookupFiltersafe({
+      options: {
+        disableFetch: true,
+        commMetaPath: 'somePath',
+      },
+    });
     expect(screen.getByText('Refresh search filters')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).not.toHaveBeenCalledWith(
@@ -105,12 +111,64 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
     );
   });
   test('should call onFieldChangeButton function when editor is initialised', () => {
-    initialStore.getState().session.editors = {'sf-mappingLookupFilter': {fieldId: 'someFieldID'}};
-    initDynaNetSuiteLookupFiltersafe(true, initialStore);
+    mutateStore(initialStore, draft => {
+      draft.session.editors = {'sf-mappingLookupFilter': {fieldId: 'someFieldID'}};
+    });
+    initDynaNetSuiteLookupFiltersafe({
+      options: {
+        disableFetch: true,
+        commMetaPath: 'somePath',
+      },
+    });
     expect(screen.getByText('id: salesforce.operation')).toBeInTheDocument();
     expect(screen.getByText('editorId: sf-mappingLookupFilter')).toBeInTheDocument();
 
     userEvent.click(screen.getByText('onFieldChangeButton'));
     expect(mockOnFieldChange).toHaveBeenCalledTimes(1);
+  });
+
+  describe('dynaNetSuiteLookupFiltersafe sObjectTypeFieldId test cases', () => {
+    test('should verify useEffect dispatch call when sObjectTypeFieldId is present', () => {
+      mutateStore(initialStore, draft => {
+        draft.session.form = {form_key_1: {fields: { field_1: {value: 's_object_1'} }}};
+      });
+      initDynaNetSuiteLookupFiltersafe({
+        sObjectTypeFieldId: 'field_1',
+        formKey: 'form_key_1',
+      });
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.editor.init('sf-mappingLookupFilter', 'salesforceLookupFilter', {
+          fieldId: 'salesforce.operation',
+          rule: '(CreatedById = 5)',
+          stage: 'importMappingExtract',
+          data: 'someData',
+          wrapData: true,
+        })
+      );
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.metadata.request('someconnectionId', 'salesforce/metadata/connections/someconnectionId/sObjectTypes/s_object_1')
+      );
+    });
+
+    test('should verify useEffect dispatch call when sObjectTypeFieldId is not present', () => {
+      mutateStore(initialStore, draft => {
+        draft.session.form = {form_key_1: {fields: { field_1: {value: 's_object_1'} }}};
+      });
+      initDynaNetSuiteLookupFiltersafe({
+        formKey: 'form_key_1',
+      });
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.editor.init('sf-mappingLookupFilter', 'salesforceLookupFilter', {
+          fieldId: 'salesforce.operation',
+          rule: '(CreatedById = 5)',
+          stage: 'importMappingExtract',
+          data: 'someData',
+          wrapData: true,
+        })
+      );
+      expect(mockDispatch).not.toHaveBeenCalledWith(
+        actions.metadata.request('someconnectionId', 'salesforce/metadata/connections/someconnectionId/sObjectTypes/s_object_1')
+      );
+    });
   });
 });

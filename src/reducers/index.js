@@ -1,6 +1,4 @@
-/* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
-import cloneDeep from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -24,7 +22,6 @@ import {
   isPageGeneratorResource,
   getImportsFromFlow,
   getAllConnectionIdsUsedInTheFlow,
-  getFlowListWithMetadata,
   getNextDataFlows,
   getIAFlowSettings,
   getIAResources,
@@ -119,6 +116,7 @@ import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flow
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
+import customCloneDeep from '../utils/customCloneDeep';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -682,7 +680,7 @@ selectors.mkTileApplications = () => {
 
               applications.push(app.id || 'http');
             } else {
-              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.type);
+              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.jdbc?.type || connection.type);
             }
           }
         });
@@ -704,14 +702,14 @@ selectors.mkTileApplications = () => {
           const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
           integrationConnections.forEach(c => {
-            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+            applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.jdbc?.type || c.type);
           });
         });
 
         const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
         parentIntegrationConnections.forEach(c => {
-          applications.push(c.assistant || c.rdbms?.type || c.http?.formType || c.type);
+          applications.push(c.assistant || c.rdbms?.type || c.jdbc?.type || c.http?.formType || c.jdbc?.type || c.type);
         });
         applications = uniq(applications);
       }
@@ -1573,15 +1571,6 @@ selectors.flowSupportsSettings = (state, id, childId) => {
    the flowDetails, we should delete that selector.
 *********************************************************************** */
 
-selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options || emptyObject).resources || emptyArray;
-  const exports = selectors.resourceList(state, {
-    type: 'exports',
-  }).resources;
-
-  return getFlowListWithMetadata(flows, exports);
-};
-
 /*
  * Gives all other valid flows of same Integration
  */
@@ -1676,6 +1665,13 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (connection.rdbms?.type) {
           return (
             this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
+        if (connection.jdbc?.type) {
+          return (
+            this.jdbc?.type === connection.jdbc?.type &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
@@ -1912,7 +1908,9 @@ selectors.mkFilteredHomeTiles = () => {
         const applications = appSel(state, t);
         const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
 
+        // eslint-disable-next-line no-param-reassign
         t.applications = applications;
+        // eslint-disable-next-line no-param-reassign
         t.pinned = pinnedIntegrations.includes(t._integrationId);
       });
 
@@ -2342,9 +2340,9 @@ selectors.paginatedAuditLogs = createSelector(
   (auditLogs, filters) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 
-    auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+    const logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
-    return auditLogs;
+    return {...auditLogs, logs};
   });
 
 selectors.mkFlowResources = () => createSelector(
@@ -2525,15 +2523,34 @@ selectors.getScriptContext = createSelector(
 
       return flow._integrationId;
     },
+    (state, { resourceType }) => resourceType,
+    (state, { resourceId }) => resourceId,
   ],
-  (contextType, _flowId, _integrationId) => {
-    if (contextType === 'hook' && _integrationId) {
-      return {
-        type: 'hook',
-        container: 'integration',
-        _integrationId,
-        _flowId,
-      };
+  (contextType, _flowId, _integrationId, resourceType, resourceId) => {
+    if (contextType === 'hook') {
+      if (_integrationId) {
+        return {
+          type: 'hook',
+          container: 'integration',
+          _integrationId,
+          _flowId,
+        };
+      }
+      if (_flowId) {
+        return {
+          type: 'hook',
+          container: 'flow',
+          _integrationId,
+          _flowId,
+        };
+      }
+      if (resourceType === 'apis' && !isNewId(resourceId)) {
+        return {
+          type: 'hook',
+          container: 'api',
+          _apiId: resourceId,
+        };
+      }
     }
   }
 );
@@ -2713,7 +2730,7 @@ selectors.mkGetMediaTypeOptions = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, {formKey}) => selectors.formState(state, formKey)?.value || {},
+    (state, {formKey}) => selectors.formState(state, formKey)?.value || emptyObject,
 
     (state, {formKey}) => {
       const formValues = selectors.formState(state, formKey)?.value || {};
@@ -2726,7 +2743,9 @@ selectors.mkGetMediaTypeOptions = () => {
     (_, {dependentFieldForMediaType}) => dependentFieldForMediaType,
     (_, {options}) => options,
     (_, {fieldId}) => fieldId,
-    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, options, fieldId) => {
+    (formValues, connectionMediaType, resourceType, dependentFieldForMediaType, _options, fieldId) => {
+      let options = Array.isArray(_options) ? [..._options] : [];
+
       if (resourceType === 'imports' && fieldId === 'http.requestMediaType') {
         const inputMode = formValues['/inputMode'];
 
@@ -2752,7 +2771,7 @@ selectors.mkGetMediaTypeOptions = () => {
 
       // remove the media type which is set on connection/dependent field , from options
       // cloning options so as to not affect original options
-      const modifiedOptions = cloneDeep(options);
+      const modifiedOptions = customCloneDeep(options);
 
       if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);
 
@@ -2969,6 +2988,26 @@ selectors.mkIntegrationChildren = () => createSelector(
     const children = [];
     const integration = integrations.find(int => int._id === integrationId) || {};
     const childIntegrations = integrations.filter(int => int._parentId === integrationId);
+
+    childIntegrations.sort(stringCompare('createdAt'));
+
+    children.push({ value: integrationId, label: integration.name });
+    childIntegrations.forEach(ci => {
+      children.push({ value: ci._id, label: ci.name, mode: ci.mode });
+    });
+
+    return children;
+  }
+);
+
+selectors.mkIntegrationTreeChildren = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.['tree/metadata'],
+  (state, integrationId) => integrationId,
+  (integrations = emptyArray, treeMetaData = emptyArray, integrationId) => {
+    const children = [];
+    const integration = integrations.find(int => int._id === integrationId) || {};
+    const childIntegrations = treeMetaData.filter(int => int._parentId === integrationId);
 
     childIntegrations.sort(stringCompare('createdAt'));
 
@@ -3283,19 +3322,20 @@ selectors.makeIntegrationAppSectionFlows = () =>
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
 
-      flows = flows
+      const _flows = flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
         ).map(f => ({...f, errors: errorMap?.[f._id] || 0, searchKey: requiredFlows.find(flow => flow.id === f._id)?.searchKey}));
 
       return filterAndSortResources(addLastExecutedAtSortableProp({
-        flows,
+        flows: _flows,
         isUserInErrMgtTwoDotZero,
         latestFlowJobs,
         supportsMultiStore,
         childId,
-        requiredFlows}), options);
+        requiredFlows,
+      }), options);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
@@ -4667,6 +4707,20 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
+selectors.resourceCanHaveFileDefinitions = (state, resourceId, resourceType) => {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return false;
+  }
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resource?.type === 'simple') {
+    // Data loaders do not have file definitions
+    return false;
+  }
+
+  return isFileAdaptor(resource) || isAS2Resource(resource) || FILE_PROVIDER_ASSISTANTS.includes(resource?.assistant);
+};
+
 // #endregion SAMPLE DATA selectors
 
 // #region  SUITESCRIPT Selectors
@@ -5563,6 +5617,15 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
+  if (adaptorType?.toUpperCase().startsWith('JDBC')) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+
+    return connection && connection.jdbc && connection.jdbc.type;
+  }
   if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
       state,
@@ -5822,8 +5885,7 @@ selectors.filteredV2TreeData = createSelector(
   (v2TreeData, filter = [], lookups = [], searchKey) => {
     if (isEmpty(v2TreeData) || (!searchKey && (isEmpty(filter) || filter.includes('all')))) return {filteredTreeData: v2TreeData};
 
-    // ToDo: try replacing cloneDeep with something else
-    let filteredTreeData = cloneDeep(v2TreeData);
+    let filteredTreeData = customCloneDeep(v2TreeData);
     let expandedKeys;
     let searchCount;
 
@@ -6164,21 +6226,22 @@ selectors.integrationErrorsPerSection = createSelector(
   state => state?.data?.resources?.flows,
   (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
-    flowSections.reduce((errorsMap, section) => {
+    flowSections.reduce((acc, section) => {
       const { flows = [], titleId } = section;
 
-      errorsMap[titleId] = flows.reduce((total, flow) => {
+      acc[titleId] = flows.reduce((total, flow) => {
         const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
 
         // we consider enabled flows to show total count per section
         if (!isFlowDisabled) {
+          // eslint-disable-next-line no-param-reassign
           total += (integrationErrors[flow._id] || 0);
         }
 
         return total;
       }, 0);
 
-      return errorsMap;
+      return acc;
     }, {})
 
 );
@@ -6193,14 +6256,14 @@ selectors.integrationErrorsPerChild = (state, integrationId) => {
 
   if (!supportsMultiStore) return emptyObject;
 
-  return children.reduce((childErrorsMap, child) => {
+  return children.reduce((acc, child) => {
     const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, child.id);
 
-    childErrorsMap[child.id] = Object.values(sectionErrorsMap).reduce(
+    acc[child.id] = Object.values(sectionErrorsMap).reduce(
       (total, count) => total + count,
       0);
 
-    return childErrorsMap;
+    return acc;
   }, {});
 };
 
@@ -6212,17 +6275,17 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
   selectors.integrationEnabledFlowIds,
   (state, integrationId) => selectors.openErrorsMap(state, integrationId),
   state => state?.data?.resources?.flows,
-  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
+  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((acc, flowId) => {
     const flow = flowsList.find(f => f._id === flowId);
     const groupId = flow._flowGroupingId || UNASSIGNED_SECTION_ID;
     const errorCount = errorMap[flowId] || 0;
 
-    if (!groupErrorMap[groupId]) {
-      groupErrorMap[groupId] = 0;
+    if (!acc[groupId]) {
+      acc[groupId] = 0;
     }
-    groupErrorMap[groupId] += errorCount;
+    acc[groupId] += errorCount;
 
-    return groupErrorMap;
+    return acc;
   }, {})
 );
 
@@ -7081,6 +7144,12 @@ selectors.isSSOEnabled = state => {
   return !oidcClient.disabled;
 };
 
+selectors.isAccountOwnerMFAEnabled = state => {
+  const accountOwner = selectors.ownerUser(state);
+
+  return !!accountOwner?.mfaEnabled;
+};
+
 selectors.userLinkedSSOClientId = state => {
   if (selectors.isAccountOwner(state)) {
     return selectors.oidcSSOClient(state)?._id;
@@ -7242,7 +7311,7 @@ selectors.revisionsFilter = (state, integrationId) => {
 selectors.filteredRevisions = createSelector(
   selectors.revisions,
   selectors.revisionsFilter,
-  (revisionsList, revisionsFilter) => getFilteredRevisions(cloneDeep(revisionsList), revisionsFilter)
+  (revisionsList, revisionsFilter) => getFilteredRevisions(customCloneDeep(revisionsList), revisionsFilter)
 );
 
 selectors.getCurrPageFilteredRevisions = createSelector(

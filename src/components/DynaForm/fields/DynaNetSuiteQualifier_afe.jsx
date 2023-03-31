@@ -121,7 +121,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
           key={id}
           name={name}
           {...isLoggableAttr(isLoggable)}
-          className={classes.textField}
+          fullWidth
           placeholder={placeholder}
           disabled
           required={required}

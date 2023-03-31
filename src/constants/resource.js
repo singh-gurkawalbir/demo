@@ -34,7 +34,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   export: 'Export',
   filedefinition: 'File definition',
   flow: 'Flow',
-  iclient: 'IClient',
+  iclient: 'iClient',
   import: 'Import',
   integration: 'Integration',
   script: 'Script',
@@ -264,3 +264,5 @@ export const OPEN_ERRORS_VIEW_TYPES = {
   SPLIT: 'split', // new view
   LIST: 'list', // old view
 };
+
+export const RESOURCE_DEPENDENCIES = { uninstall2: ['flows', 'exports', 'imports', 'connections', 'integrations', 'tree/metadata', 'asynchelpers', 'scripts']};

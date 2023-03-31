@@ -9,7 +9,7 @@ import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resour
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
-import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
+import { convertConnJSONObjHTTPtoREST } from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
 import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
@@ -185,7 +185,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'connections' && !isNew) {
     // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
     // number of active tokens on netsuite, revoking token when user updates token-auto connection.
-    if (merged.type === 'netsuite') {
+    if (merged.type === 'netsuite' || merged?.jdbc?.type === 'netsuitejdbc') {
       const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
       if (isTokenToBeRevoked) {
@@ -209,7 +209,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
     merged.assistant && !getHttpConnector(merged?.http?._httpConnectorId) &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
-    merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+    merged = convertConnJSONObjHTTPtoREST(merged);
   }
 
   // Forimports convert the lookup structure and rest placeholders to support http structure
@@ -749,13 +749,12 @@ export function* deleteIntegration({ integrationId }) {
   if (resourceReferences && Object.keys(resourceReferences).length > 0) {
     return;
   }
-
+  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
   yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
-  yield put(actions.resource.requestCollection('integrations', null, true));
-  yield put(actions.resource.requestCollection('tiles', null, true));
-  yield put(actions.resource.requestCollection('scripts', null, true));
-  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
+  yield put(actions.resource.clearCollection('integrations'));
+  yield put(actions.resource.requestCollection('tiles', null, true)); // redirect to home so we can keep this.
+  yield put(actions.resource.clearCollection('scripts'));
 }
 
 export function* getResourceCollection({ resourceType, refresh, integrationId }) {
@@ -801,7 +800,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     path = `${path}${excludePath}`;
   }
   if (resourceType === 'tree/metadata') {
-    path += '?additionalFields=_parentId,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps,createdAt,lastModified,description,readme,aliases,update,childDisplayName,pendingLicense';
+    path += '?additionalFields=createdAt,_parentId';
   }
   let updatedResourceType = resourceType;
 
@@ -847,12 +846,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     }
 
     if (resourceType === 'tree/metadata') {
-      const newCollection = collection?.childIntegrations || [];
-
-      yield put(actions.resource.receivedCollection('integrations', newCollection, integrationId));
-    } else {
-      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+      collection = collection?.childIntegrations || [];
     }
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
 
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
@@ -1059,8 +1055,11 @@ export function* authorizedConnection({ connectionId }) {
 
   if (
     connectionResource &&
-    (connectionResource.type === 'netsuite' ||
-      connectionResource.type === 'salesforce' || isOauthOfflineResource)
+    (
+      connectionResource.type === 'netsuite' ||
+      connectionResource.type === 'salesforce' ||
+      connectionResource?.jdbc?.type === 'netsuitejdbc' ||
+      isOauthOfflineResource)
   ) {
     yield put(actions.resource.request('connections', connectionId));
   }

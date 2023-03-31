@@ -1,5 +1,4 @@
 import { select, call } from 'redux-saga/effects';
-import deepClone from 'lodash/cloneDeep';
 import jsonPatch from 'fast-json-patch';
 import { selectors } from '../../../reducers';
 import { getFlowUpdatePatchesForNewPGorPP } from '../../resourceForm';
@@ -15,6 +14,7 @@ import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 import { generateMongoDBId } from '../../../utils/string';
+import customCloneDeep from '../../../utils/customCloneDeep';
 import { getUnionObject } from '../../../utils/jsonPaths';
 
 export function* pageProcessorPreview({
@@ -31,19 +31,23 @@ export function* pageProcessorPreview({
   includeStages = false,
   runOffline = false,
   addMockData,
+  includeFilterProcessing = false,
 }) {
   if (!flowId || (!_pageProcessorId && !routerId)) return;
 
+  const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
   const { merged } = yield select(selectors.resourceData, 'flows', flowId);
   const { prePatches } = yield select(selectors.editor, editorId);
 
-  let flowClone = deepClone(merged);
+  let flowClone = customCloneDeep(merged);
 
   if (prePatches?.length) {
     flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(prePatches)).newDocument;
   }
 
   let flow = yield call(filterPendingResources, { flow: flowClone });
+
+  const isIntegrationApp = flow?._connectorId;
 
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
@@ -118,7 +122,9 @@ export function* pageProcessorPreview({
       if (pageProcessor._exportId === updatedPageProcessorId) {
         pageProcessorMap[updatedPageProcessorId].options = {};
         // for lookup, remove inputFilters & output filters configured while making preview call for flowInput
-        delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
+        if (!includeFilterProcessing) {
+          delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
+        }
         delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
 
         return {
@@ -127,7 +133,7 @@ export function* pageProcessorPreview({
           _importId: pageProcessor._exportId,
         };
       }
-      if (pageProcessor._importId === updatedPageProcessorId) {
+      if (pageProcessor._importId === updatedPageProcessorId && !includeFilterProcessing) {
         // for imports, remove inputFilters configured while making preview call for flowInput
         delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
       }
@@ -165,6 +171,7 @@ export function* pageProcessorPreview({
     flow,
     _pageProcessorId: updatedPageProcessorId,
     ...(routerId && {_routerId: routerId}),
+    ...(isIntegrationApp && {options: scriptContext}),
     pageGeneratorMap,
     pageProcessorMap,
     includeStages,
@@ -203,6 +210,7 @@ export function* pageProcessorPreview({
         throwOnError,
         refresh,
         includeStages,
+        includeFilterProcessing,
       });
     }
     // Error handler
@@ -226,7 +234,7 @@ export function* exportPreview({
     resourceType: 'exports',
     formKey,
   });
-  let body = deepClone(resource);
+  let body = customCloneDeep(resource);
 
   // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
   // Example: type: once should not be sent while previewing

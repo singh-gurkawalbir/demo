@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
 import MoreActionsButton from '.';
 import {ConfirmDialogProvider} from '../../../../../ConfirmDialog';
 import actions from '../../../../../../actions';
@@ -22,10 +22,12 @@ const props = {editorId: 'router-abcd', position: '', pageProcessors: [{_id: '_i
 async function initMoreActionsButton(props) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors['router-abcd'] = {
-    editorType: 'router',
-    rule: {routeRecordsUsing: 'input_filters', id: 'abcd', branches: [{name: 'R1B1'}, {name: 'R1B2'}]},
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors['router-abcd'] = {
+      editorType: 'router',
+      rule: {routeRecordsUsing: 'input_filters', id: 'abcd', branches: [{name: 'R1B1'}, {name: 'R1B2'}]},
+    };
+  });
   const ui = (
     <ConfirmDialogProvider>
       <MoreActionsButton {...props} />

@@ -400,7 +400,7 @@ export default function JobDashboard({
   });
 
   return (
-    <LoadResources required integrationId={integrationId} resources="integrations,flows,exports,imports">
+    <LoadResources required integrationId={integrationId} resources={integrationId ? 'flows,exports,imports' : 'integrations,flows,exports,imports'}>
       <Filters
         filterKey={filterKey}
         integrationId={integrationId}

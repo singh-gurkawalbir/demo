@@ -2,7 +2,6 @@ import qs from 'qs';
 import {
   isObject,
   isString,
-  cloneDeep,
   isEmpty,
   defaultsDeep,
   isNaN,
@@ -16,6 +15,7 @@ import {
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
+import customCloneDeep from '../customCloneDeep';
 import {VALID_MONGO_ID} from '../../constants/regex';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -591,7 +591,7 @@ export function getExportOperationDetails({
     }
   }
 
-  return cloneDeep({
+  return customCloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
@@ -832,7 +832,7 @@ export function getImportOperationDetails({
     }
   }
 
-  return cloneDeep({
+  return customCloneDeep({
     queryParameters: [],
     pathParameters: [],
     headers: {},
@@ -863,9 +863,9 @@ export function getMergedImportOperationDetails({
   if (!createOperation || !createOperation.url || !updateOperation || !updateOperation.url) {
     return undefined;
   }
-  const lengthisIdentifier = createOperation.parameters.length;
+  const lengthisIdentifier = createOperation?.parameters?.length;
 
-  const createorupdateoperation = cloneDeep(createOperation);
+  const createorupdateoperation = customCloneDeep(createOperation);
 
   createorupdateoperation.ignoreExisting = false;
   createorupdateoperation.ignoreMissing = false;
@@ -879,6 +879,19 @@ export function getMergedImportOperationDetails({
     createorupdateoperation.body.push(...updateOperation.body);
   } else if (updateOperation.body) {
     createorupdateoperation.body = [...updateOperation.body, ...updateOperation.body];
+  }
+  const responseFields = ['successPath', 'successValues', 'failPath', 'failValues', 'resourceIdPath', 'resourcePath'];
+
+  if (updateOperation?.response && createOperation?.response) {
+    responseFields.forEach(element => {
+      if (updateOperation.response[element] && createOperation.response[element]) {
+        createorupdateoperation.response[element] = [...updateOperation.response[element], ...createOperation.response[element]];
+      }
+    });
+  } else if (updateOperation?.response && !createOperation?.response) {
+    responseFields.forEach(element => {
+      createorupdateoperation.response[element] = [...updateOperation.response[element]];
+    });
   }
   for (let i = 0; i < lengthisIdentifier; i += 1) {
     if (createOperation.parameters[i].isIdentifier === true) {
@@ -894,8 +907,8 @@ export function getMergedImportOperationDetails({
 }
 
 export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
-  const exportDoc = cloneDeep(exportDocOrig);
-  const assistantData = cloneDeep(assistantDataOrig);
+  const exportDoc = customCloneDeep(exportDocOrig);
+  const assistantData = customCloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
@@ -1017,7 +1030,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
 
   if (exportAdaptorSubSchema.postBody) {
     if (isObject(exportAdaptorSubSchema.postBody)) {
-      bodyParams = cloneDeep(exportAdaptorSubSchema.postBody);
+      bodyParams = customCloneDeep(exportAdaptorSubSchema.postBody);
     } else if (isString(exportAdaptorSubSchema.postBody)) {
       if (exportDoc.assistant === 'expensify') {
         bodyParams = exportAdaptorSubSchema.postBody.replace(
@@ -1083,13 +1096,13 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   });
   const exportDefaults = {
     rest: {
-      ...cloneDeep(DEFAULT_PROPS.EXPORT.REST),
+      ...customCloneDeep(DEFAULT_PROPS.EXPORT.REST),
       resourcePath: operationDetails.resourcePath,
       successPath: operationDetails.successPath,
       allowUndefinedResource: !!operationDetails.allowUndefinedResource,
     },
     http: {
-      ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
+      ...customCloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
       requestMediaType: operationDetails.requestMediaType,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
@@ -1227,7 +1240,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     if (['POST', 'PUT'].includes(exportDoc.method)) {
       if (!isEmpty(bodyParams)) {
         exportDoc.postBody = defaultsDeep(
-          cloneDeep(operationDetails.postBody),
+          customCloneDeep(operationDetails.postBody),
           bodyParams
         );
 
@@ -1241,7 +1254,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
           );
         }
       } else if (operationDetails.postBody) {
-        exportDoc.postBody = cloneDeep(operationDetails.postBody);
+        exportDoc.postBody = customCloneDeep(operationDetails.postBody);
       } else {
         exportDoc.postBody = queryParams;
       }
@@ -1269,7 +1282,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   } else if (['POST', 'PUT'].includes(exportDoc.method)) {
     if (!isEmpty(bodyParams)) {
       exportDoc.body = defaultsDeep(
-        cloneDeep(operationDetails.body),
+        customCloneDeep(operationDetails.body),
         bodyParams
       );
 
@@ -1280,7 +1293,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         );
       }
     } else if (operationDetails.body) {
-      exportDoc.body = cloneDeep(operationDetails.body);
+      exportDoc.body = customCloneDeep(operationDetails.body);
     } else {
       exportDoc.body = queryParams;
     }
@@ -1809,9 +1822,9 @@ export function updateFormValues({
 
 export function convertFromImport({ importDoc: importDocOrig, assistantData: assistantDataOrig, adaptorType }) {
   // mutating of args so we are cloning of objects to allow this operation
-  const importDoc = cloneDeep(importDocOrig);
+  const importDoc = customCloneDeep(importDocOrig);
 
-  const assistantData = cloneDeep(assistantDataOrig);
+  const assistantData = customCloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType, createEndpoint, updateEndpoint } =
     importDoc.assistantMetadata || {};
 
@@ -1957,6 +1970,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   let url2Info;
 
   if (importAdaptorSubSchema.relativeURI) {
+    if (!isArray(importAdaptorSubSchema.relativeURI)) { importAdaptorSubSchema.relativeURI = [importAdaptorSubSchema.relativeURI]; }
     url1Info = getMatchingRoute(
       [
         isArray(operationDetails.url)
@@ -2104,8 +2118,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
               operation: assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.operation || operationDetails.lookupOperationDetails?.id,
               assistantData,
             });
+            let luEndpointUrl = luEndpoint.url;
 
-            lookupUrlInfo = getMatchingRoute([luEndpoint.url], lookupUrl);
+            if (luEndpointUrl?.includes('?') && luEndpoint?._httpConnectorResourceIds?.length) { luEndpointUrl = luEndpointUrl.split('?')?.[0]; }
+            lookupUrlInfo = getMatchingRoute([luEndpointUrl], lookupUrl);
           } else {
             lookupUrlInfo = getMatchingRoute(
               assistantData.export.urlResolution,
@@ -2249,10 +2265,10 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   }
   const importDefaults = {
     rest: {
-      ...cloneDeep(DEFAULT_PROPS.IMPORT.REST),
+      ...customCloneDeep(DEFAULT_PROPS.IMPORT.REST),
     },
     http: {
-      ...cloneDeep(DEFAULT_PROPS.IMPORT.HTTP),
+      ...customCloneDeep(DEFAULT_PROPS.IMPORT.HTTP),
     },
   };
   const importDoc = {
@@ -2385,6 +2401,9 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
 
       let lookupOperationRelativeURI = lookupOperationDetails.url;
 
+      if (lookupOperationRelativeURI?.includes('?') && lookupOperationDetails?._httpConnectorResourceIds?.length) {
+        lookupOperationRelativeURI = lookupOperationRelativeURI.split('?')?.[0];
+      }
       if (luConfig.method === 'GET') {
         const queryString = qs.stringify(lookupQueryParams, {
           encode: false,

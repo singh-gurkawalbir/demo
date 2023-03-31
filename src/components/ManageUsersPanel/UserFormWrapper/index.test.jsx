@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import {createMemoryHistory} from 'history';
 import * as reactRedux from 'react-redux';
 import UserFormWrapper from '.';
-import { mockGetRequestOnce, mockPostRequestOnce, mockPutRequestOnce, renderWithProviders, mockPostRequest } from '../../../test/test-utils';
+import { mockGetRequestOnce, mockPostRequestOnce, mockPutRequestOnce, renderWithProviders, mockPostRequest, mutateStore } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
 
@@ -13,91 +13,92 @@ const history = createMemoryHistory();
 let initialStore;
 
 function initUserFormWrapper(userprops) {
-  initialStore.getState().user.org.users = [
-    {
-      _id: '60fea86dbac8e87b7660f984',
-      integrationAccessLevel: [
-        {
-          _integrationId: '60e493c0ebe4d0631aefb8f2',
-          accessLevel: 'administrator',
+  mutateStore(initialStore, draft => {
+    draft.user.org.users = [
+      {
+        _id: '60fea86dbac8e87b7660f984',
+        integrationAccessLevel: [
+          {
+            _integrationId: '60e493c0ebe4d0631aefb8f2',
+            accessLevel: 'administrator',
+          },
+        ],
+        lastModified: '2021-07-26T12:19:57.858Z',
+        sharedWithUser: {
+          _id: '60d976e1cf735963dc15335f',
+          email: 'Celigo@celigo.com',
+          allowedToResetMFA: false,
+          accountSSOLinked: 'not_linked',
         },
-      ],
-      lastModified: '2021-07-26T12:19:57.858Z',
-      sharedWithUser: {
-        _id: '60d976e1cf735963dc15335f',
-        email: 'Celigo@celigo.com',
-        allowedToResetMFA: false,
-        accountSSOLinked: 'not_linked',
+        accessLevel: 'administrator',
       },
-      accessLevel: 'administrator',
-    },
-    {
-      _id: '60fea86dbac8e87b7660f983',
-      integrationAccessLevel: [
-        {
-          _integrationId: '60e493c0ebe4d0631aefb8f3',
-          accessLevel: 'manage',
+      {
+        _id: '60fea86dbac8e87b7660f983',
+        integrationAccessLevel: [
+          {
+            _integrationId: '60e493c0ebe4d0631aefb8f3',
+            accessLevel: 'manage',
+          },
+        ],
+        lastModified: '2021-07-26T12:19:57.858Z',
+        sharedWithUser: {
+          _id: '60d976e1cf735963dc153353',
+          email: 'Celigo@celigo.com',
+          allowedToResetMFA: false,
+          accountSSOLinked: 'not_linked',
         },
-      ],
-      lastModified: '2021-07-26T12:19:57.858Z',
-      sharedWithUser: {
-        _id: '60d976e1cf735963dc153353',
-        email: 'Celigo@celigo.com',
-        allowedToResetMFA: false,
-        accountSSOLinked: 'not_linked',
+        accessLevel: 'manage',
       },
-      accessLevel: 'manage',
-    },
-    {
-      _id: '60fea86dbac8e87b7660f985',
-      integrationAccessLevel: [
-        {
-          _integrationId: '5fc5e0e66cfe5b44bb95de70',
-          accessLevel: 'monitor',
+      {
+        _id: '60fea86dbac8e87b7660f985',
+        integrationAccessLevel: [
+          {
+            _integrationId: '5fc5e0e66cfe5b44bb95de70',
+            accessLevel: 'monitor',
+          },
+        ],
+        lastModified: '2021-07-26T12:19:57.858Z',
+        sharedWithUser: {
+          _id: '60d976e1cf735963dc153353',
+          email: 'Celigo@celigo.com',
+          allowedToResetMFA: false,
+          accountSSOLinked: 'not_linked',
         },
-      ],
-      lastModified: '2021-07-26T12:19:57.858Z',
-      sharedWithUser: {
-        _id: '60d976e1cf735963dc153353',
-        email: 'Celigo@celigo.com',
-        allowedToResetMFA: false,
-        accountSSOLinked: 'not_linked',
+        accessLevel: 'monitor',
       },
-      accessLevel: 'monitor',
-    },
-    {
-      _id: '60fea86dbac8e87b7660f986',
-      integrationAccessLevel: [
-        {
-          _integrationId: '5fc5e0e66cfe5b44bb95de70',
-          accessLevel: 'manage',
+      {
+        _id: '60fea86dbac8e87b7660f986',
+        integrationAccessLevel: [
+          {
+            _integrationId: '5fc5e0e66cfe5b44bb95de70',
+            accessLevel: 'manage',
+          },
+        ],
+        lastModified: '2021-07-26T12:19:57.858Z',
+        sharedWithUser: {
+          _id: '60d976e1cf735963dc153353',
+          email: 'Celigo@celigo.com',
+          allowedToResetMFA: false,
+          accountSSOLinked: 'not_linked',
         },
-      ],
-      lastModified: '2021-07-26T12:19:57.858Z',
-      sharedWithUser: {
-        _id: '60d976e1cf735963dc153353',
-        email: 'Celigo@celigo.com',
-        allowedToResetMFA: false,
-        accountSSOLinked: 'not_linked',
+        accessLevel: 'tile',
       },
-      accessLevel: 'tile',
-    },
-  ];
-  initialStore.getState().data.resources.integrations = [
-    {
-      _id: '5fc5e0e66cfe5b44bb95de70',
-      name: '3PL Central',
-      readme: 'https://staging.integrator.io/integrations/5fc5e0e66cfe5b44bb95de70/admin/readme/edit/readme ',
-      _registeredConnectionIds: [
-        '5d529bfbdb0c7b14a6011a57',
-        '5fc5e4a46cfe5b44bb95df44',
-        '60222c93cbcaf605db26d936',
-      ],
-    },
-  ];
-  initialStore.getState().data.resources.ssoclients = [
-
-  ];
+    ];
+    draft.data.resources.integrations = [
+      {
+        _id: '5fc5e0e66cfe5b44bb95de70',
+        name: '3PL Central',
+        readme: 'https://staging.integrator.io/integrations/5fc5e0e66cfe5b44bb95de70/admin/readme/edit/readme ',
+        _registeredConnectionIds: [
+          '5d529bfbdb0c7b14a6011a57',
+          '5fc5e4a46cfe5b44bb95df44',
+          '60222c93cbcaf605db26d936',
+        ],
+      },
+    ];
+    draft.data.resources.ssoclients = [
+    ];
+  });
   const ui = (
     <Router history={history}>
       <UserFormWrapper userId={userprops} />

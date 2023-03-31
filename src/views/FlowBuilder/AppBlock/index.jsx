@@ -238,7 +238,9 @@ export default function AppBlock({
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
-    if (!connectorType || !connectorType.toUpperCase().startsWith('RDBMS')) {
+    if (!connectorType ||
+      !(connectorType.toUpperCase().startsWith('RDBMS') || connectorType.toUpperCase().startsWith('JDBC'))
+    ) {
       if (connectorType && connectorType.toUpperCase().startsWith('HTTP') && resource?.http?.formType === 'rest') {
         return connectorType.replace(/HTTP/, 'REST');
       }
@@ -254,11 +256,19 @@ export default function AppBlock({
      */
 
     if (resource._connectionId) {
+      if (connectorType.toUpperCase().startsWith('JDBC')) {
+        return selectors.jdbcConnectionType(state, resource._connectionId);
+      }
+
       return selectors.rdbmsConnectionType(state, resource._connectionId);
     }
 
     if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
       return resource.rdbms.type;
+    }
+
+    if (resource.type && resource.type === 'jdbc' && resource.jdbc) {
+      return resource.jdbc.type;
     }
   });
 

@@ -2,10 +2,11 @@ import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaRefreshableStaticMap from './DynaRefreshableStaticMap';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import * as mockEnqueSnackbar from '../../../../hooks/enqueueSnackbar';
 
+const formKey = 'form_key';
 const mockDispatchFn = jest.fn();
 const enqueueSnackbar = jest.fn();
 const mockOnFieldChange = jest.fn();
@@ -24,21 +25,34 @@ jest.mock('react-router-dom', () => ({
     location: {pathname: '/'},
   }),
 }));
-initialStore.getState().data.resources = {
-  integrations: [{
-    _id: '_integrationId',
-    _connectionId: '_connectionId',
-    _connectorId: '_connectorId',
-  }],
-};
-initialStore.getState().session.metadata = {application: {_connectionId: {somepath: {
-  status: 'refreshed',
-  data: {
-    name: 'asd',
-    scriptId: 'xyz',
-    url: 'https:://sampleURL.com',
-  },
-  changeIdentifier: 'somechangeidentifier'}}}};
+mutateStore(initialStore, draft => {
+  draft.data.resources = {
+    integrations: [{
+      _id: '_integrationId',
+      _connectionId: '_connectionId',
+      _connectorId: '_connectorId',
+    }],
+  };
+  draft.session.metadata = {
+    application: {
+      _connectionId: {
+        somepath: {
+          status: 'refreshed',
+          data: {
+            name: 'asd',
+            scriptId: 'xyz',
+            url: 'https:://sampleURL.com',
+          },
+          changeIdentifier: 'somechangeidentifier',
+        },
+      },
+    },
+  };
+
+  draft.session.form[formKey] = {
+    showValidationBeforeTouched: true,
+  };
+});
 function initDynaRefreshableStaticMap(props = {}) {
   const ui = (
     <DynaRefreshableStaticMap {...props} />
@@ -57,16 +71,19 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     jest.clearAllMocks();
   });
   test('should call enquesnackbar if there are errors and test refresh buttons and update the text in the rows', () => {
-    initialStore.getState().session.exportData = {
-      '-916382817':
-      {status: 'refreshed',
-        data: ['somedata', 'somedatatext'],
-        error: 'someerror'},
-      '-307590762': {
-        status: 'requested',
-        data: ['somedata1', 'somedata2'],
-        error: 'someerror1',
-      }};
+    mutateStore(initialStore, draft => {
+      draft.session.exportData = {
+        '-916382817':
+        {status: 'refreshed',
+          data: ['somedata', 'somedatatext'],
+          error: 'someerror'},
+        '-307590762': {
+          status: 'requested',
+          data: ['somedata1', 'somedata2'],
+          error: 'someerror1',
+        },
+      };
+    });
     const genralProps = {
       connectionId: '_connectionId',
       field: 'Type',
@@ -82,6 +99,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       valueResource: {virtual: { key: '_valuekey'}},
       filterKey: 'suitescript-recordTypes',
       disableFetch: true,
+      formKey: 'form_key',
     };
 
     initDynaRefreshableStaticMap(genralProps);
@@ -113,15 +131,18 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.exportData.request({kind: 'virtual', identifier: '-916382817', resource: {_connectionId: '_connectionId', _connectorId: '_connectorId', key: '_resourcekey'}, resourceContext: {_integrationId: '_integrationId', container: 'integration', type: 'settings'}}));
   });
   test('should test static map with number data by setting prefered value as num to true', () => {
-    initialStore.getState().session.exportData = {
-      '-916382817':
-      {status: 'refreshed',
-        data: ['somedata', 'somedatatext'],
-        error: 'someerror'},
-      '-307590762': {
-        status: 'requested',
+    mutateStore(initialStore, draft => {
+      draft.session.exportData = {
+        '-916382817':
+        {status: 'refreshed',
+          data: ['somedata', 'somedatatext'],
+          error: 'someerror'},
+        '-307590762': {
+          status: 'requested',
 
-      }};
+        },
+      };
+    });
     const genralProps = {
       field: 'Type',
       id: 'someId',
@@ -134,6 +155,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       resourceContext: {resourceId: '_integrationId', resourceType: 'integrations'},
       filterKey: 'suitescript-recordTypes',
       disableFetch: false,
+      formKey: 'form_key',
     };
 
     initDynaRefreshableStaticMap(genralProps);
@@ -155,4 +177,3 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     );
   });
 });
-

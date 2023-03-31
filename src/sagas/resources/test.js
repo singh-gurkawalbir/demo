@@ -1714,7 +1714,7 @@ describe('getResourceCollection saga', () => {
   test('should dispatch received collection action if api call succeeds and resourceType is tree/metadata with empty response', () => {
     const resourceType = 'tree/metadata';
     const refresh = 'true';
-    const path = '/integrations/integrationId/tree/metadata?additionalFields=_parentId,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps,createdAt,lastModified,description,readme,aliases,update,childDisplayName,pendingLicense';
+    const path = '/integrations/integrationId/tree/metadata?additionalFields=createdAt,_parentId';
     const collection = { id: 1 };
     const integrationId = 'integrationId';
 
@@ -1728,15 +1728,15 @@ describe('getResourceCollection saga', () => {
         }), collection],
       ])
       .put(actions.resource.collectionRequestSent(resourceType, integrationId, refresh))
-      .put(actions.resource.receivedCollection('integrations', [], 'integrationId'))
-      .returns(collection)
+      .put(actions.resource.receivedCollection('tree/metadata', [], 'integrationId'))
+      .returns([])
       .run();
   });
 
   test('should dispatch received collection action if api call succeeds and resourceType is tree/metadata with proper response', () => {
     const resourceType = 'tree/metadata';
     const refresh = 'true';
-    const path = '/integrations/integrationId/tree/metadata?additionalFields=_parentId,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps,createdAt,lastModified,description,readme,aliases,update,childDisplayName,pendingLicense';
+    const path = '/integrations/integrationId/tree/metadata?additionalFields=createdAt,_parentId';
     const collection = { id: 1, childIntegrations: [{_id: 'child_id_1', name: 'name1'}] };
     const integrationId = 'integrationId';
 
@@ -1750,8 +1750,8 @@ describe('getResourceCollection saga', () => {
         }), collection],
       ])
       .put(actions.resource.collectionRequestSent(resourceType, integrationId, refresh))
-      .put(actions.resource.receivedCollection('integrations', collection.childIntegrations, 'integrationId'))
-      .returns(collection)
+      .put(actions.resource.receivedCollection('tree/metadata', collection.childIntegrations, 'integrationId'))
+      .returns(collection.childIntegrations)
       .run();
   });
 });
@@ -2046,9 +2046,9 @@ describe('deleteIntegration saga', () => {
       [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
-    .put(actions.resource.requestCollection('integrations', null, true))
+    .put(actions.resource.clearCollection('integrations'))
     .put(actions.resource.requestCollection('tiles', null, true))
-    .put(actions.resource.requestCollection('scripts', null, true))
+    .put(actions.resource.clearCollection('scripts'))
     .put(actions.resource.integrations.redirectTo('123', HOME_PAGE_PATH))
     .run());
 });
@@ -2425,6 +2425,19 @@ describe('authorizedConnection saga', () => {
           'connections',
           connectionId
         ), {merged: {offline: true, rest: {authType: 'oauth'}}}],
+      ])
+      .put(actions.connection.madeOnline(connectionId))
+      .put(actions.resource.request('connections', connectionId))
+      .run();
+  });
+  test('should dispatch resource request action if oauth connection is of type Ns jdbc', () => {
+    expectSaga(authorizedConnection, { connectionId })
+      .provide([
+        [select(
+          selectors.resourceData,
+          'connections',
+          connectionId
+        ), {merged: {offline: true, jdbc: {type: 'netsuitejdbc'}}}],
       ])
       .put(actions.connection.madeOnline(connectionId))
       .put(actions.resource.request('connections', connectionId))

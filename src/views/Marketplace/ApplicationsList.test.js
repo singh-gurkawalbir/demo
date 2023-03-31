@@ -4,73 +4,76 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ApplicationsList from './ApplicationsList';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 
 async function initApplicationsList({
   props = {},
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.org = {
-    accounts: [
-      {
-        accessLevel: 'owner',
-        _id: 'own',
-        ownerUser: {
-          licenses: [{
-            type: 'endpoint',
-          }],
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.org = {
+      accounts: [
+        {
+          accessLevel: 'owner',
+          _id: 'own',
+          ownerUser: {
+            licenses: [{
+              type: 'endpoint',
+            }],
+          },
         },
-      },
-    ],
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: 'id_1',
-        name: 'name 1',
-      },
-    ],
-  };
-  initialStore.getState().data.marketplace = {
-    templates: [
-      {
-        _id: 'id_1',
-        name: 'name 1',
-        applications: ['salesforce'],
-      },
-    ],
-    connectors: [
-      {
-        _id: 'id_3',
-        name: 'oame 3',
-        applications: ['salesforce'],
-        framework: 'twoDotZero',
-      },
-      {
-        _id: 'id_1',
-        name: 'name 1',
-        applications: ['netsuite'],
-        framework: 'twoDotZero',
-      },
-      {
-        _id: 'id_2',
-        name: 'mame 2',
-        applications: ['netsuite'],
-        framework: 'twoDotZero',
-      },
-      {
-        _id: 'id_2',
-        name: 'mame 2',
-        applications: ['dummyname'],
-        framework: 'twoDotZero',
-      },
-    ],
-  };
+      ],
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: 'id_1',
+          name: 'name 1',
+        },
+      ],
+    };
+    draft.data.marketplace = {
+      templates: [
+        {
+          _id: 'id_1',
+          name: 'name 1',
+          applications: ['salesforce'],
+        },
+      ],
+      connectors: [
+        {
+          _id: 'id_3',
+          name: 'oame 3',
+          applications: ['salesforce'],
+          framework: 'twoDotZero',
+        },
+        {
+          _id: 'id_1',
+          name: 'name 1',
+          applications: ['netsuite'],
+          framework: 'twoDotZero',
+        },
+        {
+          _id: 'id_2',
+          name: 'mame 2',
+          applications: ['netsuite'],
+          framework: 'twoDotZero',
+        },
+        {
+          _id: 'id_2',
+          name: 'mame 2',
+          applications: ['dummyname'],
+          framework: 'twoDotZero',
+        },
+      ],
+    };
+  });
+
   const ui = (
     <MemoryRouter>
       <ApplicationsList {...props} />
@@ -89,8 +92,9 @@ describe('ApplicationsList test cases', () => {
 
   test('should pass the initial render with default value', async () => {
     await initApplicationsList();
-    expect(screen.queryByText(/NetSuite/i)).toBeInTheDocument();
+    expect(screen.queryByText('NetSuite')).toBeInTheDocument();
     expect(screen.queryByText(/Salesforce/i)).toBeInTheDocument();
+    screen.debug(null, Infinity);
   });
 
   test('should pass the initial render with search key as netsuite', async () => {
@@ -101,7 +105,7 @@ describe('ApplicationsList test cases', () => {
         },
       },
     });
-    expect(screen.queryByText(/NetSuite/i)).toBeInTheDocument();
+    expect(screen.queryByText('NetSuite')).toBeInTheDocument();
     expect(screen.queryByText(/Salesforce/i)).not.toBeInTheDocument();
   });
 

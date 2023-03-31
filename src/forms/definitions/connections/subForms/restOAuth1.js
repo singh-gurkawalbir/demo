@@ -26,6 +26,10 @@ export default {
         { field: 'rest.oauth.oauth1.signatureMethod', is: ['rsa-sha1', 'rsa-sha256', 'rsa-sha512'] },
       ],
     },
+    'rest.oauth.oauth1.realm': {
+      fieldId: 'rest.oauth.oauth1.realm',
+      visibleWhenAll: [{ field: 'rest.oauth.oauth1.signatureMethod', is: ['hmac-sha1', 'hmac-sha256', 'hmac-sha512', 'plaintext', 'rsa-sha1', 'rsa-sha256', 'rsa-sha512'] }],
+    },
   },
   layout: {
     fields: [
@@ -34,6 +38,7 @@ export default {
       'rest.oauth.oauth1.accessToken',
       'rest.oauth.oauth1.tokenSecret',
       'rest.oauth.oauth1.consumerPrivateKey',
+      'rest.oauth.oauth1.realm',
     ],
   },
 };

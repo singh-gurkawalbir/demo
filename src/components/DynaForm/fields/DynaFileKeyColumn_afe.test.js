@@ -1,7 +1,7 @@
 
 import React from 'react';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import DynaFileKeyColumnAFE from './DynaFileKeyColumn_afe';
 import actions from '../../../actions';
 
@@ -10,49 +10,51 @@ const onFieldChange = jest.fn();
 async function initDynaFileDefinitionSelect(props, status) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: 'exp-123',
-        file: {
-          type: 'csv',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      exports: [
+        {
+          _id: 'exp-123',
+          file: {
+            type: 'csv',
+          },
+          sampleData: '{}',
         },
-        sampleData: '{}',
-      },
-      {
-        _id: 'expId',
-        adapterType: 'HTTPExport',
-        file: {
-          type: 'csv',
+        {
+          _id: 'expId',
+          adapterType: 'HTTPExport',
+          file: {
+            type: 'csv',
+          },
         },
-      },
-    ],
-  };
-  initialStore.getState().session =
-  {
-    editors: {
-      filekeycolumns: {
-        data: [],
-        previewStatus: status,
-        result: { data: [{ key1: 'k1' }] },
-      },
-    },
-    form: {
-      'exports-expId': {
-        fields: {
-          'http.successMediaType': { value: 'csv' },
+      ],
+    };
+    draft.session =
+    {
+      editors: {
+        filekeycolumns: {
+          data: [],
+          previewStatus: status,
+          result: { data: [{ key1: 'k1' }] },
         },
       },
-    },
-    resourceFormSampleData: {
-      expId: {
-        preview: {
-          data: { preview: '[{a: 90}]' },
-          status: 'received',
+      form: {
+        'exports-expId': {
+          fields: {
+            'http.successMediaType': { value: 'csv' },
+          },
         },
       },
-    },
-  };
+      resourceFormSampleData: {
+        expId: {
+          preview: {
+            data: { preview: '[{a: 90}]' },
+            status: 'received',
+          },
+        },
+      },
+    };
+  });
 
   return renderWithProviders(<DynaFileKeyColumnAFE {...props} />, { initialStore });
 }

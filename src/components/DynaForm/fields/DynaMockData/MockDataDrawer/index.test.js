@@ -4,7 +4,7 @@ import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import MockOutputDrawer from '.';
 import { DrawerProvider } from '../../../../drawer/Right/DrawerContext';
@@ -60,42 +60,45 @@ const mockOutput = {
 };
 const mockOutputJson = JSON.stringify(mockOutput);
 
-function initMockOutputDrawer() {
-  initialStore.getState().data.resources = {
-    exports: [
-      {
-        _id: 'export1',
-        adaptorType: 'HTTPExport',
-      },
-    ],
-  };
-  initialStore.getState().session.form = {
-    [formKey]: {
-      fields: {
-        mockOutput: {
-          resourceId: 'export1',
-          resourceType: 'exports',
-          flowId: 'flow1',
-          label: 'Mock output',
-          helpKey: 'mockOutput',
-          type: 'mockoutput',
-          fieldId: 'mockOutput',
-          id: 'mockOutput',
-          name: '/mockOutput',
-          defaultValue: '',
-          value: mockOutput,
-          touched: false,
-          visible: true,
-          required: false,
-          disabled: false,
-          options: {},
-          isValid: true,
-          isDiscretelyInvalid: false,
-          errorMessages: '',
+function initMockOutputDrawer(fieldStateProps) {
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      exports: [
+        {
+          _id: 'export1',
+          adaptorType: 'HTTPExport',
+        },
+      ],
+    };
+    draft.session.form = {
+      [formKey]: {
+        fields: {
+          mockOutput: {
+            resourceId: 'export1',
+            resourceType: 'exports',
+            flowId: 'flow1',
+            label: 'Mock output',
+            helpKey: 'mockOutput',
+            type: 'mockoutput',
+            fieldId: 'mockOutput',
+            id: 'mockOutput',
+            name: '/mockOutput',
+            defaultValue: '',
+            value: mockOutput,
+            touched: false,
+            visible: true,
+            required: false,
+            disabled: false,
+            options: {},
+            isValid: true,
+            isDiscretelyInvalid: false,
+            errorMessages: '',
+            ...fieldStateProps,
+          },
         },
       },
-    },
-  };
+    };
+  });
   const drawerProviderProps = {
     onClose: jest.fn(),
     height: 'short',
@@ -161,6 +164,39 @@ describe('MockOutputDrawerContent UI tests', () => {
     expect(screen.getByText('Body')).toBeInTheDocument();
     expect(screen.getByText('Headers')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
+  });
+  test('should display error messages if field state has error messages on initial render', () => {
+    initMockOutputDrawer({errorMessages: 'Mock data should be valid json', value: 'abc'});
+
+    // Mock output drawer heading
+    const label = screen.getByRole('heading', {name: 'Mock output'});
+
+    expect(label).toBeInTheDocument();
+
+    // Populate with preview data button
+    expect(screen.getByText('Populate with preview data')).toBeInTheDocument();
+
+    expect(screen.getByText('abc')).toBeInTheDocument();
+
+    // done button
+    const doneButton = screen.getByRole('button', {name: 'Done'});
+
+    expect(doneButton).toBeInTheDocument();
+
+    expect(doneButton).toBeDisabled();
+
+    expect(screen.getByText('Mock data should be valid json')).toBeInTheDocument();
+
+    // change the editor content to valid json
+    const inputNode = document.querySelector('textarea[name="codeEditor"]');
+
+    userEvent.clear(inputNode);
+    userEvent.paste(inputNode, mockOutputJson);
+    expect(screen.getByText(mockOutputJson)).toBeInTheDocument();
+    expect(screen.queryByText('Mock data should be valid json')).toBeNull();
+    expect(doneButton).toBeInTheDocument();
+
+    expect(doneButton).toBeEnabled();
   });
   test('should show error for invalid mock output and done button should be disabled', () => {
     initMockOutputDrawer();

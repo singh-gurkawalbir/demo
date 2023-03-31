@@ -55,10 +55,11 @@ describe('template util function test', () => {
       expect(getApplication({type: 'http'})).toEqual({id: 'http', name: 'HTTP'});
     });
 
-    test('should return correct application details when rbdms connection is passed', () => {
+    test('should return correct application details when rbdms and jdbc connection is passed', () => {
       expect(getApplication({type: 'rdbms', rdbms: {type: 'mssql'}})).toEqual({id: 'mssql', name: 'Microsoft SQL'});
       expect(getApplication({type: 'rdbms', rdbms: {type: 'mysql'}})).toEqual({id: 'mysql', name: 'MySQL'});
       expect(getApplication({type: 'rdbms', rdbms: {type: 'oracle'}})).toEqual({id: 'oracle', name: 'Oracle DB (SQL)'});
+      expect(getApplication({type: 'jdbc', jdbc: {type: 'netsuitejdbc'}})).toEqual({id: 'netsuitejdbc', name: 'NetSuite JDBC'});
     });
 
     test('should return correct application details when rest connection is passed', () => {

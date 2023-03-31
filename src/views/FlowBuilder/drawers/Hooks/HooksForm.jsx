@@ -52,7 +52,7 @@ export default function HooksForm({flowId, integrationId, formKey}) {
   ]);
   const handleSave = useCallback(
     selectedHooks => {
-      const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
+      const patchSet = getSelectedHooksPatchSet(selectedHooks, resource, resourceType);
 
       dispatch(actions.resource.patchAndCommitStaged(resourceType, resourceId, patchSet, {
         context: { flowId },

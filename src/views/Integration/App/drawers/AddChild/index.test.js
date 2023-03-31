@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import IntegrationAppAddNewChild from '.';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 
 let initialStore;
@@ -150,8 +150,10 @@ jest.mock('../../../../../components/InstallStep', () => ({
 }));
 
 function initIntegrationAppAddNewChild({addChildData, integrationData}) {
-  initialStore.getState().session.integrationApps.addChild = addChildData;
-  initialStore.getState().data.resources.integrations = integrationData;
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.addChild = addChildData;
+    draft.data.resources.integrations = integrationData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test/123'}]}

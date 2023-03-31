@@ -117,6 +117,85 @@ describe('router processor logic', () => {
 
       expect(init({resource, options})).toEqual(expectedOutput);
     });
+    test('should correctly return the rule and options along with script context', () => {
+      jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('new_key');
+      const options = {
+        router: {id: 'r1', name: 'router1', branches: [{pageProcessors: [{id: 'p1'}]}, {pageProcessors: [{id: 'p2'}]}]},
+        branchNamingIndex: 1,
+      };
+      const expectedOutput = {
+        branchNamingIndex: 1,
+        editorTitle: 'Edit branching',
+        isEdit: true,
+        router: {
+          branches: [
+            {
+              pageProcessors: [
+                {
+                  id: 'p1',
+                },
+              ],
+            },
+            {
+              pageProcessors: [
+                {
+                  id: 'p2',
+                },
+              ],
+            },
+          ],
+          id: 'r1',
+          name: 'router1',
+        },
+        rule: {
+          activeProcessor: 'filter',
+          branches: [
+            {
+              id: 'new_key',
+              inputFilter: {
+                rules: undefined,
+              },
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  id: 'p1',
+                },
+              ],
+            },
+            {
+              id: 'new_key',
+              inputFilter: {
+                rules: undefined,
+              },
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  id: 'p2',
+                },
+              ],
+            },
+          ],
+          entryFunction: 'branching',
+          fetchScriptContent: true,
+          id: 'r1',
+          name: 'router1',
+        },
+        context: {
+          _integrationId: 'inetgartionID',
+          _flowId: 'flowId',
+          container: 'inetgration',
+          type: 'hook',
+        },
+      };
+      const scriptContext = {
+        _integrationId: 'inetgartionID',
+        _flowId: 'flowId',
+        container: 'inetgration',
+        type: 'hook',
+      };
+
+      expect(init({resource, options, scriptContext})).toEqual(expectedOutput);
+    });
   });
   describe('requestBody util', () => {
     test('should return correct request body for javascript processor', () => {
@@ -185,6 +264,55 @@ describe('router processor logic', () => {
             },
           },
         ],
+      });
+    });
+    test('should return correct request body for filter with scriptContext for IA', () => {
+      const editor = {
+        rule: {
+          activeProcessor: 'javascript',
+        },
+        data: {
+          javascript: {a: 'b'},
+          input_filters: {c: 'd'},
+        },
+        flow: {
+          _id: 1234,
+          _connectorId: 4321,
+        },
+        context: {
+          _integrationId: 'integartionID',
+          _flowId: 'flowId',
+          container: 'integration',
+          type: 'hook',
+        },
+      };
+
+      expect(requestBody(editor)).toEqual({
+        data: [
+          {
+            options: {
+              contextData: {
+                a: 'b',
+              },
+              settings: undefined,
+            },
+            record: undefined,
+            router: {
+              routeRecordsUsing: 'script',
+              script: {
+                _scriptId: undefined,
+                code: undefined,
+                function: undefined,
+              },
+            },
+          },
+        ],
+        options: {
+          _integrationId: 'integartionID',
+          _flowId: 'flowId',
+          container: 'integration',
+          type: 'hook',
+        },
       });
     });
   });

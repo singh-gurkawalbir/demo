@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import NotificationsSection from '.';
 
@@ -167,50 +167,53 @@ describe('NotificationsSection UI tests', () => {
 
     useDispatchSpy.mockReturnValue(mockDispatch);
 
-    initialStore.getState().data.resources.integrations = [{
-      _id: '5ff579d745ceef7dcd797c15',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5e7068331c056a75e6df19b2',
-      ],
-      installSteps: [],
-      uninstallSteps: [],
-      flowGroupings: [
-        {
-          name: 'some group',
-          _id: '62bdeb31a0f5f21448168826',
+    mutateStore(initialStore, draft => {
+      draft.data.resources.integrations = [{
+        _id: '5ff579d745ceef7dcd797c15',
+        lastModified: '2021-01-19T06:34:17.222Z',
+        name: " AFE 2.0 refactoring for DB's",
+        install: [],
+        sandbox: false,
+        _registeredConnectionIds: [
+          '5e7068331c056a75e6df19b2',
+        ],
+        installSteps: [],
+        uninstallSteps: [],
+        flowGroupings: [
+          {
+            name: 'some group',
+            _id: '62bdeb31a0f5f21448168826',
+          },
+        ],
+        createdAt: '2021-01-06T08:50:31.935Z',
+      }];
+      draft.data.resources.flows = flows;
+      draft.data.resources.connections = connections;
+      draft.data.resources.notifications = [{
+        subscribedByUser: {
+          email: 'Celigo@celigo.com',
         },
-      ],
-      createdAt: '2021-01-06T08:50:31.935Z',
-    }];
-    initialStore.getState().data.resources.flows = flows;
-    initialStore.getState().data.resources.connections = connections;
-    initialStore.getState().data.resources.notifications = [{
-      subscribedByUser: {
+        _integrationId: '5ff579d745ceef7dcd797c15',
+      }];
+      draft.user.profile = {
+        _id: '5ca5c855ec5c172792285f53',
+        name: 'Celigo 123',
         email: 'Celigo@celigo.com',
-      },
-      _integrationId: '5ff579d745ceef7dcd797c15',
-    }];
-    initialStore.getState().user.profile = {
-      _id: '5ca5c855ec5c172792285f53',
-      name: 'Celigo 123',
-      email: 'Celigo@celigo.com',
-      role: 'io-qa intern',
-      company: 'Amazon Central',
-      phone: '',
-      auth_type_google: {},
-      timezone: 'Asia/Calcutta',
-      developer: true,
-      allowedToPublish: true,
-      agreeTOSAndPP: true,
-      createdAt: '2019-04-04T09:03:18.208Z',
-      useErrMgtTwoDotZero,
-      authTypeSSO: null,
-      emailHash: '1c8eb6f416e72a5499283b56f2663fe1',
-    };
+        role: 'io-qa intern',
+        company: 'Amazon Central',
+        phone: '',
+        auth_type_google: {},
+        timezone: 'Asia/Calcutta',
+        developer: true,
+        allowedToPublish: true,
+        agreeTOSAndPP: true,
+        createdAt: '2019-04-04T09:03:18.208Z',
+        useErrMgtTwoDotZero,
+        authTypeSSO: null,
+        emailHash: '1c8eb6f416e72a5499283b56f2663fe1',
+      };
+    });
+
     renderWithProviders(<MemoryRouter><NotificationsSection integrationId="5ff579d745ceef7dcd797c15" /> </MemoryRouter>, {initialStore});
 
     return mockDispatch;

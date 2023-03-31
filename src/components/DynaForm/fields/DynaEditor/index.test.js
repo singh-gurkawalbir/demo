@@ -1,9 +1,12 @@
 import React from 'react';
+import * as reactRedux from 'react-redux';
 import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { renderWithProviders } from '../../../../test/test-utils';
 import DynaEditor from './index';
+import errorMessageStore from '../../../../utils/errorStore';
+import actions from '../../../../actions';
 
 const mockOnFieldChange = jest.fn();
 const mockHistoryPush = jest.fn();
@@ -49,6 +52,16 @@ function initDynaEditor(props = {}) {
 }
 
 describe('dynaEditor UI tests', () => {
+  let mockDispatchFn;
+  let useDispatchSpy;
+
+  beforeEach(() => {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+
+    mockDispatchFn = jest.fn();
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -121,7 +134,149 @@ describe('dynaEditor UI tests', () => {
     fireEvent.change(textBoxNode, { target: { value: '' } });
     expect(mockOnFieldChange).toHaveBeenCalledWith('settings', '', false);
   });
+  test('should call validate content function and dispatch correct action', () => {
+    const validateContent = jest.fn(() => 'Invalid format');
+    const props = {
+      id: 'feedOptions',
+      expandMode: 'drawer',
+      saveMode: 'json',
+      formKey,
+      options: { scriptFunctionStub: 'preSavePage', file: 'json' },
+      isValid: true,
+      onFieldChange,
+      value: 'somevalue',
+      className,
+      label: 'Feed options',
+      editorClassName,
+      disabled,
+      required,
+      isLoggable,
+      validateContent,
+      mode: 'json',
+    };
 
+    initDynaEditor(props);
+
+    const editorButton = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
+
+    expect(editorButton).toBeInTheDocument();
+    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('somevalue');
+    const textBoxNode = screen.getByRole('textbox');
+
+    expect(textBoxNode).toBeInTheDocument();
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.form.forceFieldState(formKey)('feedOptions', {isValid: false, errorMessages: 'Invalid format'})
+    );
+
+    // should dispatch forceFieldState action when value changes
+    const editorArea = document.querySelector('textarea[data-test="code-editor"]');
+
+    userEvent.type(editorArea, 'abcd');
+
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.form.forceFieldState(formKey)('feedOptions', {isValid: false, errorMessages: 'Invalid format'})
+    );
+  });
+  test('should dispatch correct action if validateContent is true and mode is json', () => {
+    const props = {
+      id: 'feedOptions',
+      expandMode: 'drawer',
+      saveMode: 'json',
+      formKey,
+      options: { scriptFunctionStub: 'preSavePage', file: 'json' },
+      isValid: true,
+      onFieldChange,
+      value: 'somevalue',
+      className,
+      label: 'Feed options',
+      editorClassName,
+      disabled,
+      required,
+      isLoggable,
+      validateContent: true,
+      mode: 'json',
+    };
+
+    initDynaEditor(props);
+
+    const editorButton = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
+
+    expect(editorButton).toBeInTheDocument();
+    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('somevalue');
+    const textBoxNode = screen.getByRole('textbox');
+
+    expect(textBoxNode).toBeInTheDocument();
+
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.form.forceFieldState(formKey)('feedOptions', {isValid: false, errorMessages: errorMessageStore('INVALID_JSON_VALUE', {label: 'Feed options'}) })
+    );
+  });
+  test('should not dispatch any action if validateContent is true and mode is not json', () => {
+    const props = {
+      id: 'feedOptions',
+      expandMode: 'drawer',
+      saveMode: 'json',
+      formKey,
+      options: { scriptFunctionStub: 'preSavePage', file: 'json' },
+      isValid: true,
+      onFieldChange,
+      value: 'somevalue',
+      className,
+      label: 'Feed options',
+      editorClassName,
+      disabled,
+      required,
+      isLoggable,
+      validateContent: true,
+      mode: 'java',
+    };
+
+    initDynaEditor(props);
+
+    const editorButton = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
+
+    expect(editorButton).toBeInTheDocument();
+    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('somevalue');
+    const textBoxNode = screen.getByRole('textbox');
+
+    expect(textBoxNode).toBeInTheDocument();
+
+    expect(mockDispatchFn).toHaveBeenCalledTimes(0);
+  });
+  test('should not dispatch any action if validateContent is false and mode is json', () => {
+    const props = {
+      id: 'feedOptions',
+      expandMode: 'drawer',
+      saveMode: 'json',
+      formKey,
+      options: { scriptFunctionStub: 'preSavePage', file: 'json' },
+      isValid: true,
+      onFieldChange,
+      value: 'somevalue',
+      className,
+      label: 'Feed options',
+      editorClassName,
+      disabled,
+      required,
+      isLoggable,
+      validateContent: false,
+      mode: 'java',
+    };
+
+    initDynaEditor(props);
+
+    const editorButton = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('data-test') === 'code-editor');
+
+    expect(editorButton).toBeInTheDocument();
+    expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveValue('somevalue');
+    const textBoxNode = screen.getByRole('textbox');
+
+    expect(textBoxNode).toBeInTheDocument();
+
+    expect(mockDispatchFn).toHaveBeenCalledTimes(0);
+  });
   test('should test cancel modal dialog', () => {
     const props = {
       id,

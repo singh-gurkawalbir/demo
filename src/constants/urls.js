@@ -3,7 +3,7 @@
  * account to access help center. So redirect user to integrator.io when he try to access help center from
  * the non-production domains.
  */
-export const HELP_CENTER_BASE_URL = `${['integrator.io', 'eu.integrator.io'].includes(window.document.location.hostname.replace('www.', '')) ? '' : 'https://integrator.io'}/zendesk/sso?return_to=https://docs.celigo.com`;
+export const HELP_CENTER_BASE_URL = 'https://docs.celigo.com';
 export const SUBMIT_TICKET_URL =
    `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
@@ -12,7 +12,7 @@ export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics'
 export const FLOW_EVENT_REPORTS_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4402565285389`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
-export const MFA_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+export const MFA_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account`;
 export const REVISIONS_GUIDE_URL = 'https://docs.celigo.com/hc/en-us/sections/5918596617883-Manage-integration-revisions';
 // Intentaionally skipping _ and - characters as we use them as delmiters in some urls. Do not add those characters
 export const URL_SAFE_CHARACTERS = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
@@ -83,3 +83,5 @@ export const MOCK_RESPONSE_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/e
 export const BUNDLE_DEPRICATION_URL = 'https://docs.celigo.com/hc/en-us/articles/360050643132';
 // This needs to be updated once integrator app is published in shopify marketplace.
 export const SHOPIFY_APP_URL = 'https://apps.shopify.com';
+
+export const HTTP_IMPORT_CREATE_FEED_RELATIVE_URI = '/feeds/2021-06-30/documents';

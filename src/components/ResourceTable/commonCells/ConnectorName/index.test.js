@@ -3,26 +3,36 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import ConnectorName from '.';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import * as Resource from '../../../../utils/resource';
 import * as HTTPConnector from '../../../../constants/applications';
 
 let initialStore;
 
 function initConnectorName({resource}) {
-  initialStore.getState().data.resources.connections = [{
-    _id: 23456,
-    http: {
-      _httpConnectorId: 9876,
+  mutateStore(initialStore, draft => {
+    draft.data.resources.connections = [{
+      _id: 23456,
+      http: {
+        _httpConnectorId: 9876,
+      },
     },
-  },
-  {
-    _id: 56789,
-    name: 'Testing RDBMS Connection',
-    rdbms: {
-      type: 'bigquery',
+    {
+      _id: 56789,
+      name: 'Testing RDBMS Connection',
+      rdbms: {
+        type: 'bigquery',
+      },
     },
-  }];
+    {
+      _id: 1234,
+      name: 'NS jdbc connection',
+      jdbc: {
+        type: 'netsuitejdbc',
+      },
+    },
+    ];
+  });
   const ui = (
     <ConnectorName resource={resource} />
   );
@@ -149,6 +159,16 @@ describe('testsuite for ConnectorName', () => {
 
     initConnectorName({resource});
     expect(screen.getByText(/rdbms/i)).toBeInTheDocument();
+  });
+  test('should test the NesuiteJdbc name when the resource type is jdbc', () => {
+    const resource = {
+      _connectionId: 1234,
+      type: 'jdbc',
+      adaptorType: 'JDBCExport',
+    };
+
+    initConnectorName({resource});
+    expect(screen.getByText('NetSuite JDBC')).toBeInTheDocument();
   });
 });
 

@@ -3,7 +3,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import {reduxStore, renderWithProviders} from '../../../../../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import AddonInstallerButton from './AddonInstallerButton';
 import { ConfirmDialogProvider } from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
@@ -11,20 +11,22 @@ import actions from '../../../../../../../actions';
 async function initAddonButton(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.integrationApps.addon = {};
-  initialStore.getState().session.integrationApps.addon['678901234567890'] = {installInprogress: false};
-  initialStore.getState().user.org.accounts = [{accessLevel: 'administrator',
-    _id: 'own',
-    ownerUser: {licenses: [{
-      _id: '5a6ec1bae9aaa11c9bc86106',
-      created: '2018-01-29T06:39:54.268Z',
-      lastModified: '2022-06-27T07:52:09.014Z',
-      expires: '2023-05-05T00:00:00.000Z',
-      type: 'connector',
-      upgradeText: 'Request upgrade',
-      _integrationId: '678901234567891123456789',
-      resumable: false,
-    }]}}];
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.addon = {};
+    draft.session.integrationApps.addon['678901234567890'] = {installInprogress: false};
+    draft.user.org.accounts = [{accessLevel: 'administrator',
+      _id: 'own',
+      ownerUser: {licenses: [{
+        _id: '5a6ec1bae9aaa11c9bc86106',
+        created: '2018-01-29T06:39:54.268Z',
+        lastModified: '2022-06-27T07:52:09.014Z',
+        expires: '2023-05-05T00:00:00.000Z',
+        type: 'connector',
+        upgradeText: 'Request upgrade',
+        _integrationId: '678901234567891123456789',
+        resumable: false,
+      }]}}];
+  });
 
   return renderWithProviders(<ConfirmDialogProvider><AddonInstallerButton {...props} /></ConfirmDialogProvider>, {initialStore});
 }

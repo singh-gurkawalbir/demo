@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -27,7 +27,8 @@ import OperandSettingsDialog from '../AFE/Editor/panels/Filter/OperandSettingsDi
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
-import { isNumber, safeParse } from '../../utils/string';
+import { safeParse, isNumber } from '../../utils/string';
+import customCloneDeep from '../../utils/customCloneDeep';
 import { message } from '../../utils/messageStore';
 
 const defaultData = {};
@@ -221,7 +222,16 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         );
         expressionField
           .off('change')
-          .on('change', () => handleFilterRulesChange());
+          .on('change', () => {
+            if (
+              rule.operator &&
+              (rule.operator.type === 'is_empty' ||
+                rule.operator.type === 'is_not_empty')
+            ) {
+              rule.filter.valueGetter(rule);
+            }
+            handleFilterRulesChange();
+          });
       }
     }
 
@@ -342,7 +352,16 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         );
         expressionField
           .off('change')
-          .on('change', () => handleFilterRulesChange());
+          .on('change', () => {
+            if (
+              rule.operator &&
+              (rule.operator.type === 'is_empty' ||
+                rule.operator.type === 'is_not_empty')
+            ) {
+              rule.filter.valueGetter(rule);
+            }
+            handleFilterRulesChange();
+          });
       }
     }
 
@@ -620,7 +639,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
-          const r = cloneDeep(rulesState[ruleId].data);
+          const r = customCloneDeep(rulesState[ruleId].data);
           let lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
@@ -650,7 +669,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                 lhsValue === 'currentExportDateTime')
             ) {
               r.lhs.dataType = 'epochtime';
-            } else if (lhsValue?.endsWith('.length')) {
+            } else if (typeof lhsValue === 'string' && lhsValue.endsWith('.length')) {
               const fieldType = filtersMetadata.find(
                 metadata => metadata.id === lhsValue
               ).type;
@@ -687,7 +706,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                 rhsValue === 'currentExportDateTime')
             ) {
               r.rhs.dataType = 'epochtime';
-            } else if (rhsValue?.endsWith('.length')) {
+            } else if (typeof rhsValue === 'string' && rhsValue.endsWith('.length')) {
               const fieldType = filtersMetadata.find(
                 metadata => metadata.id === rhsValue
               ).type;
@@ -738,7 +757,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                   lhsValue === 'currentExportDateTime')
               ) {
                 r.lhs.dataType = 'epochtime';
-              } else if (lhsValue?.endsWith('.length')) {
+              } else if (typeof lhsValue === 'string' && lhsValue.endsWith('.length')) {
                 const fieldType = filtersMetadata.find(
                   metadata => metadata.id === lhsValue
                 ).type;
@@ -771,7 +790,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
                   rhsValue === 'currentExportDateTime')
               ) {
                 r.rhs.dataType = 'epochtime';
-              } else if (rhsValue?.endsWith('.length')) {
+              } else if (typeof rhsValue === 'string' && rhsValue.endsWith('.length')) {
                 const fieldType = filtersMetadata.find(
                   metadata => metadata.id === rhsValue
                 ).type;
