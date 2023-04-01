@@ -193,6 +193,7 @@ export default {
       } account`,
       name: 'Integrator Adaptor Package',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      sourceConnId: conn._id,
       options: {},
     }));
 
