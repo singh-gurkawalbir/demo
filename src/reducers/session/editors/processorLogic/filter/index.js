@@ -1,5 +1,8 @@
 import { isString } from 'lodash';
+// import Ajv from 'ajv';
 import util from '../../../../../utils/json';
+
+// import json schema validation library
 
 export default {
   requestBody: editor => {
@@ -69,6 +72,19 @@ export default {
       data: typeof record === 'object' ? [record] : [{}],
       options: { settings, contextData: context },
     };
+  },
+  validateRule: (editor, rule) => {
+    const isValid = util.validateJsonString(rule);
+
+    if (!isValid) {
+      return ['Invalid JSON'];
+    }
+
+    // Test to see if rule matches JSON schema for filter rule
+    // const ajv = new Ajv();
+    // const validate = ajv.compile({ });
+
+    console.log('rule is valid');
   },
   validate: editor => ({
     dataError:

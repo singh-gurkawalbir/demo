@@ -25,6 +25,7 @@ import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
+import { getDomain } from '../../forms/formFactory/utils';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -809,6 +810,8 @@ export function* initEditor({ id, editorType, options }) {
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
 
+  formattedOptions.enableAI = ['localhost', 'localhost.io', 'qa.staging.integrator.io'].includes(getDomain());
+
   const init = processorLogic.init(editorType);
 
   if (init) {
@@ -915,21 +918,76 @@ export function* toggleEditorVersion({ id, version }) {
   );
 }
 
+export function* requestAICompletion({ id, prompt }) {
+  let response;
+  const formKey = `${id}-chatbot-settings`;
+  const chatOptions = yield select(selectors.formValueTrimmed, formKey);
+  const editor = yield select(selectors.editor, id);
+  const { data, rule } = editor;
+  const { messages, ...requestOptions } = chatOptions;
+
+  requestOptions.messages = JSON.parse(messages);
+
+  requestOptions.messages.push({
+    role: 'user',
+    content: `The current filter json is:\n ${JSON.stringify(rule)}\n
+ The record being filtered is:\n ${data}\n
+ ${prompt}`,
+  });
+
+  console.log('saga', requestOptions);
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: '/openai/chat/completions',
+      opts: {
+        method: 'POST',
+        body: requestOptions,
+      },
+    });
+  } catch (error) {
+    return yield put(actions.editor.AI.failed(id, [error.message]));
+  }
+  // we have a successful response, but we do not know if the response itself
+  // holds a valid result.
+  const newRule = response.choices[0].message.content;
+
+  const validationErrors = processorLogic.validateRule(editor, newRule);
+
+  if (validationErrors.length === 0) {
+    return yield put(actions.editor.AI.failed(id, validationErrors));
+  }
+
+  console.log('saga chat completion', JSON.parse(newRule));
+
+  yield put(actions.editor.patchRule(id, JSON.parse(newRule) || []));
+  yield put(actions.editor.AI.complete(id));
+}
+
 export default [
   takeLatest(
-    [actionTypes.EDITOR.PATCH.DATA,
+    [
+      actionTypes.EDITOR.PATCH.DATA,
       actionTypes.EDITOR.PATCH.RULE,
       actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW,
-      actionTypes.EDITOR.PATCH.FEATURES],
+      actionTypes.EDITOR.PATCH.FEATURES,
+    ],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as
   // both, csv parser and file key editor can be in use and would require
   // the preview API call parallel
-  takeLatest(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
+  takeLatest(
+    actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN,
+    autoEvaluateProcessorWithCancel
+  ),
   takeEvery(actionTypes.EDITOR.INIT, initEditor),
   takeLatest(actionTypes.EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes.EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes.EDITOR.SAVE.REQUEST, save),
-  takeLatest(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS, refreshHelperFunctions),
+  takeLatest(
+    actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS,
+    refreshHelperFunctions
+  ),
+  takeLatest(actionTypes.EDITOR.AI.REQUEST, requestAICompletion),
 ];

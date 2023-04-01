@@ -67,6 +67,8 @@ export function getLogic(editor) {
   return logic;
 }
 
+const validateRule = (editor, rule) => getLogic(editor).validateRule(editor, rule);
+
 const validate = editor => {
   if (!editor) return;
   const violations = getLogic(editor).validate(editor);
@@ -197,7 +199,7 @@ export const featuresMap = options => ({
   },
   filter: {
     autoEvaluate: false,
-    layout: 'compact',
+    layout: options.enableAI ? 'compact-ai' : 'compact',
   },
   javascript: {
     autoEvaluate: false,
@@ -272,12 +274,15 @@ export const featuresMap = options => ({
     // the same layout as for settings form. We need to find a generic name
     // for the pair of layouts.
     // also the css grid template needs to rename "hook" to "script".
-    layout: `${options?.rule?.activeProcessor === 'filter' ? 'json' : 'script'}FormBuilder`,
+    layout: `${
+      options?.rule?.activeProcessor === 'filter' ? 'json' : 'script'
+    }FormBuilder`,
   },
 });
 
 export default {
   requestOptions,
+  validateRule,
   validate,
   isDirty,
   init,

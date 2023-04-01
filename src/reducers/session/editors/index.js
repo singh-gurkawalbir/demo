@@ -8,6 +8,13 @@ import { toggleData } from './processorLogic/settingsForm';
 
 const emptyObj = {};
 
+export const AI_STATUS = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  COMPLETE: 'complete',
+  FAILED: 'failed',
+};
+
 export default function reducer(state = {}, action) {
   const {
     type,
@@ -41,11 +48,12 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.INIT: {
         // initStatus is used to determine if parent url
         // redirection needs to happen or not on page refresh
-        draft[id] = {initStatus: 'inProgress'};
+        draft[id] = { initStatus: 'inProgress' };
         break;
       }
 
       case actionTypes.EDITOR.INIT_COMPLETE: {
+        console.log('INIT_COMPLETE', id, options);
         draft[id] = options;
         break;
       }
@@ -67,8 +75,14 @@ export default function reducer(state = {}, action) {
         const buildData = processorLogic.buildData(draft[id].editorType);
 
         if (buildData) {
-          if (draft[id].editorType === 'sql' || draft[id].editorType === 'databaseMapping') {
-            const {data, defaultData} = buildData(original(draft[id]), sampleData);
+          if (
+            draft[id].editorType === 'sql' ||
+            draft[id].editorType === 'databaseMapping'
+          ) {
+            const { data, defaultData } = buildData(
+              original(draft[id]),
+              sampleData
+            );
 
             draft[id].data = data;
             draft[id].defaultData = defaultData || '';
@@ -81,7 +95,10 @@ export default function reducer(state = {}, action) {
           // for file definition generator where post map data needs to be shown
           // this action gets called so we add the originalData here
           // ref IO-27516
-          if (draft[id].editorType === 'structuredFileGenerator' && draft[id].stage) {
+          if (
+            draft[id].editorType === 'structuredFileGenerator' &&
+            draft[id].stage
+          ) {
             draft[id].originalData = sampleData;
           }
         }
@@ -122,6 +139,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.EDITOR.PATCH.RULE: {
         if (!draft[id]) break;
+        console.log('PATCH.RULE', JSON.stringify(rulePatch, null, 2));
         const ap = draft[id].activeProcessor;
         const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
         const shouldReplace =
@@ -133,7 +151,11 @@ export default function reducer(state = {}, action) {
         if (rulePath) {
           set(draftRule, rulePath, rulePatch);
         } else if (processorLogic.updateRule(draft[id])) {
-          processorLogic.updateRule(draft[id])(draft[id], action, shouldReplace);
+          processorLogic.updateRule(draft[id])(
+            draft[id],
+            action,
+            shouldReplace
+          );
         } else if (!shouldReplace) {
           Object.assign(draftRule, customCloneDeep(rulePatch));
         } else if (ap) {
@@ -159,7 +181,8 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.PATCH.DATA: {
         if (!draft[id]) break;
         // Object.assign(draft[id].data, deepClone(dataPatch));
-        const mode = draft[id].activeProcessor || draft[id]?.rule?.activeProcessor;
+        const mode =
+          draft[id].activeProcessor || draft[id]?.rule?.activeProcessor;
 
         if (mode) {
           if (!draft[id].data) {
@@ -185,7 +208,12 @@ export default function reducer(state = {}, action) {
         if (draft[id].editorType === 'settingsForm') {
           // if view was toggled, update form definition
           if (mode) {
-            const formData = toggleData(draft[id].data, mode, draft[id].flowGrouping, draft[id].resourceDocs);
+            const formData = toggleData(
+              draft[id].data,
+              mode,
+              draft[id].flowGrouping,
+              draft[id].resourceDocs
+            );
 
             draft[id].data = formData;
             draft[id].layout = `${mode}FormBuilder`;
@@ -197,7 +225,9 @@ export default function reducer(state = {}, action) {
           if (mode) {
             delete draft[id].activeProcessor;
             draft[id].rule.activeProcessor = mode;
-            draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
+            draft[id].layout = `${
+              mode === 'filter' ? 'json' : 'script'
+            }FormBuilder`;
             // clear the output panel
             delete draft[id].result;
           }
@@ -308,6 +338,25 @@ export default function reducer(state = {}, action) {
         break;
       }
 
+      case actionTypes.EDITOR.AI.REQUEST: {
+        draft[id].ai = {};
+        draft[id].ai.status = AI_STATUS.PENDING;
+        draft[id].ai.errors = null;
+        break;
+      }
+
+      case actionTypes.EDITOR.AI.FAILED: {
+        draft[id].ai.status = AI_STATUS.FAILED;
+        draft[id].ai.errors = error;
+        break;
+      }
+
+      case actionTypes.EDITOR.AI.COMPLETE: {
+        draft[id].ai.status = AI_STATUS.COMPLETE;
+        draft[id].ai.errors = null;
+        break;
+      }
+
       default:
     }
   });
@@ -399,4 +448,11 @@ selectors.editorViolations = (state, id) => processorLogic.validate(state?.[id])
 
 selectors.isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
 
+selectors.editorAIState = (state, id) => {
+  if (!state) return;
+
+  const editor = state[id];
+
+  return editor?.ai || emptyObj;
+};
 // #endregion

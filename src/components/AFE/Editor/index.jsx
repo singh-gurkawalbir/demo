@@ -166,6 +166,7 @@ export default function Editor({ editorId }) {
       saveError: e.saveMessage,
       resourceType: e.resourceType,
       mappingPreviewType: e.mappingPreviewType,
+      enableAI: e.enableAI,
     };
   }, shallowEqual);
 
