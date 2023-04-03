@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const useScript = (url = '', id = '', callBack) => {
   useEffect(() => {
-    const script = document.createElement('scripto');
+    const script = document.createElement('script');
 
     if (!url || !id) return;
     script.id = id;
