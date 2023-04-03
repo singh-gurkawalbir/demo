@@ -78,43 +78,45 @@ export default function DynaNSSavedSearchInternalID(props) {
   }, [netSuiteSystemDomain, value]);
   const classes = useStyles();
 
-  return <>
-    <FormControl variant="standard" className={classes.dynaNSSearchInternalIDFormControl}>
-      <div className={classes.dynaNSSearchInternalIDLabelWrapper}>
-        <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-
-      <div className={classes.dynaNetsuiteFieldLookupWrapper}>
-        <div className={classes.dynaNSSearchInternalIDField}>
-          <TextField
-            {...isLoggableAttr(isLoggable)}
-            key={id}
-            name={name}
-            className={classes.dynaNSSearchInternalIDField}
-            placeholder={placeholder}
-            disabled={disabled}
-            value={value}
-            variant="filled"
-            onChange={handleFieldChange}
-          />
-          <FieldMessage
-            isValid={isValid}
-            description={description}
-            errorMessages={errorMessages}
-          />
+  return (
+    <>
+      <FormControl variant="standard" className={classes.dynaNSSearchInternalIDFormControl}>
+        <div className={classes.dynaNSSearchInternalIDLabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
         </div>
-        {value && (
+
+        <div className={classes.dynaNetsuiteFieldLookupWrapper}>
+          <div className={classes.dynaNSSearchInternalIDField}>
+            <TextField
+              {...isLoggableAttr(isLoggable)}
+              key={id}
+              name={name}
+              className={classes.dynaNSSearchInternalIDField}
+              placeholder={placeholder}
+              disabled={disabled}
+              value={value}
+              variant="filled"
+              onChange={handleFieldChange}
+          />
+            <FieldMessage
+              isValid={isValid}
+              description={description}
+              errorMessages={errorMessages}
+          />
+          </div>
+          {value && (
           <ActionButton
             data-test={id}
             onClick={handleOpenNetSuiteSavedSearch}
             className={classes.actionBtnSearchInternalID}>
             <ExitIcon />
           </ActionButton>
-        )}
-      </div>
-    </FormControl>
-  </>;
+          )}
+        </div>
+      </FormControl>
+    </>
+  );
 }

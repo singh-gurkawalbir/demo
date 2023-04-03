@@ -22,25 +22,27 @@ export default function HandlebarGuide() {
   const classes = useStyles();
   const hasWideScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-  return <>
-    {hasWideScreen ? (
-      <TextButton
-        {...anchorProps}
-        className={classes.button}
-        startIcon={<Icon />}>
-        Handlebars guide
-      </TextButton>
-    ) : (
-      <Tooltip title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
-        <IconButton
+  return (
+    <>
+      {hasWideScreen ? (
+        <TextButton
           {...anchorProps}
           className={classes.button}
-          aria-label="handlebars guide"
-          size="large">
-          <Icon />
-        </IconButton>
-      </Tooltip>
-    )}
-    <CeligoDivider position="right" />
-  </>;
+          startIcon={<Icon />}>
+          Handlebars guide
+        </TextButton>
+      ) : (
+        <Tooltip title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
+          <IconButton
+            {...anchorProps}
+            className={classes.button}
+            aria-label="handlebars guide"
+            size="large">
+            <Icon />
+          </IconButton>
+        </Tooltip>
+      )}
+      <CeligoDivider position="right" />
+    </>
+  );
 }

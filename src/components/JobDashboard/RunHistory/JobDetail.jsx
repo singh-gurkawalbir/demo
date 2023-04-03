@@ -73,41 +73,42 @@ export default function JobDetail({
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
   }
 
-  return <>
-    <TableRow>
-      <TableCell>
-        <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
-          <li>
-            <IconButton
-              data-test="toggleJobDetail"
-              className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
-              onClick={handleExpandCollapseClick}
-              size="large">
-              <RowIcon expanded={expanded} childLoaded={job.children} />
-            </IconButton>
-            {job.name || flow?.name || job._flowId}
-          </li>
-        </ul>
-      </TableCell>
-      <TableCell className={classes.status}>
-        <JobStatusWithTag job={job} />
-      </TableCell>
-      <TableCell className={classes.duration}>{getJobDuration(job)}</TableCell>
-      <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><CeligoTimeAgo date={job.startedAt} /></TableCell>
-      <TableCell className={classes.completed}><CeligoTimeAgo date={job.endedAt} /></TableCell>
-      <TableCell className={classes.success}>{job.numSuccess}</TableCell>
+  return (
+    <>
+      <TableRow>
+        <TableCell>
+          <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
+            <li>
+              <IconButton
+                data-test="toggleJobDetail"
+                className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
+                onClick={handleExpandCollapseClick}
+                size="large">
+                <RowIcon expanded={expanded} childLoaded={job.children} />
+              </IconButton>
+              {job.name || flow?.name || job._flowId}
+            </li>
+          </ul>
+        </TableCell>
+        <TableCell className={classes.status}>
+          <JobStatusWithTag job={job} />
+        </TableCell>
+        <TableCell className={classes.duration}>{getJobDuration(job)}</TableCell>
+        <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><CeligoTimeAgo date={job.startedAt} /></TableCell>
+        <TableCell className={classes.completed}><CeligoTimeAgo date={job.endedAt} /></TableCell>
+        <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
-      <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-      <TableCell className={clsx(jobDetailsClasses.error, classes.errorWrapper)}>{getTextAfterCount('error', job.numError)}</TableCell>
-      <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
-      <TableCell className={clsx(classes.actions, jobDetailsClasses.actions)}>
-        <JobActionsMenu
-          job={job}
+        <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
+        <TableCell className={clsx(jobDetailsClasses.error, classes.errorWrapper)}>{getTextAfterCount('error', job.numError)}</TableCell>
+        <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
+        <TableCell className={clsx(classes.actions, jobDetailsClasses.actions)}>
+          <JobActionsMenu
+            job={job}
         />
-      </TableCell>
-    </TableRow>
+        </TableCell>
+      </TableRow>
 
-    {expanded &&
+      {expanded &&
       job.children &&
       job.children.map(cJob => (
         <ChildJobDetail
@@ -116,5 +117,6 @@ export default function JobDetail({
           parentJob={job}
         />
       ))}
-  </>;
+    </>
+  );
 }

@@ -1,8 +1,8 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Typography} from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useLocation, useHistory } from 'react-router-dom';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -81,7 +81,6 @@ export default function SignIn({dialogOpen, className}) {
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
-  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
   const error = useSelector(state => {
@@ -132,12 +131,10 @@ export default function SignIn({dialogOpen, className}) {
     reInitializeSession();
   };
   useEffect(() => {
-    if (isMFASetupIncomplete) {
-      history.push(getRoutePath('/myAccount/security/mfa'), location.state);
-    } else if (isMFAAuthRequired) {
+    if (isMFAAuthRequired) {
       history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired, isMFASetupIncomplete, location.state]);
+  }, [history, isMFAAuthRequired, location.state]);
   const attemptedRoute = location.state?.attemptedRoute;
 
   const fieldMeta = useMemo(() => getFieldMeta(), []);
@@ -147,35 +144,36 @@ export default function SignIn({dialogOpen, className}) {
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <LoginFormWrapper className={className}>
-      {!isAuthenticating && !showError && query.get('msg') && (
-      <Typography
-        data-private
-        color="error"
-        component="div"
-        variant="h4"
-        className={classes.errorMsg}>
-        {query.get('msg')}
-      </Typography>
-      )}
-      <DynaForm formKey={formKey} />
-
-      {!isAuthenticating && showError && error && (
-        <ShowErrorMessage error={error} />
-      )}
-      {isAuthenticating ? <Spinner />
-        : (
-          <DynaSubmit
-            id="submit"
-            fullWidth
-            submit
-            formKey={formKey}
-            className={classes.submit}
-            onClick={handleOnSubmit}
-            ignoreFormTouchedCheck>
-            Sign in
-          </DynaSubmit>
+      <form>
+        {!isAuthenticating && !showError && query.get('msg') && (
+        <Typography
+          data-private
+          color="error"
+          component="div"
+          variant="h4"
+          className={classes.errorMsg}>
+          {query.get('msg')}
+        </Typography>
         )}
+        <DynaForm formKey={formKey} />
 
+        {!isAuthenticating && showError && error && (
+        <ShowErrorMessage error={error} />
+        )}
+        {isAuthenticating ? <Spinner />
+          : (
+            <DynaSubmit
+              id="submit"
+              fullWidth
+              submit
+              formKey={formKey}
+              className={classes.submit}
+              onClick={handleOnSubmit}
+              ignoreFormTouchedCheck>
+              Sign in
+            </DynaSubmit>
+          )}
+      </form>
       { !isAuthenticating && (
       <div>
         {!dialogOpen &&

@@ -1,17 +1,8 @@
 import React from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import {Box} from '@celigo/fuse-ui';
 import Templates from '../Templates';
 import Spinner from '../../Spinner';
 import PreviewBodyTabs from './PreviewBodyTabs';
-
-const useStyles = makeStyles({
-  previewBodyContainer: {
-    display: 'flex',
-    flexGrow: 1,
-    flexDirection: 'column',
-    position: 'relative',
-  },
-});
 
 export default function PreviewBody(props) {
   const {
@@ -23,8 +14,6 @@ export default function PreviewBody(props) {
     resourceType,
     showDefaultPreviewBody = false,
   } = props;
-
-  const classes = useStyles(props);
 
   if (showDefaultPreviewBody) {
     return (
@@ -48,7 +37,13 @@ export default function PreviewBody(props) {
   }
 
   return (
-    <div className={classes.previewBodyContainer}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexGrow: 1,
+        flexDirection: 'column',
+        position: 'relative',
+      }}>
       {resourceSampleData.status === 'requested' && (
         <Spinner centerAll />
       )}
@@ -69,6 +64,6 @@ export default function PreviewBody(props) {
           />
         </>
       )}
-    </div>
+    </Box>
   );
 }

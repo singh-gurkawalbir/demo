@@ -24,12 +24,15 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     background: theme.palette.background.paper,
     border: `1px solid ${theme.palette.secondary.lightest}`,
+
     paddingRight: theme.spacing(1),
     '& > div': {
       '& >.MuiFilledInput-input': {
         border: 'none',
+        letterSpacing: '0.5px',
       },
     },
+
   },
   fieldWrapper: {
     display: 'flex',
@@ -90,7 +93,6 @@ export default function DynaPassword(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const open = !!anchorEl;
-  const [showErr, setShowErr] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [containDigits, setContainDigits] = useState(false);
   const [containCapitalLetter, setContainCapitalLetter] = useState(false);
@@ -100,13 +102,11 @@ export default function DynaPassword(props) {
 
   const handleOnChangePassword = useCallback(e => {
     const password = e.target.value;
-    const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
     onFieldChange(id, password);
     setContainCapitalLetter(/[A-Z]/.test(password));
     setContainDigits(/\d/.test(password));
     setValidLength(password.length > 9 && password.length < 256);
-    setShowErr(!isValid);
   }, [id, onFieldChange]);
 
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function DynaPassword(props) {
           className={classes.arrowPopperPassword}
           preventOverflow>
           <TooltipContent className={classes.infoText}>
-            <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+            <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>
             <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
             <div className={classes.passwordListItem}>
               {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
@@ -200,7 +200,7 @@ export default function DynaPassword(props) {
         </ArrowPopper>
 
         <div className={classes.passwordStrongSteps}>
-          <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+          <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>
           <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
           <div className={classes.passwordListItem}>
             {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
