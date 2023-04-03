@@ -92,8 +92,7 @@ describe('MFAVerify', () => {
       },
       status: 'received'};
     });
-
-    expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument());
 
     expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
@@ -140,7 +139,7 @@ describe('MFAVerify', () => {
       status: 'received'};
     });
 
-    expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument());
 
     expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
@@ -182,7 +181,7 @@ describe('MFAVerify', () => {
       },
       status: 'received'};
     });
-    const headingNode = screen.getByRole('heading', {name: 'Authenticate with one-time passcode'});
+    const headingNode = await waitFor(() => screen.getByRole('heading', {name: 'Authenticate with one-time passcode'}));
 
     expect(headingNode).toBeInTheDocument();
     const mfaSigninText = screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i);
