@@ -9,7 +9,7 @@ before_install: git fetch --depth=50 origin refs/heads/$TRAVIS_BRANCH:refs/heads
 install:
   - echo @celigo:registry=https://npm.pkg.github.com >> ~/.npmrc
   - echo //npm.pkg.github.com/:_authToken=$GIT_READ_PAT >> ~/.npmrc
-  - echo yarn --frozen-lockfile
+  - yarn --frozen-lockfile
 cache: false
 jobs:
   fast_finish: true
