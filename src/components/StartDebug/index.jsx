@@ -139,27 +139,28 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   };
 
-  return <>
-    <TextButton
-      disabled={disabled}
-      startIcon={<DebugIcon />}
-      onClick={toggleClick}
-      data-test="refreshResource">
-      {debugUntil ? (
-        <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
-      ) : 'Start debug'}
-    </TextButton>
-    <ArrowPopper
-      disabled={disabled}
-      open={!!anchorEl}
-      anchorEl={anchorEl}
-      restrictToParent={false}
-      classes={{
-        popper: classes.dateRangePopper,
-      }}
-      placement="bottom-end"
-      onClose={toggleClick}>
-      {anchorEl && (
+  return (
+    <>
+      <TextButton
+        disabled={disabled}
+        startIcon={<DebugIcon />}
+        onClick={toggleClick}
+        data-test="refreshResource">
+        {debugUntil ? (
+          <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
+        ) : 'Start debug'}
+      </TextButton>
+      <ArrowPopper
+        disabled={disabled}
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        restrictToParent={false}
+        classes={{
+          popper: classes.dateRangePopper,
+        }}
+        placement="bottom-end"
+        onClose={toggleClick}>
+        {anchorEl && (
         <div className={classes.dateRangePickerWrapper}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
@@ -198,7 +199,8 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
             </div>
           </div>
         </div>
-      )}
-    </ArrowPopper>
-  </>;
+        )}
+      </ArrowPopper>
+    </>
+  );
 }

@@ -65,7 +65,7 @@ export default function MultiApiSelect({ items, value: val, onClick}) {
             </CeligoTruncate>
           </Typography>
           <Radio
-            color="default"
+            color="primary"
             checked={value === id}
             className={classes.apiRadio}
             value={id}

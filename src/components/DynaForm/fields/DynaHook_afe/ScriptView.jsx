@@ -101,43 +101,45 @@ export default function ScriptView({
     value: script._id,
   })) || emptyList }], [allScripts]);
 
-  return <>
-    <div className={classes.field}>
-      <FormControl variant="standard" className={classes.select}>
-        <InputLabel htmlFor="scriptId">Script</InputLabel>
-        <DynaSelect
-          id="scriptId"
-          label="Scripts"
-          value={value._scriptId}
-          disabled={disabled}
-          isLoggable={isLoggable}
-          placeholder="None"
-          required={required}
-          isValid={isValidHookField('_scriptId')}
-          onFieldChange={handleFieldChange('_scriptId')}
-          options={options}
-          helpKey="api.scripts"
-          disablePortal={false} />
-      </FormControl>
-    </div>
-    <IconButtonWithTooltip
-      onClick={handleCreateScriptClick}
-      tooltipProps={{title: 'Create script'}}
-      disabled={disabled}
-      className={classes.hookActionBtnAdd}
-      data-test={id}>
-      <AddIcon />
-    </IconButtonWithTooltip>
-    <IconButtonWithTooltip
-      onClick={handleEditorClick}
-      tooltipProps={{title: 'Edit script'}}
-      disabled={disabled || !value._scriptId}
-      className={clsx(
-        classes.hookActionBtnAdd,
-        classes.hookActionBtnEdit
-      )}
-      data-test={id}>
-      <EditIcon />
-    </IconButtonWithTooltip>
-  </>;
+  return (
+    <>
+      <div className={classes.field}>
+        <FormControl variant="standard" className={classes.select}>
+          <InputLabel htmlFor="scriptId">Script</InputLabel>
+          <DynaSelect
+            id="scriptId"
+            label="Scripts"
+            value={value._scriptId}
+            disabled={disabled}
+            isLoggable={isLoggable}
+            placeholder="None"
+            required={required}
+            isValid={isValidHookField('_scriptId')}
+            onFieldChange={handleFieldChange('_scriptId')}
+            options={options}
+            helpKey="api.scripts"
+            disablePortal={false} />
+        </FormControl>
+      </div>
+      <IconButtonWithTooltip
+        onClick={handleCreateScriptClick}
+        tooltipProps={{title: 'Create script'}}
+        disabled={disabled}
+        className={classes.hookActionBtnAdd}
+        data-test={id}>
+        <AddIcon />
+      </IconButtonWithTooltip>
+      <IconButtonWithTooltip
+        onClick={handleEditorClick}
+        tooltipProps={{title: 'Edit script'}}
+        disabled={disabled || !value._scriptId}
+        className={clsx(
+          classes.hookActionBtnAdd,
+          classes.hookActionBtnEdit
+        )}
+        data-test={id}>
+        <EditIcon />
+      </IconButtonWithTooltip>
+    </>
+  );
 }

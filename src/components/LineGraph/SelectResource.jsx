@@ -130,19 +130,20 @@ export default function SelectResource(props) {
     });
   };
 
-  return <>
-    <OutlinedButton
-      onClick={toggleClick}
-      color="secondary"
-      className={classes.dateRangePopperBtn}>
-      {buttonName}
-    </OutlinedButton>
-    <ArrowPopper
-      open={!!anchorEl}
-      anchorEl={anchorEl}
-      placement="bottom-end"
-      onClose={toggleClick}>
-      {anchorEl && (
+  return (
+    <>
+      <OutlinedButton
+        onClick={toggleClick}
+        color="secondary"
+        className={classes.dateRangePopperBtn}>
+        {buttonName}
+      </OutlinedButton>
+      <ArrowPopper
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        placement="bottom-end"
+        onClose={toggleClick}>
+        {anchorEl && (
         <div className={classes.dateRangePickerWrapper}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
@@ -186,7 +187,8 @@ export default function SelectResource(props) {
             </div>
           </div>
         </div>
-      )}
-    </ArrowPopper>
-  </>;
+        )}
+      </ArrowPopper>
+    </>
+  );
 }

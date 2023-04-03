@@ -99,39 +99,41 @@ export default function DynaNetSuiteLookup_afe(props) {
     }));
   }, [dispatch, editorId, extractFields, formKey, flowId, handleSave, history, id, match.url, resourceContext.resourceType, resourceId, ssLinkedConnectionId]);
 
-  return <>
-    <FormControl variant="standard" className={classes.dynaNetsuiteLookupFormControl}>
-      <div className={classes.dynaNetsuiteLookupLabelWrapper}>
-        <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      <div className={classes.dynaNetsuiteFieldLookupWrapper}>
-        <div className={classes.dynaNetsuiteLookupField}>
-          <TextField
-            {...isLoggableAttr(isLoggable)}
-            key={id}
-            name={name}
-            className={classes.dynaNetsuiteLookupField}
-            placeholder={placeholder}
-            disabled
-            value={value}
-            variant="filled"
-          />
-          <FieldMessage
-            isValid={isValid}
-            description=""
-            errorMessages={errorMessages}
-          />
+  return (
+    <>
+      <FormControl variant="standard" className={classes.dynaNetsuiteLookupFormControl}>
+        <div className={classes.dynaNetsuiteLookupLabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
         </div>
-        <ActionButton
-          data-test={id}
-          onClick={handleEditorClick}
-          className={classes.dynaNetsuiteLookupActionBtn}>
-          <FilterIcon />
-        </ActionButton>
-      </div>
-    </FormControl>
-  </>;
+        <div className={classes.dynaNetsuiteFieldLookupWrapper}>
+          <div className={classes.dynaNetsuiteLookupField}>
+            <TextField
+              {...isLoggableAttr(isLoggable)}
+              key={id}
+              name={name}
+              className={classes.dynaNetsuiteLookupField}
+              placeholder={placeholder}
+              disabled
+              value={value}
+              variant="filled"
+          />
+            <FieldMessage
+              isValid={isValid}
+              description=""
+              errorMessages={errorMessages}
+          />
+          </div>
+          <ActionButton
+            data-test={id}
+            onClick={handleEditorClick}
+            className={classes.dynaNetsuiteLookupActionBtn}>
+            <FilterIcon />
+          </ActionButton>
+        </div>
+      </FormControl>
+    </>
+  );
 }

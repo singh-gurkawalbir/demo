@@ -120,7 +120,7 @@ export default function AgreeTOSAndPP() {
             data-test="agreeTOSAndPP"
             className={classes.consent}
             onFieldChange={handleToggle}
-            label={
+            label={(
               <Typography variant="body1">
                 I agree to the{' '}
                 <a
@@ -140,7 +140,7 @@ export default function AgreeTOSAndPP() {
                 </a>
                 .
               </Typography>
-            }
+            )}
             value={agree}
           />
           <div className={classes.line} />

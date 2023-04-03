@@ -69,34 +69,36 @@ export default function LogoStrip(props) {
   }, []);
   const open = !!anchorEl;
 
-  return <>
-    {applicationsCount > maxItems ? (
-      <Applications {...props} applications={apps}>
-        <IconButton
-          data-test="logoStrip"
-          className={classes.logoStripBtn}
-          aria-label="additional apps"
-          aria-controls="additionalApps"
-          aria-haspopup="true"
-          onClick={handleClick}
-          size="large">
-          <span>+{applicationsCount - apps.length}</span>
-        </IconButton>
-        <ArrowPopper
-          placement="bottom"
-          open={open}
-          anchorEl={anchorEl}
-          restrictToParent={false}
-          classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, appsPaper) }}
-          id="additionalApps"
-          onClose={handleClose}>
-          <Applications {...props} applications={additionalApps} className={classes.moreLogoStrip} />
-        </ArrowPopper>
-      </Applications>
-    ) : (
-      <Applications {...props} />
-    )}
-  </>;
+  return (
+    <>
+      {applicationsCount > maxItems ? (
+        <Applications {...props} applications={apps}>
+          <IconButton
+            data-test="logoStrip"
+            className={classes.logoStripBtn}
+            aria-label="additional apps"
+            aria-controls="additionalApps"
+            aria-haspopup="true"
+            onClick={handleClick}
+            size="large">
+            <span>+{applicationsCount - apps.length}</span>
+          </IconButton>
+          <ArrowPopper
+            placement="bottom"
+            open={open}
+            anchorEl={anchorEl}
+            restrictToParent={false}
+            classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, appsPaper) }}
+            id="additionalApps"
+            onClose={handleClose}>
+            <Applications {...props} applications={additionalApps} className={classes.moreLogoStrip} />
+          </ArrowPopper>
+        </Applications>
+      ) : (
+        <Applications {...props} />
+      )}
+    </>
+  );
 }
 
 LogoStrip.propTypes = {

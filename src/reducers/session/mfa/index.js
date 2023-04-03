@@ -28,6 +28,7 @@ export default (state = { codes: {}, sessionInfo: {} }, action) => {
         delete draft.codes.mobileCode;
         break;
       case actionTypes.MFA.SESSION_INFO.REQUEST:
+      case actionTypes.AUTH.VALIDATE_SESSION:
         draft.sessionInfo = {
           status: 'requested',
         };

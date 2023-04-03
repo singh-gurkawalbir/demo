@@ -142,38 +142,40 @@ export const GenericTypeableSelect = props => {
     </Option>
   );
 
-  return <>
-    <div className={classes.fullWidth}>
-      <FormLabel htmlFor={id} required={required} error={!isValid}>
-        {label}
-      </FormLabel>
-      <FieldHelp {...props} />
-    </div>
-    <FormControl
-      variant="standard"
-      className={classes.fullWidth}
-      error={!isValid}
-      disabled={disabled}
-      required={required}>
-      <span {...isLoggableAttr(isLoggable)}>
-        <Select
-          isDisabled={disabled}
-          isMulti
-          placeholder={placeholder}
-          components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
-          options={options}
-          value={value}
-          onChange={handleChange}
-          closeMenuOnSelect={false}
-          hideSelectedOptions={false}
-          styles={customStyles}
-          isSearchable={!unSearchable}
-          defaultMenuIsOpen={defaultMenuIsOpen}
+  return (
+    <>
+      <div className={classes.fullWidth}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <FormControl
+        variant="standard"
+        className={classes.fullWidth}
+        error={!isValid}
+        disabled={disabled}
+        required={required}>
+        <span {...isLoggableAttr(isLoggable)}>
+          <Select
+            isDisabled={disabled}
+            isMulti
+            placeholder={placeholder}
+            components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
+            options={options}
+            value={value}
+            onChange={handleChange}
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            styles={customStyles}
+            isSearchable={!unSearchable}
+            defaultMenuIsOpen={defaultMenuIsOpen}
    />
-      </span>
+        </span>
 
-      <FieldMessage {...props} />
-    </FormControl>
-  </>;
+        <FieldMessage {...props} />
+      </FormControl>
+    </>
+  );
 };
 
