@@ -1,9 +1,8 @@
 import React, {useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import Applications from './Applications';
 
 export const logoSizes = {
@@ -13,31 +12,19 @@ export const logoSizes = {
 };
 
 const useStyles = makeStyles(theme => ({
-  applicationsMenuPopper: {
-    border: 'none',
-  },
   applicationsMenuPaper: {
     right: styleProps => styleProps.additionalAppsCount >= styleProps.columns - 1 ? styleProps.pxSize : styleProps.pxSize / 2,
   },
   applicationsMenuPaperMax: {
     right: styleProps => styleProps.pxSize * 1.5,
   },
-  applicationsMenuPaperPlaceholder: {
-    position: 'relative',
-    maxHeight: styleProps => styleProps.pxSize * 4,
-    overflowY: 'auto',
-  },
   moreLogoStrip: {
     gridTemplateColumns: styleProps => `repeat(${styleProps.additionalAppsCount > styleProps.columns ? styleProps.columns : styleProps.additionalAppsCount}, ${styleProps.pxSize})`,
   },
   logoStripBtn: {
     padding: 0,
-    '& >* span': {
-      display: 'flex',
-      alignItems: 'center',
-      fontSize: styleProps => styleProps.pxSize / 2.5,
-      color: theme.palette.secondary.main,
-    },
+    fontSize: theme.spacing(2.5),
+    color: theme.palette.secondary.main,
   },
 }));
 
@@ -56,7 +43,6 @@ export default function LogoStrip(props) {
     pxSize,
   };
   const classes = useStyles(styleProps);
-  const appsPaper = additionalAppsCount > columns ? classes.applicationsMenuPaperMax : classes.applicationsMenuPaper;
 
   const handleClick = useCallback(
     event => {
@@ -81,14 +67,14 @@ export default function LogoStrip(props) {
             aria-haspopup="true"
             onClick={handleClick}
             size="large">
-            <span>+{applicationsCount - apps.length}</span>
+            <Box display="flex" flexDirection="column" alignItems="center" sx={{height: 24, width: 24}} >+{applicationsCount - apps.length}</Box>
           </IconButton>
           <ArrowPopper
             placement="bottom-end"
             open={open}
             anchorEl={anchorEl}
-            preventOverflow={false}
-            classes={{ popper: classes.applicationsMenuPopper, paper: clsx(classes.applicationsMenuPaperPlaceholder, appsPaper) }}
+            sx={{border: 'none'}}
+            offset={[10, 0]}
             id="additionalApps"
             onClose={handleClose}>
             <Applications {...props} applications={additionalApps} className={classes.moreLogoStrip} />
