@@ -1,26 +1,25 @@
-import { ThemeProvider, StyledEngineProvider } from '@mui/material';
+import { StyledEngineProvider } from '@mui/material';
+import { AppShell } from '@celigo/fuse-ui';
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import produce from 'immer';
-import themeProvider from '../theme/themeProvider';
 import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
 import rootReducer from '../reducers';
 
-const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
   const reduxStore = initialStore || getCreatedStore();
   const utils = renderFun(
     <Provider store={reduxStore}>
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
+        <AppShell>
           <SnackbarProvider>
             {ui}
           </SnackbarProvider>
-        </ThemeProvider>
+        </AppShell>
       </StyledEngineProvider>
     </Provider>
   );
