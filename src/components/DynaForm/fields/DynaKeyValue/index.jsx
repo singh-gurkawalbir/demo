@@ -202,69 +202,71 @@ export function KeyValueComponent(props) {
 
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
-  return <>
-    <FormControl
-      variant="standard"
-      disabled={disabled}
-      data-test={dataTest}
-      className={classes.container}>
-      <div className={classes.dynaKeyValueLabelWrapper}>
-        <FormLabel className={classes.label} required={required} error={!isValid}>{label}</FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      {showHeaderLabels && (
-      <div className={clsx(classes.rowContainer, classes.dynaValueTitle)}>
-        <FormLabel className={classes.label}>{keyLabel}</FormLabel>
-        <FormLabel className={classes.label}>{valueLabel}</FormLabel>
-      </div>
-      )}
-      <>
-        <SortableList
-          onSortEnd={handleSortEnd}
-          updateBeforeSortStart={handleSortStart}
-          axis="y"
-          useDragHandle>
-          {values.map((r, index) => (
-            <SortableItem
-              key={r.key}
-              disabled={!enableSorting || (!r[keyName] && !r[valueName])}
-              index={index}
-              hideSortableGhost={false}
-              value={(
-                <KeyValueRow
-                  {...props}
-                  isLoggable={isLoggable}
-                  suggestionConfig={suggestionConfig}
-                  isDragInProgress={dragItemIndex !== undefined}
-                  isRowDragged={dragItemIndex === index}
-                  disabled={disabled}
-                  keyName={keyName}
-                  valueName={valueName}
-                  keyPlaceholder={keyPlaceholder}
-                  index={index}
-                  handleUpdate={handleUpdate}
-                  rowInd={rowInd}
-                  handleKeyUpdate={handleKeyUpdate}
-                  handleValueUpdate={handleValueUpdate}
-                  showDelete={showDelete}
-                  handleDelete={handleDelete}
-                  isKey={isKey}
-                  classes={classes}
-                  r={r}
-                  enableSorting={enableSorting}
-                  showSortOrder={showSortOrder}
-                  handleEditorClick={handleEditorClick && handleEditorClickWithIndex}
-                  isEndSearchIcon={isEndSearchIcon}
-                  isInlineClose={isInlineClose}
+  return (
+    <>
+      <FormControl
+        variant="standard"
+        disabled={disabled}
+        data-test={dataTest}
+        className={classes.container}>
+        <div className={classes.dynaKeyValueLabelWrapper}>
+          <FormLabel className={classes.label} required={required} error={!isValid}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
+        {showHeaderLabels && (
+        <div className={clsx(classes.rowContainer, classes.dynaValueTitle)}>
+          <FormLabel className={classes.label}>{keyLabel}</FormLabel>
+          <FormLabel className={classes.label}>{valueLabel}</FormLabel>
+        </div>
+        )}
+        <>
+          <SortableList
+            onSortEnd={handleSortEnd}
+            updateBeforeSortStart={handleSortStart}
+            axis="y"
+            useDragHandle>
+            {values.map((r, index) => (
+              <SortableItem
+                key={r.key}
+                disabled={!enableSorting || (!r[keyName] && !r[valueName])}
+                index={index}
+                hideSortableGhost={false}
+                value={(
+                  <KeyValueRow
+                    {...props}
+                    isLoggable={isLoggable}
+                    suggestionConfig={suggestionConfig}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isRowDragged={dragItemIndex === index}
+                    disabled={disabled}
+                    keyName={keyName}
+                    valueName={valueName}
+                    keyPlaceholder={keyPlaceholder}
+                    index={index}
+                    handleUpdate={handleUpdate}
+                    rowInd={rowInd}
+                    handleKeyUpdate={handleKeyUpdate}
+                    handleValueUpdate={handleValueUpdate}
+                    showDelete={showDelete}
+                    handleDelete={handleDelete}
+                    isKey={isKey}
+                    classes={classes}
+                    r={r}
+                    enableSorting={enableSorting}
+                    showSortOrder={showSortOrder}
+                    handleEditorClick={handleEditorClick && handleEditorClickWithIndex}
+                    isEndSearchIcon={isEndSearchIcon}
+                    isInlineClose={isInlineClose}
              />
             )}
             />
-          ))}
-        </SortableList>
-      </>
-    </FormControl>
-    {!removeHelperText && <FieldMessage {...props} />}
-  </>;
+            ))}
+          </SortableList>
+        </>
+      </FormControl>
+      {!removeHelperText && <FieldMessage {...props} />}
+    </>
+  );
 }
 
 export default function DynaKeyValue(props) {

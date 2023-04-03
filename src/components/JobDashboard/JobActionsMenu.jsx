@@ -365,58 +365,60 @@ export default function JobActionsMenu({
     commStatusHandler: handleCommsStatus,
   });
 
-  return <>
-    {showRetriesDialog && (
+  return (
+    <>
+      {showRetriesDialog && (
       <JobRetriesDialog
         job={job}
         onCloseClick={handleJobRetriesDialogCloseClick}
         integrationName={integrationName}
       />
-    )}
-    {showFilesDownloadDialog && (
+      )}
+      {showFilesDownloadDialog && (
       <JobFilesDownloadDialog
         job={job}
         onCloseClick={handleJobFilesDownloadDialogCloseClick}
         integrationName={integrationName}
       />
-    )}
+      )}
 
-    <Menu
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={handleMenuClose}>
-      {menuOptions.map(opt => {
-        if (opt.action === 'runFlow') {
-          return (
-            <MenuItem key="runFlow">
-              <RunIcon />
-              <RunFlowButton
-                variant="text"
-                flowId={job._flowId}
-                onRunStart={handleRunStart}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}>
+        {menuOptions.map(opt => {
+          if (opt.action === 'runFlow') {
+            return (
+              <MenuItem key="runFlow">
+                <RunIcon />
+                <RunFlowButton
+                  variant="text"
+                  flowId={job._flowId}
+                  onRunStart={handleRunStart}
               />
+              </MenuItem>
+            );
+          }
+
+          return (
+            <MenuItem
+              key={opt.action}
+              onClick={() => {
+                handleActionClick(opt.action);
+              }}>
+              {opt.icon}{opt.label}
             </MenuItem>
           );
-        }
-
-        return (
-          <MenuItem
-            key={opt.action}
-            onClick={() => {
-              handleActionClick(opt.action);
-            }}>
-            {opt.icon}{opt.label}
-          </MenuItem>
-        );
-      })}
-    </Menu>
-    <IconButton
-      data-test="moreJobActionsMenu"
-      className={classes.iconBtn}
-      onClick={handleMenuClick}
-      disabled={menuOptions.length === 0}
-      size="large">
-      <EllipsisHorizontallIcon />
-    </IconButton>
-  </>;
+        })}
+      </Menu>
+      <IconButton
+        data-test="moreJobActionsMenu"
+        className={classes.iconBtn}
+        onClick={handleMenuClick}
+        disabled={menuOptions.length === 0}
+        size="large">
+        <EllipsisHorizontallIcon />
+      </IconButton>
+    </>
+  );
 }

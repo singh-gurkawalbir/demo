@@ -105,34 +105,35 @@ export default function DynaWebhookTokenGenerator(props) {
     }
   }, [finalResourceId, id, onFieldChange, webHookProvider, resourceId, url, value]);
 
-  return <>
-    <div className={classes.dynaWebhookTokenWrapper}>
-      <div className={classes.dynaWebhookTokenField}>
-        <DynaTextForSetFields
-          {...props}
-          isLoggable={false}
-          required
-          value={value}
-          setFieldIds={setFieldIds}
+  return (
+    <>
+      <div className={classes.dynaWebhookTokenWrapper}>
+        <div className={classes.dynaWebhookTokenField}>
+          <DynaTextForSetFields
+            {...props}
+            isLoggable={false}
+            required
+            value={value}
+            setFieldIds={setFieldIds}
       />
-        {value?.match(/^[A-Za-z0-9]/) && (
-        <FieldMessage
-          className={classes.warningText}
-          warningMessages={warningTextMessage} />
+          {value?.match(/^[A-Za-z0-9]/) && (
+          <FieldMessage
+            className={classes.warningText}
+            warningMessages={warningTextMessage} />
       )}
-      </div>
-      <div className={classes.dynaWebhookTokenbtn}>
-        {value?.match(/^[A-Za-z0-9]/) ? (
-          <CopyToClipboard
-            data-private
-            onCopy={handleCopy}
-            text={value}>
-            <IconButtonWithTooltip
-              tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
-              buttonSize={{size: 'small'}}>
-              <CopyIcon />
-            </IconButtonWithTooltip>
-          </CopyToClipboard>
+        </div>
+        <div className={classes.dynaWebhookTokenbtn}>
+          {value?.match(/^[A-Za-z0-9]/) ? (
+            <CopyToClipboard
+              data-private
+              onCopy={handleCopy}
+              text={value}>
+              <IconButtonWithTooltip
+                tooltipProps={{title: 'Copy to clipboard', placement: 'bottom'}}
+                buttonSize={{size: 'small'}}>
+                <CopyIcon />
+              </IconButtonWithTooltip>
+            </CopyToClipboard>
         ) : (
           <IconButtonWithTooltip
             tooltipProps={{title: buttonLabel, placement: 'bottom'}}
@@ -141,7 +142,8 @@ export default function DynaWebhookTokenGenerator(props) {
             <AddIcon />
           </IconButtonWithTooltip>
         )}
+        </div>
       </div>
-    </div>
-  </>;
+    </>
+  );
 }
