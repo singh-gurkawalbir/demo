@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import MultiSelectApplication from '.';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 const mockOnFieldChange = jest.fn();
 
@@ -10,7 +11,7 @@ function initMultiSelectApplication({props}) {
     <MultiSelectApplication {...props} />
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 
 // Mocking Field Help child component as part of unit testing

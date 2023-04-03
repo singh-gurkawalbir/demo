@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModalDialog from '.';
+import { renderWithProviders } from '../../test/test-utils';
 
 const mockReact = React;
 
@@ -19,7 +20,7 @@ jest.mock('@mui/material/IconButton', () => ({
 
 describe('modalDialog UI tests', () => {
   test('should not show the modal dialog when the prop "show" is false', () => {
-    const {container} = render(
+    const {container} = renderWithProviders(
       <ModalDialog show={false}>
         <div>child-1</div>
         <div>child-2</div>
@@ -30,7 +31,7 @@ describe('modalDialog UI tests', () => {
   });
 
   test('should show the modal when the prop "show" is true', () => {
-    render(
+    renderWithProviders(
       <ModalDialog show>
         <div>child-1</div>
         <div>child-2</div>
@@ -44,7 +45,7 @@ describe('modalDialog UI tests', () => {
   test('should click the close button', async () => {
     const onclose = jest.fn();
 
-    await render(
+    await renderWithProviders(
       <ModalDialog show onClose={onclose}>
         <div>child-1</div>
         <div>child-2</div>
@@ -65,7 +66,7 @@ describe('modalDialog UI tests', () => {
   test('should disable the close button', () => {
     const onclose = jest.fn();
 
-    render(
+    renderWithProviders(
       <ModalDialog show onClose={onclose} disableClose>
         <div>child-1</div>
         <div>child-2</div>
@@ -85,7 +86,7 @@ describe('modalDialog UI tests', () => {
   test('should click on the action handler function provided through prop', async () => {
     const actionhanlder = jest.fn();
 
-    render(
+    renderWithProviders(
       <ModalDialog show actionHandler={actionhanlder} actionLabel="actionLabel">
         <div>child-1</div>
         <div>child-2</div>

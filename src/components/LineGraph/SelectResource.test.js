@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SelectResource from './SelectResource';
+import { renderWithProviders } from '../../test/test-utils';
 
 const flowResources = [{_id: 's1', name: 'name'}, {_id: 's2'}, {_id: 's3'}, {_id: 's4'}, {_id: 's5'}, {_id: 's6'}, {_id: 's7'}, {_id: 's8'}, {_id: 's9'}];
 const selectedResources = ['s1', 's2'];
@@ -11,7 +12,7 @@ describe('selectResource UI Tests', () => {
   test('should select one more flow through checkbox', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
@@ -42,7 +43,7 @@ describe('selectResource UI Tests', () => {
   test('should click on the checked flow twice', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
@@ -72,7 +73,7 @@ describe('selectResource UI Tests', () => {
   test('should click the cancel button after selecting', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
@@ -112,7 +113,7 @@ describe('selectResource UI Tests', () => {
   test('should select one item in start', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
 
     const button = screen.getByText('name');
 
@@ -133,7 +134,7 @@ describe('selectResource UI Tests', () => {
   test('should select all 8 flows', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
 
     const button = screen.getByText('name');
 
@@ -156,7 +157,7 @@ describe('selectResource UI Tests', () => {
   test('should test when no flow is selected', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource onSave={onSave} />);
+    renderWithProviders(<SelectResource onSave={onSave} />);
     expect(screen.getByText('No flows selected')).toBeInTheDocument();
   });
 });

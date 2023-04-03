@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render, waitFor} from '@testing-library/react';
+import { screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../../test/test-utils';
@@ -129,7 +129,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType')).toBeInTheDocument();
     });
     test('should show the field type and input value when souce dropdown is hidden and lookup is not of dynamic type', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A"
         isTruncated
         fieldType="someFieldType"
@@ -138,7 +138,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType: A')).toBeInTheDocument();
     });
     test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A"
         isTruncated
         fieldType="someFieldType"
@@ -149,7 +149,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType: A')).toBeInTheDocument();
     });
     test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type duplicate', () => {
-      const utils = render(<TooltipTitle
+      const utils = renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -164,7 +164,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(utils.container.textContent).toBe('Source field / data type: A / string  B / number ');
     });
     test('should hide dropdown with message "Dynamic lookups values do not provide source field list"', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -177,7 +177,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
     });
     test('should hide dropdown with message "Hard-coded values do not provide source field list"', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -190,7 +190,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
     });
     test('should hide dropdown with message "Handlebars expression do not provide source field list"', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated

@@ -1,8 +1,8 @@
 
-import { render } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import AddButton from '.';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 const mockOnClick = jest.fn();
 
@@ -11,7 +11,7 @@ describe('Testsuite for Add Button', () => {
     mockOnClick.mockClear();
   });
   test('should test the add button when type is generator', async () => {
-    render(
+    renderWithProviders(
       <AddButton onClick={mockOnClick} type="generator" />
     );
     const buttonNode = document.querySelector('button[data-test="addGenerator"]');
@@ -21,7 +21,7 @@ describe('Testsuite for Add Button', () => {
     expect(mockOnClick).toBeCalled();
   });
   test('should test the add button when type is processor', async () => {
-    render(
+    renderWithProviders(
       <AddButton onClick={mockOnClick} type="processor" />
     );
     const buttonNode = document.querySelector('button[data-test="addProcessor"]');
@@ -31,7 +31,7 @@ describe('Testsuite for Add Button', () => {
     expect(mockOnClick).toBeCalled();
   });
   test('should test the add button when there is no type', async () => {
-    render(
+    renderWithProviders(
       <AddButton onClick={mockOnClick} type="" />
     );
     const buttonNode = document.querySelector('button[data-test="addProcessor"]');

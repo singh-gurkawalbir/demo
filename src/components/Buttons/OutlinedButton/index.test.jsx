@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {screen, render} from '@testing-library/react';
+import {screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import OutlinedButton from './index';
 import {renderWithProviders} from '../../../test/test-utils';
@@ -10,7 +10,7 @@ describe('outlined Button component test', () => {
   }
 
   test('passing string', () => {
-    const {container} = render(
+    const {container} = renderWithProviders(
       <MemoryRouter>
         <OutlinedButton
           data-test="saveAndClose"
@@ -55,7 +55,7 @@ describe('outlined Button component test', () => {
   });
 
   test('testing by className', () => {
-    const {container} = render(
+    const {container} = renderWithProviders(
       <MemoryRouter>
         <OutlinedButton
           data-test="saveAndClose"
