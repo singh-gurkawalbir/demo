@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import * as DynaText from './DynaText';
+import { renderWithProviders } from '../../../test/test-utils';
 
 const mockOnBlur = jest.fn();
 const mockOnTouch = jest.fn();
@@ -12,7 +13,7 @@ function initDynaTypeableSelect({props}) {
     <DynaTypeableSelect {...props} />
   );
 
-  render(ui);
+  renderWithProviders(ui);
 }
 
 describe('Testsuite for DynaTypeableSelect', () => {

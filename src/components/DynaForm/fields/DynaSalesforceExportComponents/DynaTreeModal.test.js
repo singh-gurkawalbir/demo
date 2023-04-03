@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-handler-names */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import DynaTreeModal from './DynaTreeModal';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 const mockOnFieldChange = jest.fn();
 
@@ -95,7 +96,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
       },
     };
 
-    render(
+    renderWithProviders(
       <DynaTreeModal {...props} />
     );
     expect(screen.getByText(/testing dyna text/i)).toBeInTheDocument();
@@ -119,7 +120,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
       },
     };
 
-    render(
+    renderWithProviders(
       <DynaTreeModal {...props} />
     );
     expect(screen.getByText(/testing dyna text/i)).toBeInTheDocument();
@@ -147,7 +148,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
       },
     };
 
-    render(
+    renderWithProviders(
       <DynaTreeModal {...props} />
     );
     expect(screen.getByText(/testing dyna text/i)).toBeInTheDocument();
@@ -177,7 +178,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
       },
     };
 
-    render(
+    renderWithProviders(
       <DynaTreeModal {...props} />
     );
     expect(screen.getByText(/testing dyna text/i)).toBeInTheDocument();
@@ -209,7 +210,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
       },
     };
 
-    render(
+    renderWithProviders(
       <DynaTreeModal {...props} />
     );
     expect(screen.getByText(/testing dyna text/i)).toBeInTheDocument();
@@ -240,7 +241,7 @@ describe('Testsuite for Dyna Tree Modal', () => {
       },
     };
 
-    render(
+    renderWithProviders(
       <DynaTreeModal {...props} />
     );
     expect(screen.getByText(/testing dyna text/i)).toBeInTheDocument();

@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTransformRules from './DynaTransformRules_afe';
 import actions from '../../../actions';
 import { IMPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
+import { renderWithProviders } from '../../../test/test-utils';
 
 const asyncHelperId = 'async-123';
 let mockSave = jest.fn();
@@ -73,7 +74,7 @@ describe('test suite for DynaTransformRules_afe', () => {
       label: 'Transform rules',
     };
 
-    render(<DynaTransformRules {...props} />);
+    renderWithProviders(<DynaTransformRules {...props} />);
     expect(screen.getByText(props.label)).toBeInTheDocument();
 
     const codeEditor = screen.getByTestId('codeEditor');
@@ -94,7 +95,7 @@ describe('test suite for DynaTransformRules_afe', () => {
       disabled: true,
     };
 
-    render(<DynaTransformRules {...props} />);
+    renderWithProviders(<DynaTransformRules {...props} />);
     const openAfeBtn = document.querySelector('[data-test="editTransformation"]');
 
     expect(openAfeBtn).toBeDisabled();
@@ -109,7 +110,7 @@ describe('test suite for DynaTransformRules_afe', () => {
       label: 'Transform rules',
     };
 
-    render(<DynaTransformRules {...props} />);
+    renderWithProviders(<DynaTransformRules {...props} />);
     const openAfeBtn = document.querySelector('[data-test="editTransformation"]');
 
     await userEvent.click(openAfeBtn);
@@ -140,7 +141,7 @@ describe('test suite for DynaTransformRules_afe', () => {
       onFieldChange,
     };
 
-    render(
+    renderWithProviders(
       <>
         <DynaTransformRules {...props} />
         <button type="button" onClick={() => mockSave({rule: 'sampleNewRule'})}>Save</button>

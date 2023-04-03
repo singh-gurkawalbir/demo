@@ -1,14 +1,15 @@
 
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import JobStatusWithTag from './JobStatusWithTag';
+import { renderWithProviders } from '../../../test/test-utils';
 
 function initJobStatusWithTag(props) {
   const ui = (
     <JobStatusWithTag {...props} />
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 
 describe('jobStatusWithTag test cases', () => {

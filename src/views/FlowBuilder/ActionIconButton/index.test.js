@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ActionIconButton from '.';
+import { renderWithProviders } from '../../../test/test-utils';
 
 function initActionIconButton({
   helpKey,
@@ -23,7 +24,7 @@ function initActionIconButton({
     </ActionIconButton>
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 jest.mock('../../../components/Help', () => ({
   __esModule: true,

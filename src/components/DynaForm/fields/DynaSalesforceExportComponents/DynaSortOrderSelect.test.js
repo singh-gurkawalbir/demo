@@ -1,14 +1,15 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import DynaSortOrderSelect from './DynaSortOrderSelect';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 const mockOnFieldChange = jest.fn();
 const mockOnOrderChange = jest.fn();
 const mockUnderScore = '_';
 
 function initDynaSortOrderSelect(props) {
-  render(<DynaSortOrderSelect {...props} />);
+  renderWithProviders(<DynaSortOrderSelect {...props} />);
 }
 
 jest.mock('../../FieldHelp', () => ({
