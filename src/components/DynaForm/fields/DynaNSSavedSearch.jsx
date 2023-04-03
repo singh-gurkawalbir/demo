@@ -120,70 +120,72 @@ export default function DynaNSSavedSearch(props) {
   }, [data, defaultValue, isSearchTypeSet, resourceId, setSearchType]);
   const savedSearchUrl = value && netSuiteSystemDomain ? `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value}` : null;
 
-  return <>
-    <div>
+  return (
+    <>
+      <div>
+        <FormControl
+          variant="standard"
+          required={required}
+          disabled={disabled}
+          className={classes.nsSavedSearch}
+          component="fieldset">
+          <div className={classes.radioGroupWrapper}>
+            <FormLabel component="legend" className={classes.radioGroupLabel}>
+              Saved search type:
+            </FormLabel>
+            {/* can be loggable in all circumstances? */}
+            <div className={classes.radioGroupWrapper} {...isLoggableAttr(isLoggable)}>
+              <RadioGroup
+                name="searchType"
+                defaultValue="public"
+                value={searchType}
+                data-test="netsuite.restlet.searchType"
+                onChange={handleChange}>
+                <FormControlLabel
+                  value="public"
+                  control={<Radio color="primary" />}
+                  label="Public"
+              />
+                <FormControlLabel
+                  value="private"
+                  control={<Radio color="primary" />}
+                  label="Private"
+                  className={classes.labelSpace}
+              />
+              </RadioGroup>
+              <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />
+            </div>
+          </div>
+        </FormControl>
+      </div>
       <FormControl
         variant="standard"
-        required={required}
-        disabled={disabled}
-        className={classes.nsSavedSearch}
-        component="fieldset">
-        <div className={classes.radioGroupWrapper}>
-          <FormLabel component="legend" className={classes.radioGroupLabel}>
-            Saved search type:
-          </FormLabel>
-          {/* can be loggable in all circumstances? */}
-          <div className={classes.radioGroupWrapper} {...isLoggableAttr(isLoggable)}>
-            <RadioGroup
-              name="searchType"
-              defaultValue="public"
-              value={searchType}
-              data-test="netsuite.restlet.searchType"
-              onChange={handleChange}>
-              <FormControlLabel
-                value="public"
-                control={<Radio color="primary" />}
-                label="Public"
-              />
-              <FormControlLabel
-                value="private"
-                control={<Radio color="primary" />}
-                label="Private"
-                className={classes.labelSpace}
-              />
-            </RadioGroup>
-            <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />
+        component="fieldset"
+        className={classes.dynaNsSearched}>
+        {searchType === 'public' ? (
+          <div className={classes.dynaNsInternalID}>
+            <DynaRefreshableSelect
+              {...searchIdOptions}
+              {...props}
+              ignoreValueUnset
+              resetValue={resetSearchIdValue}
+              urlToOpen={savedSearchUrl}
+              className={classes.dynaNsInternalID}
+              helpKey="export.netsuite.restlet.searchId"
+          />
           </div>
-        </div>
+        ) : (
+          <div className={classes.dynaNsInternalID}>
+            <DynaNSSavedSearchInternalID
+              {...searchInternalIdOptions}
+              {...props}
+              urlToOpen={savedSearchUrl}
+              className={classes.dynaNsInternalID}
+              helpKey="export.netsuite.restlet.searchInternalId"
+          />
+          </div>
+        )}
       </FormControl>
-    </div>
-    <FormControl
-      variant="standard"
-      component="fieldset"
-      className={classes.dynaNsSearched}>
-      {searchType === 'public' ? (
-        <div className={classes.dynaNsInternalID}>
-          <DynaRefreshableSelect
-            {...searchIdOptions}
-            {...props}
-            ignoreValueUnset
-            resetValue={resetSearchIdValue}
-            urlToOpen={savedSearchUrl}
-            className={classes.dynaNsInternalID}
-            helpKey="export.netsuite.restlet.searchId"
-          />
-        </div>
-      ) : (
-        <div className={classes.dynaNsInternalID}>
-          <DynaNSSavedSearchInternalID
-            {...searchInternalIdOptions}
-            {...props}
-            urlToOpen={savedSearchUrl}
-            className={classes.dynaNsInternalID}
-            helpKey="export.netsuite.restlet.searchInternalId"
-          />
-        </div>
-      )}
-    </FormControl>
-  </>;
+    </>
+  );
 }

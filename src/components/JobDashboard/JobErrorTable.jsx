@@ -422,131 +422,132 @@ export default function JobErrorTable({
     );
   }
 
-  return <>
-    {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-    <Spinner centerAll>
-      Uploading...
-    </Spinner>
-    )}
-    <ul className={classes.statusWrapper}>
-      <li>
-        Success: <span className={classes.success}>{job.numSuccess}</span>
-      </li>
-      <li>
-        Ignore: <span>{job.numIgnore}</span>
-      </li>
-      <li>
-        Error: <span className={classes.error}>{job.numError}</span>
-      </li>
-      <li>
-        Resolved: <span className={classes.resolved}>{job.numResolved}</span>
-      </li>
-      <li>
-        Duration: <span className={classes.darkGray}>{job.duration}</span>
-      </li>
-      <li>
-        Completed:{' '}
-        <span className={classes.darkGray}>
-          <DateTimeDisplay dateTime={job.endedAt} />
-        </span>
-      </li>
-    </ul>
-    {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
-
+  return (
+    <>
+      {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
       <Spinner centerAll>
-        Loading job errors
+        Uploading...
       </Spinner>
+      )}
+      <ul className={classes.statusWrapper}>
+        <li>
+          Success: <span className={classes.success}>{job.numSuccess}</span>
+        </li>
+        <li>
+          Ignore: <span>{job.numIgnore}</span>
+        </li>
+        <li>
+          Error: <span className={classes.error}>{job.numError}</span>
+        </li>
+        <li>
+          Resolved: <span className={classes.resolved}>{job.numResolved}</span>
+        </li>
+        <li>
+          Duration: <span className={classes.darkGray}>{job.duration}</span>
+        </li>
+        <li>
+          Completed:{' '}
+          <span className={classes.darkGray}>
+            <DateTimeDisplay dateTime={job.endedAt} />
+          </span>
+        </li>
+      </ul>
+      {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
-    ) : (
-      <>
-        <ActionGroup className={classes.btnsWrappper}>
-          <OutlinedButton
-            data-test="retryErroredJobs"
-            color="secondary"
-            onClick={handleRetryClick}
-            disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
-            { !job.flowDisabled && numSelectedRetriableErrors > 0
-              ? `Retry ${getTextAfterCount('error', numSelectedRetriableErrors)}`
-              : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
-          </OutlinedButton>
-          <OutlinedButton
-            data-test="markResolvedJobs"
-            color="secondary"
-            onClick={handleResolveClick}
-            disabled={isJobInProgress || !hasUnresolvedErrors}>
-            {numSelectedResolvableErrors > 1
-              ? `Mark resolved ${numSelectedResolvableErrors} errors`
-              : `${
-                numSelectedResolvableErrors === 1
-                  ? `Mark resolved ${numSelectedResolvableErrors} error`
-                  : 'Mark resolved'
-              }`}
-          </OutlinedButton>
-          <OutlinedButton
-            data-test="downloadAllErrors"
-            color="secondary"
-            onClick={handleDownloadAllErrorsClick}
-            disabled={isJobInProgress}>
-            Download all errors
-          </OutlinedButton>
-          <OutlinedButton
-            data-test="uploadProcessedErrors"
-            color="secondary"
-            disabled={isJobInProgress}
-            onClick={handleUploadProcessedErrors}>
-            Upload processed errors
-          </OutlinedButton>
-          <input
-            data-test="uploadFile"
-            id="fileUpload"
-            type="file"
-            ref={uploadFileRef}
-            className={classes.fileInput}
-            onChange={handleFileChosen}
+        <Spinner centerAll>
+          Loading job errors
+        </Spinner>
+
+      ) : (
+        <>
+          <ActionGroup className={classes.btnsWrappper}>
+            <OutlinedButton
+              data-test="retryErroredJobs"
+              color="secondary"
+              onClick={handleRetryClick}
+              disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
+              { !job.flowDisabled && numSelectedRetriableErrors > 0
+                ? `Retry ${getTextAfterCount('error', numSelectedRetriableErrors)}`
+                : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
+            </OutlinedButton>
+            <OutlinedButton
+              data-test="markResolvedJobs"
+              color="secondary"
+              onClick={handleResolveClick}
+              disabled={isJobInProgress || !hasUnresolvedErrors}>
+              {numSelectedResolvableErrors > 1
+                ? `Mark resolved ${numSelectedResolvableErrors} errors`
+                : `${
+                  numSelectedResolvableErrors === 1
+                    ? `Mark resolved ${numSelectedResolvableErrors} error`
+                    : 'Mark resolved'
+                }`}
+            </OutlinedButton>
+            <OutlinedButton
+              data-test="downloadAllErrors"
+              color="secondary"
+              onClick={handleDownloadAllErrorsClick}
+              disabled={isJobInProgress}>
+              Download all errors
+            </OutlinedButton>
+            <OutlinedButton
+              data-test="uploadProcessedErrors"
+              color="secondary"
+              disabled={isJobInProgress}
+              onClick={handleUploadProcessedErrors}>
+              Upload processed errors
+            </OutlinedButton>
+            <input
+              data-test="uploadFile"
+              id="fileUpload"
+              type="file"
+              ref={uploadFileRef}
+              className={classes.fileInput}
+              onChange={handleFileChosen}
           />
-        </ActionGroup>
+          </ActionGroup>
 
-        {jobErrorsInCurrentPage.length === 0 ? (
-          <>
-            <Divider className={classes.downloadOnlyDivider} />
-            <Typography>
-              Please use the &apos;Download all errors&apos; button above to
-              view the errors for this job.
-            </Typography>
-          </>
-        ) : (
-          <>
-            <TablePagination
-              classes={{ root: classes.tablePaginationRoot }}
-              rowsPerPageOptions={[rowsPerPage]}
-              component="div"
-              rowsPerPage={rowsPerPage}
-              count={jobErrors.length}
-              page={currentPage}
-              backIconButtonProps={{
-                'aria-label': 'Previous Page',
-              }}
-              nextIconButtonProps={{
-                'aria-label': 'Next Page',
-              }}
-              onPageChange={handleChangePage}
+          {jobErrorsInCurrentPage.length === 0 ? (
+            <>
+              <Divider className={classes.downloadOnlyDivider} />
+              <Typography>
+                Please use the &apos;Download all errors&apos; button above to
+                view the errors for this job.
+              </Typography>
+            </>
+          ) : (
+            <>
+              <TablePagination
+                classes={{ root: classes.tablePaginationRoot }}
+                rowsPerPageOptions={[rowsPerPage]}
+                component="div"
+                rowsPerPage={rowsPerPage}
+                count={jobErrors.length}
+                page={currentPage}
+                backIconButtonProps={{
+                  'aria-label': 'Previous Page',
+                }}
+                nextIconButtonProps={{
+                  'aria-label': 'Next Page',
+                }}
+                onPageChange={handleChangePage}
             />
 
-            <CeligoTable
-              className={classes.celigoTableWrapper}
-              data={customCloneDeep(jobErrorsData)}
-              selectableRows={
+              <CeligoTable
+                className={classes.celigoTableWrapper}
+                data={customCloneDeep(jobErrorsData)}
+                selectableRows={
                 !isJobInProgress && hasUnresolvedErrorsInCurrentPage
               }
-              isSelectableRow={r =>
-                r.metadata && r.metadata.isParent && !r.resolved}
-              onSelectChange={handleJobErrorSelectChange}
-              useColumns={() => [
-                {
-                  key: 'expandClick',
-                  heading: '',
-                  isLoggable: true,
-                  Value: ({rowData: r}) =>
+                isSelectableRow={r =>
+                  r.metadata && r.metadata.isParent && !r.resolved}
+                onSelectChange={handleJobErrorSelectChange}
+                useColumns={() => [
+                  {
+                    key: 'expandClick',
+                    heading: '',
+                    isLoggable: true,
+                    Value: ({rowData: r}) =>
                     r.similarErrors?.length > 0 && (
                       <IconButton
                         data-test="expandJobsErrors"
@@ -560,68 +561,69 @@ export default function JobErrorTable({
                           <ChevronRight />
                         )}
                       </IconButton>
-                    ),
-                },
-                {
-                  key: 'resolved',
-                  heading: 'Resolved?',
-                  align: 'center',
-                  isLoggable: true,
-                  Value: ({rowData: r}) => r.resolved
-                    ? (<span className={classes.resolved}>Yes</span>)
-                    : (<span className={classes.error}>No</span>),
-                },
-                {
-                  key: 'source',
-                  heading: 'Source',
-                  width: '15%',
-                  Value: ({rowData: r}) => r.source && (<span className={classes.code}>{r.source}</span>),
-                },
-                {
-                  key: 'code',
-                  heading: 'Code',
-                  align: 'left',
-                  width: '15%',
-                  Value: ({rowData: r}) => r.code && (<span className={classes.code}>{r.code}</span>),
-                },
-                {
-                  key: 'message',
-                  heading: 'Message',
-                  width: '30%',
-                  Value: ({rowData: r}) => (
-                    <JobErrorMessage
-                      message={r.message}
-                      exportDataURI={r.exportDataURI}
-                      importDataURI={r.importDataURI}
+                      ),
+                  },
+                  {
+                    key: 'resolved',
+                    heading: 'Resolved?',
+                    align: 'center',
+                    isLoggable: true,
+                    Value: ({rowData: r}) => r.resolved
+                      ? (<span className={classes.resolved}>Yes</span>)
+                      : (<span className={classes.error}>No</span>),
+                  },
+                  {
+                    key: 'source',
+                    heading: 'Source',
+                    width: '15%',
+                    Value: ({rowData: r}) => r.source && (<span className={classes.code}>{r.source}</span>),
+                  },
+                  {
+                    key: 'code',
+                    heading: 'Code',
+                    align: 'left',
+                    width: '15%',
+                    Value: ({rowData: r}) => r.code && (<span className={classes.code}>{r.code}</span>),
+                  },
+                  {
+                    key: 'message',
+                    heading: 'Message',
+                    width: '30%',
+                    Value: ({rowData: r}) => (
+                      <JobErrorMessage
+                        message={r.message}
+                        exportDataURI={r.exportDataURI}
+                        importDataURI={r.importDataURI}
                     />
-                  ),
-                },
-                {
-                  key: 'time',
-                  heading: 'Time',
-                  width: '15%',
-                  isLoggable: true,
-                  Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
-                },
-                {
-                  key: 'retryData',
-                  heading: 'Retry data',
-                  align: 'center',
-                  isLoggable: true,
-                  Value: ({rowData: r}) => (
-                    <EditRetryCell
-                      retryId={r._retryId}
-                      isEditable={r.metadata?.isParent &&
+                    ),
+                  },
+                  {
+                    key: 'time',
+                    heading: 'Time',
+                    width: '15%',
+                    isLoggable: true,
+                    Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
+                  },
+                  {
+                    key: 'retryData',
+                    heading: 'Retry data',
+                    align: 'center',
+                    isLoggable: true,
+                    Value: ({rowData: r}) => (
+                      <EditRetryCell
+                        retryId={r._retryId}
+                        isEditable={r.metadata?.isParent &&
                     r.retryObject?.isDataEditable}
-                      isDownloadable={r.retryObject?.isDownloadable}
-                      dateTime={r.createdAt} />
-                  ),
-                },
-              ]}
+                        isDownloadable={r.retryObject?.isDownloadable}
+                        dateTime={r.createdAt} />
+                    ),
+                  },
+                ]}
             />
-          </>
-        )}
-      </>
-    )}
-  </>;
+            </>
+          )}
+        </>
+      )}
+    </>
+  );
 }

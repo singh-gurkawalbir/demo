@@ -178,16 +178,17 @@ export default function JobDetail({
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
   }
 
-  return <>
-    <TableRow>
-      <TableCell
-        className={clsx({
-          [classes.checkActionBorder]: isSelected && expanded && job.children,
-          [jobDetailsClasses.checkActionBorder]: isSelected && expanded && job.children,
-        })}>
-        <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
-          <li>
-            {job.uiStatus !== JOB_STATUS.QUEUED && (
+  return (
+    <>
+      <TableRow>
+        <TableCell
+          className={clsx({
+            [classes.checkActionBorder]: isSelected && expanded && job.children,
+            [jobDetailsClasses.checkActionBorder]: isSelected && expanded && job.children,
+          })}>
+          <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
+            <li>
+              {job.uiStatus !== JOB_STATUS.QUEUED && (
               <IconButton
                 data-test="toggleJobDetail"
                 className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
@@ -195,60 +196,60 @@ export default function JobDetail({
                 size="large">
                 <RowIcon expanded={expanded} childLoaded={job.children} />
               </IconButton>
-            )}
-          </li>
-          <li>
-            <Checkbox
-              disabled={!(job.retriable || job.numError)}
-              checked={isSelected}
-              className={clsx(classes.checkIcon, jobDetailsClasses.checkIcon)}
-              color="primary"
-              onChange={event => handleSelectChange(event)}
+              )}
+            </li>
+            <li>
+              <Checkbox
+                disabled={!(job.retriable || job.numError)}
+                checked={isSelected}
+                className={clsx(classes.checkIcon, jobDetailsClasses.checkIcon)}
+                color="primary"
+                onChange={event => handleSelectChange(event)}
             />
-          </li>
-        </ul>
-      </TableCell>
-      <TableCell className={classes.name} data-test={job.name || job._flowId}>
-        {job.name || job._flowId}
-      </TableCell>
-      <TableCell className={classes.status}>
-        <JobStatus job={job} />
-      </TableCell>
-      <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
-      <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-      <ErrorCountCell
-        count={job.numError}
-        isJobInProgress={isJobInProgress}
-        isError
-        onClick={() => handleViewErrorsClick(false)}
-        className={clsx(classes.error, jobDetailsClasses.error, {
-          [classes.errorCount]: job.numError > 0,
-        })}
+            </li>
+          </ul>
+        </TableCell>
+        <TableCell className={classes.name} data-test={job.name || job._flowId}>
+          {job.name || job._flowId}
+        </TableCell>
+        <TableCell className={classes.status}>
+          <JobStatus job={job} />
+        </TableCell>
+        <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
+        <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
+        <ErrorCountCell
+          count={job.numError}
+          isJobInProgress={isJobInProgress}
+          isError
+          onClick={() => handleViewErrorsClick(false)}
+          className={clsx(classes.error, jobDetailsClasses.error, {
+            [classes.errorCount]: job.numError > 0,
+          })}
          />
-      <ErrorCountCell
-        count={job.numResolved}
-        isJobInProgress={isJobInProgress}
-        onClick={() => handleViewErrorsClick(true)}
-        className={clsx(classes.resolved, {
-          [classes.resolvedCount]: job.numResolved > 0,
-        })}
+        <ErrorCountCell
+          count={job.numResolved}
+          isJobInProgress={isJobInProgress}
+          onClick={() => handleViewErrorsClick(true)}
+          className={clsx(classes.resolved, {
+            [classes.resolvedCount]: job.numResolved > 0,
+          })}
          />
-      <TableCell className={classes.pages}>{getPages(job)}</TableCell>
-      <TableCell className={classes.duration}>{job.duration}</TableCell>
-      <TableCell className={classes.completed}>
-        <DateTimeDisplay dateTime={job.endedAt} />
-      </TableCell>
-      <TableCell className={classes.actions}>
-        <JobActionsMenu
-          job={job}
-          userPermissionsOnIntegration={userPermissionsOnIntegration}
-          integrationName={integrationName}
-          isFlowBuilderView={isFlowBuilderView}
+        <TableCell className={classes.pages}>{getPages(job)}</TableCell>
+        <TableCell className={classes.duration}>{job.duration}</TableCell>
+        <TableCell className={classes.completed}>
+          <DateTimeDisplay dateTime={job.endedAt} />
+        </TableCell>
+        <TableCell className={classes.actions}>
+          <JobActionsMenu
+            job={job}
+            userPermissionsOnIntegration={userPermissionsOnIntegration}
+            integrationName={integrationName}
+            isFlowBuilderView={isFlowBuilderView}
         />
-      </TableCell>
-    </TableRow>
+        </TableCell>
+      </TableRow>
 
-    {expanded &&
+      {expanded &&
       job.children &&
       job.children.map(cJob => (
         <ChildJobDetail
@@ -263,5 +264,6 @@ export default function JobDetail({
           isFlowBuilderView={isFlowBuilderView}
         />
       ))}
-  </>;
+    </>
+  );
 }

@@ -168,39 +168,40 @@ export default function StartDebugEnhanced({
     setValue(evt.target.value);
   }, []);
 
-  return <>
-    <TextButton
-      disabled={disabled}
-      onClick={toggleClick}
-      startIcon={<DebugIcon />}
-      className={classes.debugButton}
-      data-test="refreshResource">
-      {activeDebugUntil ? (
-        <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
-      ) : 'Start debug'}
-    </TextButton>
+  return (
+    <>
+      <TextButton
+        disabled={disabled}
+        onClick={toggleClick}
+        startIcon={<DebugIcon />}
+        className={classes.debugButton}
+        data-test="refreshResource">
+        {activeDebugUntil ? (
+          <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
+        ) : 'Start debug'}
+      </TextButton>
 
-    {!!activeDebugUntil && (
-    <TextButton
-      disabled={disabled}
-      startIcon={<CancelIcon />}
-      className={clsx(classes.debugButton, classes.stopDebugButton)}
-      onClick={handleStopDebug} >
-      Stop debug
-    </TextButton>
-    )}
-    <ArrowPopper
-      disabled={disabled}
-      open={!!anchorEl}
-      anchorEl={anchorEl}
-      restrictToParent={false}
-      classes={{
-        popper: classes.dateRangePopper,
-        arrow: classes.dateRangePopperArrow,
-      }}
-      placement="bottom-end"
-      onClose={toggleClick}>
-      {anchorEl && (
+      {!!activeDebugUntil && (
+      <TextButton
+        disabled={disabled}
+        startIcon={<CancelIcon />}
+        className={clsx(classes.debugButton, classes.stopDebugButton)}
+        onClick={handleStopDebug} >
+        Stop debug
+      </TextButton>
+      )}
+      <ArrowPopper
+        disabled={disabled}
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        restrictToParent={false}
+        classes={{
+          popper: classes.dateRangePopper,
+          arrow: classes.dateRangePopperArrow,
+        }}
+        placement="bottom-end"
+        onClose={toggleClick}>
+        {anchorEl && (
         <div className={classes.dateRangePickerWrapper}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
@@ -226,9 +227,9 @@ export default function StartDebugEnhanced({
                   </CeligoSelect>
                 </FormControl>
                 {!!pastDebugUntil && (
-                  <div className={classes.lastDebug}>
-                    Last debug: <TimeAgo date={pastDebugUntil} formatter={lastRunFormatter} />
-                  </div>
+                <div className={classes.lastDebug}>
+                  Last debug: <TimeAgo date={pastDebugUntil} formatter={lastRunFormatter} />
+                </div>
                 )}
 
               </div>
@@ -245,9 +246,10 @@ export default function StartDebugEnhanced({
             </div>
           </div>
         </div>
-      )}
-    </ArrowPopper>
-  </>;
+        )}
+      </ArrowPopper>
+    </>
+  );
 }
 
 StartDebugEnhanced.propTypes = {

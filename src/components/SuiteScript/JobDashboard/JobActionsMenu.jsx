@@ -236,28 +236,30 @@ export default function JobActionsMenu({
     commStatusHandler: handleCommsStatus,
   });
 
-  return <>
-    <Menu
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={handleMenuClose}>
-      {menuOptions.map(opt => (
-        <MenuItem
-          key={opt.action}
-          onClick={() => {
-            handleActionClick(opt.action);
-          }}>
-          {opt.label}
-        </MenuItem>
-      ))}
-    </Menu>
-    <IconButton
-      data-test="moreJobActionsMenu"
-      className={classes.iconBtn}
-      onClick={handleMenuClick}
-      disabled={menuOptions.length === 0}
-      size="large">
-      <EllipsisHorizontallIcon />
-    </IconButton>
-  </>;
+  return (
+    <>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}>
+        {menuOptions.map(opt => (
+          <MenuItem
+            key={opt.action}
+            onClick={() => {
+              handleActionClick(opt.action);
+            }}>
+            {opt.label}
+          </MenuItem>
+        ))}
+      </Menu>
+      <IconButton
+        data-test="moreJobActionsMenu"
+        className={classes.iconBtn}
+        onClick={handleMenuClick}
+        disabled={menuOptions.length === 0}
+        size="large">
+        <EllipsisHorizontallIcon />
+      </IconButton>
+    </>
+  );
 }

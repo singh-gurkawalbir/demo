@@ -35,8 +35,9 @@ export default function ChipInput(props) {
     setIsChipView(false);
   };
 
-  return <>
-    {isChipView && (
+  return (
+    <>
+      {isChipView && (
       <Chip
         {...props}
         onClick={disabled ? () => {} : handleTagClick}
@@ -45,8 +46,8 @@ export default function ChipInput(props) {
         size="small"
         icon={<EditIcon />}
       />
-    )}
-    {!isChipView && (
+      )}
+      {!isChipView && (
       <TextField
         variant="standard"
         disabled={disabled}
@@ -56,6 +57,7 @@ export default function ChipInput(props) {
         className={classes.textField}
         //   onChange={handleTagChange}
         onBlur={handleBlur} />
-    )}
-  </>;
+      )}
+    </>
+  );
 }
