@@ -55,17 +55,7 @@ export default {
           ],
         },
       ],
-      defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
-
-        if (baseUri) {
-          if (baseUri.includes('box')) {
-            return 'sandbox';
-          }
-        }
-
-        return 'production';
-      },
+      defaultValue: r => r?.http?.unencrypted?.environment || 'production',
     },
     'http.unencrypted.tpl': {
       id: 'http.unencrypted.tpl',
