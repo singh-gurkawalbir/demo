@@ -35,6 +35,7 @@ const CONFIRM_REMOVE = 'Are you sure you want to remove this resource?';
 const NO_DEBUG_LOG = 'You don’t have any debug log entries.';
 const COMPONENT_INFO = 'The following components are created with this integration:';
 const KEY_COLUMN_DEPRECATION = 'You’re using a deprecated option “Key Columns” to group your records. Use the new and improved option in the “How would you like to sort and group records” section. Your group settings may be affected when you use the new sorting and grouping option.';
+const PREVIEW_FAILED = 'Failed to fetch preview data.';
 
 const MARKETPLACE = {
   HELPINFO: 'Jump-start your integrations with our Quickstart integration templates. Explore new or install your existing licensed integration apps.',
@@ -111,6 +112,10 @@ const USER_SIGN_IN = {
   SESSION_EXPIRED: 'For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.',
   CACHED: 'It looks like your browser has cached an older version of our app.Click \'Reload\' to refresh the page.',
   OWNER_ACCOUNT: 'You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.',
+  SIGNIN_FAILED: 'Sign in failed. Please try again.',
+  SIGNIN_REQUIRED: '{{label}} is required.',
+  INVALID_FIRST_LAST_NAME: 'Please enter your first and last name.',
+  INVALID_EMAIL: 'Please enter a valid email address',
 };
 // end region
 
@@ -210,9 +215,9 @@ const LCM = {
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
   NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: `You don't have any data to pull. Learn more about <a target='_blank' href=${REVISIONS_GUIDE_URL}> cloning and pulling your integrations</>.`,
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
-  PULL_MERGE_ERROR: 'The merging of your pull request was unsuccessful.',
+  PULL_MERGE_ERROR: 'The merge of your pull was unsuccessful. Try your pull again.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
-  REVERT_ERROR: 'You were unable to revert your changes successfully.',
+  REVERT_ERROR: 'Your revert was unsuccessful. Try reverting again.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   CREATE_SNAPSHOT_FORM_HELPINFO: 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
@@ -269,10 +274,6 @@ const MFA = {
   OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
   USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
   USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
-  NEW_PASSWORD_EMPTY: 'New password is required',
-  CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
-  INVALID_EMAIL: 'Please enter a valid email address.',
-  EMAIL_EMPTY: 'Email is required.',
   SSO_SIGN_UP: 'This is an SSO sign-up. Make sure you have access to <a className="link" href=ssoLink>this</a> SSO provider',
   INSTALL_AUTHENTICATOR: 'Install any authenticator app that supports TOTP protocol or time-based one time password.',
   SCAN_QR: ' Scan the QR code below with your verification app. Once your app reads the QR code, you\'ll get a 6-digit code.',
@@ -425,6 +426,7 @@ const messages = {
   RESOURCE,
   ADDONS,
   KEY_COLUMN_DEPRECATION,
+  PREVIEW_FAILED,
   CONNECTION,
   NO_RESULT,
   PLAYGROUND,

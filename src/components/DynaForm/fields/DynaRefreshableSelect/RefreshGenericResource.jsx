@@ -64,6 +64,7 @@ export default function RefreshGenericResource(props) {
     removeRefresh = false,
     urlToOpen,
     value,
+    className,
   } = props;
 
   const classes = useStyles();
@@ -133,7 +134,7 @@ export default function RefreshGenericResource(props) {
       <FormControl
         key={id}
         disabled={disabled}
-        className={classes.refreshGenericResourceWrapper}>
+        className={clsx(classes.refreshGenericResourceWrapper, className)}>
 
         <div className={classes.refreshRoot}>
           {cloneElement(children, {

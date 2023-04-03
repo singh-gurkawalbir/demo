@@ -6,6 +6,7 @@ import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/t
 import actions from '../../../../actions';
 import * as mockEnqueSnackbar from '../../../../hooks/enqueueSnackbar';
 
+const formKey = 'form_key';
 const mockDispatchFn = jest.fn();
 const enqueueSnackbar = jest.fn();
 const mockOnFieldChange = jest.fn();
@@ -46,6 +47,10 @@ mutateStore(initialStore, draft => {
         },
       },
     },
+  };
+
+  draft.session.form[formKey] = {
+    showValidationBeforeTouched: true,
   };
 });
 function initDynaRefreshableStaticMap(props = {}) {
@@ -94,6 +99,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       valueResource: {virtual: { key: '_valuekey'}},
       filterKey: 'suitescript-recordTypes',
       disableFetch: true,
+      formKey: 'form_key',
     };
 
     initDynaRefreshableStaticMap(genralProps);
@@ -149,6 +155,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
       resourceContext: {resourceId: '_integrationId', resourceType: 'integrations'},
       filterKey: 'suitescript-recordTypes',
       disableFetch: false,
+      formKey: 'form_key',
     };
 
     initDynaRefreshableStaticMap(genralProps);
@@ -170,4 +177,3 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     );
   });
 });
-

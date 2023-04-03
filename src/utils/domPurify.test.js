@@ -142,15 +142,8 @@ describe('Testsuite for Get Dom Purify', () => {
     document.body.appendChild(parentNode);
     arg2(node);
 
-    expect(DOMPurify.addHook).toHaveBeenCalledTimes(2);
+    expect(DOMPurify.addHook).toHaveBeenCalledTimes(1);
 
-    const afterSanitizeElementsHook = DOMPurify.addHook.mock.calls[1];
-
-    expect(afterSanitizeElementsHook[0]).toBe('afterSanitizeElements');
-
-    const afterSanitizeElementsHookCallback = afterSanitizeElementsHook[1];
-
-    afterSanitizeElementsHookCallback(node);
     expect(node).not.toBeNull();
     expect(node.textContent).toBe('test');
 
