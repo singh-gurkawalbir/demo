@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
-  fieldsWithRemoveDelete,
+  handleIsRemoveLogic,
 } from '../../forms/formFactory/utils';
 import { commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
@@ -56,12 +56,11 @@ export function* createFormValuesPatchSet({
     resourceId
   );
   let finalValues = values;
-  const formKey = yield select(
-    selectors.formKey,
+  const formData = yield select(
+    selectors.formContext,
     resourceType,
     resourceId
   );
-  const data = yield select(selectors.formState, formKey);
   let connection;
   let assistantData;
 
@@ -109,7 +108,7 @@ export function* createFormValuesPatchSet({
 
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
-    finalValues = fieldsWithRemoveDelete(data.fields, finalValues);
+    finalValues = handleIsRemoveLogic(formData.fields, finalValues);
   }
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),

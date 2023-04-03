@@ -9,7 +9,7 @@ import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, fieldsWithRemoveDelete, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, handleIsRemoveLogic, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isSapByDesignSoapConnection, isEbayFinanceConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
@@ -96,7 +96,7 @@ export default function FormView(props) {
     });
     let finalValues = preSave(formContext.value, staggedRes, { connection });
 
-    finalValues = fieldsWithRemoveDelete(formContext.fields, finalValues);
+    finalValues = handleIsRemoveLogic(formContext.fields, finalValues);
 
     const newFinalValues = {...finalValues};
 
