@@ -27,7 +27,7 @@ export default {
   'restlet-recordTypes': data =>
     Array.isArray(data) &&
     data
-      .filter(item => !item?.doesNotSupportSearch)
+      .filter(item => !item.doesNotSupportSearch)
       .map(item => ({
         label: item.name,
         value: item.scriptId && item.scriptId.toLowerCase(),
@@ -117,7 +117,7 @@ export default {
   'webservices-recordTypes': data =>
     data
       .filter(
-        item => !item?.doesNotSupportSearch,
+        item => !item.doesNotSupportSearch,
       )
       .map(item => ({
         label: item.label,
