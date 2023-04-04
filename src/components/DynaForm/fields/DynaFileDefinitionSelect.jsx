@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import DynaSelect from './DynaSelect';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import Spinner from '../../Spinner';
 
 export default function DynaFileDefinitionSelect(props) {
   const { format, onFieldChange } = props;

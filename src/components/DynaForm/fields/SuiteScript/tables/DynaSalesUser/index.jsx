@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import Spinner from '../../../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import CeligoTable from '../../../../../CeligoTable';
 import metadata from './metadata';
 import DynaSelect from '../../../DynaSelect';

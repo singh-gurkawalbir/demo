@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
-import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader'; import OutlinedButton from '../../../../../../../components/Buttons/OutlinedButton';
 import { message } from '../../../../../../../utils/messageStore';
 

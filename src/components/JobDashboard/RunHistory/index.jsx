@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { FormControlLabel, Checkbox, MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
+import {Box, Spinner} from '@celigo/fuse-ui';
 import CeligoSelect from '../../CeligoSelect';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -13,7 +14,6 @@ import RefreshIcon from '../../icons/RefreshIcon';
 import { addDataRetentionPeriods, getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
-import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
@@ -261,7 +261,11 @@ export default function RunHistory({ flowId, className }) {
           </ActionGroup>
         </>
       </div>
-      {isLoadingHistory ? <Spinner loading size="large" />
+      {isLoadingHistory ? (
+        <Box display="flex" justifyContent="center">
+          <Spinner size="large" />
+        </Box>
+      )
         : (
           <JobTable
             classes={classes.jobTable}

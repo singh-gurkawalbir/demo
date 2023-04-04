@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import TrashIcon from '../../../../icons/TrashIcon';
@@ -11,7 +12,6 @@ import DynaTypeableSelect from '../../DynaTypeableSelect';
 import DynaSelect from '../../DynaSelect';
 import DynaText from '../../DynaText';
 import {operators, operatorsByFieldType} from './operators';
-import Spinner from '../../../../Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 
@@ -52,9 +52,6 @@ const useStyles = makeStyles(theme => ({
   headerName: {
     width: '100%',
     wordBreak: 'break-word',
-  },
-  spinnerSearchCriteria: {
-    maxWidth: theme.spacing(3),
   },
   deleteButton: {
     marginTop: theme.spacing(1),
@@ -249,7 +246,7 @@ export default function SearchCriteriaEditor(props) {
           <div className={classes.childHeader} key={header.name}>
             <span className={classes.headerName}>{header.name}</span>
             {header.refreshable && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
-            {header.refreshable && status === 'requested' && <Spinner className={classes.spinnerSearchCriteria} />}
+            {header.refreshable && status === 'requested' && <Spinner sx={{maxWidth: 24}} />}
           </div>
         ))}
       </div>

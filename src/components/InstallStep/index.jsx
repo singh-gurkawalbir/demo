@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
 import { INSTALL_STEP_TYPES } from '../../constants';
@@ -10,7 +11,6 @@ import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import InfoIconButton from '../InfoIconButton';
-import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
 import getImageUrl from '../../utils/image';
 

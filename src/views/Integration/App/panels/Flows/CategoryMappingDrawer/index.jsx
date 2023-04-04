@@ -15,11 +15,11 @@ import {
   AccordionDetails,
   AccordionSummary,
 } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';
-import Spinner from '../../../../../../components/Spinner';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
 import RestoreIcon from '../../../../../../components/icons/RestoreIcon';

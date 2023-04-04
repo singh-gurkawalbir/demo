@@ -7,6 +7,7 @@ import {
   Breadcrumbs,
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -23,7 +24,6 @@ import {
 } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
 import Loader from '../../components/Loader';
-import Spinner from '../../components/Spinner';
 import { getApplication } from '../../utils/template';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { capitalize } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import DateFilter from '../commonCells/DateFilter';
@@ -8,7 +9,6 @@ import cancelReport from './actions/cancelReport';
 import downloadResults from './actions/downloadResults';
 import viewReport from './actions/viewReport';
 import DateTimeDisplay from '../../DateTimeDisplay';
-import Spinner from '../../Spinner';
 import CeligoTruncate from '../../CeligoTruncate';
 import {EVENT_REPORTS_DEFAULT} from '../../DynaForm/fields/integrations/DynaReportDateRange';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';

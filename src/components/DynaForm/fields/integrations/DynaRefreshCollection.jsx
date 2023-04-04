@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FormControl from '@mui/material/FormControl';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import Spinner from '../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import DynaMultiSelect from '../DynaMultiSelect';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import ActionButton from '../../../ActionButton';

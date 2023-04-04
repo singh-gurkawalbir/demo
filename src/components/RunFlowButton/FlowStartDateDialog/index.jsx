@@ -1,12 +1,12 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ModalDialog from '../../ModalDialog';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
-import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import adjustTimezone from '../../../utils/adjustTimezone';
 import { convertUtcToTimezone } from '../../../utils/date';

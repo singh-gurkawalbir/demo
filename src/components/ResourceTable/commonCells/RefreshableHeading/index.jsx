@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { IconButton } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
-import Spinner from '../../../Spinner';
 import { selectors } from '../../../../reducers';
 import ActionGroup from '../../../ActionGroup';
 
@@ -13,9 +13,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
-  },
-  statusSpinner: {
-    marginLeft: theme.spacing(1),
   },
   refreshIconButton: {
     marginLeft: theme.spacing(1),
@@ -37,7 +34,7 @@ export default function RefreshableHeading({label, resourceType}) {
     <ActionGroup>
       {label}
       {(refreshRequested && isResourceCollectionLoading)
-        ? <Spinner className={classes.statusSpinner} size="small" />
+        ? <Spinner size="small" sx={{ml: 1}} />
         : (
           <IconButton
             data-test="refreshStatus"

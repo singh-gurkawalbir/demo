@@ -2,9 +2,9 @@ import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import Spinner from '../../components/Spinner';
 import { FilledButton } from '../../components/Buttons';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 

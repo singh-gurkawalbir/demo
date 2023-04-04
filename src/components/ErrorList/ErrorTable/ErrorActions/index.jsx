@@ -5,12 +5,12 @@ import MenuItem from '@mui/material/MenuItem';
 import clsx from 'clsx';
 import { Tooltip, Typography } from '@mui/material';
 import { isEqual } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import { FILTER_KEYS, MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
-import Spinner from '../../../Spinner';
 import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
 import { message } from '../../../../utils/messageStore';
 
@@ -29,9 +29,6 @@ const useStyles = makeStyles(theme => ({
   },
   resolveBtn: {
     minWidth: 120,
-  },
-  loading: {
-    verticalAlign: 'middle',
   },
   noPadding: {
     '& >.MuiSelect-selectMenu': {
@@ -126,7 +123,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearc
       value="">
       <MenuItem value="" disabled >
         { isRetryInProgress
-          ? <Spinner size="small" className={classes.loading}><Typography className={classes.spinnerLable}>Retry</Typography></Spinner>
+          ? <Spinner size="small" sx={{verticalAlign: 'middle'}}><Typography className={classes.spinnerLable}>Retry</Typography></Spinner>
           : 'Retry'}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedRetriableErrorCount}>
@@ -194,7 +191,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApp
       value="">
       <MenuItem value="" disabled>
         { isResolveInProgress
-          ? <Spinner size="small" className={classes.loading}><Typography className={classes.spinnerLable}>Resolve</Typography></Spinner>
+          ? <Spinner size="small" sx={{verticalAlign: 'middle'}}><Typography className={classes.spinnerLable}>Resolve</Typography></Spinner>
           : 'Resolve'}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedErrorCount}>

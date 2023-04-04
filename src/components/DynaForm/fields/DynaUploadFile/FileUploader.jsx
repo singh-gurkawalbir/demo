@@ -3,10 +3,10 @@ import Button from '@mui/material/Button';
 import makeStyles from '@mui/styles/makeStyles';
 import { FormControl, FormLabel } from '@mui/material';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
-import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {

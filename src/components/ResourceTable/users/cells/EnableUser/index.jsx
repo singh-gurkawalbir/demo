@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import { ACCOUNT_IDS } from '../../../../../constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
@@ -8,7 +9,6 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
-import Spinner from '../../../../Spinner';
 
 export default function EnableUser({ user }) {
   const { confirmDialog } = useConfirmDialog();

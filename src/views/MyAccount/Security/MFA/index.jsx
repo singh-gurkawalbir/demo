@@ -2,10 +2,10 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import CeligoSwitch from '../../../../components/CeligoSwitch';
 import PanelHeader from '../../../../components/PanelHeader';
 import Help from '../../../../components/Help';
-import Spinner from '../../../../components/Spinner';
 import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -134,7 +134,7 @@ function MFADetails() {
       <>
         <div className={classes.collapseContainer}>
           <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
+            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center /> }
           </CollapsableContainer>
         </div>
         <div className={classes.collapseContainer}>
@@ -146,7 +146,7 @@ function MFADetails() {
 
   return (
     <div className={classes.collapseContainer}>
-      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />}
+      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center />}
     </div>
   );
 }

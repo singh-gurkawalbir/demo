@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { Spinner } from '@celigo/fuse-ui';
 import ActionGroup from '../ActionGroup';
-import Spinner from '../Spinner';
 import { FORM_SAVE_STATUS } from '../../constants';
 import {FilledButton, OutlinedButton, TextButton} from '../Buttons';
 

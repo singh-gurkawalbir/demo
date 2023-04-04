@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
-import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { message } from '../../../../../../../utils/messageStore';

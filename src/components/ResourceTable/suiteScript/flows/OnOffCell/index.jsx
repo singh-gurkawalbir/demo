@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import CeligoSwitch from '../../../../CeligoSwitch';
-import Spinner from '../../../../Spinner';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
@@ -10,9 +10,6 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
     marginTop: theme.spacing(1),
-  },
-  spinnerOnOff: {
-    marginLeft: 12,
   },
 }));
 
@@ -52,7 +49,7 @@ export default function OnOffCell({ ssLinkedConnectionId, flow, tooltip }) {
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner className={classes.spinnerOnOff} />;
+    return <Spinner sx={{ml: 1.5}} />;
   }
 
   return (

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import SignUp from './SignUpForm';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -9,7 +10,6 @@ import { emptyObject } from '../../constants';
 import RawHtml from '../../components/RawHtml';
 import UserSignInPage from '../../components/UserSignInPage';
 import NotificationToaster from '../../components/NotificationToaster';
-import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import {message as messageStoreMessage} from '../../utils/messageStore';
 

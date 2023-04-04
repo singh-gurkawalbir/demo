@@ -2,12 +2,12 @@ import React, { useEffect, Fragment } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import {useRouteMatch} from 'react-router-dom';
+import { Box, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
-import Spinner from '../../../Spinner';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 import NoResultTypography from '../../../NoResultTypography';
 import messageStore from '../../../../utils/messageStore';
@@ -67,7 +67,11 @@ export default function RunningFlows() {
   return (
     <>
       <div className={classes.root}>
-        {isRunningJobsCollectionLoading ? (<Spinner loading size="large" />) : (
+        {isRunningJobsCollectionLoading ? (
+          <Box display="flex" justifyContent="center">
+            <Spinner size="large" />
+          </Box>
+        ) : (
           <>
             <Filters
               filterKey={filterKey} />

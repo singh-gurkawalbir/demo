@@ -2,7 +2,7 @@ import React, { useEffect, useState, cloneElement, useCallback, useMemo } from '
 import FormControl from '@mui/material/FormControl';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
-import Spinner from '../../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import DynaSelect from '../../DynaSelect';
 import DynaMultiSelect from '../../DynaMultiSelect';

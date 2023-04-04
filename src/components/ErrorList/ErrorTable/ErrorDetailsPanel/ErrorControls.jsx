@@ -2,11 +2,11 @@ import { Typography } from '@mui/material';
 // import { useStyles } from '@mui/lab';
 import clsx from 'clsx';
 import React from 'react';
+import { Spinner } from '@celigo/fuse-ui';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import TextButton from '../../../Buttons/TextButton';
 import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../icons/ArrowRightIcon';
-import Spinner from '../../../Spinner';
 import { useHandleNextAndPreviousError } from '../hooks/useHandleNextAndPreviousError';
 
 export default function ErrorControls({

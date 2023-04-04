@@ -6,10 +6,10 @@ import { IconButton } from '@mui/material';
 import {
   isBoolean,
 } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FilterPanel from '../../AFE/Editor/panels/NetSuiteLookupFilter';
-import Spinner from '../../Spinner';
 import RefreshIcon from '../../icons/RefreshIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 

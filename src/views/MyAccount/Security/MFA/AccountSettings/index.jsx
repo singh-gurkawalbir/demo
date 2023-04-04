@@ -1,10 +1,10 @@
 import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box, Spinner } from '@celigo/fuse-ui';
 import CollapsableContainer from '../../../../../components/CollapsableContainer';
 import useForm from '../../../../../components/Form';
 import DynaForm from '../../../../../components/DynaForm';
-import Spinner from '../../../../../components/Spinner';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -94,7 +94,9 @@ export default function AccountSettings() {
   if (!areAccountSettingsLoaded) {
     return (
       <CollapsableContainer title="Account settings" forceExpand>
-        <Spinner loading size="large" />
+        <Box display="flex" justifyContent="center">
+          <Spinner size="large" />
+        </Box>
       </CollapsableContainer>
     );
   }

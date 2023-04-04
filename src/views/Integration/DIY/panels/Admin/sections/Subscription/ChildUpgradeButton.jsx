@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
-import Spinner from '../../../../../../../components/Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
