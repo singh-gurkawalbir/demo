@@ -3,7 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
-import ArrowPopper from '../ArrowPopper';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
@@ -48,8 +48,6 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '100%',
   },
   dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
     padding: theme.spacing(2),
     maxWidth: 600,
     '&>div': {
@@ -82,9 +80,6 @@ const useStyles = makeStyles(theme => ({
   selectResourceCheck: {
     marginTop: theme.spacing(-0.5),
     marginRight: theme.spacing(0.5),
-  },
-  multiSelectFilterPopper: {
-    top: '5px !important',
   },
   checkAction: {
     listStyle: 'none',
@@ -222,14 +217,10 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom"
-        restrictToParent={false}
-        classes={{
-          popper: classes.multiSelectFilterPopper,
-          arrow: classes.multiSelectFilterPopperArrow,
-        }}
+        preventOverflow={false}
         onClose={toggleClick}>
         {anchorEl && (
-        <div className={classes.dateRangePickerWrapper}>
+        <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
               <FormControl variant="standard" component="fieldset" className={classes.formControl}>
@@ -284,7 +275,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
               </ActionGroup>
             </div>
           </div>
-        </div>
+        </Box>
         )}
       </ArrowPopper>
     </>

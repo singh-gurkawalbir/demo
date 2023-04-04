@@ -6,8 +6,8 @@ import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useSelector, shallowEqual } from 'react-redux';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
-import ArrowPopper from '../ArrowPopper';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import CancelIcon from '../icons/CancelIcon';
@@ -31,8 +31,6 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
     padding: theme.spacing(2),
     minWidth: 224,
   },
@@ -46,11 +44,6 @@ const useStyles = makeStyles(theme => ({
   row: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  dateRangePopper: {
-    zIndex: 1300,
-    left: '45px !important',
-    top: '5px !important',
   },
   dropdown: {
     marginTop: '0px !important',
@@ -69,10 +62,6 @@ const useStyles = makeStyles(theme => ({
       fontSize: 18,
     },
   },
-  dateRangePopperArrow: {
-    left: '110px !important',
-  },
-
 }));
 
 const MenuProps = {
@@ -194,15 +183,10 @@ export default function StartDebugEnhanced({
         disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
-        classes={{
-          popper: classes.dateRangePopper,
-          arrow: classes.dateRangePopperArrow,
-        }}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
-        {anchorEl && (
-        <div className={classes.dateRangePickerWrapper}>
+        <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
               <div className={classes.row}>
@@ -245,8 +229,7 @@ export default function StartDebugEnhanced({
               </ActionGroup>
             </div>
           </div>
-        </div>
-        )}
+        </Box>
       </ArrowPopper>
     </>
   );

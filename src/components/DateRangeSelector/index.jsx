@@ -279,7 +279,7 @@ export default function DateRangeSelector({
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
+        preventOverflow={false}
         placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (

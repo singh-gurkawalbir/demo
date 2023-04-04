@@ -4,9 +4,9 @@ import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import ArrowPopper from '../ArrowPopper';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import ActionGroup from '../ActionGroup';
@@ -28,11 +28,6 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '1fr',
   },
-  dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-  },
   actions: {
     marginTop: theme.spacing(2),
   },
@@ -43,9 +38,6 @@ const useStyles = makeStyles(theme => ({
   row: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  dateRangePopper: {
-    zIndex: 1300,
   },
   dropdown: {
     marginTop: '0px !important',
@@ -154,14 +146,10 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
         disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
-        classes={{
-          popper: classes.dateRangePopper,
-        }}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
-        {anchorEl && (
-        <div className={classes.dateRangePickerWrapper}>
+        <Box display="flex" flexDirection="column" sx={{padding: 2}}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
               <div className={classes.row}>
@@ -198,8 +186,7 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
               </ActionGroup>
             </div>
           </div>
-        </div>
-        )}
+        </Box>
       </ArrowPopper>
     </>
   );
