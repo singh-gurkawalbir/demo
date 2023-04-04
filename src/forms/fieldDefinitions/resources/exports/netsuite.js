@@ -19,7 +19,7 @@ export default {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
-    filterKey: 'suitescript-recordTypes',
+    filterKey: 'restlet-recordTypes',
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
@@ -30,9 +30,6 @@ export default {
       { field: 'netsuite.api.type', is: ['restlet'] },
       { field: 'netsuite.execution.type', is: ['scheduled'] },
     ],
-    OperationsOnItems: {
-      filterBy: value => !value?.doesNotSupportSearch,
-    },
   },
   'netsuite.webservices.recordType': {
     isLoggable: true,
@@ -56,9 +53,6 @@ export default {
       r.netsuite.searches &&
       r.netsuite.searches[0] &&
       r.netsuite.searches[0].recordType,
-    OperationsOnItems: {
-      filterBy: value => !value?.doesNotSupportSearch,
-    },
   },
   // execution context
   'netsuite.distributed.executionContext': {
