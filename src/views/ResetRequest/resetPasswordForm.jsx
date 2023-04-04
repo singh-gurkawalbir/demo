@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link} from 'react-router-dom';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
@@ -14,11 +15,14 @@ import ShowErrorMessage from '../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import DynaPassword from '../../components/DynaForm/fields/DynaPassword';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   submit: {
     marginTop: 30,
   },
-});
+  cancelBtn: {
+    fontSize: theme.spacing(2),
+  },
+}));
 
 export default function ResetPassword() {
   const {token} = useParams();
@@ -97,7 +101,7 @@ export default function ResetPassword() {
           color="primary"
           component={Link}
           role="link"
-          className={classes.submit}
+          className={clsx(classes.submit, classes.cancelBtn)}
           submit
         >
           Cancel

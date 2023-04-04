@@ -33,6 +33,7 @@ import {
   constructSuiteScriptResourceFromFormValues,
 } from '../../utils';
 import { evaluateExternalProcessor } from '../../editor';
+import { message } from '../../../utils/messageStore';
 
 const formKey = 'form-123';
 const resourceId = 'export-123';
@@ -67,6 +68,16 @@ describe('resourceFormSampleData sagas', () => {
 
       expectSaga(_handlePreviewError, { e, resourceId })
         .put(actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedMessage))
+        .run();
+    });
+    test('should dispatch receivedPreviewError action when there is a internal server error', () => {
+      const e = {
+        status: 500,
+        message: '{"message":"any message", "code":"code"}',
+      };
+
+      expectSaga(_handlePreviewError, { e, resourceId })
+        .put(actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED}))
         .run();
     });
   });

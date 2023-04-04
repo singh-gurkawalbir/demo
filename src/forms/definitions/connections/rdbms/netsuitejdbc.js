@@ -1,16 +1,13 @@
-import { deepClone } from 'fast-json-patch';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
   preSave: formValues => {
-    const newValues = deepClone(formValues);
+    const newValues = {...formValues};
 
     const roleId = newValues['/netsuite/token/auto/roleId'];
     const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
 
     if (newValues['/netsuite/authType'] === 'token') {
-      newValues['/netsuite/environment'] =
-        newValues['/netsuite/tokenEnvironment'];
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
 
@@ -53,7 +50,6 @@ export default {
     delete newValues['/netsuite/roleId'];
     delete newValues['/netsuite/token/auto/roleId'];
     delete newValues['/netsuite/token/auto/account'];
-    delete newValues['/netsuite/tokenEnvironment'];
     delete newValues['/jdbc/StaticSchema'];
     delete newValues['/jdbc/serverDataSource'];
     delete newValues['/rdbms/concurrencyLevel'];
@@ -113,10 +109,6 @@ export default {
       },
     },
     'jdbc.authType': { fieldId: 'jdbc.authType'},
-    'netsuite.tokenEnvironment': {
-      fieldId: 'netsuite.tokenEnvironment',
-      visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
-    },
     'netsuite.tokenAccount': {
       id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
@@ -216,7 +208,6 @@ export default {
           },
           { fields: [
             'jdbc.authType',
-            'netsuite.tokenEnvironment',
             'netsuite.tokenAccount',
             'netsuite.token.auto.account',
             'netsuite.token.auto.roleId',
