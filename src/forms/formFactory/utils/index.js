@@ -36,9 +36,7 @@ export const handleIsRemoveLogic = (fields, values) => {
     const valueKeys = valkey.replaceAll('/', '.');
 
     newValues[key] = (valueKeys in fieldsNew && (fieldsNew[valueKeys].remove || fieldsNew[valueKeys].isRemove)) ? undefined : newValues[key];
-  });
-  Object.keys(fieldsNew).forEach(key => {
-    (fieldsNew[key].delete || fieldsNew[key].isDelete) ? delete newValues[`/${(key.replaceAll('.', '/'))}`] : '';
+    (fieldsNew[valueKeys]?.delete || fieldsNew[valueKeys]?.isDelete) ? delete newValues[key] : null;
   });
 
   return newValues;
