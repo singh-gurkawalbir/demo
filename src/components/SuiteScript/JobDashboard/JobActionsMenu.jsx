@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import Menu from '@mui/material/Menu';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import makeStyles from '@mui/styles/makeStyles';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -238,7 +238,7 @@ export default function JobActionsMenu({
 
   return (
     <>
-      <Menu
+      <ArrowPopper
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}>
@@ -251,7 +251,7 @@ export default function JobActionsMenu({
             {opt.label}
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
       <IconButton
         data-test="moreJobActionsMenu"
         className={classes.iconBtn}
