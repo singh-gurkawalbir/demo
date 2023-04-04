@@ -174,11 +174,6 @@ export default function TemplatePreview() {
   };
 
   const handleInstallIntegration = () => {
-    if (template._connectorId) {
-      installTemplate();
-
-      return;
-    }
     installTemplate();
   };
 
