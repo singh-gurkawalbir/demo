@@ -73,6 +73,45 @@ export default {
       options: { settings, contextData: context },
     };
   },
+  getChatOptions: () => ({
+    model: 'gpt-3.5-turbo',
+    temperature: 0.2,
+    top_p: 1,
+    max_tokens: 512,
+    messages: [
+      {
+        role: 'system',
+        content:
+        "you are an assistant to build filter rules for celigo's integrator.io product. Do not output any explanations. Only output valid json.",
+      },
+      {
+        role: 'user',
+        content: 'only process records where type = adjustment',
+      },
+      {
+        role: 'assistant',
+        content: '["equals",["string",["extract","Type"]],"Adjustment"]',
+      },
+      {
+        role: 'user',
+        content: 'only process records where isDelete is true',
+      },
+      {
+        role: 'assistant',
+        content: '["equals",["string",["extract","isDelete"]],"true"]',
+      },
+      {
+        role: 'user',
+        content:
+        'only process records where CreditMemoData.length > 0 and charge != yes',
+      },
+      {
+        role: 'assistant',
+        content:
+        '["and",["greaterthan",["number",["extract","CreditMemoData.length"]],0],["notequals",["string",["extract","CHARGE"]],"YES"]]',
+      },
+    ],
+  }),
   validateRule: (editor, rule) => {
     const isValid = util.validateJsonString(rule);
 
@@ -91,7 +130,7 @@ export default {
       typeof editor.data !== 'object' && util.validateJsonString(editor.data),
     ruleError: editor.isInvalid ? 'Invalid rule' : undefined,
   }),
-  processResult: (editor, {data}) => {
+  processResult: (editor, { data }) => {
     let outputMessage = '';
 
     if (data) {
@@ -102,6 +141,6 @@ export default {
       }
     }
 
-    return {data: outputMessage};
+    return { data: outputMessage };
   },
 };

@@ -1690,10 +1690,11 @@ const editor = {
   saveComplete: id => action(actionTypes.EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
-  AI: {
-    request: (id, prompt) => action(actionTypes.EDITOR.AI.REQUEST, {id, prompt }),
-    complete: id => action(actionTypes.EDITOR.AI.COMPLETE, { id }),
-    failed: (id, error) => action(actionTypes.EDITOR.AI.FAILED, {id, error }),
+  CHAT: {
+    request: (id, prompt) => action(actionTypes.EDITOR.CHAT.REQUEST, {id, prompt }),
+    complete: id => action(actionTypes.EDITOR.CHAT.COMPLETE, { id }),
+    failed: (id, error) => action(actionTypes.EDITOR.CHAT.FAILED, {id, error }),
+    patchMessages: (id, messages) => action(actionTypes.EDITOR.CHAT.PATCH_MESSAGES, {id, messages }),
   },
 };
 // #endregion

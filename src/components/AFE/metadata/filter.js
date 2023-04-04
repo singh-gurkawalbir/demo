@@ -42,9 +42,6 @@ export default {
         title: 'Celigo chat bot',
         area: 'chat',
         Panel: ChatBotPanel,
-        props: {
-          mode: 'text',
-        },
       });
     }
 

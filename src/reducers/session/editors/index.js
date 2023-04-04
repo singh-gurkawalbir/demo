@@ -8,10 +8,9 @@ import { toggleData } from './processorLogic/settingsForm';
 
 const emptyObj = {};
 
-export const AI_STATUS = {
+export const CHAT_STATUS = {
   IDLE: 'idle',
   PENDING: 'pending',
-  COMPLETE: 'complete',
   FAILED: 'failed',
 };
 
@@ -48,13 +47,19 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.INIT: {
         // initStatus is used to determine if parent url
         // redirection needs to happen or not on page refresh
-        draft[id] = { initStatus: 'inProgress' };
+        draft[id] = { initStatus: 'inProgress',
+        };
         break;
       }
 
       case actionTypes.EDITOR.INIT_COMPLETE: {
-        console.log('INIT_COMPLETE', id, options);
-        draft[id] = options;
+        draft[id] = {...options,
+          chat: {
+            formKey: `chat-${id}`,
+            status: CHAT_STATUS.IDLE,
+            options: processorLogic.getChatOptions(options.editorType),
+          },
+        };
         break;
       }
 
@@ -338,22 +343,22 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.EDITOR.AI.REQUEST: {
-        draft[id].ai = {};
-        draft[id].ai.status = AI_STATUS.PENDING;
-        draft[id].ai.errors = null;
+      case actionTypes.EDITOR.CHAT.REQUEST: {
+        draft[id].chat.status = CHAT_STATUS.PENDING;
+        draft[id].chat.errors = null;
+
         break;
       }
 
-      case actionTypes.EDITOR.AI.FAILED: {
-        draft[id].ai.status = AI_STATUS.FAILED;
-        draft[id].ai.errors = error;
+      case actionTypes.EDITOR.CHAT.FAILED: {
+        draft[id].chat.status = CHAT_STATUS.FAILED;
+        draft[id].chat.errors = error;
         break;
       }
 
-      case actionTypes.EDITOR.AI.COMPLETE: {
-        draft[id].ai.status = AI_STATUS.COMPLETE;
-        draft[id].ai.errors = null;
+      case actionTypes.EDITOR.CHAT.COMPLETE: {
+        draft[id].chat.status = CHAT_STATUS.IDLE;
+        draft[id].chat.errors = null;
         break;
       }
 
@@ -448,11 +453,11 @@ selectors.editorViolations = (state, id) => processorLogic.validate(state?.[id])
 
 selectors.isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
 
-selectors.editorAIState = (state, id) => {
-  if (!state) return;
+selectors.editorChatState = (state, id) => {
+  if (!state) return emptyObj;
 
   const editor = state[id];
 
-  return editor?.ai || emptyObj;
+  return editor?.chat || emptyObj;
 };
 // #endregion

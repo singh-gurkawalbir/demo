@@ -10,50 +10,14 @@ import DynaForm from '../../../../DynaForm';
 import SettingsIcon from '../../../../icons/SettingsIcon';
 import Spinner from '../../../../Spinner';
 
-const defaultMessages = [
-  {
-    role: 'system',
-    content:
-      "you are an assistant to build filter rules for celigo's integrator.io product. Do not output any explanations. Only output valid json.",
-  },
-  {
-    role: 'user',
-    content: 'only process records where type = adjustment',
-  },
-  {
-    role: 'assistant',
-    content:
-      '{"rules":["equals",["string",["extract","Type"]],"Adjustment"],"version":"1"}',
-  },
-  {
-    role: 'user',
-    content: 'only process records where isDelete is true',
-  },
-  {
-    role: 'assistant',
-    content:
-      '{"rules":["equals",["string",["extract","isDelete"]],"true"],"version":"1"}',
-  },
-  {
-    role: 'user',
-    content:
-      'only process records where CreditMemoData.length > 0 and charge != yes',
-  },
-  {
-    role: 'assistant',
-    content:
-      '{"rules":["and",["greaterthan",["number",["extract","CreditMemoData.length"]],0],["notequals",["string",["extract","CHARGE"]],"YES"]],"version":"1"}',
-  },
-];
-
-const fieldMeta = editorClassName => ({
+const fieldMeta = (chatOptions, editorClassName) => ({
   fieldMap: {
     model: {
       id: 'model',
       name: 'model',
       label: 'model',
       type: 'text',
-      defaultValue: 'gpt-3.5-turbo',
+      defaultValue: chatOptions.model,
       readOnly: true,
     },
     temperature: {
@@ -62,7 +26,7 @@ const fieldMeta = editorClassName => ({
       label: 'temperature',
       type: 'text',
       required: true,
-      defaultValue: 0.2,
+      defaultValue: chatOptions.temperature,
       helpText:
         'Between 0 and 2. Higher values like 0.8 will make the output more random, while lower values will make it more focused and deterministic. We recommend altering this or top_p but not both.',
     },
@@ -71,7 +35,7 @@ const fieldMeta = editorClassName => ({
       name: 'top_p',
       label: 'top_p',
       type: 'text',
-      defaultValue: 1,
+      defaultValue: chatOptions.top_p,
       helpText:
         'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. We generally recommend altering this or temperature but not both.',
     },
@@ -81,7 +45,7 @@ const fieldMeta = editorClassName => ({
       label: 'max_tokens',
       type: 'text',
       inputType: 'number',
-      defaultValue: 512,
+      defaultValue: chatOptions.max_tokens,
       helpText:
         'The maximum number of tokens to generate in the chat completion.  The total length of input tokens and generated tokens is limited by the model`s context length.',
     },
@@ -91,7 +55,7 @@ const fieldMeta = editorClassName => ({
       label: 'messages',
       type: 'editor',
       mode: 'json',
-      defaultValue: JSON.stringify(defaultMessages, null, 2),
+      defaultValue: JSON.stringify(chatOptions.messages, null, 2),
       editorClassName,
     },
   },
@@ -106,19 +70,19 @@ const useStyles = makeStyles({
 export default function ChatBotPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const formKey = `${editorId}-chatbot-settings`;
 
-  const [prompt, setPrompt] = React.useState('remove records with age > 40');
+  const [prompt, setPrompt] = React.useState('include records with age > 40');
   const [showSettings, setShowSettings] = React.useState(false);
 
+  const { formKey, status, errors, options } = useSelector(state =>
+    selectors.editorChatState(state, editorId)
+  );
+
+  console.log('chat panel:', { editorId, formKey, status, errors, options });
   useFormInitWithPermissions({
     formKey,
-    fieldMeta: fieldMeta(classes.openAIeditor),
+    fieldMeta: fieldMeta(options, classes.openAIeditor),
   });
-
-  const { status, errors } = useSelector(state =>
-    selectors.editorAIState(state, editorId)
-  );
 
   // console.log({ status, error, response });
   const disabled = useSelector(state =>
@@ -130,7 +94,7 @@ export default function ChatBotPanel({ editorId }) {
   };
 
   const handleClick = () => {
-    dispatch(actions.editor.AI.request(editorId, prompt));
+    dispatch(actions.editor.CHAT.request(editorId, prompt));
   };
 
   const isPending = status === 'pending';

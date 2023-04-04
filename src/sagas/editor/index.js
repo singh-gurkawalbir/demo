@@ -918,35 +918,39 @@ export function* toggleEditorVersion({ id, version }) {
   );
 }
 
-export function* requestAICompletion({ id, prompt }) {
+export function* requestChatCompletion({ id, prompt }) {
   let response;
-  const formKey = `${id}-chatbot-settings`;
-  const chatOptions = yield select(selectors.formValueTrimmed, formKey);
   const editor = yield select(selectors.editor, id);
-  const { data, rule } = editor;
-  const { messages, ...requestOptions } = chatOptions;
+  const { data, rule, chat } = editor;
 
-  requestOptions.messages = JSON.parse(messages);
+  const chatFormOptions = yield select(selectors.formValueTrimmed, chat.formKey);
+  // this is part of the openAI api spec
+  // eslint-disable-next-line camelcase
+  const { messages, temperature, top_p, ...chatOptions } = chatFormOptions;
 
-  requestOptions.messages.push({
+  chatOptions.temperature = parseFloat(temperature);
+  chatOptions.top_p = parseFloat(top_p);
+  chatOptions.messages = JSON.parse(messages);
+
+  chatOptions.messages.push({
     role: 'user',
     content: `The current filter json is:\n ${JSON.stringify(rule)}\n
  The record being filtered is:\n ${data}\n
  ${prompt}`,
   });
 
-  console.log('saga', requestOptions);
+  console.log('saga', chatOptions);
 
   try {
     response = yield call(apiCallWithRetry, {
       path: '/openai/chat/completions',
       opts: {
         method: 'POST',
-        body: requestOptions,
+        body: chatOptions,
       },
     });
   } catch (error) {
-    return yield put(actions.editor.AI.failed(id, [error.message]));
+    return yield put(actions.editor.CHAT.failed(id, [error.message]));
   }
   // we have a successful response, but we do not know if the response itself
   // holds a valid result.
@@ -955,13 +959,13 @@ export function* requestAICompletion({ id, prompt }) {
   const validationErrors = processorLogic.validateRule(editor, newRule);
 
   if (validationErrors.length === 0) {
-    return yield put(actions.editor.AI.failed(id, validationErrors));
+    return yield put(actions.editor.CHAT.failed(id, validationErrors));
   }
 
   console.log('saga chat completion', JSON.parse(newRule));
 
   yield put(actions.editor.patchRule(id, JSON.parse(newRule) || []));
-  yield put(actions.editor.AI.complete(id));
+  yield put(actions.editor.CHAT.complete(id));
 }
 
 export default [
@@ -989,5 +993,5 @@ export default [
     actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS,
     refreshHelperFunctions
   ),
-  takeLatest(actionTypes.EDITOR.AI.REQUEST, requestAICompletion),
+  takeLatest(actionTypes.EDITOR.CHAT.REQUEST, requestChatCompletion),
 ];

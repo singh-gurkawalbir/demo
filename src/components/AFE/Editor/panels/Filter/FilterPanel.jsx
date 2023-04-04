@@ -19,6 +19,8 @@ const useStyles = makeStyles(theme => ({
 export default function FilterPanel({editorId}) {
   const classes = useStyles();
   const rule = useSelector(state => selectors.editorRule(state, editorId));
+
+  console.log('filter rule from panel:', rule);
   const dispatch = useDispatch();
   const handlePatchEditor = useCallback(
     value => {

@@ -135,6 +135,24 @@ const init = editorType => {
   return logic.init;
 };
 
+const getChatOptions = editorType => {
+  if (!editorType) return {};
+
+  const logic = getLogic({ editorType });
+
+  if (logic.getChatOptions) {
+    return logic.getChatOptions();
+  }
+
+  return {
+    model: 'gpt-3.5-turbo',
+    temperature: 0.2,
+    top_p: 1,
+    max_tokens: 512,
+    messages: [],
+  };
+};
+
 const updateRule = editor => {
   if (!editor) return;
   let logic;
@@ -199,7 +217,7 @@ export const featuresMap = options => ({
   },
   filter: {
     autoEvaluate: false,
-    layout: options.enableAI ? 'compact-ai' : 'compact',
+    layout: options.enableAI ? 'compact-chat' : 'compact',
   },
   javascript: {
     autoEvaluate: false,
@@ -288,6 +306,7 @@ export default {
   init,
   processResult,
   getPatchSet,
+  getChatOptions,
   buildData,
   preSaveValidate,
   updateRule,
