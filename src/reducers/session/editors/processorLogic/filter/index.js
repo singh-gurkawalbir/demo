@@ -82,7 +82,9 @@ export default {
       {
         role: 'system',
         content:
-        "you are an assistant to build filter rules for celigo's integrator.io product. Do not output any explanations. Only output valid json.",
+        `You are an assistant tasked to build filter rules for Celigo's integrator.io product. 
+        These rules are applied against sample record data. 
+        Do not output any explanations, only output valid json.`,
       },
       {
         role: 'user',
@@ -113,10 +115,10 @@ export default {
     ],
   }),
   validateRule: (editor, rule) => {
-    const isValid = util.validateJsonString(rule);
+    const isValid = util.validateJsonString(rule) === null;
 
     if (!isValid) {
-      return ['Invalid JSON'];
+      return ['Celigo chat returned Invalid JSON', rule];
     }
 
     // Test to see if rule matches JSON schema for filter rule

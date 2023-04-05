@@ -118,6 +118,7 @@ export default function ChatBotPanel({ editorId }) {
       >
         <div style={{ flexGrow: 1 }}>
           <textarea
+            value={prompt}
             disabled={disabled}
             onChange={handleChange}
             style={{
@@ -128,9 +129,7 @@ export default function ChatBotPanel({ editorId }) {
               outline: 'none',
             }}
             placeholder="Tell me what to filter"
-          >
-            {prompt}
-          </textarea>
+          />
         </div>
 
         {status === 'failed' && (

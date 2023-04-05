@@ -1694,7 +1694,6 @@ const editor = {
     request: (id, prompt) => action(actionTypes.EDITOR.CHAT.REQUEST, {id, prompt }),
     complete: id => action(actionTypes.EDITOR.CHAT.COMPLETE, { id }),
     failed: (id, error) => action(actionTypes.EDITOR.CHAT.FAILED, {id, error }),
-    patchMessages: (id, messages) => action(actionTypes.EDITOR.CHAT.PATCH_MESSAGES, {id, messages }),
   },
 };
 // #endregion

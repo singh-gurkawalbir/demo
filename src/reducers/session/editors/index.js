@@ -53,11 +53,14 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.INIT_COMPLETE: {
+        const chatOptions = processorLogic.getChatOptions(options.editorType);
+
         draft[id] = {...options,
           chat: {
+            enabled: chatOptions !== undefined,
             formKey: `chat-${id}`,
             status: CHAT_STATUS.IDLE,
-            options: processorLogic.getChatOptions(options.editorType),
+            options: chatOptions,
           },
         };
         break;

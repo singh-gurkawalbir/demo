@@ -25,7 +25,6 @@ import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
-import { getDomain } from '../../forms/formFactory/utils';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -810,8 +809,6 @@ export function* initEditor({ id, editorType, options }) {
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
 
-  formattedOptions.enableAI = ['localhost', 'localhost.io', 'qa.staging.integrator.io'].includes(getDomain());
-
   const init = processorLogic.init(editorType);
 
   if (init) {
@@ -934,8 +931,8 @@ export function* requestChatCompletion({ id, prompt }) {
 
   chatOptions.messages.push({
     role: 'user',
-    content: `The current filter json is:\n ${JSON.stringify(rule)}\n
- The record being filtered is:\n ${data}\n
+    content: `The current rule is:\n ${JSON.stringify(rule)}\n
+ The data to apply the rule to is:\n ${data}\n
  ${prompt}`,
   });
 
@@ -958,7 +955,7 @@ export function* requestChatCompletion({ id, prompt }) {
 
   const validationErrors = processorLogic.validateRule(editor, newRule);
 
-  if (validationErrors.length === 0) {
+  if (validationErrors?.length > 0) {
     return yield put(actions.editor.CHAT.failed(id, validationErrors));
   }
 

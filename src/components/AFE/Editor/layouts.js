@@ -6,12 +6,6 @@ export default {
     gridTemplateAreas:
       '"rule dragBar_v_0 data" "rule dragBar_v_0 dragBar_h_0" "rule dragBar_v_0 result" "dragBar_h_1 dragBar_h_1 dragBar_h_1" "error error error"',
   },
-  'compact-chat': {
-    gridTemplateColumns: '2fr auto 1fr',
-    gridTemplateRows: '1fr auto 1fr auto 2fr auto 0fr',
-    gridTemplateAreas:
-     '"rule dragBar_v_0 data" "rule dragBar_v_0 dragBar_h_0"  "rule dragBar_v_0 result" "dragBar_h_1 dragBar_h_1 dragBar_h_1" "chat chat chat" "dragBar_h_2 dragBar_h_2 dragBar_h_2" "error error error"',
-  },
   compact2: {
     gridTemplateColumns: '1fr 1fr 1fr auto 1fr',
     gridTemplateRows: '1fr auto 1fr auto 0fr',

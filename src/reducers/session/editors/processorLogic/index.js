@@ -1,4 +1,6 @@
 import isEqual from 'lodash/isEqual';
+import { getDomain } from '../../../../forms/formFactory/utils';
+
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
 import jsonParser from './jsonParser';
@@ -136,21 +138,23 @@ const init = editorType => {
 };
 
 const getChatOptions = editorType => {
-  if (!editorType) return {};
+  if (!editorType) return;
+
+  // for now, while we have no "feature flag" user setting, we'll just
+  // disable chat options for all domains except localhost and QA
+  if (![
+    'localhost',
+    'localhost.io',
+    'qa.staging.integrator.io',
+  ].includes(getDomain())) {
+    return;
+  }
 
   const logic = getLogic({ editorType });
 
   if (logic.getChatOptions) {
     return logic.getChatOptions();
   }
-
-  return {
-    model: 'gpt-3.5-turbo',
-    temperature: 0.2,
-    top_p: 1,
-    max_tokens: 512,
-    messages: [],
-  };
 };
 
 const updateRule = editor => {
@@ -217,7 +221,7 @@ export const featuresMap = options => ({
   },
   filter: {
     autoEvaluate: false,
-    layout: options.enableAI ? 'compact-chat' : 'compact',
+    layout: 'compact',
   },
   javascript: {
     autoEvaluate: false,
