@@ -20,14 +20,16 @@ jest.mock('@mui/material/IconButton', () => ({
 
 describe('modalDialog UI tests', () => {
   test('should not show the modal dialog when the prop "show" is false', () => {
-    const {container} = renderWithProviders(
+    renderWithProviders(
       <ModalDialog show={false}>
         <div>child-1</div>
         <div>child-2</div>
         <div>child-3</div>
       </ModalDialog>);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByText('child-1')).not.toBeInTheDocument();
+    expect(screen.queryByText('child-2')).not.toBeInTheDocument();
+    expect(screen.queryByText('child-3')).not.toBeInTheDocument();
   });
 
   test('should show the modal when the prop "show" is true', () => {

@@ -217,7 +217,9 @@ describe('mock input drawer test cases', () => {
   });
   test('should show a spinner and "Fetch latest input data" button should be disabled when mock input is requested', async () => {
     initMockInput({ status: MOCK_INPUT_STATUS.REQUESTED });
-    expect(document.querySelector(['svg[class="MuiCircularProgress-svg"]'])).toBeInTheDocument();
+    const spinnerNode = screen.getByRole('progressbar');
+
+    expect(spinnerNode.className).toEqual(expect.stringContaining('MuiCircularProgress-'));
 
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
