@@ -24,6 +24,21 @@ export default {
       doesNotSupportSearch: item.doesNotSupportSearch,
       doesNotSupportDelete: item.doesNotSupportDelete,
     })),
+  'restlet-recordTypes': data =>
+    Array.isArray(data) &&
+    data
+      .filter(item => !item.doesNotSupportSearch)
+      .map(item => ({
+        label: item.name,
+        value: item.scriptId && item.scriptId.toLowerCase(),
+        url: item.url,
+        hasSubRecord: item.hasSubRecord,
+        subRecordConfig: item.subRecordConfig,
+        doesNotSupportUpdate: item.doesNotSupportUpdate,
+        doesNotSupportCreate: item.doesNotSupportCreate,
+        doesNotSupportSearch: item.doesNotSupportSearch,
+        doesNotSupportDelete: item.doesNotSupportDelete,
+      })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
       label: item.name,
@@ -100,10 +115,14 @@ export default {
     })),
 
   'webservices-recordTypes': data =>
-    data.map(item => ({
-      label: item.label,
-      value: getWSRecordId(item),
-    })),
+    data
+      .filter(
+        item => !item.doesNotSupportSearch,
+      )
+      .map(item => ({
+        label: item.label,
+        value: getWSRecordId(item),
+      })),
   'webservices-savedSearches': data =>
     data.map(item => ({
       label: item.name,
