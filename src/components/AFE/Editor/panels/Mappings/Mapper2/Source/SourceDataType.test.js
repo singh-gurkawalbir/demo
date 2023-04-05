@@ -96,7 +96,7 @@ describe('source Data type Ui test cases', () => {
     initFunction(props);
 
     expect(screen.getByText('string,number')).toBeInTheDocument();
-    expect(screen.getByTitle('The data type of handlebars expressions is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
+    expect(screen.getByLabelText('The data type of handlebars expressions is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
   });
   test('should verify the presense of tootip title for hardcoded', () => {
     anchorEl = null;
@@ -107,6 +107,6 @@ describe('source Data type Ui test cases', () => {
     initFunction(props);
 
     expect(screen.getByText('string,number')).toBeInTheDocument();
-    expect(screen.getByTitle('The data type of hard-coded values is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
+    expect(screen.getByLabelText('The data type of hard-coded values is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
   });
 });
