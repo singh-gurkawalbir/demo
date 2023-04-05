@@ -26,7 +26,7 @@ export default {
   },
   column: {
     gridTemplateColumns: '1fr auto 1fr auto 1fr',
-    gridTemplateRows: '4fr 0fr',
+    gridTemplateRows: '4fr auto 0fr',
     gridTemplateAreas:
       '"rule dragBar_v_0 data dragBar_v_1 result" "dragBar_h_0 dragBar_h_0 dragBar_h_0 dragBar_h_0 dragBar_h_0" "error error error error error"',
   },
