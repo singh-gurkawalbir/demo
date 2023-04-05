@@ -52,7 +52,7 @@ export default function SignUp() {
 
   const handleSignUpWithGoogle = useCallback(e => {
     e.preventDefault();
-    dispatch(actions.auth.signUpWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value), {});
+    dispatch(actions.auth.signUpWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value, {}));
   }, [dispatch]);
 
   const handleOnSubmit = useCallback(values => {
