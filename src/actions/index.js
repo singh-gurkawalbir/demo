@@ -1690,7 +1690,7 @@ const editor = {
   saveComplete: id => action(actionTypes.EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
-  CHAT: {
+  chat: {
     request: (id, prompt) => action(actionTypes.EDITOR.CHAT.REQUEST, {id, prompt }),
     complete: id => action(actionTypes.EDITOR.CHAT.COMPLETE, { id }),
     failed: (id, error) => action(actionTypes.EDITOR.CHAT.FAILED, {id, error }),

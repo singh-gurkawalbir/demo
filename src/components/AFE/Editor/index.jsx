@@ -156,8 +156,6 @@ const getGridTemplateCSS = (layout, editorContext) => {
     .join(' '));
   areas.push(Array(colCount).fill('error').join(' '));
 
-  console.log({ rows, areas, errorDragBarIndex });
-
   return {
     gridTemplateRows: gridRows,
     gridTemplateColumns: layoutCSS.gridTemplateColumns,
@@ -181,10 +179,10 @@ export default function Editor({ editorId }) {
   const showErrorDragBar = useSelector(state => {
     const violations = selectors.editorViolations(state, editorId);
     const { warning, logs } = selectors.editorResult(state, editorId);
-
+    const { errors: chatErrors } = selectors.editorChatState(state, editorId);
     const editor = selectors.editor(state, editorId);
 
-    return !!(violations || editor.error || warning || logs);
+    return !!(violations || editor.error || warning || logs || chatErrors);
   });
 
   const editorContext = useSelector(state => {

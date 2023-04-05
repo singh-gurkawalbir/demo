@@ -947,7 +947,7 @@ export function* requestChatCompletion({ id, prompt }) {
       },
     });
   } catch (error) {
-    return yield put(actions.editor.CHAT.failed(id, [error.message]));
+    return yield put(actions.editor.chat.failed(id, [error.message]));
   }
   // we have a successful response, but we do not know if the response itself
   // holds a valid result.
@@ -956,13 +956,13 @@ export function* requestChatCompletion({ id, prompt }) {
   const validationErrors = processorLogic.validateRule(editor, newRule);
 
   if (validationErrors?.length > 0) {
-    return yield put(actions.editor.CHAT.failed(id, validationErrors));
+    return yield put(actions.editor.chat.failed(id, validationErrors));
   }
 
   console.log('saga chat completion', JSON.parse(newRule));
 
-  yield put(actions.editor.patchRule(id, JSON.parse(newRule) || []));
-  yield put(actions.editor.CHAT.complete(id));
+  yield put(actions.editor.patchRule(id, JSON.parse(newRule)));
+  yield put(actions.editor.chat.complete(id));
 }
 
 export default [

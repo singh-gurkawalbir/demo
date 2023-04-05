@@ -47,15 +47,15 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.INIT: {
         // initStatus is used to determine if parent url
         // redirection needs to happen or not on page refresh
-        draft[id] = { initStatus: 'inProgress',
-        };
+        draft[id] = { initStatus: 'inProgress' };
         break;
       }
 
       case actionTypes.EDITOR.INIT_COMPLETE: {
         const chatOptions = processorLogic.getChatOptions(options.editorType);
 
-        draft[id] = {...options,
+        draft[id] = {
+          ...options,
           chat: {
             enabled: chatOptions !== undefined,
             formKey: `chat-${id}`,

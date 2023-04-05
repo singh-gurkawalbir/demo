@@ -78,7 +78,6 @@ export default function ChatBotPanel({ editorId }) {
     selectors.editorChatState(state, editorId)
   );
 
-  console.log('chat panel:', { editorId, formKey, status, errors, options });
   useFormInitWithPermissions({
     formKey,
     fieldMeta: fieldMeta(options, classes.openAIeditor),
@@ -94,7 +93,7 @@ export default function ChatBotPanel({ editorId }) {
   };
 
   const handleClick = () => {
-    dispatch(actions.editor.CHAT.request(editorId, prompt));
+    dispatch(actions.editor.chat.request(editorId, prompt));
   };
 
   const isPending = status === 'pending';
@@ -104,7 +103,8 @@ export default function ChatBotPanel({ editorId }) {
       style={{
         display: 'flex',
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: errors ? '#FFF3F3' : 'white',
+        border: errors ? '1px solid red' : 'none',
       }}
     >
       <div
@@ -127,18 +127,11 @@ export default function ChatBotPanel({ editorId }) {
               resize: 'none',
               border: 'none',
               outline: 'none',
+              backgroundColor: 'transparent',
             }}
             placeholder="Tell me what to filter"
           />
         </div>
-
-        {status === 'failed' && (
-        <div style={{ color: 'red' }}>{
-          // eslint-disable-next-line react/no-array-index-key
-          errors.map((error, i) => <div key={i}>{error}</div>)
-        }
-        </div>
-        )}
 
         <div style={{ display: 'flex', columnGap: 16, padding: 4 }}>
           <FilledButton onClick={handleClick} disabled={disabled || !prompt}>
