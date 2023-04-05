@@ -50,9 +50,9 @@ export default function SignUp() {
   const {email, token, _csrf, skipPassword} = useSelector(state => selectors.acceptInviteData(state), shallowEqual) || emptyObject;
   const attemptedRoute = location.state?.attemptedRoute;
 
-  const handleSignInWithGoogle = useCallback(e => {
+  const handleSignUpWithGoogle = useCallback(e => {
     e.preventDefault();
-    dispatch(actions.auth.signInWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value));
+    dispatch(actions.auth.signUpWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value), {});
   }, [dispatch]);
 
   const handleOnSubmit = useCallback(values => {
@@ -81,7 +81,7 @@ export default function SignUp() {
       </DynaSubmit>
       {
         isGoogleSignInAllowed() && (
-          <form onSubmit={handleSignInWithGoogle}>
+          <form onSubmit={handleSignUpWithGoogle}>
             <TextField
               data-private
               type="hidden"

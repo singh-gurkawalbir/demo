@@ -79,10 +79,10 @@ export default function SignUp() {
     handleSignup(values);
   }, [handleSignup]);
 
-  const handleSignInWithGoogle = useCallback(e => {
+  const handleSignUpWithGoogle = useCallback(e => {
     e.preventDefault();
-    dispatch(actions.auth.signInWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value));
-  }, [dispatch]);
+    dispatch(actions.auth.signUpWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value, validatedParam));
+  }, [dispatch, validatedParam]);
 
   const fieldMeta = useMemo(() => getFieldMeta(userEmail), [userEmail]);
 
@@ -112,7 +112,7 @@ export default function SignUp() {
       <div>
         {
         isGoogleSignInAllowed() && (
-          <form onSubmit={handleSignInWithGoogle}>
+          <form onSubmit={handleSignUpWithGoogle}>
             <TextField
               data-private
               type="hidden"

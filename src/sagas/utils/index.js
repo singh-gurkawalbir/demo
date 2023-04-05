@@ -964,6 +964,15 @@ export function resourceConflictResolution({ merged, master, origin }) {
 
   return { conflict: null, merged: updatedMerged };
 }
+export function generateInnerHTMLForSignUP(params) {
+  let string = '';
+
+  Object.keys(params).forEach(key => {
+    string = `${string}<input name="${key}" value="${params[key]}">`;
+  });
+
+  return string;
+}
 
 export function* constructResourceFromFormValues({
   formValues = {},
