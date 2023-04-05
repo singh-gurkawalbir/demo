@@ -116,7 +116,7 @@ describe('Branch filter panel test cases', () => {
     };
 
     initBranchFilterPanel(inputProps);
-    const addRuleButton = screen.getByRole('button', {name: 'Add Rule'});
+    const addRuleButton = screen.getByRole('button', {name: 'Add rule'});
 
     expect(addRuleButton).toBeInTheDocument();
     await userEvent.click(addRuleButton);
