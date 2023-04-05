@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {screen, fireEvent} from '@testing-library/react';
+import {screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Mapper2Generates from './Mapper2Generates';
 import { renderWithProviders} from '../../../../../../../test/test-utils';
@@ -12,13 +12,13 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-jest.mock('../../../../../../icons/LockIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../../../../icons/LockIcon'),
-  default: () => (
-    <div>LockIcon</div>
-  ),
-}));
+// jest.mock('../../../../../../icons/LockIcon', () => ({
+//   __esModule: true,
+//   ...jest.requireActual('../../../../../../icons/LockIcon'),
+//   default: () => (
+//     <div>LockIcon</div>
+//   ),
+// }));
 const mockOnBlur = jest.fn();
 
 function initFunction(disabled = false, isRequired = false) {
@@ -65,9 +65,14 @@ describe('mapper2Generates test cases', () => {
     fireEvent.click(document);
     expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });
-  test('should should the Lock Icon when the field is mandatory', () => {
+  test('should should the Lock Icon when the field is mandatory', async () => {
     initFunction(false, true);
-    expect(screen.getByText('LockIcon')).toBeInTheDocument();
-    expect(screen.getByTitle('This field is required by the application you are importing into')).toBeInTheDocument();
+    const lockIcon = document.querySelectorAll('[class*=lockIcon]')[0];
+
+    expect(lockIcon).toBeInTheDocument();
+    await userEvent.hover(lockIcon);
+    const tooltipText = document.querySelector('[aria-label="This field is required by the application you are importing into"]');
+
+    expect(tooltipText).toBeInTheDocument();
   });
 });

@@ -66,7 +66,6 @@ export default function FileDataPanelTitle({editorId, fileType}) {
       resourceType={resourceType}
       onFieldChange={onFieldChange}
       options={fileType}
-      color=""
       placeholder={`Sample ${fileType.toUpperCase()} file (that would be parsed)`}
       id="uploadFile"
       persistData
