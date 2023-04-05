@@ -159,6 +159,6 @@ describe('Testsuite for SignUp', () => {
 
     userEvent.click(signUpWithGoogleButton);
 
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.signInWithGoogle('/'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.signUpWithGoogle('/', {}));
   });
 });

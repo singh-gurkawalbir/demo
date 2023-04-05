@@ -43,7 +43,7 @@ describe('Sign up form test cases', () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
     userEvent.click(screen.getByRole('button', {name: 'Sign up with Google'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(
-      actions.auth.signInWithGoogle('/')
+      actions.auth.signUpWithGoogle('/', {})
     );
   });
   test('should fill the sign up form and click on sign up button', () => {
