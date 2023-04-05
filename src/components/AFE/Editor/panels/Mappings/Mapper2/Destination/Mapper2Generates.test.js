@@ -12,13 +12,6 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-// jest.mock('../../../../../../icons/LockIcon', () => ({
-//   __esModule: true,
-//   ...jest.requireActual('../../../../../../icons/LockIcon'),
-//   default: () => (
-//     <div>LockIcon</div>
-//   ),
-// }));
 const mockOnBlur = jest.fn();
 
 function initFunction(disabled = false, isRequired = false) {
