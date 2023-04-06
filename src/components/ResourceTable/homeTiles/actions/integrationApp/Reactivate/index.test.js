@@ -23,9 +23,9 @@ const end = new Date();
 end.setMonth(end.getMonth() - 2);
 
 mutateStore(initialStore, draft => {
-  draft.userEvent.preferences = {defaultAShareId: 'own' };
+  draft.user.preferences = {defaultAShareId: 'own' };
 
-  draft.userEvent.org.accounts = [
+  draft.user.org.accounts = [
     {_id: 'own',
       ownerUser: {licenses: [
         {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: end},
