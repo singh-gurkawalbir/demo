@@ -375,8 +375,8 @@ describe('test suite for Connections', () => {
     mutateStore(initialStore, draft => {
       draft.user.preferences.defaultAShareId = 'own';
     });
-    initConnections(data, initialStore);
-    const actionButton = screen.getByRole('button', {name: /more/i});
+    await initConnections(data, initialStore);
+    const actionButton = await waitFor(() => screen.getByRole('button', {name: /more/i}));
 
     await userEvent.click(actionButton);
     const actionItems = await waitFor(() => screen.getAllByRole('menuitem').map(ele => ele.textContent));

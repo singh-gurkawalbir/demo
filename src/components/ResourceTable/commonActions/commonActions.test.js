@@ -161,12 +161,12 @@ describe('test suite for common actions', () => {
       }];
 
       mutateStore(initialStore, draft => {
-        draft.userEvent.preferences.defaultAShareId = 'own';
+        draft.user.preferences.defaultAShareId = 'own';
       });
 
       await initCommonActions(data);
 
-      expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument());
     });
 
     test("should not be able to clone an integration flow if doesn't have permissions to clone", async () => {
@@ -197,7 +197,7 @@ describe('test suite for common actions', () => {
       type: 'integrationApp',
     }]);
 
-    const editButton = screen.getByRole('menuitem', {name: 'Edit license'});
+    const editButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Edit license'}));
 
     await userEvent.click(editButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(`${mockRouteMatch.url}/edit/connectorLicenses/ia123`);
@@ -210,15 +210,15 @@ describe('test suite for common actions', () => {
       type: 'integrationApp',
     }]);
 
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
-    // screen.debug(undefined, Infinity);
     const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: /Delete license/i}));
 
     await userEvent.click(deleteButton);
     const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
-    const confirmButton = screen.getByRole('button', { name: /Delete/i });
+    // screen.debug(undefined, Infinity);
+    const confirmButton = await waitFor(() => screen.getByRole('button', { name: /Delete/i }));
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Are you sure you want to delete this license?');
@@ -254,21 +254,20 @@ describe('test suite for common actions', () => {
     });
 
     await initCommonActions(data);
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
-    screen.debug(undefined, Infinity);
     const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete export'}));
 
     await userEvent.click(deleteButton);
     const confirmDeleteButton = await waitFor(() => screen.getByRole('button', {name: /Delete/i}));
 
     await userEvent.click(confirmDeleteButton);
-    expect(screen.getByRole('dialog').textContent).toContain('Unable to delete export');
+    await waitFor(() => expect(screen.getByRole('dialog').textContent).toContain('Unable to delete export'));
     const closeDialogButton = screen.getByTestId('closeModalDialog');
 
     await userEvent.click(closeDialogButton);
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
   });
 
   test('should be able to download a resource', async () => {
@@ -278,7 +277,7 @@ describe('test suite for common actions', () => {
       name: 'Shopify template',
     }]);
 
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
     // screen.debug(undefined, Infinity);

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
@@ -87,7 +87,10 @@ describe('flowStepLogs meta data UI tests', () => {
     expect(screen.getByText('Response code')).toBeInTheDocument();
     expect(screen.getByText('somestatusCode')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button')[2]);
-    await userEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    const check = await waitFor(() => screen.getAllByRole('checkbox'));
+
+    await userEvent.click(check[0]);
     await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
