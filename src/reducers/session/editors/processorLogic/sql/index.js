@@ -33,18 +33,25 @@ export function _hasDefaultMetaData({fieldId, resourceType}) {
 export default {
   processor: 'handlebars',
   init: props => {
-    const {adaptorType} = props.resource || {};
+    const { adaptorType } = props.resource || {};
     let modelMetadata;
 
     if (adaptorType === 'RDBMSImport') {
       modelMetadata = props.formValues['/modelMetadata'];
     }
 
-    return handlebars.init({...props, modelMetadata, supportsDefaultData: _hasDefaultMetaData(props.options)});
+    return handlebars.init({
+      ...props,
+      modelMetadata,
+      supportsDefaultData: _hasDefaultMetaData(props.options),
+    });
   },
-  buildData: ({modelMetadata, supportsDefaultData, resourceId}, sampleData) => {
+  buildData: (
+    { modelMetadata, supportsDefaultData, resourceId },
+    sampleData
+  ) => {
     if (!supportsDefaultData) {
-      return { data: sampleData};
+      return { data: sampleData };
     }
     const parsedData = safeParse(sampleData);
 
@@ -60,15 +67,19 @@ export default {
 
     // we only show suggested defaults for new resource
     if (!isNewResource) {
-      return { data: sampleData};
+      return { data: sampleData };
     }
 
     let temp = {};
 
-    if (Array.isArray(parsedData) && parsedData.length && typeof parsedData[0] === 'object') {
+    if (
+      Array.isArray(parsedData) &&
+      parsedData.length &&
+      typeof parsedData[0] === 'object'
+    ) {
       temp = customCloneDeep(getUnionObject(parsedData));
     } else if (parsedData) {
-      const {data, rows, record} = parsedData;
+      const { data, rows, record } = parsedData;
       const sampleDataToClone = record || rows?.[0] || data?.[0] || data;
 
       temp = customCloneDeep(sampleDataToClone);
@@ -85,7 +96,7 @@ export default {
     data: safeParse(editor.data) || {},
   }),
   dirty: editor => {
-    const {originalDefaultData, defaultData, originalRule, rule} = editor;
+    const { originalDefaultData, defaultData, originalRule, rule } = editor;
 
     if (!isEqual(originalDefaultData, defaultData)) {
       return true;
@@ -119,5 +130,54 @@ export default {
     return {
       dataError: getDataError(),
     };
+  },
+  getChatOptions: () => ({
+    enabled: true,
+    placeholder:
+      'Tell me about your SQL query. I will apply your request to the existing SQL query unless you tell me to replace it',
+    request: {
+      model: 'gpt-3.5-turbo',
+      temperature: 0.1,
+      top_p: 1,
+      max_tokens: 512,
+      messages: [
+        {
+          role: 'system',
+          content: `You are an assistant tasked to build valid, handlebar enhanced SQL queries. 
+        These SQL queries may also include handlebar placeholders that reference fields from the sample record data provided below.`,
+        },
+        {
+          role: 'user',
+          content: `Only give valid handlebar enhanced SQL queries. 
+        Do not output any explanations, only output valid handlebar enhanced SQL.
+        Do not provide any explanations and format the SQL over multiple lines.
+        Assume any handlebar placeholders reference fields from the sample record data provided below.
+        Always add to the existing SQL query, unless told to replace it.`,
+        },
+        {
+          role: 'user',
+          content: `select name and email from users where id is the userId from the sample record. 
+          Also select the total from orders, joined with users on userId`,
+        },
+        {
+          role: 'assistant',
+          content: `SELECT u.name, u.email, o.total 
+  FROM users u
+  JOIN orders o ON o.userId = u.id
+  WHERE u.id = {{userId}}`,
+        },
+      ],
+    },
+  }),
+  validateRule: (editor, rule) => {
+    const isValid = typeof rule === 'string' && rule.length > 10;
+
+    if (!isValid) {
+      return ['Celigo chat returned the following invalid SQL:', rule];
+    }
+
+    // Test to see if rule matches JSON schema for filter rule
+    // const ajv = new Ajv();
+    // const validate = ajv.compile({ });
   },
 };

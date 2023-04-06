@@ -10,14 +10,14 @@ import DynaForm from '../../../../DynaForm';
 import SettingsIcon from '../../../../icons/SettingsIcon';
 import Spinner from '../../../../Spinner';
 
-const fieldMeta = (chatOptions, editorClassName) => ({
+const fieldMeta = (request, editorClassName) => ({
   fieldMap: {
     model: {
       id: 'model',
       name: 'model',
       label: 'model',
       type: 'text',
-      defaultValue: chatOptions.model,
+      defaultValue: request.model,
       readOnly: true,
     },
     temperature: {
@@ -26,7 +26,7 @@ const fieldMeta = (chatOptions, editorClassName) => ({
       label: 'temperature',
       type: 'text',
       required: true,
-      defaultValue: chatOptions.temperature,
+      defaultValue: request.temperature,
       helpText:
         'Between 0 and 2. Higher values like 0.8 will make the output more random, while lower values will make it more focused and deterministic. We recommend altering this or top_p but not both.',
     },
@@ -35,7 +35,7 @@ const fieldMeta = (chatOptions, editorClassName) => ({
       name: 'top_p',
       label: 'top_p',
       type: 'text',
-      defaultValue: chatOptions.top_p,
+      defaultValue: request.top_p,
       helpText:
         'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. We generally recommend altering this or temperature but not both.',
     },
@@ -45,7 +45,7 @@ const fieldMeta = (chatOptions, editorClassName) => ({
       label: 'max_tokens',
       type: 'text',
       inputType: 'number',
-      defaultValue: chatOptions.max_tokens,
+      defaultValue: request.max_tokens,
       helpText:
         'The maximum number of tokens to generate in the chat completion.  The total length of input tokens and generated tokens is limited by the model`s context length.',
     },
@@ -55,7 +55,7 @@ const fieldMeta = (chatOptions, editorClassName) => ({
       label: 'messages',
       type: 'editor',
       mode: 'json',
-      defaultValue: JSON.stringify(chatOptions.messages, null, 2),
+      defaultValue: JSON.stringify(request.messages, null, 2),
       editorClassName,
     },
   },
@@ -74,13 +74,13 @@ export default function ChatBotPanel({ editorId }) {
   const [prompt, setPrompt] = React.useState('include records with age > 40');
   const [showSettings, setShowSettings] = React.useState(false);
 
-  const { formKey, status, errors, options } = useSelector(state =>
+  const { formKey, status, errors, request, placeholder } = useSelector(state =>
     selectors.editorChatState(state, editorId)
   );
 
   useFormInitWithPermissions({
     formKey,
-    fieldMeta: fieldMeta(options, classes.openAIeditor),
+    fieldMeta: fieldMeta(request, classes.openAIeditor),
   });
 
   // console.log({ status, error, response });
@@ -129,7 +129,7 @@ export default function ChatBotPanel({ editorId }) {
               outline: 'none',
               backgroundColor: 'transparent',
             }}
-            placeholder="Tell me what to filter"
+            placeholder={placeholder}
           />
         </div>
 

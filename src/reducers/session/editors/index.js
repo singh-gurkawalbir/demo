@@ -56,12 +56,17 @@ export default function reducer(state = {}, action) {
 
         draft[id] = {
           ...options,
-          chat: {
-            enabled: chatOptions !== undefined,
-            formKey: `chat-${id}`,
-            status: CHAT_STATUS.IDLE,
-            options: chatOptions,
-          },
+          chat: !chatOptions
+            ? {
+              enabled: false,
+            }
+            : {
+              enabled: true,
+              formKey: `chat-${id}`,
+              status: CHAT_STATUS.IDLE,
+              request: chatOptions.request,
+              placeholder: chatOptions.placeholder,
+            },
         };
         break;
       }

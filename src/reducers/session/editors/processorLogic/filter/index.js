@@ -74,58 +74,59 @@ export default {
     };
   },
   getChatOptions: () => ({
-    model: 'gpt-3.5-turbo',
-    temperature: 0.2,
-    top_p: 1,
-    max_tokens: 512,
-    messages: [
-      {
-        role: 'system',
-        content:
+    placeholder: 'Tell me about your filter rules',
+    request: {
+      model: 'gpt-3.5-turbo',
+      temperature: 0.2,
+      top_p: 1,
+      max_tokens: 512,
+      messages: [
+        {
+          role: 'system',
+          content:
         `You are an assistant tasked to build filter rules for Celigo's integrator.io product. 
         These rules are applied against sample record data. 
         Do not output any explanations, only output valid json.`,
-      },
-      {
-        role: 'user',
-        content: 'only process records where type = adjustment',
-      },
-      {
-        role: 'assistant',
-        content: '["equals",["string",["extract","Type"]],"Adjustment"]',
-      },
-      {
-        role: 'user',
-        content: 'only process records where isDelete is true',
-      },
-      {
-        role: 'assistant',
-        content: '["equals",["string",["extract","isDelete"]],"true"]',
-      },
-      {
-        role: 'user',
-        content:
+        },
+        {
+          role: 'user',
+          content: 'only process records where type = adjustment',
+        },
+        {
+          role: 'assistant',
+          content: '["equals",["string",["extract","Type"]],"Adjustment"]',
+        },
+        {
+          role: 'user',
+          content: 'only process records where isDelete is true',
+        },
+        {
+          role: 'assistant',
+          content: '["equals",["string",["extract","isDelete"]],"true"]',
+        },
+        {
+          role: 'user',
+          content:
         'only process records where CreditMemoData.length > 0 and charge != yes',
-      },
-      {
-        role: 'assistant',
-        content:
+        },
+        {
+          role: 'assistant',
+          content:
         '["and",["greaterthan",["number",["extract","CreditMemoData.length"]],0],["notequals",["string",["extract","CHARGE"]],"YES"]]',
-      },
-    ],
+        },
+      ],
+    },
   }),
   validateRule: (editor, rule) => {
     const isValid = util.validateJsonString(rule) === null;
 
     if (!isValid) {
-      return ['Celigo chat returned Invalid JSON', rule];
+      return ['Celigo chat returned the following invalid JSON:', rule];
     }
 
     // Test to see if rule matches JSON schema for filter rule
     // const ajv = new Ajv();
     // const validate = ajv.compile({ });
-
-    console.log('rule is valid');
   },
   validate: editor => ({
     dataError:

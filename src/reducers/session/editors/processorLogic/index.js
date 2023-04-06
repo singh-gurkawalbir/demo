@@ -142,11 +142,11 @@ const getChatOptions = editorType => {
 
   // for now, while we have no "feature flag" user setting, we'll just
   // disable chat options for all domains except localhost and QA
-  if (![
-    'localhost',
-    'localhost.io',
-    'qa.staging.integrator.io',
-  ].includes(getDomain())) {
+  if (
+    !['localhost', 'localhost.io', 'qa.staging.integrator.io'].includes(
+      getDomain()
+    )
+  ) {
     return;
   }
 
@@ -156,7 +156,6 @@ const getChatOptions = editorType => {
     return logic.getChatOptions();
   }
 };
-
 const updateRule = editor => {
   if (!editor) return;
   let logic;
