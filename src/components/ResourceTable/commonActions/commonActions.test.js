@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
@@ -161,7 +161,7 @@ describe('test suite for common actions', () => {
       }];
 
       mutateStore(initialStore, draft => {
-        draft.user.preferences.defaultAShareId = 'own';
+        draft.userEvent.preferences.defaultAShareId = 'own';
       });
 
       await initCommonActions(data);
@@ -210,11 +210,15 @@ describe('test suite for common actions', () => {
       type: 'integrationApp',
     }]);
 
-    const deleteButton = screen.getByRole('menuitem', {name: 'Delete license'});
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
+    // screen.debug(undefined, Infinity);
+    const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: /Delete license/i}));
 
     await userEvent.click(deleteButton);
-    const confirmDialog = screen.getByRole('dialog');
-    const confirmButton = screen.getByRole('button', { name: 'Delete' });
+    const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
+    const confirmButton = screen.getByRole('button', { name: /Delete/i });
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Are you sure you want to delete this license?');
@@ -250,10 +254,14 @@ describe('test suite for common actions', () => {
     });
 
     await initCommonActions(data);
-    const deleteButton = screen.getByRole('menuitem', {name: 'Delete export'});
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
+    screen.debug(undefined, Infinity);
+    const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete export'}));
 
     await userEvent.click(deleteButton);
-    const confirmDeleteButton = screen.getByRole('button', {name: 'Delete'});
+    const confirmDeleteButton = await waitFor(() => screen.getByRole('button', {name: /Delete/i}));
 
     await userEvent.click(confirmDeleteButton);
     expect(screen.getByRole('dialog').textContent).toContain('Unable to delete export');
@@ -269,7 +277,12 @@ describe('test suite for common actions', () => {
       _id: 'template123',
       name: 'Shopify template',
     }]);
-    const downloadButton = screen.getByRole('menuitem', {name: 'Download template zip'});
+
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
+    // screen.debug(undefined, Infinity);
+    const downloadButton = await waitFor(() => screen.getByRole('menuitem', {name: /Download template zip/i}));
 
     await userEvent.click(downloadButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.downloadFile('template123', 'templates'));
@@ -291,6 +304,9 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
@@ -318,6 +334,9 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
@@ -327,7 +346,7 @@ describe('test suite for common actions', () => {
     const confirmButton = screen.getByRole('button', {name: 'Generate'});
 
     await userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.stack.generateToken(data[0]._id));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.stack.generateToken(data[0]._id)));
   });
 
   test('should not be able to generate new token for stacks of type lambda', async () => {
@@ -345,6 +364,9 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
     expect(screen.queryByRole('menuitem', {name: 'Generate new token'})).not.toBeInTheDocument();
   });
 
@@ -373,6 +395,9 @@ describe('test suite for common actions', () => {
       _id: 'export123',
       name: 'Netsuite Export',
     }]);
+    const more = screen.getByRole('button', { name: /more/i });
+
+    await userEvent.click(more);
     const viewReferenceButton = screen.getByRole('menuitem', {name: 'Used by'});
 
     await userEvent.click(viewReferenceButton);

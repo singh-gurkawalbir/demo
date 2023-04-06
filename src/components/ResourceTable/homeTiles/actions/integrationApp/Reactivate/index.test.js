@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
@@ -24,9 +23,9 @@ const end = new Date();
 end.setMonth(end.getMonth() - 2);
 
 mutateStore(initialStore, draft => {
-  draft.user.preferences = {defaultAShareId: 'own' };
+  draft.userEvent.preferences = {defaultAShareId: 'own' };
 
-  draft.user.org.accounts = [
+  draft.userEvent.org.accounts = [
     {_id: 'own',
       ownerUser: {licenses: [
         {_integrationId: '1_integrationId', _connectorId: 'some_connectorId', resumable: false, trialEndDate: end},
@@ -85,9 +84,9 @@ describe("homeTiles's Reactivate Action UI tests", () => {
     jest.spyOn(snakbar, 'default').mockReturnValue([myEnqueueSnackbar]);
     const data = {name: 'tileName', integration: {permissions: {accessLevel: 'manage'}}, _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
-    initHomeTiles(data, initialStore);
+    await initHomeTiles(data, initialStore);
     await userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    const reactivate = screen.getByText('Reactivate integration');
+    const reactivate = await waitFor(() => screen.getByRole('menuitem', {name: /Reactivate integration/i}));
 
     expect(reactivate).toBeInTheDocument();
     await userEvent.click(reactivate);
@@ -103,7 +102,7 @@ describe("homeTiles's Reactivate Action UI tests", () => {
   test('should not show reactivate option because resumable is true', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '3_integrationId', supportsMultiStore: true, _id: 'someID'};
 
-    initHomeTiles(data, initialStore);
+    await initHomeTiles(data, initialStore);
     await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });

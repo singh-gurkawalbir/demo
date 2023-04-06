@@ -72,7 +72,7 @@ describe('error management edit retry data action tests', () => {
   });
   test('should have enable title when flow is disabled', async () => {
     await renderFuntion({resourceId: 'resourceId', isFlowDisabled: true}, {retryDataKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
-    const editRetry = screen.getByTitle('Enable the flow to edit retry data');
+    const editRetry = screen.getByLabelText('Enable the flow to edit retry data');
 
     expect(editRetry).toBeInTheDocument();
     expect(editRetry.textContent).toBe('Edit retry data');

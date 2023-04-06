@@ -107,7 +107,6 @@ describe('access Tokens test suite', () => {
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'The API token',
       'Active',
       'Full Access',
       'Never',
@@ -250,7 +249,6 @@ describe('access Tokens test suite', () => {
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'The API token',
       'Revoked',
       'Full Access',
       'Never',
@@ -258,6 +256,8 @@ describe('access Tokens test suite', () => {
       'Show token',
       '',
     ]);
+
+    expect(screen.getByRole('link', {name: data[0].name})).toBeInTheDocument();
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
@@ -377,7 +377,7 @@ describe('access Tokens test suite', () => {
     }];
 
     initAccessTokens(data);
-    expect(screen.getAllByRole('cell')[3]).toHaveTextContent('5 hours');
+    expect(screen.getAllByRole('cell')[2]).toHaveTextContent('5 hours');
   });
 
   test('should be able to extract the value of scope', () => {

@@ -81,6 +81,7 @@ describe('flowStepLogs meta data UI tests', () => {
       )
     );
   });
+
   test('should verify the Response code column', async () => {
     await renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Response code')).toBeInTheDocument();

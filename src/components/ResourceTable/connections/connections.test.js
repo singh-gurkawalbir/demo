@@ -1,7 +1,7 @@
 
 import React from 'react';
 import * as reactRedux from 'react-redux';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import moment from 'moment';
@@ -115,10 +115,10 @@ describe('test suite for Connections', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'HTTP Connection',
       'Offline',
       'HTTP',
       'https://xyz.pqr',
@@ -161,10 +161,11 @@ describe('test suite for Connections', () => {
     });
 
     initConnections(data, initialStore);
+
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'HTTP Connection',
       'Offline',
       'HTTP',
       'https://xyz.pqr',
@@ -212,10 +213,11 @@ describe('test suite for Connections', () => {
     });
 
     initConnections(data, initialStore);
+
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'HTTP Connection',
       'Offline',
       'HTTP',
       'https://xyz.pqr',
@@ -357,6 +359,7 @@ describe('test suite for Connections', () => {
 
   test('should be able to de register a connection', async () => {
     mockTableContext.integrationId = 'int123';
+    delete mockTableContext.type;
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -376,7 +379,7 @@ describe('test suite for Connections', () => {
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     await userEvent.click(actionButton);
-    const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+    const actionItems = await waitFor(() => screen.getAllByRole('menuitem').map(ele => ele.textContent));
 
     expect(actionItems).toEqual([
       'Edit connection',
@@ -420,7 +423,7 @@ describe('test suite for Connections', () => {
       const actionButton = screen.getByRole('button', {name: /more/i});
 
       await userEvent.click(actionButton);
-      const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+      const actionItems = await waitFor(() => screen.getAllByRole('menuitem').map(ele => ele.textContent));
 
       expect(actionItems).toEqual([
         'Edit connection',
@@ -428,7 +431,7 @@ describe('test suite for Connections', () => {
         'Used by',
         'Refresh metadata',
       ]);
-      const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
+      const refreshMetadata = await waitFor(() => screen.getByRole('menuitem', {name: 'Refresh metadata'}));
 
       await userEvent.click(refreshMetadata);
       [
@@ -463,7 +466,7 @@ describe('test suite for Connections', () => {
 
       initConnections(data, initialStore);
       await userEvent.click(screen.getByRole('button', {name: /more/i}));
-      const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
+      const refreshMetadata = await waitFor(() => screen.getByRole('menuitem', {name: 'Refresh metadata'}));
 
       await userEvent.click(refreshMetadata);
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request(
@@ -492,10 +495,10 @@ describe('test suite for Connections', () => {
 
       initConnections(data, initialStore);
       await userEvent.click(screen.getByRole('button', {name: /more/i}));
-      const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
+      const refreshMetadata = await waitFor(() => screen.getByRole('menuitem', {name: 'Refresh metadata'}));
 
       await userEvent.click(refreshMetadata);
-      expect(document.querySelector('[aria-describedby="client-snackbar"]').textContent).toBe('Connection is offline.');
+      expect(document.querySelector('[aria-describedby="notistack-snackbar"]').textContent).toBe('Connection is offline.');
     });
   });
 
