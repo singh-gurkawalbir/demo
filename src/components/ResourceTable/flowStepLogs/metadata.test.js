@@ -73,7 +73,9 @@ describe('flowStepLogs meta data UI tests', () => {
     await userEvent.click(screen.getByText('Stage'));
     expect(screen.getByText('somestage')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button')[2]);
-    await userEvent.click(screen.getAllByRole('checkbox')[0]);
+    const check = await waitFor(() => screen.getAllByRole('checkbox'));
+
+    await userEvent.click(check[0]);
     await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
@@ -87,7 +89,6 @@ describe('flowStepLogs meta data UI tests', () => {
     expect(screen.getByText('Response code')).toBeInTheDocument();
     expect(screen.getByText('somestatusCode')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button')[2]);
-
     const check = await waitFor(() => screen.getAllByRole('checkbox'));
 
     await userEvent.click(check[0]);
