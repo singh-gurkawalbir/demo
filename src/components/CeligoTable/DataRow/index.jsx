@@ -7,6 +7,9 @@ import useScrollIntoView from '../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   tableRow: {
+    '& .MuiTableCell-root': {
+      padding: '10px 16px',
+    },
     '&:last-child': {
       '& > .MuiTableCell-body': {
         border: 'none',

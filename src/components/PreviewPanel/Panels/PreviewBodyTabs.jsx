@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
+import makeStyles from '@mui/styles/makeStyles';
 import Templates from '../Templates';
 import { HTTP_STAGES, getLatestReqResData, getParsedData } from '../../../utils/exportPanel';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
@@ -8,6 +9,25 @@ import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
 import {selectors} from '../../../reducers';
+
+const useStyles = makeStyles(theme => ({
+  tabWrapper: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    '& .MuiToggleButtonGroup-root': {
+      borderRadius: theme.spacing(3),
+      '& .MuiToggleButton-root:not(:first-child)': {
+        borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+        borderRadius: 0,
+      },
+      '& .MuiToggleButton-root:first-child': {
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+      },
+    },
+  },
+}));
 
 export default function PreviewBodyTabs({
   resourceSampleData,
@@ -20,7 +40,7 @@ export default function PreviewBodyTabs({
 }) {
   const [defaultTab, setDefaultTab] = useState();
   const activeSendOrPreviewTab = useSelector(state => selectors.typeOfSampleData(state, resourceId));
-
+  const classes = useStyles();
   // Default panel is the panel shown by default when export panel is launched
   // We can configure it in the metadata with 'default' as true
   // Else the last stage is taken as the default stage
@@ -58,7 +78,7 @@ export default function PreviewBodyTabs({
 
   if (showDefaultPreviewBody) {
     return (
-      <CeligoTabWrapper>
+      <CeligoTabWrapper className={classes.tabWrapper}>
         <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
         <CeligoTabPanel panelId="preview"> <DefaultPanel isLoggable={false} /> </CeligoTabPanel>
         <CeligoTabPanel panelId="request"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>

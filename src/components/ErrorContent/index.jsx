@@ -10,7 +10,6 @@ const useStyles = makeStyles({
     maxWidth: 500,
     overflowY: 'auto',
     maxHeight: 'calc(100vh - 118px)',
-    paddingLeft: 12,
     wordBreak: 'break-word',
     '& > * ': {
       whiteSpace: 'pre-wrap',

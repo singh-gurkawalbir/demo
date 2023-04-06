@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   pageHeaderShift: {
-    width: `calc(100% - ${theme.drawerWidth}px - ${theme.spacing(1)})`,
+    width: `calc(100% - (${theme.drawerWidth}px - ${theme.spacing(1)}))`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
