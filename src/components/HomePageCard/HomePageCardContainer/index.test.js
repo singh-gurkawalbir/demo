@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import HomePageCardContainer from '.';
+import { renderWithProviders } from '../../../test/test-utils';
 
 const values = 'test';
 const isDragInProgress = false;
@@ -11,7 +12,7 @@ const isTileNotDragged = true;
 
 describe('testing HomePageCardContainer Component', () => {
   test('should render the same text passed into props when tile is not in drag in progress and not dragged', async () => {
-    const {container} = render(<HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged} >{values}</HomePageCardContainer>);
+    const {container} = renderWithProviders(<HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged} >{values}</HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();
@@ -24,7 +25,7 @@ describe('testing HomePageCardContainer Component', () => {
   });
 
   test('should render the same text passed into props when tile is dragged', async () => {
-    const {container} = render(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileNotDragged}> {values} </HomePageCardContainer>);
+    const {container} = renderWithProviders(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileNotDragged}> {values} </HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();
@@ -34,7 +35,7 @@ describe('testing HomePageCardContainer Component', () => {
     expect(svgEl).toBeInTheDocument();
   });
   test('should render the same text passed into props when tile is drag in progress and not completely dragged', async () => {
-    const {container} = render(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileDragged}> {values} </HomePageCardContainer>);
+    const {container} = renderWithProviders(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileDragged}> {values} </HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();

@@ -1,7 +1,8 @@
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import EmptyNode from '.';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 jest.mock('../Handles/DefaultHandle', () => ({
   __esModule: true,
@@ -16,7 +17,7 @@ jest.mock('../Handles/DefaultHandle', () => ({
 }));
 describe('Testsuite for Empty Node', () => {
   test('should test the branch name and info text props', () => {
-    render(
+    renderWithProviders(
       <EmptyNode data={{infoText: 'test infotext', name: 'Testing Branch name'}} />
     );
     expect(screen.getByText(/testing branch name/i)).toBeInTheDocument();
@@ -25,7 +26,7 @@ describe('Testsuite for Empty Node', () => {
     })).toBeInTheDocument();
   });
   test('should test the dom when there is no branch name and info text props passed', () => {
-    render(
+    renderWithProviders(
       <EmptyNode data={{infoText: '', name: ''}} />
     );
     expect(screen.queryByText(/testing branch name/i)).not.toBeInTheDocument();

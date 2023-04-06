@@ -45,24 +45,26 @@ export default function ToggleLayout({ editorId }) {
     dispatch(actions.editor.changeLayout(editorId, event.target.value));
   };
 
-  return <>
-    <CeligoDivider position="left" />
+  return (
     <>
-      <Select
-        variant="standard"
-        labelId="toggle-layout-label"
-        id="toggle-layout"
-        value={layout}
-        className={classes.toggleLayoutSelect}
-        onChange={handleToggle}>
-        {!isMappingsEditor && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
-        {!isMappingsEditor && <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem> }
-        {!isMappingsEditor && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }
-        {isMappingsEditor && <MenuItem className={classes.item} value="compact2"><ViewCompactIcon /></MenuItem> }
-        {isMappingsEditor && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
-        {!!mappingPreviewType && <MenuItem className={classes.item} value="assistantRight"> <ViewAssistantRightIcon /></MenuItem> }
-        {!!mappingPreviewType && <MenuItem className={classes.item} value="assistantTopRight"> <ViewAssistantTopRightIcon /></MenuItem> }
-      </Select>
+      <CeligoDivider position="left" />
+      <>
+        <Select
+          variant="standard"
+          labelId="toggle-layout-label"
+          id="toggle-layout"
+          value={layout}
+          className={classes.toggleLayoutSelect}
+          onChange={handleToggle}>
+          {!isMappingsEditor && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
+          {!isMappingsEditor && <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem> }
+          {!isMappingsEditor && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }
+          {isMappingsEditor && <MenuItem className={classes.item} value="compact2"><ViewCompactIcon /></MenuItem> }
+          {isMappingsEditor && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
+          {!!mappingPreviewType && <MenuItem className={classes.item} value="assistantRight"> <ViewAssistantRightIcon /></MenuItem> }
+          {!!mappingPreviewType && <MenuItem className={classes.item} value="assistantTopRight"> <ViewAssistantTopRightIcon /></MenuItem> }
+        </Select>
+      </>
     </>
-  </>;
+  );
 }

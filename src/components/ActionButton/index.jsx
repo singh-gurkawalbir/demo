@@ -28,14 +28,15 @@ export default function ActionButton({ className, children, placement, tooltip =
   const classes = useStyles();
 
   return (
-    // The strange looking open property expression disables the tooltip for any action button
-    // which does not have a tooltip. If anyone has a more elegant way to do this, plmk. (Dave Riedl)
+  // The strange looking open property expression disables the tooltip for any action button
+  // which does not have a tooltip. If anyone has a more elegant way to do this, plmk. (Dave Riedl)
 
     // TODO:(Dave) Tooltip title is a default required prop, undefined throwing a warning
     <Tooltip
       open={tooltip ? undefined : false} placement={placement} title={tooltip}
       aria-label={tooltip}>
       <IconButton
+        role="button"
         className={clsx(classes.editorButton, className)}
         {...props}
         aria-label="tooltip"

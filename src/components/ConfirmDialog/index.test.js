@@ -1,7 +1,7 @@
 
 import React, { useCallback } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import useConfirmDialog, { ConfirmDialogProvider } from '.';
 import { renderWithProviders } from '../../test/test-utils';
@@ -147,7 +147,7 @@ jest.mock('@mui/material/IconButton', () => ({
 
 describe('confirm Dialogue Component Testing', () => {
   test('testing what is rendered in the DOM', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test />
@@ -186,7 +186,7 @@ describe('confirm Dialogue Component Testing', () => {
   });
 
   test('testing saveDiscardDialogue', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test2 />
@@ -221,7 +221,7 @@ describe('confirm Dialogue Component Testing', () => {
   });
 
   test('testing defaultConfirmDialog', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test3 />
@@ -246,7 +246,7 @@ describe('confirm Dialogue Component Testing', () => {
   });
 
   test('testing onClose', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test4 />
@@ -260,7 +260,7 @@ describe('confirm Dialogue Component Testing', () => {
   });
 
   test('testing Confirm Dialogue with isHtml true', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test5 />

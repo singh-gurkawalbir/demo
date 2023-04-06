@@ -1,13 +1,14 @@
 
 import React from 'react';
-import {render, screen, waitFor} from '@testing-library/react';
+import { screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import GlobalSearchProto from '.';
+import { renderWithProviders } from '../../test/test-utils';
 
 describe('globalSearch UI Tests', () => {
   beforeEach(() => {
-    render(<MemoryRouter><GlobalSearchProto /></MemoryRouter>);
+    renderWithProviders(<MemoryRouter><GlobalSearchProto /></MemoryRouter>);
   });
   const clickOnSearchIcon = async () => {
     await userEvent.click(screen.getByLabelText(/Global search/i));

@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import FormHeader from '.';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 // Mocking Environment Toggle as part of unit testing
 jest.mock('../../../../../App/CeligoAppBar/EnvironmentToggle', () => ({
@@ -25,7 +26,7 @@ describe('Testsuite for FormHeader', () => {
   test('should test Form header when the selectedAccountHasSandbox is set to true', async () => {
     const mockHandleToggle = jest.fn();
 
-    render(
+    renderWithProviders(
       <FormHeader
         selectedAccountHasSandbox
         helpURL="/test"
@@ -49,7 +50,7 @@ describe('Testsuite for FormHeader', () => {
   test('should test Form header when the selectedAccountHasSandbox is set to false', () => {
     const mockHandleToggle = jest.fn();
 
-    render(
+    renderWithProviders(
       <FormHeader
         selectedAccountHasSandbox={false}
         helpURL="/test"

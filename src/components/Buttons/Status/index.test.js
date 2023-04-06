@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -37,7 +37,7 @@ describe('status button component test', () => {
   });
 
   test('testing by className', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <MemoryRouter>
         <Status variant="error" size="mini" onClick={handleErrorClick}>
           handleErrorClick
