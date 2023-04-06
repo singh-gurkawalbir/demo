@@ -3,16 +3,12 @@ import React, { useCallback } from 'react';
 import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { Switch } from '@celigo/fuse-ui';
-// import CeligoSwitch from '../../../CeligoSwitch';
 import FieldHelp from '../../FieldHelp';
 import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   dynaSwitchLabel: {
     marginRight: theme.spacing(1),
-  },
-  dynaSwitch: {
-    marginRight: theme.spacing(0),
   },
 }));
 
@@ -37,7 +33,8 @@ export default function DynaSwitch(props) {
         disabled={rest.disabled}
         onChange={onChange}
         checked={value}
-        tooltip={rest.disabled ? tooltip : ''} />
+        tooltip={rest.disabled ? tooltip : ''}
+        sx={{mr: '0px !important'}} />
       <FieldHelp {...props} />
     </ActionGroup>
   );
