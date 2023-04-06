@@ -344,10 +344,10 @@ with: {{#with field}} {{field1}} {{field2}} {{/with}}`,
     },
   }),
   validateRule: (editor, rule) => {
-    const isValid = typeof rule === 'string' && rule.length > 10;
+    const isValid = typeof rule === 'string' && rule.length > 1;
 
     if (!isValid) {
-      return ['Celigo chat returned the following invalid SQL:', rule];
+      return ['Celigo chat returned the following invalid template:', rule];
     }
   },
 };
