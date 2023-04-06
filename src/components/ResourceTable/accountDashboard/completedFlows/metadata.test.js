@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import metadata from './metadata';
@@ -207,7 +207,6 @@ describe('running flows metadata column UI Tests', () => {
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
 
-    // screen.debug(undefined, Infinity);
     expect(screen.getByRole('rowheader')).toBeInTheDocument();
     expect(cellIndex).toEqual(headerIndex - 1);
   });
@@ -231,9 +230,9 @@ describe('running flows metadata column UI Tests', () => {
     );
 
     expect(screen.getByText('Integration')).toBeInTheDocument();
-    await userEvent.click(screen.getAllByRole('button')[0]);
-    await userEvent.click(screen.getAllByRole('checkbox')[1]);
-    await userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(await waitFor(() => screen.getAllByRole('button')[0]));
+    await userEvent.click(await waitFor(() => screen.getAllByRole('checkbox')[1]));
+    await userEvent.click(await waitFor(() => screen.getByText(/Apply/i)));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'PATCH_FILTER',

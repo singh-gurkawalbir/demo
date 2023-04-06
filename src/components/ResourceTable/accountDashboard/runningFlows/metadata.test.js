@@ -90,7 +90,6 @@ describe('running flows metadata column UI Tests', () => {
     const headerIndex = indexOfCell('Started', 'columnheader');
     const cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
 
-    // screen.debug(undefined, Infinity);
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
 
