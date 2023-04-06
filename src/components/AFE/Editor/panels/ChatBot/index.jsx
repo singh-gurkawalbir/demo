@@ -71,7 +71,7 @@ export default function ChatBotPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [prompt, setPrompt] = React.useState('include records with age > 40');
+  const [prompt, setPrompt] = React.useState('');
   const [showSettings, setShowSettings] = React.useState(false);
 
   const { formKey, status, errors, request, placeholder } = useSelector(state =>

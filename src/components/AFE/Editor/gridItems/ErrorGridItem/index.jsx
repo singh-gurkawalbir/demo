@@ -50,7 +50,7 @@ export default function ErrorGridItem({ editorId }) {
     ...(Array.isArray(error) ? error : [error]),
     violations?.ruleError,
     violations?.dataError,
-    ...chatErrors,
+    ...chatErrors || [],
   ]
     .filter(e => !!e)
     .join('\n');

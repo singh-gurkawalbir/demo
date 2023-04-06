@@ -115,21 +115,46 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
-    const {fieldId, paramIndex} = options;
-    const {type, value, arrayIndex} = fieldState || {};
+    const {
+      options,
+      resource,
+      fieldState,
+      connection,
+      isPageGenerator,
+      isStandaloneResource,
+      formValues,
+      ...rest
+    } = props;
+    const { fieldId, paramIndex } = options;
+    const { type, value, arrayIndex } = fieldState || {};
     let rule = value;
 
-    if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {
-    // below formatting applies for only relative URI, body and sql fields
-      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value || '';
+    if (
+      type === 'relativeuri' ||
+      type === 'httprequestbody' ||
+      type === 'sqlquerybuilder'
+    ) {
+      // below formatting applies for only relative URI, body and sql fields
+      const formattedRule =
+        typeof arrayIndex === 'number' && Array.isArray(value)
+          ? value[arrayIndex]
+          : value || '';
 
-      rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
+      rule =
+        typeof formattedRule === 'string'
+          ? formattedRule
+          : JSON.stringify(formattedRule, null, 2);
     } else if (type === 'soqlquery') {
       rule = value?.query;
     }
 
-    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneResource});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({
+      resource,
+      fieldId,
+      connection,
+      isPageGenerator,
+      isStandaloneResource,
+    });
     let v1Rule;
     let v2Rule;
 
@@ -138,11 +163,20 @@ export default {
       v2Rule = rule;
     }
 
-    const connectionMediaType = connection?.type === 'http' ? connection?.http?.mediaType : connection?.rest?.mediaType;
-    const contentType = fieldState?.options?.contentType || fieldState?.contentType || connectionMediaType;
+    const connectionMediaType =
+      connection?.type === 'http'
+        ? connection?.http?.mediaType
+        : connection?.rest?.mediaType;
+    const contentType =
+      fieldState?.options?.contentType ||
+      fieldState?.contentType ||
+      connectionMediaType;
     let resultMode;
 
-    if (fieldState?.type !== 'httprequestbody' && fieldState?.id !== 'webhook.successBody') {
+    if (
+      fieldState?.type !== 'httprequestbody' &&
+      fieldState?.id !== 'webhook.successBody'
+    ) {
       resultMode = 'text';
     } else if (fieldId === 'file.xml.body') {
       resultMode = 'xml';
@@ -155,9 +189,11 @@ export default {
 
     if (fieldId === 'assistantMetadata.queryParams') {
       rule = fieldState.value[Object.keys(fieldState.value)[paramIndex]];
-    } else if (fieldId === 'oauth2.token.headers' ||
-    fieldId === 'oauth2.revoke.headers' ||
-    fieldId === 'oauth2.refresh.headers') {
+    } else if (
+      fieldId === 'oauth2.token.headers' ||
+      fieldId === 'oauth2.revoke.headers' ||
+      fieldId === 'oauth2.refresh.headers'
+    ) {
       rule = fieldState.value[paramIndex]?.value;
     }
 
@@ -176,20 +212,24 @@ export default {
     rules: { strict: !!editor.strict, template: editor.rule },
     data: JSON.parse(editor.data),
   }),
-  validate: ({data}) => ({
+  validate: ({ data }) => ({
     dataError: !data
       ? 'Must provide some sample data.'
       : typeof data === 'string' && util.validateJsonString(data),
   }),
-  processResult: ({resultMode}, result) => {
-    const {data, ...rest} = result;
+  processResult: ({ resultMode }, result) => {
+    const { data, ...rest } = result;
 
     if (data) {
       if (resultMode === 'json') {
         try {
           JSON.parse(data);
         } catch (e) {
-          return {data, warning: `Evaluated result is not valid JSON. ${e.message || ''}`, ...rest};
+          return {
+            data,
+            warning: `Evaluated result is not valid JSON. ${e.message || ''}`,
+            ...rest,
+          };
         }
       } else if (resultMode === 'xml') {
         const xmldoc = new DOMParser().parseFromString(data, 'text/xml');
@@ -198,11 +238,116 @@ export default {
         if (parseError?.length) {
           const errorText = parseError[0].childNodes?.[1]?.textContent || '';
 
-          return {data, warning: `Evaluated result is not valid XML. ${errorText}`, ...rest};
+          return {
+            data,
+            warning: `Evaluated result is not valid XML. ${errorText}`,
+            ...rest,
+          };
         }
       }
     }
 
     return result;
+  },
+  getChatOptions: () => ({
+    enabled: true,
+    placeholder:
+      'Describe in detail what you would like me to do. I can also make changes to your template for you',
+    request: {
+      model: 'gpt-3.5-turbo',
+      temperature: 0.1,
+      top_p: 1,
+      max_tokens: 512,
+      messages: [
+        {
+          role: 'system',
+          content: `You are an assistant tasked to build valid, handlebar templates that typically generate a valid json object. 
+ These templates include handlebar placeholders that reference fields from the sample record data provided below.`,
+        },
+        {
+          role: 'user',
+          content: `Only give valid handlebar templates. 
+ Do not output any explanations.
+ use whitespace to format your output in a readable way.
+ Assume any handlebar placeholders reference fields from the sample record data provided below.
+ Always add to the existing template, unless told to replace it.`,
+        },
+        {
+          role: 'user',
+          content: `Restrict all handlebar helpers to the following list:
+abs: {{abs field}}
+add: {{add field field}}
+and: {{#and field field}} expr {{else}} expr {{/and}}
+avg: {{avg field field}}
+base64Encode: {{base64Encode field}}
+base64Decode: {{base64Decode field decodeFormat}}
+capitalize: {{capitalize field}}
+capitalizeAll: {{capitalizeAll field}}
+ceil: {{ceil field}}
+compare: {{#compare field operator field}} expr {{else}} expr {{/compare}}
+contains: {{#contains collection field}} expr {{else}} expr {{/contains}}
+dateAdd: {{dateAdd dateField offsetField timeZoneField}}
+dateFormat: {{dateFormat o/pformat date i/pformat timezone}}
+decodeURI: {{decodeURI field}}
+divide: {{divide field field}}
+each: {{#each field}}{{this}}{{/each}}
+encodeURI: {{encodeURI field}}
+floor: {{floor field}}
+getValue: {{getValue field "defaultValue"}}
+hash: {{hash algorithm encoding field}}
+hmac: {{hmac algorithm key encoding field keyEncoding}}
+if_else: {{#if field}} expr {{else}} expr {{/if}}
+ifEven: {{#ifEven field}} expr {{else}} expr {{/ifEven}}
+join: {{join delimiterField field1 field2}}
+jsonEncode: {{jsonEncode field}}
+jsonSerialize: {{jsonSerialize field}}
+lookup: {{lookup lookupName contextPath}}
+lowercase: {{lowercase field}}
+multiply: {{multiply field field}}
+neither: {{#neither field field}} expr {{else}} expr {{/neither}}
+or: {{#or field field}} expr {{else}} expr {{/or}}
+random: {{random “CRYPTO”/“UUID” length}}
+regexMatch: {{regexMatch field regex index options}}
+regexReplace: {{regexReplace field1 field2 regex options}}
+regexSearch: {{regexSearch field regex options}}
+replace: {{replace field string string}}
+round: {{round field}}
+sortnumbers: {{sort field number="true"}}
+sortstrings: {{sort field}}
+split: {{split field delimiter index}}
+substring: {{substring stringField startIndex endIndex}}
+subtract: {{subtract field field}}
+sum: {{sum <array>}}
+timestamp: {{timestamp format timezone}}
+toExponential: {{toExponential field fractionDigits}}
+toFixed: {{toFixed field digits}}
+toPrecision: {{toPrecision field precision}}
+trim: {{trim field}}
+unless: {{#unless field}} expr {{else}} expr {{/unless}}
+uppercase: {{uppercase field}}
+with: {{#with field}} {{field1}} {{field2}} {{/with}}`,
+        },
+        {
+          role: 'user',
+          content: `generate a json object template with the following fields: age, id, name. 
+ The values of these fields are placeholders.`,
+        },
+        {
+          role: 'assistant',
+          content: `{
+  "age": {{age}}, 
+  "id": {{id}},
+  "name": {{name}} 
+}`,
+        },
+      ],
+    },
+  }),
+  validateRule: (editor, rule) => {
+    const isValid = typeof rule === 'string' && rule.length > 10;
+
+    if (!isValid) {
+      return ['Celigo chat returned the following invalid SQL:', rule];
+    }
   },
 };
