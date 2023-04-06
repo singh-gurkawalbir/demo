@@ -953,15 +953,15 @@ export function* requestChatCompletion({ id, prompt }) {
   // holds a valid result.
   const newRule = response.choices[0].message.content;
 
-  const validationErrors = processorLogic.validateRule(editor, newRule);
+  const {isValid, validationErrors, parsedResponse} = processorLogic.validateChatResponse(editor, newRule);
 
-  if (validationErrors?.length > 0) {
+  if (!isValid) {
     return yield put(actions.editor.chat.failed(id, validationErrors));
   }
 
-  console.log('saga chat completion', newRule);
+  console.log('saga chat completion', parsedResponse);
 
-  yield put(actions.editor.patchRule(id, newRule));
+  yield put(actions.editor.patchRule(id, parsedResponse));
   yield put(actions.editor.chat.complete(id));
 }
 

@@ -69,7 +69,8 @@ export function getLogic(editor) {
   return logic;
 }
 
-const validateRule = (editor, rule) => getLogic(editor).validateRule(editor, rule);
+const validateChatResponse = (editor, response) =>
+  getLogic(editor).validateChatResponse(editor, response);
 
 const validate = editor => {
   if (!editor) return;
@@ -303,13 +304,13 @@ export const featuresMap = options => ({
 
 export default {
   requestOptions,
-  validateRule,
   validate,
   isDirty,
   init,
   processResult,
   getPatchSet,
   getChatOptions,
+  validateChatResponse,
   buildData,
   preSaveValidate,
   updateRule,

@@ -343,11 +343,20 @@ with: {{#with field}} {{field1}} {{field2}} {{/with}}`,
       ],
     },
   }),
-  validateRule: (editor, rule) => {
-    const isValid = typeof rule === 'string' && rule.length > 1;
 
-    if (!isValid) {
-      return ['Celigo chat returned the following invalid template:', rule];
+  validateChatResponse: (editor, response) => {
+    const isValid = typeof response === 'string' && response.length;
+
+    if (isValid) {
+      return { isValid, parsedResponse: response };
     }
+
+    return {
+      isValid,
+      validationErrors: [
+        'Celigo chat returned the following invalid template:',
+        response,
+      ],
+    };
   },
 };

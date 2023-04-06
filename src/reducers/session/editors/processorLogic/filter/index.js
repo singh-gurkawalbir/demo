@@ -83,8 +83,7 @@ export default {
       messages: [
         {
           role: 'system',
-          content:
-        `You are an assistant tasked to build filter rules for Celigo's integrator.io product. 
+          content: `You are an assistant tasked to build filter rules for Celigo's integrator.io product. 
         These rules are applied against sample record data. 
         Do not output any explanations, only output valid json.`,
         },
@@ -107,12 +106,12 @@ export default {
         {
           role: 'user',
           content:
-        'only process records where CreditMemoData.length > 0 and charge != yes',
+            'only process records where CreditMemoData.length > 0 and charge != yes',
         },
         {
           role: 'assistant',
           content:
-        '["and",["greaterthan",["number",["extract","CreditMemoData.length"]],0],["notequals",["string",["extract","CHARGE"]],"YES"]]',
+            '["and",["greaterthan",["number",["extract","CreditMemoData.length"]],0],["notequals",["string",["extract","CHARGE"]],"YES"]]',
         },
       ],
     },
@@ -123,11 +122,28 @@ export default {
     if (!isValid) {
       return ['Celigo chat returned the following invalid JSON:', rule];
     }
-
-    // Test to see if rule matches JSON schema for filter rule
-    // const ajv = new Ajv();
-    // const validate = ajv.compile({ });
   },
+
+  validateChatResponse: (editor, response) => {
+    try {
+      const parsedResponse = JSON.parse(response);
+
+      // Test to see if rule matches JSON schema for filter rule
+      // const ajv = new Ajv();
+      // const validate = ajv.compile({ });
+
+      return { isValid: true, parsedResponse };
+    } catch (e) {
+      return {
+        isValid: false,
+        validationErrors: [
+          'Celigo chat returned the following invalid JSON:',
+          e.message,
+        ],
+      };
+    }
+  },
+
   validate: editor => ({
     dataError:
       typeof editor.data !== 'object' && util.validateJsonString(editor.data),

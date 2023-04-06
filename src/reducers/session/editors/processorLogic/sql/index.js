@@ -225,11 +225,16 @@ with: {{#with field}} {{field1}} {{field2}} {{/with}}`,
       ],
     },
   }),
-  validateRule: (editor, rule) => {
-    const isValid = typeof rule === 'string' && rule.length > 10;
+  validateChatResponse: (editor, response) => {
+    const isValid = typeof response === 'string' && response.length > 5;
 
-    if (!isValid) {
-      return ['Celigo chat returned the following invalid SQL:', rule];
+    if (isValid) {
+      return {isValid, parsedResponse: response};
     }
+
+    return {
+      isValid,
+      validationErrors: ['Celigo chat returned the following invalid SQL:', response],
+    };
   },
 };
