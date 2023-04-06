@@ -1052,6 +1052,7 @@ describe('testcases with window dom setup', () => {
         innerHTML: '<input name="_csrf" value="someCsrf">',
         method: 'POST',
         submit,
+        target: '_blank',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();
@@ -1072,6 +1073,7 @@ describe('testcases with window dom setup', () => {
         innerHTML: '<input name="_csrf" value="someCsrf"><input name="key" value="value">',
         method: 'POST',
         submit,
+        target: '_blank',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();
