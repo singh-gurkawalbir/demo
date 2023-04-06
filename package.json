@@ -11,7 +11,11 @@
     "type": "git",
     "url": "git://github.com/celigo/integrator-ui.git"
   },
+<<<<<<< HEAD
   "gitRevision": "release/2023.4.1",
+=======
+  "gitRevision": "2023.3.1.4",
+>>>>>>> 464c5145935413de5cd3b23afdbb97a4b7690d69
   "scripts": {
     "start": "webpack-dev-server --mode=development",
     "start-optimized": "env NODE_ENV=production webpack-dev-server --mode=production",
