@@ -35,6 +35,7 @@ const CONFIRM_REMOVE = 'Are you sure you want to remove this resource?';
 const NO_DEBUG_LOG = 'You don’t have any debug log entries.';
 const COMPONENT_INFO = 'The following components are created with this integration:';
 const KEY_COLUMN_DEPRECATION = 'You’re using a deprecated option “Key Columns” to group your records. Use the new and improved option in the “How would you like to sort and group records” section. Your group settings may be affected when you use the new sorting and grouping option.';
+const PREVIEW_FAILED = 'Failed to fetch preview data.';
 
 const MARKETPLACE = {
   HELPINFO: 'Jump-start your integrations with our Quickstart integration templates. Explore new or install your existing licensed integration apps.',
@@ -356,7 +357,7 @@ const SUBSCRIPTION = {
 
   <a target="_blank" rel="noopener noreferrer"
   href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with integration apps & templates.`,
-  TRY_UNLIMITED: 'Try unlimited flows free for 30 days',
+  TRY_FULL_ACCESS: 'Try full access free for 30 days',
   UNLIMITED_FLOWS_START: 'Congratulations! Your unlimited flows trial starts now.',
   REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out<br>for an email from one of our associates soon.',
   UPGRADE_TO_NEXT_PLAN: 'Upgrade to a {{nextPlan}} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.',
@@ -425,6 +426,7 @@ const messages = {
   RESOURCE,
   ADDONS,
   KEY_COLUMN_DEPRECATION,
+  PREVIEW_FAILED,
   CONNECTION,
   NO_RESULT,
   PLAYGROUND,

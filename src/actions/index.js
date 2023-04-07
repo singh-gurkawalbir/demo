@@ -1429,10 +1429,10 @@ const user = {
       created: user => action(actionTypes.USER.CREATED, { user }),
       update: (_id, user, asyncKey) => action(actionTypes.USER.UPDATE, { _id, user, asyncKey }),
       updated: user => action(actionTypes.USER.UPDATED, { user }),
-      delete: _id => action(actionTypes.USER.DELETE, { _id }),
+      delete: (_id, isSwitchAccount) => action(actionTypes.USER.DELETE, { _id, isSwitchAccount }),
       deleted: _id => action(actionTypes.USER.DELETED, { _id }),
-      disable: (_id, disabled) =>
-        action(actionTypes.USER.DISABLE, { _id, disabled }),
+      disable: (_id, disabled, isSwitchAccount) =>
+        action(actionTypes.USER.DISABLE, { _id, disabled, isSwitchAccount }),
       disabled: _id => action(actionTypes.USER.DISABLED, { _id }),
       reinvited: _id => action(actionTypes.USER.REINVITED, { _id }),
       makeOwner: email => action(actionTypes.USER.MAKE_OWNER, { email }),
@@ -1442,7 +1442,7 @@ const user = {
     accounts: {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
-      leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
+      leave: (id, isSwitchAccount) => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id, isSwitchAccount }),
       switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
       switchToComplete: () => action(actionTypes.USER.ACCOUNT.SWITCH_COMPLETE),
       addLinkedConnectionId: connectionId =>

@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
     textAlign: 'right',
     marginTop: theme.spacing(-2),
+    marginRight: theme.spacing(-0.5),
   },
 
 }));

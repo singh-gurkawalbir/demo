@@ -2430,6 +2430,19 @@ describe('authorizedConnection saga', () => {
       .put(actions.resource.request('connections', connectionId))
       .run();
   });
+  test('should dispatch resource request action if oauth connection is of type Ns jdbc', () => {
+    expectSaga(authorizedConnection, { connectionId })
+      .provide([
+        [select(
+          selectors.resourceData,
+          'connections',
+          connectionId
+        ), {merged: {offline: true, jdbc: {type: 'netsuitejdbc'}}}],
+      ])
+      .put(actions.connection.madeOnline(connectionId))
+      .put(actions.resource.request('connections', connectionId))
+      .run();
+  });
   test('should not dispatch any action if oauth connection is not offline or connection type is neither netsuite or salesforce', () => {
     expectSaga(authorizedConnection, { connectionId })
       .provide([
