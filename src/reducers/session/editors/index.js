@@ -11,7 +11,6 @@ const emptyObj = {};
 export const CHAT_STATUS = {
   IDLE: 'idle',
   PENDING: 'pending',
-  FAILED: 'failed',
 };
 
 export default function reducer(state = {}, action) {
@@ -357,7 +356,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.CHAT.FAILED: {
-        draft[id].chat.status = CHAT_STATUS.FAILED;
+        draft[id].chat.status = CHAT_STATUS.IDLE;
         draft[id].chat.errors = error;
         break;
       }

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import actions from '../../../../../actions';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
+import { CHAT_STATUS } from '../../../../../reducers/session/editors';
 import ActionButton from '../../../../ActionButton';
 import { FilledButton } from '../../../../Buttons';
 import DynaForm from '../../../../DynaForm';
@@ -46,7 +47,7 @@ export default function ChatBotPanel({ editorId }) {
     dispatch(actions.editor.chat.request(editorId, prompt));
   };
 
-  const isPending = status === 'pending';
+  const isPending = status === CHAT_STATUS.PENDING;
 
   return (
     <div

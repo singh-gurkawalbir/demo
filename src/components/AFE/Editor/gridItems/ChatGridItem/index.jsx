@@ -54,11 +54,11 @@ export default function ChatGridItem({ editorId, ref }) {
             />
             <div style={{ flexGrow: 1 }} />
             <div style={{ marginTop: 4 }}>
-              <ActionButton>
+              <ActionButton tooltip="Celigo AI was helpful">
                 <ThumbsUpIcon onClick={handleFeedback(true)} />
               </ActionButton>
 
-              <ActionButton>
+              <ActionButton tooltip="Celigo AI failed me">
                 <ThumbsDownIcon onClick={handleFeedback(false)} />
               </ActionButton>
             </div>
