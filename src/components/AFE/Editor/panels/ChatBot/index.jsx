@@ -6,11 +6,10 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import { selectors } from '../../../../../reducers';
 import { CHAT_STATUS } from '../../../../../reducers/session/editors';
 import ActionButton from '../../../../ActionButton';
-import { FilledButton } from '../../../../Buttons';
 import DynaForm from '../../../../DynaForm';
 import SettingsIcon from '../../../../icons/SettingsIcon';
-import Spinner from '../../../../Spinner';
 import getFieldMeta from './getFieldMeta';
+import ChatInput from './ChatInput';
 
 const useStyles = makeStyles({
   openAIeditor: {
@@ -22,7 +21,6 @@ export default function ChatBotPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [prompt, setPrompt] = React.useState('');
   const [showSettings, setShowSettings] = React.useState(false);
 
   const { formKey, status, errors, request, placeholder } = useSelector(state =>
@@ -39,11 +37,7 @@ export default function ChatBotPanel({ editorId }) {
     selectors.isEditorDisabled(state, editorId)
   );
 
-  const handleChange = e => {
-    setPrompt(e.target.value);
-  };
-
-  const handleClick = () => {
+  const handleNewPrompt = prompt => {
     dispatch(actions.editor.chat.request(editorId, prompt));
   };
 
@@ -67,29 +61,14 @@ export default function ChatBotPanel({ editorId }) {
           flexDirection: 'column',
         }}
       >
-        <div style={{ flexGrow: 1 }}>
-          <textarea
-            value={prompt}
-            disabled={disabled}
-            onChange={handleChange}
-            style={{
-              width: '100%',
-              height: '100%',
-              resize: 'none',
-              border: 'none',
-              outline: 'none',
-              backgroundColor: 'transparent',
-            }}
-            placeholder={placeholder}
+        {!disabled && (
+        <ChatInput
+          key={editorId}
+          isChatPending={isPending}
+          placeholder={placeholder}
+          onNewPrompt={handleNewPrompt}
           />
-        </div>
-
-        <div style={{ display: 'flex', columnGap: 16, padding: 4 }}>
-          <FilledButton onClick={handleClick} disabled={disabled || !prompt}>
-            Submit
-          </FilledButton>
-          {isPending && <Spinner>Thinking...</Spinner>}
-        </div>
+        )}
       </div>
       <div
         style={{

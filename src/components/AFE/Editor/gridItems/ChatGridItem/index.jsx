@@ -1,7 +1,9 @@
 import React, {useCallback} from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
+import { CHAT_STATUS } from '../../../../../reducers/session/editors';
 import PanelGridItem from '../PanelGridItem';
 import PanelTitle from '../PanelTitle';
 import ChatBotPanel from '../../panels/ChatBot';
@@ -9,6 +11,7 @@ import ActionButton from '../../../../ActionButton';
 import ThumbsUpIcon from '../../../../icons/ThumbsUpIcon';
 import ThumbsDownIcon from '../../../../icons/ThumbsDownIcon';
 import Help from '../../../../Help';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles({
   flexContainer: {
@@ -25,6 +28,10 @@ const useStyles = makeStyles({
 export default function ChatGridItem({ editorId, ref }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  const isPending = useSelector(
+    state => selectors.editorChatState(state, editorId).status === CHAT_STATUS.PENDING
+  );
 
   const handleFeedback = useCallback(wasHelpful => () => {
     dispatch(
@@ -52,6 +59,9 @@ export default function ChatGridItem({ editorId, ref }) {
                     to understand the intent of your text. It can be used to automate your business processes
                     by providing a conversational interface to your applications."
             />
+            <div style={{ marginLeft: 16 }}>
+              {isPending && <Spinner size="small">Thinking</Spinner>}
+            </div>
             <div style={{ flexGrow: 1 }} />
             <div style={{ marginTop: 4 }}>
               <ActionButton tooltip="Celigo AI was helpful">
