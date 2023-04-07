@@ -9,7 +9,6 @@ import {
   race,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { parse } from 'date-fns';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
