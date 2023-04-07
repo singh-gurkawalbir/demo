@@ -78,7 +78,7 @@ export default {
     placeholder: 'Tell me about your filter rules',
     request: {
       model: 'gpt-3.5-turbo',
-      temperature: 0.2,
+      temperature: 0,
       top_p: 1,
       max_tokens: 512,
       messages: [

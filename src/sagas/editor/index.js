@@ -930,11 +930,12 @@ export function* requestChatCompletion({ id, prompt }) {
   const chatFormValues = yield select(selectors.formValueTrimmed, formKey);
   // this is part of the openAI api spec
   // eslint-disable-next-line camelcase
-  const { messages, temperature, top_p } = chatFormValues;
+  const { messages, temperature, top_p, max_tokens } = chatFormValues;
   const body = {
     model: 'gpt-3.5-turbo',
-    temperature: parseFloat(temperature),
-    top_p: parseFloat(top_p),
+    max_tokens: parseInt(max_tokens, 10) || 512,
+    temperature: parseFloat(temperature) || 0,
+    top_p: parseFloat(top_p) || 1,
     messages: JSON.parse(messages),
   };
 

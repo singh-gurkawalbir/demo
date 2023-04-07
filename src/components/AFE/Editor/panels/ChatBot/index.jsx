@@ -14,6 +14,7 @@ const fieldMeta = (request, editorClassName) => ({
   fieldMap: {
     model: {
       id: 'model',
+      visible: false,
       name: 'model',
       label: 'model',
       type: 'text',
@@ -22,6 +23,7 @@ const fieldMeta = (request, editorClassName) => ({
     },
     temperature: {
       id: 'temperature',
+      visible: false,
       name: 'temperature',
       label: 'temperature',
       type: 'text',
@@ -32,12 +34,22 @@ const fieldMeta = (request, editorClassName) => ({
     },
     topP: {
       id: 'top_p',
+      visible: false,
       name: 'top_p',
       label: 'top_p',
       type: 'text',
       defaultValue: request.top_p,
       helpText:
         'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. We generally recommend altering this or temperature but not both.',
+    },
+    messages: {
+      id: 'messages',
+      name: 'messages',
+      label: 'messages',
+      type: 'editor',
+      mode: 'json',
+      defaultValue: JSON.stringify(request.messages, null, 2),
+      editorClassName,
     },
     maxTokens: {
       id: 'max_tokens',
@@ -48,15 +60,6 @@ const fieldMeta = (request, editorClassName) => ({
       defaultValue: request.max_tokens,
       helpText:
         'The maximum number of tokens to generate in the chat completion.  The total length of input tokens and generated tokens is limited by the model`s context length.',
-    },
-    messages: {
-      id: 'messages',
-      name: 'messages',
-      label: 'messages',
-      type: 'editor',
-      mode: 'json',
-      defaultValue: JSON.stringify(request.messages, null, 2),
-      editorClassName,
     },
   },
 });

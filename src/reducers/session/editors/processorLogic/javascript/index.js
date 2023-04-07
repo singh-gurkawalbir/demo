@@ -91,7 +91,7 @@ export default {
       'Describe what your code should do. I will apply your request to any existing code unless you tell me to replace it.',
     request: {
       model: 'gpt-3.5-turbo',
-      temperature: 0.1,
+      temperature: 0,
       top_p: 1,
       max_tokens: 1024,
       messages: [

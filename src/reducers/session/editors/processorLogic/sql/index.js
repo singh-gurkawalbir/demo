@@ -137,7 +137,7 @@ export default {
       'Tell me about your SQL query. I will apply your request to the existing SQL query unless you tell me to replace it',
     request: {
       model: 'gpt-3.5-turbo',
-      temperature: 0.1,
+      temperature: 0,
       top_p: 1,
       max_tokens: 512,
       messages: [

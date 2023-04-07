@@ -255,7 +255,7 @@ export default {
       'Describe in detail what you would like me to do. I can also make changes to your template for you',
     request: {
       model: 'gpt-3.5-turbo',
-      temperature: 0.1,
+      temperature: 0,
       top_p: 1,
       max_tokens: 512,
       messages: [
