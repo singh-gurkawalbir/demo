@@ -74,6 +74,7 @@ export default {
     };
   },
   getChatOptions: () => ({
+    enabled: true,
     placeholder: 'Tell me about your filter rules',
     request: {
       model: 'gpt-3.5-turbo',

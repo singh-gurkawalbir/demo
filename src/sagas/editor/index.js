@@ -9,6 +9,7 @@ import {
   race,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
+import { parse } from 'date-fns';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
@@ -918,32 +919,41 @@ export function* toggleEditorVersion({ id, version }) {
 export function* requestChatCompletion({ id, prompt }) {
   let response;
   const editor = yield select(selectors.editor, id);
-  const { data, rule, chat } = editor;
+  const { data, rule: rawRule, chat } = editor;
+  const { formKey, rulePath } = chat;
 
-  const chatFormOptions = yield select(selectors.formValueTrimmed, chat.formKey);
+  let rule = rulePath ? rawRule[rulePath] : rawRule;
+
+  if (typeof rule === 'object') {
+    rule = JSON.stringify(rule, null, 2);
+  }
+
+  const chatFormValues = yield select(selectors.formValueTrimmed, formKey);
   // this is part of the openAI api spec
   // eslint-disable-next-line camelcase
-  const { messages, temperature, top_p, ...chatOptions } = chatFormOptions;
+  const { messages, temperature, top_p } = chatFormValues;
+  const body = {
+    model: 'gpt-3.5-turbo',
+    temperature: parseFloat(temperature),
+    top_p: parseFloat(top_p),
+    messages: JSON.parse(messages),
+  };
 
-  chatOptions.temperature = parseFloat(temperature);
-  chatOptions.top_p = parseFloat(top_p);
-  chatOptions.messages = JSON.parse(messages);
-
-  chatOptions.messages.push({
+  body.messages.push({
     role: 'user',
     content: `The current rule is:\n ${JSON.stringify(rule)}\n
  The data to apply the rule to is:\n ${data}\n
  ${prompt}`,
   });
 
-  console.log('saga', chatOptions);
+  console.log('completion saga body', body);
 
   try {
     response = yield call(apiCallWithRetry, {
       path: '/openai/chat/completions',
       opts: {
         method: 'POST',
-        body: chatOptions,
+        body,
       },
     });
   } catch (error) {
@@ -960,8 +970,9 @@ export function* requestChatCompletion({ id, prompt }) {
   }
 
   console.log('saga chat completion', parsedResponse);
+  const value = rulePath ? {[rulePath]: parsedResponse} : parsedResponse;
 
-  yield put(actions.editor.patchRule(id, parsedResponse));
+  yield put(actions.editor.patchRule(id, value));
   yield put(actions.editor.chat.complete(id));
 }
 

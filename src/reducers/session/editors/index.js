@@ -61,11 +61,9 @@ export default function reducer(state = {}, action) {
               enabled: false,
             }
             : {
-              enabled: true,
               formKey: `chat-${id}`,
               status: CHAT_STATUS.IDLE,
-              request: chatOptions.request,
-              placeholder: chatOptions.placeholder,
+              ...chatOptions,
             },
         };
         break;
