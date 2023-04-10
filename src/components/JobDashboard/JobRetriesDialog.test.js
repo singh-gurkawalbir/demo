@@ -46,7 +46,7 @@ describe('testsuite for JobDialog', () => {
       integrationName: 'test integration name',
       onCloseClick: mockClose,
     });
-    expect(screen.getByText(/test integration name > test job name/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'test integration name > test job name', hidden: true })).toBeInTheDocument();
     expect(screen.getByText(/success: 1 ignore: 0 error: 0/i)).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /retry #/i, hidden: true })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /duration/i, hidden: true })).toBeInTheDocument();
@@ -76,8 +76,9 @@ describe('testsuite for JobDialog', () => {
       },
       onCloseClick: mockClose,
     });
-    const headings = screen.getAllByRole('heading');
-
-    expect(headings[0].textContent).toMatch(/undefined > undefined/i);
+    expect(screen.getByRole('heading', {
+      name: 'undefined > undefined',
+      hidden: true,
+    })).toBeInTheDocument();
   });
 });
