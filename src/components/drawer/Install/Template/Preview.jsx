@@ -9,7 +9,6 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
-import { message } from '../../../../utils/messageStore';
 import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -174,35 +173,8 @@ export default function TemplatePreview() {
     });
   };
 
-  const getMessageForTemplate = () => {
-    if (template?.user.company === 'Celigo') {
-      return message.DISCLAIMER.CELIGO_AUTHORED_TEMPLATE_DISCLAIMER;
-    }
-
-    return message.DISCLAIMER.THIRD_PARTY_TEMPLATE_DISCLAIMER;
-  };
-
   const handleInstallIntegration = () => {
-    if (template._connectorId) {
-      installTemplate();
-
-      return;
-    }
-
-    confirmDialog({
-      title: 'Disclaimer',
-      message: getMessageForTemplate(),
-      buttons: [
-        {
-          label: 'Proceed',
-          onClick: installTemplate,
-        },
-        {
-          label: 'Cancel',
-          variant: 'text',
-        },
-      ],
-    });
+    installTemplate();
   };
 
   return (

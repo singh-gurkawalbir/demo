@@ -513,7 +513,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         <QueuedJobsDrawer integrationId={integrationId} />
         <FlowgroupDrawer integrationId={integrationId} />
 
-        <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle}>
+        <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle} contentId="flows">
           <ActionGroup>
             <KeywordSearch
               filterKey={searchFilterKey}
