@@ -149,7 +149,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType: A')).toBeInTheDocument();
     });
     test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type duplicate', () => {
-      const utils = renderWithProviders(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -161,7 +161,8 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
 
       expect(screen.getByRole('separator')).toBeInTheDocument();
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
-      expect(utils.container.textContent).toBe('Source field / data type: A / string  B / number ');
+      expect(screen.getByText('A / string')).toBeInTheDocument();
+      expect(screen.getByText('B / number')).toBeInTheDocument();
     });
     test('should hide dropdown with message "Dynamic lookups values do not provide source field list"', () => {
       renderWithProviders(<TooltipTitle
