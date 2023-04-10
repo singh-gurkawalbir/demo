@@ -51,7 +51,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.INIT_COMPLETE: {
-        const chatOptions = processorLogic.getChatOptions(options.editorType);
+        const chatOptions = processorLogic.getChatOptions(options?.editorType);
 
         draft[id] = {
           ...options,
