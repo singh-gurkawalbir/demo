@@ -245,7 +245,7 @@ describe('uI test cases for Flowstep name', () => {
   });
   test('should click on connection down button when connection is offline', async () => {
     renderWithProviders(<FlowStepName job={jobdata4} />, { initialStore });
-    const response = screen.getByTitle('Connection down');
+    const response = screen.getByLabelText('Connection down');
 
     expect(response).toBeInTheDocument();
     const response1 = screen.getByRole('button');
