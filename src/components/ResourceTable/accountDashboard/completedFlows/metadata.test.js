@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import metadata from './metadata';
@@ -90,7 +90,7 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify 0 Open errors', () => {
     const numOpenError = '0';
@@ -101,7 +101,7 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+    expect(cellIndex).toEqual(headerIndex - 1);
     const error = screen.getByText(numOpenError);
 
     expect(error).toHaveAttribute('href', '/5ff579d745ceef7dcd797c15/childID/flowId/flowID/errorsList');
@@ -113,7 +113,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader', {name: flowId})).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Last run', () => {
     renderFunction({_id: id, _flowId: 'flowID', lastExecutedAt: '2022-05-18T18:16:31.989Z'});
@@ -122,7 +124,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader', {name: flowId})).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Average wed', () => {
     const numRuns = '6';
@@ -133,7 +137,10 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader', {name: flowId})).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
+
     const numsRun = screen.getByText(numRuns);
 
     expect(numsRun).toHaveAttribute('href', '/5ff579d745ceef7dcd797c15/childID/flowId/flowID/runHistory');
@@ -147,7 +154,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Ignore', () => {
     const numIgnore = '2';
@@ -158,7 +167,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Errors', () => {
     const numError = '3';
@@ -169,7 +180,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Auto Resolved', () => {
     const numResolvedByAuto = '5';
@@ -180,7 +193,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify User Resolved', () => {
     const numResolvedByUser = '4';
@@ -191,7 +206,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Pages', () => {
     renderFunction({_id: id, type: 'flow', numPages: 5});
@@ -199,6 +216,7 @@ describe('running flows metadata column UI Tests', () => {
     expect(screen.getByText('Pages')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
   });
+
   test('should verify Integration options', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={['/flowId']}>
@@ -212,9 +230,9 @@ describe('running flows metadata column UI Tests', () => {
     );
 
     expect(screen.getByText('Integration')).toBeInTheDocument();
-    await userEvent.click(screen.getAllByRole('button')[0]);
-    await userEvent.click(screen.getAllByRole('checkbox')[1]);
-    await userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(await waitFor(() => screen.getAllByRole('button')[0]));
+    await userEvent.click(await waitFor(() => screen.getAllByRole('checkbox')[1]));
+    await userEvent.click(await waitFor(() => screen.getByText(/Apply/i)));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'PATCH_FILTER',
@@ -223,6 +241,7 @@ describe('running flows metadata column UI Tests', () => {
       }
     );
   });
+
   test('should verify Actions', async () => {
     renderFunction();
     const actionButton = screen.getByRole('button', {name: /more/i});

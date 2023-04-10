@@ -66,10 +66,11 @@ describe('test suite for orgUsers', () => {
       'Status',
       'Notifications',
     ]);
+
+    expect(screen.getByRole('rowheader', { name: 'User name'})).toBeInTheDocument();
     const rowsData = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowsData).toEqual([
-      'User name',
       'mail@user.in',
       'Manage',
       'Pending',
@@ -78,7 +79,7 @@ describe('test suite for orgUsers', () => {
     const addNotificationsButton = screen.getByRole('link');
 
     //  should show the options to add notification if user is allowed to manage notifications, but there are not notifications
-    expect(addNotificationsButton).toHaveAttribute('title', 'Add notifications');
+    expect(addNotificationsButton).toHaveAttribute('aria-label', 'Add notifications');
     expect(addNotificationsButton).toHaveAttribute('href', `${mockRouteMatch.url}/${user.email}/manageNotifications`);
   });
 
@@ -111,7 +112,7 @@ describe('test suite for orgUsers', () => {
     initOrgUsers(data, initialStore);
     const addNotificationsButton = screen.getByRole('link');
 
-    expect(addNotificationsButton).toHaveAttribute('title', 'Edit notifications');
+    expect(addNotificationsButton).toHaveAttribute('aria-label', 'Edit notifications');
     expect(addNotificationsButton).toHaveAttribute('href', `${mockRouteMatch.url}/${user.email}/manageNotifications`);
   });
 
@@ -148,7 +149,7 @@ describe('test suite for orgUsers', () => {
     initOrgUsers(data, initialStore);
     const addNotificationsButton = screen.getByRole('link');
 
-    expect(addNotificationsButton).toHaveAttribute('title', 'View notifications');
+    expect(addNotificationsButton).toHaveAttribute('aria-label', 'View notifications');
     expect(addNotificationsButton).toHaveAttribute('href', `${mockRouteMatch.url}/${user.email}/notifications`);
   });
 
@@ -175,10 +176,11 @@ describe('test suite for orgUsers', () => {
       'Access level',
       'Status',
     ]);
+
+    expect(screen.getByRole('rowheader', { name: 'User name'})).toBeInTheDocument();
     const rowsData = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowsData).toEqual([
-      'User name',
       'mail@user.in',
       'Tile',
       'Pending',

@@ -61,7 +61,7 @@ describe('metadata of stacks UI Tests', () => {
     renderFunction(resource);
 
     const headerI = indexOfCell('Name', 'columnheader');
-    const cellI = indexOfCell('ResourceNameShared', 'cell');
+    const cellI = indexOfCell('ResourceNameShared', 'rowheader');
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
@@ -75,7 +75,9 @@ describe('metadata of stacks UI Tests', () => {
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellI).toEqual(headerI - 1);
   });
   test('should verify the Host', () => {
     renderFunction(resource);
@@ -85,7 +87,9 @@ describe('metadata of stacks UI Tests', () => {
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellI).toEqual(headerI - 1);
   });
   test('should verify the Host dupliccate', () => {
     renderFunction(resource);
@@ -95,7 +99,9 @@ describe('metadata of stacks UI Tests', () => {
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellI).toEqual(headerI - 1);
   });
   test('should verify the Access key ID', () => {
     renderFunction(resource);
@@ -105,7 +111,9 @@ describe('metadata of stacks UI Tests', () => {
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellI).toEqual(headerI - 1);
   });
   test('should verify the Last updated', () => {
     renderFunction(resource);
@@ -115,7 +123,9 @@ describe('metadata of stacks UI Tests', () => {
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellI).toEqual(headerI - 1);
   });
   test('should verify the System token with N/A message', () => {
     renderFunction({_id: 'someID'});
@@ -125,7 +135,9 @@ describe('metadata of stacks UI Tests', () => {
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellI).toEqual(headerI - 1);
   });
   test('should verify the row actions', async () => {
     renderWithProviders(

@@ -40,7 +40,7 @@ export default function SetPassword() {
 
   useEffect(() => {
     if (isSetPasswordStatus === 'success') {
-      history.replace(getRoutePath('/signin'));
+      history.replace(getRoutePath('/home'));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSetPasswordStatus]);

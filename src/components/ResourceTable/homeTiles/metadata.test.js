@@ -127,6 +127,7 @@ describe('homeTiles metadata UI tests', () => {
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
     expect(screen.getByText('Uninstall integration')).toBeInTheDocument();
   });
+
   test('should verify the Row action setup is uninstall reactivate option', async () => {
     initHomeTiles({name: 'tileName', pinned: true, _connectorId: 'some_connectorId', status: 'uninstall', _integrationId: '1_integrationId', _id: 'someId'}, initialStore);
     await userEvent.click(screen.queryByRole('button', {name: /more/i}));
