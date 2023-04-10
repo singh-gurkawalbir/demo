@@ -162,7 +162,6 @@ export default function ProfilePanel() {
     delete completePayloadCopy.dateFormat;
     delete completePayloadCopy.showRelativeDateTime;
     delete completePayloadCopy.colorTheme;
-    delete completePayloadCopy.helpContent;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch, preferences.developer]);
