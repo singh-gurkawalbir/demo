@@ -2504,7 +2504,6 @@ Object {
 }
 `;
 
-
 exports[`getResourceFromAssets load correct form connections rdbms within rdbms schema should load a oracle connection form 1`] = `
 Object {
   "fieldMeta": Object {
@@ -2940,7 +2939,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7548,7 +7547,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -11193,7 +11192,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -13176,6 +13175,42 @@ Object {
       "amazonmws.secretKey": Object {
         "fieldId": "amazonmws.secretKey",
       },
+      "application": Object {
+        "defaultValue": [Function],
+        "fieldId": "application",
+        "isLoggable": true,
+        "label": "Application",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "Shopify",
+                "value": "shopify",
+              },
+              Object {
+                "label": "HTTP",
+                "value": "http",
+              },
+              Object {
+                "label": "3PL Central",
+                "value": "3plcentral",
+              },
+            ],
+          },
+        ],
+        "type": "select",
+      },
+      "iclientFormView": Object {
+        "defaultValue": [Function],
+        "helpKey": "formView",
+        "id": "iclientFormView",
+        "isLoggable": true,
+        "label": "Form view",
+        "required": true,
+        "resourceType": "iclients",
+        "type": "iclientFormView",
+        "visible": true,
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -13223,6 +13258,7 @@ Object {
       },
       "provider": Object {
         "fieldId": "provider",
+        "visible": false,
       },
     },
     "layout": Object {
@@ -13232,6 +13268,7 @@ Object {
           "fields": Array [
             "name",
             "provider",
+            "application",
           ],
           "label": "General",
         },
@@ -13334,7 +13371,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -13457,7 +13494,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],
