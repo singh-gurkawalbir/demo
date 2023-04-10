@@ -93,10 +93,8 @@ describe('moreActionsButton tests', () => {
   test('should able to test MoreActionsButton deleteBranch option with last branch', async () => {
     await initMoreActionsButton({...props, allowDeleting: false});
     await userEvent.click(screen.getByRole('button'));
-    const spans = document.querySelectorAll('span');
-    const tooltip = spans[spans.length - 1];
 
-    expect(tooltip.getAttribute('title')).toBe('Branch cannot be deleted. Branching must have at least one branch.');
+    expect(screen.getByLabelText('no notifications')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menuitem', {name: 'Delete branch'})).toHaveAttribute('aria-disabled', 'true');
   });

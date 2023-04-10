@@ -44,10 +44,10 @@ describe('test suite for scripts', () => {
       'Actions',
     ]);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name})).toBeInTheDocument();
     const rowValues = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowValues).toEqual([
-      'scriptName',
       lastModified,
       '',
     ]);

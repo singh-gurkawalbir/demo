@@ -220,7 +220,7 @@ describe('Mapper2Row UI test cases', () => {
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row isRequired extract="/" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
-    expect(screen.getByTitle('This field is required by the application you are importing into')).toBeInTheDocument();
+    expect(screen.getByLabelText('This field is required by the application you are importing into')).toBeInTheDocument();
   });
   test('should not show extract field when dataypye is of object and copysource is no', () => {
     const nodeKey = 'somenodekey';

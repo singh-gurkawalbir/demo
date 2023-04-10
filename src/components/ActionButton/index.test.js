@@ -5,6 +5,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Link } from 'react-router-dom';
+import { AppShell } from '@celigo/fuse-ui';
 import ActionButton from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders} from '../../test/test-utils';
@@ -77,7 +78,7 @@ describe('actionButton component Test cases', () => {
     const buttonRef = screen.getByRole('button', {name: 'tooltip'});
 
     expect(buttonRef).toBeDisabled();
-    utils.rerender(<ActionButton disabled={false}>Test Button</ActionButton>);
+    utils.rerender(<AppShell><ActionButton disabled={false}>Test Button</ActionButton></AppShell>);
     const buttonRef1 = screen.getByRole('button', {name: 'tooltip'});
 
     expect(buttonRef1).not.toBeDisabled();

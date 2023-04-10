@@ -19,7 +19,7 @@ export default {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
-    filterKey: 'suitescript-recordTypes',
+    filterKey: 'restlet-recordTypes',
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,

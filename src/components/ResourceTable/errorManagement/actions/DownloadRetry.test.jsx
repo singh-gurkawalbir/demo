@@ -60,7 +60,7 @@ describe('error Management Retry UI tests', () => {
   });
   test('should have enabled title when flow is disabled', async () => {
     await renderFuntion({resourceId, isFlowDisabled}, {source, retryDataKey, errorId});
-    const enableFlowText = screen.getByTitle('Enable the flow to download retry data');
+    const enableFlowText = screen.getByLabelText('Enable the flow to download retry data');
 
     expect(enableFlowText).toBeInTheDocument();
     expect(enableFlowText.textContent).toBe('Download retry data');
