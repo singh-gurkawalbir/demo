@@ -112,6 +112,7 @@ const config = {
       ALLOW_GOOGLE_SIGNIN: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN || 'true'),
       ALLOW_SIGNUP_EU: JSON.stringify(process.env.ALLOW_SIGNUP_EU || 'true'),
       ALLOW_GOOGLE_SIGNIN_EU: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN_EU || 'true'),
+      HELP_CONTENT: JSON.stringify(process.env.HELP_CONTENT || 'false'),
     }),
   ],
   output: {
