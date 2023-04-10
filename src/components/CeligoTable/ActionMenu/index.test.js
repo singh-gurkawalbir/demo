@@ -116,6 +116,7 @@ describe('actionMenu component Test cases', () => {
 
     const listButton = await waitFor(() => screen.getByRole('tooltip'));
 
+    await userEvent.click(listButton);
     await waitFor(() => expect(listButton).toBeInTheDocument());
     await waitFor(() => expect(screen.getAllByRole('menuitem')).toHaveLength(2));
 
