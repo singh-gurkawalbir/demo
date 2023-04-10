@@ -58,7 +58,7 @@ describe('Table Row UI test cases', () => {
     initTableRow(props);
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
     await fireEvent.change(inputs[0], { target: { value: '' } });
     await userEvent.type(inputs[0], 'Name');
@@ -392,7 +392,7 @@ describe('Table Row UI test cases', () => {
     };
 
     initTableRow(props);
-    const input = screen.getAllByRole('textbox');
+    const input = screen.getAllByRole('combobox');
 
     fireEvent.change(input[0], {target: {value: 'exportop1'}});
     expect(screen.getByText('exportop1')).toBeInTheDocument();

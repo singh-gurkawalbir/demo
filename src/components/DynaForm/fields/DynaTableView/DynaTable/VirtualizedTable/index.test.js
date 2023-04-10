@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +42,7 @@ describe('virtualizedTable UI test cases', () => {
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
     await fireEvent.change(inputs[0], { target: { value: '' } });
     await userEvent.type(inputs[0], 'idchanged');
@@ -98,7 +97,7 @@ describe('virtualizedTable UI test cases', () => {
     expect(screen.getByDisplayValue('CustomerName1')).toBeInTheDocument();
     expect(screen.getByDisplayValue('address')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Address')).toBeInTheDocument();
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
     await fireEvent.change(inputs[0], { target: { value: '' } });
     await userEvent.type(inputs[0], 'Typechanged');

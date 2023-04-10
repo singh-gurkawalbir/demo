@@ -158,7 +158,6 @@ describe('dynaChildLicense UI tests', () => {
     expect(screen.getByText('Integration ID')).toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();           // Table headers //
 
-    screen.debug(null, Infinity);
     expect(screen.getByText('11/10/2022 5:15:46 am')).toBeInTheDocument();           // value for one of the table row //
   });
   test('should make 2 dispatch calls on initial render', async () => {

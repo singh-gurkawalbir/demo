@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../../test/test-utils';
 import DynaHFAssistantPathParams from './DynaHFAssistantPathParams';
@@ -78,7 +77,7 @@ describe('DynaHFAssistantPathParams UI tests', () => {
       labelName: 'name',
       valueName: 'value',
       value: undefined,
-      options: {suggestions: [{name: 'option1', value: 'value1'}]},
+      options: { suggestions: [{ name: 'option1', value: 'value1' }] },
     };
 
     renderWithProviders(<DynaHFAssistantPathParams {...props} {...extraProps} />);
@@ -86,14 +85,16 @@ describe('DynaHFAssistantPathParams UI tests', () => {
 
     expect(label).toHaveTextContent(props.label);
     await userEvent.click(screen.getByRole('textbox'));
-    expect(screen.getByRole('option', {name: 'option1'})).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'option1' })).toBeInTheDocument();
   });
 
   test('should open handlebars editor on clicking AFE Icon', async () => {
     renderWithProviders(<DynaHFAssistantPathParams {...props} />);
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button', { name: 'tooltip' });
 
-    expect(openAfeBtn).toHaveAttribute('title', 'Open handlebars editor');
+    await userEvent.hover(openAfeBtn);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Open handlebars editor'));
+
     await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('assistantMetadatapathParamspathField', 'handlebars', {
       formKey: props.formKey,
@@ -124,13 +125,13 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     renderWithProviders(
       <>
         <DynaHFAssistantPathParams {...props} />
-        <button type="button" onClick={() => mockSave({rule: 'SampleRule'})}>Save</button>
+        <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button', { name: 'tooltip' });
 
     await userEvent.click(openAfeBtn);
-    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

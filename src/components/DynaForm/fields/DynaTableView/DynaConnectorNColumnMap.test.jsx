@@ -62,7 +62,7 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
     expect(screen.getByDisplayValue('connector Test1')).toBeInTheDocument();
     expect(screen.getByDisplayValue('connector2')).toBeInTheDocument();
     expect(screen.getByDisplayValue('connector Test2')).toBeInTheDocument();
-    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    await userEvent.click(document.querySelector('svg'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('connectorexport', 'someid', 'someintegrationId'));
   });
 });
