@@ -23,7 +23,7 @@ describe('suite script MappingCell ui test', () => {
   test('should show empty dom when no flow is provided', () => {
     const utils = renderWithProviders(<MemoryRouter><MappingCell flow={{}} /></MemoryRouter>);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(utils.container).toBeUndefined();
   });
   test('should call history push after clikcing the mapping button', async () => {
     renderWithProviders(

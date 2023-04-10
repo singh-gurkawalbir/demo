@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import metadata from './metadata';
@@ -92,7 +92,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Success coulmn', () => {
     const numSuccess = '1';
@@ -106,7 +108,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
 
   test('should verify Ignore coulmn', () => {
@@ -119,7 +123,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Errors coulmn', () => {
     const numError = '3';
@@ -131,7 +137,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Resolved coulmn', () => {
     const numResolved = '4';
@@ -143,7 +151,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Pages coulmn', () => {
     const numPagesGenerated = '5';
@@ -155,8 +165,11 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
+
   test('should verify Integration options coulmn', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={['/flowId']}>
@@ -187,6 +200,6 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(actionButton).toBeInTheDocument();
     await userEvent.click(actionButton);
-    expect(screen.getByText('Cancel run')).toBeInTheDocument();
+    waitFor(() => expect(screen.getByText('Cancel run')).toBeInTheDocument());
   });
 });

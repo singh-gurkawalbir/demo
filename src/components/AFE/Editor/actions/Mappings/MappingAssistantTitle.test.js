@@ -109,8 +109,7 @@ describe('mappingAssistantTitle UI tests', () => {
     const commMetaPath = 'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote/layouts?recordTypeId=demoId';
 
     initMappingAssistantTitle({editorId: 'filecsv'});
-    screen.debug();
-    const refreshIcon = document.querySelector('[title="Refresh data"]');
+    const refreshIcon = screen.getByLabelText('Refresh data');
 
     expect(refreshIcon).toBeInTheDocument();
     await userEvent.click(refreshIcon);
