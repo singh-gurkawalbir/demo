@@ -49,19 +49,23 @@ const genralProps = {
   disableDeleteRows: false,
   handleCleanupHandler: () => {},
   _integrationId: 'someintegrationId',
+  formKey: 'form_key',
 };
 
 mutateStore(initialStore, draft => {
   draft.session.connectors = {
     someintegrationId: {
       someid: {
-        isLoading: {export: false, import: false},
+        isLoading: false,
         shouldReset: false,
         data: {optionsMap: [{id: 'export', label: 'Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}, {id: 'subsidiary', label: 'Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false}],
         },
         fieldType: 'somefieldtype',
       },
     },
+  };
+  draft.session.form[genralProps.formKey] = {
+    showValidationBeforeTouched: true,
   };
 });
 describe('dynaMultiSubsidiaryMapping UI test cases', () => {
@@ -113,18 +117,22 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
       disableDeleteRows: false,
       handleCleanupHandler: () => {},
       _integrationId: 'someintegrationId',
+      formKey: 'formKey',
     };
 
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someintegrationId: {
           someid: {
-            isLoading: {export: false, import: false},
+            isLoading: false,
             shouldReset: false,
             data: {},
           },
           fieldType: 'somefieldtype',
         },
+      };
+      draft.session.form[genralProps.formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
     initDynaMultiSubsidiaryMapping(genralProps);

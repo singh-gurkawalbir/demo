@@ -63,18 +63,10 @@ describe('getLookupMetadata component Test cases', () => {
 
     const expressionRes = response.optionsHandler('_expression', fields);
 
-    expect(expressionRes).toEqual({
-      disableFetch: false,
-      commMetaPath: 'netsuite/metadata/suitescript/connections/undefined/recordTypes/recordType/searchFilters?includeJoinFilters=true',
-    });
-
+    expect(expressionRes).toBeNull();
     const expressionRes1 = response.optionsHandler('_expression', []);
 
-    expect(expressionRes1).toEqual({
-      disableFetch: true,
-      commMetaPath: '',
-    });
-
+    expect(expressionRes1).toBeNull();
     const resultFieldRes = response.optionsHandler('_resultField', fields);
 
     expect(resultFieldRes).toEqual({

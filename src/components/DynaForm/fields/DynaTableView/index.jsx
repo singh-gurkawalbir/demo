@@ -60,7 +60,9 @@ export default function DynaTable(props) {
       )}
       {tableType === 'staticMap' && <DynaStaticMap {...propsWithVirtualization} />}
       {tableType === 'staticMapWidget' && <DynaStaticMapWidget {...propsWithVirtualization} />}
-      {tableType === 'generic' && <DynaTableView {...updatedProps} />}
+      {/* We are adding the invalidateParentFieldOnError property inorder to fix the allignment issue which is causing by Asterisk
+          when we are using the type as exportSelect in the custom settings form builder */}
+      {tableType === 'generic' && <DynaTableView {...updatedProps} invalidateParentFieldOnError />}
       <FieldMessage {...props} />
     </LoadResources>
   );

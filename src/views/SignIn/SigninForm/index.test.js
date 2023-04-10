@@ -2,11 +2,11 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
-import Signin from './SigninForm';
-import actions from '../../actions';
-import { getCreatedStore } from '../../store';
-import * as useQuery from '../../hooks/useQuery';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
+import Signin from '.';
+import actions from '../../../actions';
+import { getCreatedStore } from '../../../store';
+import * as useQuery from '../../../hooks/useQuery';
 
 let initialStore = reduxStore;
 
@@ -31,17 +31,17 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({state: 'someState'}),
 }));
 
-jest.mock('../../components/icons/ShowContentIcon', () => ({
+jest.mock('../../../components/icons/ShowContentIcon', () => ({
   __esModule: true,
-  ...jest.requireActual('../../components/icons/ShowContentIcon'),
+  ...jest.requireActual('../../../components/icons/ShowContentIcon'),
   default: props => (
     <div onClick={props.onClick} onMouseDown={props.onMouseDown}>ShowContentIcon</div>
   ),
 }));
 
-jest.mock('../../components/icons/HideContentIcon', () => ({
+jest.mock('../../../components/icons/HideContentIcon', () => ({
   __esModule: true,
-  ...jest.requireActual('../../components/icons/HideContentIcon'),
+  ...jest.requireActual('../../../components/icons/HideContentIcon'),
   default: props => (
     <div onClick={props.onClick}>HideContentIcon</div>
   ),

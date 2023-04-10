@@ -70,6 +70,12 @@ export default function assistantDefinition(
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }
+
+      if (importDoc && (importDoc['/ignoreExisting'] === true || importDoc['/ignoreMissing'] === true) && importDoc['/http']?.existingExtract && !importDoc['/http']?.ignoreExtract) {
+        importDoc['/http/ignoreExtract'] = importDoc['/http'].existingExtract;
+        importDoc['/http'].existingExtract = undefined;
+        delete importDoc['/http'].existingExtract;
+      }
       otherFormValues['/mockResponse'] = safeParse(otherFormValues['/mockResponse']);
       if (Array.isArray(importDoc?.['/assistantMetadata']?.operation)) {
         importDoc['/http/_httpConnectorEndpointIds'] = importDoc['/assistantMetadata'].operation;

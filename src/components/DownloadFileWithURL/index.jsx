@@ -21,7 +21,7 @@ export default function DownloadFileWithURL({ downloadUrl, children }) {
   );
 
   if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-    url += `&integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
+    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
   }
 
   return (

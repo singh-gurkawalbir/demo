@@ -449,7 +449,7 @@ Object {
           Click
            
           <a
-            href="https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs"
+            href="https://docs.celigo.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs"
             target="_blank"
           >
             here
@@ -750,10 +750,6 @@ Object {
       },
       "ftp.port": Object {
         "fieldId": "ftp.port",
-        "refreshOptionsOnChangesTo": Array [
-          "ftp.type",
-          "ftp.useImplicitFtps",
-        ],
         "validWhen": Object {
           "matchesRegEx": Object {
             "message": "Must be a number.",
@@ -2507,6 +2503,7 @@ Object {
   "validationHandler": [Function],
 }
 `;
+
 
 exports[`getResourceFromAssets load correct form connections rdbms within rdbms schema should load a oracle connection form 1`] = `
 Object {
@@ -5965,9 +5962,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -6453,10 +6447,6 @@ Object {
       },
       "webhook.sampledata": Object {
         "fieldId": "webhook.sampledata",
-        "refreshOptionsOnChangesTo": Array [
-          "webhook.url",
-          "webhook.provider",
-        ],
         "sampleData": [Function],
       },
       "webhook.slackKey": Object {
@@ -6971,9 +6961,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -7814,9 +7801,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -8540,7 +8524,7 @@ Object {
       ],
     },
   },
-  "init": [Function],
+  "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -9783,6 +9767,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.feedOptions": Object {
+        "fieldId": "unencrypted.feedOptions",
+      },
       "unencrypted.feedType": Object {
         "fieldId": "unencrypted.feedType",
       },
@@ -9899,6 +9886,7 @@ Object {
                 "http.lookups",
                 "http.batchSize",
                 "unencrypted.feedType",
+                "unencrypted.feedOptions",
                 "http.body",
                 "uploadFile",
               ],
@@ -11487,9 +11475,6 @@ Object {
       },
       "salesforce.idLookup.whereClause": Object {
         "fieldId": "salesforce.idLookup.whereClause",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.lookups": Object {
         "fieldId": "salesforce.lookups",
@@ -11739,18 +11724,12 @@ Object {
       },
       "netsuite_da.internalIdLookup.expression": Object {
         "fieldId": "netsuite_da.internalIdLookup.expression",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.mapping": Object {
         "fieldId": "netsuite_da.mapping",
       },
       "netsuite_da.operation": Object {
         "fieldId": "netsuite_da.operation",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
@@ -11760,9 +11739,6 @@ Object {
       },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -11983,18 +11959,12 @@ Object {
       },
       "netsuite_da.internalIdLookup.expression": Object {
         "fieldId": "netsuite_da.internalIdLookup.expression",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.mapping": Object {
         "fieldId": "netsuite_da.mapping",
       },
       "netsuite_da.operation": Object {
         "fieldId": "netsuite_da.operation",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
@@ -12004,9 +11974,6 @@ Object {
       },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -12263,9 +12230,6 @@ Object {
       },
       "salesforce.idLookup.whereClause": Object {
         "fieldId": "salesforce.idLookup.whereClause",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.lookups": Object {
         "fieldId": "salesforce.lookups",

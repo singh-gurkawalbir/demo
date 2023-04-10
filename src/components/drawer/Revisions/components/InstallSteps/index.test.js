@@ -287,14 +287,14 @@ describe('InstallSteps tests', () => {
   test('Should able to test the error message when the installation steps is completed but when the revision status is failed and type is pull', async () => {
     await initInstallSteps({...props, revisionId: '_revId8', integrationId: '_integrationId2'}, 'pull');
     expect(screen.getByText('Complete the steps below to merge your changes.')).toBeInTheDocument();
-    expect(screen.getByText('The merging of your pull request was unsuccessful.')).toBeInTheDocument();
+    expect(screen.getByText('The merge of your pull was unsuccessful. Try your pull again.')).toBeInTheDocument();
     userEvent.click(screen.getByText('Configured'));
     expect(mockClose).toHaveBeenCalled();
   });
   test('Should able to test the error message when the installation steps is completed but when the revision status is failed and type is revert', async () => {
     await initInstallSteps({...props, revisionId: '_revId9', integrationId: '_integrationId2'});
     expect(screen.getByText('Complete the steps below to revert your changes.')).toBeInTheDocument();
-    expect(screen.getByText('You were unable to revert your changes successfully.')).toBeInTheDocument();
+    expect(screen.getByText('Your revert was unsuccessful. Try reverting again.')).toBeInTheDocument();
     userEvent.click(screen.getByText('Configured'));
     expect(mockClose).toHaveBeenCalled();
   });

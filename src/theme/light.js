@@ -581,6 +581,23 @@ export default {
         paddingRight: 30,
       },
     },
+    MuiTextField: {
+      root: {
+        background: colors.celigoWhite,
+        '&:hover': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&$focused': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&.Mui-disabled': {
+          backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
+        },
+      },
+    },
     MuiInputAdornment: {
       root: {
         height: '100%',

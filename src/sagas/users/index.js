@@ -12,6 +12,7 @@ import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../constants';
 import { getResourceCollection } from '../resources';
+import { checkAndUpdateDefaultSetId } from '../authentication';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -54,7 +55,10 @@ export function* changePassword({ updatedPassword }) {
   }
 }
 
-export function* updatePreferences() {
+export function* updatePreferences({ skipSaga = false } = {}) {
+  if (skipSaga) {
+    return true;
+  }
   const updatedPayload = yield select(selectors.userOwnPreferences);
 
   try {
@@ -243,7 +247,14 @@ export function* switchAccount({ preferences }) {
   return yield put(actions.auth.abortAllSagasAndSwitchAcc(preferences?.defaultAShareId));
 }
 
-export function* leaveAccount({ id }) {
+// user is disabling/deleting/removing his own user in userList we should reinitialise the session and set the defaultAShareId to next valid accountId or as own(if no other shared account present)
+export function* switchAccountActions() {
+  yield call(checkAndUpdateDefaultSetId);
+  yield put(actions.auth.clearStore({ authenticated: true }));
+  yield put(actions.auth.initSession({ switchAcc: true }));
+}
+
+export function* leaveAccount({ id, isSwitchAccount }) {
   const path = `/shared/ashares/${id}`;
   const opts = { method: 'DELETE', body: {} };
 
@@ -259,11 +270,8 @@ export function* leaveAccount({ id }) {
     );
   }
 
-  const userPreferences = yield select(selectors.userPreferences);
-
-  if (userPreferences.defaultAShareId === id) {
-    yield put(actions.auth.clearStore({ authenticated: true }));
-    yield put(actions.auth.initSession());
+  if (isSwitchAccount) {
+    yield call(switchAccountActions);
   } else {
     yield put(actions.resource.requestCollection('shared/ashares'));
   }
@@ -317,7 +325,7 @@ export function* updateUser({ _id, user, asyncKey }) {
   yield put(actions.user.org.users.updated({ ...user, _id }));
 }
 
-export function* deleteUser({ _id }) {
+export function* deleteUser({ _id, isSwitchAccount }) {
   const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
     resourceId: _id,
   });
@@ -334,10 +342,14 @@ export function* deleteUser({ _id }) {
     return true;
   }
 
+  if (isSwitchAccount) {
+    yield call(switchAccountActions);
+  }
+
   yield put(actions.user.org.users.deleted(_id));
 }
 
-export function* disableUser({ _id, disabled }) {
+export function* disableUser({ _id, disabled, isSwitchAccount }) {
   const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
     resourceId: _id,
   });
@@ -351,6 +363,10 @@ export function* disableUser({ _id, disabled }) {
     });
   } catch (e) {
     return true;
+  }
+
+  if (isSwitchAccount) {
+    yield call(switchAccountActions);
   }
 
   yield put(actions.user.org.users.disabled(_id));
@@ -434,8 +450,9 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
       actions.user.preferences.update({
         defaultAShareId: id,
         environment: 'production',
-      })
-    ); // incase the account which is accepted has mfa required. we need to update the preference first so that initSession set requiredMfaSetUp to true
+      }, true)
+    ); // incase the account which is accepted has mfa required. we need to update the preference first so that initSession can set requiredMfaSetUp to true.
+    yield call(updatePreferences); // we have wait till preference get updated in the DB to proceed further.
     yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {

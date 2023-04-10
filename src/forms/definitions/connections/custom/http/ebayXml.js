@@ -104,7 +104,7 @@ export default {
       resourceType: 'iClients',
       filter: { provider: 'ebay' },
       connType: 'ebay',
-      label: 'IClient',
+      label: 'iClient',
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,

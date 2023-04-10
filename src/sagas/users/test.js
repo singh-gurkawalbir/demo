@@ -38,11 +38,13 @@ import {
   addSuiteScriptLinkedConnection,
   deleteSuiteScriptLinkedConnection,
   refreshLicensesCollection,
+  switchAccountActions,
 } from '.';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../constants';
 import getRequestOptions from '../../utils/requestOptions';
 import { APIException } from '../api/requestInterceptors/utils';
 import { getResourceCollection } from '../resources';
+import { checkAndUpdateDefaultSetId } from '../authentication';
 
 const changeEmailError = new APIException({
   status: 403,
@@ -327,7 +329,10 @@ describe('all modal sagas', () => {
           put(actions.user.preferences.update({
             defaultAShareId: 'something',
             environment: 'production',
-          })),
+          }, true)),
+        );
+        expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
+          call(updatePreferences),
         );
         expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
           put(actions.auth.clearStore({ authenticated: true })),
@@ -523,6 +528,7 @@ describe('all modal sagas', () => {
       test('should leave the default account successfuly', () => {
         const aShare = {
           id: defaultAShareId,
+          isSwitchAccount: true,
         };
         const saga = leaveAccount(aShare);
 
@@ -534,12 +540,7 @@ describe('all modal sagas', () => {
           }),
         );
 
-        expect(saga.next().value).toEqual(select(selectors.userPreferences));
-
-        expect(saga.next({ defaultAShareId }).value).toEqual(
-          put(actions.auth.clearStore({ authenticated: true })),
-        );
-        expect(saga.next().value).toEqual(put(actions.auth.initSession()));
+        expect(saga.next({}).value).toEqual(call(switchAccountActions));
         expect(saga.next().done).toBe(true);
       });
 
@@ -557,9 +558,7 @@ describe('all modal sagas', () => {
           }),
         );
 
-        expect(saga.next().value).toEqual(select(selectors.userPreferences));
-
-        expect(saga.next({ defaultAShareId }).value).toEqual(
+        expect(saga.next({}).value).toEqual(
           put(actions.resource.requestCollection('shared/ashares')),
         );
         expect(saga.next().done).toBe(true);
@@ -771,7 +770,55 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.next({}).value).toEqual(
-          put(actions.user.org.users.deleted(userId)),
+          put(actions.user.org.users.deleted(userId))
+        );
+        expect(saga.next().done).toBe(true);
+      });
+      test('should delete user successfully when deleted user and deleting user is same', () => {
+        const userId = 'something';
+        const saga = deleteUser({ _id: userId, isSwitchAccount: true });
+        const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Deleting User',
+            hidden: true,
+          }),
+        );
+        expect(saga.next({}).value).toEqual(
+          call(switchAccountActions)
+        );
+        expect(saga.next().value).toEqual(
+          put(actions.user.org.users.deleted(userId))
+        );
+        expect(saga.next().done).toBe(true);
+      });
+      test('should delete user where the deleting user = selected user successfully', () => {
+        const userId = 'something';
+        const saga = deleteUser({ _id: userId, isSwitchAccount: true});
+        const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Deleting User',
+            hidden: true,
+          }),
+        );
+        expect(saga.next({}).value).toEqual(
+          call(switchAccountActions)
+        );
+        expect(saga.next().value).toEqual(
+          put(actions.user.org.users.deleted(userId))
         );
         expect(saga.next().done).toBe(true);
       });
@@ -813,6 +860,31 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.next({}).value).toEqual(
+          put(actions.user.org.users.disabled(userId)),
+        );
+        expect(saga.next().done).toBe(true);
+      });
+
+      test('should shared user disables his own user successfully', () => {
+        const userId = 'something';
+        const disabled = false;
+        const saga = disableUser({ _id: userId, disabled, isSwitchAccount: true });
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Disabling User',
+          }),
+        );
+        expect(saga.next({}).value).toEqual(
+          call(switchAccountActions),
+        );
+        expect(saga.next().value).toEqual(
           put(actions.user.org.users.disabled(userId)),
         );
         expect(saga.next().done).toBe(true);
@@ -1256,6 +1328,17 @@ describe('all modal sagas', () => {
       ])
       .not.put(actions.resource.requestCollection('shared/ashares'))
       .put(actions.resource.requestCollection('licenses'))
+      .run()
+    );
+  });
+
+  describe('switchAccountActions saga', () => {
+    test('should dispatch request collection of ashares if it is a shared account', () => expectSaga(switchAccountActions)
+      .provide([
+        [call(checkAndUpdateDefaultSetId)],
+      ])
+      .put(actions.auth.clearStore({ authenticated: true }))
+      .put(actions.auth.initSession({ switchAcc: true }))
       .run()
     );
   });

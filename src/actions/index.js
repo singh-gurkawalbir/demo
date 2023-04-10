@@ -1429,10 +1429,10 @@ const user = {
       created: user => action(actionTypes.USER.CREATED, { user }),
       update: (_id, user, asyncKey) => action(actionTypes.USER.UPDATE, { _id, user, asyncKey }),
       updated: user => action(actionTypes.USER.UPDATED, { user }),
-      delete: _id => action(actionTypes.USER.DELETE, { _id }),
+      delete: (_id, isSwitchAccount) => action(actionTypes.USER.DELETE, { _id, isSwitchAccount }),
       deleted: _id => action(actionTypes.USER.DELETED, { _id }),
-      disable: (_id, disabled) =>
-        action(actionTypes.USER.DISABLE, { _id, disabled }),
+      disable: (_id, disabled, isSwitchAccount) =>
+        action(actionTypes.USER.DISABLE, { _id, disabled, isSwitchAccount }),
       disabled: _id => action(actionTypes.USER.DISABLED, { _id }),
       reinvited: _id => action(actionTypes.USER.REINVITED, { _id }),
       makeOwner: email => action(actionTypes.USER.MAKE_OWNER, { email }),
@@ -1442,7 +1442,7 @@ const user = {
     accounts: {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
-      leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
+      leave: (id, isSwitchAccount) => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id, isSwitchAccount }),
       switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
       switchToComplete: () => action(actionTypes.USER.ACCOUNT.SWITCH_COMPLETE),
       addLinkedConnectionId: connectionId =>
@@ -1457,8 +1457,8 @@ const user = {
   },
   preferences: {
     request: message => resource.request('preferences', undefined, message),
-    update: preferences =>
-      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    update: (preferences, skipSaga) =>
+      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences, skipSaga }),
     pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
     unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },
@@ -1498,7 +1498,7 @@ const license = {
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
   clearActionMessage: () =>
     action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
-  receivedLicenseErrorMessage: code => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code }),
+  receivedLicenseErrorMessage: (code, message) => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code, message }),
   clearErrorMessage: () => action(actionTypes.LICENSE.CLEAR_ERROR_MESSAGE),
 
 };
@@ -1752,7 +1752,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId, options) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1763,6 +1763,7 @@ const resourceForm = {
       integrationId,
       fieldMeta,
       parentConnectionId,
+      options,
     }),
   initComplete: (
     resourceType,

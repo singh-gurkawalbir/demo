@@ -17,6 +17,7 @@ const applicationsWithPreviewPanel = [
   'rest',
   'mongodb',
   'rdbms',
+  'jdbc',
   'dynamodb',
   'netsuite',
   'salesforce',
@@ -65,6 +66,8 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
+      return PREVIEW_STAGE;
+    case 'jdbc':
       return PREVIEW_STAGE;
     default:
       return emptyList;
@@ -146,6 +149,19 @@ export const getLatestReqResData = (previewData, stage) => {
 };
 
 export const getRequestURL = previewData => getLatestReqResData(previewData, 'request')?.url;
+export const getDecodedURL = url => {
+  if (!url) return;
+
+  let decodedUrl;
+
+  try {
+    decodedUrl = decodeURIComponent(url);
+  } catch (e) {
+    // console.log(e);
+  }
+
+  return decodedUrl;
+};
 
 export const IMPORT_PREVIEW_ERROR_TYPES = [
   { label: 'Preview', value: 'preview' },

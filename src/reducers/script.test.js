@@ -176,5 +176,77 @@ describe('Scripts region selector testcases', () => {
       );
     });
   });
+  describe('selectors.getScriptContext test cases', () => {
+    test('should return undefined incase of no params', () => {
+      expect(selectors.getScriptContext({}, {})).toBeUndefined();
+    });
+    test('should return undefined incase of contextType other thank hook', () => {
+      expect(selectors.getScriptContext({}, { contextType: 'settings'})).toBeUndefined();
+    });
+    test('should return undefined if there is no integration/flow/api id for contextType hook', () => {
+      expect(selectors.getScriptContext({}, { contextType: 'hook' })).toBeUndefined();
+      expect(selectors.getScriptContext({}, { contextType: 'hook', resourceType: 'exports' })).toBeUndefined();
+      expect(selectors.getScriptContext({}, { contextType: 'hook', resourceType: 'imports' })).toBeUndefined();
+      expect(selectors.getScriptContext({}, { contextType: 'hook', resourceType: 'api', resourceId: 'new-1234' })).toBeUndefined();
+    });
+    test('should return integration container when contextType hook and integration is present', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {_id: 'flow-123', _integrationId: 'integration1'},
+            ],
+          },
+        },
+      };
+
+      const expectedContext = {
+        type: 'hook',
+        container: 'integration',
+        _integrationId: 'integration1',
+        _flowId: 'flow-123',
+      };
+
+      expect(selectors.getScriptContext(state, { contextType: 'hook', flowId: 'flow-123' })).toEqual(expectedContext);
+    });
+    test('should return flow container when contextType hook and it is standalone flow', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              { _id: 'flow-123', name: 'flow1' },
+            ],
+          },
+        },
+      };
+
+      const expectedContext = {
+        type: 'hook',
+        container: 'flow',
+        _flowId: 'flow-123',
+      };
+
+      expect(selectors.getScriptContext(state, { contextType: 'hook', flowId: 'flow-123' })).toEqual(expectedContext);
+    });
+    test('should return api container when contextType hook and it is opened from an api', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              { _id: 'flow-123', name: 'flow1' },
+            ],
+          },
+        },
+      };
+
+      const expectedContext = {
+        type: 'hook',
+        container: 'api',
+        _apiId: 'api-123',
+      };
+
+      expect(selectors.getScriptContext(state, { contextType: 'hook', resourceType: 'apis', resourceId: 'api-123' })).toEqual(expectedContext);
+    });
+  });
 });
 

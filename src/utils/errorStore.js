@@ -19,8 +19,6 @@ const messages = {
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
   MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
   SIGN_UP_CONSENT: 'You must agree to the Terms of Service / Service Subscription Agreement and Privacy Policy to continue.',
-  SIGN_UP_NAME: 'Name is required.',
-  SIGN_UP_EMAIL: 'Business email is required.',
   // #endregion
 
   // #region Mock output error messages
@@ -35,6 +33,9 @@ const messages = {
   MOCK_RESPONSE_INVALID_FORMAT: `Mock response must be in integrator.io canonical format. <a href=${MOCK_RESPONSE_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,
   MOCK_RESPONSE_SIZE_EXCEED: 'Mock response cannot be larger than 1 MB. Decrease your data size and try again.',
   // #endregion
+
+  // #region jsonEditor error messages
+  INVALID_JSON_VALUE: '{{{label}}} must be a valid JSON',
 };
 
 export default function errorMessageStore(key, argsObj) {

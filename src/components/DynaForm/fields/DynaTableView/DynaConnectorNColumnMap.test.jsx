@@ -35,19 +35,23 @@ describe('dynaConnectorNColumnMap UI test cases', () => {
       id: 'someid',
       _integrationId: 'someintegrationId',
       fieldType: 'somefieldtype',
+      formKey: 'form_key',
     };
 
     mutateStore(initialStore, draft => {
       draft.session.connectors = {
         someintegrationId: {
           someid: {
-            isLoading: {connectorexport: false, connectorimport: false},
+            isLoading: false,
             shouldReset: false,
             data: {optionsMap: [{id: 'connectorexport', label: 'Connector Export field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}, {id: 'connectorimport', label: 'Connector Import field value', options: undefined, readOnly: false, required: true, type: 'input', multiline: false, supportsRefresh: true}],
             },
             fieldType: 'somefieldtype',
           },
         },
+      };
+      draft.session.form[genralProps.formKey] = {
+        showValidationBeforeTouched: true,
       };
     });
 

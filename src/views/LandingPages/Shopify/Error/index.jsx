@@ -82,20 +82,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     width: theme.spacing(50),
   },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
-  errorIcon: {
-    fill: theme.palette.error.main,
-    // fontSize: theme.spacing(2),
-    marginRight: 5,
-  },
+
   errorNotification: {
     border: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',

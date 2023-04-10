@@ -118,6 +118,9 @@ function LicenseAction() {
   const licenseErrorCode = useSelector(state =>
     selectors.licenseErrorCode(state)
   );
+  const licenseErrorMessage = useSelector(
+    state => selectors.licenseErrorMessage(state)
+  );
 
   const canRequestUpgrade = useSelector(
     state =>
@@ -174,7 +177,7 @@ function LicenseAction() {
 
   const startFreeTrialConfirmationDialog = useCallback(() => {
     confirmDialog({
-      title: message.SUBSCRIPTION.TRY_UNLIMITED,
+      title: message.SUBSCRIPTION.TRY_FULL_ACCESS,
       message: <StartFreeTrialConfirmationMessage />,
       buttons: [
         { label: 'Start free trial now',
@@ -195,7 +198,7 @@ function LicenseAction() {
 
   const startFreeOrRequestUpgradeDialog = useCallback(() => {
     confirmDialog({
-      title: 'Try unlimited flows free for 30 days or upgrade plan',
+      title: 'Try full access free for 30 days or upgrade plan',
       message: <StartFreeOrRequestUpgradeConfirmMessage />,
       buttons: [
         { label: 'Start free trial',
@@ -256,7 +259,7 @@ function LicenseAction() {
   const entitlementOfEndpointsDialog = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
-      message: message.SUBSCRIPTION.REACHED_ENTITLEMENT_ENDPOINTS,
+      message: licenseErrorMessage,
       buttons: [
         { label: 'Request upgrade',
           onClick: () => {
@@ -268,7 +271,7 @@ function LicenseAction() {
         },
       ],
     });
-  }, [confirmDialog, submitUpgradeDialog]);
+  }, [confirmDialog, licenseErrorMessage, submitUpgradeDialog]);
 
   useEffect(() => {
     if (licenseErrorCode === 'subscription_required') {

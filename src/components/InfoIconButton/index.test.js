@@ -33,4 +33,27 @@ describe('infoIconButton UI tests', () => {
     userEvent.click(screen.getByText('exterior'));
     expect(screen.queryByText(/sample info icon content/i)).toBeNull();
   });
+  test('should close the arrowpopper on clicking the close button', () => {
+    const props = {info: 'sample info icon content'};
+    const onClick = jest.fn();
+
+    renderWithProviders(<div onClick={onClick}>exterior<InfoIconButton {...props} /></div>);
+    userEvent.click(screen.getByRole('button'));
+
+    const infoText = screen.getByText(/sample info icon content/i);
+
+    // should not close the popper on clicking inside the popper
+    expect(infoText).toBeInTheDocument();
+    userEvent.click(infoText);
+    expect(infoText).toBeInTheDocument();
+    expect(onClick).not.toBeCalled();
+
+    // should close the popper on clicking the close button
+    const closeButton = document.querySelector('[data-test="close"]');
+
+    expect(closeButton).toBeInTheDocument();
+    userEvent.click(closeButton);
+    expect(onClick).not.toBeCalled();
+    expect(screen.queryByText(/sample info icon content/i)).toBeNull();
+  });
 });
