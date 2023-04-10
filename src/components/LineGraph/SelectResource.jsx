@@ -1,9 +1,9 @@
 import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useState, useMemo } from 'react';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import { emptyList } from '../../constants';
 import ActionGroup from '../ActionGroup';
-import ArrowPopper from '../ArrowPopper';
 import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -36,11 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   child: {
     flexBasis: '100%',
-  },
-  dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -130,20 +125,20 @@ export default function SelectResource(props) {
     });
   };
 
-  return <>
-    <OutlinedButton
-      onClick={toggleClick}
-      color="secondary"
-      className={classes.dateRangePopperBtn}>
-      {buttonName}
-    </OutlinedButton>
-    <ArrowPopper
-      open={!!anchorEl}
-      anchorEl={anchorEl}
-      placement="bottom-end"
-      onClose={toggleClick}>
-      {anchorEl && (
-        <div className={classes.dateRangePickerWrapper}>
+  return (
+    <>
+      <OutlinedButton
+        onClick={toggleClick}
+        color="secondary"
+        className={classes.dateRangePopperBtn}>
+        {buttonName}
+      </OutlinedButton>
+      <ArrowPopper
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        placement="bottom-end"
+        onClose={toggleClick}>
+        <Box display="flex" sx={{padding: 2}}>
           <div className={classes.filter}>
             <div className={classes.wrapper}>
               <FormControl variant="standard" component="fieldset" className={classes.formControl}>
@@ -185,8 +180,8 @@ export default function SelectResource(props) {
               </ActionGroup>
             </div>
           </div>
-        </div>
-      )}
-    </ArrowPopper>
-  </>;
+        </Box>
+      </ArrowPopper>
+    </>
+  );
 }

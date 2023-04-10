@@ -18,13 +18,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 100,
     marginLeft: theme.spacing(-1),
   },
-  textToggle: {
-    '&>.MuiButtonBase-root': {
-      minWidth: 'auto',
-      paddingLeft: theme.spacing(2.5),
-      paddingRight: theme.spacing(2.5),
-    },
-  },
 }));
 const emptyObj = {};
 export default function FormView(props) {
@@ -160,7 +153,13 @@ export default function FormView(props) {
         onChange={onFieldChangeFn}
         exclusive
         options={options}
-        className={classes.textToggle}
+        className={{
+          '&>.MuiButtonBase-root': {
+            minWidth: 'auto',
+            paddingLeft: theme => theme.spacing(2.5),
+            paddingRight: theme => theme.spacing(2.5),
+          },
+        }}
       />
       <Help
         title="Formview"

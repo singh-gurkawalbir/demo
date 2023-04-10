@@ -1,9 +1,10 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import * as DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import * as FormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 const mockOnClose = jest.fn();
 const mockOnSubmit = jest.fn();
@@ -73,7 +74,7 @@ function initOperandSettingsDialog({
     <OperandSettingsDialog ruleData={ruleData} onClose={onClose} onSubmit={onSubmit} disabled={disabled} />
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 
 // Mocking ModalDialog as part of unit testing

@@ -133,8 +133,9 @@ export default function (props) {
 
   const defaultAvailableScopes = excludeSelectedScopes(flattenedScopes, updatedScopes);
 
-  return <>
-    {showScopesModal && (
+  return (
+    <>
+      {showScopesModal && (
       <TransferListModal
         id={id}
         scopesOrig={flattenedScopes}
@@ -147,22 +148,23 @@ export default function (props) {
         }}
         helpLink={helpLink}
       />
-    )}
-    <FormControl variant="standard" className={classes.dynaSelectScopesContainer}>
-      <div className={classes.dynaTextLabelWrapper}>
-        <FormLabel htmlFor={id} className={classes.scopesLabel} required={required}>
+      )}
+      <FormControl variant="standard" className={classes.dynaSelectScopesContainer}>
+        <div className={classes.dynaTextLabelWrapper}>
+          <FormLabel htmlFor={id} className={classes.scopesLabel} required={required}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
+        <OutlinedButton
+          data-test={id}
+          className={classes.scopesBtn}
+          onClick={() => setShowScopesModal(true)}>
           {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      <OutlinedButton
-        data-test={id}
-        className={classes.scopesBtn}
-        onClick={() => setShowScopesModal(true)}>
-        {label}
-      </OutlinedButton>
+        </OutlinedButton>
 
-      <FieldMessage {...props} />
-    </FormControl>
-  </>;
+        <FieldMessage {...props} />
+      </FormControl>
+    </>
+  );
 }

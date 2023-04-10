@@ -70,30 +70,32 @@ export default function DynaMapper2SourceField(props) {
 
   if (hideSourceField) return null;
 
-  return <>
-    <div className={classes.fieldWrapper}>
-      <FormLabel htmlFor={id}>
-        {label}
-      </FormLabel>
-      {/* <FieldHelp {...props} /> */}
-    </div>
-    <FormControl
-      variant="standard"
-      key={id}
-      disabled={disabled}
-      className={classes.dynaWrapper}>
-      <Mapper2ExtractsTypeableSelect
-        key={value}
-        id={`fieldMappingExtract-${nodeKey}`}
-        nodeKey={nodeKey}
-        value={value}
+  return (
+    <>
+      <div className={classes.fieldWrapper}>
+        <FormLabel htmlFor={id}>
+          {label}
+        </FormLabel>
+        {/* <FieldHelp {...props} /> */}
+      </div>
+      <FormControl
+        variant="standard"
+        key={id}
         disabled={disabled}
-        dataType={dataType}
-        onBlur={handleExtractBlur}
-        editorLayout={editorLayout}
-        className={classes.typeableSelectWrapper}
-        popperClassName={classes.popperWrapper}
+        className={classes.dynaWrapper}>
+        <Mapper2ExtractsTypeableSelect
+          key={value}
+          id={`fieldMappingExtract-${nodeKey}`}
+          nodeKey={nodeKey}
+          value={value}
+          disabled={disabled}
+          dataType={dataType}
+          onBlur={handleExtractBlur}
+          editorLayout={editorLayout}
+          className={classes.typeableSelectWrapper}
+          popperClassName={classes.popperWrapper}
           />
-    </FormControl>
-  </>;
+      </FormControl>
+    </>
+  );
 }

@@ -22,24 +22,26 @@ export default function RevisionsGuide() {
   const classes = useStyles();
   const hasWideScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-  return <>
-    {hasWideScreen ? (
-      <TextButton
-        {...anchorProps}
-        className={classes.button}
-        startIcon={<Icon />}>
-        Revisions guide
-      </TextButton>
-    ) : (
-      <Tooltip title="Revisions guide" placement="bottom" aria-label="revisions guide" >
-        <IconButton
+  return (
+    <>
+      {hasWideScreen ? (
+        <TextButton
           {...anchorProps}
           className={classes.button}
-          aria-label="revisions guide"
-          size="large">
-          <Icon />
-        </IconButton>
-      </Tooltip>
-    )}
-  </>;
+          startIcon={<Icon />}>
+          Revisions guide
+        </TextButton>
+      ) : (
+        <Tooltip title="Revisions guide" placement="bottom" aria-label="revisions guide" >
+          <IconButton
+            {...anchorProps}
+            className={classes.button}
+            aria-label="revisions guide"
+            size="large">
+            <Icon />
+          </IconButton>
+        </Tooltip>
+      )}
+    </>
+  );
 }

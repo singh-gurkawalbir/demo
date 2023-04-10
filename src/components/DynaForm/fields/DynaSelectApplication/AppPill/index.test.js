@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import AppPill from '.';
 import * as ApplicationsList from '../../../../../constants/applications';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 const mockOnRemove = jest.fn();
 
@@ -30,7 +31,7 @@ describe('Testsuite for AppPill', () => {
   });
   test('should test the App Pill initial render and test the Application Image when there is no app icon and test the close button', async () => {
     jest.spyOn(ApplicationsList, 'applicationsList').mockReturnValue([{id: '123', assistant: 'test assistant', type: 'test type'}]);
-    render(
+    renderWithProviders(
       <AppPill appId="123" onRemove={mockOnRemove} />
     );
     expect(screen.getByText(/Mock Application Image/i)).toBeInTheDocument();
@@ -45,7 +46,7 @@ describe('Testsuite for AppPill', () => {
   });
   test('should test the App Pill initial render and test the Application Image when there is app icon and test the close button', async () => {
     jest.spyOn(ApplicationsList, 'applicationsList').mockReturnValue([{id: '123', icon: 'test icon', type: 'test type'}]);
-    render(
+    renderWithProviders(
       <AppPill appId="123" onRemove={mockOnRemove} />
     );
     expect(screen.getByText(/Mock Application Image/i)).toBeInTheDocument();

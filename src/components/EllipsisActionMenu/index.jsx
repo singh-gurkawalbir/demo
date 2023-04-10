@@ -1,17 +1,9 @@
 import React, { useCallback, useState} from 'react';
-import { IconButton, Menu, MenuItem } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, MenuItem } from '@mui/material';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
 import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
 import {TextButton} from '../Buttons';
-
-const useStyles = makeStyles(theme => ({
-  wrapper: {
-    '& > .MuiMenu-paper': {
-      marginLeft: theme.spacing(-2),
-    },
-  },
-}));
 
 const ActionLabel = (({ label, Icon }) => {
   if (Icon) {
@@ -22,7 +14,6 @@ const ActionLabel = (({ label, Icon }) => {
 });
 
 export default function EllipsisActionMenu({ actionsMenu, label, onAction, alignment }) {
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
     setAnchorEl(event.currentTarget);
@@ -60,12 +51,9 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             {alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal />}
           </IconButton>
         )}
-      <Menu
-        elevation={2}
-        variant="menu"
+      <ArrowPopper
         id={actionsPopoverId}
         anchorEl={anchorEl}
-        className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
         {actionsMenu?.map(({ action, label, Icon, disabled }) => (
@@ -77,7 +65,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             <ActionLabel label={label} Icon={Icon} />
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
     </>
   );
 }

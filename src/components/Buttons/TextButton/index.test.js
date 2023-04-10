@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import TextButton from './index';
+import { renderWithProviders } from '../../../test/test-utils';
 
 describe('text button component test', () => {
   // eslint-disable-next-line jest/no-commented-out-tests
@@ -45,7 +45,7 @@ describe('text button component test', () => {
   // });
 
   test('testing by className', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <TextButton
         data-test="cancelOperandSettings"
         onClick={onClose}> Cancel

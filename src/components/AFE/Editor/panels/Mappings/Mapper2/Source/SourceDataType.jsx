@@ -7,10 +7,10 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useHistory } from 'react-router-dom';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
-import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 
@@ -32,10 +32,6 @@ const useStyles = makeStyles(theme => ({
         display: 'none',
       },
     },
-  },
-  listPopper: {
-    maxWidth: theme.spacing(31),
-    top: '5px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -237,9 +233,6 @@ export default function SourceDataType({
         id="dataTypesList"
         open={open}
         anchorEl={anchorEl}
-        classes={{
-          popper: classes.listPopper,
-        }}
         placement="bottom-end"
         onClose={handleClose}>
         <List

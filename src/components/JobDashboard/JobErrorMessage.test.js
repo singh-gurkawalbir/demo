@@ -1,8 +1,9 @@
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import JobErrorMessage from './JobErrorMessage';
+import { renderWithProviders } from '../../test/test-utils';
 
 const mockExternalURL = jest.fn().mockReturnValue('test');
 
@@ -26,7 +27,7 @@ describe('testsuite for Job Error Message', () => {
     windowSpy.mockRestore();
   });
   test('should be able to click on export record link', async () => {
-    render(
+    renderWithProviders(
       <JobErrorMessage
         message="test message"
         exportDataURI="https://exportURI"
@@ -44,7 +45,7 @@ describe('testsuite for Job Error Message', () => {
     expect(screen.getByText(/Import Id: importURI/i)).toBeInTheDocument();
   });
   test('should be able to click on import record link', async () => {
-    render(
+    renderWithProviders(
       <JobErrorMessage
         message="test message"
         exportDataURI="exportURI"

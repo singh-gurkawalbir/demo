@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import Menu from '@mui/material/Menu';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import makeStyles from '@mui/styles/makeStyles';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -100,35 +100,37 @@ export default function JobActionsMenu({
     setShowFilesDownloadDialog(false);
   }
 
-  return <>
-    {showFilesDownloadDialog && (
+  return (
+    <>
+      {showFilesDownloadDialog && (
       <JobFilesDownloadDialog
         job={job}
         onCloseClick={handleJobFilesDownloadDialogCloseClick}
       />
-    )}
+      )}
 
-    <Menu
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={handleMenuClose}>
-      {menuOptions.map(opt => (
-        <MenuItem
-          key={opt.action}
-          onClick={() => {
-            handleActionClick(opt.action);
-          }}>
-          {opt.icon}{opt.label}
-        </MenuItem>
-      ))}
-    </Menu>
-    <IconButton
-      data-test="moreJobActionsMenu"
-      className={classes.iconBtn}
-      onClick={handleMenuClick}
-      disabled={menuOptions.length === 0}
-      size="large">
-      <EllipsisHorizontallIcon />
-    </IconButton>
-  </>;
+      <ArrowPopper
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}>
+        {menuOptions.map(opt => (
+          <MenuItem
+            key={opt.action}
+            onClick={() => {
+              handleActionClick(opt.action);
+            }}>
+            {opt.icon}{opt.label}
+          </MenuItem>
+        ))}
+      </ArrowPopper>
+      <IconButton
+        data-test="moreJobActionsMenu"
+        className={classes.iconBtn}
+        onClick={handleMenuClick}
+        disabled={menuOptions.length === 0}
+        size="large">
+        <EllipsisHorizontallIcon />
+      </IconButton>
+    </>
+  );
 }

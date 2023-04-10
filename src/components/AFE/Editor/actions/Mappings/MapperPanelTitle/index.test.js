@@ -59,11 +59,11 @@ describe('mapperPanelTitle UI tests', () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
     expect(screen.getByText('Create destination record { } from source record { }')).toBeInTheDocument();
     expect(screen.getByText('Refresh fields')).toBeInTheDocument();
-    const collapseRowsButton = document.querySelector('[title="Collapse all rows"]');
+    const collapseRowsButton = screen.getByLabelText('Collapse all rows');
 
     expect(collapseRowsButton).toBeInTheDocument();
 
-    const expandRowsButton = document.querySelector('[title="Expand all rows"]');
+    const expandRowsButton = screen.getByLabelText('Expand all rows');
 
     expect(expandRowsButton).toBeInTheDocument();
 
@@ -73,7 +73,7 @@ describe('mapperPanelTitle UI tests', () => {
   });
   test('should make a dispatch call when clicked on the collapseRow icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
-    const collapseRowsButton = document.querySelector('[title="Collapse all rows"]');
+    const collapseRowsButton = screen.getByLabelText('Collapse all rows');
 
     expect(collapseRowsButton).toBeInTheDocument();
     await userEvent.click(collapseRowsButton);
@@ -81,7 +81,7 @@ describe('mapperPanelTitle UI tests', () => {
   });
   test('should make a dispatch call when clicked on the expandRows icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
-    const expandRowsButton = document.querySelector('[title="Expand all rows"]');
+    const expandRowsButton = screen.getByLabelText('Expand all rows');
 
     expect(expandRowsButton).toBeInTheDocument();
     await userEvent.click(expandRowsButton);

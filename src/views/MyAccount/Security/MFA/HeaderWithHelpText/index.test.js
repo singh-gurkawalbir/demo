@@ -1,7 +1,8 @@
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import HeaderWithHelpText from '.';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 jest.mock('../../../../../components/Help', () => ({
   __esModule: true,
@@ -10,7 +11,7 @@ jest.mock('../../../../../components/Help', () => ({
 }));
 describe('Test suite for HeaderWithHelpText', () => {
   test('should render the title and help text', () => {
-    render(
+    renderWithProviders(
       <HeaderWithHelpText title="Test Title" helpKey="test" >
         test children
       </HeaderWithHelpText>

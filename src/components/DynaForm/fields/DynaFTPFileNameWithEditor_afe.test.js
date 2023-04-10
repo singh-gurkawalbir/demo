@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor_afe';
 import actions from '../../../actions';
+import { renderWithProviders } from '../../../test/test-utils';
 
 const resourceId = '626abc';
 const mockHistoryPush = jest.fn();
@@ -87,7 +88,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       onFieldChange,
     };
 
-    render(<DynaFTPFileNameWithEditor {...props} />);
+    renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
     expect(screen.getByTestId('label')).toHaveTextContent(props.label);
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
   });
@@ -103,7 +104,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       onFieldChange,
     };
 
-    render(<DynaFTPFileNameWithEditor {...props} />);
+    renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
     const openEditorBtn = screen.getByTitle('Open handlebars editor');
 
     await userEvent.click(openEditorBtn);
@@ -129,7 +130,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       onFieldChange,
     };
 
-    render(
+    renderWithProviders(
       <>
         <DynaFTPFileNameWithEditor {...props} />
         <button type="button" onClick={() => mockSave({rule: 'SampleRule'})}>Save</button>
@@ -163,7 +164,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const {rerender} = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'json';
@@ -181,7 +182,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const {rerender} = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'fixed';
@@ -200,7 +201,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const {rerender} = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'delimited/edifact';
@@ -219,7 +220,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const {rerender} = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'filedefinition';

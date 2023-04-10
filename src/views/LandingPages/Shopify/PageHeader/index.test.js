@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ShopifyLandingPageHeader from '.';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 // Mocking Action Group as part of unit testing
 jest.mock('../../../../components/ActionGroup', () => ({
@@ -38,7 +39,7 @@ jest.mock('../../../../components/icons/ApplicationImg', () => ({
 
 describe('Testsuite for ShopifyLandingPageHeader', () => {
   test('should test the shopify landing page header', () => {
-    render(
+    renderWithProviders(
       <MemoryRouter><ShopifyLandingPageHeader /></MemoryRouter>
 
     );
