@@ -147,7 +147,7 @@ export default function ResourceList(props) {
 
       <CeligoPageBar
         title={resourceType === 'iClients' ? resourceType : `${resourceName}s`}
-        infoText={infoText[resourceType]}>
+        infoText={infoText[resourceType]} contentId={resourceType}>
         <ActionGroup>
           <KeywordSearch
             filterKey={resourceType}
