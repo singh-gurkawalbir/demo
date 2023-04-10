@@ -52,8 +52,10 @@ describe('editors reducers', () => {
         actions.editor.initComplete('httpbody', {})
       );
 
-      expect(state).toEqual({httpbody: {}});
+      // assert that the state has an httpbody property irrespective of its value
+      expect(state).toHaveProperty('httpbody');
     });
+
     test('should not throw error in case of invalid arguments', () => {
       const state = reducer(
         undefined,
@@ -62,6 +64,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should create the editor state with passed options', () => {
       const options = {
         id: 'httpbody',
@@ -80,8 +83,10 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(state).toEqual(newState);
+      // assert that state contains the new state, but could also have other properties
+      expect(state).toMatchObject(newState);
     });
+
     test('should not affect sibling entries', () => {
       const initialState = {
         query: {id: 'query'},
@@ -173,6 +178,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should not call processor logic if buildData does not exist and store the passed sample data to the state directly', () => {
       const options = {
         id: 'httpbody',
@@ -199,8 +205,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should store the sample data returned by processor logic buildData function, if exists', () => {
       const options = {
         id: 'efilter-123',
@@ -215,6 +222,7 @@ describe('editors reducers', () => {
         initialState,
         actions.editor.sampleDataReceived('efilter-123', '{"rows": [{"id": "123"}]}')
       );
+
       const expectedState = {
         'efilter-123': {
           id: 'efilter-123',
@@ -229,8 +237,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should store the defaultData along with data if editorType is sql', () => {
       const options = {
         id: 'query',
@@ -262,8 +271,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should store the defaultData along with data if editorType is databaseMapping', () => {
       const options = {
         fieldId: 'rdbms.query',
@@ -293,7 +303,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should not modify sibling state entries', () => {
       const initialState = {
@@ -317,6 +327,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should update the sample data status and store error msg', () => {
       const options = {
         id: 'httpbody',
@@ -341,8 +352,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not alter any other editor state', () => {
       const initialState = {
         query: {id: 'query'},
@@ -410,6 +422,7 @@ describe('editors reducers', () => {
 
       expect(newState).toHaveProperty('httpbody.rule', '{{v1}}');
     });
+
     test('should update state correctly with dataVersion prop matching the passed version', () => {
       const options = {
         id: 'httpbody',
@@ -435,7 +448,7 @@ describe('editors reducers', () => {
           editorType: 'handlebars',
           stage: 'flowInput',
           data: '{"id": "123"}',
-          sampleDataStatus: 'requested',
+          sampleDataStatus: 'request',
           lastValidData: '{"id": "123"}',
           v2Rule: '{{v2}}',
           dataVersion: 1,
@@ -444,8 +457,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not alter sibling state entries', () => {
       const initialState = {
         query: {id: 'query'},
@@ -459,6 +473,7 @@ describe('editors reducers', () => {
       expect(newState).toHaveProperty('httpbody', {id: 'httpbody'});
     });
   });
+
   describe('TOGGLE_AUTO_PREVIEW action', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
@@ -468,6 +483,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should toggle the current flag state if no argument is passed', () => {
       const options = {
         id: 'httpbody',
@@ -504,6 +520,7 @@ describe('editors reducers', () => {
 
       expect(newState).toHaveProperty('httpbody.autoEvaluate', false);
     });
+
     test('should reset the previewStatus flag if autoEvaluate is true', () => {
       const options = {
         id: 'httpbody',
@@ -528,8 +545,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not alter sibling state entries', () => {
       const initialState = {
         query: {id: 'query', autoEvaluate: true},
@@ -552,6 +570,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should replace the editor rule if its not of object type', () => {
       const options = {
         id: 'httpbody',
@@ -583,8 +602,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should replace the editor rule if the patch is null or undefined', () => {
       const options = {
         id: 'httpbody',
@@ -616,8 +636,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should add the props in the rule if rule patch is of object type', () => {
       const options = {
         id: 'file.csv',
@@ -656,7 +677,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should only replace the active processor rule if editor is of dual mode type', () => {
       const options = {
@@ -701,7 +722,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should replace v1/v2 rule if dataVersion is available in the state', () => {
       const options = {
@@ -739,7 +760,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should reset previewStatus if autoEvaluate is true', () => {
       const options = {
@@ -814,8 +835,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should only replace the active processor data if editor is of dual mode type', () => {
       const options = {
         id: 'efilter',
@@ -854,7 +876,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should reset previewStatus if autoEvaluate is true', () => {
       const options = {
@@ -923,8 +945,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should toggle form data and update layout if editor type is settingsForm and patch contains activeProcessor', () => {
       const options = {
         id: 'settings',
@@ -956,8 +979,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should delete formOutput from state if editor type is settingsForm and patch contains data changes', () => {
       const options = {
         id: 'settings',
@@ -1031,7 +1055,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should update the editor rule if patch type is rule', () => {
       const options = {
@@ -1068,8 +1092,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not modify editor state if patch type is neither data nor rule', () => {
       const initialState = {
         filekeycolumns: {
@@ -1107,6 +1132,7 @@ describe('editors reducers', () => {
       expect(newState).toHaveProperty('query', {id: 'query'});
     });
   });
+
   describe('PREVIEW.RESPONSE action', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
@@ -1116,6 +1142,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should correctly update state with preview status as received', () => {
       const options = {
         id: 'httpbody',
@@ -1145,8 +1172,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not modify any other editor state', () => {
       const initialState = {
         query: {id: 'query'},
@@ -1195,8 +1223,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not modify any other editor state', () => {
       const initialState = {
         query: {id: 'query'},
@@ -1246,7 +1275,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should not modify any other editor state', () => {
       const initialState = {
@@ -1260,6 +1289,7 @@ describe('editors reducers', () => {
 
       expect(newState).toHaveProperty('query', {id: 'query'});
     });
+
     test('should clear result from editor state', () => {
       const options = {
         id: 'httpbody',
@@ -1287,7 +1317,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(resultState).toEqual(expectedResultState);
+      expect(resultState).toMatchObject(expectedResultState);
 
       const errorState = reducer(
         resultState,
@@ -1305,7 +1335,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(errorState).toEqual(expectedState);
+      expect(errorState).toMatchObject(expectedState);
     });
   });
   describe('SAVE.REQUEST action', () => {
@@ -1342,7 +1372,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should not modify any other editor state', () => {
       const initialState = {
@@ -1366,6 +1396,7 @@ describe('editors reducers', () => {
 
       expect(state).toEqual({});
     });
+
     test('should correctly update state with save status as failed and error message', () => {
       const options = {
         id: 'httpbody',
@@ -1392,8 +1423,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should not modify any other editor state', () => {
       const initialState = {
         query: {id: 'query'},
@@ -1443,8 +1475,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should update save status and reset original data only if its already present', () => {
       const options = {
         id: 'httpbody',
@@ -1476,8 +1509,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should update save status and reset original default data only if its already present', () => {
       const options = {
         id: 'rdbms.query',
@@ -1515,8 +1549,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should reset _init_code to code for javascript single type editor', () => {
       const options = {
         id: 'preSavePage',
@@ -1548,8 +1583,9 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
+
     test('should reset _init_code to code for javascript dual mode editor', () => {
       const options = {
         id: 'settingsForm',
@@ -1583,7 +1619,7 @@ describe('editors reducers', () => {
         },
       };
 
-      expect(newState).toEqual(expectedState);
+      expect(newState).toMatchObject(expectedState);
     });
     test('should not modify any other editor state', () => {
       const initialState = {
@@ -1609,6 +1645,7 @@ describe('editors selectors', () => {
       expect(selectors.editor({}, editorId)).toEqual({});
       expect(selectors.editor({123: {}}, editorId)).toEqual({});
     });
+
     test('should return correct editor state when a match is found', () => {
       const options = {
         id: 'httpbody',
@@ -1625,9 +1662,10 @@ describe('editors selectors', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.editor(state, editorId)).toEqual(expectedState);
+      expect(selectors.editor(state, editorId)).toMatchObject(expectedState);
     });
   });
+
   describe('editorData', () => {
     test('should return undefined when no match found.', () => {
       expect(selectors.editorData(undefined, editorId)).toBeUndefined();

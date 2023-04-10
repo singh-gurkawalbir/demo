@@ -149,7 +149,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.EDITOR.PATCH.RULE: {
         if (!draft[id]) break;
-        console.log('PATCH.RULE', JSON.stringify(rulePatch, null, 2));
+        // console.log('PATCH.RULE', JSON.stringify(rulePatch, null, 2));
         const ap = draft[id].activeProcessor;
         const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
         const shouldReplace =

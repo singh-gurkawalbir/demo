@@ -33,7 +33,7 @@ const overrides = { wrap: true };
 export default function ErrorGridItem({ editorId }) {
   const {error, sampleDataStatus, chatErrors} = useSelector(state => {
     const editorState = selectors.editor(state, editorId);
-    const {error, sampleDataStatus, chat} = editorState;
+    const {error, sampleDataStatus, chat = {}} = editorState;
     const {errors: chatErrors} = chat;
 
     return {error, sampleDataStatus, chatErrors};

@@ -196,7 +196,7 @@ export default function Editor({ editorId }) {
     const activeProcessor = selectors.editorActiveProcessor(state, editorId);
 
     return {
-      chatEnabled: e.chat.enabled,
+      chatEnabled: !!e.chat?.enabled,
       editorId,
       editorType: e.editorType,
       layout: e.layout,
