@@ -111,16 +111,16 @@ describe('actionMenu component Test cases', () => {
 
     const iconButton = iconButtons.find(eachButton => eachButton.hasAttribute('aria-label', 'more'));
 
-    expect(iconButton).toBeInTheDocument();
+    await waitFor(() => expect(iconButton).toBeInTheDocument());
     await userEvent.click(iconButton);
 
-    const listButton = await screen.getByTestId('arrow_popper');
+    const listButton = await waitFor(() => screen.getByRole('tooltip'));
 
-    expect(listButton).toBeInTheDocument();
-    expect(screen.queryByText('Test Child')).toBeInTheDocument();
+    await waitFor(() => expect(listButton).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByRole('menuitem')).toHaveLength(2));
+
     await userEvent.click(listButton);
-
-    expect(screen.queryByText('Test Child')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryAllByRole('menuitem')).toHaveLength(0));
   });
 
   test('should pass initial render with tooltip action icon', async () => {
