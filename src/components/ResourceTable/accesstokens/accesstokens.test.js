@@ -104,6 +104,7 @@ describe('access Tokens test suite', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
