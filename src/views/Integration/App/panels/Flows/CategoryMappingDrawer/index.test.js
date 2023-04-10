@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -344,9 +343,9 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    await userEvent.click(screen.getByTitle('Hide categories'));
-    expect(screen.getByTitle('Enable categories')).toBeInTheDocument();
-    await userEvent.click(screen.getByTitle('Restore category'));
+    await userEvent.click(screen.getByLabelText('Hide categories'));
+    expect(screen.getByLabelText('Enable categories')).toBeInTheDocument();
+    await userEvent.click(screen.getByLabelText('Restore category'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -384,7 +383,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    await userEvent.click(screen.getAllByTitle('Configure variations')[0]);
+    await userEvent.click(screen.getAllByLabelText('Configure variations')[0]);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/5ff579d745ceef7dcd797c15/5ea16c600e2fab71928a6152/utilitymapping/categoryId/depth/0/variations/categoryId'
     );
@@ -415,7 +414,7 @@ describe('CategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    await userEvent.click(screen.getByTitle('Delete category'));
+    await userEvent.click(screen.getByLabelText('Delete category'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {

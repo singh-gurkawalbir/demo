@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import RetryListPopper from './index';
@@ -36,12 +35,13 @@ describe('SelectResource UI Tests', () => {
   test('should close the arrowPopper when clicked outside the component', async () => {
     renderWithProviders(
       <MemoryRouter>
-        <div>exterior<RetryListPopper resources={resources} /></div>
+        <div>exterior</div>
+        <RetryListPopper resources={resources} />
       </MemoryRouter>
     );
     await userEvent.click(screen.getByText('View results'));
     expect(screen.getByText(/name1/i)).toBeInTheDocument();
     await userEvent.click(screen.getByText('exterior'));
-    expect(screen.queryByText(/name1/i)).toBeNull();
+    await waitFor(() => expect(screen.queryByText(/name1/i)).toBeNull());
   });
 });

@@ -110,7 +110,7 @@ describe('Testsuite for AccountSettings', () => {
   });
   test('should able to load spinner when the account settings status is pending', async () => {
     await initAccountSettings({asyncStatus: 'pending', accountSettingsStatus: 'pending'});
-    expect(document.querySelector('circle[class="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate"]')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_ACCOUNT_SETTINGS_REQUEST' });
   });
 });

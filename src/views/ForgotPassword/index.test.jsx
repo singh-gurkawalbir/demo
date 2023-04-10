@@ -113,7 +113,7 @@ describe('ForgotPasswordWrapper', () => {
     const forgotpasswordHeadingNode = screen.getByRole('heading', {name: 'Forgot your password?'});
 
     expect(forgotpasswordHeadingNode).toBeInTheDocument();
-    const SigninButton = screen.getByRole('button', {name: 'Sign in'});
+    const SigninButton = screen.getByRole('link', {name: 'Sign in'});
 
     expect(SigninButton).toBeInTheDocument();
 
