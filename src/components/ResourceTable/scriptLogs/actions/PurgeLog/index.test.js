@@ -69,6 +69,7 @@ describe('purgeMultipleErrors action Test cases', () => {
     expect(purgeLogs).toBeInTheDocument();
     expect(purgeLogs.getAttribute('aria-disabled')).toBeTruthy();
   });
+
   test('should pass the intial render with disabled action duplicate', async () => {
     const scriptId = '6439276e7uybwe78292878';
     const flowId = '6938764rh739d3378';
@@ -83,7 +84,7 @@ describe('purgeMultipleErrors action Test cases', () => {
     const purgeLogs = screen.getByText(/Purge all logs of this script/i);
 
     expect(purgeLogs).toBeInTheDocument();
-    expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
+    expect(purgeLogs.getAttribute('aria-disabled')).toBeNull();
 
     await userEvent.click(purgeLogs);
     expect(screen.getByText('Are you sure you want to purge all logs of this script? This cannot be undone.')).toBeInTheDocument();

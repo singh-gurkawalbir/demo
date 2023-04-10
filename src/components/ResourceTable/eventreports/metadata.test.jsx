@@ -154,10 +154,10 @@ describe('test suite for eventreports', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: 'integrationTestName'})).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'integrationTestName',
       'flownametest',
       '12/24/2018 10:33:30 am',
       '10/02/2022 10:33:30 am',

@@ -68,10 +68,11 @@ describe('recycle Bin TTL test suite', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].doc.name})).toBeInTheDocument();
+
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'flowName',
       'Flow',
       lastModified,
       '30 days',

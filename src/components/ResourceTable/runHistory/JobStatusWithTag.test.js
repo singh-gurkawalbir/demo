@@ -44,6 +44,6 @@ describe('jobStatusWithTag test cases', () => {
   test('should show empty dom when no props are provided', () => {
     const utils = initJobStatusWithTag({job: {}});
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(utils.container).toBeUndefined();
   });
 });
