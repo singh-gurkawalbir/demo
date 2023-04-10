@@ -61,7 +61,7 @@ describe('allContentCells component Test cases', () => {
       },
     });
 
-    const TableHead = screen.getByRole('cell', {name: 'row name'});
+    const TableHead = screen.getByRole('rowheader', {name: 'row name'});
     const TableData = screen.getByRole('cell', {name: 'true'});
 
     expect(TableHead).toBeInTheDocument();
