@@ -98,7 +98,7 @@ export function getSupportedHooksForResource(resource) {
       break;
     case 'netsuite':
       unSupportedHooks = ['postAggregate'];
-      if (!resource.netsuite_da?.useSS2Restlets) { // eslint-disable-line camelcase
+      if (['suiteapp1.0', 'suitebundle'].includes(resource?.netsuite_da?.restletVersion) || !resource.netsuite_da?.useSS2Restlets) { // eslint-disable-line camelcase
         unSupportedHooks.push('postMap');
       }
       break;
