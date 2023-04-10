@@ -276,7 +276,6 @@ describe('test suite for orgOwnerUsers', () => {
       return res.once(ctx.status(404), ctx.json({message: errorMessage}));
     });
 
-    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -310,7 +309,6 @@ describe('test suite for orgOwnerUsers', () => {
       return res(ctx.json([]));
     });
 
-    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
@@ -350,7 +348,6 @@ describe('test suite for orgOwnerUsers', () => {
       return res.once(ctx.status(404), ctx.json({message: errorMessage}));
     });
 
-    delete mockTableContext.integrationId;
     const data = [{
       _id: 'sharedUser123',
       sharedWithUser: {
