@@ -217,7 +217,6 @@ describe('test suite for common actions', () => {
 
     await userEvent.click(deleteButton);
     const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
-    // screen.debug(undefined, Infinity);
     const confirmButton = await waitFor(() => screen.getByRole('button', { name: /Delete/i }));
 
     expect(confirmDialog).toContainElement(confirmButton);
@@ -280,7 +279,6 @@ describe('test suite for common actions', () => {
     const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
-    // screen.debug(undefined, Infinity);
     const downloadButton = await waitFor(() => screen.getByRole('menuitem', {name: /Download template zip/i}));
 
     await userEvent.click(downloadButton);
