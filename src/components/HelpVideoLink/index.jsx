@@ -14,7 +14,7 @@ export default function HelpVideoLink({ contentId }) {
   const link = helpContent.videoLinks[contentId];
   const classes = useStyles();
 
-  return HELP_CONTENT === 'true' && link ? (
+  return ENABLE_HELP_CONTENT === 'true' && link ? (
     <Tooltip title="help content" placement="top">
       <div className={classes.helpButton}>
         <a href={link} rel="noreferrer" target="_blank" data-test="helpVideoLink">

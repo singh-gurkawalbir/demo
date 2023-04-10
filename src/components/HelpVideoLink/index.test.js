@@ -31,7 +31,7 @@ describe('HelpVideoLink component', () => {
   });
 
   test('should pass the initial render with contentId and helpContent feature is disable', async () => {
-    global.HELP_CONTENT = 'false';
+    global.ENABLE_HELP_CONTENT = 'false';
     const { utils } = await initHelpVideoLink({ props: { contentId: 'profile'}});
 
     expect(utils.container).toBeEmptyDOMElement();

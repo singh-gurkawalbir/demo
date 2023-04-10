@@ -14,7 +14,7 @@ export default function HelpDocumentationLink({ contentId }) {
   const link = helpContent.documentationLinks[contentId];
   const classes = useStyles();
 
-  return HELP_CONTENT === 'true' && link ? (
+  return ENABLE_HELP_CONTENT === 'true' && link ? (
     <Tooltip title="help article " placement="top">
       <div className={classes.helpButton}>
         <a href={link} rel="noreferrer" target="_blank" data-test="helpDocumentLink">

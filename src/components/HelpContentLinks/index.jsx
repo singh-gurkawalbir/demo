@@ -18,7 +18,7 @@ export default function HelpContentLinks({ contentId }) {
   const isContentLinkPresent = helpContent.documentationLinks[contentId] || helpContent.videoLinks[contentId];
   const classes = useStyles();
 
-  return HELP_CONTENT === 'true' && isContentLinkPresent ? (
+  return ENABLE_HELP_CONTENT === 'true' && isContentLinkPresent ? (
     <div className={classes.buttonRef}>
       <HelpDocumentationLink contentId={contentId} />
       <HelpVideoLink contentId={contentId} />
