@@ -139,6 +139,7 @@ export default function PreviewInfo(props) {
         mb: 4,
         borderRadius: 1,
         border: theme => `1px solid ${theme.palette.secondary.lightest}`,
+        minHeight: 80,
         '&:before': {
           content: '""',
           width: 5,

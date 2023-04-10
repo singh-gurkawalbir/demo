@@ -8,7 +8,9 @@ export const CeligoTabWrapper = ({ children, height, className }) => {
 
   return (
     <TabContext.Provider value={{activeTab, setActiveTab, height}}>
-      <Box className={className}>
+      <Box
+        className={className}
+        sx={{height: '100%'}}>
         {children}
       </Box>
     </TabContext.Provider>
