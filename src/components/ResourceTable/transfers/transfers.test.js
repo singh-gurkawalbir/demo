@@ -72,10 +72,11 @@ describe('test suite for transfers', () => {
       'Transfer date',
       'Actions',
     ]);
+
+    expect(screen.getByRole('rowheader', { name: 'User1 email@user1.com'})).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'User1email@user1.com',
       'User2email@user2.com',
       'Integration 1Integration 2',
       'Dismissed',

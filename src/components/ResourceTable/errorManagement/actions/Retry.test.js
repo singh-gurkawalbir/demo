@@ -39,7 +39,7 @@ describe('error management retry action tests', () => {
   test('should show "Enable the flow to retry" message when flow is disabled', async () => {
     await renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
     await userEvent.click(screen.getByRole('button', {name: /more/i}));
-    const retry = screen.getByTitle('Enable the flow to retry');
+    const retry = screen.getByLabelText('Enable the flow to retry');
 
     expect(retry).toBeInTheDocument();
     expect(retry.textContent).toBe('Retry');

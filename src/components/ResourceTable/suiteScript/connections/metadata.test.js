@@ -55,39 +55,43 @@ describe('suite script connection metadata UI test', () => {
   test('should verify the coulmns for unknown resource type', () => {
     renderFunction(resource);
     headerI = existanceOfCellInDom('Name', 'columnheader');
-    cellI = existanceOfCellInDom('3D Cart Staging delete', 'cell');
+    cellI = existanceOfCellInDom('3D Cart Staging delete', 'rowheader');
     expectFunction(headerI, cellI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
 
     headerI = existanceOfCellInDom('Type', 'columnheader');
     cellI = existanceOfCellInDom('rest', 'cell');
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('API', 'columnheader');
     cellI = existanceOfCellInDom('https://apirest.3dcart.com', 'cell');
 
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Username', 'columnheader');
     cellI = existanceOfCellInDom('SomeUserName', 'cell');
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
   });
   test('should verify the coulmns for ftp Type field', () => {
     renderFunction({...resource, type: 'sftp', ftp: {hostURI: 'FTPhostURI', username: 'FTP userName'}});
     headerI = existanceOfCellInDom('Name', 'columnheader');
-    cellI = existanceOfCellInDom('3D Cart Staging delete', 'cell');
+    cellI = existanceOfCellInDom('3D Cart Staging delete', 'rowheader');
     expectFunction(headerI, cellI);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
 
     headerI = existanceOfCellInDom('Type', 'columnheader');
     cellI = existanceOfCellInDom('SFTP', 'cell');
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('API', 'columnheader');
     cellI = existanceOfCellInDom('FTPhostURI', 'cell');
 
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Username', 'columnheader');
     cellI = existanceOfCellInDom('FTP userName', 'cell');
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
   });
 });

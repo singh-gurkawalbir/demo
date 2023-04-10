@@ -96,6 +96,7 @@ describe("homeTile's Renew actions UI test", () => {
     await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
+
   test('should not show access when unetgrations is v2 and resumable', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, _integrationId: '5_integrationId', supportsMultiStore: true, _id: 'modeText'};
 

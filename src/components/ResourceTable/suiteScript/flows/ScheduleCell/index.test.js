@@ -17,7 +17,7 @@ describe('suite script ScheduleCell ui test', () => {
   test('should show empty dom when no props are provided', () => {
     const utils = renderWithProviders(<MemoryRouter><ScheduleCell /></MemoryRouter>);
 
-    expect(utils.container.textContent).toBe('');
+    expect(utils.container).toBeUndefined();
   });
 
   test('should show no option for schedule when flow type is not of schedule', () => {
@@ -36,7 +36,7 @@ describe('suite script ScheduleCell ui test', () => {
           ><ScheduleCell flow={{_id: 'someFlowID', type: 'EXPORT', hasConfiguration: true}} />
         </Route>
       </MemoryRouter>);
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link');
 
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/initialURL/someFlowID/schedule');
@@ -55,13 +55,13 @@ describe('suite script ScheduleCell ui test', () => {
           ><ScheduleCell flow={{_id: 'someFlowID', type: 'EXPORT', hasConfiguration: true, editable: true}} />
         </Route>
       </MemoryRouter>);
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link');
 
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/initialURL/someFlowID/schedule');
     expect(screen.getByText('Calendar')).toBeInTheDocument();
     const disable = link.getAttribute('aria-disabled');
 
-    expect(disable).toBe('false');
+    expect(disable).toBeNull();
   });
 });
