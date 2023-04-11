@@ -5,6 +5,7 @@ import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
 import Edit from '../commonActions/Edit';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
+import { getHttpConnectorApplications } from '../../../constants/applications';
 
 export default {
   useColumns: () => {
@@ -17,10 +18,11 @@ export default {
         orderBy: 'name',
       },
       {
-        key: 'provider',
+        key: 'application',
         isLoggable: true,
-        heading: 'Provider',
-        Value: ({rowData: r}) => r.provider,
+        heading: 'Application',
+        Value: ({rowData: r}) => r?._httpConnectorId ? getHttpConnectorApplications(r?._httpConnectorId)?.name : 'http',
+        visible: false,
       },
       {
         key: 'lastUpdated',
