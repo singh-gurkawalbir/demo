@@ -98,14 +98,14 @@ describe('test suite for common actions', () => {
     const viewAuditLogsButton = screen.getByRole('menuitem', {name: 'View audit log'});
 
     await userEvent.click(viewAuditLogsButton);
-    const auditLogDialog = screen.getByRole('dialog');
+    const auditLogDialog = await waitFor(() => screen.getByRole('dialog'));
 
     expect(auditLogDialog).toBeInTheDocument();
     expect(auditLogDialog).toHaveTextContent(`Audit log: ${connection.name}`);
     const closeButton = screen.getByTestId('closeModalDialog');
 
     await userEvent.click(closeButton);
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
   });
 
   test('should be able to view execution logs in a separate tab in flow builder', async () => {
@@ -223,7 +223,7 @@ describe('test suite for common actions', () => {
     expect(confirmDialog.textContent).toContain('Are you sure you want to delete this license?');
     await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.delete(mockTableContext.resourceType, 'ia123'));
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
   });
 
   test('should not be able to delete a resource already in use', async () => {
@@ -259,7 +259,7 @@ describe('test suite for common actions', () => {
     const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete export'}));
 
     await userEvent.click(deleteButton);
-    const confirmDeleteButton = await waitFor(() => screen.getByRole('button', {name: /Delete/i}));
+    const confirmDeleteButton = await waitFor(() => screen.getByRole('button', {name: 'Delete'}));
 
     await userEvent.click(confirmDeleteButton);
     await waitFor(() => expect(screen.getByRole('dialog').textContent).toContain('Unable to delete export'));
@@ -307,7 +307,7 @@ describe('test suite for common actions', () => {
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
-    const confirmDialog = screen.getByRole('dialog');
+    const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
 
     expect(confirmDialog.textContent).toContain('Confirm generate');
     const confirmButton = screen.getByRole('button', {name: 'Generate'});
@@ -337,7 +337,7 @@ describe('test suite for common actions', () => {
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
-    const confirmDialog = screen.getByRole('dialog');
+    const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
 
     expect(confirmDialog.textContent).toContain('Confirm generate');
     const confirmButton = screen.getByRole('button', {name: 'Generate'});
@@ -398,7 +398,7 @@ describe('test suite for common actions', () => {
     const viewReferenceButton = screen.getByRole('menuitem', {name: 'Used by'});
 
     await userEvent.click(viewReferenceButton);
-    const dialogBox = screen.getByRole('dialog');
+    const dialogBox = await waitFor(() => screen.getByRole('dialog'));
 
     expect(dialogBox.textContent).toContain('Used by');
     const closeDialogButton = screen.getByTestId('closeModalDialog');
