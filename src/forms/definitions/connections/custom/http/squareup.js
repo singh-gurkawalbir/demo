@@ -111,7 +111,6 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'squareup.connection.http._iClientId',
       visibleWhenAll: [{field: 'accountType', is: ['sandbox']}],
-      remove: r => !!((r && !r._connectorId && r?.http && r?.http?._iClientId)),
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
