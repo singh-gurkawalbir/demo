@@ -74,7 +74,7 @@ describe('startDebugEnhanced UI tests', () => {
     const screenspace = screen.getByText(/ScreenSpace/i);
 
     await userEvent.click(screenspace);
-    expect(screen.queryByText(/Last Debug/i)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(/Last Debug/i)).not.toBeInTheDocument());
   });
   test('should render the popover when clicked on Start Debug button', async () => {
     DebugEnhanced({
