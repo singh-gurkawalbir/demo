@@ -94,6 +94,7 @@ function ProfileMenuButton() {
           aria-owns={open ? 'profileOptions' : null}
           aria-haspopup="true"
           onClick={handleMenu}
+          className={classes.avatarButton}
         >
           <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
         </IconButton>

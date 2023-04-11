@@ -4,8 +4,9 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 const rootCss = {
-  borderRadius: 24,
-  padding: 2,
+  borderRadius: 3,
+  padding: '2px',
+  backgroundColor: theme => theme.palette.secondary.lightest,
   '& button': {
     marginLeft: 0,
     height: 22,
@@ -15,6 +16,9 @@ const rootCss = {
     '& span': {
       lineHeight: '0px',
     },
+  },
+  '& .MuiToggleButtonGroup-grouped:not(:last-of-type),.MuiToggleButtonGroup-grouped:not(:first-of-type)': {
+    borderRadius: 6,
   },
   '& button.Mui-selected': {
     borderRadius: 24,

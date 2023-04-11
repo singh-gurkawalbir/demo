@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
   btnNotification: {
     padding: 0,
+    color: 'inherit',
   },
 }));
 
