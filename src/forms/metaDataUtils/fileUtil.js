@@ -622,8 +622,9 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
   } else if (fieldId === 'file.skipAggregation') {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
+    const batchSize = fields.find(field => field.id === 'file.batchSize')?.value;
 
-    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue;
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue || batchSize > 1;
   } else if (fieldId === 'file.encoding') {
     const fileType = fields.find(field => field.id === 'file.type');
 
