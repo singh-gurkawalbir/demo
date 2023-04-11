@@ -76,7 +76,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.hint,
   },
   appsTitle: {
-    color: theme.palette.background.paper,
+    color: theme.palette.secondary.main,
     paddingLeft: theme.spacing(2),
   },
   componentPreviewHeading: {
