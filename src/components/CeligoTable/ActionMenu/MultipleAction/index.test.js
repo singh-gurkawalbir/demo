@@ -38,7 +38,7 @@ describe('multipleAction component Test cases', () => {
       },
     });
 
-    expect(screen.getByTitle('use_disabled_action_text')).toBeInTheDocument();
+    expect(screen.getByLabelText('use_disabled_action_text')).toBeInTheDocument();
   });
 
   test('should pass the intial render with useHasAccess false', async () => {

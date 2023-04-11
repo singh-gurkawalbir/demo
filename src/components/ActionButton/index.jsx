@@ -39,7 +39,7 @@ export default function ActionButton({ className, children, placement, tooltip =
         role="button"
         className={clsx(classes.editorButton, className)}
         {...props}
-        aria-label="tooltip"
+        aria-label={tooltip}
         size="large">
         <span>{children}</span>
       </IconButton>
