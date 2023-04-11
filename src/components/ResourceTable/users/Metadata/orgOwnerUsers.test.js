@@ -114,7 +114,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(disableUserButton).toBeChecked();
 
     //  should show the options to add notification if user is allowed to manage notifications, but there are not notifications
-    expect(addNotificationsButton).toHaveAttribute('title', 'Add notifications');
+    expect(addNotificationsButton).toHaveAttribute('aria-label', 'Add notifications');
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     await userEvent.click(actionButton);
@@ -261,7 +261,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm delete');
     userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123', false));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123', false)));
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
