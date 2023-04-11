@@ -18,7 +18,7 @@ describe('setting cell test cases', () => {
   test('should show empty dom when flow doesnot supports settings', () => {
     const {container} = renderWithProviders(<MemoryRouter><RemoveMargin actionProps={{flowAttributes: {}}} /></MemoryRouter>);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(container).toBeUndefined();
   });
   test('should show empty dom when flow supports settings', async () => {
     renderWithProviders(
@@ -31,7 +31,7 @@ describe('setting cell test cases', () => {
         </Route>
       </MemoryRouter>);
 
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link');
 
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/integrations/integration_id/flows/someFlowId/settings');

@@ -247,7 +247,14 @@ export function* switchAccount({ preferences }) {
   return yield put(actions.auth.abortAllSagasAndSwitchAcc(preferences?.defaultAShareId));
 }
 
-export function* leaveAccount({ id }) {
+// user is disabling/deleting/removing his own user in userList we should reinitialise the session and set the defaultAShareId to next valid accountId or as own(if no other shared account present)
+export function* switchAccountActions() {
+  yield call(checkAndUpdateDefaultSetId);
+  yield put(actions.auth.clearStore({ authenticated: true }));
+  yield put(actions.auth.initSession({ switchAcc: true }));
+}
+
+export function* leaveAccount({ id, isSwitchAccount }) {
   const path = `/shared/ashares/${id}`;
   const opts = { method: 'DELETE', body: {} };
 
@@ -263,11 +270,8 @@ export function* leaveAccount({ id }) {
     );
   }
 
-  const userPreferences = yield select(selectors.userPreferences);
-
-  if (userPreferences.defaultAShareId === id) {
-    yield put(actions.auth.clearStore({ authenticated: true }));
-    yield put(actions.auth.initSession());
+  if (isSwitchAccount) {
+    yield call(switchAccountActions);
   } else {
     yield put(actions.resource.requestCollection('shared/ashares'));
   }
@@ -321,7 +325,7 @@ export function* updateUser({ _id, user, asyncKey }) {
   yield put(actions.user.org.users.updated({ ...user, _id }));
 }
 
-export function* deleteUser({ _id }) {
+export function* deleteUser({ _id, isSwitchAccount }) {
   const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
     resourceId: _id,
   });
@@ -337,19 +341,15 @@ export function* deleteUser({ _id }) {
   } catch (e) {
     return true;
   }
-  const { defaultAShareId } = yield select(selectors.userPreferences);
 
-  // user delete his own user in userList we should reinitialise the session and set the defaultAShareId to next valid accountId or as own(if no other shared account present)
-  if (defaultAShareId === _id) {
-    yield call(checkAndUpdateDefaultSetId);
-    yield put(actions.auth.clearStore({ authenticated: true }));
-    yield put(actions.auth.initSession());
+  if (isSwitchAccount) {
+    yield call(switchAccountActions);
   }
 
   yield put(actions.user.org.users.deleted(_id));
 }
 
-export function* disableUser({ _id, disabled }) {
+export function* disableUser({ _id, disabled, isSwitchAccount }) {
   const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
     resourceId: _id,
   });
@@ -363,6 +363,10 @@ export function* disableUser({ _id, disabled }) {
     });
   } catch (e) {
     return true;
+  }
+
+  if (isSwitchAccount) {
+    yield call(switchAccountActions);
   }
 
   yield put(actions.user.org.users.disabled(_id));

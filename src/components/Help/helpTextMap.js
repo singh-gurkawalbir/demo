@@ -644,6 +644,7 @@ export default {
 'Please enter the x-seller-token provided by Target.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'target.connection.http.unencrypted.x-seller-id':
 'Please enter the x-seller-id provided by Target.',
+  '3plcentral.connection.http.unencrypted.environment': 'Select the environment type.<br>If your account URL is https://secure-wms.com, select <b>Production</b>. If your account URL is https://box.secure-wms.com, select <b>Sandbox</b>.',
   '3plcentral.connection.http.unencrypted.tpl':
 'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
   '3plcentral.connection.http.unencrypted.userLoginId':

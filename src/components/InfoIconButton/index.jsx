@@ -71,6 +71,7 @@ export default function InfoIconButton({
         anchorEl={anchorEl}
         placement={placement}
         onClose={handleInfoClose}
+        onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
         <HelpContent
