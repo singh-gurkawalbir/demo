@@ -1,20 +1,33 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'squareup',
-    '/http/auth/type': 'oauth',
-    '/http/auth/oauth/useIClientFields': false,
-    '/http/mediaType': 'json',
-    '/http/ping/relativeURI': '/v2/locations',
-    '/http/baseURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/`,
-    '/http/auth/oauth/authURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/oauth2/authorize`,
-    '/http/auth/oauth/tokenURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/oauth2/token`,
-    '/http/auth/token/refreshMethod': 'POST',
-    '/http/auth/token/refreshMediaType': 'urlencoded',
-    '/http/auth/oauth/scopeDelimiter': ' ',
-    '/http/ping/method': 'GET',
-  }),
+  preSave: (formValues, resource) => {
+    const retValues = { ...formValues };
+
+    if (
+      resource &&
+      !resource._connectorId &&
+      resource.http &&
+      resource.http._iClientId
+    ) {
+      retValues['/http/_iClientId'] = undefined;
+    }
+
+    return {
+      ...retValues,
+      '/type': 'http',
+      '/assistant': 'squareup',
+      '/http/auth/type': 'oauth',
+      '/http/auth/oauth/useIClientFields': false,
+      '/http/mediaType': 'json',
+      '/http/ping/relativeURI': '/v2/locations',
+      '/http/baseURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/`,
+      '/http/auth/oauth/authURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/oauth2/authorize`,
+      '/http/auth/oauth/tokenURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/oauth2/token`,
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'urlencoded',
+      '/http/auth/oauth/scopeDelimiter': ' ',
+      '/http/ping/method': 'GET',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     accountType: {
