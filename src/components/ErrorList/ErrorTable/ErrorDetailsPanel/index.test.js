@@ -252,7 +252,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
     expect(
       document.querySelector(
-        'span[class="css-y4cjyz-MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
