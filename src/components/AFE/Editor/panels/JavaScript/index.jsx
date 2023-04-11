@@ -65,9 +65,9 @@ export default function JavaScriptPanel({ editorId }) {
   const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = rule || {};
   const insertStubKey = useSelector(state => selectors.editor(state, editorId).insertStubKey);
 
-  const { errorLine, error } =
+  const { errorLine, error, errSourceProcessor } =
     useSelector(state => selectors.editorPreviewError(state, editorId), shallowEqual);
-  const hasError = !!error;
+  const hasError = !!error && errSourceProcessor !== 'transform';
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const {flowId} = useSelector(state => selectors.editor(state, editorId));
   const isIntegrationApp = !!useSelector(state => selectors.resource(state, 'flows', flowId)?._connectorId);
