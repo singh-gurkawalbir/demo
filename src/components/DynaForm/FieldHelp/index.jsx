@@ -27,7 +27,10 @@ export default function FieldHelp({
       resourceType={resourceContext && resourceContext.resourceType}
       escapeUnsecuredDomains={escapeUnsecuredDomains}
       disablePortal={disablePortal}
-      sx={{ml: 0.5}}
+      sx={{
+        ml: 0.5,
+        padding: '3px',
+      }}
     />
   );
 }

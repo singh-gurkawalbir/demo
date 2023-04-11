@@ -47,6 +47,10 @@ const useStyles = makeStyles(theme => ({
       left: 0,
     },
   },
+  homeSearch: {
+    height: 38,
+    marginRight: theme.spacing(1),
+  },
 }));
 
 const emptyObject = {};
@@ -65,7 +69,7 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      <KeywordSearch placeholder="Search integrations & flows" size="large" filterKey={FILTER_KEY} />
+      <KeywordSearch placeholder="Search integrations & flows" size="large" filterKey={FILTER_KEY} className={classes.homeSearch} />
 
       <ActionGroup>
         {permission.create && (

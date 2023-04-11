@@ -26,7 +26,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
   },
-
+  outlinedButton: {
+    borderColor: theme.palette.secondary.lightest,
+    color: theme.palette.secondary.light,
+  },
 }));
 
 export default function OutlinedButton(props) {
@@ -36,7 +39,7 @@ export default function OutlinedButton(props) {
   return (
     <Button
       variant="outlined"
-      className={clsx({[classes.error]: error}, {[classes.googleBtn]: googleBtn}, className)}
+      className={clsx({[classes.error]: error}, {[classes.googleBtn]: googleBtn}, {[classes.outlinedButton]: props.color === 'secondary'}, className)}
       color="primary"
       disableElevation
       {...rest}>
