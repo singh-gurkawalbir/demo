@@ -1,18 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { Box } from '@celigo/fuse-ui';
 
 const TabContext = React.createContext();
 
-export const CeligoTabWrapper = ({ children, height, className }) => {
+export const CeligoTabWrapper = ({ children, height }) => {
   const [activeTab, setActiveTab] = useState();
 
   return (
     <TabContext.Provider value={{activeTab, setActiveTab, height}}>
-      <Box
-        className={className}
-        sx={{height: '100%'}}>
-        {children}
-      </Box>
+      {children}
     </TabContext.Provider>
   );
 };
