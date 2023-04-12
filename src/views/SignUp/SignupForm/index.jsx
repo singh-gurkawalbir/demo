@@ -97,6 +97,31 @@ export default function SignUp() {
 
   return (
     <LoginFormWrapper>
+      <div>
+        {
+        isGoogleSignInAllowed() && (
+          <form onSubmit={handleSignUpWithGoogle}>
+            <OutlinedButton
+              type="submit"
+              color="secondary"
+              googleBtn>
+              Sign up with Google
+            </OutlinedButton>
+            <TextField
+              data-private
+              type="hidden"
+              id="attemptedRoute"
+              name="attemptedRoute"
+              value={attemptedRoute || getRoutePath('/')}
+                />
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
+          </form>
+
+        )
+}
+      </div>
       { signupStatus === 'failed' && error && (
       <ShowErrorMessage error={error} className={classes.errorMessageSignup} />
       )}
@@ -109,31 +134,6 @@ export default function SignUp() {
         ignoreFormTouchedCheck>
         Sign up
       </DynaSubmit>
-      <div>
-        {
-        isGoogleSignInAllowed() && (
-          <form onSubmit={handleSignUpWithGoogle}>
-            <TextField
-              data-private
-              type="hidden"
-              id="attemptedRoute"
-              name="attemptedRoute"
-              value={attemptedRoute || getRoutePath('/')}
-                />
-            <div className={classes.or}>
-              <Typography variant="body1">or</Typography>
-            </div>
-            <OutlinedButton
-              type="submit"
-              color="secondary"
-              googleBtn>
-              Sign up with Google
-            </OutlinedButton>
-          </form>
-
-        )
-}
-      </div>
     </LoginFormWrapper>
   );
 }

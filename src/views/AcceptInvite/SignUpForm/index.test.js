@@ -147,8 +147,8 @@ describe('Testsuite for SignUp', () => {
   test('should click the sign up with google button', () => {
     initSignUp({
       acceptInviteData: {
-        email: '',
-        token: '',
+        email: 'email@email.com',
+        token: 'token',
         _csrf: 'test_csrf',
         skipPassword: true,
       },
@@ -159,6 +159,10 @@ describe('Testsuite for SignUp', () => {
 
     userEvent.click(signUpWithGoogleButton);
 
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.signUpWithGoogle('/', {}));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.signUpWithGoogle('/', {}, {
+      email: 'email@email.com',
+      token: 'token',
+      isGoogleSignup: true,
+    }));
   });
 });

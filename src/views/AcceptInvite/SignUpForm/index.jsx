@@ -52,8 +52,12 @@ export default function SignUp() {
 
   const handleSignUpWithGoogle = useCallback(e => {
     e.preventDefault();
-    dispatch(actions.auth.signUpWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value, {}));
-  }, [dispatch]);
+    dispatch(actions.auth.signUpWithGoogle(
+      e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value,
+      {},
+      {email, token, isGoogleSignup: true},
+    ));
+  }, [dispatch, email, token]);
 
   const handleOnSubmit = useCallback(values => {
     dispatch(actions.auth.acceptInvite.submit(values));
@@ -69,19 +73,15 @@ export default function SignUp() {
 
   return (
     <LoginFormWrapper>
-      <DynaForm formKey={formKey} />
-      <DynaSubmit
-        className={classes.submit}
-        submit
-        formKey={formKey}
-        fullWidth
-        onClick={handleOnSubmit}
-        ignoreFormTouchedCheck>
-        Sign up
-      </DynaSubmit>
       {
         isGoogleSignInAllowed() && (
           <form onSubmit={handleSignUpWithGoogle}>
+            <OutlinedButton
+              type="submit"
+              color="secondary"
+              googleBtn>
+              Sign up with Google
+            </OutlinedButton>
             <TextField
               data-private
               type="hidden"
@@ -92,16 +92,20 @@ export default function SignUp() {
             <div className={classes.or}>
               <Typography variant="body1">or</Typography>
             </div>
-            <OutlinedButton
-              type="submit"
-              color="secondary"
-              googleBtn>
-              Sign up with Google
-            </OutlinedButton>
           </form>
 
         )
 }
+      <DynaForm formKey={formKey} />
+      <DynaSubmit
+        className={classes.submit}
+        submit
+        formKey={formKey}
+        fullWidth
+        onClick={handleOnSubmit}
+        ignoreFormTouchedCheck>
+        Sign up
+      </DynaSubmit>
     </LoginFormWrapper>
   );
 }

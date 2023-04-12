@@ -643,16 +643,16 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
-export function* signUpWithGoogle({ returnTo, utmParams = {} }) {
+export function* signUpWithGoogle({ returnTo, utmParams = {}, acceptInviteParams = {} }) {
   const _csrf = yield call(getCSRFTokenBackend);
   const htmlForUtmParams = generateInnerHTMLForSignUP(utmParams);
+  const htmlForAcceptInviteParams = generateInnerHTMLForSignUP(acceptInviteParams);
   const form = document.createElement('form');
 
   form.id = 'signinWithGoogle';
   form.method = 'POST';
   form.action = `/auth/google?returnTo=${returnTo || getRoutePath('/')}`;
-
-  form.innerHTML = `<input name="_csrf" value="${_csrf}">${htmlForUtmParams}`;
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">${htmlForUtmParams}${htmlForAcceptInviteParams}`;
   document.body.appendChild(form);
   form.submit();
   document.body.removeChild(form);
