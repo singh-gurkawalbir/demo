@@ -23,11 +23,11 @@ export function Background() {
   // regardless of pan or zoom settings.
   const [x, , scale] = useStoreState(s => s.transform);
   const {flowId} = useFlowContext();
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
-  const sourceColumnWidth = iconView === 'icon' ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
+  const sourceColumnWidth = isIconView ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
   const width = Math.max(0, sourceColumnWidth * scale + x);
 
   return (

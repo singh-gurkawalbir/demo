@@ -115,7 +115,7 @@ describe('Subscription Section UI tests', () => {
     expect(screen.getByText('Version 1.27.3')).toBeInTheDocument();
     expect(screen.getByText('Integration ID 61604a5a8364267b8a378084')).toBeInTheDocument();
     expect(screen.getByText('Started on Jan 29th, 2018')).toBeInTheDocument();
-    expect(screen.getByText('Expires on May 5th, 2023')).toBeInTheDocument();
+    expect(screen.getByText('Expires on May 5th, 2023 (23 Days)')).toBeInTheDocument();
     expect(screen.getByText('Your subscription gives you access to install and run one instance (tile) of this Integration App. Contact your Account Manager for more info.')).toBeInTheDocument();
     expect(screen.getByText('Add-ons')).toBeInTheDocument();
     expect(screen.getByText('Add-ons let you customize your subscription to meet your specific business requirements. They will expire when your Integration App subscription expires.')).toBeInTheDocument();
@@ -163,7 +163,7 @@ describe('Subscription Section UI tests', () => {
       upgradeText: 'Upgrade',
       _integrationId: '61604a5a8364267b8a378084',
       resumable: false,
-      expiresText: 'Expires on May 5th, 2023',
+      expiresText: 'Expires on May 5th, 2023 (23 Days)',
       upgradeRequested: false,
       createdText: 'Started on Jan 29th, 2018',
       showLicenseExpiringWarning: false,

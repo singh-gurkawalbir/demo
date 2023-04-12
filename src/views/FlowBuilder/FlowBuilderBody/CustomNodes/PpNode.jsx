@@ -90,8 +90,8 @@ export default function PageProcessorNode({ data = {}}) {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
   const {confirmDialog} = useConfirmDialog();
@@ -126,12 +126,12 @@ export default function PageProcessorNode({ data = {}}) {
   }, [dispatch, flowId]);
 
   return (
-    <div className={clsx({[classes.newroot]: iconView === 'icon'}, {[classes.root]: iconView !== 'icon'})}>
+    <div className={clsx({[classes.newroot]: isIconView}, {[classes.root]: !isIconView})}>
       <DefaultHandle type="target" position={Position.Left} />
 
-      <div className={clsx({[classes.newcontentContainer]: iconView === 'icon'}, {[classes.contentContainer]: iconView !== 'icon'})} >
+      <div className={clsx({[classes.newcontentContainer]: isIconView}, {[classes.contentContainer]: !isIconView})} >
         <div>
-          {iconView !== 'icon' && (
+          {!isIconView && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
             {!isVirtual && (
             <Typography variant="overline" className={classes.branchName}>
@@ -156,7 +156,7 @@ export default function PageProcessorNode({ data = {}}) {
             onMove={handlePPMove}
             routerIndex={routerIndex}
             branchIndex={branchIndex}
-            iconView={iconView}
+            isIconView={isIconView}
             pageProcessorIndex={pageProcessorIndex}
           />
         </div>

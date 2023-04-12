@@ -209,7 +209,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, iconView}) => {
+const PageBarChildren = ({integrationId, flowId, isIconView}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -220,7 +220,7 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
 
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
 
-  const showIconViewToggle = Boolean(process.env.ICON_VIEW_FLOWBUILDER);
+  const showIconViewToggle = process.env.ICON_VIEW_FLOWBUILDER === 'true';
 
   const pushOrReplaceHistory = usePushOrReplaceHistory();
 
@@ -252,13 +252,15 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
     placement: 'bottom',
   };
   const tooltipIconView = {
-    title: iconView !== 'icon' ? 'Swith to iconic view' : 'Swith to bubble view',
+    title: !isIconView ? 'Swith to iconic view' : 'Swith to bubble view',
     placement: 'bottom',
   };
 
   const handleViewChange = () => {
     dispatch(actions.flow.toggleSubFlowView(flowId, false));
-    if (iconView === 'icon') { dispatch(actions.flow.iconView(flowId, 'bubble')); } else {
+    if (isIconView) {
+      dispatch(actions.flow.iconView(flowId, 'bubble'));
+    } else {
       dispatch(actions.flow.iconView(flowId, 'icon'));
     }
   };
@@ -267,7 +269,7 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
     <div className={classes.actions}>
       {(showIconViewToggle && (
         <>
-          {(iconView === 'icon' && (
+          {(isIconView && (
           <Help
             title="How to operate?" className={classes.helpIcon} disablePortal={false} placement="left-start"
             helpKey="flowbuilder.iconView" />
@@ -359,8 +361,8 @@ export default function PageBar({flowId, integrationId}) {
 
     return flow?.description;
   });
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
   return (
@@ -372,7 +374,7 @@ export default function PageBar({flowId, integrationId}) {
     >
       <TotalErrors flowId={flowId} />
       <PageBarChildren
-        flowId={flowId} integrationId={integrationId} iconView={iconView}
+        flowId={flowId} integrationId={integrationId} isIconView={isIconView}
       />
     </CeligoPageBar>
   );

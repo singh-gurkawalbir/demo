@@ -206,7 +206,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
   );
 
   const downstreamHighlighter = id => {
-    dispatch(actions.flow.toggleSubFlowView(flowId, true, id));
+    dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'left'}));
     const node = elements.find(ele => ele.id === id);
     const subFlow = getAllOutgoingNodes(node, elements).map(node => node.id);
 
@@ -221,7 +221,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     setSubFlowElements(newElements);
   };
   const upstreamHighlighter = id => {
-    dispatch(actions.flow.toggleSubFlowView(flowId, true, id));
+    dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'right'}));
     const node = elements.find(ele => ele.id === id);
     const subFlow = getAllIncomingNodes(node, elements).map(node => node.id);
 

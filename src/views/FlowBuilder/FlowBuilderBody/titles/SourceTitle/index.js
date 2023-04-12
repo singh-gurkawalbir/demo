@@ -8,8 +8,6 @@ import { FB_SOURCE_COLUMN_WIDTH, FB_ICON_VIEW_SOURCE_COLUMN_WIDTH } from '../../
 import { useHandleAddGenerator } from '../../../hooks';
 import { selectors } from '../../../../../reducers';
 
-const minTitleWidth = 80;
-
 const useStyles = makeStyles(theme => ({
   sourceTitle: {
     cursor: 'default',
@@ -24,10 +22,12 @@ const SourceTitle = () => {
   // regardless of pan or zoom settings.
   const [x, , scale] = useStoreState(s => s.transform);
   const {flowId} = useFlowContext();
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
-  const width = iconView === 'icon' ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
+
+  const minTitleWidth = isIconView ? 80 : 140;
+  const width = isIconView ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
   const columnWidth = Math.max(0, width * scale + x);
   const titleWidth = Math.max(columnWidth, minTitleWidth);
   let xOffset = (columnWidth - titleWidth) / 2; // + menuWidth;

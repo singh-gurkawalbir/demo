@@ -5,7 +5,7 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow, flowId, id, stepId, targetId, targetType, status, isViewMode, info, isDataLoader, view, isSubFlowView, linkedEdges } = action;
+  const { type, flow, flowId, subFlowProps, stepId, targetId, targetType, status, isViewMode, info, isDataLoader, view, isSubFlowView, linkedEdges } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -36,7 +36,7 @@ export default function reducer(state = {}, action) {
         }
 
         draft[flowId].isSubFlowActive = isSubFlowView;
-        draft[flowId].selectedNode = id;
+        draft[flowId].subFlowProps = subFlowProps;
         break;
       }
 
@@ -114,7 +114,7 @@ selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetTyp
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
 selectors.fbIconview = (state, flowId) => state?.[flowId]?.iconView;
 selectors.fbSubFlowView = (state, flowId) => state?.[flowId]?.isSubFlowActive;
-selectors.fbSelectedSubFlow = (state, flowId) => state?.[flowId]?.selectedNode;
+selectors.fbSelectedSubFlow = (state, flowId) => state?.[flowId]?.subFlowProps;
 selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
 selectors.fbEdgeHovered = (state, flowId) => state?.[flowId]?.linkedEdges;
 
