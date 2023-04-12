@@ -79,15 +79,10 @@ describe('Profile', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
     store();
-    // jest.useFakeTimers();
-    // jest.setTimeout(100000);
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    // jest.runOnlyPendingTimers();
-    // jest.useRealTimers();
-    // jest.clearAllTimers();
     cleanup();
   });
   test('Should able to load the profile pane and able to update the password', async () => {
@@ -101,7 +96,7 @@ describe('Profile', () => {
     await initProfile();
 
     expect(screen.getByText('Password')).toBeInTheDocument();
-    const passwordEditButton = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editPassword');
+    const passwordEditButton = screen.queryAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'editPassword');
 
     expect(passwordEditButton).toBeInTheDocument();
     await userEvent.click(passwordEditButton);

@@ -398,10 +398,10 @@ describe('Mapping Drawer', () => {
     const output = screen.getByText('Output');
 
     expect(output).toBeInTheDocument();
-    const closeButton1Node = screen.getAllByRole('button', {name: 'Close'});
+    const closeButton1Node = document.querySelector('button[data-test="closeRightDrawer"]');
 
-    expect(closeButton1Node[0]).toBeInTheDocument();
-    await userEvent.click(closeButton1Node[0]);
+    expect(closeButton1Node).toBeInTheDocument();
+    await userEvent.click(closeButton1Node);
   });
   test('Should be able to test the close button', async () => {
     const props = {
