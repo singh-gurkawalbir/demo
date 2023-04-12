@@ -68,8 +68,8 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const pendingBlockType = isDataLoaderFlow ? 'newImport' : 'newPP';
@@ -226,7 +226,7 @@ const PageProcessor = ({
   const name = pending ? '' : resource.name || resource.id;
 
   // eslint-disable-next-line no-nested-ternary
-  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (iconView === 'icon' ? IconBlock : AppBlock);
+  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (isIconView ? IconBlock : AppBlock);
 
   return (
     <>

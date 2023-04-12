@@ -49,13 +49,13 @@ export default function PageGeneratorNode(props) {
   }, [dispatch, flowId]);
   const handleMove = useHandleMovePG(flowId);
 
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
   return (
-    <div className={clsx({[classes.iconLayoutRoot]: iconView === 'icon'}, {[classes.root]: iconView !== 'icon'})}>
-      <div className={clsx({[classes.iconLayoutPgContainer]: iconView === 'icon'}, {[classes.pgContainer]: iconView !== 'icon'})}>
+    <div className={clsx({[classes.iconLayoutRoot]: isIconView}, {[classes.root]: !isIconView})}>
+      <div className={clsx({[classes.iconLayoutPgContainer]: isIconView}, {[classes.pgContainer]: !isIconView})}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
@@ -67,7 +67,7 @@ export default function PageGeneratorNode(props) {
           integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}
           isViewMode={isViewMode || isFreeFlow}
-          iconView={iconView}
+          isIconView={isIconView}
         />
       </div>
 

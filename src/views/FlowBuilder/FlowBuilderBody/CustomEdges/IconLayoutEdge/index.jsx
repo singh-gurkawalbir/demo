@@ -168,7 +168,10 @@ function DefaultEdge(props) {
     selectors.fbEdgeHovered(state, flowId)
   );
   const selectedSubFlowNodeId = useSelector(state =>
-    selectors.fbSelectedSubFlow(state, flowId)
+    selectors.fbSelectedSubFlow(state, flowId)?.nodeId
+  );
+  const subFlowCloseBtnPosition = useSelector(state =>
+    selectors.fbSelectedSubFlow(state, flowId)?.buttonPosition
   );
   const isFlowSaveInProgress = useSelector(state =>
     selectors.isFlowSaveInProgress(state, flowId)
@@ -183,7 +186,8 @@ function DefaultEdge(props) {
   const edge = transformedElements.find(ele => ele?.id === id);
   const selectedSubFlowNode = transformedElements.find(ele => ele?.id === selectedSubFlowNodeId);
 
-  const showSubFlowIcon = (edge?.target === selectedSubFlowNodeId) && isSubFlowView;
+  const showSubFlowIconToLeft = edge?.target === selectedSubFlowNodeId && subFlowCloseBtnPosition === 'left' && isSubFlowView;
+  const showSubFlowIconToRight = edge?.source === selectedSubFlowNodeId && subFlowCloseBtnPosition === 'right' && isSubFlowView;
 
   const {
     sourceType,
@@ -332,14 +336,16 @@ function DefaultEdge(props) {
     processorCount
   );
 
+  // console.log({subFlowCloseBtnPosition, showSubFlowIcon, isFirstPGEdge});
+
   return (
     <>
       <path id={id} className={(hoveredEdges && hoveredEdges?.includes(id)) || highlight ? classes.edgeAnimatedLine : classes.edgePath} d={edgePath} />
-      {showSubFlowIconForPG && (
+      {showSubFlowIconToRight && (
       <ForeignObject
         edgePath={edgePath}
         position="right"
-        offset={65}
+        offset={12}
       >
         <SubFlowButton edgeId={id} />
       </ForeignObject>
@@ -409,11 +415,11 @@ function DefaultEdge(props) {
           <UnlinkButton edgeId={id} />
         </ForeignObject>
       )}
-      {showSubFlowIcon && !isFirstPGEdge && (
+      {((showSubFlowIconToLeft && !isFirstPGEdge) || showSubFlowIconForPG) && (
       <ForeignObject
         edgePath={edgePath}
         position={position}
-        offset={offset + 40}
+        offset={55}
       >
         <SubFlowButton edgeId={id} />
       </ForeignObject>

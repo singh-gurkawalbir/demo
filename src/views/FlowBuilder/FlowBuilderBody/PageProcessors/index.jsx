@@ -71,14 +71,14 @@ export default function PageProcessors({integrationId, flowId}) {
 
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
 
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
   const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
   const {handleSortEnd} = useSortableList(useHandleMovePP(flowId));
 
-  const Component = iconView === 'icon' ? IconBlock : AppBlock;
+  const Component = isIconView ? IconBlock : AppBlock;
 
   return (
     <div className={classes.processorContainer}>

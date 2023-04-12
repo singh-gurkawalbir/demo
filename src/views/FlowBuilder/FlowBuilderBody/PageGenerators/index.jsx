@@ -76,11 +76,11 @@ export default function PageGenerators({integrationId, flowId}) {
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
-  const Component = iconView === 'icon' ? IconBlock : AppBlock;
+  const Component = isIconView ? IconBlock : AppBlock;
 
   const handleAddGenerator = useHandleAddGenerator();
   const {handleSortEnd} = useSortableList(useHandleMovePG(flowId));

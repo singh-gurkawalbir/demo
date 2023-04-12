@@ -103,7 +103,7 @@ const AddNodeMenuPopper = ({
   );
 };
 
-const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, iconView }) => {
+const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, isIconView }) => {
   const classes = useStyles();
 
   const { elementsMap } = useFlowContext();
@@ -119,7 +119,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, iconView }) => 
         title={isConnectedToRouterOrTerminal ? 'Add destination / lookup' : ''}
         placement="top"
       >
-        <IconButton onClick={handleAddNode} className={clsx({[classes.iconViewAddButton]: iconView === 'icon'}, {[classes.addButton]: iconView !== 'icon'})}>
+        <IconButton onClick={handleAddNode} className={clsx({[classes.iconViewAddButton]: isIconView}, {[classes.addButton]: !isIconView})}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -127,7 +127,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, iconView }) => 
   }
 
   return (
-    <IconButton className={clsx({[classes.iconViewAddButton]: iconView === 'icon'}, {[classes.addButton]: iconView !== 'icon'})} onClick={handleOpenMenu}>
+    <IconButton className={clsx({[classes.iconViewAddButton]: isIconView}, {[classes.addButton]: !isIconView})} onClick={handleOpenMenu}>
       <AddIcon />
     </IconButton>
   );
@@ -138,8 +138,8 @@ export default ({ edgeId, disabled }) => {
 
   const {flowId} = useFlowContext();
 
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
 
   const handleCloseMenu = () => {
@@ -159,7 +159,7 @@ export default ({ edgeId, disabled }) => {
         <span>
           <AddNodeToolTip
             handleOpenMenu={handleOpenMenu}
-            iconView={iconView}
+            isIconView={isIconView}
             edgeId={edgeId}
             handleAddNode={handleAddNode}
           />

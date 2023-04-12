@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
-// import {sele}
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -68,8 +67,8 @@ const PageGenerator = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
   );
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
   const isSubFlowView = useSelector(state =>
     selectors.fbSubFlowView(state, flowId)
@@ -313,10 +312,10 @@ const PageGenerator = ({
   // console.log('render: <PageGenerator>');
 
   // eslint-disable-next-line no-nested-ternary
-  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (iconView === 'icon' ? IconBlock : AppBlock);
+  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (isIconView ? IconBlock : AppBlock);
 
   return (
-    <div className={clsx({[classes.iconViewPgContainer]: iconView === 'icon'}, {[classes.pgContainer]: iconView !== 'icon'})} >
+    <div className={clsx({[classes.iconViewPgContainer]: isIconView}, {[classes.pgContainer]: !isIconView})} >
       <Component
         integrationId={integrationId}
         name={blockName}

@@ -74,8 +74,8 @@ export default function ActionIconButton({
   const classes = useStyles();
   const { flowId } = useFlowContext();
 
-  const iconView = useSelector(state =>
-    selectors.fbIconview(state, flowId)
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
   const isSubFlowView = useSelector(state =>
     selectors.fbSubFlowView(state, flowId)
@@ -87,8 +87,8 @@ export default function ActionIconButton({
         size="small"
         className={clsx(classes.button, classes[variant], className)}
         classes={{
-          root: clsx({[classes.newiconButtonRoot]: iconView === 'icon'}, {[classes.iconButtonRoot]: iconView !== 'icon'}),
-          label: clsx({[classes.newiconButtonLabel]: (iconView === 'icon' && !isSubFlowView)}, {[classes.iconButtonLabel]: iconView !== 'icon'}, {[classes.subFlowButtonLabel]: isSubFlowView}),
+          root: clsx({[classes.newiconButtonRoot]: isIconView}, {[classes.iconButtonRoot]: !isIconView}),
+          label: clsx({[classes.newiconButtonLabel]: (isIconView && !isSubFlowView)}, {[classes.iconButtonLabel]: !isIconView}, {[classes.subFlowButtonLabel]: isSubFlowView}),
         }}
         {...props}>
         {children}

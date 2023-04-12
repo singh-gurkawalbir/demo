@@ -29,7 +29,6 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
 import { useFlowContext } from '../FlowBuilderBody/Context';
-import GripperIcon from '../../../components/icons/GripperIcon';
 import PPDropbox from '../FlowBuilderBody/CustomEdges/PPDropbox';
 
 const blockWidth = 50;
@@ -428,14 +427,6 @@ export default function IconBlock({
             data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
             <CloseIcon />
           </IconButton>
-          )}
-          {isDraggable && (
-            <IconButton
-              size="small"
-              className={clsx(classes.grabButton)}
-              data-test={`move-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <GripperIcon />
-            </IconButton>
           )}
           <div className={clsx(classes.dropbox, classes.left)}>
             <PPDropbox
