@@ -184,6 +184,9 @@ const pageChildreUseStyles = makeStyles(theme => ({
     minWidth: 'unset',
     maxWidth: 'unset',
   },
+  flowIcon: {
+    marginRight: theme.spacing(1.5),
+  },
 }));
 
 const RunFlowButtonWrapper = ({flowId}) => {
@@ -277,7 +280,8 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
           <IconButtonWithTooltip
             onClick={handleViewChange}
             data-test="flowSettings"
-            tooltipProps={tooltipIconView}>
+            tooltipProps={tooltipIconView}
+            className={classes.flowIcon}>
             <FlowIconView />
           </IconButtonWithTooltip>
         </>
