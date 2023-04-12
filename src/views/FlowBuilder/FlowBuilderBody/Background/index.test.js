@@ -3,12 +3,15 @@ import * as StoreState from 'react-flow-renderer';
 import {renderWithProviders} from '../../../../test/test-utils';
 import {Background} from '.';
 import { getCreatedStore } from '../../../../store';
+import { FlowProvider } from '../Context';
 
 let initialStore;
 
 function initBackground() {
   const ui = (
-    <Background />
+    <FlowProvider>
+      <Background />
+    </FlowProvider>
   );
 
   return renderWithProviders(ui, {initialStore});

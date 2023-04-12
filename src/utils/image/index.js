@@ -14,4 +14,3 @@ export default function getImageUrl(url) {
   // In all other cases, append cdn base uri to the relative uri
   return `${CDN_BASE_URL}${url.replace(/^\//, '')}`;
 }
-

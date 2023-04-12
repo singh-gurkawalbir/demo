@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0.5),
     marginRight: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
+
     '&:hover': {
       backgroundColor: theme.palette.background.paper,
       '& svg': {
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   newiconButtonRoot: {
     padding: theme.spacing(0.1),
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.primary.lightest,
     '&:hover': {
       backgroundColor: theme.palette.background.paper,
       '& svg': {
@@ -43,12 +44,6 @@ const useStyles = makeStyles(theme => ({
       height: 26,
     },
   },
-  newiconButtonLabel: {
-    '& svg': {
-      width: 20,
-      height: 20,
-    },
-  },
   subFlowButtonLabel: {
     width: 18,
     height: 18,
@@ -57,11 +52,9 @@ const useStyles = makeStyles(theme => ({
       height: 16,
     },
   },
-  contained: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
 }));
+
+// dupli
 
 export default function ActionIconButton({
   helpKey,
@@ -77,18 +70,15 @@ export default function ActionIconButton({
   const iconView = useSelector(state =>
     selectors.fbIconview(state, flowId)
   );
-  const isSubFlowView = useSelector(state =>
-    selectors.fbSubFlowView(state, flowId)
-  );
 
   return (
     <Tooltip title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
       <IconButton
         size="small"
-        className={clsx(classes.button, classes[variant], className)}
+        className={clsx(classes.button, className, classes[variant])}
         classes={{
           root: clsx({[classes.newiconButtonRoot]: iconView === 'icon'}, {[classes.iconButtonRoot]: iconView !== 'icon'}),
-          label: clsx({[classes.newiconButtonLabel]: (iconView === 'icon' && !isSubFlowView)}, {[classes.iconButtonLabel]: iconView !== 'icon'}, {[classes.subFlowButtonLabel]: isSubFlowView}),
+          label: clsx({[classes.subFlowButtonLabel]: iconView === 'icon'}, {[classes.iconButtonLabel]: iconView !== 'icon'}),
         }}
         {...props}>
         {children}
