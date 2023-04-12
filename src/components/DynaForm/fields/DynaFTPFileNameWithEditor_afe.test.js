@@ -104,7 +104,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     };
 
     renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
-    const openEditorBtn = screen.getByRole('button', { name: 'tooltip' });
+    const openEditorBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
     await userEvent.click(openEditorBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('filefileName', 'handlebars', {
@@ -135,7 +135,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openEditorBtn = screen.getByRole('button', { name: 'tooltip' });
+    const openEditorBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
     await userEvent.click(openEditorBtn);
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));

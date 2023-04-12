@@ -90,7 +90,7 @@ describe('DynaHFAssistantPathParams UI tests', () => {
 
   test('should open handlebars editor on clicking AFE Icon', async () => {
     renderWithProviders(<DynaHFAssistantPathParams {...props} />);
-    const openAfeBtn = screen.getByRole('button', { name: 'tooltip' });
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
     await userEvent.hover(openAfeBtn);
     await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Open handlebars editor'));
@@ -128,7 +128,7 @@ describe('DynaHFAssistantPathParams UI tests', () => {
         <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openAfeBtn = screen.getByRole('button', { name: 'tooltip' });
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
     await userEvent.click(openAfeBtn);
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));

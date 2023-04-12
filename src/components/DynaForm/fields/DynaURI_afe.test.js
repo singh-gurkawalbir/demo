@@ -134,7 +134,7 @@ describe('test suite for DynaURI_afe field', () => {
         <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openAfeBtn = screen.getByRole('button', { name: 'tooltip' });
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
     await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
