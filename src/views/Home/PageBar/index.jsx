@@ -64,7 +64,7 @@ export default function IntegrationCeligoPageBar() {
   const isListView = useSelector(state => selectors.isHomeListView(state));
 
   return (
-    <CeligoPageBar title="My integrations">
+    <CeligoPageBar title="My integrations" contentId="home">
       <KeywordSearch isHomeSearch filterKey={FILTER_KEY} />
 
       <ActionGroup>

@@ -172,9 +172,9 @@ export default function BranchItem({
   }
 
   const handleNameChange = (title, position) => {
-    let newTitle = title;
+    let newTitle = title?.trim();
 
-    if (!title) {
+    if (!newTitle) {
       enquesnackbar({message: 'A branch name is required.', variant: 'error'});
       newTitle = getBranchName(position, branches, branchNamingIndex);
     }

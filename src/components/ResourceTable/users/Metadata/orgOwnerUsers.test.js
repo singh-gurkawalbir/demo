@@ -261,7 +261,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm delete');
     userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123', false));
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
@@ -295,7 +295,7 @@ describe('test suite for orgOwnerUsers', () => {
     const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
     userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123', false));
 
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(errorMessage));
   });
@@ -407,7 +407,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm disable');
     userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false, false));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('User sampleName disabled successfully'));
   });
 
@@ -442,7 +442,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm disable');
     userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false, false));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(`Disabling user sampleName failed due to the error "${errorMessage}"`));
   });
 
