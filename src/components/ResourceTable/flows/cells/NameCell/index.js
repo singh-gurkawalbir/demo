@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   connectionIcon: {
     padding: 0,
     color: theme.palette.secondary.main,
+    width: theme.spacing(3),
     '&:hover': {
       backgroundColor: theme.palette.background.paper2,
     },
