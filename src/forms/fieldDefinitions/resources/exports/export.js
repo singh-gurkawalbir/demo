@@ -167,6 +167,7 @@ export default {
       return [];
     },
     showLookup: false,
+    contentId: 'traceKeyTemplate',
   },
   oneToMany: {
     isLoggable: true,

@@ -10,9 +10,25 @@ import { getCreatedStore } from '../../store';
 
 let initialStore;
 
+const mockHistoryReplace = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    replace: mockHistoryReplace,
+  }),
+}));
+
 function store(session) {
   mutateStore(initialStore, draft => {
     draft.session = session;
+  });
+}
+
+function authStore(auth) {
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
   });
 }
 
@@ -160,5 +176,21 @@ describe('setPassword', () => {
 
     expect(setpasswordButtonNode).toBeInTheDocument();
     userEvent.click(setpasswordButtonNode);
+  });
+  test('should redirect to home page when password is successfully set', async () => {
+    authStore({
+      requestSetPasswordStatus: 'success',
+    });
+    const props = {
+      match: {
+        params: {
+          token: '5fc5e0e66cfe5b44bb95de70',
+        },
+      },
+      pathname: '/set-initial-password/5fc5e0e66cfe5b44bb95de70',
+    };
+
+    await initSetPassword(props);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/home');
   });
 });

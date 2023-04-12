@@ -23,7 +23,8 @@ module.exports = {
     ALLOW_SIGNUP: 'readonly',
     ALLOW_GOOGLE_SIGNIN: 'readonly',
     ALLOW_SIGNUP_EU: 'readonly',
-    ALLOW_GOOGLE_SIGNIN_EU: 'readonly'
+    ALLOW_GOOGLE_SIGNIN_EU: 'readonly',
+    ENABLE_HELP_CONTENT: 'readonly'
   },
   parserOptions: {
     ecmaFeatures: {
