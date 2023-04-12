@@ -1080,33 +1080,6 @@ describe('testcases with window dom setup', () => {
       expect(removeChildFn).toHaveBeenCalled();
     }
     );
-    test('should fabricate the signUpWithGoogle body correctly and call all of its mocks as well and with accept invite up params', () => {
-      const acceptInviteParams = {
-        email: 'email.@email.com',
-        token: 'token',
-        isGoogleSignup: true,
-      };
-
-      expectSaga(signUpWithGoogle, {returnTo: 'something', utmParams: {}, acceptInviteParams})
-        .provide([
-          [call(getCSRFTokenBackend), 'someCsrf',
-          ]])
-
-        .run();
-
-      expect(form).toEqual({
-        action: '/auth/google?returnTo=something',
-        id: 'signinWithGoogle',
-        innerHTML: '<input name="_csrf" value="someCsrf"><input name="email" value="email.@email.com"><input name="token" value="token"><input name="isGoogleSignup" value="true">',
-        method: 'POST',
-        submit,
-        target: '_blank',
-      });
-      expect(submit).toHaveBeenCalled();
-      expect(appendChildFn).toHaveBeenCalled();
-      expect(removeChildFn).toHaveBeenCalled();
-    }
-    );
   });
 });
 

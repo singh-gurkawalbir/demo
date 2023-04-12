@@ -144,25 +144,4 @@ describe('Testsuite for SignUp', () => {
     userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
-  test('should click the sign up with google button', () => {
-    initSignUp({
-      acceptInviteData: {
-        email: 'email@email.com',
-        token: 'token',
-        _csrf: 'test_csrf',
-        skipPassword: true,
-      },
-    });
-    const signUpWithGoogleButton = screen.getByRole('button', {
-      name: /Sign up with Google/i,
-    });
-
-    userEvent.click(signUpWithGoogleButton);
-
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.signUpWithGoogle('/', {}, {
-      email: 'email@email.com',
-      token: 'token',
-      isGoogleSignup: true,
-    }));
-  });
 });
