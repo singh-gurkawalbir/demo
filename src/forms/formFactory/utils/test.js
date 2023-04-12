@@ -317,6 +317,96 @@ describe('Form Utils', () => {
         html: { name: 'hello', rateLimit: { failValues: ['bad', 'fail'] } },
       });
     });
+    test('result patch set should succeed in patching resource when field on resource has a value but the value in the patch is empty string', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/name',
+          value: '',
+        },
+      ];
+      const fieldMeta = {
+        fieldMap: {
+          'html.name': {
+            fieldId: 'html.name',
+            defaultValue: '',
+            name: '/html/name',
+          },
+        },
+      };
+      const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: { name: '' },
+      });
+    });
+    test('result patch set should succeed in patching resource when field on resource has a value of empty string but the value in the patch is not empty string', () => {
+      const resource = {
+        html: {
+          name: '',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/name',
+          value: 'adfs',
+        },
+      ];
+      const fieldMeta = {
+        fieldMap: {
+          'html.name': {
+            fieldId: 'html.name',
+            defaultValue: '',
+            name: '/html/name',
+          },
+        },
+      };
+      const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: { name: 'adfs' },
+      });
+    });
+    test('result patch set should succeed in patching resource when field on resource has a value of empty string but the value in the patch is empty string', () => {
+      const resource = {
+        html: {
+          name: '',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/name',
+          value: '',
+        },
+      ];
+      const fieldMeta = {
+        fieldMap: {
+          'html.name': {
+            fieldId: 'html.name',
+            defaultValue: '',
+            name: '/html/name',
+          },
+        },
+      };
+      const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: { name: '' },
+      });
+    });
   });
 
   describe('search field by id through the fieldMap', () => {
