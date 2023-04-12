@@ -53,7 +53,7 @@ describe('Testsuite for Manage Device Drawer', () => {
     expect(screen.getByRole('heading', {name: 'Manage devices'})).toBeInTheDocument();
     expect(screen.getByRole('columnheader', {name: /name/i})).toBeInTheDocument();
     expect(screen.getByRole('columnheader', {name: /actions/i})).toBeInTheDocument();
-    expect(screen.getByRole('cell', {name: /chrome mac os/i})).toBeInTheDocument();
+    expect(screen.getByRole('row', {name: /chrome mac os/i})).toBeInTheDocument();
   });
   test('should test the Manage device drawer with no devices', async () => {
     const { utils } = await initManageDeviceDrawer({

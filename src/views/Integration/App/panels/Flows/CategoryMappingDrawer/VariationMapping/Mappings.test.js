@@ -89,7 +89,7 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
     initStoreAndRender(true);
     const mappingtext = screen.getByText('sometext');
 
-    expect(screen.getByTitle('This field is required by the application you are importing into')).toBeInTheDocument();
+    expect(screen.getByLabelText('This field is required by the application you are importing into')).toBeInTheDocument();
 
     expect(mappingtext).toBeInTheDocument();
     const allTextBox = screen.getAllByRole('textbox');

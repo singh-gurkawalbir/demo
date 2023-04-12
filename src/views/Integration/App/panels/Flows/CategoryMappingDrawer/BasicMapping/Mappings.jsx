@@ -205,7 +205,7 @@ const MappingRow = ({
     dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
   }, [dispatch, editorId, flowId, integrationId, mappingKey]);
 
-  const Option = ({filterType, name = ''}) => (
+  const Option = (_, {filterType, name = ''}) => (
     <>
       <Icon filterType={filterType} />
       {name}

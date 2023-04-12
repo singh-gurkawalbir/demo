@@ -88,7 +88,7 @@ describe('Testsuite for MFA', () => {
 
     expect(screen.getByRole('heading', { name: /multifactor authentication \(mfa\)/i })).toBeInTheDocument();
     expect(screen.getByText(/my user/i)).toBeInTheDocument();
-    expect(document.querySelector('svg[class="MuiCircularProgress-svg"]')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(screen.getByText(/Testing Account Settings/i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_USER_SETTINGS_REQUEST' });
   });
