@@ -26,7 +26,7 @@ import LineGraphButton from '../../LineGraphButton';
 import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
-import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import FlowIconView from '../../../../components/icons/FlowIconView';
 import Help from '../../../../components/Help';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
@@ -276,7 +276,7 @@ const PageBarChildren = ({integrationId, flowId, iconView}) => {
             onClick={handleViewChange}
             data-test="flowSettings"
             tooltipProps={tooltipIconView}>
-            <RefreshIcon />
+            <FlowIconView />
           </IconButtonWithTooltip>
         </>
       ))}
