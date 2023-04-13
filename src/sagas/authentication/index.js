@@ -18,7 +18,7 @@ import {
   removeCSRFToken,
 } from '../../utils/session';
 import { safeParse } from '../../utils/string';
-import { generateInnerHTMLForSignUP } from '../utils/index';
+import { generateInnerHTMLForSignUp } from '../utils/index';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -645,7 +645,7 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
 
 export function* signUpWithGoogle({ returnTo, utmParams = {}}) {
   const _csrf = yield call(getCSRFTokenBackend);
-  const htmlForUtmParams = generateInnerHTMLForSignUP(utmParams);
+  const htmlForUtmParams = generateInnerHTMLForSignUp(utmParams);
   const form = document.createElement('form');
 
   form.id = 'signinWithGoogle';

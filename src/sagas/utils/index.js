@@ -964,7 +964,7 @@ export function resourceConflictResolution({ merged, master, origin }) {
 
   return { conflict: null, merged: updatedMerged };
 }
-export function generateInnerHTMLForSignUP(params) {
+export function generateInnerHTMLForSignUp(params) {
   let string = '';
 
   Object.keys(params).forEach(key => {
