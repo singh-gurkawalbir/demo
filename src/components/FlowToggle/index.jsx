@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { Switch } from '@celigo/fuse-ui';
 import actions from '../../actions';
-import CeligoSwitch from '../CeligoSwitch';
 import useConfirmDialog from '../ConfirmDialog';
 import { selectors } from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -109,9 +109,8 @@ export default function FlowToggle({
   return onOffInProgressStatus ? (
     <Spinner className={classes.spinnerFlowToggle} />
   ) : (
-    <CeligoSwitch
+    <Switch
       disabled={disabled}
-      on={flow.disabled === false ? 'true' : 'false'}
       onChange={enableOrDisableFlow}
       data-test="switchFlowOnOff"
       checked={flow.disabled === false}
