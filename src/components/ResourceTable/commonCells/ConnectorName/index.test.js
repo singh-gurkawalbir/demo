@@ -171,4 +171,3 @@ describe('testsuite for ConnectorName', () => {
     expect(screen.getByText('NetSuite JDBC')).toBeInTheDocument();
   });
 });
-
