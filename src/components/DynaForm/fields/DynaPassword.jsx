@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
@@ -60,11 +62,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.error.dark,
     borderColor: theme.palette.error.dark,
   },
-  arrowPopperPassword: {
-    [theme.breakpoints.down('md')]: {
-      display: 'none',
-    },
-  },
   passwordStrongSteps: {
     marginTop: theme.spacing(1),
     [theme.breakpoints.up('md')]: {
@@ -97,6 +94,7 @@ export default function DynaPassword(props) {
   const [containDigits, setContainDigits] = useState(false);
   const [containCapitalLetter, setContainCapitalLetter] = useState(false);
   const [validLength, setValidLength] = useState(false);
+  const isMobile = useMediaQuery(useTheme().breakpoints.down('md'));
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
@@ -169,14 +167,13 @@ export default function DynaPassword(props) {
 
       </div>
 
-      {!hidePasswordIcon && (
+      {!hidePasswordIcon && !isMobile && (
       <>
         <ArrowPopper
           id="pageInfo"
           open={open}
           anchorEl={anchorEl}
           placement="right"
-          className={classes.arrowPopperPassword}
           preventOverflow>
           <TooltipContent className={classes.infoText}>
             <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>
