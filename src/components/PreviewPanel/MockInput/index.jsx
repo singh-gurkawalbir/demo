@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 function DrawerSpinner({visible}) {
   if (!visible) return null;
 
-  return (<Spinner center />);
+  return (<Spinner center="screen" />);
 }
 
 function RouterWrappedContent(props) {

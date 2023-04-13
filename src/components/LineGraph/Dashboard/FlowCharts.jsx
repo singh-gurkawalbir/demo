@@ -14,7 +14,7 @@ import {
 import * as d3 from 'd3';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import {Box, Spinner} from '@celigo/fuse-ui';
+import { Spinner} from '@celigo/fuse-ui';
 import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
@@ -295,9 +295,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   if (data.status === COMM_STATES.LOADING) {
     return (
-      <Box display="flex" justifyContent="center">
-        <Spinner size="large" sx={{mb: 1}} />
-      </Box>
+      <Spinner center="horizontal" size="large" sx={{mb: 1}} />
     );
   }
   if (data.status === COMM_STATES.ERROR) {

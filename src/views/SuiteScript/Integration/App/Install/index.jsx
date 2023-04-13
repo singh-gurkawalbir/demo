@@ -327,7 +327,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   }
   if (isInstallComplete && !setupDone) {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

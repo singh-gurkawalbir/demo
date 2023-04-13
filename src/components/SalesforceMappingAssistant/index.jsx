@@ -54,7 +54,7 @@ export default function SalesforceMappingAssistant({
 
   if (status === 'requested') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

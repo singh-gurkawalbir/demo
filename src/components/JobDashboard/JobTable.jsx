@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@mui
 import makeStyles from '@mui/styles/makeStyles';
 import { difference } from 'lodash';
 import clsx from 'clsx';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import { JOB_STATUS } from '../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import JobDetail from './JobDetail';
@@ -157,10 +157,7 @@ export default function JobTable({
   return (
     <>
       {isFlowJobsCollectionLoading ? (
-        <Box display="flex" justifyContent="center">
-          <Spinner size="large" />
-        </Box>
-
+        <Spinner center="horizontal" size="large" />
       ) : (
         <div className={classes.tableContainer}>
           <Table className={clsx(classes.table, jobDetailsClasses.table)}>

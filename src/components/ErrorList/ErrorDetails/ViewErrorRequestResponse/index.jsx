@@ -58,7 +58,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   }, [dispatch, flowId, resourceId, httpDocStatus, reqAndResKey]);
 
   if (httpDocStatus === 'requested') {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
 
   if (httpDocStatus === 'error' && errorHttpDocError) {

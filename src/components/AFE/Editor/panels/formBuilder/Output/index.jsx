@@ -46,7 +46,7 @@ export default function OutputPanel({ editorId }) {
         )
       )}
       {previewStatus === 'requested' && previewStatus !== 'error' && (
-        <Spinner size="small" center overlay>Loading... </Spinner>
+        <Spinner size="small" center="screen" overlay>Loading... </Spinner>
       )}
     </>
   );

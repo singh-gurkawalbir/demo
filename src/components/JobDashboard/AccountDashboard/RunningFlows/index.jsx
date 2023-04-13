@@ -2,7 +2,7 @@ import React, { useEffect, Fragment } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import {useRouteMatch} from 'react-router-dom';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
@@ -68,9 +68,7 @@ export default function RunningFlows() {
     <>
       <div className={classes.root}>
         {isRunningJobsCollectionLoading ? (
-          <Box display="flex" justifyContent="center">
-            <Spinner size="large" />
-          </Box>
+          <Spinner center="horizontal" size="large" />
         ) : (
           <>
             <Filters

@@ -191,7 +191,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl, flowId }) {
   });
 
   if (!metadataLoaded) {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
 
   return (

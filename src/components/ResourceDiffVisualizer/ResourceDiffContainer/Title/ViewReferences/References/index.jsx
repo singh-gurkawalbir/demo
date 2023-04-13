@@ -81,7 +81,7 @@ export default function References({ resourceId, resourceType, integrationId }) 
   }, [dispatch, resourceType, resourceId]);
 
   if (!resourceReferences) {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
 
   if (!resourceReferences.length) {

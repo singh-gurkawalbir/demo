@@ -246,7 +246,7 @@ export default function Endpoint() {
 
   if (!licenseEntitlementUsage) {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

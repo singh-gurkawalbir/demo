@@ -2,7 +2,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import actions, { auditResourceTypePath } from '../../actions';
 import { selectors } from '../../reducers';
 import commKeyGenerator from '../../utils/commKeyGenerator';
@@ -85,7 +85,7 @@ export default function AuditLog({
       resources={integrationId ? resourcesToLoad : [...resourcesToLoad, 'integrations']}>
       <>
         {isLoadingAuditLog
-          ? <Box display="flex" justifyContent="center"><Spinner loading size="large" /></Box> : (
+          ? <Spinner center="horizontal" size="large" /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
                 resourceDetails={resourceDetails}

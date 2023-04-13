@@ -200,7 +200,7 @@ export default function JobErrorTable({
         </li>
       </ul>
       {!jobErrors ? (
-        <Spinner center>Loading</Spinner>
+        <Spinner center="screen" >Loading</Spinner>
       ) : (
         <>
           <ActionGroup className={classes.btnsWrappper}>

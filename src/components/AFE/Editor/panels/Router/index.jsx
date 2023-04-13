@@ -189,7 +189,7 @@ export default function RouterPanel({ editorId }) {
       <Divider orientation="horizontal" className={classes.divider} />
 
       {isLoading ? (
-        <Spinner center />
+        <Spinner center="screen" />
       ) : (
         <SortableContainer
           className={classes.branchList}

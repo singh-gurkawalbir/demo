@@ -206,7 +206,7 @@ export default function JavaScriptPanel({ editorId }) {
         {/* hide the script content */}
         <div className={classes.scriptPanel}>
           {fetchScript ? (
-            <Spinner center />
+            <Spinner center="screen" />
           ) : (
             <CodePanel
               name="code"

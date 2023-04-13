@@ -164,7 +164,7 @@ function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }
   }
 
   if (!metadataLoaded) {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
 
   return (

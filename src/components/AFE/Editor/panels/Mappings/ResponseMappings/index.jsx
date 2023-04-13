@@ -131,7 +131,7 @@ export default function ResponseMappingWrapper({ editorId }) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

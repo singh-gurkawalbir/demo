@@ -416,7 +416,7 @@ export default function ErrorTable({
         filterKey={filterKey}
       />
       {isFreshDataLoad ? (
-        <Spinner center />
+        <Spinner center="screen" />
       ) : (
         <>
           <ErrorTableWithPanel

@@ -18,7 +18,7 @@ export default function FeaturePanel({ editorId, mode, featureName }) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <Spinner center />
+        <Spinner center="screen" />
       ) : (
         <CodePanel
           name="feature"

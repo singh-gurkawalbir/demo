@@ -157,7 +157,7 @@ const VirtualizedTable = ({
   if (isAnyColumnFetching) {
     return (
       <div style={{height: `${maxHeightOfSelect}px`}}>
-        <Spinner center />
+        <Spinner center="screen" />
       </div>
     );
   }

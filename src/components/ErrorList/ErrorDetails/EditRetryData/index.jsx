@@ -45,7 +45,7 @@ export default function EditRetryData({
     <div className={classes.container} data-private>
       {
         retryStatus === 'requested'
-          ? (<Spinner center size="large" />)
+          ? (<Spinner center="screen" size="large" />)
           : (
             <CodeEditor
               name={`${retryId}-edit`}

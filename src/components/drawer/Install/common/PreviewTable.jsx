@@ -102,7 +102,7 @@ export default function PreviewTable({ templateId }) {
   if (status === 'requested') {
     return (
       <div className={classes.spinnerPreview}>
-        <Spinner center />
+        <Spinner center="screen" />
       </div>
     );
   }

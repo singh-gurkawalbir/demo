@@ -111,7 +111,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   }, [retryData]);
 
   if (!retryData) {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
 
   return (

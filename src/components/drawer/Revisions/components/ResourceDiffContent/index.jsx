@@ -18,7 +18,7 @@ export default function ResourceDiffContent({ integrationId, type, parentUrl }) 
   const resourceDiffInfo = useMemo(() => getRevisionResourceLevelChanges(revisionResourceDiff, type), [revisionResourceDiff, type]);
 
   if (isResourceComparisonInProgress) {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
   if (hasResourceDiffError) {
     return (

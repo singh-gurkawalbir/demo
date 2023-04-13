@@ -130,7 +130,7 @@ function MFADetails() {
       <>
         <div className={classes.collapseContainer}>
           <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center /> }
+            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center="screen" /> }
           </CollapsableContainer>
         </div>
         <div className={classes.collapseContainer}>
@@ -142,7 +142,7 @@ function MFADetails() {
 
   return (
     <div className={classes.collapseContainer}>
-      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center />}
+      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center="screen" />}
     </div>
   );
 }

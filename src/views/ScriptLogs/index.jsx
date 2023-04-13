@@ -3,7 +3,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DateRangeSelector from '../../components/DateRangeSelector';
@@ -354,9 +354,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
           </NoResultTypography>
         )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
-        <Box display="flex" justifyContent="center">
-          <Spinner size="large" sx={{mt: 1}} />
-        </Box>
+          <Spinner center="horizontal" size="large" sx={{mt: 1}} />
         )}
       </div>
       <ViewLogDetailDrawer />

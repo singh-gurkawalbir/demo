@@ -194,14 +194,14 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-      <Spinner center />
+      <Spinner center="screen" />
       )}
       {suiteletUrl && (
         <Iframe

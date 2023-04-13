@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { FormControlLabel, Checkbox, MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
-import {Box, Spinner} from '@celigo/fuse-ui';
+import { Spinner} from '@celigo/fuse-ui';
 import CeligoSelect from '../../CeligoSelect';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -262,9 +262,7 @@ export default function RunHistory({ flowId, className }) {
         </>
       </div>
       {isLoadingHistory ? (
-        <Box display="flex" justifyContent="center">
-          <Spinner size="large" />
-        </Box>
+        <Spinner center="horizontal" size="large" />
       )
         : (
           <JobTable

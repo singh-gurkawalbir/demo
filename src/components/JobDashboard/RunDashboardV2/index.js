@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
@@ -23,9 +23,7 @@ export default function RunDashboardV2({ flowId }) {
     // Only when the dashboard is entirely refreshed , show loading
     // it can be updated in between to get latest job status in which case, no need to show loader
     return (
-      <Box display="flex" justifyContent="center">
-        <Spinner size="large" />
-      </Box>
+      <Spinner center="horizontal" size="large" />
     );
   }
 

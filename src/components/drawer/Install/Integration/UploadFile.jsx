@@ -100,7 +100,7 @@ export default function UploadFile() {
 
   if (uploadInProgress) {
     return (
-      <Spinner size="large" center sx={{mt: '60px'}} />
+      <Spinner size="large" center="screen" sx={{mt: '60px'}} />
     );
   }
 

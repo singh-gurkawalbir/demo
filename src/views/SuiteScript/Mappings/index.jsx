@@ -99,7 +99,7 @@ export default function SuiteScriptMappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

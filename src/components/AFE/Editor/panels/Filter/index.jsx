@@ -12,7 +12,7 @@ export default function FilterPanelWrapper({editorId}) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <Spinner center />
+        <Spinner center="screen" />
       ) : (
         <FilterPanel
           editorId={editorId}

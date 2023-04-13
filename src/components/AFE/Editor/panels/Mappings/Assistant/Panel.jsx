@@ -121,7 +121,7 @@ export default function PreviewPanelWrapper({editorId}) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

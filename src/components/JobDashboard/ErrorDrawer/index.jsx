@@ -116,7 +116,7 @@ export default function ErrorDrawer({
       <DrawerContent>
         <div className={classes.wrapperErrorDrawer}>
           {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
-          <Spinner center>
+          <Spinner center="screen" >
             <span>{anyChildJobsAreInProgress ? message.JOBS.CHILD_JOBS_IN_PROGRESS : message.JOBS.LOAD_CHILD_JOBS}</span>
           </Spinner>
           )}

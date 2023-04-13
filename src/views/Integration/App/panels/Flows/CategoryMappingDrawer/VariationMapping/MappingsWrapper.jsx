@@ -40,7 +40,7 @@ export default function VariationMappings(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

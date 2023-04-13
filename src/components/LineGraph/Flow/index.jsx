@@ -291,7 +291,7 @@ export default function FlowCharts({ flowId, integrationId, range, selectedResou
   if (data.status === COMM_STATES.LOADING) {
     return (
 
-      <Spinner center />
+      <Spinner center="screen" />
 
     );
   }

@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect, useCallback, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generatePath, Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import CeligoSelect from '../../components/CeligoSelect';
@@ -173,9 +173,7 @@ const Loading = ({resourceType}) => {
   const {isReady: isDataReadyAfterUserRefresh} = resourceStatus?.[0] || {};
 
   return !isDataReadyAfterUserRefresh ? (
-    <Box display="flex" justifyContent="center">
-      <Spinner size="large" sx={{m: '20px'}} />
-    </Box>
+    <Spinner center="horizontal" size="large" sx={{m: '20px'}} />
   ) : null;
 };
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch } from 'react-router-dom';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import { generateId } from '../../../../../utils/string';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
@@ -76,9 +76,7 @@ const RevisionsList = ({ integrationId }) => {
 
   if (isLoadingRevisions) {
     return (
-      <Box display="flex" justifyContent="center">
-        <Spinner size="large" />
-      </Box>
+      <Spinner center="horizontal" size="large" />
     );
   }
 

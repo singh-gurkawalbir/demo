@@ -35,7 +35,7 @@ export default function MappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

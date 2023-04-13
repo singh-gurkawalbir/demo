@@ -251,7 +251,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
 
   return (
     <div className={classes.container}>
-      {!commFiltersMetadata ? (<Spinner center />)
+      {!commFiltersMetadata ? (<Spinner center="screen" />)
         : (<div className="salesforce-Qualifier" ref={qbuilder} />)}
       {openModal ? (
         <ReferencedFieldsModal

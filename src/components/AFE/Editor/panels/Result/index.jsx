@@ -18,7 +18,7 @@ export default function ResultPanel({ editorId, mode }) {
         hasWarning={!!warning}
     />
       {previewStatus === 'requested' && (
-      <Spinner overlay center size="small">Loading...</Spinner>
+      <Spinner overlay center="screen" size="small">Loading...</Spinner>
       )}
     </>
   );

@@ -168,7 +168,7 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <Spinner size="large" center />;
+    return <Spinner size="large" center="screen" />;
   }
 
   return (

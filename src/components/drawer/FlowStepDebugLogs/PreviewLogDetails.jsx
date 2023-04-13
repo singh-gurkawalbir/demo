@@ -52,7 +52,7 @@ export default function PreviewLogDetails({ flowId, resourceId }) {
   const { request, response } = logDetails;
 
   if (status === 'requested') {
-    return <Spinner center />;
+    return <Spinner center="screen" />;
   }
 
   return (

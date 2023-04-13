@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import PanelHeader from '../../../components/PanelHeader';
 import NotificationToaster from '../../../components/NotificationToaster';
 import messageStore, {message} from '../../../utils/messageStore';
@@ -87,9 +87,7 @@ export default function DataRetention() {
     return (
       <div className={classes.root}>
         <PanelHeader title="Data retention" />
-        <Box display="flex" justifyContent="center">
-          <Spinner size="large" />
-        </Box>
+        <Spinner center="horizontal" size="large" />
       </div>
     );
   }

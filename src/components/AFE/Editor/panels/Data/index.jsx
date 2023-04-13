@@ -19,7 +19,7 @@ export default function DataPanel({ editorId, mode }) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <Spinner center />
+        <Spinner center="screen" />
       ) : (
         <CodePanel
           name="data"

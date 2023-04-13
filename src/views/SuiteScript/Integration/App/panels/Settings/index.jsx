@@ -43,7 +43,7 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!hasSettingsMetadata || isLoading) { return <Spinner center />; }
+  if (!hasSettingsMetadata || isLoading) { return <Spinner center="screen" />; }
 
   // if settings is of type string...quiet likely its an error
   if (typeof resource === 'string' || resource?.errors) {

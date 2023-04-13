@@ -44,7 +44,7 @@ export default function PreviewBody(props) {
         position: 'relative',
       }}>
       {resourceSampleData.status === 'requested' && (
-        <Spinner center />
+        <Spinner center="screen" />
       )}
       {['received', 'error'].includes(resourceSampleData.status) && (
         <>

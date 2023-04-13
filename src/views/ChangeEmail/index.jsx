@@ -41,5 +41,5 @@ export default function ChangeEmail(props) {
     );
   }
 
-  return <Spinner center />;
+  return <Spinner center="screen" />;
 }

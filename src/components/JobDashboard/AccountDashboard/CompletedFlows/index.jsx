@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
@@ -55,9 +55,7 @@ export default function CompletedFlows() {
     <div className={!showEmptyMessage && classes.completeFlowTable}>
       <div className={classes.root}>
         {isCompletedJobsCollectionLoading ? (
-          <Box display="flex" justifyContent="center">
-            <Spinner size="large" />
-          </Box>
+          <Spinner center="horizontal" size="large" />
         ) : (
           <>
             <Filters

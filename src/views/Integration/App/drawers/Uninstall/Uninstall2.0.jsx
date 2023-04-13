@@ -174,7 +174,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   }
   if (!uninstallSteps || uninstallSteps.length === 0) {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

@@ -55,7 +55,7 @@ export default function RetryList({ flowId }) {
     <>
       <RetryTableFilters flowId={flowId} resourceId={resourceId} filterKey={FILTER_KEYS.RETRIES} />
       {retryListStatus === 'requested' ? (
-        <Spinner center />
+        <Spinner center="screen" />
       ) : (
         <div className={classes.retriesList}>
           <ResourceTable

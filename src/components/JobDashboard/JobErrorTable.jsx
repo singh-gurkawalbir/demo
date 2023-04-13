@@ -425,7 +425,7 @@ export default function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-      <Spinner center>
+      <Spinner center="screen" >
         Uploading...
       </Spinner>
       )}
@@ -454,7 +454,7 @@ export default function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
-        <Spinner center>
+        <Spinner center="screen" >
           Loading job errors
         </Spinner>
 

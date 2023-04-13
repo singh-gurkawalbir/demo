@@ -102,7 +102,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
 
   if (!logsStatus || logsStatus === 'requested') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 
@@ -124,7 +124,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
           )}
           {!hasDebugLogs && hasNextPage && fetchStatus === 'inProgress' && (
             <div className={classes.tableHeaderWithSpinner}>
-              <Spinner center />
+              <Spinner center="screen" />
             </div>
           )}
         </div>

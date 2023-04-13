@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Spinner } from '@celigo/fuse-ui';
 import CollapsableContainer from '../../../../../components/CollapsableContainer';
 import useForm from '../../../../../components/Form';
 import DynaForm from '../../../../../components/DynaForm';
@@ -94,9 +94,7 @@ export default function AccountSettings() {
   if (!areAccountSettingsLoaded) {
     return (
       <CollapsableContainer title="Account settings" forceExpand>
-        <Box display="flex" justifyContent="center">
-          <Spinner size="large" />
-        </Box>
+        <Spinner center="horizontal" size="large" />
       </CollapsableContainer>
     );
   }

@@ -48,7 +48,7 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 
   if (!formState.initComplete) {
     return (
-      <Spinner size="large" center sx={{mt: '60px'}} />
+      <Spinner size="large" center="screen" sx={{mt: '60px'}} />
     );
   }
 

@@ -467,6 +467,6 @@ export function SalesforceLookupFilterPanelData({
 export default function NetSuiteLookupFilterPanel(props) {
   const { sampleDataStatus } = useSelector(state => selectors.editor(state, props.editorId));
 
-  return sampleDataStatus === 'requested' ? <Spinner center /> : <SalesforceLookupFilterPanelData {...props} />;
+  return sampleDataStatus === 'requested' ? <Spinner center="screen" /> : <SalesforceLookupFilterPanelData {...props} />;
 }
 

@@ -140,7 +140,7 @@ export default function MappingWrapper({ editorId }) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner center />
+      <Spinner center="screen" />
     );
   }
 

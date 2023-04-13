@@ -82,7 +82,7 @@ export default function FormView({
   }
 
   if (!settingsFormState || settingsFormState.status === 'request') {
-    return (<Spinner center />);
+    return (<Spinner center="screen" />);
   }
 
   return (
