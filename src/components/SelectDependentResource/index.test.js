@@ -31,7 +31,7 @@ describe('selectDependentResource test cases', () => {
     expect(screen.getByRole('button', {name: /apply/i})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: /Cancel/i})).toBeInTheDocument();
     await userEvent.click(buttonRef);
-    await expect(screen.findByText('Apply')).resolves.toBeInTheDocument();
+    expect(screen.queryByText('Apply')).not.toBeInTheDocument();
   });
 
   test('should pass the initial render with custom values', async () => {
