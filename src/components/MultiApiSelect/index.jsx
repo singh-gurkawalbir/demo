@@ -27,10 +27,6 @@ const useStyles = makeStyles(theme => ({
   apiRadio: {
     width: 18,
     marginTop: theme.spacing(1),
-    color: theme.palette.secondary.contrastText,
-    '&:hover': {
-      color: theme.palette.text.hint,
-    },
     '& svg': {
       fontSize: 24,
     },

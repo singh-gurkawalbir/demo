@@ -137,7 +137,7 @@ export default function SignIn({dialogOpen, className}) {
   }, [history, isMFAAuthRequired, location.state]);
   const attemptedRoute = location.state?.attemptedRoute;
 
-  const fieldMeta = useMemo(() => getFieldMeta(), []);
+  const fieldMeta = useMemo(() => getFieldMeta({email: userEmail, isSessionExpired: dialogOpen}), [dialogOpen, userEmail]);
 
   useFormInitWithPermissions({formKey, fieldMeta});
 
