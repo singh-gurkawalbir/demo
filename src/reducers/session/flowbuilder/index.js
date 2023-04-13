@@ -5,7 +5,7 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info, isDataLoader } = action;
+  const { type, flow, flowId, subFlowProps, stepId, targetId, targetType, status, isViewMode, info, isDataLoader, view, isSubFlowView, linkedEdges } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -25,10 +25,38 @@ export default function reducer(state = {}, action) {
 
         break;
       }
+      case actionTypes.FLOW.ICON_VIEW: {
+        draft[flowId].iconView = view;
+
+        break;
+      }
+      case actionTypes.FLOW.TOGGLE_SUBFLOW_VIEW: {
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+
+        draft[flowId].isSubFlowActive = isSubFlowView;
+        draft[flowId].subFlowProps = subFlowProps;
+        break;
+      }
 
       case actionTypes.FLOW.SET_DRAG_IN_PROGRESS: {
         draft[flowId].dragStepId = draft[flowId].dragStepIdInProgress;
         delete draft[flowId].dragStepIdInProgress;
+        break;
+      }
+      case actionTypes.FLOW.EDGE_HOVER: {
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        draft[flowId].linkedEdges = linkedEdges;
+        break;
+      }
+      case actionTypes.FLOW.EDGE_UNHOVER: {
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        delete draft[flowId].linkedEdges;
         break;
       }
 
@@ -84,7 +112,11 @@ selectors.fbDragStepId = (state, flowId) => state?.[flowId]?.dragStepId;
 selectors.fbInfo = (state, flowId) => state?.[flowId]?.info || emptyObject;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
+selectors.fbIconview = (state, flowId) => state?.[flowId]?.iconView;
+selectors.fbSubFlowView = (state, flowId) => state?.[flowId]?.isSubFlowActive;
+selectors.fbSelectedSubFlow = (state, flowId) => state?.[flowId]?.subFlowProps;
 selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
+selectors.fbEdgeHovered = (state, flowId) => state?.[flowId]?.linkedEdges;
 
 selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
   let configuredCount = 0;
