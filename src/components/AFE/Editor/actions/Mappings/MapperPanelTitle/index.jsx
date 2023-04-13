@@ -103,6 +103,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
       <OutputFormatsList disabled={disabled} />
       {helpKey && (
         <Help
+          title={title}
           helpKey={helpKey}
           sx={{margin: 0.5}}
         />

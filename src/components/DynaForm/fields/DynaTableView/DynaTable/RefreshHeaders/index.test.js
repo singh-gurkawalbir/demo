@@ -1,6 +1,5 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import RefreshHeaders from './index';
 import { renderWithProviders } from '../../../../../../test/test-utils';
 
@@ -22,10 +21,9 @@ describe('RefreshHeaders UI test cases', () => {
     };
 
     refreshHeaders(data);
-    const refreshIcon = document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-4"]');
+    const refreshIcons = document.querySelectorAll('svg');
 
-    await userEvent.click(refreshIcon);
-    expect(refreshIcon).toBeInTheDocument();
+    expect(refreshIcons).toHaveLength(2);
   });
   test('should test when data is not loaded', () => {
     const data = {

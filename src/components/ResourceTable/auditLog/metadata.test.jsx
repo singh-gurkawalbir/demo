@@ -119,10 +119,11 @@ describe('test suite for auditlog', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: '12/24/2018 10:33:30 am'})).toBeInTheDocument();
+
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      '12/24/2018 10:33:30 am',
       'auditlogs',
       'UI',
       'Connection',

@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-0.5),
     width: theme.spacing(3),
     height: theme.spacing(3),
-    '& >* svg': {
+    '& > svg': {
       fontSize: theme.spacing(2),
     },
   },
@@ -71,6 +71,7 @@ export default function InfoIconButton({
         anchorEl={anchorEl}
         placement={placement}
         onClose={handleInfoClose}
+        onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
         <HelpContent

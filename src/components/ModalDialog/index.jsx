@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
     padding: theme.spacing(1.5, 2),
-
+    marginBottom: theme.spacing(2),
   },
   actionButton: {
     float: 'right',
@@ -30,9 +30,9 @@ const useStyles = makeStyles(theme => ({
   },
   closeButton: {
     position: 'absolute',
-    top: theme.spacing(1) + 4,
-    right: theme.spacing(2) + 2,
-    padding: theme.spacing(1) - 3,
+    top: theme.spacing(1),
+    right: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   actions: {
     justifyContent: 'flex-start',

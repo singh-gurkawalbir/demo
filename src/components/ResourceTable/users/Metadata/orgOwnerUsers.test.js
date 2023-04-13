@@ -97,10 +97,10 @@ describe('test suite for orgOwnerUsers', () => {
       'Notifications',
       'Actions',
     ]);
+    expect(screen.getByRole('rowheader', {name: data[0].sharedWithUser.name})).toBeInTheDocument();
     const rowsData = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowsData).toEqual([
-      'User name',
       'mail@user.in',
       'Monitor',
       'Accepted',
@@ -114,7 +114,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(disableUserButton).toBeChecked();
 
     //  should show the options to add notification if user is allowed to manage notifications, but there are not notifications
-    expect(addNotificationsButton).toHaveAttribute('title', 'Add notifications');
+    expect(addNotificationsButton).toHaveAttribute('aria-label', 'Add notifications');
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     await userEvent.click(actionButton);
@@ -260,8 +260,8 @@ describe('test suite for orgOwnerUsers', () => {
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm delete');
-    await userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123'));
+    userEvent.click(confirmButton);
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123', false)));
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
@@ -295,7 +295,7 @@ describe('test suite for orgOwnerUsers', () => {
     const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
     await userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.delete('sharedUser123', false));
 
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(errorMessage));
   });
@@ -322,9 +322,9 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     mockTableContext.accessLevel = 'owner';
-    initOrgOwnerUsers(data);
+    await initOrgOwnerUsers(data);
     await userEvent.click(screen.getByRole('button', {name: /more/i}));
-    const makeOwnerButton = screen.getByRole('menuitem', {name: 'Make account owner'});
+    const makeOwnerButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Make account owner'}));
 
     await userEvent.click(makeOwnerButton);
     const confirmDialog = screen.getByRole('dialog');
@@ -363,7 +363,7 @@ describe('test suite for orgOwnerUsers', () => {
     mockTableContext.accessLevel = 'owner';
     initOrgOwnerUsers(data);
     await userEvent.click(screen.getByRole('button', {name: /more/i}));
-    const makeOwnerButton = screen.getByRole('menuitem', {name: 'Make account owner'});
+    const makeOwnerButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Make account owner'}));
 
     await userEvent.click(makeOwnerButton);
     const confirmDialog = screen.getByRole('dialog');
@@ -407,7 +407,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm disable');
     await userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false, false));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('User sampleName disabled successfully'));
   });
 
@@ -442,7 +442,7 @@ describe('test suite for orgOwnerUsers', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Confirm disable');
     await userEvent.click(confirmButton);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.org.users.disable('user123', false, false));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(`Disabling user sampleName failed due to the error "${errorMessage}"`));
   });
 
@@ -514,10 +514,10 @@ describe('test suite for orgOwnerUsers', () => {
       'Actions',
     ]);
 
+    expect(screen.getByRole('rowheader', { name: data[0].sharedWithUser.name})).toBeInTheDocument();
     const rowDatas = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowDatas).toEqual([
-      'sampleName',
       'mail@user.in',
       'Owner',
       '', // should not show user status for account owner
@@ -604,10 +604,10 @@ describe('test suite for orgOwnerUsers', () => {
       'Require MFA?',
       'Actions',
     ]);
+    expect(screen.getByRole('rowheader', { name: data[0].sharedWithUser.name})).toBeInTheDocument();
     const rowsData = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowsData).toEqual([
-      'sampleName',
       'mail@user.in',
       'Administrator',
       'Accepted',
@@ -641,10 +641,11 @@ describe('test suite for orgOwnerUsers', () => {
     }];
 
     initOrgOwnerUsers(data);
+
+    expect(screen.getByRole('rowheader', { name: data[0].sharedWithUser.name})).toBeInTheDocument();
     const rowsData = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(rowsData).toEqual([
-      'sampleName',
       'mail@user.in',
       'Administrator',
       'Accepted',

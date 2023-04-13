@@ -269,7 +269,7 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
   });
   test('shoud display the confirm dialogue when we attempt to delete a subrecord', async () => {
     initDynaNetSuiteSubRecords({...props});
-    const deleteButton = document.querySelector('[title="Delete subrecord"]');
+    const deleteButton = document.querySelector('button[data-test="delete-subrecord"]');
 
     await userEvent.click(deleteButton);
     expect(screen.getByText('Confirm remove')).toBeInTheDocument();
@@ -278,7 +278,7 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
   });
   test('should make a dispatch call with updated subrecord list when a subrecord is deleted', async () => {
     initDynaNetSuiteSubRecords({...props});
-    const deleteButton = document.querySelector('[title="Delete subrecord"]');
+    const deleteButton = document.querySelector('button[data-test="delete-subrecord"]');
 
     await userEvent.click(deleteButton);
     expect(screen.getByText('Remove')).toBeInTheDocument();

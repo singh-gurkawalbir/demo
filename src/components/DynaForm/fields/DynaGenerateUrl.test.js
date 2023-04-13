@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
@@ -97,7 +96,7 @@ describe('test suite for generate URL field', () => {
     renderWithProviders(<GenerateUrl {...props} />);
     const label = document.querySelector('label');
     const inputUrlField = screen.getByRole('textbox');
-    const copyButton = screen.getByTitle('Copy to clipboard');
+    const copyButton = screen.getByLabelText('Copy to clipboard');
 
     expect(label).toHaveTextContent(`${props.label} *`);
     expect(inputUrlField).toHaveValue(props.value);
@@ -143,6 +142,9 @@ describe('test suite for generate URL field', () => {
 
     renderWithProviders(<GenerateUrl {...props} />);
     const generateUrlBtn = screen.getAllByRole('button')[1];
+
+    await userEvent.hover(generateUrlBtn);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Generate URL'));
 
     await userEvent.click(generateUrlBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit(

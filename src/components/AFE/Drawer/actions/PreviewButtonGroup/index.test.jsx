@@ -62,7 +62,7 @@ describe('PreviewButtonGroup UI tests', () => {
     expect(previewButton).toBeEnabled();
     await userEvent.click(previewButton);
     const spanEle = document.querySelector(
-      'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+      '.MuiTouchRipple-rippleVisible'
     );
 
     expect(spanEle).toBeInTheDocument();

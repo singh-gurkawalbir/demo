@@ -58,7 +58,7 @@ describe('suite script DeleteCell ui test', () => {
 
     await userEvent.click(deleteButton);
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
-    const del = screen.getByText('Delete');
+    const del = screen.getByRole('button', { name: 'Delete' });
 
     expect(del).toBeInTheDocument();
 
@@ -76,7 +76,7 @@ describe('suite script DeleteCell ui test', () => {
 
     await userEvent.click(deleteButton);
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
-    const del = screen.getByText('Delete');
+    const del = screen.getByRole('button', { name: 'Delete' });
 
     expect(del).toBeInTheDocument();
 

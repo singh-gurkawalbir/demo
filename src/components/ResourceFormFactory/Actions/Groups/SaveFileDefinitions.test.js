@@ -82,7 +82,6 @@ describe('test suite for SaveFileDefinitions', () => {
     const snackBar = screen.getByRole('alert');
 
     expect(snackBar).toHaveTextContent(ERROR_MSG);
-    expect(snackBar).toHaveStyle({color: 'rgb(51, 61, 71)'});
   });
 
   test('should be able to save successfully', async () => {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import LogoStrip from '.';
@@ -19,9 +19,7 @@ describe('logoStrip UI tests', () => {
 
     expect(newimages).toHaveLength(4);
     await userEvent.click(newimages[0]);
-    const lastimages = screen.getAllByAltText(/.*/);
-
-    expect(lastimages).toHaveLength(1);
+    await waitFor(() => expect(screen.getAllByAltText(/.*/)).toHaveLength(1));
   });
   test('should do the test when application length is less than maxlength', () => {
     renderWithProviders(<LogoStrip applications={['3dcart', 'docusign', 'salesforce', 'magento']} rows={2} columns={3} />);

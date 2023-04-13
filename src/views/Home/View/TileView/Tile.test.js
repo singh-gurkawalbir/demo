@@ -202,7 +202,7 @@ describe('Tile UI tests', () => {
     };
 
     initTile(props);
-    const userButton = document.querySelector('[aria-label="tooltip"]');
+    const userButton = screen.getByRole('button', {name: 'Continue setup >'});
 
     await userEvent.click(userButton);
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));

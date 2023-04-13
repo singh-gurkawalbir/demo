@@ -77,7 +77,7 @@ describe('startDebug UI tests', () => {
     await userEvent.click(screen.getByText(/Start Debug/i));
     expect(screen.getByText(/Start debug log level/i)).toBeInTheDocument();
     await userEvent.click(screen.getByText(/ScreenSpace/i));
-    expect(screen.queryByText(/Start debug log level/i)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(/Start debug log level/i)).not.toBeInTheDocument());
   });
   test('should render the popover when clicked on Start debug button', async () => {
     initDebug({resourceType: 'connections', resourceId: '5f084bff6da99c0abdacb731', disabled: false});

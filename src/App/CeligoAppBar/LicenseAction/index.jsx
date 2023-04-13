@@ -194,7 +194,7 @@ function LicenseAction() {
 
   const startFreeTrialConfirmationDialog = useCallback(() => {
     confirmDialog({
-      title: message.SUBSCRIPTION.TRY_UNLIMITED,
+      title: message.SUBSCRIPTION.TRY_FULL_ACCESS,
       message: <StartFreeTrialConfirmationMessage />,
       buttons: [
         {
@@ -216,7 +216,7 @@ function LicenseAction() {
 
   const startFreeOrRequestUpgradeDialog = useCallback(() => {
     confirmDialog({
-      title: 'Try unlimited flows free for 30 days or upgrade plan',
+      title: 'Try full access free for 30 days or upgrade plan',
       message: <StartFreeOrRequestUpgradeConfirmMessage />,
       buttons: [
         {

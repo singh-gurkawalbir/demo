@@ -132,14 +132,14 @@ export default function PreviewInfo(props) {
   return (
     <Box
       sx={{
-        minHeight: 10,
         position: 'relative',
         justifyContent: 'space-between',
         flexDirection: 'row',
         p: 1,
         mb: 4,
-        borderRadius: 0.5,
+        borderRadius: 1,
         border: theme => `1px solid ${theme.palette.secondary.lightest}`,
+        minHeight: 80,
         '&:before': {
           content: '""',
           width: 5,

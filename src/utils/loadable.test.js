@@ -65,6 +65,6 @@ describe('Testsuite for Loadable', () => {
       pastDelay: false,
     });
 
-    expect(container.firstChild).toBeEmptyDOMElement();
+    expect(container).toBeUndefined();
   });
 });

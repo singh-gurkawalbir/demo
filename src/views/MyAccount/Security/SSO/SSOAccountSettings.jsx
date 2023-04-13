@@ -2,11 +2,10 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
-import { Box, Spinner } from '@celigo/fuse-ui';
+import { Box, Switch, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../../components/LoadResources';
-import CeligoSwitch from '../../../../components/CeligoSwitch';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -307,7 +306,7 @@ export default function SSOAccountSettings() {
                   helpKey="enableSSO"
                   sx={{ml: 0.5, mr: 2}}
                 />
-                <CeligoSwitch
+                <Switch
                   onChange={handleEnableSSO}
                   checked={isSSOEnabled} />
                 {isEnableSSOSwitchInProgress && <Spinner size="small" sx={{display: 'flex', ml: 0.5}} />}

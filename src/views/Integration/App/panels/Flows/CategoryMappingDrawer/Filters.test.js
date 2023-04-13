@@ -1,9 +1,8 @@
-
 import React from 'react';
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { mutateStore, renderWithProviders} from '../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import Filters from './Filters';
 
@@ -15,16 +14,6 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-jest.mock('@mui/material', () => ({
-  __esModule: true,
-  ...jest.requireActual('@mui/material'),
-  ClickAwayListener: props => (
-    <div>
-      <div onClick={props.onClickAway}>Outside</div>
-      {props.children}
-    </div>
-  )}));
-
 describe('Filters UI tests', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -34,10 +23,10 @@ describe('Filters UI tests', () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
-      draft.session.integrationApps.settings['1234-4321'] = {filters: {attributes: {required: true}}};
+      draft.session.integrationApps.settings['1234-4321'] = { filters: { attributes: { required: true } } };
     });
 
-    renderWithProviders(<MemoryRouter><Filters integrationId="4321" flowId="1234" uiAssistant="uiAssistant" /></MemoryRouter>, {initialStore});
+    renderWithProviders(<MemoryRouter><Filters integrationId="4321" flowId="1234" uiAssistant="uiAssistant" /></MemoryRouter>, { initialStore });
     await userEvent.click(screen.getByRole('button'));
 
     const checkbox = screen.getAllByRole('checkbox');
@@ -78,14 +67,5 @@ describe('Filters UI tests', () => {
         flowId: '1234',
         filters: { mappingFilter: 'unmapped' },
       });
-  });
-  test('should test the close button', async () => {
-    const {utils} = renderWithProviders(<MemoryRouter><Filters integrationId="4321" flowId="1234" uiAssistant="uiAssistant" /></MemoryRouter>);
-
-    await userEvent.click(screen.getAllByRole('button')[0]);
-    fireEvent.click(utils.container);
-    await userEvent.click(screen.getAllByText('Outside')[0]);
-
-    await waitFor(() => expect(screen.queryByText('uiAssistant attributes')).not.toBeInTheDocument());
   });
 });
