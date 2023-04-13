@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaURI from './DynaURI_afe';
@@ -84,9 +83,10 @@ describe('test suite for DynaURI_afe field', () => {
     };
 
     renderWithProviders(<DynaURI {...props} />);
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button');
 
-    expect(openAfeBtn).toHaveAttribute('title', 'Open handlebars editor');
+    await userEvent.hover(openAfeBtn);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Open handlebars editor'));
 
     await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
@@ -131,10 +131,10 @@ describe('test suite for DynaURI_afe field', () => {
     renderWithProviders(
       <>
         <DynaURI {...props} />
-        <button type="button" onClick={() => mockSave({rule: 'SampleRule'})}>Save</button>
+        <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
     await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
@@ -151,7 +151,7 @@ describe('test suite for DynaURI_afe field', () => {
     }));
     expect(mockHistoryPush).toHaveBeenCalledWith(`/imports/edit/imports/${resourceId}/editor/ftpfileNameStartsWith`);
 
-    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

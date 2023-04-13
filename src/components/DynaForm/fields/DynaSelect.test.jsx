@@ -175,7 +175,7 @@ describe('dynaSelect UI test cases', () => {
 
     initDynaSelect(data);
     await userEvent.click(screen.getByText('ftp Connection'));
-    await userEvent.click(screen.getByRole('menuitem'));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'Please select'}));
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '');
   });
   test('keyboard listener with keycode 40', async () => {

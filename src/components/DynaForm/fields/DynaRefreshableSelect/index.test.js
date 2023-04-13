@@ -65,7 +65,7 @@ describe('dynaSelectOptionsGenerator UI tests', () => {
 
   test('should pass the initial render', () => {
     initDynaSelectOptionsGenerator(props);
-    const dropdown = document.querySelector('[class="MuiSelect-nativeInput"]');
+    const dropdown = document.querySelector('input');
 
     expect(dropdown).toBeInTheDocument();
   });

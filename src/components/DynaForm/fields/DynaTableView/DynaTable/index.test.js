@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -117,7 +116,7 @@ describe('dynaTable UI test cases', () => {
     };
 
     await initDynaTable(props);
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
     expect(inputs[4]).toHaveValue('Type');
     await fireEvent.change(inputs[4], { target: { value: '' } });

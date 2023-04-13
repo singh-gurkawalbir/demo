@@ -90,7 +90,8 @@ describe('DynaStaticMapWidget UI test cases', () => {
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(mockOnFieldChange).toBeCalledWith('someId', {allowFailures: true, default: 'defaultValue', map: {id: 'Id', name: 'samplename'}}, true);
-    await userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-14"]'));
+    // screen.debug(null, Infinity);
+    await userEvent.click(document.querySelector('.makeStyles-refreshIcon-14'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('extracts', 'someId', 'someIntegrationId'));
     expect(screen.getByLabelText('Action to take if unique match not found')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('radio')[0]);
@@ -100,7 +101,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       allowFailures: false,
     });
 
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
     await fireEvent.change(inputs[0], { target: { value: '' } });
     await userEvent.type(inputs[0], 'Typechanged');
@@ -207,7 +208,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
       allowFailures: true,
     }, true);
 
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
     await userEvent.type(inputs[0], 'RandomText');
     expect(screen.getByDisplayValue('RandomText')).toBeInTheDocument();
