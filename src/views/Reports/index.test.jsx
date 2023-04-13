@@ -185,7 +185,7 @@ describe('reports', () => {
 
     await initReports(params);
     store();
-    const runReportButtonNode = screen.getByRole('button', {name: 'Run report'});
+    const runReportButtonNode = screen.getByRole('link', {name: 'Run report'});
 
     expect(runReportButtonNode).toBeInTheDocument();
     expect(runReportButtonNode).toHaveAttribute('href', '/reports/eventreports/add/eventreports/somegeneratedID');

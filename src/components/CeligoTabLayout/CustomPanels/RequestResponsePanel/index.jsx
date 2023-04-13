@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   },
   panelTabs: {
     borderBottom: `1px solid ${theme.palette.background.paper2}`,
+    '& .MuiTab-root': {
+      minWidth: theme.spacing(20),
+    },
   },
 }));
 

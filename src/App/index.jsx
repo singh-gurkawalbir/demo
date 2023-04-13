@@ -322,16 +322,10 @@ export default function App() {
                         },
                       },
                       '& .SnackbarItem-message': {
-                        marginLeft: 40,
                         display: 'grid',
                         gridTemplateColumns: 'auto 1fr',
                         wordBreak: 'break-word',
                         paddingTop: '6px',
-                        '& > svg': {
-                          position: 'fixed',
-                          left: 16,
-                          top: 16,
-                        },
                       },
                     }}>
                     <FontStager />

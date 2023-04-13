@@ -21,7 +21,6 @@ import { emptyObject } from '../../../constants';
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
-    marginBottom: theme.spacing(2),
   },
   dynaTextFormControl: {
     width: '100%',
@@ -55,8 +54,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: '0px !important',
   },
   textAreaField: {
-    '& > .MuiFilledInput-multiline': {
-      paddingRight: theme.spacing(4),
+    '& > .MuiInputBase-multiline': {
+      padding: 0,
     },
   },
 }));

@@ -114,7 +114,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         <Typography sx={{fontSize: 18, p: 2, borderBottom: theme => `1px solid ${theme.palette.secondary.lightest}`, background: theme => theme.palette.background.paper}} >
           {isSendVisible ? (
             <Box sx={{display: 'flex', alignItems: 'flex-start'}}>
-              <FormLabel sx={{mb: 6, fontSize: 18 }}>Preview &amp; send</FormLabel>
+              <FormLabel sx={{mb: '6px', fontSize: 18 }}>Preview &amp; send</FormLabel>
               <FieldHelp
                 id="previewandsend"
                 helpKey="import.previewAndSend"

@@ -91,6 +91,9 @@ export default {
           cursor: 'not-allowed',
         },
       },
+      sizeSmall: {
+        padding: 20,
+      },
       contained: {
         border: '1px solid',
         boxShadow: 'none',
@@ -439,7 +442,7 @@ export default {
     MuiTableCell: {
       root: {
         position: 'relative',
-        padding: [[10, 16]],
+        padding: 20,
         borderBottomColor: colors.celigoNeutral3,
         verticalAlign: 'top',
       },

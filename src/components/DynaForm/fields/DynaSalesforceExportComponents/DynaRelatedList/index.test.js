@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';
-import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import DynaRelatedList from './index';
 import { getCreatedStore } from '../../../../../store';
 
@@ -12,21 +12,25 @@ const initialStore = getCreatedStore();
 
 function initDynaRelatedList(props = {}) {
   mutateStore(initialStore, draft => {
-    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
-      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-        data: {childRelationships: [
-          {label: 'label1', name: 'name 1', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
-          {label: 'label2', name: 'name 2', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
-          {label: 'label3', name: 'name 3', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote'},
-        ]},
-        status: props.status,
+    draft.session.metadata = {
+      application: {
+        '5efd8663a56953365bd28541': {
+          'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+            data: {
+              childRelationships: [
+                { label: 'label1', name: 'name 1', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote' },
+                { label: 'label2', name: 'name 2', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote' },
+                { label: 'label3', name: 'name 3', relationshipName: 'test relation', field: 'test parent field', childSObject: 'Quote' },
+              ],
+            },
+            status: props.status,
+          },
+        },
       },
-    },
-    },
     };
   });
 
-  return renderWithProviders(<DynaRelatedList {...props} />, {initialStore});
+  return renderWithProviders(<DynaRelatedList {...props} />, { initialStore });
 }
 
 jest.mock('../../../../CodeEditor', () => ({
@@ -141,12 +145,12 @@ describe('dynaRelatedList UI tests', () => {
 
     expect(ellipsisButton).toBeInTheDocument();
     await userEvent.click(ellipsisButton);
-    expect(screen.getByText('Edit')).toBeInTheDocument();
-    expect(screen.getByText('Delete')).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Edit' })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument();
 
     expect(screen.getByText('test relation')).toBeInTheDocument();
 
-    await userEvent.click((screen.getByText('Delete')));
+    await userEvent.click((screen.getByRole('menuitem', { name: 'Delete' })));
     expect(screen.queryByText('test relation')).toBeNull();
   });
   test('should call the onFieldChange function when clicked on save button', async () => {
@@ -154,7 +158,7 @@ describe('dynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     await userEvent.click(editButton);
-    const saveButton = screen.getByText('Save');
+    const saveButton = screen.getByRole('button', { name: 'Save' });
 
     expect(saveButton).toBeInTheDocument();
     await userEvent.click(saveButton);
@@ -166,7 +170,7 @@ describe('dynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     await userEvent.click(editButton);
-    const addListButton = screen.getByText('Add new related list');
+    const addListButton = screen.getByRole('button', { name: 'Add new related list' });
 
     expect(addListButton).toBeInTheDocument();
     await userEvent.click(addListButton);
@@ -178,7 +182,7 @@ describe('dynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     await userEvent.click(editButton);
-    const addListButton = screen.getByText('Add new related list');
+    const addListButton = screen.getByRole('button', { name: 'Add new related list' });
 
     expect(addListButton).toBeInTheDocument();
     await userEvent.click(addListButton);
@@ -192,7 +196,7 @@ describe('dynaRelatedList UI tests', () => {
     expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
   test('should make a dispatch call on initial render when metadata call status is undefined', async () => {
-    initDynaRelatedList({...props, status: undefined});
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('5efd8663a56953365bd28541', 'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote', {refreshCache: true})));
+    initDynaRelatedList({ ...props, status: undefined });
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('5efd8663a56953365bd28541', 'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote', { refreshCache: true })));
   });
 });

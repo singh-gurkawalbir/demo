@@ -23,7 +23,7 @@ describe('verifyTag UI test cases', () => {
       };
     });
     initVerifyTag();
-    const progressBar = document.querySelector('div[role="progressbar"]');
+    const progressBar = screen.getByRole('progressbar');
 
     expect(progressBar).toBeInTheDocument();
     expect(screen.getByText('Verifying...')).toBeInTheDocument();

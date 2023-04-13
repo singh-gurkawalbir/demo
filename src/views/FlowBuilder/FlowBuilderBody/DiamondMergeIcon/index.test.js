@@ -9,7 +9,7 @@ describe('Testsuite for Diamond Merge Icon', () => {
     renderWithProviders(
       <DiamondMergeIcon isDroppable className="test class name" tooltip="test tooltip" data-test="diamond-merge-icon" />
     );
-    expect(document.querySelector('div[title="test tooltip"]')).toBeInTheDocument();
+    expect(screen.getByLabelText('test tooltip')).toBeInTheDocument();
     expect(document.querySelector('svg[data-test="diamond-merge-icon"]')).toBeInTheDocument();
   });
   test('should test the diamond icon when the tooltip is not passed in props and isDropabble is set to true', () => {

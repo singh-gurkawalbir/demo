@@ -102,7 +102,7 @@ describe('refreshableIntegrationAppSetting UI tests', () => {
     const selectDropdown = screen.getByText('Please select');
 
     expect(selectDropdown).toBeInTheDocument();
-    const refreshButton = document.querySelector('[title="Refresh"]');
+    const refreshButton = document.querySelector('button[data-test="refreshResource"]');
 
     expect(refreshButton).toBeInTheDocument();
   });

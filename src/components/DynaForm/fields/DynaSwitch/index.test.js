@@ -40,7 +40,7 @@ describe('DynaSwitch test cases', () => {
     };
 
     renderWithProviders(<DynaSwitch {...props} />);
-    const tooltipcalled = screen.getByLabelText('sometooltip');
+    const tooltipcalled = screen.getByRole('button');
 
     expect(tooltipcalled).toBeInTheDocument();
     const checkbox = screen.getByRole('checkbox');

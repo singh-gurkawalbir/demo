@@ -33,6 +33,12 @@ const useStyles = makeStyles(theme => ({
   },
   accordionHeader: {
     display: 'flex',
+    '& .MuiAccordionSummary-content': {
+      margin: '10px 0',
+    },
+    '& .MuiAccordionSummary-expandIconWrapper': {
+      margin: '1px 4px 0 0',
+    },
   },
 }));
 
