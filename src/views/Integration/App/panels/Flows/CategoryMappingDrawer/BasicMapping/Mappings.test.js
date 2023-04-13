@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as GenerateMediumId from '../../../../../../../utils/string';
@@ -33,8 +33,8 @@ describe('Mappings UI tests', () => {
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'field'}]}
         />
       </MemoryRouter>, {initialStore});
-    const allInputs = screen.getAllByRole('textbox');
-    const input = allInputs.find(each => each.getAttribute('id') === 'fieldMappingGenerate-key');
+    const allInputs = screen.getAllByRole('combobox');
+    const input = await waitFor(() => allInputs.find(each => each.getAttribute('id') === 'fieldMappingGenerate-key'));
 
     await userEvent.click(input);
     await userEvent.click(screen.getByText('sometext2'));
@@ -101,7 +101,7 @@ describe('Mappings UI tests', () => {
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'field'}, '']}
         />
       </MemoryRouter>, {initialStore});
-    const allInput = screen.getAllByRole('textbox');
+    const allInput = screen.getAllByRole('combobox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
     await userEvent.click(input);
@@ -131,7 +131,7 @@ describe('Mappings UI tests', () => {
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'optional'}, '']}
         />
       </MemoryRouter>, {initialStore});
-    const allInput = screen.getAllByRole('textbox');
+    const allInput = screen.getAllByRole('combobox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingExtract-someGeneratedId');
 
     await userEvent.click(input);
@@ -166,7 +166,7 @@ describe('Mappings UI tests', () => {
             {name: 'sometext5', id: 'sometext5', filterType: 'conditional'}]}
         />
       </MemoryRouter>, {initialStore});
-    const allInput = screen.getAllByRole('textbox');
+    const allInput = screen.getAllByRole('combobox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
     await userEvent.click(input);
