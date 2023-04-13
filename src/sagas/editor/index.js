@@ -969,7 +969,6 @@ export function* requestChatCompletion({ id, prompt }) {
     return yield put(actions.editor.chat.failed(id, validationErrors));
   }
 
-  console.log('saga chat completion', parsedResponse);
   const value = rulePath ? {[rulePath]: parsedResponse} : parsedResponse;
 
   yield put(actions.editor.patchRule(id, value));
