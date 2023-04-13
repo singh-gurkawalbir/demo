@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, cleanup } from '@testing-library/react';
+import { screen, cleanup, fireEvent } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../test/test-utils';
@@ -169,14 +169,14 @@ describe('setPassword', () => {
 
     expect(password).toBeInTheDocument();
 
-    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    fireEvent.change(password, { target: { value: 'xbsbxsxazl223xbsbixi' } });
 
     expect(password.value).toBe('xbsbxsxazl223xbsbixi');
     const setpasswordButtonNode = screen.getByRole('button', {name: 'Save and sign in'});
 
     expect(setpasswordButtonNode).toBeInTheDocument();
     await userEvent.click(setpasswordButtonNode);
-  }, 10000);
+  });
   test('should redirect to home page when password is successfully set', async () => {
     authStore({
       requestSetPasswordStatus: 'success',

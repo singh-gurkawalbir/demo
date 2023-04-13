@@ -1645,18 +1645,37 @@ const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const editor = {
   init: (id, editorType, options) =>
     action(actionTypes.EDITOR.INIT, { id, editorType, options }),
-  initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
-  changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
-  patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
-  patchRule: (id, rulePatch, options) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch, ...options }),
-  patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
-  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
+  initComplete: (id, options) =>
+    action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
+  changeLayout: (id, newLayout) =>
+    action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
+  patchFeatures: (id, featuresPatch) =>
+    action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
+  patchRule: (id, rulePatch, options) =>
+    action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch, ...options }),
+  patchData: (id, dataPatch) =>
+    action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
+  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) =>
+    action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, {
+      id,
+      fileKeyPatchType,
+      fileKeyPatch,
+    }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
-  toggleVersion: (id, version) => action(actionTypes.EDITOR.TOGGLE_VERSION, { id, version }),
-  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes.EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
-  sampleDataFailed: (id, sampleDataError) => action(actionTypes.EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
-  toggleAutoPreview: (id, autoPreview) => action(actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
-  refreshHelperFunctions: () => action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
+  toggleVersion: (id, version) =>
+    action(actionTypes.EDITOR.TOGGLE_VERSION, { id, version }),
+  sampleDataReceived: (id, sampleData, templateVersion) =>
+    action(actionTypes.EDITOR.SAMPLEDATA.RECEIVED, {
+      id,
+      sampleData,
+      templateVersion,
+    }),
+  sampleDataFailed: (id, sampleDataError) =>
+    action(actionTypes.EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
+  toggleAutoPreview: (id, autoPreview) =>
+    action(actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  refreshHelperFunctions: () =>
+    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
   previewRequest: id => action(actionTypes.EDITOR.PREVIEW.REQUEST, { id }),
@@ -1664,11 +1683,18 @@ const editor = {
     action(actionTypes.EDITOR.PREVIEW.FAILED, { id, error }),
   previewResponse: (id, result) =>
     action(actionTypes.EDITOR.PREVIEW.RESPONSE, { id, result }),
-  saveRequest: (id, context) => action(actionTypes.EDITOR.SAVE.REQUEST, { id, context }),
-  saveFailed: (id, saveMessage) => action(actionTypes.EDITOR.SAVE.FAILED, { id, saveMessage }),
+  saveRequest: (id, context) =>
+    action(actionTypes.EDITOR.SAVE.REQUEST, { id, context }),
+  saveFailed: (id, saveMessage) =>
+    action(actionTypes.EDITOR.SAVE.FAILED, { id, saveMessage }),
   saveComplete: id => action(actionTypes.EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
+  chat: {
+    request: (id, prompt) => action(actionTypes.EDITOR.CHAT.REQUEST, {id, prompt }),
+    complete: id => action(actionTypes.EDITOR.CHAT.COMPLETE, { id }),
+    failed: (id, error) => action(actionTypes.EDITOR.CHAT.FAILED, {id, error }),
+  },
 };
 // #endregion
 // #region Mapping actions

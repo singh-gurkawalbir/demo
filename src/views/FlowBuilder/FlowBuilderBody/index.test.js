@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -209,7 +208,7 @@ describe('FlowBuilderBody UI tests', () => {
     expect(runFlowButton).toBeInTheDocument();
   });
 
-  test('should display all 4 control buttons: zoom in, out, fit, and hide miniMap', () => {
+  test('should display all 4 control buttons: zoom in, out, fit, and hide miniMap', async () => {
     const props = {
       flowId: '62c6f122a2f4a703c3dee3d0',
       fullScreen: true,
@@ -217,11 +216,9 @@ describe('FlowBuilderBody UI tests', () => {
     };
 
     initFlowBuilderBody(props);
-    const controlButtons = document.querySelectorAll(
-      '[ class="react-flow__controls-button"] > span'
-    );
+    const controlButtons = document.querySelectorAll('.react-flow__controls-button > span');
 
-    const actualTitles = Array.from(controlButtons).map(cb => cb.title);
+    const actualTitles = Array.from(controlButtons).map(cb => cb.getAttribute('aria-label'));
 
     const expectedButtonTitles = [
       'Zoom in',

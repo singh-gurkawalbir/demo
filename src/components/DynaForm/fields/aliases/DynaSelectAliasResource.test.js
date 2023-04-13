@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -170,16 +169,14 @@ describe('dynaAliasId UI tests', () => {
 
   test('should display all the valid flows when the aliasResourceType is "flows" and when clicked on the resource dropdown', async () => {
     initDynaSelect(props);
-    waitFor(async () => {
-      const dropBox = document.querySelector('[aria-haspopup="listbox"]');
+    const dropBox = screen.getByRole('button');
 
-      expect(dropBox).toBeInTheDocument();
+    expect(dropBox).toBeInTheDocument();
+    await userEvent.click(dropBox);
 
-      await userEvent.click(dropBox);
-      expect(screen.getByText('flow1')).toBeInTheDocument();
-      expect(screen.getByText('flow2')).toBeInTheDocument();
-      expect(screen.getByText('flow3')).toBeInTheDocument();
-    });
+    const menuitems = screen.getAllByRole('menuitem').map(opt => opt.textContent);
+
+    expect(menuitems).toEqual(['Please select', 'flow1', 'flow2', 'flow3']);
   });
   test('should only display the flows belonging to the integration in the above case', async () => {
     initDynaSelect(props);
@@ -207,7 +204,7 @@ describe('dynaAliasId UI tests', () => {
   });
   test('should display the imports belonging to the integration passed when aliasResourceType is selected as "imports"', async () => {
     initDynaSelect({...props, aliasResourceType: 'imports'});
-    const dropBox = document.querySelector('[aria-haspopup="listbox"]');
+    const dropBox = screen.getByRole('button');
 
     expect(dropBox).toBeInTheDocument();
     await userEvent.click(dropBox);
@@ -219,7 +216,7 @@ describe('dynaAliasId UI tests', () => {
   });
   test('should display the imports belonging to the integration passed when aliasResourceType is selected as "exports"', async () => {
     initDynaSelect({...props, aliasResourceType: 'exports'});
-    const dropBox = document.querySelector('[aria-haspopup="listbox"]');
+    const dropBox = screen.getByRole('button');
 
     expect(dropBox).toBeInTheDocument();
     await userEvent.click(dropBox);

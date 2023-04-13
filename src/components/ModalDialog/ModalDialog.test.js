@@ -20,14 +20,14 @@ jest.mock('@mui/material/IconButton', () => ({
 
 describe('modalDialog UI tests', () => {
   test('should not show the modal dialog when the prop "show" is false', () => {
-    const {container} = renderWithProviders(
+    const {utils} = renderWithProviders(
       <ModalDialog show={false}>
         <div>child-1</div>
         <div>child-2</div>
         <div>child-3</div>
       </ModalDialog>);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(utils.container).toBeEmptyDOMElement();
   });
 
   test('should show the modal when the prop "show" is true', () => {

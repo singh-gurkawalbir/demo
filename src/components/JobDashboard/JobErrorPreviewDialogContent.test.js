@@ -1,11 +1,12 @@
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
+import { renderWithProviders } from '../../test/test-utils';
 
 describe('testsuite for Job Error Preview Dialog Content', () => {
   test('should render the resolved, retries, remains, invalids, total and adds Job Error Preview Dialog Content when the preview data is of type string', () => {
-    render(
+    renderWithProviders(
       <JobErrorPreviewDialogContent
         previewData={{
           resolves: 'test resolves',
@@ -37,7 +38,7 @@ describe('testsuite for Job Error Preview Dialog Content', () => {
     )).toBeInTheDocument();
   });
   test('should render the resolved, retries, remains, invalids, total and adds Job Error Preview Dialog Content when the preview data is of type number', () => {
-    render(
+    renderWithProviders(
       <JobErrorPreviewDialogContent
         previewData={{
           resolves: 1,
@@ -69,7 +70,7 @@ describe('testsuite for Job Error Preview Dialog Content', () => {
     )).toBeInTheDocument();
   });
   test('should render the resolved, retries, remains, invalids, total and adds Job Error Preview Dialog Content when the preview data is undefined', () => {
-    render(
+    renderWithProviders(
       <JobErrorPreviewDialogContent
         previewData={{
         }} />

@@ -111,7 +111,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(screen.getByDisplayValue('samplename')).toBeInTheDocument();
-    const input = screen.getAllByRole('textbox');
+    const input = screen.getAllByRole('combobox');
 
     fireEvent.change(input[0], {target: {value: ''}});
 
@@ -161,7 +161,7 @@ describe('DynaRefreshableStaticMap UI test cases', () => {
     initDynaRefreshableStaticMap(genralProps);
     expect(screen.getByDisplayValue('7')).toBeInTheDocument();
     expect(screen.getByDisplayValue('3')).toBeInTheDocument();
-    const input = screen.getAllByRole('textbox');
+    const input = screen.getAllByRole('combobox');
 
     fireEvent.change(input[0], {target: {value: '8'}});
     fireEvent.change(input[1], {target: {value: '2'}});

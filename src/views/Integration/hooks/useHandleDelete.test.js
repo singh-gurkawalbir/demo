@@ -130,7 +130,7 @@ describe('test suite for useHandleDelete hook', () => {
       const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
       await userEvent.click(confirmButton);
-      const snackbar = document.getElementById('client-snackbar');
+      const snackbar = screen.getByRole('alert');
 
       expect(snackbar).toBeInTheDocument();
       expect(snackbar).toHaveTextContent(messageStore('INTEGRATION.INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE'));
@@ -157,7 +157,7 @@ describe('test suite for useHandleDelete hook', () => {
       const confirmButton = screen.getByRole('button', {name: 'Delete'});
 
       await userEvent.click(confirmButton);
-      const snackbar = document.getElementById('client-snackbar');
+      const snackbar = screen.getByRole('alert');
 
       expect(snackbar).toBeInTheDocument();
       expect(snackbar).toHaveTextContent(message.INTEGRATION.INTEGRATION_DELETE_VALIDATE);

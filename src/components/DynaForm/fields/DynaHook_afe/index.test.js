@@ -79,8 +79,8 @@ describe('dynaHook_afe UI tests', () => {
     expect(screen.getByText('Script')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('function field')).toBeInTheDocument();
     expect(document.querySelector('[id="scriptId"]')).toBeInTheDocument();           // function dropdown  //
-    expect(document.querySelector('[title="Create script"]')).toBeInTheDocument();   // CreateScript button //
-    expect(document.querySelector('[title="Edit script"]')).toBeInTheDocument();   // EditScript button //
+    expect(screen.getByLabelText('Create script')).toBeInTheDocument();
+    expect(screen.getByLabelText('Edit script')).toBeInTheDocument();
   });
   test('should call the onFieldChange passed in props when function field is edited', async () => {
     props.hookType = 'script';
@@ -125,7 +125,7 @@ describe('dynaHook_afe UI tests', () => {
     renderWithProviders(<MemoryRouter><DynaHookAFE {...newprops} /></MemoryRouter>);
     expect(screen.getByText('Script')).toBeInTheDocument();
     expect(document.querySelector('[id="scriptId"]')).toBeInTheDocument();
-    expect(document.querySelector('[title="Create script"]')).toBeInTheDocument();
-    expect(document.querySelector('[title="Edit script"]')).toBeInTheDocument();
+    expect(screen.getByLabelText('Create script')).toBeInTheDocument();
+    expect(screen.getByLabelText('Edit script')).toBeInTheDocument();
   });
 });

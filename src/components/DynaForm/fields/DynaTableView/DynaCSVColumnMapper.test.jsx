@@ -53,7 +53,7 @@ describe('dynaCSVColumnMapper UI test cases', () => {
 
     await userEvent.click(menuItemsOptionNode[3]);
     await userEvent.click(screen.getByText('Please enter a value'));
-    const input = screen.getAllByRole('textbox');
+    const input = screen.getAllByRole('combobox');
 
     await userEvent.type(input[6], 'Payment Amount');
     await userEvent.type(input[7], 'CHECK AMOUNT');

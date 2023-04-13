@@ -111,7 +111,7 @@ describe('DynaStaticMap UI test cases', () => {
     };
 
     initDynaStaticMap(genralProps);
-    const textBox = screen.getAllByRole('textbox');
+    const textBox = screen.getAllByRole('combobox');
 
     expect(textBox[0]).toHaveDisplayValue(1350);
     expect(textBox[1]).toHaveDisplayValue(2500);
@@ -135,7 +135,7 @@ describe('DynaStaticMap UI test cases', () => {
     };
 
     initDynaStaticMap(genralProps);
-    const textBox = screen.getAllByRole('textbox');
+    const textBox = screen.getAllByRole('combobox');
 
     expect(textBox[0]).toHaveDisplayValue(1350);
     expect(textBox[1]).toHaveDisplayValue(2500);
@@ -158,7 +158,7 @@ describe('DynaStaticMap UI test cases', () => {
     };
 
     initDynaStaticMap(genralProps);
-    const textBox = screen.getAllByRole('textbox');
+    const textBox = screen.getAllByRole('combobox');
 
     expect(textBox[0]).toHaveDisplayValue(1350);
     expect(textBox[1]).toHaveDisplayValue(2500);

@@ -263,9 +263,9 @@ describe('Flows Panel UI tests', () => {
 
     initFlowsPanel(props);
     expect(screen.getByText(/Integration flows/i)).toBeInTheDocument();
-    expect(screen.getByText(/4 error/i)).toBeInTheDocument();
+    expect(screen.getByText(/4 errors/i)).toBeInTheDocument();
 
-    const element = document.querySelector('[aria-label="search"]');
+    const element = screen.getByLabelText(/search/i);
 
     expect(element).toBeInTheDocument();
   });
@@ -292,7 +292,7 @@ describe('Flows Panel UI tests', () => {
     expect(screen.queryByText(/Create flow/i)).toBeNull();
     expect(screen.queryByText(/Load data/i)).toBeNull();
     expect(screen.queryByText(/More/i)).toBeNull();
-    const element = document.querySelector('[aria-label="search"]');
+    const element = screen.getByLabelText(/search/i);
 
     expect(element).toBeInTheDocument();
   });
@@ -300,7 +300,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Add mapping"]');
+    const element = screen.getByLabelText('Add mapping');
 
     await userEvent.click(element);
     expect(screen.getByText('Mapping Drawer')).toBeInTheDocument();       // mocked component//
@@ -309,7 +309,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Remove or configure all unconfigured flow steps to edit the flow schedule"]');
+    const element = screen.getByLabelText('Remove or configure all unconfigured flow steps to edit the flow schedule');
 
     await userEvent.click(element);
     expect(screen.getByText('Schedule Drawer')).toBeInTheDocument();       // mocked component//
@@ -340,7 +340,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[aria-label="search"]');
+    const element = screen.getByLabelText(/search/i);
 
     await userEvent.click(element);
     await userEvent.type(element, 'senorita');
@@ -350,7 +350,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[aria-label="search"]');
+    const element = screen.getByLabelText(/search/i);
 
     await userEvent.clear(element);
     await userEvent.click(element);

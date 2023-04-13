@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -152,6 +152,6 @@ describe('Testsuite for BranchMenuPopper', () => {
 
     expect(tooltipNode).toBeInTheDocument();
     await userEvent.click(tooltipNode);
-    expect(mockhandleClose).toHaveBeenCalled();
+    await waitFor(() => expect(mockhandleClose).toHaveBeenCalled());
   });
 });

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
-import CeligoSwitch from '../../../../components/CeligoSwitch';
+import { Switch } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../components/PanelHeader';
 import Help from '../../../../components/Help';
 import Spinner from '../../../../components/Spinner';
@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
   },
   configContainer: {
     margin: theme.spacing(2),
-  },
-  mfaSwitch: {
-    marginLeft: theme.spacing(0.5),
   },
   content: {
     fontSize: '14px',
@@ -93,11 +90,11 @@ function MyUserSettings() {
     <div className={classes.userSettings}>
       <ActionGroup>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
-        <CeligoSwitch
+        <Switch
           onChange={handleEnableMFA}
           checked={isMFASetupIncomplete || isMFAEnabled}
           disabled={isMFASetupIncomplete}
-          className={classes.mfaSwitch}
+          sx={{ml: 0.5}}
           tooltip="Off / On"
           data-test="mfa-switch-button" />
         <Help

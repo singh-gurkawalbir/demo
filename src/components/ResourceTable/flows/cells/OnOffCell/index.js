@@ -1,13 +1,12 @@
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Switch } from '@celigo/fuse-ui';
 import Spinner from '../../../../Spinner';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import CeligoSwitch from '../../../../CeligoSwitch';
-import RemoveMargin from '../RemoveMargin';
 
 const useStyles = makeStyles(theme => ({
 
@@ -138,15 +137,13 @@ export default function OnOffCell({
 
   if (!isFlowEnableLocked) {
     return (
-      <RemoveMargin>
-        <CeligoSwitch
-          tooltip="Off / On"
-          data-test={`toggleOnAndOffFlow${flowName}`}
-          disabled={accessLevel === 'monitor'}
-          checked={!disabled}
-          onChange={handleDisableClick}
+      <Switch
+        tooltip="Off / On"
+        data-test={`toggleOnAndOffFlow${flowName}`}
+        disabled={accessLevel === 'monitor'}
+        checked={!disabled}
+        onChange={handleDisableClick}
       />
-      </RemoveMargin>
     );
   }
 

@@ -114,11 +114,11 @@ describe('scriptView UI tests', () => {
     isValid: true,
   };
 
-  test('should pass the initial render', () => {
+  test('should pass the initial render', async () => {
     initScriptView(props);
     expect(document.querySelector('[id="scriptId"]')).toBeInTheDocument();
-    expect(document.querySelector('[title="Create script"]')).toBeInTheDocument();
-    expect(document.querySelector('[title="Edit script"]')).toBeInTheDocument();
+    expect(screen.getByLabelText('Create script')).toBeInTheDocument();
+    expect(screen.getByLabelText('Edit script')).toBeInTheDocument();
   });
   test('should call the "handleCreateScriptClick" function passed in props when clicked on create script button', async () => {
     initScriptView(props);

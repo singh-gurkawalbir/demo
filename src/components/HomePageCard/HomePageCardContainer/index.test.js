@@ -12,12 +12,12 @@ const isTileNotDragged = true;
 
 describe('testing HomePageCardContainer Component', () => {
   test('should render the same text passed into props when tile is not in drag in progress and not dragged', async () => {
-    const {container} = renderWithProviders(<HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged} >{values}</HomePageCardContainer>);
+    renderWithProviders(<HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged} >{values}</HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();
     fireEvent.mouseEnter(value);
-    const svgEl = container.querySelector("[viewBox='0 0 24 24']");
+    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
     fireEvent.mouseLeave(value);
@@ -25,22 +25,22 @@ describe('testing HomePageCardContainer Component', () => {
   });
 
   test('should render the same text passed into props when tile is dragged', async () => {
-    const {container} = renderWithProviders(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileNotDragged}> {values} </HomePageCardContainer>);
+    renderWithProviders(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileNotDragged}> {values} </HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();
     fireEvent.drag(value);
-    const svgEl = container.querySelector("[viewBox='0 0 24 24']");
+    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
   });
   test('should render the same text passed into props when tile is drag in progress and not completely dragged', async () => {
-    const {container} = renderWithProviders(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileDragged}> {values} </HomePageCardContainer>);
+    renderWithProviders(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileDragged}> {values} </HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();
     fireEvent.mouseEnter(value);
-    const svgEl = container.querySelector("[id='dragHandle']");
+    const svgEl = document.querySelector("[id='dragHandle']");
 
     expect(svgEl).toBeInTheDocument();
   });

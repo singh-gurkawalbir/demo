@@ -144,7 +144,7 @@ describe('testsuite for JobErrorTable', () => {
       onCloseClick: mockOnCloseClick,
       jobErrorsPreviewStatus: 'requested',
     });
-    const loadingJoBErrorsSpinner = document.querySelector('div > div:nth-child(3) > div:nth-child(1) > svg');
+    const loadingJoBErrorsSpinner = document.querySelector('svg');
 
     expect(loadingJoBErrorsSpinner).toBeInTheDocument();
     expect(screen.getByText(/Loading job errors/i)).toBeInTheDocument();

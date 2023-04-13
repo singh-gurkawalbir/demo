@@ -43,7 +43,7 @@ describe('multiSelectFilter component Test cases', () => {
     expect(header).toBeInTheDocument();
     await userEvent.click(header);
 
-    expect(screen.queryByText(/apply/i)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(/apply/i)).not.toBeInTheDocument());
   });
 
   test('should pass the intial render for SelectedLabelImp and handleClose', async () => {

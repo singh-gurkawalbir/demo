@@ -209,7 +209,7 @@ describe('PageBar2 UI tests', () => {
 
     await prefAndIntegInStore(store);
 
-    const clonebutton = screen.getByRole('button', {name: 'Clone integration'});
+    const clonebutton = screen.getByRole('link', {name: 'Clone integration'});
 
     expect(clonebutton).toHaveAttribute('href', '/clone/integrations/5ff579d745ceef7dcd797c15/preview');
   });
