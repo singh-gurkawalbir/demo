@@ -140,6 +140,20 @@ export default function JavaScriptPanel({ editorId }) {
     aceEditor.current = e;
   }, []);
 
+  const isValidHookField = useCallback(
+    field => {
+      // If hook is not empty, then valid if those respective fields are not empty
+      switch (field) {
+        case 'function':
+          return entryFunction !== '';
+        case '_scriptId':
+          return scriptId !== '';
+        default:
+      }
+    },
+    [entryFunction, scriptId]
+  );
+
   // This is temporary code to demo the panel in storybook.
   // We really need to refactor this code so these components can render even if
   // disconnected from thr API. In this case, if it is not possible to load
@@ -150,7 +164,7 @@ export default function JavaScriptPanel({ editorId }) {
     <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
-          <FormControl className={classes.jsPanelFormControl}>
+          <FormControl className={classes.jsPanelFormControl} error={!isValidHookField('_scriptId')}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
@@ -179,7 +193,7 @@ export default function JavaScriptPanel({ editorId }) {
               {[defaultItem, ...scriptOptions]}
             </CeligoSelect>
           </FormControl>
-          <FormControl className={classes.jsPanelFormControl}>
+          <FormControl className={classes.jsPanelFormControl} error={!isValidHookField('function')}>
             <FormLabel htmlFor="entryFunction">
               Function
             </FormLabel>
