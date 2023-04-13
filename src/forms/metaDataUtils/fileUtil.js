@@ -622,8 +622,12 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
   } else if (fieldId === 'file.skipAggregation') {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
+    const batchSize = fields.find(field => field.id === 'file.batchSize')?.value;
 
-    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue;
+    // TODO: value being changed in optionalHandler. check if a DynaForm util to handle inter field dependencies can be created.
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || // Skip aggregation should be true for file definitions
+    skipAggregationField.defaultValue || // or the user defined value
+    batchSize > 1; // or when batchSize is greater than 1
   } else if (fieldId === 'file.encoding') {
     const fileType = fields.find(field => field.id === 'file.type');
 

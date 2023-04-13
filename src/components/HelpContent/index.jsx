@@ -10,7 +10,6 @@ import ThumbsUpIcon from '../icons/ThumbsUpIcon';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
 import ThumbsDownIcon from '../icons/ThumbsDownIcon';
 import CloseIcon from '../icons/CloseIcon';
-import HelpContentLinks from '../HelpContentLinks';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -170,7 +169,7 @@ const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) =
   );
 };
 
-export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, contentId, ...rest }) {
+export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, ...rest }) {
   const classes = useStyles();
 
   return (
@@ -201,9 +200,6 @@ export default function HelpContent({ title, caption, children, supportFeedback 
       <Typography variant="subtitle2" className={classes.caption}>
         Field path: {caption}
       </Typography>
-      )}
-      {contentId && (
-        <HelpContentLinks contentId={contentId} />
       )}
     </div>
   );

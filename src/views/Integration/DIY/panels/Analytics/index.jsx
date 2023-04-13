@@ -21,7 +21,7 @@ export default function AnalyticsPanel({ integrationId, childId }) {
   return (
     <div className={classes.root}>
       <LoadResources required integrationId={integrationId} resources="flows">
-        <PanelHeader title="Analytics" infoText={infoText.Analytics} contentId="analytics" />
+        <PanelHeader title="Analytics" infoText={infoText.Analytics} />
         <ChartsDrawer integrationId={childId || integrationId} />
       </LoadResources>
     </div>

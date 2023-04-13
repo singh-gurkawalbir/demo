@@ -281,7 +281,13 @@ export default {
     type: 'checkbox',
     label: 'Skip aggregation',
     defaultValue: r => !!(r && r.file && r.file.skipAggregation),
-    refreshOptionsOnChangesTo: 'file.type',
+    disabledWhen: [
+      {
+        field: 'file.batchSize',
+        isNot: ['', 0, 1],
+      },
+    ],
+    refreshOptionsOnChangesTo: ['file.type', 'file.batchSize'],
     visibleWhenAll: [
       {
         field: 'file.type',
