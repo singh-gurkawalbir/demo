@@ -1,8 +1,7 @@
 import React from 'react';
-import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -19,7 +18,14 @@ import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
-const useStyles = makeStyles(theme => ({
+const StyledActionGroup = styled(ActionGroup)(({ theme }) => ({
+  borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+  paddingLeft: parseInt(theme.spacing(3), 10),
+}));
+
+const StyledIconButtonWithTooltip = styled(IconButtonWithTooltip, {
+  shouldForwardProp: prop => prop !== 'active',
+})(({ theme, active }) => ({
   viewIcon: {
     position: 'relative',
     marginLeft: theme.spacing(2),
@@ -32,11 +38,7 @@ const useStyles = makeStyles(theme => ({
       marginLeft: -parseInt(theme.spacing(0.5), 10),
     },
   },
-  viewsWrapper: {
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    paddingLeft: parseInt(theme.spacing(3), 10),
-  },
-  activeView: {
+  ...(active && {
     color: theme.palette.primary.main,
     '&:after': {
       position: 'absolute',
@@ -46,17 +48,12 @@ const useStyles = makeStyles(theme => ({
       bottom: -parseInt(theme.spacing(0.5), 10),
       left: 0,
     },
-  },
-  homeSearch: {
-    height: 38,
-    marginRight: theme.spacing(1),
-  },
+  }),
 }));
 
 const emptyObject = {};
 export default function IntegrationCeligoPageBar() {
   const location = useLocation();
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const permission = useSelector(state => {
@@ -69,7 +66,15 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      <KeywordSearch placeholder="Search integrations & flows" size="large" filterKey={FILTER_KEY} className={classes.homeSearch} />
+      <KeywordSearch
+        placeholder="Search integrations & flows"
+        size="large"
+        filterKey={FILTER_KEY}
+        sx={{
+          height: 38,
+          marginRight: theme => theme.spacing(1),
+        }}
+      />
 
       <ActionGroup>
         {permission.create && (
@@ -107,25 +112,25 @@ export default function IntegrationCeligoPageBar() {
           Install integration
         </TextButton>
         )}
-        <ActionGroup className={classes.viewsWrapper}>
-          <IconButtonWithTooltip
+        <StyledActionGroup>
+          <StyledIconButtonWithTooltip
             data-test="tileView"
-            className={clsx(classes.viewIcon, {[classes.activeView]: !isListView})}
+            active={!isListView}
             onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: TILE_VIEW}}))}
             tooltipProps={{title: 'Tile view', placement: 'bottom'}}
             buttonSize={{size: 'small'}}>
             <TilesViewIcon />
-          </IconButtonWithTooltip>
+          </StyledIconButtonWithTooltip>
 
-          <IconButtonWithTooltip
+          <StyledIconButtonWithTooltip
             data-test="listView"
-            className={clsx(classes.viewIcon, {[classes.activeView]: isListView})}
+            active={isListView}
             onClick={() => dispatch(actions.user.preferences.update({ dashboard: {...homePreferences, view: LIST_VIEW} }))}
             tooltipProps={{title: 'List view', placement: 'bottom'}}
             buttonSize={{size: 'small'}}>
             <ListViewIcon />
-          </IconButtonWithTooltip>
-        </ActionGroup>
+          </StyledIconButtonWithTooltip>
+        </StyledActionGroup>
       </ActionGroup>
     </CeligoPageBar>
   );

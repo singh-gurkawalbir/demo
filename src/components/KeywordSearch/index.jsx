@@ -9,6 +9,7 @@ export default function KeywordSearch({
   placeholder = 'Search…',
   size = 'small',
   onFocus,
+  sx,
   className}) {
   const dispatch = useDispatch();
   const filter = useSelector(state => selectors.filter(state, filterKey));
@@ -41,6 +42,7 @@ export default function KeywordSearch({
       placeholder={placeholder}
       debounceDuration={300}
       size={size}
+      sx={sx}
       className={className}
     />
   );
