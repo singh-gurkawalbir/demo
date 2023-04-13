@@ -3,6 +3,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import { selectors } from '../../../../reducers';
 import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../../../components/HomePageCard/Header';
@@ -34,19 +35,8 @@ import { getTextAfterCount } from '../../../../utils/string';
 import OfflineConnectionsIcon from '../../../../components/icons/OfflineConnectionsIcon';
 
 const useStyles = makeStyles(theme => ({
-  tileName: {
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
-  },
   action: {
     marginLeft: 0,
-  },
-  tagWithLicenseMessage: {
-    bottom: 90,
-    position: 'absolute',
   },
   headerTileStatus: {
     fontSize: 13,
@@ -66,6 +56,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const StyledIntegrationTag = styled(IntegrationTag)({
+  bottom: 90,
+  position: 'absolute',
+});
 
 function AppLogosContainer({ tile }) {
   const applications = useSelectorMemo(selectors.mkTileApplications, tile);
@@ -188,7 +183,13 @@ function Tile({
           <CardTitle>
             <Typography
               variant="h3"
-              className={classes.tileName}
+              sx={{
+                color: theme => theme.palette.main,
+                wordBreak: 'break-word',
+                '&:hover': {
+                  color: theme => theme.palette.primary.main,
+                },
+              }}
               onClick={handleTileClick}>
               <CeligoTruncate
                 isLoggable
@@ -224,7 +225,7 @@ function Tile({
               )}
             </Manage>
             )}
-            {licenseMessageContent && tile.tag && (<IntegrationTag label={tile.tag} className={classes.tagWithLicenseMessage} />)}
+            {licenseMessageContent && tile.tag && (<StyledIntegrationTag label={tile.tag} />)}
             {!licenseMessageContent && tile.tag && (<IntegrationTag label={tile.tag} />)}
           </FooterActions>
           <Info
