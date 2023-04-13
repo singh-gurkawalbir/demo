@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import InfoIconButton from '.';
@@ -33,18 +33,18 @@ describe('infoIconButton UI tests', () => {
     await userEvent.click(screen.getByText('exterior'));
     expect(screen.queryByText(/sample info icon content/i)).toBeNull();
   });
-  test('should close the arrowpopper on clicking the close button', () => {
+  test('should close the arrowpopper on clicking the close button', async () => {
     const props = {info: 'sample info icon content'};
     const onClick = jest.fn();
 
     renderWithProviders(<div onClick={onClick}>exterior<InfoIconButton {...props} /></div>);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
 
-    const infoText = screen.getByText(/sample info icon content/i);
+    const infoText = await waitFor(() => screen.getByText(/sample info icon content/i));
 
     // should not close the popper on clicking inside the popper
     expect(infoText).toBeInTheDocument();
-    userEvent.click(infoText);
+    await userEvent.click(infoText);
     expect(infoText).toBeInTheDocument();
     expect(onClick).not.toBeCalled();
 
@@ -52,7 +52,7 @@ describe('infoIconButton UI tests', () => {
     const closeButton = document.querySelector('[data-test="close"]');
 
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onClick).not.toBeCalled();
     expect(screen.queryByText(/sample info icon content/i)).toBeNull();
   });
