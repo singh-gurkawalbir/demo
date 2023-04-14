@@ -308,16 +308,17 @@ export default function ProfilePanel() {
         // is this loggable
         isLoggable: true,
       },
-      iconViewToggle: {
+      showIconView: {
         id: 'showIconView',
         name: 'showIconView',
         type: 'checkbox',
         helpKey: 'myaccount.showIconView',
         noApi: true,
-        label: 'Show icon view toggle option',
+        label: 'Show flowbuilder icon view',
         defaultValue: preferences && preferences.showIconView,
         // is this loggable
         isLoggable: true,
+        visible: (!isProduction() && process.env.ICON_VIEW_FLOWBUILDER === 'true'),
       },
       colorTheme: {
         id: 'colorTheme',
@@ -346,7 +347,7 @@ export default function ProfilePanel() {
         'showRelativeDateTime',
         'developer',
         'colorTheme',
-        'iconViewToggle',
+        'showIconView',
       ],
     },
   }), [preferences, isUserAllowedOnlySSOSignIn, dateTimeZonesList, dateFormatList, timeFormatList, colorThemeList]);
