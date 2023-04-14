@@ -31,10 +31,9 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     marginRight: -theme.spacing(1.5),
     padding: theme.spacing(1, 1.5, 0, 0),
-    '&>.MuiTypography-root': {
-      maxHeight: 200,
-      padding: 0,
-      '&>ul': {
+    maxHeight: 200,
+    '&.MuiTypography-root': {
+      '& ul': {
         paddingLeft: theme.spacing(2),
         margin: 0,
       },
