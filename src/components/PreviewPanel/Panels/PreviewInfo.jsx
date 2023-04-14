@@ -1,11 +1,11 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import isEmpty from 'lodash/isEmpty';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
-import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
+import { getPreviewDataPageSizeInfo, getPreviewDataPageSizeLength } from '../../../utils/exportPanel';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
@@ -14,6 +14,9 @@ import {OutlinedButton} from '../../Buttons';
 import { capitalizeFirstLetter } from '../../../utils/string';
 import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 import { sampleDataStage } from '../../../utils/flowData';
+import FlowStartDateDialog from '../RunPreviewDateSelector';
+import actions from '../../../actions';
+import { convertUtcToTimezone } from '../../../utils/date';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -92,8 +95,39 @@ export default function PreviewInfo(props) {
     flowId,
   } = props;
   const classes = useStyles(props);
-  const [isValidRecordSize, setIsValidRecordSize] = useState(true);
+  const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
+
+  const [defaultDate] = useState(new Date());
+  const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(false);
+  const [clickOnPreview, setClickOnPreview] = useState(false);
+  const [showWarning, setShowWarning] = useState(!!flowId);
+  const [isValidRecordSize, setIsValidRecordSize] = useState(true);
+  const [dateSelected, setDateSelected] = useState();
+
+  const preferences = useSelector(state => selectors.userOwnPreferences(state));
+  const timeZone = useSelector(state => selectors.userTimezone(state));
+  const origLastExportDateTime = useSelector(state =>
+    selectors.getLastExportDateTime(state, flowId)
+  ).data;
+  const isDeltaSupported = useSelector(
+    state => {
+      let isDelta = false;
+      let isPG;
+
+      if (flowId) {
+        isPG = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+      }
+      if (isPG || !flowId) {
+        const formValue = selectors.createFormValuesPatchSet(state, formKey, resourceType, resourceId);
+        const formType = formValue?.finalValues?.['/type'];
+
+        isDelta = formType === 'delta';
+      }
+
+      return isDelta;
+    }
+  );
   const canSelectRecords = useSelector(state =>
     selectors.canSelectRecordsInPreviewPanel(state, formKey)
   );
@@ -112,6 +146,30 @@ export default function PreviewInfo(props) {
   const isMockInputDataAbsent = resourceType === 'imports' &&
                               isEmpty(resourceMockData) &&
                               isEmpty(resourceDefaultMockData);
+
+  useEffect(() => {
+    if (flowId) {
+      dispatch(actions.flow.requestLastExportDateTime({ flowId }));
+    }
+  }, [dispatch, flowId]);
+
+  useEffect(() => {
+    if (resourceSampleData.status === 'received' && clickOnPreview) {
+      const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
+        ? previewStageDataList.preview
+        : previewStageDataList.parse;
+
+      if (isDeltaSupported && getPreviewDataPageSizeLength(records, resourceType) === 0) {
+        setShowDeltaStartDateDialog(true);
+      } else {
+        setClickOnPreview(false);
+      }
+    }
+  }, [clickOnPreview, flowId, isDeltaSupported, previewStageDataList, resourceSampleData.status, resourceType]);
+
+  const lastExportDateTime = useMemo(() =>
+    convertUtcToTimezone(origLastExportDateTime || defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}
+    ), [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]);
 
   const sampleDataStatus = useMemo(() => {
     const { status, error, message } = resourceSampleData;
@@ -175,17 +233,49 @@ export default function PreviewInfo(props) {
           message: 'Enter a valid record size',
           variant: 'error',
         });
+      } else if (!flowId && isDeltaSupported) { // stand alone delta exports
+        setShowDeltaStartDateDialog(true);
+        setClickOnPreview(true);
+      } else if (isDeltaSupported) { // flow builder delta exports
+        setClickOnPreview(true);
+        fetchExportPreviewData(lastExportDateTime);
       } else {
         fetchExportPreviewData();
       }
     },
-    [fetchExportPreviewData, isValidRecordSize, enquesnackbar],
+    [isValidRecordSize, flowId, isDeltaSupported, enquesnackbar, fetchExportPreviewData, lastExportDateTime],
+  );
+  const handleCloseDeltaDialog = useCallback((userAction = true) => {
+    setShowDeltaStartDateDialog(false);
+    userAction && setShowWarning(flowId ? !!flowId : false);
+  }, [flowId]);
+
+  const handleRunFlow = useCallback(
+    customStartDate => {
+      const lastExportDate = customStartDate || lastExportDateTime;
+
+      fetchExportPreviewData(lastExportDate);
+      setDateSelected(lastExportDate);
+      setShowWarning(true);
+    },
+    [fetchExportPreviewData, lastExportDateTime]
   );
   const disablePreview = isPreviewDisabled || (showPreviewData && resourceSampleData.status === 'requested');
 
   return (
     <div className={classes.previewContainer}>
       <div className={classes.previewData}>
+        {
+          showDeltaStartDateDialog && (
+            <FlowStartDateDialog
+              flowId={flowId}
+              onClose={handleCloseDeltaDialog}
+              onRun={handleRunFlow}
+              showWarning={showWarning}
+              dateSelected={dateSelected}
+            />
+          )
+        }
         <div className={classes.previewDataLeft}>
           <OutlinedButton
             color="secondary"

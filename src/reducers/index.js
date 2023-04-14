@@ -117,6 +117,11 @@ import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 import customCloneDeep from '../utils/customCloneDeep';
+import getResourceFormAssets from '../forms/formFactory/getResourceFromAssets';
+import {
+  sanitizePatchSet,
+  defaultPatchSetConverter,
+} from '../forms/formFactory/utils';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1402,6 +1407,15 @@ selectors.flowDetails = (state, id) => {
   return getFlowDetails(flow, integration, exports);
 };
 
+selectors.isExportAPageGenerator = (state, flowId, exportId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  if (!flow) return emptyObject;
+  const exports = selectors.resource(state, 'exports', exportId);
+
+  return getFlowDetails(flow, exports);
+};
+
 selectors.mkFlowDetails = () => {
   const resourceSel = selectors.makeResourceSelector();
   const integrationResourceSel = selectors.makeResourceSelector();
@@ -2260,6 +2274,60 @@ selectors.makeResourceDataSelector = () => {
 
     (resourceIdState, stagedIdState, uiFields, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, uiFields, resourceType, id)
   );
+};
+
+selectors.createFormValuesPatchSet = (state, formKey, resourceType, resourceId) => {
+  const { value: values } = selectors.formState(state, formKey) || emptyObject;
+  const { merged: resource } = selectors.resourceData(state, resourceType, resourceId) || emptyObject;
+
+  if (!resource || !values) return { patchSet: [], finalValues: null }; // nothing to do.
+
+  const formState = selectors.resourceFormState(state, resourceType, resourceId);
+  let finalValues = values;
+  let connection;
+  let assistantData;
+
+  if (resource?._connectionId) {
+    connection = selectors.resource(state, 'connections', resource._connectionId);
+  }
+
+  const connectorMetaData = selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
+
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+
+  if (_httpConnectorId) {
+    assistantData = connectorMetaData;
+  }
+
+  const { preSave } = getResourceFormAssets({
+    resourceType,
+    resource,
+    connection,
+    isNew: formState.isNew,
+    assistantData,
+  });
+
+  if (typeof preSave === 'function') {
+    const iClients = selectors.resourceList(state, {
+      type: 'iClients',
+    });
+    let httpConnectorData;
+    const httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+
+    if (resourceType === 'connections' && httpPublishedConnector) {
+      httpConnectorData = selectors.connectorData(state, httpPublishedConnector?._id);
+    }
+
+    // stock preSave handler present...
+    finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
+  }
+  const patchSet = sanitizePatchSet({
+    patchSet: defaultPatchSetConverter(finalValues),
+    fieldMeta: formState.fieldMeta,
+    resource,
+  });
+
+  return { patchSet, finalValues };
 };
 
 selectors.makeFlowDataForFlowBuilder = () => {
