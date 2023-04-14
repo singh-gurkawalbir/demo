@@ -144,7 +144,6 @@ export default function ProfilePanel() {
 
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
-    console.log({formVal});
     const completePayloadCopy = { ...formVal };
     const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, darkTheme: undefined };
