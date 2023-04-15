@@ -125,16 +125,38 @@ export default {
       allowEdit: true,
     },
 
+    checkExistingExport: {
+      id: 'checkExistingExport',
+      name: 'checkExistingExport',
+      type: 'existingCheckBox',
+      required: false,
+      flowResourceType: 'pg',
+      resourceType: 'exports',
+      label: 'Use existing Export',
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'type',
+      ],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [''],
+        },
+      ],
+    },
+
     existingExport: {
       id: 'exportId',
       name: 'exportId',
       type: 'selectflowresource',
       flowResourceType: 'pg',
       resourceType: 'exports',
-      label: 'Would you like to use an existing export?',
+      label: '',
       defaultValue: '',
       required: false,
       allowEdit: true,
+      alwaysOpen: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -146,14 +168,16 @@ export default {
           field: 'application',
           isNot: [''],
         },
+        { field: 'checkExistingExport', is: [true] },
       ],
     },
   },
+
   layout: {
     type: 'box',
     containers: [
       {
-        fields: ['application', 'type', 'connection', 'existingExport'],
+        fields: ['application', 'type', 'connection', 'checkExistingExport', 'existingExport'],
       },
     ],
   },
@@ -219,7 +243,7 @@ export default {
       return { filter: andingExpressions, appType };
     }
 
-    if (fieldId === 'exportId') {
+    if (fieldId === 'exportId' || fieldId === 'checkExistingExport') {
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =

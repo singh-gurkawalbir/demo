@@ -91,16 +91,37 @@ export default {
       required: true,
     },
 
+    checkExistingImport: {
+      id: 'checkExistingImport',
+      name: 'checkExistingImport',
+      label: 'Use existing Import',
+      type: 'existingCheckBox',
+      flowResourceType: 'pp',
+      resourceType: 'imports',
+      required: false,
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+      ],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'connection', isNot: [''] },
+        { field: 'resourceType', is: ['importRecords', 'transferFiles'] },
+      ],
+    },
+
     existingImport: {
       id: 'importId',
       name: 'importId',
       type: 'selectflowresource',
       flowResourceType: 'pp',
       resourceType: 'imports',
-      label: 'Would you like to use an existing import?',
+      label: '',
       defaultValue: '',
       required: false,
       allowEdit: true,
+      alwaysOpen: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -111,6 +132,27 @@ export default {
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
         { field: 'resourceType', is: ['importRecords', 'transferFiles'] },
+        { field: 'checkExistingImport', is: [true] },
+      ],
+    },
+
+    checkExistingExport: {
+      id: 'checkExistingExport',
+      name: 'checkExistingExport',
+      label: 'Use existing Export',
+      flowResourceType: 'pp',
+      resourceType: 'exports',
+      type: 'existingCheckBox',
+      required: false,
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+      ],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'connection', isNot: [''] },
+        { field: 'resourceType', is: ['lookupRecords', 'lookupFiles'] },
       ],
     },
 
@@ -120,10 +162,11 @@ export default {
       type: 'selectflowresource',
       flowResourceType: 'pp',
       resourceType: 'exports',
-      label: 'Would you like to use an existing lookup?',
+      label: '',
       defaultValue: '',
       required: false,
       allowEdit: true,
+      alwaysOpen: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -134,6 +177,7 @@ export default {
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
         { field: 'resourceType', is: ['lookupRecords', 'lookupFiles'] },
+        { field: 'checkExistingExport', is: [true] },
       ],
     },
 
@@ -163,7 +207,9 @@ export default {
           'application',
           'resourceType',
           'connection',
+          'checkExistingImport',
           'existingImport',
+          'checkExistingExport',
           'existingExport',
         ],
       },
@@ -235,7 +281,7 @@ export default {
       return { filter: andingExpressions, appType };
     }
 
-    if (['importId', 'exportId'].includes(fieldId)) {
+    if (['importId', 'exportId', 'checkExistingExport', 'checkExistingImport'].includes(fieldId)) {
       const adaptorTypePrefix = appTypeToAdaptorType[appType];
 
       if (!adaptorTypePrefix) return;
@@ -304,7 +350,9 @@ export default {
         importLabel = 'Would you like to use an existing lookup?';
       }
 
-      return { filter, appType, label: importLabel };
+      const visible = !!connectionField.value;
+
+      return { filter, appType, label: importLabel, visible };
     }
 
     return null;
