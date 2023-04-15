@@ -249,10 +249,11 @@ export default function DynaSelect(props) {
     skipSort,
     dataTest,
     isLoggable,
+    alwaysOpen,
   } = props;
 
   const listRef = React.createRef();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(alwaysOpen || false);
   const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const classes = useStyles();
   const dispatch = useDispatch();
