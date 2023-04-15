@@ -350,7 +350,7 @@ export default function ProfilePanel() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} contentId="profile" />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit

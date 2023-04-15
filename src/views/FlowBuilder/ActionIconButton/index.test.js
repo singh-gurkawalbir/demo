@@ -1,7 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ActionIconButton from '.';
+import ActionIconButton from './index';
+import { FlowProvider } from '../FlowBuilderBody/Context';
+import { renderWithProviders } from '../../../test/test-utils';
 
 function initActionIconButton({
   helpKey,
@@ -12,18 +14,20 @@ function initActionIconButton({
   ...props
 }) {
   const ui = (
-    <ActionIconButton
-      helpKey={helpKey}
-      helpText={helpText}
-      className={className}
-      variant={variant}
-      props={props}
+    <FlowProvider flowId="id">
+      <ActionIconButton
+        helpKey={helpKey}
+        helpText={helpText}
+        className={className}
+        variant={variant}
+        props={props}
     >
-      {children}
-    </ActionIconButton>
+        {children}
+      </ActionIconButton>
+    </FlowProvider>
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 jest.mock('../../../components/Help', () => ({
   __esModule: true,

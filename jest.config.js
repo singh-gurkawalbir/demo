@@ -57,6 +57,5 @@ module.exports = {
     ALLOW_GOOGLE_SIGNIN: 'true',
     ALLOW_SIGNUP_EU: 'true',
     ALLOW_GOOGLE_SIGNIN_EU: 'true',
-    ENABLE_HELP_CONTENT: 'true',
   },
 };
