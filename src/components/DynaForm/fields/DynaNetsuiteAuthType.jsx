@@ -30,4 +30,3 @@ export default function DynaNetsuiteAuthType(props) {
     <DynaSelect {...props} options={availableAuthOptions} />
   );
 }
-

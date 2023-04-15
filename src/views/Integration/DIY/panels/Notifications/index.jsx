@@ -135,7 +135,7 @@ export default function NotificationsSection({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Notifications" infoText={infoText.Notifications} contentId="notifications" />
+      <PanelHeader title="Notifications" infoText={infoText.Notifications} />
 
       <LoadResources required integrationId={_integrationId} resources="notifications,flows,connections">
         <div className={classes.form}>

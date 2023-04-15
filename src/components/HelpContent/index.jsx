@@ -10,7 +10,6 @@ import ThumbsUpIcon from '../icons/ThumbsUpIcon';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
 import ThumbsDownIcon from '../icons/ThumbsDownIcon';
 import CloseIcon from '../icons/CloseIcon';
-import HelpContentLinks from '../HelpContentLinks';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -32,10 +31,9 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     marginRight: -theme.spacing(1.5),
     padding: theme.spacing(1, 1.5, 0, 0),
-    '&>.MuiTypography-root': {
-      maxHeight: 200,
-      padding: 0,
-      '&>ul': {
+    maxHeight: 200,
+    '&.MuiTypography-root': {
+      '& ul': {
         paddingLeft: theme.spacing(2),
         margin: 0,
       },
@@ -170,7 +168,7 @@ const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) =
   );
 };
 
-export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, contentId, ...rest }) {
+export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, ...rest }) {
   const classes = useStyles();
 
   return (
@@ -201,9 +199,6 @@ export default function HelpContent({ title, caption, children, supportFeedback 
       <Typography variant="subtitle2" className={classes.caption}>
         Field path: {caption}
       </Typography>
-      )}
-      {contentId && (
-        <HelpContentLinks contentId={contentId} />
       )}
     </div>
   );
