@@ -145,8 +145,8 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, darkTheme: undefined };
+    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, darkTheme: undefined };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -165,6 +165,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.dateFormat;
     delete completePayloadCopy.showRelativeDateTime;
     delete completePayloadCopy.colorTheme;
+    delete completePayloadCopy.showIconView;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch, preferences.developer]);
@@ -306,6 +307,18 @@ export default function ProfilePanel() {
         // is this loggable
         isLoggable: true,
       },
+      showIconView: {
+        id: 'showIconView',
+        name: 'showIconView',
+        type: 'checkbox',
+        helpKey: 'myaccount.showIconView',
+        noApi: true,
+        label: 'Show flowbuilder icon view',
+        defaultValue: preferences && preferences.showIconView,
+        // is this loggable
+        isLoggable: true,
+        visible: (!isProduction() && process.env.ICON_VIEW_FLOWBUILDER === 'true'),
+      },
       colorTheme: {
         id: 'colorTheme',
         name: 'colorTheme',
@@ -333,6 +346,7 @@ export default function ProfilePanel() {
         'showRelativeDateTime',
         'developer',
         'colorTheme',
+        'showIconView',
       ],
     },
   }), [preferences, isUserAllowedOnlySSOSignIn, dateTimeZonesList, dateFormatList, timeFormatList, colorThemeList]);
