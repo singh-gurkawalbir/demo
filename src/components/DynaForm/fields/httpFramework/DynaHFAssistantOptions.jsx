@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import MaterialUiSelect from '../DynaSelect';
+import DynaSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { selectOptions } from './util';
@@ -335,8 +335,9 @@ function DynaAssistantOptions(props) {
   }, [id, value, assistantFieldType]);
 
   return (
-    <MaterialUiSelect
+    <DynaSelect
       {...props}
+      helpKey={id}
       label={label}
       options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}

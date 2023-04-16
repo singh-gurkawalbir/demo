@@ -86,6 +86,7 @@ export default function DynaHFAssistantPathParams(props) {
             placeholder="Please select"
             showAllSuggestions
             {...props}
+            helpKey={id}
             />
         )
           : (
@@ -96,6 +97,7 @@ export default function DynaHFAssistantPathParams(props) {
               id={id}
               value={value}
               stage={flowDataStage}
+              helpKey={id}
             />
           )}
         <ActionButton
