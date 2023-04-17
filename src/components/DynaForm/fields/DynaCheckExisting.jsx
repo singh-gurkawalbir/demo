@@ -11,6 +11,8 @@ import FieldHelp from '../FieldHelp';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
+import Spinner from '../../Spinner';
+import LoadResources from '../../LoadResources';
 
 const emptyArray = [];
 
@@ -62,6 +64,7 @@ export default function DynaCheckboxExisting(props) {
   } = props;
 
   const { filter, visible = true, ...otherOptions } = options;
+  const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
   const resourceIdsToFilter = useSelector(state => {
     const flow = selectors.resource(state, 'flows', flowId);
     const { pageProcessors = [], pageGenerators = [], routers = [] } = flow || {};
@@ -175,42 +178,48 @@ export default function DynaCheckboxExisting(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
 
-  if ((!resourceItems.length) || !visible) {
+  if ((!resourceItems.length && hasResourceTypeLoaded) || !visible) {
     return null;
   }
 
   return (
-    <FormControl
-      error={!isValid}
-      required={required}
-      disabled={disabled}
-      className={clsx(classes.dynaLabelWrapper, className)}>
-      <FormControlLabel
-        control={(
-          <Checkbox
-            key={id}
-            name={name}
-            {...isLoggableAttr(isLoggable)}
-            className={classes.dynaCheckbox}
-            // isInvalid={!isValid}
-            data-test={id}
-            value={String(!!value)}
-            checked={inverse ? !value : !!value}
-            onChange={evt =>
-              onFieldChange(
-                id,
-                inverse ? !evt.target.checked : evt.target.checked
-              )}
-          />
-        )}
-        className={classes.dynaCheckControlLabel}
-        label={label}
+    <LoadResources
+      required
+      spinner={<Spinner size="medium" />}
+      resources={resourceType !== 'connectorLicenses' ? resourceType : []}
+      >
+      <FormControl
+        error={!isValid}
+        required={required}
+        disabled={disabled}
+        className={clsx(classes.dynaLabelWrapper, className)}>
+        <FormControlLabel
+          control={(
+            <Checkbox
+              key={id}
+              name={name}
+              {...isLoggableAttr(isLoggable)}
+              className={classes.dynaCheckbox}
+              // isInvalid={!isValid}
+              data-test={id}
+              value={String(!!value)}
+              checked={inverse ? !value : !!value}
+              onChange={evt =>
+                onFieldChange(
+                  id,
+                  inverse ? !evt.target.checked : evt.target.checked
+                )}
+            />
+          )}
+          className={classes.dynaCheckControlLabel}
+          label={label}
 
-      />
-      {labelSubText && (<Typography variant="caption" className={classes.infoText}>{labelSubText}</Typography>)}
+        />
+        {labelSubText && (<Typography variant="caption" className={classes.infoText}>{labelSubText}</Typography>)}
 
-      <FieldHelp {...props} />
-      <FieldMessage {...props} />
-    </FormControl>
+        <FieldHelp {...props} />
+        <FieldMessage {...props} />
+      </FormControl>
+    </LoadResources>
   );
 }
