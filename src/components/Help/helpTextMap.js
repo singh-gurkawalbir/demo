@@ -2451,6 +2451,7 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   'myaccount.timeFormat':
 'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
   'myaccount.developer': 'Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an \'Export\' or an \'Import\' there are \'Hooks\' fields available in the UI where custom code can be configured.',
+  'myaccount.showIconView': 'Turning on this setting will expose a toggle option in the flowbuilder page which allows you to switch between bubble view and iconic view in the flowbuilder layout',
   'myaccount.showRelativeDateTime': 'Check this box to view the amount of time elapsed since an event occurred, such as <b>1 hour ago</b> or <b>1 day ago</b>. Otherwise, the display format is absolute, such as <b>2021-10-25 7:47:33 PM</b>.',
   'hooks.insertFunction':
 'Select a function stub to add a model entry point for a built-in <a href="https://docs.celigo.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io">hook</a>. Each stub includes example parameters, a return value, and self-documenting comments.',
