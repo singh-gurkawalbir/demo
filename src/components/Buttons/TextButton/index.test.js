@@ -45,13 +45,13 @@ describe('text button component test', () => {
   // });
 
   test('testing by className', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <TextButton
         data-test="cancelOperandSettings"
         onClick={onClose}> Cancel
       </TextButton>
     );
-    const m = container.querySelector("[data-test='cancelOperandSettings']");
+    const m = document.querySelector("[data-test='cancelOperandSettings']");
 
     expect(m).toBeInTheDocument();
   });

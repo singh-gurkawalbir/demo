@@ -22,7 +22,7 @@ describe('buttontooltip component test', () => {
     const ButtonName1 = screen.getByRole('button', {name: /Delete flow group/i});
 
     expect(ButtonName1).toBeInTheDocument();
-    const TitleDisplay = screen.getByTitle('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.');
+    const TitleDisplay = screen.getByLabelText('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.');
 
     expect(TitleDisplay).toBeInTheDocument();
     fireEvent.click(ButtonName1);
@@ -34,7 +34,7 @@ describe('buttontooltip component test', () => {
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );
-    const Title2 = screen.getByTitle('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.');
+    const Title2 = screen.getByLabelText('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.');
 
     expect(Title2).toBeInTheDocument();
     const Button2 = screen.getByRole('button', {name: /Delete flow group/i});
@@ -55,7 +55,7 @@ describe('buttontooltip component test', () => {
     const NewFlow1 = screen.getByRole('button', {name: /Delete flow group/i});
 
     expect(NewFlow1).toBeInTheDocument();
-    fireEvent.mouseOver(screen.getByTitle('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.'));
+    fireEvent.mouseOver(screen.getByLabelText('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.'));
   });
   test('whenever no title is passed', () => {
     renderWithProviders(

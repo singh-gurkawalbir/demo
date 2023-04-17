@@ -37,14 +37,14 @@ describe('status button component test', () => {
   });
 
   test('testing by className', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <MemoryRouter>
         <Status variant="error" size="mini" onClick={handleErrorClick}>
           handleErrorClick
         </Status>
       </MemoryRouter>
     );
-    const m = container.querySelector("[type='button']");
+    const m = document.querySelector("[type='button']");
 
     expect(m).toBeInTheDocument();
   });
