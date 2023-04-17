@@ -4681,6 +4681,15 @@ selectors.sampleDataWrapper = createSelector(
 
       return null;
     },
+    (state, { flowId }) => {
+      const { data } = selectors.getLastExportDateTime(state, flowId) || emptyObject;
+
+      if (data) {
+        return data;
+      }
+
+      return null;
+    },
   ],
   (
     sampleData,
@@ -4694,6 +4703,7 @@ selectors.sampleDataWrapper = createSelector(
     fieldType,
     editorType,
     parentIntegration,
+    lastExportDateTime,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -4704,7 +4714,8 @@ selectors.sampleDataWrapper = createSelector(
     stage,
     fieldType,
     editorType,
-    parentIntegration})
+    parentIntegration,
+    lastExportDateTime})
 );
 
 /**

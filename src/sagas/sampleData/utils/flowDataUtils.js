@@ -18,6 +18,7 @@ import { getAllPageProcessors, isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
 import { emptyObject } from '../../../constants';
 import { isFileAdaptor } from '../../../utils/resource';
+import { getLastExportDateTime } from '../../flows';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -410,6 +411,8 @@ export function* getFlowStageData({
 
   if (noWrap) {
     selector = selectors.getSampleDataContext;
+  } else if (flowId) {
+    yield call(getLastExportDateTime, { flowId });
   }
   let flowStageData = yield select(selector, {
     flowId,

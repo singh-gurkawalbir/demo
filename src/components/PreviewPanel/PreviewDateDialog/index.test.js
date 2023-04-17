@@ -27,7 +27,7 @@ jest.mock('../../DynaForm/DynaSubmit', () => ({
   ),
 }));
 
-describe('PreviewDateDialog Component test cases', () => {
+describe('PreviewDateDialog component test cases', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -105,6 +105,7 @@ describe('PreviewDateDialog Component test cases', () => {
 
     expect(screen.getByText('Delta preview')).toBeInTheDocument();
     expect(screen.queryByText(/No records available to preview./i)).toBeInTheDocument();
+    expect(mockDispatchFn).toBeCalledWith(actions.flow.requestLastExportDateTime({ flowId: 'flow_id' }));
     const runButton = screen.getByRole('button', { name: 'Preview' });
     const cancelButton = screen.getByRole('button', { name: 'Cancel' });
 

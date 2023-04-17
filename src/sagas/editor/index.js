@@ -946,8 +946,6 @@ export function* requestChatCompletion({ id, prompt }) {
  ${prompt}`,
   });
 
-  console.log('completion saga body', body);
-
   try {
     response = yield call(apiCallWithRetry, {
       path: '/openai/chat/completions',
