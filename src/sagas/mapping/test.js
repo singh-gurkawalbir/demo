@@ -27,7 +27,6 @@ import { autoEvaluateProcessorWithCancel } from '../editor';
 import {generateId} from '../../utils/string';
 import { MAPPING_DATA_TYPES } from '../../utils/mapping';
 import errorMessageStore from '../../utils/errorStore';
-import { getLastExportDateTime } from '../flows';
 
 jest.mock('../../utils/string');
 
@@ -695,7 +694,6 @@ describe('mappingInit saga', () => {
       .put(actions.flowData.requestStage(flowId, 'import28', 'processedFlowInput'))
       .put(actions.flowData.requestStage(flowId, 'import28', 'flowInput'))
       .put(actions.flowData.receivedPreviewData(flowId, 'import28', undefined, 'flowInput'))
-      .call(getLastExportDateTime, {flowId: 'flow28'})
       .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'processedFlowInput', {data: []}))
       .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'inputFilter', {data: []}))
       .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'preMap', {data: []}))
