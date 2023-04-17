@@ -210,12 +210,12 @@ describe('ErrorDetailsPanel UI test cases', () => {
       })
     );
     await userEvent.click(
-      screen.getByTitle('Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.')
+      screen.getByRole('checkbox', { name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.' })
     );
     await userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
@@ -252,7 +252,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
@@ -299,18 +299,20 @@ describe('ErrorDetailsPanel UI test cases', () => {
     expect(getByRole('tab', { name: 'Error fields' })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
+
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
+    screen.debug(undefined, Infinity);
     await userEvent.click(
-      screen.getByTitle('Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.')
+      screen.getByRole('checkbox', { name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.' })
     );
     await userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
