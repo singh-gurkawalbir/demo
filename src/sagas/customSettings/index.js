@@ -32,7 +32,7 @@ export function layoutHasField(layout, fieldId) {
   }
 }
 
-function isValidDisplayAfterRef(refId, refMetadata) {
+export function isValidDisplayAfterRef(refId, refMetadata) {
   const { layout, fieldMap } = refMetadata;
 
   if (!layout) {

@@ -19,9 +19,11 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
+import { isValidDisplayAfterRef } from '../customSettings';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
+import { getFieldIdsInLayoutOrder } from '../../utils/form';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
@@ -225,6 +227,37 @@ export function* requestPreview({ id }) {
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
     return yield put(actions.editor.previewFailed(id, {errorMessage: e.message}));
+  }
+
+  // check for custom settings editor and for http connector
+  if (editor.editorType === 'settingsForm') {
+    // TODO add http connector view condition as well
+    const { resourceType, resourceId } = editor;
+    const formKey = `${resourceType}-${resourceId}`;
+    // fetch form fields list of fields
+    const formContext = yield select(selectors.formState, formKey);
+
+    const { fieldMap, layout } = finalResult?.data || {};
+    const fields = layout ? getFieldIdsInLayoutOrder(layout) : Object.keys(fieldMap || {});
+    const displayAfterFieldIds = fields.filter(fieldId => !!fieldMap[fieldId].displayAfter);
+    const invalidFieldId = displayAfterFieldIds.find(fieldId => {
+      const {displayAfter} = fieldMap[fieldId];
+      const index = displayAfter?.indexOf('.');
+      const displayAfterRef = displayAfter?.substr(index + 1);
+
+      if (!isValidDisplayAfterRef(displayAfterRef, formContext.fieldMeta)) {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (invalidFieldId) {
+      const invalidFieldPath = fieldMap[invalidFieldId].displayAfter;
+      const errorMessage = `The field path set in displayAfter does not exist: ${invalidFieldPath}`;
+
+      return yield put(actions.editor.previewFailed(id, { errorMessage }));
+    }
   }
 
   return yield put(actions.editor.previewResponse(id, finalResult));
