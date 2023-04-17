@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SearchInput({ ...rest }) {
+export default function SearchInput({placeholder, ...rest }) {
   const classes = useStyles();
 
   return (
@@ -61,7 +61,7 @@ export default function SearchInput({ ...rest }) {
         </div>
         <InputBase
           {...rest}
-          placeholder="Search…"
+          placeholder={placeholder || 'Search…'}
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,
