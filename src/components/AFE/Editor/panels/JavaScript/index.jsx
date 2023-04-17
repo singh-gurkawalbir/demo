@@ -67,7 +67,14 @@ export default function JavaScriptPanel({ editorId }) {
 
   const { errorLine, error, errSourceProcessor } =
     useSelector(state => selectors.editorPreviewError(state, editorId), shallowEqual);
-  const hasError = !!error && errSourceProcessor !== 'transform';
+
+  let hasError = false;
+
+  if (errSourceProcessor) {
+    hasError = !!error && errSourceProcessor === 'javascript';
+  } else {
+    hasError = !!error;
+  }
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const {flowId} = useSelector(state => selectors.editor(state, editorId));
   const isIntegrationApp = !!useSelector(state => selectors.resource(state, 'flows', flowId)?._connectorId);
