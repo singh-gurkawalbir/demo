@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function FlowStartDateDialog(props) {
+export default function PreviewDateDialog(props) {
   const classes = useStyles(props);
   const [defaultDate] = useState(new Date());
   const { flowId, onClose, disabled, onRun, showWarning, dateSelected } = props;

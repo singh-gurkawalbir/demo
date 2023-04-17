@@ -114,7 +114,8 @@ export const getPreviewDataPageSizeLength = (previewData, resourceType) => {
   return pageSize;
 };
 
-export const getPreviewDataPageSizeInfo = (previewData, resourceType) => `1 Page, ${getPreviewDataPageSizeLength(previewData, resourceType)} Records`;
+export const getPreviewDataPageSizeInfo = (previewData, resourceType) =>
+  `1 Page, ${getPreviewDataPageSizeLength(previewData, resourceType)} ${getPreviewDataPageSizeLength(previewData, resourceType) === 1 ? 'Record' : 'Records'}`;
 
 export const previewFileData = (previewData, recordSize) => {
   if (!previewData || !Array.isArray(previewData) || !recordSize || Number.isNaN(recordSize)) {

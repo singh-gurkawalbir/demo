@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect, useReducer } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
@@ -14,9 +14,10 @@ import {OutlinedButton} from '../../Buttons';
 import { capitalizeFirstLetter } from '../../../utils/string';
 import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 import { sampleDataStage } from '../../../utils/flowData';
-import FlowStartDateDialog from '../RunPreviewDateSelector';
+import FlowStartDateDialog from '../PreviewDateDialog';
 import actions from '../../../actions';
 import { convertUtcToTimezone } from '../../../utils/date';
+import reducer from './stateReducer';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -97,13 +98,16 @@ export default function PreviewInfo(props) {
   const classes = useStyles(props);
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
-
-  const [defaultDate] = useState(new Date());
-  const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(false);
-  const [clickOnPreview, setClickOnPreview] = useState(false);
-  const [showWarning, setShowWarning] = useState(!!flowId);
-  const [isValidRecordSize, setIsValidRecordSize] = useState(true);
-  const [dateSelected, setDateSelected] = useState();
+  const [previewState, dispatchLocalAction] = useReducer(reducer,
+    {
+      defaultDate: new Date(),
+      showDeltaStartDateDialog: false,
+      clickOnPreview: false,
+      showWarning: !!flowId,
+      isValidRecordSize: true,
+      dateSelected: '',
+    });
+  const {defaultDate, showDeltaStartDateDialog, clickOnPreview, showWarning, isValidRecordSize, dateSelected } = previewState;
 
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const timeZone = useSelector(state => selectors.userTimezone(state));
@@ -160,9 +164,9 @@ export default function PreviewInfo(props) {
         : previewStageDataList.parse;
 
       if (isDeltaSupported && getPreviewDataPageSizeLength(records, resourceType) === 0) {
-        setShowDeltaStartDateDialog(true);
+        dispatchLocalAction({ payload: { showDeltaStartDateDialog: true, showWarning: true }});
       } else {
-        setClickOnPreview(false);
+        dispatchLocalAction({ payload: { clickOnPreview: false }});
       }
     }
   }, [clickOnPreview, flowId, isDeltaSupported, previewStageDataList, resourceSampleData.status, resourceType]);
@@ -233,12 +237,9 @@ export default function PreviewInfo(props) {
           message: 'Enter a valid record size',
           variant: 'error',
         });
-      } else if (!flowId && isDeltaSupported) { // stand alone delta exports
-        setShowDeltaStartDateDialog(true);
-        setClickOnPreview(true);
       } else if (isDeltaSupported) { // flow builder delta exports
-        setClickOnPreview(true);
-        fetchExportPreviewData(lastExportDateTime);
+        dispatchLocalAction({ payload: { clickOnPreview: true }});
+        flowId ? fetchExportPreviewData(lastExportDateTime) : dispatchLocalAction({ payload: { showDeltaStartDateDialog: true }});
       } else {
         fetchExportPreviewData();
       }
@@ -246,20 +247,22 @@ export default function PreviewInfo(props) {
     [isValidRecordSize, flowId, isDeltaSupported, enquesnackbar, fetchExportPreviewData, lastExportDateTime],
   );
   const handleCloseDeltaDialog = useCallback((userAction = true) => {
-    setShowDeltaStartDateDialog(false);
-    userAction && setShowWarning(flowId ? !!flowId : false);
+    dispatchLocalAction({ payload: { showDeltaStartDateDialog: false }});
+    userAction && dispatchLocalAction({ payload: { showWarning: flowId ? !!flowId : false, dateSelected: ''}});
   }, [flowId]);
 
-  const handleRunFlow = useCallback(
+  const handleRunPreview = useCallback(
     customStartDate => {
       const lastExportDate = customStartDate || lastExportDateTime;
 
       fetchExportPreviewData(lastExportDate);
-      setDateSelected(lastExportDate);
-      setShowWarning(true);
+      dispatchLocalAction({payload: {dateSelected: lastExportDate}});
     },
     [fetchExportPreviewData, lastExportDateTime]
   );
+  const setIsValidRecordSize = useCallback(isValid => {
+    dispatchLocalAction({payload: { isValidRecordSize: isValid }});
+  }, []);
   const disablePreview = isPreviewDisabled || (showPreviewData && resourceSampleData.status === 'requested');
 
   return (
@@ -270,7 +273,7 @@ export default function PreviewInfo(props) {
             <FlowStartDateDialog
               flowId={flowId}
               onClose={handleCloseDeltaDialog}
-              onRun={handleRunFlow}
+              onRun={handleRunPreview}
               showWarning={showWarning}
               dateSelected={dateSelected}
             />

@@ -2277,13 +2277,13 @@ selectors.makeResourceDataSelector = () => {
 };
 
 selectors.createFormValuesPatchSet = (state, formKey, resourceType, resourceId) => {
-  const { value: values } = selectors.formState(state, formKey) || emptyObject;
+  const { value: formValues } = selectors.formState(state, formKey) || emptyObject;
   const { merged: resource } = selectors.resourceData(state, resourceType, resourceId) || emptyObject;
 
-  if (!resource || !values) return { patchSet: [], finalValues: null }; // nothing to do.
+  if (!resource || !formValues) return { patchSet: [], finalValues: null }; // nothing to do.
 
   const formState = selectors.resourceFormState(state, resourceType, resourceId);
-  let finalValues = values;
+  let finalValues = formValues;
   let connection;
   let assistantData;
 
@@ -2319,7 +2319,7 @@ selectors.createFormValuesPatchSet = (state, formKey, resourceType, resourceId) 
     }
 
     // stock preSave handler present...
-    finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
+    finalValues = preSave(formValues, resource, {iClients, connection, httpConnector: httpConnectorData});
   }
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),

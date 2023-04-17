@@ -20,8 +20,7 @@ export default {
                   dateTimezones.map(date => ({
                     label: date.value,
                     value: date.name,
-                  }))) ||
-                [],
+                  }))),
             },
           ],
         },
