@@ -218,7 +218,7 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const connectionField = fields.find(field => field.id === 'connection');
-    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    const adaptorTypeSuffix = fieldId === 'importId' || fieldId === 'checkExistingImport' ? 'Import' : 'Export';
     const applications = applicationsList();
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
