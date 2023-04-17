@@ -11,7 +11,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
   const { entryFunction, scriptId} = useSelector(state => selectors.editorRule(state, editorId)) || {};
   const handleSave = useCallback(() => {
     if (activeProcessor === 'javascript') {
-      if (entryFunction === '' || scriptId === '') { return; }
+      if (!entryFunction || entryFunction === '' || !scriptId || scriptId === '') { return; }
     }
     dispatch(actions.editor.saveRequest(editorId));
   }, [activeProcessor, dispatch, editorId, entryFunction, scriptId]);
