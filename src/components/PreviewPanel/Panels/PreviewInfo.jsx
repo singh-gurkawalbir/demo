@@ -18,6 +18,7 @@ import FlowStartDateDialog from '../PreviewDateDialog';
 import actions from '../../../actions';
 import { convertUtcToTimezone } from '../../../utils/date';
 import reducer from './stateReducer';
+import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -100,14 +101,13 @@ export default function PreviewInfo(props) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const [previewState, dispatchLocalAction] = useReducer(reducer,
     {
-      defaultDate: new Date(),
+      defaultDate: new Date(new Date().setDate(new Date().getDate() - 1)),
       showDeltaStartDateDialog: false,
       clickOnPreview: false,
-      showWarning: !!flowId,
       isValidRecordSize: true,
       dateSelected: '',
     });
-  const {defaultDate, showDeltaStartDateDialog, clickOnPreview, showWarning, isValidRecordSize, dateSelected } = previewState;
+  const { defaultDate, showDeltaStartDateDialog, clickOnPreview, isValidRecordSize, dateSelected } = previewState;
 
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const timeZone = useSelector(state => selectors.userTimezone(state));
@@ -152,7 +152,7 @@ export default function PreviewInfo(props) {
                               isEmpty(resourceDefaultMockData);
 
   useEffect(() => {
-    if (flowId) {
+    if (flowId && !isNewId(flowId)) {
       dispatch(actions.flow.requestLastExportDateTime({ flowId }));
     }
   }, [dispatch, flowId]);
@@ -164,7 +164,7 @@ export default function PreviewInfo(props) {
         : previewStageDataList.parse;
 
       if (isDeltaSupported && getPreviewDataPageSizeLength(records, resourceType) === 0) {
-        dispatchLocalAction({ payload: { showDeltaStartDateDialog: true, showWarning: true }});
+        dispatchLocalAction({ payload: { showDeltaStartDateDialog: true }});
       } else {
         dispatchLocalAction({ payload: { clickOnPreview: false }});
       }
@@ -239,17 +239,18 @@ export default function PreviewInfo(props) {
         });
       } else if (isDeltaSupported) { // flow builder delta exports
         dispatchLocalAction({ payload: { clickOnPreview: true }});
-        flowId ? fetchExportPreviewData(lastExportDateTime) : dispatchLocalAction({ payload: { showDeltaStartDateDialog: true }});
+        fetchExportPreviewData(lastExportDateTime);
       } else {
         fetchExportPreviewData();
       }
     },
-    [isValidRecordSize, flowId, isDeltaSupported, enquesnackbar, fetchExportPreviewData, lastExportDateTime],
+    [isValidRecordSize, isDeltaSupported, enquesnackbar, fetchExportPreviewData, lastExportDateTime],
   );
+
   const handleCloseDeltaDialog = useCallback((userAction = true) => {
     dispatchLocalAction({ payload: { showDeltaStartDateDialog: false }});
-    userAction && dispatchLocalAction({ payload: { showWarning: flowId ? !!flowId : false, dateSelected: ''}});
-  }, [flowId]);
+    userAction && dispatchLocalAction({ payload: { dateSelected: lastExportDateTime}});
+  }, [lastExportDateTime]);
 
   const handleRunPreview = useCallback(
     customStartDate => {
@@ -274,7 +275,6 @@ export default function PreviewInfo(props) {
               flowId={flowId}
               onClose={handleCloseDeltaDialog}
               onRun={handleRunPreview}
-              showWarning={showWarning}
               dateSelected={dateSelected}
             />
           )

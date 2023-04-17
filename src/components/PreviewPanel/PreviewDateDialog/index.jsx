@@ -1,4 +1,6 @@
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useCallback,
+  useMemo, useState,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,13 +10,13 @@ import ModalDialog from '../../ModalDialog';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
-import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import adjustTimezone from '../../../utils/adjustTimezone';
 import { convertUtcToTimezone } from '../../../utils/date';
 import ActionGroup from '../../ActionGroup';
 import { TextButton } from '../../Buttons';
 import NotificationToaster from '../../NotificationToaster';
+import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(() => ({
   small: {
@@ -24,15 +26,11 @@ const useStyles = makeStyles(() => ({
 
 export default function PreviewDateDialog(props) {
   const classes = useStyles(props);
-  const [defaultDate] = useState(new Date());
-  const { flowId, onClose, disabled, onRun, showWarning, dateSelected } = props;
+  const [defaultDate] = useState(new Date(new Date().setDate(new Date().getDate() - 1)));
+  const { flowId, onClose, disabled, onRun, dateSelected } = props;
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const timeZone = useSelector(state => selectors.userTimezone(state));
-  const selectorStatus = useSelector(state =>
-    selectors.getLastExportDateTime(state, flowId)
-  ).status;
-
   const origLastExportDateTime = useSelector(state =>
     selectors.getLastExportDateTime(state, flowId)
   ).data;
@@ -43,7 +41,7 @@ export default function PreviewDateDialog(props) {
   );
 
   const fetchLastExportDateTime = useCallback(() => {
-    if (flowId) {
+    if (flowId && !isNewId(flowId)) {
       dispatch(actions.flow.requestLastExportDateTime({ flowId }));
     }
   }, [dispatch, flowId]);
@@ -74,19 +72,10 @@ export default function PreviewDateDialog(props) {
     fieldMeta,
   });
 
-  if (!selectorStatus && flowId) {
-    return <Spinner />;
-  }
-
-  if (selectorStatus === 'error') {
-    onClose();
-  }
-
   return (
     <ModalDialog show onClose={onClose}>
       <div>Delta preview</div>
       <div>
-        {showWarning && (
         <NotificationToaster
           variant="warning"
           className={classes.small}
@@ -97,7 +86,6 @@ export default function PreviewDateDialog(props) {
             No records available to preview. Select an earlier start date/time and try again
           </Typography>
         </NotificationToaster>
-        )}
         <DynaForm formKey={formKey} />
         <ActionGroup>
           <DynaSubmit
