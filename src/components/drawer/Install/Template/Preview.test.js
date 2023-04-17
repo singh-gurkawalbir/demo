@@ -124,7 +124,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
   test('Should able to test the TemplatePreview With template with user from Celigo', async () => {
@@ -142,7 +142,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
 
