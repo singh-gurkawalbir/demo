@@ -152,7 +152,7 @@ export default function DynaCheckboxExisting(props) {
       filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
     }
 
-    const filteredResourceIds333 = filteredResources.map(conn => {
+    return filteredResources.map(conn => {
       const result = {
         label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
         value: conn._id,
@@ -174,7 +174,6 @@ export default function DynaCheckboxExisting(props) {
 
     // console.log(filteredResourceIds333,'filteredResourceIds333')
 
-    return filteredResourceIds333;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
 
