@@ -6,10 +6,10 @@ import React, {
   useMemo,
 } from 'react';
 import { useDrag } from 'react-dnd';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import ArrowPopper from '../../../components/ArrowPopper';
 import { selectors } from '../../../reducers';
