@@ -5,6 +5,82 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { getFieldIdsInLayoutOrder } from '../../utils/form';
+import customCloneDeep from '../../utils/customCloneDeep';
+
+export function removeFieldFromLayout(layout, fieldId) {
+  if (!layout) return;
+  if (layout.fields?.length) {
+    if (layout.fields.includes(fieldId)) {
+      const fieldIndex = layout.fields.indexOf(fieldId);
+
+      layout.fields.splice(fieldIndex, 1);
+    }
+  }
+  if (layout.containers?.length) {
+    layout.containers.forEach(container => removeFieldFromLayout(container, fieldId));
+  }
+}
+
+export function layoutHasField(layout, fieldId) {
+  if (!layout) return false;
+  if (layout.containers?.length) {
+    return layout.containers.some(container => layoutHasField(container, fieldId));
+  }
+  if (layout.fields?.length) {
+    return layout.fields.includes(fieldId);
+  }
+}
+
+function isValidDisplayAfterRef(refId, refMetadata) {
+  const { layout, fieldMap } = refMetadata;
+
+  if (!layout) {
+    return !!fieldMap[refId];
+  }
+
+  return layoutHasField(layout, refId);
+}
+
+export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
+  // this is for http connector
+  // fetch formkey
+  const formKey = `${resourceType}-${resourceId}`;
+  // fetch form fields list of fields
+  const formContext = yield select(selectors.formState, formKey);
+
+  // if the metadata has displayAfter and ref is valid , remove from cs fields
+
+  const { fieldMap, layout } = metadata || {};
+  const fieldsList = layout ? getFieldIdsInLayoutOrder(layout) : Object.keys(fieldMap);
+
+  const validDisplayAfterFieldIds = fieldsList.filter(fieldId => {
+    // cs fieldId
+    // fetch displayAfter
+    const field = fieldMap[fieldId];
+
+    if (!field.displayAfter) return false;
+
+    const index = field.displayAfter?.indexOf('.');
+    const displayAfterRef = field.displayAfter?.substr(index + 1);
+
+    return isValidDisplayAfterRef(displayAfterRef, formContext.fieldMeta);
+  });
+
+  const updatedFieldMetadata = customCloneDeep(metadata);
+
+  validDisplayAfterFieldIds.forEach(fieldId => {
+    // remove field from form metadata
+
+    if (!updatedFieldMetadata.layout) {
+      delete updatedFieldMetadata.fieldMap[fieldId];
+    } else {
+      removeFieldFromLayout(updatedFieldMetadata.layout, fieldId);
+    }
+  });
+
+  return updatedFieldMetadata;
+}
 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
   const resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
@@ -49,7 +125,7 @@ export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
 
   // inject the current setting values (found in resource.settings)
   // into the respective field’s defaultValue prop.
-  let newFieldMeta = metadata;
+  let newFieldMeta = yield call(getCustomSettingsMetadata, { metadata, resourceId, resourceType });
 
   if (resource.settings && metadata && typeof metadata.fieldMap === 'object') {
     newFieldMeta = produce(metadata, draft => {
