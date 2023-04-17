@@ -21,7 +21,9 @@ import {
   getCombinedExtract,
   buildExtractsHelperFromExtract,
   getSelectedExtractDataTypes,
-  isMapper2HandlebarExpression} from '../../../utils/mapping';
+  isMapper2HandlebarExpression,
+  findNodeInTreeWithParents,
+  findNodeWithGivenParentsList} from '../../../utils/mapping';
 import { generateId } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -288,6 +290,7 @@ export default (state = {}, action) => {
     propValue,
     isSettingsPatch,
     selectedExtractJsonPath,
+    destinationTree,
   } = action;
 
   return produce(state, draft => {
@@ -327,6 +330,7 @@ export default (state = {}, action) => {
           mappingsCopy: customCloneDeep(mappings),
           lookupsCopy: customCloneDeep(lookups),
           v2TreeDataCopy: customCloneDeep(v2TreeData),
+          destinationTree: customCloneDeep(destinationTree),
         };
         break;
       }
@@ -1130,6 +1134,30 @@ export default (state = {}, action) => {
         delete draft.mapping.newRowKey;
         break;
       }
+
+      case actionTypes.MAPPING.V2.FINAL_DESTINATION_TREE: {
+        if (!draft.mapping.destinationTree) break;
+        const treeData = draft.mapping.isGroupedOutput ? draft.mapping.v2TreeData[0].children : draft.mapping.v2TreeData;
+
+        const {node = {}, parentsList = []} = findNodeInTreeWithParents(treeData, 'key', v2Key);
+        let treeToBeRendered = [];
+
+        if (node) {
+          if (!parentsList.length) treeToBeRendered = [];
+
+          if (parentsList.length === 1) treeToBeRendered = draft.mapping.destinationTree;
+
+          if (parentsList.length > 1) {
+            const {node: destinationNode} = findNodeWithGivenParentsList(draft.mapping.destinationTree, parentsList.slice(0, -1));
+
+            treeToBeRendered = destinationNode;
+          }
+        }
+
+        draft.mapping.finalDestinationTree = customCloneDeep(treeToBeRendered);
+
+        break;
+      }
       default:
     }
   });
@@ -1159,6 +1187,14 @@ selectors.v2MappingsExtractsTree = state => {
   }
 
   return state.mapping.extractsTree || emptyArr;
+};
+
+selectors.v2MappingsDestinationTree = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.destinationTree || emptyArr;
 };
 
 selectors.searchKey = state => {
