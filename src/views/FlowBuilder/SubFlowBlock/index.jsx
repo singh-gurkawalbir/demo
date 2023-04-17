@@ -8,18 +8,16 @@ import React, {
 import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import makeStyles from '@mui/styles/makeStyles';
-import { Typography, IconButton } from '@mui/material';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-import ResourceButton from '../ResourceButton';
-import BubbleSvg from '../BubbleSvg';
-import CloseIcon from '../../../components/icons/CloseIcon';
+import IconViewResourceButton from '../IconViewResourceButton';
+import SubFlowBubbleSvg from '../SubFlowBubbleSvg';
 import GripperIcon from '../../../components/icons/GripperIcon';
-import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
 import {getHttpConnector} from '../../../constants/applications';
@@ -31,15 +29,19 @@ import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
+import SubFlowErrorStatus from '../SubFlowErrorStatus';
 
-const blockHeight = 170;
-const blockWidth = 275;
+// TODO : Flowbuiler duplicate code
+// Can be combined with exisitng Appblock
+
+const blockWidth = 137;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: blockWidth,
+    // height: 86,
   },
   draggable: {
     '&:hover': {
@@ -51,19 +53,19 @@ const useStyles = makeStyles(theme => ({
   },
   box: {
     width: blockWidth,
-    height: blockHeight,
+    height: 104,
     position: 'relative',
     zIndex: theme.zIndex.bubble,
   },
   name: {
-    height: 150,
+    height: 65,
     overflow: 'hidden',
     width: '100%',
     justifyContent: 'center',
     display: 'flex',
     textAlign: 'center',
     marginTop: -85,
-    background: theme.palette.background.default,
+    // background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
     zIndex: theme.zIndex.bubbleName,
@@ -82,24 +84,49 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
+  applicationsMenuPopper: {
+    border: 'none',
+  },
+  applicationsMenuPaper: {
+    right: styleProps => styleProps.additionalAppsCount >= styleProps.columns - 1 ? styleProps.pxSize : styleProps.pxSize / 2,
+  },
+  applicationsMenuPaperMax: {
+    right: styleProps => styleProps.pxSize * 1.5,
+  },
+  applicationsMenuPaperPlaceholder: {
+    position: 'relative',
+    maxHeight: styleProps => styleProps.pxSize * 4,
+    overflowY: 'auto',
+  },
   middleActionContainer: {
     position: 'relative',
     alignSelf: 'center',
+    marginBottom: '20px',
+    top: 9,
+    left: -7,
   },
   sideActionContainer: {
     position: 'relative',
   },
   leftActions: {
     position: 'absolute',
+    // backgroundColor: theme.palette.primary.lightest2,
     display: 'flex',
     left: -16,
-    top: 68,
+    top: 28,
+    '& .MuiButtonBase-root': {
+      backgroundColor: theme.palette.background.paper,
+    },
   },
   rightActions: {
     position: 'absolute',
+    // backgroundColor: theme.palette.primary.lightest2,
     display: 'flex',
-    left: 280,
-    top: 68,
+    left: 137,
+    top: 32,
+    '& .MuiButtonBase-root': {
+      backgroundColor: theme.palette.background.paper,
+    },
   },
   isNotOverActions: {
     width: 0,
@@ -115,9 +142,26 @@ const useStyles = makeStyles(theme => ({
   actionIsNew: {
     color: theme.palette.primary.main,
   },
+  actionUsed: {
+    color: theme.palette.primary.main,
+    '&:before': {
+      content: '""',
+      height: theme.spacing(1),
+      width: theme.spacing(1),
+      borderRadius: '50%',
+      backgroundColor: theme.palette.primary.main,
+      position: 'absolute',
+      top: theme.spacing(0.6),
+      right: theme.spacing(0.2),
+      display: 'block',
+      zIndex: 1,
+    },
+  },
   bubbleContainer: {
     position: 'relative',
     display: 'flex',
+    backgroundColor: theme.palette.primary.main,
+
   },
   bubble: {
     position: 'absolute',
@@ -125,20 +169,23 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent',
   },
   bubbleBG: {
-    fill: 'white',
+    fill: theme.palette.primary.main,
+
+    // fill: 'white',
   },
   bubbleActive: {
     fill: theme.palette.primary.main,
   },
   appLogoContainer: {
-    marginTop: theme.spacing(2),
+    marginTop: '12px',
     textAlign: 'center',
-    height: 41,
+    height: '16px',
   },
   appLogo: {
     position: 'relative',
     alignSelf: 'center',
-    maxWidth: 101,
+    maxWidth: 55,
+    marginRight: '30px',
     maxHeight: theme.spacing(4),
     pointerEvents: 'none',
   },
@@ -178,7 +225,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AppBlock({
+export default function SubFlowBlock({
   className,
   onDelete,
   onErrors,
@@ -208,9 +255,9 @@ export default function AppBlock({
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
+  const isNew = blockType.startsWith('new');
   const [activeAction, setActiveAction] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
 
@@ -238,9 +285,7 @@ export default function AppBlock({
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
-    if (!connectorType ||
-      !(connectorType.toUpperCase().startsWith('RDBMS') || connectorType.toUpperCase().startsWith('JDBC'))
-    ) {
+    if (!connectorType || !connectorType.toUpperCase().startsWith('RDBMS')) {
       if (connectorType && connectorType.toUpperCase().startsWith('HTTP') && resource?.http?.formType === 'rest') {
         return connectorType.replace(/HTTP/, 'REST');
       }
@@ -256,19 +301,11 @@ export default function AppBlock({
      */
 
     if (resource._connectionId) {
-      if (connectorType.toUpperCase().startsWith('JDBC')) {
-        return selectors.jdbcConnectionType(state, resource._connectionId);
-      }
-
       return selectors.rdbmsConnectionType(state, resource._connectionId);
     }
 
     if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
       return resource.rdbms.type;
-    }
-
-    if (resource.type && resource.type === 'jdbc' && resource.jdbc) {
-      return resource.jdbc.type;
     }
   });
 
@@ -309,7 +346,6 @@ export default function AppBlock({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelete = useCallback(id => () => onDelete(id), [onDelete]);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
   const handleMouseOver = useCallback(
     isOver => () => {
@@ -380,7 +416,6 @@ export default function AppBlock({
     // This disables the default preview image, so that we can render our own custom drag layer.
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
-
   function renderActions(flowActions, hide) {
     if (!flowActions || !flowActions.length || hide) return null;
 
@@ -431,19 +466,17 @@ export default function AppBlock({
         onFocus={handleMouseOver(true)}
         onMouseLeave={handleMouseOver(false)}
         onBlur={handleMouseOver(false)}
+        {...rest}
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
         className={classes.box}
       >
         <div className={classes.bubbleContainer}>
-          {onDelete && !isViewMode && !resource._connectorId && (
-            <IconButton
-              size="small"
-              className={classes.deleteButton}
-              onClick={handleDelete(id)}
-              data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <CloseIcon />
-            </IconButton>
-          )}
+          <SubFlowErrorStatus
+            errorCount={2}
+            subBlockSchema
+            isNew={isNew}
+            flowId={flowId}
+            resourceId={resource?._id} />
           {isDraggable && (
             <IconButton
               size="small"
@@ -460,9 +493,7 @@ export default function AppBlock({
               id={id}
               path={rest.path} />
           </div>
-          <BubbleSvg
-            height={blockHeight}
-            width={blockWidth}
+          <SubFlowBubbleSvg
             classes={{ bubble: clsx(classes.bubble, {[classes.bubbleActive]: isActive}),
               bubbleBG: classes.bubbleBG,
             }}
@@ -497,7 +528,7 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          <IconViewResourceButton onClick={onBlockClick} variant={blockType} isSubFlow disabled={isFlowSaveInProgress} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
@@ -510,11 +541,6 @@ export default function AppBlock({
             ) : null}
           </div>
         </div>
-        <ErrorStatus
-          count={openErrorCount}
-          isNew={isNew}
-          flowId={flowId}
-          resourceId={resource?._id} />
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
@@ -524,3 +550,4 @@ export default function AppBlock({
     </div>
   );
 }
+

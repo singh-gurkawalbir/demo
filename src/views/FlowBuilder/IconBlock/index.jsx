@@ -6,24 +6,21 @@ import React, {
   useMemo,
 } from 'react';
 import { useDrag } from 'react-dnd';
+import { IconButton } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import makeStyles from '@mui/styles/makeStyles';
-import { Typography, IconButton } from '@mui/material';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import ArrowPopper from '../../../components/ArrowPopper';
 import { selectors } from '../../../reducers';
-import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
-import ResourceButton from '../ResourceButton';
-import BubbleSvg from '../BubbleSvg';
+import IconViewResourceButton from '../IconViewResourceButton';
+import EmptyResourceButton from '../EmptyResourceButton';
 import CloseIcon from '../../../components/icons/CloseIcon';
-import GripperIcon from '../../../components/icons/GripperIcon';
-import ErrorStatus from '../ErrorStatus';
-import CeligoTruncate from '../../../components/CeligoTruncate';
+import BranchIcon from '../../../components/icons/BranchIcon';
 import actions from '../../../actions';
 import {getHttpConnector} from '../../../constants/applications';
-import PPDropbox from '../FlowBuilderBody/CustomEdges/PPDropbox';
 import itemTypes from '../itemTypes';
 import { useSelectorMemo } from '../../../hooks';
 import { useIsDragInProgress } from '../hooks';
@@ -31,9 +28,10 @@ import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
 import { message } from '../../../utils/messageStore';
+import { useFlowContext } from '../FlowBuilderBody/Context';
+import PPDropbox from '../FlowBuilderBody/CustomEdges/PPDropbox';
 
-const blockHeight = 170;
-const blockWidth = 275;
+const blockWidth = 50;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -50,56 +48,15 @@ const useStyles = makeStyles(theme => ({
     },
   },
   box: {
-    width: blockWidth,
-    height: blockHeight,
     position: 'relative',
     zIndex: theme.zIndex.bubble,
-  },
-  name: {
-    height: 150,
-    overflow: 'hidden',
-    width: '100%',
-    justifyContent: 'center',
+    background: 'transparent',
     display: 'flex',
-    textAlign: 'center',
-    marginTop: -85,
-    background: theme.palette.background.default,
-    borderRadius: [[0, 0, 20, 20]],
-    position: 'relative',
-    zIndex: theme.zIndex.bubbleName,
-    padding: theme.spacing(2),
-
-  },
-  containerName: {
-    fontSize: 15,
-    lineHeight: '19px',
-    wordBreak: 'break-word',
-    paddingTop: 84,
-    width: '100%',
-    color: theme.palette.secondary.main,
+    alignItems: 'flex-end',
   },
   buttonContainer: {
     display: 'flex',
     justifyContent: 'center',
-  },
-  middleActionContainer: {
-    position: 'relative',
-    alignSelf: 'center',
-  },
-  sideActionContainer: {
-    position: 'relative',
-  },
-  leftActions: {
-    position: 'absolute',
-    display: 'flex',
-    left: -16,
-    top: 68,
-  },
-  rightActions: {
-    position: 'absolute',
-    display: 'flex',
-    left: 280,
-    top: 68,
   },
   isNotOverActions: {
     width: 0,
@@ -107,6 +64,7 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     opacity: 0,
+    color: theme.palette.primary.main,
     '& svg': {
       width: 0,
       height: 0,
@@ -115,37 +73,41 @@ const useStyles = makeStyles(theme => ({
   actionIsNew: {
     color: theme.palette.primary.main,
   },
-  bubbleContainer: {
-    position: 'relative',
-    display: 'flex',
+  invert: {
+    transform: 'scaleX(-1)',
+    color: theme.palette.primary.main,
   },
-  bubble: {
-    position: 'absolute',
-    fill: theme.palette.secondary.lightest,
-    background: 'transparent',
-  },
-  bubbleBG: {
-    fill: 'white',
-  },
-  bubbleActive: {
-    fill: theme.palette.primary.main,
+  actionUsed: {
+    color: theme.palette.primary.main,
+    '&:before': {
+      content: '""',
+      height: theme.spacing(1),
+      width: theme.spacing(1),
+      borderRadius: '50%',
+      backgroundColor: theme.palette.primary.main,
+      position: 'absolute',
+      top: theme.spacing(0.6),
+      right: theme.spacing(0.2),
+      display: 'block',
+      zIndex: 1,
+    },
   },
   appLogoContainer: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     textAlign: 'center',
-    height: 41,
+    fill: 'blue',
   },
   appLogo: {
     position: 'relative',
     alignSelf: 'center',
-    maxWidth: 101,
+    maxWidth: theme.spacing(7),
     maxHeight: theme.spacing(4),
     pointerEvents: 'none',
   },
   deleteButton: {
     position: 'absolute',
     right: -theme.spacing(0.5),
-    top: -theme.spacing(0.5),
+    top: -theme.spacing(3),
     zIndex: 1,
     transition: theme.transitions.create('color'),
     color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
@@ -176,9 +138,26 @@ const useStyles = makeStyles(theme => ({
   pgContainerName: {
     background: theme.palette.background.paper,
   },
+  applicationsMenuPaperPlaceholder: {
+    position: 'relative',
+    maxHeight: styleProps => styleProps.pxSize * 4,
+    overflowY: 'auto',
+    '& .MuiButtonBase-root': {
+      border: 'none',
+    },
+  },
+  resourceIconButtons: {
+    color: theme.palette.primary.main,
+    '& .MuiButton-startIcon': {
+      margin: 0,
+    },
+  },
+  downStreamIconButton: {
+    color: theme.palette.primary.main,
+  },
 }));
 
-export default function AppBlock({
+export default function IconBlock({
   className,
   onDelete,
   onErrors,
@@ -208,16 +187,10 @@ export default function AppBlock({
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [activeAction, setActiveAction] = useState(null);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isNew = blockType.startsWith('new');
-  const isActive = useSelector(state => {
-    const activeConn = selectors.activeConnection(state);
-
-    if (!activeConn || !resource) return false;
-
-    return activeConn === resource?._id || activeConn === resource?._connectionId;
-  });
+  const {downstreamHighlighter, upstreamHighlighter} = useFlowContext();
   const flowOriginal =
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
@@ -238,9 +211,7 @@ export default function AppBlock({
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
-    if (!connectorType ||
-      !(connectorType.toUpperCase().startsWith('RDBMS') || connectorType.toUpperCase().startsWith('JDBC'))
-    ) {
+    if (!connectorType || !connectorType.toUpperCase().startsWith('RDBMS')) {
       if (connectorType && connectorType.toUpperCase().startsWith('HTTP') && resource?.http?.formType === 'rest') {
         return connectorType.replace(/HTTP/, 'REST');
       }
@@ -256,19 +227,11 @@ export default function AppBlock({
      */
 
     if (resource._connectionId) {
-      if (connectorType.toUpperCase().startsWith('JDBC')) {
-        return selectors.jdbcConnectionType(state, resource._connectionId);
-      }
-
       return selectors.rdbmsConnectionType(state, resource._connectionId);
     }
 
     if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
       return resource.rdbms.type;
-    }
-
-    if (resource.type && resource.type === 'jdbc' && resource.jdbc) {
-      return resource.jdbc.type;
     }
   });
 
@@ -311,6 +274,19 @@ export default function AppBlock({
 
   const handleDelete = useCallback(id => () => onDelete(id), [onDelete]);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
+
+  const handleClick = useCallback(
+    event => {
+      handleExpandClick();
+      setAnchorEl(!anchorEl ? event.currentTarget : null);
+    },
+    [anchorEl, handleExpandClick]
+  );
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const open = !!anchorEl;
   const handleMouseOver = useCallback(
     isOver => () => {
       if (!activeAction) {
@@ -320,10 +296,16 @@ export default function AppBlock({
     [activeAction]
   );
   const handleActionClose = useCallback(() => {
+    handleClose();
     setActiveAction(null);
     setExpanded();
+  }, [handleClose]);
+  const handleMouseHover = useCallback(val => () => {
+    if (!val) {
+      setAnchorEl(null);
+    }
+    setIsHover(val);
   }, []);
-  const handleMouseHover = useCallback(val => () => setIsHover(val), []);
 
   const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
@@ -393,6 +375,7 @@ export default function AppBlock({
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
+            [classes.actionUsed]: expanded && a.isUsed,
           })}
           onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
@@ -431,26 +414,19 @@ export default function AppBlock({
         onFocus={handleMouseOver(true)}
         onMouseLeave={handleMouseOver(false)}
         onBlur={handleMouseOver(false)}
+        {...rest}
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
         className={classes.box}
       >
-        <div className={classes.bubbleContainer}>
+        <div className={classes.appLogoContainer}>
           {onDelete && !isViewMode && !resource._connectorId && (
-            <IconButton
-              size="small"
-              className={classes.deleteButton}
-              onClick={handleDelete(id)}
-              data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <CloseIcon />
-            </IconButton>
-          )}
-          {isDraggable && (
-            <IconButton
-              size="small"
-              className={clsx(classes.grabButton)}
-              data-test={`move-${isPageGenerator ? 'pg' : 'pp'}`}>
-              <GripperIcon />
-            </IconButton>
+          <IconButton
+            size="small"
+            className={classes.deleteButton}
+            onClick={handleDelete(id)}
+            data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
+            <CloseIcon />
+          </IconButton>
           )}
           <div className={clsx(classes.dropbox, classes.left)}>
             <PPDropbox
@@ -460,67 +436,55 @@ export default function AppBlock({
               id={id}
               path={rest.path} />
           </div>
-          <BubbleSvg
-            height={blockHeight}
-            width={blockWidth}
-            classes={{ bubble: clsx(classes.bubble, {[classes.bubbleActive]: isActive}),
-              bubbleBG: classes.bubbleBG,
-            }}
-          />
-          <div className={clsx(classes.dropbox, classes.right)}>
-            <PPDropbox
-              show={rest.showRight}
-              position="right"
-              targetIndex={rest.pageProcessorIndex}
-              id={id}
-              path={rest.path}
-              />
-          </div>
-        </div>
-        <div className={classes.sideActionContainer}>
-          <div className={classes.leftActions}>
-            {renderActions(leftActions, isDragInProgress)}
-          </div>
-        </div>
-        <div className={classes.sideActionContainer}>
-          <div className={classes.rightActions}>
-            {renderActions(rightActions, isDragInProgress)}
-          </div>
-        </div>
-        <div className={classes.appLogoContainer}>
           {iconType && (
             <ApplicationImg
               className={classes.appLogo}
               type={iconType}
-              assistant={connAssistant || assistant}
-            />
+              markOnly={!(['http', 'ftp'].includes(iconType))}
+              assistant={connAssistant || assistant} />
           )}
+          {!iconType && (
+            <EmptyResourceButton variant={blockType} onClick={onBlockClick} />
+          )}
+
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
-          <div className={classes.middleActionContainer}>
-            {renderActions(middleActions)}
-            {!expanded && hasActions ? (
+          {iconType && <IconViewResourceButton onClick={!iconType ? onBlockClick : handleClick} variant={blockType} disabled={isFlowSaveInProgress} />}
+          <ArrowPopper
+            placement="bottom"
+            open={open}
+            anchorEl={anchorEl}
+            restrictToParent={false}
+            classes={{paper: classes.applicationsMenuPaperPlaceholder}}
+            id="bubbleActions"
+            onClose={handleClose} >
+            <div>
+              {renderActions(leftActions, isDragInProgress)}
+              {renderActions(rightActions, isDragInProgress)}
+              {renderActions(middleActions)}
+              <IconViewResourceButton
+                title={`Open ${blockType}`} showTooltip onClick={onBlockClick} variant={blockType}
+                disabled={isFlowSaveInProgress}
+                className={classes.resourceIconButtons} />
               <ActionIconButton
-                onClick={handleExpandClick}
-                data-test="addDataProcessor"
-                helpText="Define options">
-                <AddIcon />
+                onClick={() => downstreamHighlighter(id)}
+                data-test="flowBranching"
+                helpText="DownStream expansion"
+                className={classes.downStreamIconButton}>
+                <BranchIcon />
               </ActionIconButton>
-            ) : null}
-          </div>
+              <ActionIconButton
+                onClick={() => upstreamHighlighter(id)}
+                data-test="flowBranching1"
+                helpText="Upstream expansion"
+                className={classes.invert}>
+                <BranchIcon />
+              </ActionIconButton>
+            </div>
+          </ArrowPopper>
         </div>
-        <ErrorStatus
-          count={openErrorCount}
-          isNew={isNew}
-          flowId={flowId}
-          resourceId={resource?._id} />
-      </div>
-      <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
-        <Typography className={classes.containerName}>
-          <CeligoTruncate isLoggable lines={2}>{name}</CeligoTruncate>
-        </Typography>
       </div>
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import React, { useCallback, useMemo} from 'react';
+import { getSmoothStepPath } from 'react-flow-renderer';
+import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDragDropManager } from 'react-dnd';
 import {
@@ -7,7 +8,6 @@ import {
   nodeSize,
   areMultipleEdgesConnectedToSameEdgeTarget,
   snapPointsToHandles,
-  getEdgeStepPath,
 } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
@@ -16,11 +16,15 @@ import ForeignObject from '../ForeignObject';
 import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
-import { emptyObject, GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
+import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 import { isVirtualRouter } from '../../../../../utils/flows/flowbuilder';
 import { useIsDragInProgress } from '../../../hooks';
 import PGDropbox from '../PGDropbox';
 import itemTypes from '../../../itemTypes';
+import SubFlowButton from '../SubFlowButton';
+
+// TODO : Flowbuiler duplicate code
+// Can be combined with exisitng DefaultEdge
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -30,8 +34,14 @@ const useStyles = makeStyles(theme => ({
     fill: 'transparent',
     '&:hover': {
       // temporary rule to help trace overlapping paths.
-      stroke: theme.palette.primary.lightest,
     },
+  },
+  edgeAnimatedLine: {
+    strokeDasharray: 4,
+    strokeWidth: 2,
+    stroke: theme.palette.primary.light, // celigo neutral 3
+    fill: 'transparent',
+    animation: 'dashdraw .8s linear infinite',
   },
 }));
 
@@ -45,8 +55,8 @@ function getPositionAndOffset(
   let offset = 10;
 
   if (
-    targetType === GRAPH_ELEMENTS_TYPE.PP_STEP &&
-    sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP
+    targetType === GRAPH_ELEMENTS_TYPE.ICON_PP &&
+    sourceType !== GRAPH_ELEMENTS_TYPE.ICON_PP
   ) {
     // we want the add button to be positioned close to the pp,
     // not close to the merge/router nodes.
@@ -54,20 +64,32 @@ function getPositionAndOffset(
     offset = 30;
   } else if (
     targetType === GRAPH_ELEMENTS_TYPE.ROUTER &&
-    sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP
+    sourceType === GRAPH_ELEMENTS_TYPE.ICON_PG
   ) {
     position = 'right';
-    offset = 50;
+    offset = 30;
+  } else if (
+    targetType === GRAPH_ELEMENTS_TYPE.ROUTER &&
+    sourceType === GRAPH_ELEMENTS_TYPE.ICON_PP
+  ) {
+    position = 'right';
+    offset = 30;
   } else if (targetType === GRAPH_ELEMENTS_TYPE.TERMINAL &&
-    sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
+    sourceType === GRAPH_ELEMENTS_TYPE.ICON_PP
   ) {
     offset = 40;
   } else if (
-    targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP &&
-    sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
+    targetType !== GRAPH_ELEMENTS_TYPE.ICON_PP &&
+    sourceType === GRAPH_ELEMENTS_TYPE.ICON_PP
   ) {
-    position = 'left';
-    offset = 70;
+    position = 'right';
+    offset = 30;
+  } else if (
+    targetType === GRAPH_ELEMENTS_TYPE.ICON_PP &&
+    sourceType === GRAPH_ELEMENTS_TYPE.ICON_PP
+  ) {
+    position = 'right';
+    offset = 30;
   } else if (targetType === GRAPH_ELEMENTS_TYPE.EMPTY) {
     position = 'right';
     offset = 10;
@@ -78,8 +100,8 @@ function getPositionAndOffset(
     targetType === GRAPH_ELEMENTS_TYPE.TERMINAL &&
     sourceType === GRAPH_ELEMENTS_TYPE.ROUTER
   ) {
-    position = 'right';
-    offset = 105;
+    position = 'left';
+    offset = 45;
   }
 
   if (processorCount > 0) {
@@ -98,23 +120,32 @@ function getPositionAndOffset(
   return { position, offset };
 }
 
-function DefaultEdge({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  sourcePosition,
-  targetPosition,
-  style = emptyObject,
-  data,
-}) {
+function DefaultEdge(props) {
+  const {
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    data,
+  } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const { elements, dragNodeId, flow, flowId } = useFlowContext();
+  const transformedElements = elements.map(ele => {
+    if (ele.type === 'pg') {
+      return {...ele, type: 'iconpg'};
+    } if (ele.type === 'pp') {
+      return {...ele, type: 'iconpp'};
+    }
+
+    return ele;
+  });
   const hasSiblingEdges = useMemo(
-    () => areMultipleEdgesConnectedToSameEdgeTarget(id, elements),
-    [id, elements]
+    () => areMultipleEdgesConnectedToSameEdgeTarget(id, transformedElements),
+    [id, transformedElements]
   );
 
   const isDraggingInProgress = useIsDragInProgress();
@@ -133,18 +164,37 @@ function DefaultEdge({
   const isViewMode = useSelector(state =>
     selectors.isFlowViewMode(state, flow._integrationId, flowId)
   );
+  const hoveredEdges = useSelector(state =>
+    selectors.fbEdgeHovered(state, flowId)
+  );
+  const selectedSubFlowNodeId = useSelector(state =>
+    selectors.fbSelectedSubFlow(state, flowId)?.nodeId
+  );
+  const subFlowCloseBtnPosition = useSelector(state =>
+    selectors.fbSelectedSubFlow(state, flowId)?.buttonPosition
+  );
   const isFlowSaveInProgress = useSelector(state =>
     selectors.isFlowSaveInProgress(state, flowId)
   );
   const isDataLoaderFlow = useSelector(state =>
     selectors.isDataLoaderFlow(state, flowId)
   );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
+
+  const edge = transformedElements.find(ele => ele?.id === id);
+  const selectedSubFlowNode = transformedElements.find(ele => ele?.id === selectedSubFlowNodeId);
+
+  const showSubFlowIconToLeft = edge?.target === selectedSubFlowNodeId && subFlowCloseBtnPosition === 'left' && isSubFlowView;
+  const showSubFlowIconToRight = edge?.source === selectedSubFlowNodeId && subFlowCloseBtnPosition === 'right' && isSubFlowView;
 
   const {
     sourceType,
     targetType,
     points: edgePoints,
     processorCount,
+    highlight,
     mergableTerminals = [],
   } = data;
   const isDragging = !!dragNodeId;
@@ -152,7 +202,8 @@ function DefaultEdge({
   const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
-  const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
+  const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.ICON_PG;
+  const showSubFlowIconForPG = selectedSubFlowNode?.type === GRAPH_ELEMENTS_TYPE.ICON_PG && isSubFlowView && isFirstPGEdge;
 
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon =
@@ -163,7 +214,7 @@ function DefaultEdge({
     !isViewMode &&
     !isFlowSaveInProgress &&
     !isDataLoaderFlow &&
-    (targetIndex <= 1) &&
+    (targetIndex <= 0) &&
     !isSourceEmptyNode;
   const isMergableEdge =
     mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
@@ -171,14 +222,16 @@ function DefaultEdge({
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
+
   Example path with hard corners
   M1250,494 L1350,555 L1588,555 L1825,555 L1928,422
+
   Example path with rounded corners.
   M529,306 L982,306 Q987,306 987,301 L987,92 Q987,87 992,87 L1446,87
   */
   const edgePath = useMemo(() => {
     if (isTargetTerminal && !isSourceRouter) {
-      return getEdgeStepPath({
+      const sp = getSmoothStepPath({
         sourceX,
         sourceY,
         sourcePosition,
@@ -186,6 +239,8 @@ function DefaultEdge({
         targetY,
         targetPosition,
       });
+
+      return sp;
     }
 
     const targetHandle = { x: targetX, y: targetY };
@@ -230,7 +285,7 @@ function DefaultEdge({
         // edges in some use-cases.
         drawLine(p, 'y');
         drawLine(p, 'x');
-      } else if (i === 1 && isLastPGEdge && isDraggingInProgress && showDropBox) {
+      } else if (i === 1 && (isLastPGEdge && !isSubFlowView) && isDraggingInProgress && showDropBox) {
         drawLine(p, 'x');
         drawLine(p, 'y');
         drawLine({x: current.x, y: current.y + 100}, 'y');
@@ -251,8 +306,8 @@ function DefaultEdge({
 
         // For pg edges (i.e. targetIndex > 1), the vertical line of the edge will be drawn upto the previous step,
         // and the horizontal line of the edge will be skipped, so that the line will not overlap the pg-dropbox
-        if (targetIndex > 1) {
-          drawLine({x: p.x, y: p.y + (346 * (targetIndex - 1))}, 'y');
+        if (targetIndex > 0) {
+          drawLine({x: p.x, y: p.y + (122 * (targetIndex - 1))}, 'y');
         } else {
           drawLine(p, 'y');
           drawLine(p, 'x');
@@ -264,7 +319,7 @@ function DefaultEdge({
     });
 
     return path;
-  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge, targetIndex]);
+  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge, isSubFlowView, targetIndex]);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));
@@ -281,9 +336,21 @@ function DefaultEdge({
     processorCount
   );
 
+  // console.log({subFlowCloseBtnPosition, showSubFlowIcon, isFirstPGEdge});
+
   return (
     <>
-      <path id={id} style={style} className={classes.edgePath} d={edgePath} />
+      <path id={id} className={(hoveredEdges && hoveredEdges?.includes(id)) || highlight ? classes.edgeAnimatedLine : classes.edgePath} d={edgePath} />
+      {showSubFlowIconToRight && (
+      <ForeignObject
+        edgePath={edgePath}
+        position="right"
+        offset={12}
+      >
+        <SubFlowButton edgeId={id} />
+      </ForeignObject>
+      )}
+
       {isDragging && isMergableEdge && (
         <ForeignObject
           onMouseOver={handleMouseOver}
@@ -347,6 +414,15 @@ function DefaultEdge({
         >
           <UnlinkButton edgeId={id} />
         </ForeignObject>
+      )}
+      {((showSubFlowIconToLeft && !isFirstPGEdge) || showSubFlowIconForPG) && (
+      <ForeignObject
+        edgePath={edgePath}
+        position={position}
+        offset={55}
+      >
+        <SubFlowButton edgeId={id} />
+      </ForeignObject>
       )}
     </>
   );
