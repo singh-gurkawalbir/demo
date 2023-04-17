@@ -107,6 +107,8 @@ describe('escapeSpecialChars util test cases', () => {
   });
   test('should return correct string with escaped chars if present', () => {
     expect(escapeSpecialChars('false')).toBe('false');
+    expect(escapeSpecialChars(false)).toBe('false');
+    expect(escapeSpecialChars(undefined)).toBe();
     expect(escapeSpecialChars(true)).toBe('true');
     expect(escapeSpecialChars('\n')).toBe('\\n');
     expect(escapeSpecialChars('\r\n')).toBe('\\r\\n');
