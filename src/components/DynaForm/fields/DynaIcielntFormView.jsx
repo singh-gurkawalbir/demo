@@ -113,11 +113,6 @@ export default function DynaIclientFormView(props) {
     );
   }, [accountOwner, dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  // useEffect(() => {
-  //   if (value === 'false') {
-  //     onFieldChangeFn(value);
-  //   }
-  // }, [onFieldChangeFn, value]);
   if (!sourceForm) {
     return null;
   }
