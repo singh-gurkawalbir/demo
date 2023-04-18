@@ -105,7 +105,7 @@ describe('escapeSpecialChars util test cases', () => {
     expect(escapeSpecialChars()).toBeUndefined();
     expect(escapeSpecialChars(null)).toBe('null');
   });
-  test('should return correct string with escaped chars if present', () => {
+  test('should return correct string with escaped chars if  present', () => {
     expect(escapeSpecialChars('false')).toBe('false');
     expect(escapeSpecialChars(false)).toBe('false');
     expect(escapeSpecialChars(undefined)).toBe();
