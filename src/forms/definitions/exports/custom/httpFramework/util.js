@@ -14,7 +14,7 @@ function hiddenFieldsMeta({ values }) {
   }));
 }
 
-function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistantConfig, assistantData }) {
   let resourceDefaultValue = assistantConfig.resource;
   let operationDefaultValue = assistantConfig.operation || assistantConfig.operationUrl;
 
@@ -65,7 +65,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
-    fieldDefinitions[fieldId].helpKey = `${assistant}.export.${fieldId}`;
+
     if (helpTexts[fieldId]) {
       fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
     }

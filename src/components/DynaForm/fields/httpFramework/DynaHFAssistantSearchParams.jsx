@@ -11,6 +11,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
 import { message } from '../../../../utils/messageStore';
 import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
+import { getHelpKey } from '../../../../utils/httpConnector';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -213,7 +214,8 @@ export default function DynaHFAssistantSearchParams(props) {
 
   return (
     <KeyValueComponent
-      {...props}
+      helpKey={getHelpKey(resourceType, id)}
+      {...props} // If helpKey is passed from the props, they will override the above helpKey
       label={label}
       suggestionConfig={suggestionConfig}
       dataTest="queryParameters"

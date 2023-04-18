@@ -9,3 +9,7 @@ export function isValidDisplayAfterRef(refId, refMetadata) {
 
   return layoutHasField(layout, refId);
 }
+
+export function getHelpKey(resourceType, id) {
+  return `${resourceType}.${id}`;
+}

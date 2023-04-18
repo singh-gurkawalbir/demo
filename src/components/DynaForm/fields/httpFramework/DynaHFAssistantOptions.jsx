@@ -8,6 +8,7 @@ import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
+import { getHelpKey } from '../../../../utils/httpConnector';
 
 const emptyObj = {};
 export const useHFSetInitializeFormData = ({
@@ -336,8 +337,8 @@ function DynaAssistantOptions(props) {
 
   return (
     <DynaSelect
-      {...props}
-      helpKey={id}
+      helpKey={getHelpKey(resourceType, id)}
+      {...props} // If helpKey is passed from the props, they will override the above helpKey
       label={label}
       options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}
