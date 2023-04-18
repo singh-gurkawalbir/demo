@@ -24,7 +24,7 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION, emptyObject } from '../../constants';
 import { getLastExportDateTime } from '../flows';
 
 /**
@@ -731,7 +731,11 @@ export function* requestEditorSampleData({
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     // @TODO: Not an ideal way of calling this saga every time. Need to come up with better approach
     if (flowId) {
-      yield call(getLastExportDateTime, { flowId });
+      const { status } = yield select(selectors.getLastExportDateTime, flowId) || emptyObject;
+
+      if (!status) {
+        yield call(getLastExportDateTime, { flowId });
+      }
     }
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {

@@ -110,10 +110,11 @@ export default function PreviewInfo(props) {
       dateSelected: '',
     });
   const { defaultDate, showDeltaStartDateDialog, clickOnPreview, isValidRecordSize, dateSelected } = previewState;
-  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => ({
+  const { preferences, timeZone, origLastExportDateTime, status } = useSelector(state => ({
     origLastExportDateTime: selectors.getLastExportDateTime(state, flowId)?.data,
     timeZone: selectors.userTimezone(state),
     preferences: selectors.userOwnPreferences(state),
+    status: selectors.getLastExportDateTime(state, flowId)?.status,
   }), shallowEqual);
   const isDeltaSupported = useSelector(
     state => {
@@ -158,9 +159,10 @@ export default function PreviewInfo(props) {
                               isEmpty(resourceDefaultMockData);
 
   useEffect(() => {
-    if (flowId && !isNewId(flowId) && isDeltaSupported) {
+    if (flowId && !isNewId(flowId) && isDeltaSupported && !status) {
       dispatch(actions.flow.requestLastExportDateTime({ flowId }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, flowId, isDeltaSupported]);
 
   useEffect(() => {
