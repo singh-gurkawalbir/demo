@@ -58,6 +58,11 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.primary.main,
     },
   },
+  selectWrapper: {
+    '& .MuiBackdrop-root': {
+      backgroundColor: 'transparent',
+    },
+  },
 }));
 
 export const DoneButton = ({onClose}) => {
@@ -126,11 +131,6 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
       vertical: 'bottom',
       horizontal: 'left',
     },
-    MenuListProps: {
-      style: {
-        overflowY: 'auto',
-      },
-    },
   };
 
   return (
@@ -144,6 +144,16 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
       onClose={closeSelect}
       classes={{selectMenu: classes.selectMenu}}
       MenuProps={menuProps}
+      inputProps={{
+        MenuProps: {
+          MenuListProps: {
+            style: {
+              overflowY: 'auto',
+            },
+          },
+          className: classes.selectWrapper,
+        },
+      }}
       {...props}>
       {children}
     </Select>
