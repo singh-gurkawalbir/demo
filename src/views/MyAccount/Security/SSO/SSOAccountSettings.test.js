@@ -130,9 +130,9 @@ describe('testsuite for SSO Account Settings', () => {
     expect(screen.getByText(/enable oidc-based sso/i)).toBeInTheDocument();
     const switchButtonNode = document.querySelector('div > div > div > div:nth-child(2) > div > div > div > div > div > div > div');
 
-    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+    expect(switchButtonNode).toHaveAttribute('class', expect.stringContaining('react-toggle'));
     await userEvent.click(switchButtonNode);
-    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitchChecked-'));
+    expect(switchButtonNode).toHaveAttribute('class', expect.stringContaining('react-toggle react-toggle--checked react-toggle--focus'));
   });
   test('should test the SSO when OIDC-based is enabled and should test the loading spinner when isEnableSSOSwitchInProgress is true', async () => {
     await initSSOAccountSettings({
@@ -199,7 +199,7 @@ describe('testsuite for SSO Account Settings', () => {
     });
     const switchButtonNode = document.querySelector('div > div > div > div:nth-child(2) > div > div > div > div > div > div > div');
 
-    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+    expect(switchButtonNode).toHaveAttribute('class', expect.stringContaining('react-toggle react-toggle--checked'));
     await userEvent.click(switchButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'RESOURCE_PATCH',
