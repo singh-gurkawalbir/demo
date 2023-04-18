@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
   nameContainer: {
     top: -25,
-    width: '187px',
+    width: theme.spacing(20),
     height: '38px',
     position: 'absolute',
   },
