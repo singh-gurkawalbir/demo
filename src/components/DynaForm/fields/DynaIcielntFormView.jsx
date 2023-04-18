@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
@@ -113,11 +113,11 @@ export default function DynaIclientFormView(props) {
     );
   }, [accountOwner, dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  useEffect(() => {
-    if (value === 'false') {
-      onFieldChangeFn(value);
-    }
-  }, [onFieldChangeFn, value]);
+  // useEffect(() => {
+  //   if (value === 'false') {
+  //     onFieldChangeFn(value);
+  //   }
+  // }, [onFieldChangeFn, value]);
   if (!sourceForm) {
     return null;
   }
