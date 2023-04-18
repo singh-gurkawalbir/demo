@@ -61,15 +61,17 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
     const displayAfterRef = field.displayAfter?.substr(index + 1);
 
     // add this cs field in field map
-    updatedFieldMetadata.fieldMap[fieldId] = {
+    const newFieldId = `settings.${fieldId}`;
+
+    updatedFieldMetadata.fieldMap[newFieldId] = {
       ...field,
       name: `/settings/${fieldId}`,
-      id: `settings.${fieldId}`,
-      fieldId: `settings.${fieldId}`,
+      id: newFieldId,
+      fieldId: newFieldId,
       defaultValue: customSettings?.[fieldId],
     };
     // find the ref index in fields and push this cs fieldId there
-    updatedFieldMetadata.layout = getUpdatedFormLayoutWithCustomSettings(updatedFieldMetadata.layout, displayAfterRef, fieldId);
+    updatedFieldMetadata.layout = getUpdatedFormLayoutWithCustomSettings(updatedFieldMetadata.layout, displayAfterRef, newFieldId);
   });
 
   return updatedFieldMetadata;
