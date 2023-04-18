@@ -18,8 +18,8 @@ import {
   getMissingItems,
   determineChangedValues,
   getFirstErroredFieldId,
-  getFieldIdsInLayoutOrder,
 } from '.';
+import { getFieldIdsInLayoutOrder } from './metadata';
 import {
   shouldOptionsBeRefreshed,
   getFirstDefinedValue,
