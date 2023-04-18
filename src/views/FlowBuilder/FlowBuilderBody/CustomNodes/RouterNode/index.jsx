@@ -46,6 +46,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.secondary,
     wordBreak: 'break-all',
     background: theme.palette.background.paper,
+    ' & > * br': {
+      display: 'none',
+    },
   },
 }));
 
