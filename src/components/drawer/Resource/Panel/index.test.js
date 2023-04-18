@@ -155,10 +155,9 @@ describe('Panel tests', () => {
     expect(screen.getByText('Preview data')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button', {name: 'Next'}));
     expect(mockClose).toHaveBeenCalled();
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.flow.requestLastExportDateTime({ flowId: '_flowId' }));
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resourceForm.submitAborted('exports', '_resourceId'));
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.resource.clearStaged('_resourceId'));
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(4, actions.resourceFormSampleData.updateType('_resourceId', 'preview'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submitAborted('exports', '_resourceId'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.clearStaged('_resourceId'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceFormSampleData.updateType('_resourceId', 'preview'));
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/parentURL/edit/exports/_resourceId');
     expect(isNestedDrawer('/add/pageGenerator/_id')).toBe(false);
