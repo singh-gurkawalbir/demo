@@ -71,7 +71,7 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
-      alwaysOpen: true,
+      defaultOpen: true,
       visibleWhenAll: [{ field: 'application', isNot: [''] }],
       placeholder: 'Please select',
     },
