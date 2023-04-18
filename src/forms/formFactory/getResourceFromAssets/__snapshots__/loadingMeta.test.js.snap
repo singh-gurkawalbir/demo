@@ -2939,7 +2939,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7547,7 +7547,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -11192,7 +11192,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -13333,7 +13333,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -13486,7 +13486,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

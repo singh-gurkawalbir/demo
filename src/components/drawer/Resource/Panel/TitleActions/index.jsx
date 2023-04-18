@@ -77,8 +77,9 @@ export default function TitleActions({ flowId }) {
       resourceType,
       id
     ) || {};
+  const mergedFormType = (resourceType === 'connections' && (merged?._httpConnectorId || merged.http?._httpConnectorId)) ? merged.http?.sessionFormType : merged.http?.formType;
 
-  applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
+  applicationType = mergedFormType === 'http' ? 'http' : applicationType;
 
   const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
 

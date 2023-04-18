@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -37,9 +38,19 @@ export const resourceButtonStyles = makeStyles(theme => ({
       },
     },
   },
+  resourceIcon: {
+    cursor: 'default',
+    marginTop: theme.spacing(-1),
+    '&:hover': {
+      color: theme.palette.secondary.main,
+      '& > * svg': {
+        color: theme.palette.secondary.main,
+      },
+    },
+  },
 }));
 
-export default function ResourceButton({ onClick, variant, disabled}) {
+export default function ResourceButton({ onClick, type, variant, disabled, className}) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
@@ -47,8 +58,9 @@ export default function ResourceButton({ onClick, variant, disabled}) {
     <TextButton
       data-test={block.label}
       onClick={onClick}
-      className={classes.resourceButton}
+      className={clsx(classes.resourceButton, {[classes.resourceIcon]: type === 'icon'}, className)}
       vertical
+      disableRipple={type === 'icon'}
       disabled={disabled}
       startIcon={<block.Icon />}>
       {block.label}
