@@ -50,7 +50,7 @@ describe('test suite for default', () => {
 
     expect(columnNames).toEqual([
       'Name',
-      'Provider',
+      'Application',
       'Last updated',
       'Actions',
     ]);
