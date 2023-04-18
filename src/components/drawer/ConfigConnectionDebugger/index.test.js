@@ -94,7 +94,7 @@ describe('ConfigConnectionDebugger tests', () => {
     await initConfigConnectionDebugger({});
     expect(screen.queryByText(/Debug connection/i)).toBeInTheDocument();
     const titleButtons = screen.getAllByRole('button');
-    const helpButton = titleButtons.find(el => el.getAttribute('class').includes('helpTextButton'));
+    const helpButton = titleButtons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
     const closeIcon = titleButtons.find(btn => btn.getAttribute('data-test') === 'closeRightDrawer');
     const closeButton = titleButtons.find(btn => btn.getAttribute('data-test') === 'cancel');
 
