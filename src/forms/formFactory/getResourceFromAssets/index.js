@@ -184,12 +184,11 @@ const getSuiteScriptFormMeta = ({resourceType, resource}) => {
 
   return meta;
 };
-const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, accountOwner}) => {
+const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, accountOwner, parentConnectionId}) => {
   let meta;
 
   const { type } = getResourceSubType(resource);
   let isNewHTTPFramework = false;
-  // let checkIclientLocation;
 
   if (['exports', 'imports'].includes(resourceType) && connection?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
@@ -197,8 +196,6 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
     isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   } else if (resourceType === 'iClients') {
     isNewHTTPFramework = 'true';
-    // checkIclientLocation = resource?.locationPath.search(/\/connections/) !== -1;
-    // console.log('checkIclientLocation', checkIclientLocation, resource);
   }
 
   switch (resourceType) {
@@ -427,7 +424,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
 
       if (meta) {
         if (isNewHTTPFramework) {
-          if (!resource?.assistant && !resource?.formType && !resource?.locationPath) {
+          if (!resource?.assistant && !resource?.formType && !parentConnectionId) {
             // resource -> iclients
             meta = meta.iClient;
           } else if (resource?.formType === 'http' && (resource?.assistant || resource.application)) {
@@ -438,6 +435,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
             meta = meta.iClient;
           } else if (resource?.assistant && !resource?.formType && !resource.application) {
             // new conn create iclient
+            meta = meta.iClientHttpFramework;
+          } else if (parentConnectionId && resource?.formType !== 'http') {
             meta = meta.iClientHttpFramework;
           } else {
             meta = meta.iClientHttpFramework;
@@ -478,6 +477,7 @@ const getResourceFormAssets = ({
   ssLinkedConnectionId,
   customFieldMeta,
   accountOwner,
+  parentConnectionId,
 }) => {
   let meta;
 
@@ -489,7 +489,7 @@ const getResourceFormAssets = ({
       meta = getSuiteScriptFormMeta({resourceType, resource});
     } else {
       // TODO: @Siddharth, find better way to inject custom form field meta instead of directly applied from resourceFormInit
-      meta = customFieldMeta || getFormMeta({resourceType, isNew, resource, connection, assistantData, accountOwner});
+      meta = customFieldMeta || getFormMeta({resourceType, isNew, resource, connection, assistantData, accountOwner, parentConnectionId});
     }
   } catch (e) {
     throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);
