@@ -7599,7 +7599,7 @@ selectors.isHttpConnector = (state, resourceId, resourceType) => {
 
     if (!isNewHTTPFramework) return false;
   }
-  if (!['exports', 'imports'].includes(resourceType) || !resource._connectionId) {
+  if (!['exports', 'imports'].includes(resourceType) || !resource?._connectionId) {
     return false;
   }
 
