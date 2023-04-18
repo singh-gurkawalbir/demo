@@ -620,8 +620,6 @@ export const wrapSampleDataWithContext = ({
 
   if (isDeltaExport) {
     contextFields.lastExportDateTime = lastExportDateTime || moment()
-      .startOf('day')
-      .add(-7, 'd')
       .toISOString();
     contextFields.currentExportDateTime = moment()
       .toISOString();

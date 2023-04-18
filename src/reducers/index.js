@@ -122,6 +122,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../forms/formFactory/utils';
+import { convertUtcToTimezone } from '../utils/date';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -4682,10 +4683,15 @@ selectors.sampleDataWrapper = createSelector(
       return null;
     },
     (state, { flowId }) => {
-      const { data } = selectors.getLastExportDateTime(state, flowId) || emptyObject;
+      const { data: origLastExportDateTime } = selectors.getLastExportDateTime(state, flowId) || emptyObject;
 
-      if (data) {
-        return data;
+      if (origLastExportDateTime) {
+        const preferences = selectors.userOwnPreferences(state);
+        const timeZone = selectors.userTimezone(state);
+
+        const lastExportDateTime = convertUtcToTimezone(origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
+
+        return lastExportDateTime;
       }
 
       return null;
