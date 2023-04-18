@@ -4,7 +4,7 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
-import DynaCheckboxExisting from './DynaCheckExisting';
+import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
 
 jest.mock('../../LoadResources', () => ({
   __esModule: true,
@@ -114,10 +114,10 @@ const props = {
   },
 };
 
-function initDynaCheckboxExisting(props = {}) {
+function initDynaCheckboxExistingResource(props = {}) {
   const ui = (
     <MemoryRouter>
-      <DynaCheckboxExisting {...props} />
+      <DynaCheckboxExistingResource {...props} />
     </MemoryRouter>
   );
 
@@ -127,24 +127,24 @@ function initDynaCheckboxExisting(props = {}) {
 describe('dynaSelectFlowResource UI test cases', () => {
   describe('normal flow', () => {
     test('should show empty dom when field is supposed to be invisible', () => {
-      const {utils} = initDynaCheckboxExisting({...props, options: { filter: {$and: []}, visible: false}});
+      const {utils} = initDynaCheckboxExistingResource({...props, options: { filter: {$and: []}, visible: false}});
 
       expect(utils.container).toBeEmptyDOMElement();
     });
 
     test('should pass the initial render', () => {
-      renderWithProviders(<DynaCheckboxExisting {...props} />);
+      renderWithProviders(<DynaCheckboxExistingResource {...props} />);
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
     });
     test('should render a checked checkbox when value is passed as true in props', () => {
-      renderWithProviders(<DynaCheckboxExisting {...props} value />);
+      renderWithProviders(<DynaCheckboxExistingResource {...props} value />);
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
       const checkBox = screen.getByRole('checkbox');
 
       expect(checkBox).toBeChecked();
     });
     test('should render a disabled checkbox when disabled is passed as true in props', () => {
-      renderWithProviders(<DynaCheckboxExisting {...props} disabled />);
+      renderWithProviders(<DynaCheckboxExistingResource {...props} disabled />);
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
       const checkBox = screen.getByRole('checkbox');
 
@@ -153,7 +153,7 @@ describe('dynaSelectFlowResource UI test cases', () => {
     test('should call the onChange function passed in props when checkbox is checked', () => {
       const mockOnChange = jest.fn();
 
-      renderWithProviders(<DynaCheckboxExisting {...props} onFieldChange={mockOnChange} />);
+      renderWithProviders(<DynaCheckboxExistingResource {...props} onFieldChange={mockOnChange} />);
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
       const checkBox = screen.getByRole('checkbox');
 
