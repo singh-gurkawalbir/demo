@@ -189,11 +189,16 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
 
   const { type } = getResourceSubType(resource);
   let isNewHTTPFramework = false;
+  // let checkIclientLocation;
 
   if (['exports', 'imports'].includes(resourceType) && connection?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
   } else if (resourceType === 'connections' && resource?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  } else if (resourceType === 'iClients') {
+    isNewHTTPFramework = 'true';
+    // checkIclientLocation = resource?.locationPath.search(/\/connections/) !== -1;
+    // console.log('checkIclientLocation', checkIclientLocation, resource);
   }
 
   switch (resourceType) {
@@ -418,7 +423,27 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
 
       break;
     case 'iClients':
-      meta = formMeta[resourceType].iClient;
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        if (isNewHTTPFramework) {
+          if (!resource?.assistant && !resource?.formType && !resource?.locationPath) {
+            // resource -> iclients
+            meta = meta.iClient;
+          } else if (resource?.formType === 'http' && (resource?.assistant || resource.application)) {
+            // new iclient in connection
+            meta = meta.iClient;
+          } else if (resource?.formType === 'http' && (!resource?.assistant || !resource.application)) {
+            // edit iclient in conn toggle to http
+            meta = meta.iClient;
+          } else if (resource?.assistant && !resource?.formType && !resource.application) {
+            // new conn create iclient
+            meta = meta.iClientHttpFramework;
+          } else {
+            meta = meta.iClientHttpFramework;
+          }
+        }
+      }
       break;
 
     case 'agents':

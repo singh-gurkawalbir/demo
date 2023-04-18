@@ -21,7 +21,7 @@ export default {
         key: 'application',
         isLoggable: true,
         heading: 'Application',
-        Value: ({rowData: r}) => r?._httpConnectorId ? getHttpConnectorApplications(r?._httpConnectorId)?.name : 'http',
+        Value: ({rowData: r}) => r?._httpConnectorId ? getHttpConnectorApplications(r?._httpConnectorId)?.name : 'Custom OAuth2.0',
         visible: false,
       },
       {

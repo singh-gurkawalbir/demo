@@ -18,7 +18,6 @@ export default {
     type: 'text',
     label: 'Client ID',
     required: true,
-    visible: r => ![r.provider, r.assistant].includes('amazonmws'),
   },
   'oauth2.clientSecret': {
     type: 'text',
@@ -28,7 +27,6 @@ export default {
     inputType: 'password',
     defaultValue: '',
     required: true,
-    visible: r => ![r.provider, r.assistant].includes('amazonmws'),
   },
   'amazonmws.accessKeyId': {
     type: 'text',
@@ -195,7 +193,13 @@ export default {
     type: 'select',
     label: 'Header scheme',
     skipDefault: true,
-    defaultValue: r => r?.oauth2?.scheme || '',
+    defaultValue: r => {
+      if (!r?.oauth2?.scheme) return ' ';
+
+      if (!['Bearer', 'MAC', ' '].includes(r.oauth2.scheme)) return 'Custom';
+
+      return r.oauth2.scheme;
+    },
     options: [
       {
         items: [
