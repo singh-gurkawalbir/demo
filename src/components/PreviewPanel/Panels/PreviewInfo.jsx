@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const typeFieldNames = ['/restlet/type', '/export/type', '/export/salesforce/exportType', '/type'];
+const typeFieldNames = ['/export/type', '/export/salesforce/exportType', '/restlet/type', '/type'];
 
 export default function PreviewInfo(props) {
   const {
