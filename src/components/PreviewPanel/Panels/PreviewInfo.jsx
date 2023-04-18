@@ -110,17 +110,11 @@ export default function PreviewInfo(props) {
       dateSelected: '',
     });
   const { defaultDate, showDeltaStartDateDialog, clickOnPreview, isValidRecordSize, dateSelected } = previewState;
-  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => {
-    const preferences = selectors.userOwnPreferences(state);
-    const timeZone = selectors.userTimezone(state);
-    const origLastExportDateTime = selectors.getLastExportDateTime(state, flowId)?.data;
-
-    return {
-      origLastExportDateTime,
-      timeZone,
-      preferences,
-    };
-  }, shallowEqual);
+  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => ({
+    origLastExportDateTime: selectors.getLastExportDateTime(state, flowId)?.data,
+    timeZone: selectors.userTimezone(state),
+    preferences: selectors.userOwnPreferences(state),
+  }), shallowEqual);
   const isDeltaSupported = useSelector(
     state => {
       let isPG;

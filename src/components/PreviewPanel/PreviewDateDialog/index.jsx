@@ -27,18 +27,11 @@ export default function PreviewDateDialog(props) {
   const dispatch = useDispatch();
   const { flowId, onClose, disabled, onRun, dateSelected } = props;
   const [defaultDate] = useState(new Date(new Date().setDate(new Date().getDate() - 1)));
-  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => {
-    const preferences = selectors.userOwnPreferences(state);
-    const timeZone = selectors.userTimezone(state);
-    const origLastExportDateTime = selectors.getLastExportDateTime(state, flowId)?.data;
-
-    return {
-      origLastExportDateTime,
-      timeZone,
-      preferences,
-    };
-  }, shallowEqual);
-
+  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => ({
+    origLastExportDateTime: selectors.getLastExportDateTime(state, flowId)?.data,
+    timeZone: selectors.userTimezone(state),
+    preferences: selectors.userOwnPreferences(state),
+  }), shallowEqual);
   const lastExportDateTime = useMemo(() =>
     convertUtcToTimezone(origLastExportDateTime || defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}),
   [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]
