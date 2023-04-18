@@ -13430,8 +13430,8 @@ Object {
         ],
       },
       "type": Object {
-        "defaultOpen": true,
         "dataTest": "exportType",
+        "defaultOpen": true,
         "defaultValue": "",
         "id": "type",
         "alwaysOpen": true,
@@ -13685,8 +13685,8 @@ Object {
         ],
       },
       "resourceType": Object {
-        "defaultOpen": true,
         "dataTest": "exportType",
+        "defaultOpen": true,
         "id": "resourceType",
         "alwaysOpen": true,
         "label": "What would you like to do?",
