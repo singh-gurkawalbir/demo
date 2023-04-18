@@ -117,7 +117,6 @@ import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 import customCloneDeep from '../utils/customCloneDeep';
-import { isHttpConnectorResource } from '../utils/httpConnector';
 
 const emptyArray = [];
 const emptyObject = {};
