@@ -1408,15 +1408,6 @@ selectors.flowDetails = (state, id) => {
   return getFlowDetails(flow, integration, exports);
 };
 
-selectors.isExportAPageGenerator = (state, flowId, exportId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  if (!flow) return emptyObject;
-  const exports = selectors.resource(state, 'exports', exportId);
-
-  return getFlowDetails(flow, exports);
-};
-
 selectors.mkFlowDetails = () => {
   const resourceSel = selectors.makeResourceSelector();
   const integrationResourceSel = selectors.makeResourceSelector();
