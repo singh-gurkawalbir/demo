@@ -5,42 +5,9 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
-import { getFieldIdsInLayoutOrder } from '../../utils/form';
+import { getFieldIdsInLayoutOrder, removeFieldFromLayout } from '../../utils/form/metadata';
+import { isValidDisplayAfterRef } from '../../utils/httpConnector';
 import customCloneDeep from '../../utils/customCloneDeep';
-
-export function removeFieldFromLayout(layout, fieldId) {
-  if (!layout) return;
-  if (layout.fields?.length) {
-    if (layout.fields.includes(fieldId)) {
-      const fieldIndex = layout.fields.indexOf(fieldId);
-
-      layout.fields.splice(fieldIndex, 1);
-    }
-  }
-  if (layout.containers?.length) {
-    layout.containers.forEach(container => removeFieldFromLayout(container, fieldId));
-  }
-}
-
-export function layoutHasField(layout, fieldId) {
-  if (!layout) return false;
-  if (layout.containers?.length) {
-    return layout.containers.some(container => layoutHasField(container, fieldId));
-  }
-  if (layout.fields?.length) {
-    return layout.fields.includes(fieldId);
-  }
-}
-
-export function isValidDisplayAfterRef(refId, refMetadata) {
-  const { layout, fieldMap } = refMetadata;
-
-  if (!layout) {
-    return !!fieldMap[refId];
-  }
-
-  return layoutHasField(layout, refId);
-}
 
 export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
   // this is for http connector

@@ -1,7 +1,8 @@
 import { omitBy } from 'lodash';
 import { convertToExport } from '../../../../../utils/assistant';
 import { safeParse } from '../../../../../utils/string';
-import { fieldMeta, initMetadata } from './util';
+import { fieldMeta } from './util';
+import { initializeHttpConnectorExportForm } from '../../../../metaDataUtils/httpConnectorUtils';
 
 export default function assistantDefinition(
   resourceId,
@@ -9,7 +10,7 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
-    init: initMetadata,
+    init: initializeHttpConnectorExportForm,
     ...fieldMeta({ resource, assistantData }),
     preSave: formValues => {
       const assistantMetadata = {
