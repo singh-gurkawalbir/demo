@@ -729,6 +729,7 @@ export function* requestEditorSampleData({
   const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
+    // @TODO: Not an ideal way of calling this saga every time. Need to come up with better approach
     if (flowId) {
       yield call(getLastExportDateTime, { flowId });
     }

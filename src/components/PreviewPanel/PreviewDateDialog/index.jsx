@@ -1,7 +1,5 @@
-import React, { useEffect, useCallback,
-  useMemo, useState,
-} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
@@ -25,33 +23,32 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function PreviewDateDialog(props) {
-  const classes = useStyles(props);
-  const [defaultDate] = useState(new Date(new Date().setDate(new Date().getDate() - 1)));
-  const { flowId, onClose, disabled, onRun, dateSelected } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
-  const preferences = useSelector(state => selectors.userOwnPreferences(state));
-  const timeZone = useSelector(state => selectors.userTimezone(state));
-  const origLastExportDateTime = useSelector(state =>
-    selectors.getLastExportDateTime(state, flowId)
-  ).data;
+  const { flowId, onClose, disabled, onRun, dateSelected } = props;
+  const [defaultDate] = useState(new Date(new Date().setDate(new Date().getDate() - 1)));
+  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => {
+    const preferences = selectors.userOwnPreferences(state);
+    const timeZone = selectors.userTimezone(state);
+    const origLastExportDateTime = selectors.getLastExportDateTime(state, flowId)?.data;
+
+    return {
+      origLastExportDateTime,
+      timeZone,
+      preferences,
+    };
+  }, shallowEqual);
 
   const lastExportDateTime = useMemo(() =>
     convertUtcToTimezone(origLastExportDateTime || defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}),
   [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]
   );
 
-  const fetchLastExportDateTime = useCallback(() => {
+  useEffect(() => {
     if (flowId && !isNewId(flowId)) {
       dispatch(actions.flow.requestLastExportDateTime({ flowId }));
     }
   }, [dispatch, flowId]);
-  const cancelDialog = useCallback(() => {
-    onClose();
-  }, [onClose]);
-
-  useEffect(() => {
-    fetchLastExportDateTime();
-  }, [fetchLastExportDateTime]);
 
   const handleSubmit = formVal => {
     const customStartDate = adjustTimezone(formVal.startDateCustom, formVal.timeZone);
@@ -95,7 +92,7 @@ export default function PreviewDateDialog(props) {
             onClick={handleSubmit}>
             Preview
           </DynaSubmit>
-          <TextButton data-test="close" onClick={cancelDialog}>
+          <TextButton data-test="close" onClick={onClose}>
             Cancel
           </TextButton>
         </ActionGroup>

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect, useReducer } from 'react';
 import clsx from 'clsx';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import isEmpty from 'lodash/isEmpty';
@@ -110,12 +110,17 @@ export default function PreviewInfo(props) {
       dateSelected: '',
     });
   const { defaultDate, showDeltaStartDateDialog, clickOnPreview, isValidRecordSize, dateSelected } = previewState;
+  const { preferences, timeZone, origLastExportDateTime } = useSelector(state => {
+    const preferences = selectors.userOwnPreferences(state);
+    const timeZone = selectors.userTimezone(state);
+    const origLastExportDateTime = selectors.getLastExportDateTime(state, flowId)?.data;
 
-  const preferences = useSelector(state => selectors.userOwnPreferences(state));
-  const timeZone = useSelector(state => selectors.userTimezone(state));
-  const origLastExportDateTime = useSelector(state =>
-    selectors.getLastExportDateTime(state, flowId)
-  ).data;
+    return {
+      origLastExportDateTime,
+      timeZone,
+      preferences,
+    };
+  }, shallowEqual);
   const isDeltaSupported = useSelector(
     state => {
       let isPG;
