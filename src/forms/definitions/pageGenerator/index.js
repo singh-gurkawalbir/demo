@@ -93,7 +93,7 @@ export default {
       required: true,
       defaultValue: '',
       placeholder: 'Please select',
-      alwaysOpen: true,
+      defaultOpen: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {
