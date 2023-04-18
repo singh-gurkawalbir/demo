@@ -5,7 +5,7 @@ import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
 import Edit from '../commonActions/Edit';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import { getHttpConnectorApplications } from '../../../constants/applications';
+import { getHttpConnector } from '../../../constants/applications';
 
 export default {
   useColumns: () => {
@@ -21,7 +21,7 @@ export default {
         key: 'application',
         isLoggable: true,
         heading: 'Application',
-        Value: ({rowData: r}) => r?._httpConnectorId ? getHttpConnectorApplications(r?._httpConnectorId)?.name : 'Custom OAuth2.0',
+        Value: ({rowData: r}) => r?._httpConnectorId ? getHttpConnector(r?._httpConnectorId)?.name : 'Custom OAuth2.0',
         visible: false,
       },
       {

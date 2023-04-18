@@ -8,7 +8,7 @@ import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, CONNECTORS_TO_IGNORE, emptyObject } from '../../constants';
 import customCloneDeep from '../../utils/customCloneDeep';
-import { applicationsList, getHttpConnectorApplications } from '../../constants/applications';
+import { applicationsList, getHttpConnector } from '../../constants/applications';
 
 export const getDataTypeDefaultValue = (dataType = 'string') => {
   const data = {string: 'abc', number: 123, boolean: true, stringarray: ['a', 'b'], numberarray: [1, 2], booleanarray: [true, false], objectarray: [{a: 'b'}, {c: 'd'}], object: {a: 'b'} };
@@ -907,7 +907,7 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     items.push({label: 'Custom OAuth2.0', value: 'custom_oauth2'});
     // changing the application inside resource -> application
 
-    const connectorData = app?._httpConnectorId ? getHttpConnectorApplications(app?._httpConnectorId) : getHttpConnectorApplications(resource?._httpConnectorId);
+    const connectorData = app?._httpConnectorId ? getHttpConnector(app?._httpConnectorId) : getHttpConnector(resource?._httpConnectorId);
 
     const authUrlValue = tempFiledMeta.fieldMap?.['oauth2.auth.uri']?.defaultValue;
     const tokenUrlValues = tempFiledMeta.fieldMap?.['oauth2.token.uri']?.defaultValue;
