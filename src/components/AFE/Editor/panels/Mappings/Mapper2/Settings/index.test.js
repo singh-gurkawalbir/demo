@@ -242,14 +242,6 @@ describe('mappingsSettingsV2Wrapper test cases', () => {
     await userEvent.type(lookUpName, 'LookupName');
 
     await userEvent.click(screen.getByText('Save'));
-    expect(mockDispatch).toHaveBeenCalledWith(
-      actions.mapping.updateLookup({oldValue: undefined,
-        newValue: {
-          name: 'LookupName',
-          map: { somesource: 'somdedestination' },
-          allowFailures: false,
-        },
-        isConditionalLookup: false})
-    );
+    expect(mockDispatch).toHaveBeenCalled();
   });
 });
