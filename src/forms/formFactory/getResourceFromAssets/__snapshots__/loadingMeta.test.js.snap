@@ -13399,7 +13399,7 @@ Object {
       },
       "existingExport": Object {
         "allowEdit": true,
-        "alwaysOpen": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pg",
         "id": "exportId",
@@ -13595,7 +13595,7 @@ Object {
       },
       "existingExport": Object {
         "allowEdit": true,
-        "alwaysOpen": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pp",
         "id": "exportId",
@@ -13640,7 +13640,7 @@ Object {
       },
       "existingImport": Object {
         "allowEdit": true,
-        "alwaysOpen": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pp",
         "id": "importId",
