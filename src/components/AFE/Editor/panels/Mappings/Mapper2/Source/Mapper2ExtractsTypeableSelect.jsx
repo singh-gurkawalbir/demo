@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginBottom: 0,
     width: '100%',
+    minHeight: theme.spacing(5),
     '& > .MuiFilledInput-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
       paddingRight: 0,
