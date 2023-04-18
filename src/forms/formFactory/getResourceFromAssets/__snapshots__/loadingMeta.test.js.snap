@@ -13405,6 +13405,7 @@ Object {
         "dataTest": "exportType",
         "defaultValue": "",
         "id": "type",
+        "alwaysOpen": true,
         "label": "What would you like to do?",
         "mode": "source",
         "name": "type",
@@ -13572,6 +13573,7 @@ Object {
       "resourceType": Object {
         "dataTest": "exportType",
         "id": "resourceType",
+        "alwaysOpen": true,
         "label": "What would you like to do?",
         "mode": "destination",
         "name": "resourceType",
