@@ -249,7 +249,7 @@ export default function DynaSelect(props) {
     skipSort,
     dataTest,
     isLoggable,
-    defaultOpen,
+    defaultOpen = false,
   } = props;
 
   const listRef = React.createRef();
