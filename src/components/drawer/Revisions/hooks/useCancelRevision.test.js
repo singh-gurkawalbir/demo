@@ -76,7 +76,7 @@ describe('useCancelRevision tests', () => {
 
     expect(cancelBtn).toBeInTheDocument();
     await userEvent.click(cancelBtn);
-    expect(screen.getByRole('presentation')).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('You\'ve got a revert in progress')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to close this installer? The merges you made for this revert will be canceled')).toBeInTheDocument();
     const cancel = screen.getByRole('button', {name: 'Cancel merge'});
@@ -92,7 +92,7 @@ describe('useCancelRevision tests', () => {
 
     expect(cancelBtn).toBeInTheDocument();
     await userEvent.click(cancelBtn);
-    expect(screen.getByRole('presentation')).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('You\'ve got a merge in progress')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to close this installer? Your current merge in progress for your pull will be canceled')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Continue merge'})).toBeInTheDocument();
