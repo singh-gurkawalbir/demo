@@ -85,6 +85,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const typeFieldNames = ['/restlet/type', '/export/type', '/export/salesforce/exportType', '/type'];
+
 export default function PreviewInfo(props) {
   const {
     fetchExportPreviewData,
@@ -116,20 +118,25 @@ export default function PreviewInfo(props) {
   ).data;
   const isDeltaSupported = useSelector(
     state => {
-      let isDelta = false;
       let isPG;
+      let formType;
 
       if (flowId) {
         isPG = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
       }
       if (isPG || !flowId) {
-        const formValue = selectors.createFormValuesPatchSet(state, formKey, resourceType, resourceId);
-        const formType = formValue?.finalValues?.['/type'];
+        const { value: formValues } = selectors.formState(state, formKey) || {};
 
-        isDelta = formType === 'delta';
+        typeFieldNames.forEach(eachType => {
+          if (formValues?.[eachType]) {
+            formType = formValues[eachType];
+          }
+        });
+
+        return formType === 'delta';
       }
 
-      return isDelta;
+      return false;
     }
   );
   const canSelectRecords = useSelector(state =>
@@ -152,10 +159,10 @@ export default function PreviewInfo(props) {
                               isEmpty(resourceDefaultMockData);
 
   useEffect(() => {
-    if (flowId && !isNewId(flowId)) {
+    if (flowId && !isNewId(flowId) && isDeltaSupported) {
       dispatch(actions.flow.requestLastExportDateTime({ flowId }));
     }
-  }, [dispatch, flowId]);
+  }, [dispatch, flowId, isDeltaSupported]);
 
   useEffect(() => {
     if (resourceSampleData.status === 'received' && clickOnPreview) {
