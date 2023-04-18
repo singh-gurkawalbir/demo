@@ -261,11 +261,16 @@ export function* requestPreview({ id }) {
   }
 
   if (editor.editorType === 'settingsForm') {
-    const errorMessage = yield call(validateCustomSettings, { id, result: finalResult });
+    const isHttpConnector = yield select(selectors.isHttpConnector, editor?.resourceId, editor?.resourceType);
 
-    if (errorMessage) {
+    if (isHttpConnector) {
+      // validation of custom settings happen only for http connector 2.0 in simple view
+      const errorMessage = yield call(validateCustomSettings, { id, result: finalResult });
+
+      if (errorMessage) {
       // Incase of invalid displayAfter ref, we throw error for http connector simple view
-      return yield put(actions.editor.previewFailed(id, { errorMessage }));
+        return yield put(actions.editor.previewFailed(id, { errorMessage }));
+      }
     }
   }
 

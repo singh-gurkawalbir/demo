@@ -117,6 +117,7 @@ import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 import customCloneDeep from '../utils/customCloneDeep';
+import { isHttpConnectorResource } from '../utils/httpConnector';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -7589,4 +7590,27 @@ selectors.getShopifyStoreLink = (state, resourceId) => {
     if (integration.name.toLowerCase().includes('sap')) return SHOPIFY_APP_STORE_LINKS.SAP_BUSINESS_IA_APP; */
 
   return SHOPIFY_APP_STORE_LINKS.NETSUITE_IA_APP;
+};
+
+selectors.isHttpConnector = (state, resourceId, resourceType) => {
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resourceType === 'connections') {
+    const isNewHTTPFramework = !!getHttpConnector(resource?.http?._httpConnectorId);
+
+    if (!isNewHTTPFramework) return false;
+  }
+  if (!['exports', 'imports'].includes(resourceType) || !resource._connectionId) {
+    return false;
+  }
+
+  const connectionObj = selectors.resourceData(
+    state,
+    'connections',
+    resource._connectionId,
+  )?.merged || emptyObject;
+
+  const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
+
+  return isNewHTTPFramework && resource?.http?.sessionFormType !== 'http';
 };

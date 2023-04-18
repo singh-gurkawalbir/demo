@@ -63,6 +63,8 @@ export default function DynaSettings(props) {
   const integrationId = useIntegration(resourceType, resourceId);
   const formContext = useFormContext(parentFormKey);
 
+  const isHttpConnectorResource = useSelector(state => selectors.isHttpConnector(state, resourceId, resourceType));
+
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -72,6 +74,9 @@ export default function DynaSettings(props) {
   );
 
   const handleResourceFormRemount = useCallback(() => {
+    if (!isHttpConnectorResource) {
+      return;
+    }
     // Do this change only for http connector simple view as display after effects only there
     const allTouchedFields = Object.values(formContext.fields)
       .filter(field => !!field.touched)
@@ -88,7 +93,7 @@ export default function DynaSettings(props) {
         allTouchedFields
       )
     );
-  }, [dispatch, formContext.fields, resourceId, resourceType]);
+  }, [dispatch, formContext.fields, resourceId, resourceType, isHttpConnectorResource]);
 
   const handleSettingFormChange = useCallback(
     (values, isValid, skipFieldTouched) => {
