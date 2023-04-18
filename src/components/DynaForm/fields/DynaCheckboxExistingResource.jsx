@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 // can this be loggable in all circumstances? since it is a checkbox
-export default function DynaCheckboxExisting(props) {
+export default function DynaCheckboxExistingResource(props) {
   const classes = useStyles(props);
   const {
     disabled,

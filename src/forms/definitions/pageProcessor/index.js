@@ -143,7 +143,7 @@ export default {
       label: 'Use existing Export',
       flowResourceType: 'pp',
       resourceType: 'exports',
-      type: 'existingCheckBox',
+      type: 'existingCheckresource',
       required: false,
       refreshOptionsOnChangesTo: [
         'application',
