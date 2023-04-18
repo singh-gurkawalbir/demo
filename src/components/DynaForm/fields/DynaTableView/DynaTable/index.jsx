@@ -9,10 +9,10 @@ import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
-import Spinner from '../../../../Spinner';
 import VirtualizedTable from './VirtualizedTable';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { emptyObject } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -38,10 +38,6 @@ const useStyles = makeStyles(theme => ({
   },
   rowContainer: {
     display: 'flex',
-  },
-  tableViewWrapper: {
-    maxHeight: theme.spacing(30),
-    overflowY: 'auto',
   },
 }));
 
@@ -141,13 +137,6 @@ const BaseTable = ({
     );
   }
 
-  // isLoading flag is generally used with Virtualized table
-  if (isAnyColumnFetching) {
-    return (
-      <Spinner centerAll />
-    );
-  }
-
   return (tableValue.map((arr, rowIndex) => {
     const {value, key} = arr;
 
@@ -163,6 +152,8 @@ const BaseTable = ({
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        invalidateParentFieldOnError={invalidateParentFieldOnError}
+        setIsValid={setIsValid}
       />
     );
   }));
@@ -196,7 +187,7 @@ const DynaTable = props => {
   const [isValid, setIsValid] = useState(true);
 
   // Fetching isShowValidationBeforeTouched property in order to forceState the isValid property to true when there are required fields from the settingsForm so that we could validate the form on the initial render
-  const {showValidationBeforeTouched } = useSelector(state => selectors.formState(state, formKey));
+  const {showValidationBeforeTouched } = useSelector(state => selectors.formState(state, formKey) || emptyObject);
 
   useEffect(
     () => () => {
@@ -224,7 +215,7 @@ const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
             required={required}
           />
-          <div {...isLoggableAttr(isLoggable)} className={classes.tableViewWrapper}>
+          <span {...isLoggableAttr(isLoggable)}>
             <BaseTable
               isLoading={isLoading}
               isVirtualizedTable={isVirtualizedTable}
@@ -241,7 +232,7 @@ const DynaTable = props => {
               isShowValidationBeforeTouched={showValidationBeforeTouched}
               setIsValid={setIsValid}
           />
-          </div>
+          </span>
         </div>
       </div>
     </div>

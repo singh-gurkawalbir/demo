@@ -215,6 +215,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      showIconView,
     } = { ...profile, ...preferences };
 
     return {
@@ -234,6 +235,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      showIconView,
     };
   });
 

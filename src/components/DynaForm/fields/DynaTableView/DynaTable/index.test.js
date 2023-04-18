@@ -125,32 +125,4 @@ describe('dynaTable UI test cases', () => {
     expect(inputs[4]).toHaveValue('TextChanged');
     expect(mockOnFieldChange).toHaveBeenCalledWith('lookup.mapList', [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'TextChanged', import: 'type'}, {export: 'Invoice', import: 'invoice'}]);
   });
-
-  test('should show spinner when isLoading is present for non virtualized table', () => {
-    const props = {
-      isLoading: {id: true},
-      optionsMap: [{
-        id: 'export',
-        label: 'Export field value',
-        options: undefined,
-        readOnly: false,
-        required: false,
-        supportsRefresh: false,
-        type: 'input',
-      }, {
-        id: 'import',
-        label: 'Import field value',
-        options: undefined,
-        readOnly: false,
-        required: false,
-        supportsRefresh: false,
-        type: 'input',
-      }],
-      id: 'lookup.mapList',
-      isVirtualizedTable: false,
-    };
-
-    initDynaTable(props);
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-  });
 });

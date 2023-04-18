@@ -7,6 +7,7 @@ import SortableList from '../../../../components/Sortable/SortableList';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import useSortableList from '../../../../hooks/useSortableList';
 import { selectors } from '../../../../reducers';
+import IconBlock from '../../IconBlock';
 import AppBlock from '../../AppBlock';
 import { useHandleAddProcessor, useHandleDelete, useHandleMovePP } from '../../hooks';
 import itemTypes from '../../itemTypes';
@@ -70,8 +71,14 @@ export default function PageProcessors({integrationId, flowId}) {
 
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
 
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+
   const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
   const {handleSortEnd} = useSortableList(useHandleMovePP(flowId));
+
+  const Component = isIconView ? IconBlock : AppBlock;
 
   return (
     <div className={classes.processorContainer}>
@@ -110,7 +117,7 @@ export default function PageProcessors({integrationId, flowId}) {
         ))}
       </SortableList>
       {!pageProcessors.length && showAddPageProcessor && (
-      <AppBlock
+      <Component
         className={classes.newPP}
         integrationId={integrationId}
         isViewMode={isViewMode || isFreeFlow}

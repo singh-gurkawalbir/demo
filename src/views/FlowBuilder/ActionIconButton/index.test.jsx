@@ -2,13 +2,16 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import ActionIconButton from '.';
+import ActionIconButton from './index';
 import { renderWithProviders } from '../../../test/test-utils';
+import { FlowProvider } from '../FlowBuilderBody/Context';
 
 async function initActionIconButton({actionIconProps} = {}) {
   const ui = (
     <MemoryRouter>
-      <ActionIconButton {...actionIconProps} />
+      <FlowProvider>
+        <ActionIconButton {...actionIconProps} />
+      </FlowProvider>
     </MemoryRouter>
   );
   const { store, utils } = await renderWithProviders(ui);

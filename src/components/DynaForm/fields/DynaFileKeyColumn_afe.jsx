@@ -45,7 +45,7 @@ export default function DynaFileKeyColumn_afe(props) {
   const classes = useStyles();
   const editorId = 'filekeycolumns';
   const parentFormKey = `${resourceType}-${resourceId}`;
-  const { data: editorData, previewStatus, result } = useSelector(state =>
+  const { data: editorData, previewStatus, result, rule } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   /*
@@ -118,10 +118,10 @@ export default function DynaFileKeyColumn_afe(props) {
     }
   }, [csvData, dispatch, id, editorData, onFieldChange, isHTTPExport]);
   useEffect(() => {
-    if (!isHTTPExport) {
+    if (!isHTTPExport && rule) {
       dispatch(actions.editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
     }
-  }, [dispatch, isHTTPExport, options]);
+  }, [dispatch, isHTTPExport, options, rule]);
 
   return (
     <FormControl

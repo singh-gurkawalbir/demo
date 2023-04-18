@@ -156,7 +156,6 @@ import ViewDetailsIcon from '../../../components/icons/ViewDetailsIcon';
 import VerticalLayoutIcon from '../../../components/icons/VerticalLayoutIcon';
 import WarningIcon from '../../../components/icons/WarningIcon';
 import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
-import ZendeskChatIcon from '../../../components/icons/ZendeskChatIcon';
 
 const icons = {
   AddIcon,
@@ -312,7 +311,6 @@ const icons = {
   ViewDetailsIcon,
   WarningIcon,
   WhatsNewIcon,
-  ZendeskChatIcon,
 };
 
 export default {

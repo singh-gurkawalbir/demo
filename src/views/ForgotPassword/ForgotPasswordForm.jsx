@@ -36,6 +36,9 @@ const useStyles = makeStyles(theme => ({
   forgotPasswordSpinner: {
     marginTop: theme.spacing(1),
   },
+  cancelBtn: {
+    fontSize: theme.spacing(2),
+  },
 }));
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
@@ -118,7 +121,7 @@ export default function ForgotPassword({setShowError, email}) {
           role="link"
           type="cancel"
           submit
-          className={classes.submit}
+          className={clsx(classes.submit, classes.cancelBtn)}
         >
           Cancel
         </TextButton>

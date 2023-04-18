@@ -88,7 +88,7 @@ describe('AliasDrawerWrapper tests', () => {
   });
   test('Should able to test the alias drawer with Manage alias', async () => {
     await initAliasDrawerWrapper({props});
-    expect(screen.getByRole('heading', {name: 'Manage Aliases'})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'Manage aliases'})).toBeInTheDocument();
     const infoText = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo');
 
     userEvent.click(infoText);
@@ -108,7 +108,7 @@ describe('AliasDrawerWrapper tests', () => {
 
   test('Should able to test the alias drawer with View alias without any alias', async () => {
     await initAliasDrawerWrapper({props, manage: false});
-    expect(screen.getByRole('heading', {name: 'View Aliases'})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'View aliases'})).toBeInTheDocument();
     const infoText = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo');
 
     userEvent.click(infoText);

@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
+import clsx from 'clsx';
 import CeligoTable from '../../../../components/CeligoTable';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -36,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   },
   initiateTransferBtn: {
     margin: theme.spacing(2, 0, 2, 2),
+  },
+  error: {
+    color: theme.palette.error.main,
   },
 }));
 const integrationsFilterConfig = {
@@ -133,7 +137,7 @@ export default function Invite(props) {
         <DynaForm formKey={formKey} />
         <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
 
-        {!!error && <div className={classes.infoTransfers}> {error} </div>}
+        {!!error && <div className={clsx(classes.infoTransfers, classes.error)}> {error} </div>}
       </div>
       {response && response.length && (
         <div className={classes.initiateTransferWrapper}>

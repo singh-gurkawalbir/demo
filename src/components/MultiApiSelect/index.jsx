@@ -26,10 +26,6 @@ const useStyles = makeStyles(theme => ({
   apiRadio: {
     width: 18,
     marginTop: theme.spacing(1),
-    color: theme.palette.secondary.contrastText,
-    '&:hover': {
-      color: theme.palette.text.hint,
-    },
     '& svg': {
       fontSize: 24,
     },
@@ -64,7 +60,7 @@ export default function MultiApiSelect({ items, value: val, onClick}) {
             </CeligoTruncate>
           </Typography>
           <Radio
-            color="default"
+            color="primary"
             checked={value === id}
             className={classes.apiRadio}
             value={id}

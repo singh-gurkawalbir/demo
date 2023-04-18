@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link } from 'react-router-dom';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
@@ -14,11 +15,15 @@ import ShowErrorMessage from '../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import DynaPassword from '../../components/DynaForm/fields/DynaPassword';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   submit: {
     marginTop: 30,
   },
-});
+  // Todo: Below CSS will get removed when these forms get converted to Dynaforms
+  cancelBtn: {
+    fontSize: theme.spacing(2),
+  },
+}));
 
 export default function SetPassword() {
   const {token} = useParams();
@@ -35,7 +40,7 @@ export default function SetPassword() {
 
   useEffect(() => {
     if (isSetPasswordStatus === 'success') {
-      history.replace(getRoutePath('/signin'));
+      history.replace(getRoutePath('/home'));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSetPasswordStatus]);
@@ -50,7 +55,8 @@ export default function SetPassword() {
     return errorMessage;
   });
 
-  const handleOnSubmit = useCallback(() => {
+  const handleOnSubmit = useCallback(e => {
+    e.preventDefault();
     if (!passwordVal) {
       setShowError(true);
     } else if (!showError) {
@@ -88,7 +94,7 @@ export default function SetPassword() {
           color="primary"
           component={Link}
           role="link"
-          className={classes.submit}
+          className={clsx(classes.submit, classes.cancelBtn)}
           submit
           value="Cancel">
           Cancel

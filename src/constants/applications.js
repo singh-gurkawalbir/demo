@@ -166,7 +166,7 @@ const connectors = [
   },
   {
     id: 'netsuitejdbc',
-    name: 'Netsuite JDBC',
+    name: 'NetSuite JDBC',
     type: 'netsuitejdbc',
     keywords: 'database,db',
     group: 'db',

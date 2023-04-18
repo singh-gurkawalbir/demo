@@ -93,6 +93,10 @@ export default function MockDataEditorField(props) {
     })}`);
   }, [history, match.url, props]);
 
+  const validateContent = useCallback(value =>
+    validateMockDataField(resourceType, value),
+  [resourceType]);
+
   return (
     <EditorField
       {...props}
@@ -101,7 +105,7 @@ export default function MockDataEditorField(props) {
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       customHandleEditorClick={expandMode === 'drawer' && handleExpandDrawer}
-      validateContent={validateMockDataField(resourceType)}
+      validateContent={validateContent}
       mode="json"
     />
   );

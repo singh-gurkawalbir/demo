@@ -17,6 +17,7 @@ import {
   getCSRFToken,
   removeCSRFToken,
 } from '../../utils/session';
+import { safeParse } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -24,6 +25,7 @@ import { message } from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { updatePreferences } from '../users';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -195,8 +197,9 @@ export function* checkAndUpdateDefaultSetId() {
       actions.user.preferences.update({
         defaultAShareId: calculatedDefaultAShareId,
         environment: 'production',
-      })
+      }, true)
     );
+    yield call(updatePreferences); // we have wait till preference get updated in the BE to proceed further.
   }
 }
 
@@ -360,7 +363,11 @@ export function* submitAcceptInvite({payload}) {
       yield put(actions.auth.signupStatus('done', response.message));
     }
   } catch (e) {
-    yield put(actions.auth.acceptInvite.failure(e));
+    const errJSON = safeParse(e);
+
+    const errorMsg = errJSON?.errors?.[0]?.message;
+
+    yield put(actions.auth.acceptInvite.failure({message: [errorMsg], type: 'error'}));
   }
 }
 export function* resetRequest({ email }) {
@@ -501,9 +508,9 @@ export function* auth({ email, password }) {
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
+    yield call(validateSession);
     const isExpired = yield select(selectors.isSessionExpired);
 
-    yield call(validateSession);
     yield call(setCSRFToken, apiAuthentications._csrf);
 
     yield call(setLastLoggedInLocalStorage);

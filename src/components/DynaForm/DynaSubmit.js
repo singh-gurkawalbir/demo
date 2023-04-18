@@ -55,7 +55,9 @@ export default function FormButton({
       submit={submit}
       fullWidth={fullWidth}
       disabled={buttonDisabled}
-      onClick={onClickBtn}>
+      onClick={onClickBtn}
+      {...(submit && { type: 'submit', role: 'button' })}
+    >
       {children}
     </FilledButton>
   );
