@@ -38,7 +38,7 @@ function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSetti
   return updatedLayout;
 }
 
-function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSettingsMetadata) {
+function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSettingsMetadata, customSettings) {
   const updatedFieldMetadata = customCloneDeep(resourceFieldMetadata);
   const { fieldMap: customSettingsFieldMap } = customSettingsMetadata;
   const customSettingsFields = fetchMetadataFieldList(customSettingsMetadata);
@@ -66,6 +66,7 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
       name: `/settings/${fieldId}`,
       id: `settings.${fieldId}`,
       fieldId: `settings.${fieldId}`,
+      defaultValue: customSettings?.[fieldId],
     };
     // find the ref index in fields and push this cs fieldId there
     updatedFieldMetadata.layout = getUpdatedFormLayoutWithCustomSettings(updatedFieldMetadata.layout, displayAfterRef, fieldId);
@@ -80,11 +81,11 @@ export function initializeHttpConnectorExportForm(fieldMeta, resource) {
     return fieldMeta;
   }
   // fetch fieldMeta and resource custom settings
-  const { settingsForm } = resource;
+  const { settingsForm, settings } = resource;
 
   if (settingsForm?.form) {
     // create stubs for utils to call and update
-    return getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsForm.form);
+    return getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsForm.form, settings);
   }
   // return updated metadata
 

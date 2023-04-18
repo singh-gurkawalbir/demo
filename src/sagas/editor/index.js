@@ -158,7 +158,7 @@ export function* validateCustomSettings({ id, result }) {
 
   const { fieldMap, layout } = result?.data || {};
   const fields = layout ? getFieldIdsInLayoutOrder(layout) : Object.keys(fieldMap || {});
-  const displayAfterFieldIds = fields.filter(fieldId => !!fieldMap[fieldId].displayAfter);
+  const displayAfterFieldIds = fields.filter(fieldId => !!fieldMap[fieldId]?.displayAfter);
   const invalidFieldId = displayAfterFieldIds.find(fieldId => {
     const {displayAfter} = fieldMap[fieldId];
     const index = displayAfter?.indexOf('.');
