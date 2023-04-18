@@ -81,10 +81,6 @@ export default function IclientSelect(props) {
     );
   }, [accountOwner, dispatch, formContext.fields, formContext.value, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  // if (!data || !data.length) {
-  //   return null;
-  // }
-
   return (
 
     <DynaSelect {...props} onFieldChange={handleClick} />

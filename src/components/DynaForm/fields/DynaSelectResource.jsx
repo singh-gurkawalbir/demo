@@ -428,17 +428,6 @@ export default function DynaSelectResource(props) {
 
       dispatch(actions.resource.patchStaged(value, patchSet));
     }
-    if (resourceType === 'iClients') {
-      const patchSet = [
-        {
-          op: 'add',
-          path: '/locationPath',
-          value: location.pathname,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(value, patchSet));
-    }
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.EDIT,
       baseUrl: location.pathname,
