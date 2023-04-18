@@ -848,7 +848,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
   return tempFiledMeta;
 };
 
-export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow, httpConnectorData, isGenericHTTP) => {
+export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow, httpConnectorData) => {
   const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
   const app = applications.find(a => a.id === (resource?.assistant || resource?.application)) || {};
   const tempFiledMeta = customCloneDeep(fieldMeta);
@@ -874,58 +874,48 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     'oauth2.failValues': 'http.auth.failValues',
   };
 
-  if (!isGenericHTTP) {
-    if (!httpConnectorData || !httpConnectorData?.supportedBy) {
-      return tempFiledMeta;
+  Object.keys(iClientPathMap).forEach(key => {
+    const preConfiguredField = httpConnectorData?.supportedBy?.connection?.preConfiguredFields?.find(field => iClientPathMap[key] === field?.path);
+
+    if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
+      !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0]);
+    } else if (resource?.application && preConfiguredField) {
+      tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0];
+    } else if (resource?.application === 'custom_oauth2') {
+      tempFiledMeta.fieldMap[key].defaultValue = '';
+      tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
     }
-    if (app.assistant && app?._httpConnectorId) {
-      return tempFiledMeta;
-    }
+  });
+  if (!app._httpConnectorId) {
+    delete tempFiledMeta.layout.containers[0].fields[3];
   }
-  if (isGenericHTTP) {
-    Object.keys(iClientPathMap).forEach(key => {
-      const preConfiguredField = httpConnectorData?.supportedBy?.connection?.preConfiguredFields?.find(field => iClientPathMap[key] === field?.path);
+  const httpApplicaions = applicationsList().filter(a => a._httpConnectorId);
+  const items = [];
 
-      if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
-        !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0]);
-      } else if (resource?.application && preConfiguredField) {
-        tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0];
-      } else if (resource?.application === 'custom_oauth2') {
-        tempFiledMeta.fieldMap[key].defaultValue = '';
-        tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
-      }
-    });
-    if (!app._httpConnectorId) {
-      delete tempFiledMeta.layout.containers[0].fields[3];
-    }
-    const httpApplicaions = applicationsList().filter(a => a._httpConnectorId);
-    const items = [];
+  httpApplicaions.forEach(app => {
+    items.push({label: app?.name, value: app?.name.toLowerCase().replace(/\.|\s/g, '')});
+  });
+  items.push({label: 'Custom OAuth2.0', value: 'custom_oauth2'});
+  // changing the application inside resource -> application
 
-    httpApplicaions.forEach(app => {
-      items.push({label: app?.name, value: app?.name.toLowerCase().replace(/\.|\s/g, '')});
-    });
-    items.push({label: 'Custom OAuth2.0', value: 'custom_oauth2'});
-    // changing the application inside resource -> application
+  const connectorData = app?._httpConnectorId ? getHttpConnector(app?._httpConnectorId) : getHttpConnector(resource?._httpConnectorId);
 
-    const connectorData = app?._httpConnectorId ? getHttpConnector(app?._httpConnectorId) : getHttpConnector(resource?._httpConnectorId);
+  const authUrlValue = tempFiledMeta.fieldMap?.['oauth2.auth.uri']?.defaultValue;
+  const tokenUrlValues = tempFiledMeta.fieldMap?.['oauth2.token.uri']?.defaultValue;
 
-    const authUrlValue = tempFiledMeta.fieldMap?.['oauth2.auth.uri']?.defaultValue;
-    const tokenUrlValues = tempFiledMeta.fieldMap?.['oauth2.token.uri']?.defaultValue;
+  if (tempFiledMeta.fieldMap['oauth2.auth.uri'] || tempFiledMeta.fieldMap['oauth2.token.uri']) {
+    const authUrlDomainNames = tempFiledMeta.fieldMap['oauth2.auth.uri'] ? authUrlValue.substring(authUrlValue.indexOf('https://') + 8, authUrlValue.indexOf('.com')) : '';
 
-    if (tempFiledMeta.fieldMap['oauth2.auth.uri'] || tempFiledMeta.fieldMap['oauth2.token.uri']) {
-      const authUrlDomainNames = tempFiledMeta.fieldMap['oauth2.auth.uri'] ? authUrlValue.substring(authUrlValue.indexOf('https://') + 8, authUrlValue.indexOf('.com')) : '';
+    const tokenUrlDomainNames = tempFiledMeta.fieldMap['oauth2.token.uri'] ? tokenUrlValues.substring(tokenUrlValues.indexOf('https://') + 8, tokenUrlValues.indexOf('.com')) : '';
 
-      const tokenUrlDomainNames = tempFiledMeta.fieldMap['oauth2.token.uri'] ? tokenUrlValues.substring(tokenUrlValues.indexOf('https://') + 8, tokenUrlValues.indexOf('.com')) : '';
-
-      tempFiledMeta.fieldMap['oauth2.validDomainNames'].defaultValue = (authUrlDomainNames && tokenUrlDomainNames) ? `${authUrlDomainNames},${tokenUrlDomainNames}` : (authUrlDomainNames || tokenUrlDomainNames);
-    }
+    tempFiledMeta.fieldMap['oauth2.validDomainNames'].defaultValue = (authUrlDomainNames && tokenUrlDomainNames) ? `${authUrlDomainNames},${tokenUrlDomainNames}` : (authUrlDomainNames || tokenUrlDomainNames);
+  }
   tempFiledMeta.fieldMap?.application?.options.push({items});
   if (resource?.application === 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
   } else if ((resource?.application || resource?.assistant) && resource?.application !== 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = connectorData?.legacyId || connectorData?.name;
   } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.legacyId || connectorData?.name) : 'custom_oauth2'); }
-  }
 
   return tempFiledMeta;
 };
