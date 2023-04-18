@@ -128,7 +128,7 @@ export default {
     checkExistingExport: {
       id: 'checkExistingExport',
       name: 'checkExistingExport',
-      type: 'existingCheckBox',
+      type: 'existingCheckresource',
       required: false,
       flowResourceType: 'pg',
       resourceType: 'exports',
@@ -156,7 +156,7 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      alwaysOpen: true,
+      defaultOpen: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',

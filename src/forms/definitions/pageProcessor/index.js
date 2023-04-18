@@ -95,7 +95,7 @@ export default {
       id: 'checkExistingImport',
       name: 'checkExistingImport',
       label: 'Use existing Import',
-      type: 'existingCheckBox',
+      type: 'existingCheckresource',
       flowResourceType: 'pp',
       resourceType: 'imports',
       required: false,
@@ -121,7 +121,7 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      alwaysOpen: true,
+      defaultOpen: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -166,7 +166,7 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      alwaysOpen: true,
+      defaultOpen: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
