@@ -16,7 +16,7 @@ import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 import { sampleDataStage } from '../../../utils/flowData';
 import FlowStartDateDialog from '../PreviewDateDialog';
 import actions from '../../../actions';
-import { convertUtcToTimezone } from '../../../utils/date';
+import { convertUtcToTimezone, getNDaysBeforeDate} from '../../../utils/date';
 import reducer from './stateReducer';
 import { isNewId } from '../../../utils/resource';
 
@@ -103,7 +103,7 @@ export default function PreviewInfo(props) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const [previewState, dispatchLocalAction] = useReducer(reducer,
     {
-      defaultDate: new Date(new Date().setDate(new Date().getDate() - 1)),
+      defaultDate: getNDaysBeforeDate(1),
       showDeltaStartDateDialog: false,
       clickOnPreview: false,
       isValidRecordSize: true,

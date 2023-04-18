@@ -10,7 +10,7 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import adjustTimezone from '../../../utils/adjustTimezone';
-import { convertUtcToTimezone } from '../../../utils/date';
+import { convertUtcToTimezone, getNDaysBeforeDate } from '../../../utils/date';
 import ActionGroup from '../../ActionGroup';
 import { TextButton } from '../../Buttons';
 import NotificationToaster from '../../NotificationToaster';
@@ -26,7 +26,7 @@ export default function PreviewDateDialog(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { flowId, onClose, disabled, onRun, dateSelected } = props;
-  const [defaultDate] = useState(new Date(new Date().setDate(new Date().getDate() - 1)));
+  const [defaultDate] = useState(getNDaysBeforeDate(1));
   const { preferences, timeZone, origLastExportDateTime } = useSelector(state => ({
     origLastExportDateTime: selectors.getLastExportDateTime(state, flowId)?.data,
     timeZone: selectors.userTimezone(state),
