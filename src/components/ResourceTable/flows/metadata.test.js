@@ -32,10 +32,10 @@ jest.mock('../../RunFlowButton', () => ({
   ),
 }));
 
-jest.mock('../../CeligoSwitch', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoSwitch'),
-  default: () => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Switch: () => (
     <><div>Mocked CeligoSwitch</div></>
   ),
 }));
