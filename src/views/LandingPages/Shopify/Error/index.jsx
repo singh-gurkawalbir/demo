@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, Box, styled } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import { CeligoLogo } from '@celigo/fuse-ui';
@@ -8,44 +8,11 @@ import ShopifyLandingPageHeader from '../PageHeader';
 import NotificationToaster from '../../../../components/NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-    background: theme.palette.background.paper,
-  },
   headerBorder: {
     background: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2),
     height: theme.spacing(10),
-  },
-  shopifyBody: {
-    height: 'calc(100vh - 78px)',
-    position: 'relative',
-  },
-  shopifyContentWrapper: {
-    width: '500px',
-    position: 'absolute',
-    top: 'calc(50% - 78px)',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-  },
-  card: {
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    background: '#F8FAFF',
-    boxShadow: '0px 4px 4px rgb(0 0 0 / 25%)',
-    borderRadius: '4px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '32px 24px',
-    flexWrap: 'wrap',
-  },
-  celigoLogoWrapper: {
-    width: 150,
-    marginBottom: theme.spacing(5),
-    '& > svg': {
-      fill: theme.palette.primary.dark,
-    },
   },
   message: {
     border: `1px solid ${theme.palette.error.main}`,
@@ -53,20 +20,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  miniCard: {
-    background: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    width: '100%',
-    padding: theme.spacing(0, 2),
-    borderRadius: '4px',
-    marginTop: theme.spacing(2),
-    '& h5': {
-      fontSize: theme.spacing(1.75),
-      margin: '16px 0',
-      fontFamily: 'inherit',
-      lineHeight: 1.1,
-    },
   },
   minicard1: {
     background: theme.palette.background.paper,
@@ -79,11 +32,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     borderLeftWidth: '6px',
   },
-  divider: {
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    width: theme.spacing(50),
-  },
-
   errorNotification: {
     border: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
@@ -101,14 +49,53 @@ const useStyles = makeStyles(theme => ({
       content: 'none',
     },
   },
-  font: {
-    fontSize: theme.spacing(1.75),
-    lineHeight: 1.1,
-    margin: '8px 0',
-    fontFamily: 'inherit',
-  },
   buttonRef: {
     padding: 0,
+  },
+}));
+
+const StyledRoot = styled(Box)(({ theme }) => ({
+  width: '100%',
+  background: theme.palette.background.paper,
+}));
+
+const StyledShopifyBody = styled(Box)({
+  height: 'calc(100vh - 78px)',
+  position: 'relative',
+});
+
+const StyledShopifyContentWrapper = styled(Box)({
+  width: '500px',
+  position: 'absolute',
+  top: 'calc(50% - 78px)',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+});
+
+const StyledCard = styled(Box)(({ theme }) => ({
+  border: `1px solid ${theme.palette.secondary.lightest}`,
+  background: '#F8FAFF',
+  boxShadow: '0px 4px 4px rgb(0 0 0 / 25%)',
+  borderRadius: '4px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '32px 24px',
+  flexWrap: 'wrap',
+}));
+
+const StyledMiniCard = styled(Box)(({ theme }) => ({
+  background: theme.palette.background.paper,
+  border: `1px solid ${theme.palette.secondary.lightest}`,
+  width: '100%',
+  padding: theme.spacing(0, 2),
+  borderRadius: '4px',
+  marginTop: theme.spacing(2),
+  '& h5': {
+    fontSize: theme.spacing(1.75),
+    margin: '16px 0',
+    fontFamily: 'inherit',
+    lineHeight: 1.1,
   },
 }));
 
@@ -125,14 +112,21 @@ export default function VerifyApp() {
   }
 
   return (
-    <div className={classes.root}>
+    <StyledRoot>
       <ShopifyLandingPageHeader />
-      <div className={classes.shopifyBody}>
-        <div className={classes.shopifyContentWrapper}>
-          <div className={classes.card}>
-            <div className={classes.celigoLogoWrapper}>
+      <StyledShopifyBody>
+        <StyledShopifyContentWrapper>
+          <StyledCard>
+            <Box
+              sx={{
+                width: 150,
+                marginBottom: theme => theme.spacing(5),
+                '& > svg': {
+                  fill: theme => theme.palette.primary.dark,
+                },
+              }}>
               <CeligoLogo />
-            </div>
+            </Box>
             <NotificationToaster
               variant="error"
               className={classes.errorNotification}
@@ -140,14 +134,19 @@ export default function VerifyApp() {
               <Typography
                 component="div"
                 variant="h5"
-                className={classes.font}
+                sx={{
+                  fontSize: theme => theme.spacing(1.75),
+                  lineHeight: 1.1,
+                  margin: '8px 0',
+                  fontFamily: 'inherit',
+                }}
               >
                 Failed to add app.
                 <br />
                 Error: {paramObj.errorMessage}
               </Typography>
             </NotificationToaster>
-            <div className={classes.miniCard}>
+            <StyledMiniCard>
               <Typography
                 component="h5"
                 variant="h5"
@@ -164,17 +163,21 @@ export default function VerifyApp() {
                   </Button> and try again.
                 </span>
               </Typography>
-              <div className={classes.divider} />
+              <Box
+                sx={{
+                  borderBottom: theme => `1px solid ${theme.palette.secondary.lightest}`,
+                  width: theme => theme.spacing(50),
+                }} />
               <Typography
                 component="h5"
                 variant="h5"
               >
                 If the error persists, <a className={classes.link} href="https://docs.celigo.com/hc/en-us/requests/new" rel="noreferrer" target="_blank">submit a ticket </a>to our support team.
               </Typography>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </StyledMiniCard>
+          </StyledCard>
+        </StyledShopifyContentWrapper>
+      </StyledShopifyBody>
+    </StyledRoot>
   );
 }
