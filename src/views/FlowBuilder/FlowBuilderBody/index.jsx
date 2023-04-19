@@ -206,20 +206,20 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     }
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow, iconView]);
 
-  const getAllOutgoingNodes = (node, elements) => getOutgoers(node, elements).reduce(
-    (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, elements)],
+  const getAllOutgoingNodes = (node, nodes, edges) => getOutgoers(node, nodes, edges).reduce(
+    (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, nodes, edges)],
     []
   );
 
-  const getAllIncomingNodes = (node, elements) => getIncomers(node, elements).reduce(
-    (memo, incomer) => [...memo, incomer, ...getAllIncomingNodes(incomer, elements)],
+  const getAllIncomingNodes = (node, nodes, edges) => getIncomers(node, nodes, edges).reduce(
+    (memo, incomer) => [...memo, incomer, ...getAllIncomingNodes(incomer, nodes, edges)],
     []
   );
 
   const downstreamHighlighter = id => {
     dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'left'}));
     const node = elements.find(ele => ele.id === id);
-    const subFlow = getAllOutgoingNodes(node, elements).map(node => node.id);
+    const subFlow = getAllOutgoingNodes(node, nodes, edges).map(node => node.id);
 
     const newElements = elements.map(ele => {
       if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
@@ -234,7 +234,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
   const upstreamHighlighter = id => {
     dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'right'}));
     const node = elements.find(ele => ele.id === id);
-    const subFlow = getAllIncomingNodes(node, elements).map(node => node.id);
+    const subFlow = getAllIncomingNodes(node, nodes, edges).map(node => node.id);
 
     const newElements = elements.map(ele => {
       if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
@@ -285,12 +285,12 @@ export function Canvas({ flowId, fullscreen, iconView}) {
 
     const targetNode = elements.find(e => e?.id === targetNodeId);
 
-    const getAllOutgoingNodes = (node, elements) => getOutgoers(node, elements).reduce(
-      (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, elements)],
+    const getAllOutgoingNodes = (node, nodes, edges) => getOutgoers(node, nodes, edges).reduce(
+      (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, nodes, edges)],
       []
     );
 
-    const subsequentNodes = targetNode ? getAllOutgoingNodes(targetNode, elements).map(node => node.id) : [];
+    const subsequentNodes = targetNode ? getAllOutgoingNodes(targetNode, nodes, edges).map(node => node.id) : [];
 
     const includedEdges = elements.filter(ele => {
       if (!isEdge(ele)) return false;

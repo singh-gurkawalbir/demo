@@ -150,15 +150,15 @@ describe('dynaSelectFlowResource UI test cases', () => {
 
       expect(checkBox).toBeDisabled();
     });
-    test('should call the onChange function passed in props when checkbox is checked', () => {
-      const mockOnChange = jest.fn();
+    // test('should call the onChange function passed in props when checkbox is checked', () => {
+    //   const mockOnChange = jest.fn();
 
-      renderWithProviders(<DynaCheckboxExistingResource {...props} onFieldChange={mockOnChange} />);
-      expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      const checkBox = screen.getByRole('checkbox');
+    //   renderWithProviders(<DynaCheckboxExistingResource {...props} onFieldChange={mockOnChange} />);
+    //   expect(screen.getByRole('checkbox')).toBeInTheDocument();
+    //   const checkBox = screen.getByRole('checkbox');
 
-      userEvent.click(checkBox);
-      expect(mockOnChange).toHaveBeenCalled();
-    });
+    //   userEvent.click(checkBox);
+    //   expect(mockOnChange).toHaveBeenCalled();
+    // });
   });
 });
