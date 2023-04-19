@@ -8,8 +8,6 @@ export default {
         retValues['/http/auth/basic/username']
       }/token`;
       retValues['/http/auth/type'] = 'basic';
-    } else {
-      retValues['/http/apiToken'] = undefined;
     }
 
     return {
@@ -108,6 +106,7 @@ export default {
       type: 'text',
       label: 'API token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{field: 'http.auth.type', isNot: ['token']}],
     },
     application: {
       fieldId: 'application',

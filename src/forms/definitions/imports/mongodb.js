@@ -6,17 +6,6 @@ export default {
       ...formValues,
     };
 
-    if (
-      retValues['/mongodb/ignoreExtract'] !== '' &&
-      retValues['/mongodb/lookupType'] === 'source'
-    ) {
-      retValues['/mongodb/ignoreLookupFilter'] = undefined;
-    } else if (
-      retValues['/mongodb/ignoreLookupFilter'] !== '' &&
-      retValues['/mongodb/lookupType'] === 'lookup'
-    ) {
-      retValues['/mongodb/ignoreExtract'] = undefined;
-    }
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
@@ -57,6 +46,10 @@ export default {
     },
     'mongodb.ignoreLookupFilter': {
       fieldId: 'mongodb.ignoreLookupFilter',
+      removeWhenAll: [
+        { field: 'mongodb.ignoreExtract', isNot: [''] },
+        { field: 'mongodb.lookupType', is: ['source'] },
+      ],
     },
     'mongodb.filter': {
       fieldId: 'mongodb.filter',
@@ -66,6 +59,10 @@ export default {
     },
     'mongodb.ignoreExtract': {
       fieldId: 'mongodb.ignoreExtract',
+      removeWhenAll: [
+        { field: 'mongodb.ignoreLookupFilter', isNot: [''] },
+        { field: 'mongodb.lookupType', is: ['lookup'] },
+      ],
     },
     dataMappings: {
       formId: 'dataMappings',

@@ -24,7 +24,6 @@ export default {
       retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/token/paramName'] = undefined;
     }
 
@@ -101,6 +100,7 @@ export default {
       required: true,
       helpKey: 'pipedrive.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
