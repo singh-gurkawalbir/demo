@@ -1,5 +1,5 @@
 import React from 'react';
-import {screen } from '@testing-library/react';
+import {cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { reduxStore, renderWithProviders } from '../../test/test-utils';
 import BranchFilterPanel from '.';
@@ -146,6 +146,27 @@ describe('Branch filter panel test cases', () => {
     await userEvent.click(addRuleButton);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
       rulePath: 'branches[1].skipEmptyRuleCleanup',
+    }));
+  });
+  test('should dispatch actions with correct params on unmount', () => {
+    const inputProps = {
+      rule: undefined,
+      position: 0,
+      type: 'branchFilter',
+    };
+
+    initBranchFilterPanel(inputProps);
+
+    cleanup();
+
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchFeatures(editorId, {
+      isInvalid: false,
+      error: undefined,
+      disablePreview: false,
+    }));
+
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, false, {
+      rulePath: 'branches[0].skipEmptyRuleCleanup',
     }));
   });
 });
