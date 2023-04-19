@@ -6,7 +6,6 @@ const useStyles = makeStyles({
   label: {
     width: '100%',
     whiteSpace: 'normal',
-    marginBottom: 5,
   },
 });
 
