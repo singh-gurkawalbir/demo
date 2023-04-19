@@ -138,6 +138,7 @@ export default function Licenses(props) {
         <ActionGroup>
           <KeywordSearch
             filterKey={filterKey}
+            autoFocus
           />
           <TextButton
             onClick={handleClick}

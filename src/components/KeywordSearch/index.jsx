@@ -1,12 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect } from 'react';
 import actions from '../../actions';
-import SearchInput from '../SearchInput';
 import { selectors } from '../../reducers';
 import HomeSearchInput from '../SearchInput/HomeSearchInput';
 import useDebouncedValue from '../../hooks/useDebouncedInput';
 
-export default function KeywordSearch({ filterKey, isHomeSearch, onFocus, autoFocus, placeholder}) {
+export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHolder}) {
   const dispatch = useDispatch();
   const filter =
     useSelector(state => selectors.filter(state, filterKey));
@@ -31,19 +30,13 @@ export default function KeywordSearch({ filterKey, isHomeSearch, onFocus, autoFo
     setText(e.target.value);
   }, [setText]);
 
-  return isHomeSearch ? (
+  return (
     <HomeSearchInput
       value={text}
       onChange={handleKeywordChange}
+      autoFocus={autoFocus}
+      onFocus={onFocus}
+      placeHolder={placeHolder}
   />
-  )
-    : (
-      <SearchInput
-        value={text}
-        onChange={handleKeywordChange}
-        onFocus={onFocus}
-        autoFocus={autoFocus}
-        placeholder={placeholder}
-    />
-    );
+  );
 }
