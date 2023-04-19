@@ -2385,6 +2385,7 @@ const flow = {
       flowId,
       response,
     }),
+  clear: flowId => action(actionTypes.FLOW.CLEAR, { flowId }),
 };
 const assistantMetadata = {
   received: ({ adaptorType, assistant, metadata }) =>

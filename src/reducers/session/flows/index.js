@@ -25,6 +25,9 @@ export default (state = {}, action) => {
       case actionTypes.FLOW.RECEIVED_RUN_ACTION_STATUS:
         draft[flowId] = { runStatus };
         break;
+      case actionTypes.FLOW.CLEAR:
+        delete draft[flowId];
+        break;
 
       default:
     }
