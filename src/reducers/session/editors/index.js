@@ -290,6 +290,7 @@ export default function reducer(state = {}, action) {
         if (!draft[id]) break;
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
+        draft[id].errSourceProcessor = error?.errSourceProcessor;
         draft[id].previewStatus = 'error';
         delete draft[id].result;
         break;
@@ -435,6 +436,7 @@ selectors.editorPreviewError = (state, id) => {
   return {
     error: editor?.error,
     errorLine: editor?.errorLine,
+    errSourceProcessor: editor?.errSourceProcessor,
   };
 };
 
