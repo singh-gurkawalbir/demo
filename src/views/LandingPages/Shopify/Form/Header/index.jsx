@@ -1,6 +1,6 @@
 import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { Box, styled } from '@mui/material';
+import { Box } from '@mui/material';
 import InstallationGuideIcon from '../../../../../components/icons/InstallationGuideIcon';
 import EnvironmentToggle from '../../../../../App/CeligoAppBar/EnvironmentToggle';
 
@@ -8,13 +8,12 @@ const useStyles = makeStyles(theme => ({
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
   },
-}));
-
-const GuideLink = styled('a')(({ theme }) => ({
-  marginRight: theme.spacing(2),
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'row-reverse',
+  guideLink: {
+    marginRight: theme.spacing(2),
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+  },
 }));
 
 export default function FormHeader({
@@ -39,7 +38,7 @@ export default function FormHeader({
         <EnvironmentToggle handleToggle={handleToggle} />
       ) : (
         <div>
-          <GuideLink
+          <a
             href={helpURL}
             className={classes.guideLink}
             rel="noreferrer"
@@ -47,7 +46,7 @@ export default function FormHeader({
             >
             Shopify connection guide
             <InstallationGuideIcon className={classes.guideLinkIcon} />
-          </GuideLink>
+          </a>
         </div>
       )}
     </Box>
