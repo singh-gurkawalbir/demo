@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
-import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -18,26 +17,8 @@ const useStyles = makeStyles(theme => ({
   submit: {
     marginTop: theme.spacing(4),
   },
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-  },
-  errorField: {
-    '&:hover': {
-      borderColor: theme.palette.error.dark,
-    },
-    '& > * input': {
-      '&:hover': {
-        borderColor: theme.palette.error.dark,
-      },
-      borderColor: theme.palette.error.dark,
-    },
-  },
   forgotPasswordSpinner: {
     marginTop: theme.spacing(1),
-  },
-  cancelBtn: {
-    fontSize: theme.spacing(2),
   },
 }));
 export default function ForgotPassword({setShowError, email}) {
@@ -98,7 +79,21 @@ export default function ForgotPassword({setShowError, email}) {
           fullWidth
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
+          sx={{
+            width: '100%',
+            background: theme => theme.palette.background.paper,
+            ...((showErr || showInvalidEmailError) && {
+              '&:hover': {
+                borderColor: theme => theme.palette.error.dark,
+              },
+              '& > * input': {
+                '&:hover': {
+                  borderColor: theme => theme.palette.error.dark,
+                },
+                borderColor: theme => theme.palette.error.dark,
+              },
+            }),
+          }}
         />
         <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 
@@ -121,7 +116,10 @@ export default function ForgotPassword({setShowError, email}) {
           role="link"
           type="cancel"
           submit
-          className={clsx(classes.submit, classes.cancelBtn)}
+          sx={{
+            marginTop: theme => theme.spacing(4),
+            fontSize: theme => theme.spacing(2),
+          }}
         >
           Cancel
         </TextButton>

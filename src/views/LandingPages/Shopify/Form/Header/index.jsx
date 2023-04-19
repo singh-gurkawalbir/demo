@@ -1,26 +1,20 @@
 import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box, styled } from '@mui/material';
 import InstallationGuideIcon from '../../../../../components/icons/InstallationGuideIcon';
 import EnvironmentToggle from '../../../../../App/CeligoAppBar/EnvironmentToggle';
 
 const useStyles = makeStyles(theme => ({
-  formHeader: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(0.5, 3),
-  },
-  guideLink: {
-    marginRight: theme.spacing(2),
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row-reverse',
-  },
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
   },
+}));
+
+const GuideLink = styled('a')(({ theme }) => ({
+  marginRight: theme.spacing(2),
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row-reverse',
 }));
 
 export default function FormHeader({
@@ -31,23 +25,31 @@ export default function FormHeader({
   const classes = useStyles();
 
   return (
-    <div className={classes.formHeader}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: theme => `1px solid ${theme.palette.secondary.lightest}`,
+        padding: theme => theme.spacing(0.5, 3),
+      }}>
       <h3>Set up connection</h3>
       {selectedAccountHasSandbox ? (
         <EnvironmentToggle handleToggle={handleToggle} />
       ) : (
         <div>
-          <a
-            className={classes.guideLink}
+          <GuideLink
             href={helpURL}
+            className={classes.guideLink}
             rel="noreferrer"
             target="_blank"
             >
             Shopify connection guide
             <InstallationGuideIcon className={classes.guideLinkIcon} />
-          </a>
+          </GuideLink>
         </div>
       )}
-    </div>
+    </Box>
   );
 }

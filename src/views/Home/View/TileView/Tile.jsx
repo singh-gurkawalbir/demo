@@ -3,7 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { styled } from '@mui/material/styles';
 import { selectors } from '../../../../reducers';
 import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../../../components/HomePageCard/Header';
@@ -38,6 +37,10 @@ const useStyles = makeStyles(theme => ({
   action: {
     marginLeft: 0,
   },
+  tagWithLicenseMessage: {
+    bottom: 90,
+    position: 'absolute',
+  },
   headerTileStatus: {
     fontSize: 13,
     paddingLeft: 0,
@@ -56,11 +59,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-
-const StyledIntegrationTag = styled(IntegrationTag)({
-  bottom: 90,
-  position: 'absolute',
-});
 
 function AppLogosContainer({ tile }) {
   const applications = useSelectorMemo(selectors.mkTileApplications, tile);
@@ -225,7 +223,7 @@ function Tile({
               )}
             </Manage>
             )}
-            {licenseMessageContent && tile.tag && (<StyledIntegrationTag label={tile.tag} />)}
+            {licenseMessageContent && tile.tag && (<IntegrationTag label={tile.tag} className={classes.tagWithLicenseMessage} />)}
             {!licenseMessageContent && tile.tag && (<IntegrationTag label={tile.tag} />)}
           </FooterActions>
           <Info

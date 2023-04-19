@@ -62,7 +62,7 @@ function ForgotPassword(props) {
       pageTitle="Forgot your password?"
       pageSubHeading={<RawHtml html={message} className={classes.rawHTML} />}
       alertMessage={alertMessage}>
-      {!successView
+      {successView
         ? (
           <ForgotPasswordForm
             {...props}
@@ -71,7 +71,7 @@ function ForgotPassword(props) {
             email={queryParams.get('email')}
           />
         ) : ''}
-      {successView ? (
+      {!successView ? (
         <Typography variant="body2" className={classes.backToSignIn}>
           Back to
           <TextButton

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box, styled } from '@mui/material';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import RadioGroup from '../../../../components/DynaForm/fields/radiogroup/DynaQueryRadioGroup';
@@ -23,15 +24,6 @@ const useStyles = makeStyles(theme => ({
   resourceFormRadioGroupWrapper: {
     marginBottom: theme.spacing(2),
   },
-  guideLinkWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  guideLink: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
     color: theme.palette.secondary.light,
@@ -39,16 +31,6 @@ const useStyles = makeStyles(theme => ({
   form: {
     overflowY: 'auto',
     maxHeight: 'calc(100vh - 232px)',
-  },
-  footer: {
-    borderTop: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    background: theme.palette.background.paper,
-    padding: theme.spacing(2, 3),
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: theme.spacing(8),
   },
   connectionForm: {
     padding: theme.spacing(2),
@@ -59,6 +41,17 @@ const useStyles = makeStyles(theme => ({
   logosWrapper: {
     margin: theme.spacing(4, 0),
   },
+}));
+
+const StyledFooter = styled(Box)(({ theme }) => ({
+  borderTop: '1px solid',
+  borderColor: theme.palette.secondary.lightest,
+  background: theme.palette.background.paper,
+  padding: theme.spacing(2, 3),
+  position: 'absolute',
+  bottom: 0,
+  width: '100%',
+  height: theme.spacing(8),
 }));
 
 export default function AddOrSelectForm({
@@ -184,15 +177,22 @@ export default function AddOrSelectForm({
       <DrawerContent className={classes.form}>
         {selectedAccountHasSandbox ? (
 
-          <div className={classes.guideLinkWrapper}>
-            <a
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+            }}>
+            <Box
+              component="a"
               href={helpURL}
               rel="noreferrer"
               target="_blank"
-              className={classes.guideLink}>
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
               <InstallationGuideIcon className={classes.guideLinkIcon} />Shopify connection guide
-            </a>
-          </div>
+            </Box>
+          </Box>
         ) : null}
         <CeligoLinkAppLogo application="shopify" className={classes.logosWrapper} />
         {/* uncomment below code to show errors in future
@@ -222,7 +222,7 @@ export default function AddOrSelectForm({
         />
         <DynaForm formKey={formKey} />
       </DrawerContent>
-      <div className={classes.footer}>
+      <StyledFooter>
         <SaveAndCloseMiniResourceForm
           formKey={formKey}
           submitButtonLabel="Save & authorize"
@@ -230,7 +230,7 @@ export default function AddOrSelectForm({
           handleSave={handleSave}
           shouldNotShowCancelButton
         />
-      </div>
+      </StyledFooter>
     </>
   );
 }

@@ -5,9 +5,8 @@ import {
   useRouteMatch,
   useHistory,
 } from 'react-router-dom';
-import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
-import { List, ListItem, Divider } from '@mui/material';
+import { List, ListItem, Divider, Box, styled } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { selectors } from '../../../../../reducers';
 import GeneralSection from './sections/General';
@@ -20,41 +19,31 @@ import EditorDrawer from '../../../../../components/AFE/Drawer';
 import IsLoggableContextProvider from '../../../../../components/IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.background.paper,
-  },
-  container: {
-    display: 'flex',
-    paddingTop: theme.spacing(1),
-  },
-  subNav: {
-    minWidth: 200,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-    padding: theme.spacing(0, 3, 3, 0),
-    overflowX: 'auto',
-    overflowY: 'visible',
-  },
   listItem: {
     color: theme.palette.secondary.main,
   },
   activeListItem: {
     color: theme.palette.primary.main,
   },
-  divider: {
-    marginRight: theme.spacing(1),
-    marginTop: '10px',
-    marginBottom: '10px',
-  },
-  emptyMessageWrapper: {
-    padding: theme.spacing(1, 2),
-  },
+}));
+
+const StyledContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  paddingTop: theme.spacing(1),
+}));
+
+const StyledDivRoot = styled(Box)(({ theme }) => ({
+  border: '1px solid',
+  borderColor: theme.palette.secondary.lightest,
+  backgroundColor: theme.palette.background.paper,
+}));
+
+const StyledContent = styled(Box)(({ theme }) => ({
+  width: '100%',
+  height: '100%',
+  padding: theme.spacing(0, 3, 3, 0),
+  overflowX: 'auto',
+  overflowY: 'visible',
 }));
 
 function FlowSettingsPanel({availableSections, integrationId, childId, sectionProps}) {
@@ -151,14 +140,19 @@ export default function SettingsPanel({
     // no section provided.
     if (availableSections.length === 0 || isParentView) {
       return (
-        <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
-          <div className={classes.container}>
+        <StyledDivRoot sx={{ padding: theme => theme.spacing(1, 2) }}>
+          <StyledContainer>
             <Typography variant="h4">
               Settings
             </Typography>
-          </div>
-          <Divider className={classes.divider} />
-          <div className={classes.content}>
+          </StyledContainer>
+          <Divider
+            sx={{
+              marginRight: theme => theme.spacing(1),
+              marginTop: '10px',
+              marginBottom: '10px',
+            }} />
+          <StyledContent>
             <span>
               {isParentView
                 ? getEmptyMessage(integration.settings?.storeLabel, 'view settings')
@@ -168,16 +162,21 @@ export default function SettingsPanel({
                   </Typography>
                 ) }
             </span>
-          </div>
-        </div>
+          </StyledContent>
+        </StyledDivRoot>
       );
     }
   }
 
   return (
-    <div className={classes.root}>
-      <div className={classes.container}>
-        <div className={classes.subNav}>
+    <StyledDivRoot>
+      <StyledContainer>
+        <Box
+          sx={{
+            minWidth: 200,
+            borderRight: theme => `solid 1px ${theme.palette.secondary.lightest}`,
+            paddingTop: theme => theme.spacing(2),
+          }}>
           <List>
             {availableSections.map(({ path, label, id }) => (
               <ListItem key={path}>
@@ -192,8 +191,8 @@ export default function SettingsPanel({
               </ListItem>
             ))}
           </List>
-        </div>
-        <div className={classes.content}>
+        </Box>
+        <StyledContent>
           <FlowSettingsPanel
             availableSections={availableSections}
             integrationId={integrationId}
@@ -201,9 +200,9 @@ export default function SettingsPanel({
             sectionProps={sectionProps}
           />
           <EditorDrawer />
-        </div>
-      </div>
-    </div>
+        </StyledContent>
+      </StyledContainer>
+    </StyledDivRoot>
   );
 }
 

@@ -1,26 +1,12 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import { Tabs, Tab } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Tabs, Tab, Box } from '@mui/material';
 import { selectors } from '../../../../reducers';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
-const useStyles = makeStyles(theme => ({
-  tabContainer: {
-    padding: theme.spacing(0, 3),
-  },
-  tabPanel: {
-    overflow: 'visible',
-  },
-  tab: {
-    minWidth: 'auto',
-    fontSize: 14,
-  },
-}));
 
 export default function IntegrationTabs({ tabs, className }) {
-  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const { dashboardTab, childId } = match.params;
@@ -58,7 +44,7 @@ export default function IntegrationTabs({ tabs, className }) {
   );
 
   return (
-    <div className={(classes.tabContainer, className)}>
+    <Box sx={{ p: theme => theme.spacing(0, 3) }} className={className}>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}
@@ -69,28 +55,31 @@ export default function IntegrationTabs({ tabs, className }) {
         aria-label="scrollable auto tabs example">
         {tabs.map(({ label, Icon }, i) => (
           <Tab
-            className={classes.tab}
             key={label}
             data-test={label}
             id={`tab-${i}`}
             {...{ 'aria-controls': `tabpanel-${i}` }}
             icon={<Icon />}
             label={label}
+            sx={{
+              minWidth: 'auto',
+              fontSize: 14,
+            }}
           />
         ))}
       </Tabs>
 
       {tabs.map(({ path, Panel }, i) => (
-        <div
+        <Box
           key={path}
           role="tabpanel"
           hidden={currentTabIndex !== i}
-          className={classes.tabPanel}
           id={`tabpanel-${i}`}
-          aria-labelledby={`tab-${i}`}>
+          aria-labelledby={`tab-${i}`}
+          sx={{ overflow: 'visible' }}>
           <div>{currentTabIndex === i && <Panel {...match.params} childId={childId} />}</div>
-        </div>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }

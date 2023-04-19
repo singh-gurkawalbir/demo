@@ -1,25 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box, styled } from '@mui/material';
 import ActionGroup from '../../../../components/ActionGroup';
 import BackArrowIcon from '../../../../components/icons/BackArrowIcon';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { SHOPIFY_APP_URL } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
-  landingPageHeader: {
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    marginBottom: theme.spacing(2),
-    height: theme.spacing(9),
-  },
-  linkText: {
-    paddingLeft: theme.spacing(-1),
-  },
-  link: {
-    paddingTop: 5,
-    cursor: 'pointer',
-  },
   actionGroup: {
     '& > *': {
       marginRight: theme.spacing(1),
@@ -28,6 +16,13 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+}));
+
+const LandingPageHeader = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+  marginBottom: theme.spacing(2),
+  height: theme.spacing(9),
 }));
 
 export default function ShopifyLandingPageHeader() {
@@ -42,21 +37,24 @@ export default function ShopifyLandingPageHeader() {
   };
 
   return (
-    <div className={classes.landingPageHeader}>
+    <LandingPageHeader>
       <ActionGroup className={classes.actionGroup}>
-        <div
+        <Box
           onClick={handleBackClick}
-          className={classes.link}
+          sx={{
+            paddingTop: '5px',
+            cursor: 'pointer',
+          }}
         >
           <BackArrowIcon />
-        </div>
-        <span className={classes.linkText}>Back to</span>
+        </Box>
+        <Box component="span" sx={{ paddingLeft: theme => theme.spacing(-1) }}>Back to</Box>
         <ApplicationImg
           type="shopify"
           alt="shopify"
           size="small"
         />
       </ActionGroup>
-    </div>
+    </LandingPageHeader>
   );
 }

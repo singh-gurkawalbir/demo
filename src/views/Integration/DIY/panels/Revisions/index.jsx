@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch } from 'react-router-dom';
 import { generateId } from '../../../../../utils/string';
@@ -37,9 +37,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'auto',
     paddingBottom: theme.spacing(2),
   },
-  noRevisions: {
-    padding: theme.spacing(3),
-  },
 }));
 
 function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
@@ -69,7 +66,6 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
 }
 
 const RevisionsList = ({ integrationId }) => {
-  const classes = useStyles();
   const filteredRevisions = useSelector(state => selectors.getCurrPageFilteredRevisions(state, integrationId));
   const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
@@ -81,14 +77,14 @@ const RevisionsList = ({ integrationId }) => {
   const NoRevisionsInfo = () => {
     if (hasNoRevisions) {
       return (
-        <Typography variant="body2" className={classes.noRevisions}>
+        <Typography variant="body2" sx={{ padding: theme => theme.spacing(3) }}>
           You don&apos;t have any revisions
         </Typography>
       );
     }
     if (!filteredRevisions.length) {
       return (
-        <Typography variant="body2" className={classes.noRevisions}>
+        <Typography variant="body2" sx={{ padding: theme => theme.spacing(3) }}>
           Your selection didn&apos;t return any matching results. Try expanding your filter criteria.
         </Typography>
       );
@@ -155,7 +151,14 @@ export default function Revisions({ integrationId }) {
   });
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        overflowX: 'auto',
+        paddingBottom: theme => theme.spacing(2),
+      }}>
       <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
         { !hasMonitorLevelAccess && (
         <ActionGroup>
@@ -184,6 +187,6 @@ export default function Revisions({ integrationId }) {
           hasMonitorLevelAccess={hasMonitorLevelAccess}
        />
       </LoadResources>
-    </div>
+    </Box>
   );
 }
