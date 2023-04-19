@@ -2,7 +2,9 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     description: { fieldId: 'description' },
-    autoPurgeAt: { fieldId: 'autoPurgeAt' },
+    autoPurgeAt: { fieldId: 'autoPurgeAt',
+      removeWhen: [{ field: 'autoPurgeAt', is: ['never'] }],
+    },
     fullAccess: { fieldId: 'fullAccess' },
     _connectionIds: { fieldId: '_connectionIds' },
     _exportIds: { fieldId: '_exportIds' },
@@ -31,10 +33,8 @@ export default {
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
 
-    if (accessTokenData['/autoPurgeAt'] === 'never') {
-      accessTokenData['/autoPurgeAt'] = undefined;
     // eslint-disable-next-line no-restricted-globals
-    } else if (accessTokenData['/autoPurgeAt'] && !isNaN(accessTokenData['/autoPurgeAt'])) {
+    if (accessTokenData['/autoPurgeAt'] && !isNaN(accessTokenData['/autoPurgeAt'])) {
       const currDate = new Date();
       const timeInMilliSeconds = currDate.getTime();
 

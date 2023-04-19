@@ -71,7 +71,7 @@ describe('lookupListRow component Test cases', () => {
     await userEvent.click(deleteLookup);
     expect(onDelete).toHaveBeenCalledTimes(1);
 
-    await userEvent.keyboard('{Escape}');
+    await userEvent.click(document.querySelector('#row-actions'));
 
     await waitFor(() => expect(screen.queryByText(/Edit lookup/i)).not.toBeInTheDocument());
   });

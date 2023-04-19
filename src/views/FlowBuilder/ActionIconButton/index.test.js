@@ -2,6 +2,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ActionIconButton from '.';
+import { FlowProvider } from '../FlowBuilderBody/Context';
 import { renderWithProviders } from '../../../test/test-utils';
 
 function initActionIconButton({
@@ -13,15 +14,17 @@ function initActionIconButton({
   ...props
 }) {
   const ui = (
-    <ActionIconButton
-      helpKey={helpKey}
-      helpText={helpText}
-      className={className}
-      variant={variant}
-      props={props}
+    <FlowProvider flowId="id">
+      <ActionIconButton
+        helpKey={helpKey}
+        helpText={helpText}
+        className={className}
+        variant={variant}
+        props={props}
     >
-      {children}
-    </ActionIconButton>
+        {children}
+      </ActionIconButton>
+    </FlowProvider>
   );
 
   return renderWithProviders(ui);

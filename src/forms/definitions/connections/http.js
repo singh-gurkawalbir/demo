@@ -194,10 +194,12 @@ export default {
     }
 
     if (newValues['/http/clientCertificates/type'] === 'pem') {
+      newValues['/http/clientCertificates'] = undefined;
       delete newValues['/http/clientCertificates/pfx'];
     }
 
     if (newValues['/http/clientCertificates/type'] === 'pfx') {
+      newValues['/http/clientCertificates'] = undefined;
       delete newValues['/http/clientCertificates/cert'];
       delete newValues['/http/clientCertificates/key'];
       if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {

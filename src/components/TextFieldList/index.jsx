@@ -93,6 +93,7 @@ export default function TextFieldList({ label, disabled, value, onChange, classN
           <ActionButton
             disabled={disabled || !(value)}
             data-test={`delete-${index}`}
+            tooltip="Delete"
             onClick={() => handleDelete(key)}>
             <TrashIcon />
           </ActionButton>

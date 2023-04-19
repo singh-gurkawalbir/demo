@@ -5,6 +5,7 @@ import { act } from 'react-dom/test-utils';
 import {renderWithProviders} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
+
 import FlowCharts from '.';
 
 jest.mock('recharts', () => ({
@@ -108,8 +109,21 @@ describe('flowChart UI Tests', () => {
     return store;
   }
   test('should do the testing when flow is loading', async () => {
-    await renderWithProps(props);
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    const store = await renderWithProps(props);
+
+    act(() => {
+      store.dispatch(actions.flowMetrics.request(
+        'flows',
+        '629f0dcfccb94d35de6f436b',
+        { range: {
+          startDate: '2022-06-04T18:30:00.000Z',
+          endDate: '2022-07-04T12:16:31.435Z',
+          preset: 'last30days',
+        },
+        selectedResources: ['629f0dcfccb94d35de6f436b'] }));
+    });
+
+    await expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should test opacity', async () => {
     const store = await renderWithProps(props);

@@ -10,11 +10,6 @@ export default {
 
     newValues['/applications'] = applications.map(app => getPublishedConnectorId(app) || app);
 
-    if (!newValues['/trialEnabled']) {
-      newValues['/trialPeriod'] = undefined;
-      newValues['/_trialLicenseId'] = undefined;
-    }
-
     if (formValues['/framework'] === 'twoDotZero') {
       newValues['/twoDotZero/_integrationId'] = newValues['/_integrationId'];
 
@@ -44,13 +39,14 @@ export default {
       omitWhenHidden: true,
       visibleWhen: [{ field: 'trialEnabled', is: [true] }],
       requiredWhen: [{ field: 'trialEnabled', is: [true] }],
-
+      removedWhen: [{ field: 'trialEnabled', is: [''] }],
     },
     _trialLicenseId: {
       fieldId: '_trialLicenseId',
       omitWhenHidden: true,
       visibleWhen: [{ field: 'trialEnabled', is: [true] }],
       requiredWhen: [{ field: 'trialEnabled', is: [true] }],
+      removedWhen: [{ field: 'trialEnabled', is: [''] }],
     },
   },
   layout: {

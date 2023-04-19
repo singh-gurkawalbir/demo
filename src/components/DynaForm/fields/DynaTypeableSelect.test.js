@@ -60,7 +60,7 @@ describe('Testsuite for DynaTypeableSelect', () => {
     initDynaTypeableSelect({props});
     await fireEvent.focusIn(screen.getByTestId('someinput'));
     expect(mockOnTouch).toHaveBeenCalledWith('123');
-    await waitFor(() => { expect(screen.getByText('test value')).toBeInTheDocument(); });
+    await waitFor(() => { expect(screen.getByDisplayValue('test value')).toBeInTheDocument(); });
     await fireEvent.focusOut(document.querySelector('input[id="react-select-2-input"]'));
     expect(screen.queryByText('test value')).not.toBeInTheDocument();
     expect(document.querySelector('input[id="react-select-2-input"]')).not.toBeInTheDocument();

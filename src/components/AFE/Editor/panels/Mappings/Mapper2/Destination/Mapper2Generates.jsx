@@ -22,8 +22,9 @@ const useStyles = makeStyles(theme => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
     },
-    '& .MuiFilledInput-multiline': {
+    '& .MuiInputBase-multiline': {
       border: 'none',
+      padding: 0,
     },
   },
   mapField: {

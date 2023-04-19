@@ -103,6 +103,30 @@ describe('session.flows reducers', () => {
 
     expect(newState).toEqual(expectedState);
   });
+
+  test('should delete the flowId state', () => {
+    const oldState = {
+      [flowId]: {status: 'completed'},
+      flowId_1: {status: 'completed', data: null},
+    };
+    let expectedState = {
+      flowId_1: {status: 'completed', data: null},
+    };
+    let newState = reducer(oldState,
+      actions.flow.clear(flowId)
+    );
+
+    expect(newState).toEqual(expectedState);
+    expectedState = {};
+    newState = reducer(oldState,
+      actions.flow.clear('flowId_1')
+    );
+    newState = reducer(newState,
+      actions.flow.clear(flowId)
+    );
+
+    expect(newState).toEqual(expectedState);
+  });
 });
 
 describe('session.flows selectors', () => {

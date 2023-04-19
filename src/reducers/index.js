@@ -117,6 +117,7 @@ import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 import customCloneDeep from '../utils/customCloneDeep';
+import { convertUtcToTimezone } from '../utils/date';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -215,6 +216,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      showIconView,
     } = { ...profile, ...preferences };
 
     return {
@@ -234,6 +236,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      showIconView,
     };
   });
 
@@ -4613,6 +4616,20 @@ selectors.sampleDataWrapper = createSelector(
 
       return null;
     },
+    (state, { flowId }) => {
+      const { data: origLastExportDateTime } = selectors.getLastExportDateTime(state, flowId) || emptyObject;
+
+      if (origLastExportDateTime) {
+        const preferences = selectors.userOwnPreferences(state);
+        const timeZone = selectors.userTimezone(state);
+
+        const lastExportDateTime = convertUtcToTimezone(origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
+
+        return lastExportDateTime;
+      }
+
+      return null;
+    },
   ],
   (
     sampleData,
@@ -4626,6 +4643,7 @@ selectors.sampleDataWrapper = createSelector(
     fieldType,
     editorType,
     parentIntegration,
+    lastExportDateTime,
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -4636,7 +4654,8 @@ selectors.sampleDataWrapper = createSelector(
     stage,
     fieldType,
     editorType,
-    parentIntegration})
+    parentIntegration,
+    lastExportDateTime})
 );
 
 /**
