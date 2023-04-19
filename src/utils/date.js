@@ -18,4 +18,11 @@ export function convertUtcToTimezone(
   return dateOpts?.dateOnly ? timeZoneDate.format(`${dateFormat}`) : timeZoneDate.format(`${dateFormat} ${timeFormat}`);
 }
 
+export function getNDaysBeforeDate(days) {
+  const today = new Date();
+  const yesterday = new Date(today.setDate(today.getDate() - days));
+
+  return yesterday;
+}
+
 export default {convertUtcToTimezone};

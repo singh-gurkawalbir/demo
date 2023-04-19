@@ -37,7 +37,7 @@ describe('test suite for default', () => {
       _id: '123',
       name: 'iClient test',
       lastModified: '2020-08-24T13:18:06.179Z',
-      provider: 'custom_oauth2',
+      provider: 'Custom OAuth2.0',
       oauth2: {
         clientId: 'nhhhh',
         clientSecret: '******',
@@ -50,7 +50,7 @@ describe('test suite for default', () => {
 
     expect(columnNames).toEqual([
       'Name',
-      'Provider',
+      'Application',
       'Last updated',
       'Actions',
     ]);
@@ -62,7 +62,8 @@ describe('test suite for default', () => {
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'custom_oauth2',
+      'iClient test',
+      'Custom OAuth2.0',
       '2020-08-24T13:18:06.179Z',
       '',
     ]);
