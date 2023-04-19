@@ -21,6 +21,7 @@ import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 import JobTable from './JobTable';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import messageStore, { message } from '../../../utils/messageStore';
+import MultiSelectFilter from '../../MultiSelectFilter';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -84,6 +85,7 @@ export default function RunHistory({ flowId, className }) {
 
     return !status || status === 'requested';
   });
+  const [selectedUsersFilter, setSelectedUsersFilter] = useState(['all']);
   const defaultRange = useMemo(
     () => ({
       startDate: startOfDay(addDays(new Date(), -29)),
@@ -98,6 +100,13 @@ export default function RunHistory({ flowId, className }) {
     selectors.filter(state, FILTER_KEYS.RUN_HISTORY),
   shallowEqual
   );
+
+  const filteredRunHistory = useMemo(() => {
+    if (filter?.status !== 'canceled' || !selectedUsersFilter || selectedUsersFilter.includes('all')) return runHistory;
+
+    return runHistory.filter(({canceledBy}) => selectedUsersFilter.includes(canceledBy));
+  }, [runHistory, selectedUsersFilter, filter.status]);
+
   const filterHash = hashCode(`${filter.status}${filter.hideEmpty}`);
 
   const isDateFilterSelected = !!(filter.range && filter.range.preset !== defaultRange.preset);
@@ -149,7 +158,7 @@ export default function RunHistory({ flowId, className }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
 
-  const hasFlowRunHistory = !isLoadingHistory && !!runHistory?.length;
+  const hasFlowRunHistory = !isLoadingHistory && !!filteredRunHistory?.length;
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -181,9 +190,29 @@ export default function RunHistory({ flowId, className }) {
   }, []);
 
   const jobsInCurrentPage = useMemo(
-    () => runHistory?.slice(currentPage * ROWS_PER_PAGE, (currentPage + 1) * ROWS_PER_PAGE),
-    [runHistory, currentPage]
+    () => filteredRunHistory?.slice(currentPage * ROWS_PER_PAGE, (currentPage + 1) * ROWS_PER_PAGE),
+    [filteredRunHistory, currentPage]
   );
+
+  const canceledByUsersList = useMemo(() => {
+    if (runHistory?.length) {
+      let usersList = runHistory.reduce((acc, job) => job.canceledBy ? acc.add(job.canceledBy) : acc, new Set());
+
+      usersList = [...usersList].map(name => ({_id: name, name}));
+
+      return [
+        {
+          _id: 'all',
+          name: 'All users',
+        },
+        ...usersList,
+        {
+          _id: 'system',
+          name: 'System',
+        },
+      ];
+    }
+  }, [runHistory]);
 
   useEffect(() => {
     if (!areUserAccountSettingsLoaded && isAccountOwnerOrAdmin) {
@@ -201,6 +230,35 @@ export default function RunHistory({ flowId, className }) {
       });
     }
   }, [dispatch, enqueueSnackbar, flowId, isPurgeFilesSuccess]);
+
+  const ButtonLabel = useMemo(() => {
+    if (selectedUsersFilter.length === 1) {
+      const selectedUser = canceledByUsersList?.find(r => r._id === selectedUsersFilter[0]);
+
+      return selectedUser?._id === 'all' ? 'Select canceled by' : selectedUser?.name;
+    }
+
+    return `${selectedUsersFilter.length} users selected`;
+  }, [selectedUsersFilter, canceledByUsersList]);
+
+  const handleSelect = useCallback((selectedIds, id) => {
+    if (selectedIds.includes(id)) {
+      //  handle deselect
+      const selected = selectedIds.filter(i => i !== id);
+
+      if (selected.length === 0 && id !== 'all') {
+        return ['all'];
+      }
+
+      return selected;
+    }
+    //  handle select
+    if (id === 'all' || selectedIds.includes('all')) {
+      return [id];
+    }
+
+    return [...selectedIds, id];
+  }, []);
 
   return (
     <div className={clsx(classes.wrapper, className)}>
@@ -228,6 +286,16 @@ export default function RunHistory({ flowId, className }) {
                 </MenuItem>
               ))}
             </CeligoSelect>
+            {filter?.status === 'canceled' && (
+              <MultiSelectFilter
+                ButtonLabel={ButtonLabel}
+                disabled={!runHistory?.length}
+                items={canceledByUsersList}
+                selected={selectedUsersFilter || ['all']}
+                onSelect={handleSelect}
+                onSave={values => setSelectedUsersFilter(values?.length ? values : ['all'])}
+              />
+          )}
             <FormControlLabel
               className={classes.hideLabel}
               data-test="hideEmptyRunsFilter"
@@ -245,7 +313,7 @@ export default function RunHistory({ flowId, className }) {
             { hasFlowRunHistory && (
             <CeligoPagination
               className={classes.runHistoryPagination}
-              count={runHistory.length}
+              count={filteredRunHistory.length}
               page={currentPage}
               rowsPerPage={ROWS_PER_PAGE}
               onChangePage={handleChangePage}
