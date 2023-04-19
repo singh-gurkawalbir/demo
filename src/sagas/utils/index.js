@@ -848,7 +848,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
   return tempFiledMeta;
 };
 
-export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow, httpConnectorData) => {
+export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow, httpConnectorData, isGenericHTTP) => {
   const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
   const app = applications.find(a => a.id === (resource?.assistant || resource?.application)) || {};
   const tempFiledMeta = customCloneDeep(fieldMeta);
@@ -873,6 +873,12 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     'oauth2.failPath': 'http.auth.failPath',
     'oauth2.failValues': 'http.auth.failValues',
   };
+
+  if (!isGenericHTTP) {
+    if (!httpConnectorData || !httpConnectorData?.supportedBy) {
+      return tempFiledMeta;
+    }
+  }
 
   Object.keys(iClientPathMap).forEach(key => {
     const preConfiguredField = httpConnectorData?.supportedBy?.connection?.preConfiguredFields?.find(field => iClientPathMap[key] === field?.path);

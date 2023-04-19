@@ -255,7 +255,7 @@ export function* requestPreview({ id }) {
             errorMessage.push(`Stack: ${errJSON.stack}`);
           }
 
-          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine}));
+          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine, errSourceProcessor: editor.activeProcessor}));
         }
       }
     }
@@ -268,7 +268,7 @@ export function* requestPreview({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message}));
+    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message, errSourceProcessor: editor.activeProcessor}));
   }
 
   if (editor.editorType === 'settingsForm') {

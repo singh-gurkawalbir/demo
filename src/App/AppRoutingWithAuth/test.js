@@ -46,6 +46,8 @@ function reduxRouterWrappedComponent({
   );
 }
 
+window.zE = jest.fn();
+
 describe('AppRoutingWith authentication redirection behavior', () => {
   const initSession = jest.fn();
   const clearAppError = jest.fn();
