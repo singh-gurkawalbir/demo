@@ -133,6 +133,11 @@ jest.mock('../../../components/KeywordSearch', () => ({
     </>
   ),
 }));
+jest.mock('../../../utils/resource', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../utils/resource'),
+  generateNewId: () => 'new-Z0NZtH92gIw',
+}));
 jest.mock('../../../components/icons/TilesViewIcon', () => ({
   __esModule: true,
   ...jest.requireActual('../../../components/icons/TilesViewIcon'),
@@ -171,15 +176,59 @@ describe('Celigo Home Pagebar UI tests', () => {
   test('should display all the contents of the pagebar', () => {
     initPagebar();
     expect(screen.getByText(/My integrations/i)).toBeInTheDocument();
-    expect(screen.getByText(/Create flow/i)).toBeInTheDocument();
-    expect(screen.getByText(/Create integration/i)).toBeInTheDocument();
     expect(screen.getByText(/SearchBar/i)).toBeInTheDocument();               // SearchBar text comes from the mocked component//
-    expect(screen.getByText(/Install integration/i)).toBeInTheDocument();
   });
-  test('should redirect to the respective component url when clicked on create flow button', async () => {
+  test('should render the Create and Upload buttons', () => {
     initPagebar();
-    userEvent.click(screen.getByText(/Create flow/i));
+    expect(screen.getByRole('button', {name: 'Create'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Upload'})).toBeInTheDocument();
+  });
+  test('should render the create options when clicked on create button', () => {
+    initPagebar();
+    const createButton = screen.getByRole('button', {name: 'Create'});
+
+    userEvent.click(createButton);
+    const menuList = screen.getAllByRole('menuitem');
+
+    expect(menuList).toHaveLength(3);
+    expect(screen.getByText(/Sync data between apps/i)).toBeInTheDocument();
+    expect(screen.getByText(/Store credentials to apps/i)).toBeInTheDocument();
+    expect(screen.getByText(/Organize flows in a folder/i)).toBeInTheDocument();
+    expect(screen.getByText(/Connection/i)).toBeInTheDocument();
+    expect(screen.getByText('Integration')).toBeInTheDocument();
+  });
+  test('should render the upload integration option when clicked on upload button', () => {
+    initPagebar();
+    const Upload = screen.getByRole('button', {name: 'Upload'});
+
+    userEvent.click(Upload);
+    const menuList = screen.getAllByRole('menuitem');
+
+    expect(menuList).toHaveLength(1);
+    expect(screen.getByText('Integration')).toBeInTheDocument();
+    expect(screen.getByText(/Upload an existing integration/i)).toBeInTheDocument();
+  });
+  test('should redirect to the respective component url when clicked on create flow option', async () => {
+    initPagebar();
+    const createButton = screen.getByRole('button', {name: 'Create'});
+
+    userEvent.click(createButton);
+    const FlowOption = screen.getAllByRole('menuitem')[0];
+
+    userEvent.click(FlowOption);
+
     await waitFor(() => expect(history.location.pathname).toBe('/integrations/none/flowBuilder/new'));   // checking for redirection to new url //
+  });
+  test('should redirect to the respective component url when clicked on create integration option', async () => {
+    initPagebar();
+    const createButton = screen.getByRole('button', {name: 'Create'});
+
+    userEvent.click(createButton);
+    const integrationOption = screen.getAllByRole('menuitem')[2];
+
+    userEvent.click(integrationOption);
+
+    await waitFor(() => expect(history.location.pathname).toBe('//add/integrations/new-Z0NZtH92gIw'));   // checking for redirection to new url //
   });
   test('should make the respective dispatch calls for the listview and gridview iconbuttons', async () => {
     initPagebar();
