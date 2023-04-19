@@ -5,7 +5,8 @@ import { TreeItem } from '@material-ui/lab';
 const useStyles = makeStyles({
   label: {
     width: '100%',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'normal',
+    marginBottom: 5,
   },
 });
 
