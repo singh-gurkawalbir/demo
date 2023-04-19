@@ -1,17 +1,8 @@
 import { MenuItem, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import clsx from 'clsx';
 import { useGetAllActionProps } from '../hooks';
 
-const useStyles = makeStyles(theme => ({
-  deleteWrapper: {
-    color: theme.palette.error.dark,
-  },
-}));
-
 const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
-  const classes = useStyles();
   const {key} = meta;
   const {
     handleActionClick,
@@ -31,7 +22,8 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
       <Tooltip title={disabledActionTitle} placement="bottom" >
         <div>
           <MenuItem data-test={key} disabled>
-            {actionIcon}{label}
+            {actionIcon}
+            {label}
           </MenuItem>
         </div>
       </Tooltip>
@@ -39,8 +31,9 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
   }
 
   return (
-    <MenuItem className={clsx({[classes.deleteWrapper]: key === 'delete'})} data-test={key} onClick={handleActionClick} disabled={disabled}>
-      {actionIcon}{label}
+    <MenuItem data-test={key} onClick={handleActionClick} disabled={disabled}>
+      {actionIcon}
+      {label}
     </MenuItem>
   );
 };
