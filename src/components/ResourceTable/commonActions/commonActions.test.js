@@ -67,7 +67,6 @@ async function initCommonActions(data = [{}]) {
   );
 
   renderWithProviders(ui, {initialStore});
-  await userEvent.click(screen.getByRole('button'));
 }
 
 describe('test suite for common actions', () => {
@@ -95,6 +94,7 @@ describe('test suite for common actions', () => {
     });
 
     await initCommonActions([{_id: connection._id}]);
+    await userEvent.click(screen.getByRole('button'));
     const viewAuditLogsButton = screen.getByRole('menuitem', {name: 'View audit log'});
 
     await userEvent.click(viewAuditLogsButton);
@@ -113,6 +113,7 @@ describe('test suite for common actions', () => {
     const scriptId = 'script123';
 
     await initCommonActions([{_id: scriptId}]);
+    await userEvent.click(screen.getByRole('button'));
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     await userEvent.click(viewExecutionLogsButton);
@@ -132,6 +133,7 @@ describe('test suite for common actions', () => {
     const scriptId = 'script123';
 
     await initCommonActions([{_id: scriptId}]);
+    await userEvent.click(screen.getByRole('button'));
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     await userEvent.click(viewExecutionLogsButton);
@@ -146,7 +148,7 @@ describe('test suite for common actions', () => {
     test('should be able to clone resources (other than integration flows)', async () => {
       mockTableContext.resourceType = 'exports';
       await initCommonActions([{ _id: 'export123' }]);
-
+      await userEvent.click(screen.getByRole('button'));
       const cloneButton = screen.getByRole('menuitem', {name: 'Clone export'});
 
       await userEvent.click(cloneButton);
@@ -165,7 +167,7 @@ describe('test suite for common actions', () => {
       });
 
       await initCommonActions(data);
-
+      await userEvent.click(screen.getByRole('button'));
       await waitFor(() => expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument());
     });
 
@@ -177,7 +179,7 @@ describe('test suite for common actions', () => {
       }];
 
       await initCommonActions(data);
-
+      await userEvent.click(screen.getByRole('button'));
       expect(screen.queryByRole('menuitem', {name: 'Clone flow'})).not.toBeInTheDocument();
     });
   });
@@ -196,7 +198,7 @@ describe('test suite for common actions', () => {
       _id: 'ia123',
       type: 'integrationApp',
     }]);
-
+    await userEvent.click(screen.getByRole('button'));
     const editButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Edit license'}));
 
     await userEvent.click(editButton);
@@ -209,7 +211,7 @@ describe('test suite for common actions', () => {
       _id: 'ia123',
       type: 'integrationApp',
     }]);
-
+    await userEvent.click(screen.getByRole('button'));
     const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
@@ -253,6 +255,7 @@ describe('test suite for common actions', () => {
     });
 
     await initCommonActions(data);
+    await userEvent.click(screen.getByRole('button'));
     const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
@@ -275,7 +278,7 @@ describe('test suite for common actions', () => {
       _id: 'template123',
       name: 'Shopify template',
     }]);
-
+    await userEvent.click(screen.getByRole('button'));
     const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
 
     await userEvent.click(more);
@@ -301,6 +304,7 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
+    await userEvent.click(screen.getByRole('button'));
     const more = screen.getByRole('button', { name: /more/i });
 
     await userEvent.click(more);
@@ -331,6 +335,7 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
+    await userEvent.click(screen.getByRole('button'));
     const more = screen.getByRole('button', { name: /more/i });
 
     await userEvent.click(more);
@@ -361,6 +366,7 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
+    await userEvent.click(screen.getByRole('button'));
     const more = screen.getByRole('button', { name: /more/i });
 
     await userEvent.click(more);
@@ -392,6 +398,7 @@ describe('test suite for common actions', () => {
       _id: 'export123',
       name: 'Netsuite Export',
     }]);
+    await userEvent.click(screen.getByRole('button'));
     const more = screen.getByRole('button', { name: /more/i });
 
     await userEvent.click(more);
