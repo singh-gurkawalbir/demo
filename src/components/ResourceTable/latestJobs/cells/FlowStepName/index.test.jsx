@@ -243,14 +243,14 @@ describe('uI test cases for Flowstep name', () => {
 
     expect(res).toBeInTheDocument();
   });
-  test('should click on connection down button when connection is offline', () => {
+  test('should click on connection down button when connection is offline', async () => {
     renderWithProviders(<FlowStepName job={jobdata4} />, { initialStore });
-    const response = screen.getByTitle('Connection down');
+    const response = screen.getByLabelText('Connection down');
 
     expect(response).toBeInTheDocument();
     const response1 = screen.getByRole('button');
 
-    userEvent.click(response1);
+    await userEvent.click(response1);
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'BOTTOM_DRAWER_SET_ACTIVE_TAB',
       index: undefined,

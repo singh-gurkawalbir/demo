@@ -78,21 +78,21 @@ describe('dynaDateSelector UI tests', () => {
     initDynaDateSelector({...props, value: '2018-06T0000.000Z'});
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: false, errorMessages: 'Invalid date format'})));
   });
-  test('should call the onChange function passed in props when field value is altered', () => {
+  test('should call the onChange function passed in props when field value is altered', async () => {
     initDynaDateSelector({...props, formKey: 'demo-formkey'});
     const field = screen.getByRole('textbox');
 
     expect(field).toBeInTheDocument();
-    userEvent.type(field, 'a');
+    await userEvent.type(field, 'a');
     expect(mockOnFieldChange).toHaveBeenCalled();
   });
-  test('should call the "handleDateRangeChange" function when date is changed', () => {
+  test('should call the "handleDateRangeChange" function when date is changed', async () => {
     initDynaDateSelector(props);
     const dateField = screen.getByPlaceholderText('MM/DD/YYYY');
 
     expect(dateField).toBeInTheDocument();
-    userEvent.clear(dateField);
-    userEvent.type(dateField, '06/06/2018');
+    await userEvent.clear(dateField);
+    await userEvent.type(dateField, '06/06/2018');
     expect(mockOnFieldChange).toHaveBeenCalled();
   });
 });

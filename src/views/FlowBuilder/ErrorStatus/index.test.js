@@ -53,11 +53,11 @@ describe('ErrorStatus UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should run the onClick function when clicked on number of errors', () => {
+  test('should run the onClick function when clicked on number of errors', async () => {
     const props = {isNew: false, flowId: '6253af74cddb8a1ba550a010', count: 2};
 
     initErrorStatus(props);
-    userEvent.click(screen.getByText('2 errors'));
+    await userEvent.click(screen.getByText('2 errors'));
     expect(mockHistoryPush).toBeCalled();
   });
 });

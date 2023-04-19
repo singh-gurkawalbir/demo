@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { isEdge, isNode } from 'react-flow-renderer';
+import { isEdge, isNode } from 'reactflow';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';

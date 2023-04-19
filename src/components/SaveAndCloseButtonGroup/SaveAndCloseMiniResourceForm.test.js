@@ -53,9 +53,9 @@ describe('test cases for SaveAndCloseMiniResourceForm', () => {
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
     expect(saveButton).toBeEnabled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(handleSave).toHaveBeenCalledTimes(1);
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(handleCancel).toHaveBeenCalledTimes(1);
   });
 

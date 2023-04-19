@@ -58,7 +58,7 @@ describe('test suite for ValidateAndSave', () => {
     expect(saveButton).toBeDisabled();
     expect(testButton).toBeDisabled();
     expect(closeButton).toBeEnabled();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(props.onCancel).toHaveBeenCalledTimes(1);
   });
 });

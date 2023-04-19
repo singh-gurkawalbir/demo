@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo} from 'react';
 import { useHistory } from 'react-router-dom';
-import {makeStyles} from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { SIGN_UP_SUCCESS } from '../../../constants';

@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -29,12 +29,12 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
     },
     '&:last-child': {
-      marginLeft: -theme.spacing(0.5),
+      marginLeft: -parseInt(theme.spacing(0.5), 10),
     },
   },
   viewsWrapper: {
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    paddingLeft: theme.spacing(3),
+    paddingLeft: parseInt(theme.spacing(3), 10),
   },
   activeView: {
     color: theme.palette.primary.main,
@@ -43,9 +43,13 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: '100%',
       borderBottom: `2px solid ${theme.palette.primary.main}`,
-      bottom: -theme.spacing(0.5),
+      bottom: -parseInt(theme.spacing(0.5), 10),
       left: 0,
     },
+  },
+  homeSearch: {
+    height: 38,
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -65,7 +69,7 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      <KeywordSearch isHomeSearch filterKey={FILTER_KEY} />
+      <KeywordSearch placeholder="Search integrations & flows" size="large" filterKey={FILTER_KEY} className={classes.homeSearch} />
 
       <ActionGroup>
         {permission.create && (

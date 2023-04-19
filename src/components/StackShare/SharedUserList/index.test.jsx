@@ -1,7 +1,7 @@
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { cleanup, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { cleanup, fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
@@ -42,7 +42,7 @@ mutateStore(initialStore, draft => {
   }];
 });
 
-function initSharedUserList() {
+async function initSharedUserList() {
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter
@@ -94,34 +94,50 @@ describe('Shared User List', () => {
     const checkbox = screen.getByRole('checkbox');
 
     expect(checkbox).toBeInTheDocument();
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     const confirmEnableText = screen.getByText('Confirm enable');
 
     expect(confirmEnableText).toBeInTheDocument();
     const enableText = screen.getByText('Enable');
 
     expect(enableText).toBeInTheDocument();
-    userEvent.click(enableText);
-    const deleteText = screen.getByRole('button');
+    await userEvent.click(enableText);
+    let deleteText;
 
-    expect(deleteText).toBeInTheDocument();
-    userEvent.click(deleteText);
-    const deleteMessageText = screen.getByText('Are you sure you want to remove?');
+    waitFor(() => {
+      deleteText = screen.getByRole('button');
 
-    expect(deleteMessageText).toBeInTheDocument();
-    const cancelText = screen.getByText('Cancel');
+      expect(deleteText).toBeInTheDocument();
+    });
+    await userEvent.click(deleteText);
+    waitFor(() => {
+      const deleteMessageText = screen.getByText('Are you sure you want to remove?');
 
-    expect(cancelText).toBeInTheDocument();
-    userEvent.click(deleteText);
-    const confirmRemoveText = screen.getByText('Confirm remove');
+      expect(deleteMessageText).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const cancelText = screen.getByText('Cancel');
 
-    expect(confirmRemoveText).toBeInTheDocument();
-    const removeText = screen.getByText('Remove');
+      expect(cancelText).toBeInTheDocument();
+    });
+    await userEvent.click(deleteText);
+    waitFor(() => {
+      const confirmRemoveText = screen.getByText('Confirm remove');
 
-    expect(removeText).toBeInTheDocument();
-    userEvent.click(removeText);
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText('testuser+1@celigo.com')
-    );
+      expect(confirmRemoveText).toBeInTheDocument();
+    });
+    let removeText;
+
+    waitFor(async () => {
+      removeText = screen.getByText('Remove');
+
+      expect(removeText).toBeInTheDocument();
+      await fireEvent.click(removeText);
+    });
+    waitFor(async () => {
+      await waitForElementToBeRemoved(() =>
+        screen.queryByText('testuser+1@celigo.com')
+      );
+    });
   });
 });

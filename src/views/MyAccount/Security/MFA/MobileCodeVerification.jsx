@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch } from 'react-redux';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import useForm from '../../../../components/Form';

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Typography, makeStyles} from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';

@@ -178,14 +178,14 @@ describe('Celigo Home Pagebar UI tests', () => {
   });
   test('should redirect to the respective component url when clicked on create flow button', async () => {
     initPagebar();
-    userEvent.click(screen.getByText(/Create flow/i));
+    await userEvent.click(screen.getByText(/Create flow/i));
     await waitFor(() => expect(history.location.pathname).toBe('/integrations/none/flowBuilder/new'));   // checking for redirection to new url //
   });
   test('should make the respective dispatch calls for the listview and gridview iconbuttons', async () => {
     initPagebar();
-    userEvent.click(screen.getByText('TileButton'));
+    await userEvent.click(screen.getByText('TileButton'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({ dashboard: {view: 'tile'}})));
-    userEvent.click(screen.getByText('ListButton'));
+    await userEvent.click(screen.getByText('ListButton'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({ dashboard: {view: 'list'} })));
   });
 });

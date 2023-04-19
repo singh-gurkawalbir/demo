@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import Menu from '@material-ui/core/Menu';
-import { makeStyles } from '@material-ui/core';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
+import { ArrowPopper } from '@celigo/fuse-ui';
+import makeStyles from '@mui/styles/makeStyles';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPES } from '../../constants';
 import actions from '../../actions';
@@ -368,21 +368,21 @@ export default function JobActionsMenu({
   return (
     <>
       {showRetriesDialog && (
-        <JobRetriesDialog
-          job={job}
-          onCloseClick={handleJobRetriesDialogCloseClick}
-          integrationName={integrationName}
-        />
+      <JobRetriesDialog
+        job={job}
+        onCloseClick={handleJobRetriesDialogCloseClick}
+        integrationName={integrationName}
+      />
       )}
       {showFilesDownloadDialog && (
-        <JobFilesDownloadDialog
-          job={job}
-          onCloseClick={handleJobFilesDownloadDialogCloseClick}
-          integrationName={integrationName}
-        />
+      <JobFilesDownloadDialog
+        job={job}
+        onCloseClick={handleJobFilesDownloadDialogCloseClick}
+        integrationName={integrationName}
+      />
       )}
 
-      <Menu
+      <ArrowPopper
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}>
@@ -395,7 +395,7 @@ export default function JobActionsMenu({
                   variant="text"
                   flowId={job._flowId}
                   onRunStart={handleRunStart}
-                />
+              />
               </MenuItem>
             );
           }
@@ -410,12 +410,13 @@ export default function JobActionsMenu({
             </MenuItem>
           );
         })}
-      </Menu>
+      </ArrowPopper>
       <IconButton
         data-test="moreJobActionsMenu"
         className={classes.iconBtn}
         onClick={handleMenuClick}
-        disabled={menuOptions.length === 0}>
+        disabled={menuOptions.length === 0}
+        size="large">
         <EllipsisHorizontallIcon />
       </IconButton>
     </>

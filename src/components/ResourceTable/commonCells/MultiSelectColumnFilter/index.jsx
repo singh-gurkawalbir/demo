@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import FilterIconWrapper from '../FilterIconWrapper';
 import { selectors } from '../../../../reducers';
@@ -13,9 +13,6 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     whiteSpace: 'nowrap',
-  },
-  helpIcon: {
-    padding: 0,
   },
 });
 const emptyArr = [];
@@ -107,8 +104,7 @@ export default function MultiSelectColumnFilter({
         <Help
           title={title}
           helpKey={helpKey}
-          caption={helpKey}
-          className={classes.helpIcon}
+          fieldPath={helpKey}
           disablePortal={false}
           placement="left-end" />
       )}

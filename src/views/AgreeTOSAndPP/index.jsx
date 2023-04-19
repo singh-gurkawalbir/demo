@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import CeligoLogo from '../../components/CeligoLogo';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import DynaCheckbox from '../../components/DynaForm/fields/checkbox/DynaCheckbox';
 import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
@@ -119,9 +120,29 @@ export default function AgreeTOSAndPP() {
             data-test="agreeTOSAndPP"
             className={classes.consent}
             onFieldChange={handleToggle}
-            label={<Typography variant="body1">I agree to the <a href="https://www.celigo.com/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service / Service Subscription Agreement</a> and <a href="https://www.celigo.com/privacy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</Typography>}
+            label={(
+              <Typography variant="body1">
+                I agree to the{' '}
+                <a
+                  href="https://www.celigo.com/terms-of-service/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Terms of Service / Service Subscription Agreement
+                </a>{' '}
+                and{' '}
+                <a
+                  href="https://www.celigo.com/privacy/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Privacy Policy
+                </a>
+                .
+              </Typography>
+            )}
             value={agree}
-            />
+          />
           <div className={classes.line} />
           <FilledButton
             data-test="agree"
@@ -129,7 +150,8 @@ export default function AgreeTOSAndPP() {
             disabled={!agree}
             onClick={handleSubmit}
             className={classes.submit}
-            value="Submit">
+            value="Submit"
+          >
             Continue
           </FilledButton>
           <TextButton
@@ -145,4 +167,3 @@ export default function AgreeTOSAndPP() {
     </div>
   );
 }
-

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../reducers';

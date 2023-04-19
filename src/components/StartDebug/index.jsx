@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { MenuItem, InputLabel, FormControl} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import ArrowPopper from '../ArrowPopper';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import ActionGroup from '../ActionGroup';
@@ -28,11 +28,6 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '1fr',
   },
-  dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-  },
   actions: {
     marginTop: theme.spacing(2),
   },
@@ -43,9 +38,6 @@ const useStyles = makeStyles(theme => ({
   row: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  dateRangePopper: {
-    zIndex: 1300,
   },
   dropdown: {
     marginTop: '0px !important',
@@ -154,52 +146,47 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
         disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
-        classes={{
-          popper: classes.dateRangePopper,
-        }}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
-        {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <div className={classes.row}>
-                  <InputLabel className={classes.formLabel}>
-                    Start debug log level for:
-                  </InputLabel>
-                  <FormControl className={classes.formControl}>
+        <Box display="flex" flexDirection="column" sx={{padding: 2}}>
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <div className={classes.row}>
+                <InputLabel className={classes.formLabel}>
+                  Start debug log level for:
+                </InputLabel>
+                <FormControl variant="standard" className={classes.formControl}>
 
-                    <CeligoSelect
-                      data-test="selectDebugInterval"
-                      className={classes.dropdown}
-                      onChange={handleChange}
-                      value={value || ''}
-                      MenuProps={MenuProps}
-                    >
-                      {debugOptions.map(opt => (
-                        <MenuItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </MenuItem>
-                      ))}
-                    </CeligoSelect>
-                  </FormControl>
+                  <CeligoSelect
+                    data-test="selectDebugInterval"
+                    className={classes.dropdown}
+                    onChange={handleChange}
+                    value={value || ''}
+                    MenuProps={MenuProps}
+                  >
+                    {debugOptions.map(opt => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))}
+                  </CeligoSelect>
+                </FormControl>
 
-                </div>
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <OutlinedButton onClick={handleSave}>
-                    Apply
-                  </OutlinedButton>
-                  <TextButton onClick={handleClose}>
-                    Cancel
-                  </TextButton>
-                </ActionGroup>
               </div>
             </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <OutlinedButton onClick={handleSave}>
+                  Apply
+                </OutlinedButton>
+                <TextButton onClick={handleClose}>
+                  Cancel
+                </TextButton>
+              </ActionGroup>
+            </div>
           </div>
-        )}
+        </Box>
       </ArrowPopper>
     </>
   );

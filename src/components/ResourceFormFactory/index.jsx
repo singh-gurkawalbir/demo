@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import {makeStyles} from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -18,6 +18,12 @@ const Form = props => {
 
   return <DynaForm {...props} formKey={formKey} />;
 };
+
+const useStyles = makeStyles({
+  formNotLoadedSpinner: {
+    marginTop: 60,
+  },
+});
 
 export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, skipInitFormOnSubmit, ...props }) => {
   const { fieldMeta } = props;
@@ -46,12 +52,6 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);
-
-  const useStyles = makeStyles({
-    formNotLoadedSpinner: {
-      marginTop: 60,
-    },
-  });
 
   const classes = useStyles();
 

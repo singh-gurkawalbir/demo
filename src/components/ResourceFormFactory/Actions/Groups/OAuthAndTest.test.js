@@ -85,7 +85,7 @@ describe('test suite for OAuthAndTest', () => {
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButton).toBeEnabled();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -118,7 +118,7 @@ describe('test suite for OAuthAndTest', () => {
     const saveButton = screen.getByRole('button', {name: 'Save & authorize'});
 
     expect(saveButton).toBeEnabled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resource.connections.saveAndAuthorize(resourceId, {}, {flowId, integrationId})
     );

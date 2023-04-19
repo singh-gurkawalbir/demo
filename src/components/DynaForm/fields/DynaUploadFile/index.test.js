@@ -1,7 +1,6 @@
 
 import React from 'react';
-import {screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {fireEvent, screen} from '@testing-library/react';
 import actions from '../../../../actions';
 import DynaUploadFile from './index';
 import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
@@ -75,7 +74,8 @@ describe('dynaupload file UI test cases', () => {
       type: 'csv',
     });
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.csv');
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile(
@@ -151,7 +151,8 @@ describe('dynaupload file UI test cases', () => {
       type: 'csv',
     });
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.csv');
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile(
@@ -225,7 +226,8 @@ describe('dynaupload file UI test cases', () => {
       type: 'csv',
     });
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('sample1.csv');
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile(

@@ -2,6 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import TimeAgo from 'react-timeago';
+import { act } from 'react-dom/test-utils';
 import CeligoTimeAgo from '.';
 import { mockPutRequestOnce, renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
@@ -13,11 +14,11 @@ describe('celigoTimeAgo UI tests', () => {
     const {store} = renderWithProviders(<CeligoTimeAgo date={date} />);
     const profile = {timezone: 'Asia/Kolkata'};
 
-    store.dispatch(actions.user.profile.update(profile));
+    act(() => { store.dispatch(actions.user.profile.update(profile)); });
     if (showRelativeDateTime) {
       const preferencesPayload = {showRelativeDateTime: true};
 
-      store.dispatch(actions.user.preferences.update(preferencesPayload));
+      act(() => { store.dispatch(actions.user.preferences.update(preferencesPayload)); });
     }
 
     return store;

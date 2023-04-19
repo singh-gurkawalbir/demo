@@ -69,7 +69,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call on field change function with json stringify value', () => {
+  test('should call on field change function with json stringify value', async () => {
     initDynaNetSuiteLookupafe();
 
     expect(screen.getByText('ProvidedLabel')).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
 
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'netsuiteLookupFilter', {
         formKey: 'someFormKey',
@@ -104,7 +104,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', JSON.stringify('somestring'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/none/flowBuilder/new-DOsWPJry5/edit/exports/new-NNW5LX/editor/someID');
   });
-  test('should work as expected when the record type options are passed through options instead of fetching from form state', () => {
+  test('should work as expected when the record type options are passed through options instead of fetching from form state', async () => {
     const options = {
       disableFetch: false,
       commMetaPath: 'custom_options_path',
@@ -115,7 +115,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
 
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'netsuiteLookupFilter', {
         formKey: 'someFormKey',
@@ -129,11 +129,11 @@ describe('DynaNetSuiteLookupafe test cases', () => {
       })
     );
   });
-  test('should call on field change function with id and empty string when save function is called with empty array rule', () => {
+  test('should call on field change function with id and empty string when save function is called with empty array rule', async () => {
     initDynaNetSuiteLookupafe();
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     saveFunction({rule: []});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', '');
   });

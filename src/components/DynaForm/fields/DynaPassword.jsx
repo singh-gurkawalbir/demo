@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import ShowContentIcon from '../../icons/ShowContentIcon';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import CheckmarkIcon from '../../icons/CheckmarkIcon';
 import CloseIcon from '../../icons/CloseIcon';
 import HideContentIcon from '../../icons/HideContentIcon';
 import TooltipContent from '../../TooltipContent';
-import ArrowPopper from '../../ArrowPopper';
 import FieldMessage from './FieldMessage';
 // import { validateMockResponseField } from '../../../utils/flowDebugger';
 import actions from '../../../actions';
@@ -61,10 +61,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.error.dark,
   },
   arrowPopperPassword: {
-    position: 'absolute',
-    left: '50px !important',
-    top: '0px !important',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       display: 'none',
     },
   },
@@ -131,7 +128,7 @@ export default function DynaPassword(props) {
   };
 
   return (
-    <FormControl className={classes.field}>
+    <FormControl variant="standard" className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
       </div>
@@ -179,7 +176,7 @@ export default function DynaPassword(props) {
           open={open}
           anchorEl={anchorEl}
           placement="right"
-          classes={{ popper: classes.arrowPopperPassword }}
+          className={classes.arrowPopperPassword}
           preventOverflow>
           <TooltipContent className={classes.infoText}>
             <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>

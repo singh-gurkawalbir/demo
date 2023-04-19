@@ -6,7 +6,7 @@ import { renderWithProviders } from '../../../test/test-utils';
 import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 
 describe('test suite for Suite Script Hook', () => {
-  test('should respond to change in values', () => {
+  test('should respond to change in values', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'preSend.suiteScript',
@@ -35,12 +35,12 @@ describe('test suite for Suite Script Hook', () => {
 
     const [functionInput, internalIdInput] = inputFields;
 
-    userEvent.type(functionInput, 'fun');
+    await userEvent.type(functionInput, 'fun');
     'fun'.split('').forEach(char => {
       expect(onFieldChange).toHaveBeenCalledWith(props.id, { function: char });
     });
 
-    userEvent.type(internalIdInput, 'value');
+    await userEvent.type(internalIdInput, 'value');
     'value'.split('').forEach(char => {
       expect(onFieldChange).toHaveBeenCalledWith(props.id, { fileInternalId: char });
     });

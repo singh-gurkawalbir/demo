@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { IconButton, TableCell, TableRow, Menu, MenuItem } from '@material-ui/core';
+import { IconButton, TableCell, TableRow, MenuItem } from '@mui/material';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import EditIcon from '../icons/EditIcon';
 import DeleteOutlinedIcon from '../icons/TrashIcon';
 import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
@@ -40,16 +41,14 @@ export default function LookupListRow(props) {
           <EllipsisIcon />
         </IconButton>
 
-        <Menu
-          elevation={2}
-          variant="menu"
+        <ArrowPopper
           id={actionsPopoverId}
           anchorEl={anchorEl}
           open={open}
           onClose={handleMenuClose}>
           <MenuItem key="Edit" onClick={handleEdit}><EditIcon />Edit lookup</MenuItem>
           <MenuItem key="Delete" onClick={handleDelete}><DeleteOutlinedIcon />Delete lookup</MenuItem>
-        </Menu>
+        </ArrowPopper>
       </TableCell>
     </TableRow>
   );

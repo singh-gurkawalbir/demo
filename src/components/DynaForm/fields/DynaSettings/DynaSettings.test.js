@@ -53,7 +53,7 @@ describe('dynaSettings tests', () => {
     renderWithProviders(<MemoryRouter> <DynaSettings {...props} /></MemoryRouter>, { initialStore });
     expect(screen.getByText('Settings')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Custom settings'})).toBeInTheDocument();
-    userEvent.click(screen.getByText('Custom settings'));
+    await userEvent.click(screen.getByText('Custom settings'));
   });
   test('should able to test DynaSettings with fields only', async () => {
     const props = {

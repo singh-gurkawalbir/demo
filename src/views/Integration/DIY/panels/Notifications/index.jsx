@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Checkbox, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { Checkbox, ListItemText, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import map from 'lodash/map';
 import clsx from 'clsx';
 import { selectors } from '../../../../../reducers';

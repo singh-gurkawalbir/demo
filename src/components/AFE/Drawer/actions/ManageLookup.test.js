@@ -132,7 +132,7 @@ describe('manageLookup UI tests', () => {
     const createButtons = screen.getAllByText('Create lookup');
 
     expect(createButtons[0]).toBeInTheDocument();
-    userEvent.click(createButtons[0]);
+    await userEvent.click(createButtons[0]);
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/imports/edit/imports/63877bbd52bb056425fe6255/editor/httprelativeURI/lookup/add'));
   });
   test('should render empty DOM when showlookup and lookupFieldId are absent', () => {

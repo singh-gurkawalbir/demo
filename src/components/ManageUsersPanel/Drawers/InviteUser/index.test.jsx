@@ -106,6 +106,25 @@ jest.mock('../../../drawer/Right/DrawerHeader', () => ({
     </>
   ),
 }));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('Invite Users UI tests', () => {
   runServer();
   test('Should be able to verify the invite user form', async () => {
@@ -138,7 +157,7 @@ describe('Invite Users UI tests', () => {
     const pleaseSelectText = await screen.getByRole('button', { name: 'Please select' });
 
     expect(pleaseSelectText).toBeInTheDocument();
-    userEvent.click(pleaseSelectText);
+    await userEvent.click(pleaseSelectText);
     const administratorMessage = screen.getByRole('menuitem', {name: 'Administer account'});
 
     expect(administratorMessage).toBeInTheDocument();

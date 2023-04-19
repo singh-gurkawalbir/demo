@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { FormLabel, FormControl } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel, FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Mapper2ExtractsTypeableSelect from '../../../AFE/Editor/panels/Mappings/Mapper2/Source/Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../reducers';
 import { getMappingsEditorId } from '../../../../utils/editor';
@@ -79,10 +79,10 @@ export default function DynaMapper2SourceField(props) {
         {/* <FieldHelp {...props} /> */}
       </div>
       <FormControl
+        variant="standard"
         key={id}
         disabled={disabled}
-        className={classes.dynaWrapper}
-       >
+        className={classes.dynaWrapper}>
         <Mapper2ExtractsTypeableSelect
           key={value}
           id={`fieldMappingExtract-${nodeKey}`}
@@ -94,7 +94,7 @@ export default function DynaMapper2SourceField(props) {
           editorLayout={editorLayout}
           className={classes.typeableSelectWrapper}
           popperClassName={classes.popperWrapper}
-            />
+          />
       </FormControl>
     </>
   );

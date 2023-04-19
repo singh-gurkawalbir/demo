@@ -1,13 +1,13 @@
-
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders, mockGetRequestOnce, mutateStore} from '../../../../test/test-utils';
+import { act } from 'react-dom/test-utils';
+import { renderWithProviders, mockGetRequestOnce, mutateStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
 import integrationAppUtil from '../../../../utils/integrationApps';
-import {getCreatedStore} from '../../../../store';
+import { getCreatedStore } from '../../../../store';
 import PageBar from '.';
 
 const mockHistoryPush = jest.fn();
@@ -34,7 +34,7 @@ const commonIntegration = [{
   uninstallSteps: [],
   flowGroupings: [],
   createdAt: '2021-01-06T08:50:31.935Z',
-  settings: {supportsMultiStore: true, sections: [{id: '1111111', label: '11', title: 'title1'}, {id: '2', label: '22', title: 'title2'}]},
+  settings: { supportsMultiStore: true, sections: [{ id: '1111111', label: '11', title: 'title1' }, { id: '2', label: '22', title: 'title2' }] },
 }];
 
 describe('PageBar UI testing', () => {
@@ -43,10 +43,10 @@ describe('PageBar UI testing', () => {
     jest.resetAllMocks();
   });
   async function prepareStore(store) {
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    store.dispatch(actions.user.profile.request());
-    store.dispatch(actions.user.org.accounts.requestCollection());
+    act(() => { store.dispatch(actions.user.preferences.request()); });
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+    act(() => { store.dispatch(actions.user.profile.request()); });
+    act(() => { store.dispatch(actions.user.org.accounts.requestCollection()); });
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts[0]).toBeDefined());
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
@@ -68,9 +68,11 @@ describe('PageBar UI testing', () => {
       uninstallSteps: [],
       flowGroupings: [],
       createdAt: '2021-01-06T08:50:31.935Z',
-      settings: {supportsMultiStore: true,
-        sections: [{id: 1111111, label: '11', title: 'title1', sections: [{id: '123', label: '1234', title: 'childtitile', flows: [{_id: '1111111'}, '2']}]},
-          {id: 2, label: '22', title: 'title2'}]},
+      settings: {
+        supportsMultiStore: true,
+        sections: [{ id: 1111111, label: '11', title: 'title1', sections: [{ id: '123', label: '1234', title: 'childtitile', flows: [{ _id: '1111111' }, '2'] }] },
+          { id: 2, label: '22', title: 'title2' }],
+      },
     }]);
     mockGetRequestOnce('/api/profile', {
       _id: '5ca5c855ec5c172792285f53',
@@ -95,17 +97,24 @@ describe('PageBar UI testing', () => {
     await prepareStore(initialStore);
 
     mutateStore(initialStore, draft => {
-      draft.session.errorManagement.openErrors = {'5ff579d745ceef7dcd797c15': {status: 'received',
-        data: {1111111: {numError: errorCount,
-          _flowId: '1111111'},
-        2: {numError: 0, _flowId: '1111111'},
-        }}};
+      draft.session.errorManagement.openErrors = {
+        '5ff579d745ceef7dcd797c15': {
+          status: 'received',
+          data: {
+            1111111: {
+              numError: errorCount,
+              _flowId: '1111111',
+            },
+            2: { numError: 0, _flowId: '1111111' },
+          },
+        },
+      };
     });
 
     return renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
         <Route path="/:integrationId/"><PageBar /></Route>
-      </MemoryRouter>, {initialStore});
+      </MemoryRouter>, { initialStore });
   }
 
   test('should test when no integration Id is provided', () => {
@@ -130,20 +139,19 @@ describe('PageBar UI testing', () => {
       flowGroupings: [],
       createdAt: '2021-01-06T08:50:31.935Z',
     }]);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
         <Route path="/:integrationId"><PageBar /></Route>
       </MemoryRouter>);
 
     await prepareStore(store);
-
-    const clonebutton = screen.getAllByRole('button')[1];
+    const clonebutton = screen.getByRole('link');
 
     expect(clonebutton).toHaveAttribute('href', '/clone/integrations/5ff579d745ceef7dcd797c15/preview');
   });
   test('should test the child change condition', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/2/tab']}>
         <Route path="/:integrationId/:childId/:tab"><PageBar /></Route>
       </MemoryRouter>);
@@ -152,18 +160,18 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('title2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
   });
   test('should test when unknown child param is given', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/title3/tab']}>
         <Route path="/:integrationId/:childId/:tab"><PageBar /></Route>
       </MemoryRouter>);
@@ -172,18 +180,18 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('title3');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
   });
   test('should test selecting same option again', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/2/tab']}>
         <Route path="/:integrationId/:childId/:tab"><PageBar /></Route>
       </MemoryRouter>);
@@ -192,18 +200,18 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('title2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[0]);
+    await userEvent.click(option[0]);
     await waitFor(() => expect(option[2]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/tab');
   });
   test('should test initial no child from params', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/tab']}>
         <Route path="/:integrationId/:tab"><PageBar /></Route>
       </MemoryRouter>);
@@ -212,11 +220,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
@@ -226,7 +234,7 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
@@ -237,7 +245,7 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
@@ -258,7 +266,7 @@ describe('PageBar UI testing', () => {
       uninstallSteps: [],
       flowGroupings: [],
       createdAt: '2021-01-06T08:50:31.935Z',
-      settings: {supportsMultiStore: true},
+      settings: { supportsMultiStore: true },
     }]);
     mockGetRequestOnce('/api/preferences', {
       environment: 'production',
@@ -274,7 +282,8 @@ describe('PageBar UI testing', () => {
       integrationAccessLevel: [],
       ownerUser: {
         _id: '5feda6fdae2e896a3f3c5cbf',
-        licenses: [{expires: '2040-12-31T00:00:00.000Z',
+        licenses: [{
+          expires: '2040-12-31T00:00:00.000Z',
           _integrationId: '5ff579d745ceef7dcd797c15',
         }],
         email: 'dhilip.s@celigo.com',
@@ -311,7 +320,7 @@ describe('PageBar UI testing', () => {
       },
     }]);
 
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
         <Route path="/:integrationId"><PageBar /></Route>
       </MemoryRouter>);
@@ -320,13 +329,13 @@ describe('PageBar UI testing', () => {
 
     const add = screen.getByText('Add');
 
-    userEvent.click(add);
+    await userEvent.click(add);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/install/addNewStore');
   });
 
   test('should test the change in tag', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
         <Route path="/:integrationId"><PageBar /></Route>
       </MemoryRouter>);
@@ -334,17 +343,17 @@ describe('PageBar UI testing', () => {
     await prepareStore(store);
     const tag = screen.getByText('tag');
 
-    userEvent.click(tag);
+    await userEvent.click(tag);
     const input = screen.getByRole('textbox');
 
-    userEvent.type(input, 'changed');
-    input.blur();
+    await userEvent.type(input, 'changed');
+    await input.blur();
 
     expect(screen.getByText('tagchanged')).toBeInTheDocument();
   });
   test('should test dashboard tab', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
-    const {store} = renderWithProviders(
+    const { store } = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/dashborad']}>
         <Route path="/:integrationId/:dashboardTab"><PageBar /></Route>
       </MemoryRouter>);
@@ -353,11 +362,11 @@ describe('PageBar UI testing', () => {
 
     const select = screen.getByText('All undefineds');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const option = screen.getAllByRole('option');
 
-    userEvent.click(option[1]);
+    await userEvent.click(option[1]);
     await waitFor(() => expect(option[1]).not.toBeVisible());
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/dashboard');

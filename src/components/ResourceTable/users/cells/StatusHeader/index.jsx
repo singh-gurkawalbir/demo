@@ -1,14 +1,10 @@
 
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import Help from '../../../../Help';
 import RefreshableHeading from '../../../commonCells/RefreshableHeading';
 
-const useStyles = makeStyles(theme => ({
-  helpIcon: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-  },
+const useStyles = makeStyles(() => ({
   flexContainer: {
     display: 'flex',
   },
@@ -23,7 +19,7 @@ export default function StatusHeader() {
       <Help
         title="Status"
         helpKey="users.status"
-        className={classes.helpIcon}
+        sx={{ml: 0.5}}
         />
     </div>
   );

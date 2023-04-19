@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../../../test/test-utils';
@@ -49,62 +48,62 @@ describe("homeTiles's Reactivate Action UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show the reactivate button with pending status', () => {
+  test('should show the reactivate button with pending status', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 
     expect(screen.getByText('Reactivate integration')).toBeInTheDocument();
   });
-  test('should click on reactivate button as a owner', () => {
+  test('should click on reactivate button as a owner', async () => {
     const data = {name: 'tileName', integration: {permissions: {accessLevel: 'owner'}}, _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     const reactivate = screen.getByText('Reactivate integration');
 
     expect(reactivate).toBeInTheDocument();
-    userEvent.click(reactivate);
+    await userEvent.click(reactivate);
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.license.resume('2_integrationId'));
   });
-  test('should click on reactivate button as a administrator', () => {
+  test('should click on reactivate button as a administrator', async () => {
     const data = {name: 'tileName', integration: {permissions: {accessLevel: 'administrator'}}, _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     const reactivate = screen.getByText('Reactivate integration');
 
     expect(reactivate).toBeInTheDocument();
-    userEvent.click(reactivate);
+    await userEvent.click(reactivate);
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.license.resume('2_integrationId'));
   });
-  test('should click on reactivate button as a manage', () => {
+  test('should click on reactivate button as a manage', async () => {
     const myEnqueueSnackbar = jest.fn();
 
     jest.spyOn(snakbar, 'default').mockReturnValue([myEnqueueSnackbar]);
     const data = {name: 'tileName', integration: {permissions: {accessLevel: 'manage'}}, _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
-    initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    const reactivate = screen.getByText('Reactivate integration');
+    await initHomeTiles(data, initialStore);
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    const reactivate = await waitFor(() => screen.getByRole('menuitem', {name: /Reactivate integration/i}));
 
     expect(reactivate).toBeInTheDocument();
-    userEvent.click(reactivate);
+    await userEvent.click(reactivate);
     expect(myEnqueueSnackbar).toHaveBeenCalledWith({message: 'Contact your account owner to reactivate this integration app.', variant: 'error'});
   });
-  test('should show reactivate button when license has expired', () => {
+  test('should show reactivate button when license has expired', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
-  test('should not show reactivate option because resumable is true', () => {
+  test('should not show reactivate option because resumable is true', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '3_integrationId', supportsMultiStore: true, _id: 'someID'};
 
-    initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await initHomeTiles(data, initialStore);
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
 });

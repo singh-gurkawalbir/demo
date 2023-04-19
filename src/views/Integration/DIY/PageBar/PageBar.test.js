@@ -2,6 +2,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
@@ -92,9 +93,9 @@ describe('PageBar2 UI tests', () => {
     return store;
   }
   async function prefAndIntegInStore(store) {
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    store.dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, '5ff579d745ceef7dcd797c15'));
+    act(() => { store.dispatch(actions.user.preferences.request()); });
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+    act(() => { store.dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, '5ff579d745ceef7dcd797c15')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
     await waitFor(() => expect(store?.getState()?.data?.resources?.['tree/metadata']).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
@@ -189,11 +190,11 @@ describe('PageBar2 UI tests', () => {
     await prefAndIntegInStore(store);
     const name = screen.getByText('AFE 2.0 refactoring for DB\'s');
 
-    userEvent.click(name);
+    await userEvent.click(name);
     const input = screen.getByRole('textbox');
 
-    userEvent.type(input, 'changed');
-    input.blur();
+    await userEvent.type(input, 'changed');
+    await input.blur();
     expect(spyOnDispatch).toHaveBeenCalledWith({asyncKey: undefined,
       context: undefined,
       id: '5ff579d745ceef7dcd797c15',
@@ -208,7 +209,7 @@ describe('PageBar2 UI tests', () => {
 
     await prefAndIntegInStore(store);
 
-    const clonebutton = screen.getByRole('button', {name: 'Clone integration'});
+    const clonebutton = screen.getByRole('link', {name: 'Clone integration'});
 
     expect(clonebutton).toHaveAttribute('href', '/clone/integrations/5ff579d745ceef7dcd797c15/preview');
   });
@@ -218,7 +219,7 @@ describe('PageBar2 UI tests', () => {
     await prefAndIntegInStore(store);
     const deletebutton = screen.getByRole('button', {name: 'Delete integration'});
 
-    userEvent.click(deletebutton);
+    await userEvent.click(deletebutton);
     await waitFor(() => expect(screen.getByText('Confirm delete')).toBeInTheDocument());
   });
   test('should test add child option', async () => {
@@ -248,7 +249,7 @@ describe('PageBar2 UI tests', () => {
     await prefAndIntegInStore(store);
     const add = screen.getByText('Add new child');
 
-    userEvent.click(add);
+    await userEvent.click(add);
     expect(spyOnDispatch).toHaveBeenCalledWith({id: '5ff579d745ceef7dcd797c15', type: 'NTEGRATION_APPS_INSTALLER_INIT_CHILD'});
   });
   test('should test change child where mode is null', async () => {
@@ -256,11 +257,11 @@ describe('PageBar2 UI tests', () => {
 
     const select = screen.getByText('AFE 2.0 2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const options = screen.getAllByRole('option');
 
-    userEvent.click(options[1]);
+    await userEvent.click(options[1]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/5ff579d745ceef7dcd797c15/flows');
   });
@@ -269,11 +270,11 @@ describe('PageBar2 UI tests', () => {
 
     const select = screen.getByText('AFE 2.0 2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const options = screen.getAllByRole('option');
 
-    userEvent.click(options[3]);
+    await userEvent.click(options[3]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/setup');
   });
@@ -282,11 +283,11 @@ describe('PageBar2 UI tests', () => {
 
     const select = screen.getByText('AFE 2.0 2');
 
-    userEvent.click(select);
+    await userEvent.click(select);
 
     const options = screen.getAllByRole('option');
 
-    userEvent.click(options[4]);
+    await userEvent.click(options[4]);
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE204/uninstall_id/uninstall');
   });

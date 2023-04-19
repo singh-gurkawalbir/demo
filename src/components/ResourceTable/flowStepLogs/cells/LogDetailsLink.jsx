@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';

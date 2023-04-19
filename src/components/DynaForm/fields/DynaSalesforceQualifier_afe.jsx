@@ -2,8 +2,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 import { isEmpty } from 'lodash';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
@@ -109,7 +109,7 @@ export default function DynaSalesforceQualifier_afe(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <FormControl className={classes.salesforceFormControl}>
+        <FormControl variant="standard" className={classes.salesforceFormControl}>
           <TextField
             key={id}
             name={name}

@@ -2,7 +2,7 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LineGraphDrawer from '.';
 import actions from '../../../../actions';
@@ -150,55 +150,57 @@ describe('LineGraphDrawer test cases', () => {
 
   test('should pass the initial render with default value', async () => {
     await initLineGraphDrawer();
-    const refreshButton = screen.getByRole('button', { name: 'Refresh'});
-    const closeButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'closeRightDrawer');
-    const mockHandleDateRangeButton = screen.getByRole('button', { name: 'mock handleDateRangeChange'});
-    const mockHandleResourcesButton = screen.getByRole('button', { name: 'mock handleResourcesChange'});
+    waitFor(async () => {
+      const refreshButton = screen.getByRole('button', { name: 'Refresh'});
+      const closeButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'closeRightDrawer');
+      const mockHandleDateRangeButton = screen.getByRole('button', { name: 'mock handleDateRangeChange'});
+      const mockHandleResourcesButton = screen.getByRole('button', { name: 'mock handleResourcesChange'});
 
-    expect(screen.queryByText(/Analytics/i)).toBeInTheDocument();
-    expect(refreshButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(mockHandleDateRangeButton).toBeInTheDocument();
-    expect(mockHandleResourcesButton).toBeInTheDocument();
+      expect(screen.queryByText(/Analytics/i)).toBeInTheDocument();
+      expect(refreshButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(mockHandleDateRangeButton).toBeInTheDocument();
+      expect(mockHandleResourcesButton).toBeInTheDocument();
 
-    userEvent.click(refreshButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
+      await userEvent.click(refreshButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
 
-    userEvent.click(closeButton);
-    expect(mockHistoryGoBack).toBeCalled();
-    mockDispatchFn.mockClear();
+      await userEvent.click(closeButton);
+      expect(mockHistoryGoBack).toBeCalled();
+      mockDispatchFn.mockClear();
 
-    userEvent.click(mockHandleDateRangeButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
-    expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({
-      linegraphs: {
-        flow_id: {
-          range: {
-            startDate,
-            endDate,
+      await userEvent.click(mockHandleDateRangeButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
+      expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({
+        linegraphs: {
+          flow_id: {
+            range: {
+              startDate,
+              endDate,
+            },
+            resource: [
+              'flow_id',
+            ],
           },
-          resource: [
-            'flow_id',
-          ],
         },
-      },
-    }));
+      }));
 
-    userEvent.click(mockHandleResourcesButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
-    expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({
-      linegraphs: {
-        flow_id: {
-          range: {
-            startDate,
-            endDate,
+      await userEvent.click(mockHandleResourcesButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.flowMetrics.clear('flow_id'));
+      expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({
+        linegraphs: {
+          flow_id: {
+            range: {
+              startDate,
+              endDate,
+            },
+            resource: [
+              'flow_id',
+            ],
           },
-          resource: [
-            'flow_id',
-          ],
         },
-      },
-    }));
+      }));
+    });
   });
 
   test('should pass the initial render with no latest job status', async () => {

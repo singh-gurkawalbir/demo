@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Grid } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, IconButton, Grid } from '@mui/material';
 import DismissIcon from '../../../components/icons/ErrorIcon';
 import AcceptIcon from '../../../components/icons/SuccessIcon';
 import {message as messageStoreMessage} from '../../../utils/messageStore';
@@ -35,7 +35,7 @@ export default function InvitationItem({
   const classes = useStyles();
 
   return (
-    <Grid container alignItems="center" justify="space-between" className={classes.root}>
+    <Grid container alignItems="center" justifyContent="space-between" className={classes.root}>
       <Grid item>
         <Typography variant="h4">{name}</Typography>
         <Typography className={classes.email}>{email}</Typography>

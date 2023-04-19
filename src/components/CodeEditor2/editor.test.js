@@ -108,7 +108,7 @@ describe('testsuite for CodeEditor', () => {
     expect(mockOnLoad).toHaveBeenCalled();
     expect(document.querySelector('div[id="result"]').className).toEqual(expect.stringContaining('makeStyles-editorErrorWrapper-'));
   });
-  test('should test the code editor resize function and rerender when hasWarning is modified to true and test the warning message style', () => {
+  test('should test the code editor resize function and rerender when hasWarning is modified to true and test the warning message style', async () => {
     const props = {
       enableAutocomplete: true,
       errorLine: undefined,
@@ -146,7 +146,7 @@ describe('testsuite for CodeEditor', () => {
     const reSizeButtonNode = screen.getByRole('button', {name: 'reSize'});
 
     expect(reSizeButtonNode).toBeInTheDocument();
-    userEvent.click(reSizeButtonNode);
+    await userEvent.click(reSizeButtonNode);
     initCodeEditor({props: (props1 || props), renderFun: utils.rerender});
     expect(mockOnLoad).toHaveBeenCalled();
     expect(document.querySelector('div[id="result"]').className).toEqual(expect.stringContaining('makeStyles-editorWarningWrapper-'));

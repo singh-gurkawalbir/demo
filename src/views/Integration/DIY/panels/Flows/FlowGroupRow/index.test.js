@@ -65,6 +65,24 @@ jest.mock('../../../../../../components/Sortable/SortableHandle', () => ({
     )
   ,
 }));
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('FlowGroupRow UI tests', () => {
   test('should render empty DOM when sectionId is not present in the url', () => {
     const props = {rowData: {}, flows: []};
@@ -84,13 +102,13 @@ describe('FlowGroupRow UI tests', () => {
     renderWithProviders(<MemoryRouter><FlowGroupRow {...props} /></MemoryRouter>);
     expect(screen.queryByText('SortableHandle')).toBeNull();
   });
-  test('should display the SortableHandle when hovered on section title and should not display it when cursor is removed from section title', () => {
+  test('should display the SortableHandle when hovered on section title and should not display it when cursor is removed from section title', async () => {
     const props = {rowData: {sectionId: '6257b33a722b313acd1df1bf', title: 'demo section'}, flows: []};
 
     initFlowGroupRow(props);
-    userEvent.hover(screen.getByText('demo section'));
+    await userEvent.hover(screen.getByText('demo section'));
     expect(screen.getByText('SortableHandle')).toBeInTheDocument();
-    userEvent.unhover(screen.getByText('demo section'));
+    await userEvent.unhover(screen.getByText('demo section'));
     waitFor(() => expect(screen.queryByText('SortableHandle')).toBeNull());
   });
 });

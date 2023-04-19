@@ -9,6 +9,24 @@ import actions from '../../../actions';
 
 const onFieldChange = jest.fn();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initDynaFileDefinitionSelect(props, status) {
   const initialStore = reduxStore;
 
@@ -73,20 +91,20 @@ describe('dynaFileDefinitionSelect tests', () => {
     const props = {format: 'edi', onFieldChange};
 
     await initDynaFileDefinitionSelect(props, 'received');
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menuitem', {name: 'Amazon VC 850'})).toBeInTheDocument();
     expect(screen.getByText('Amazon Vendor Central')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('menuitem', {name: 'Amazon VC 850'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'Amazon VC 850'}));
     expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.fileDefinitions.definition.preBuilt.request('edi', 'amazonedi850'));
   });
   test('should able to test DynaFileDefinitionSelect without having template', async () => {
     const props = {format: 'fixed', onFieldChange};
 
     await initDynaFileDefinitionSelect(props, 'received');
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menuitem', {name: 'Amazon VC 754'})).toBeInTheDocument();
     expect(screen.getByText('V3')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('menuitem', {name: 'Amazon VC 754'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'Amazon VC 754'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.fileDefinitions.definition.preBuilt.request('fixed', 'amazonedi754'));
   });
   test('should able to test DynaFileDefinitionSelect without any filedefinitionselect and invalid status', async () => {

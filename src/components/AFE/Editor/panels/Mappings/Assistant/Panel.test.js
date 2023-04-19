@@ -165,14 +165,14 @@ describe('previewPanelWrapper UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should make the respective dispatch call when a salesforceMappingAssistant field is clicked', () => {
+  test('should make the respective dispatch call when a salesforceMappingAssistant field is clicked', async () => {
     initPanelWrapper({editorId: 'filecsv', disabled: false, status: 'received'});
-    userEvent.click(screen.getByText('Salesforce Assistant'));
+    await userEvent.click(screen.getByText('Salesforce Assistant'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchGenerateThroughAssistant('demoId'));
   });
-  test('should make the respective dispatch call when a NetsuiteMappingAssistant field is clicked', () => {
+  test('should make the respective dispatch call when a NetsuiteMappingAssistant field is clicked', async () => {
     initPanelWrapper({editorId: 'filescsv', disabled: false, status: 'received'});
-    userEvent.click(screen.getByText('Netsuite Assistant'));
+    await userEvent.click(screen.getByText('Netsuite Assistant'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchGenerateThroughAssistant('demoName[*].demoId'));
   });
   test('should display the error message when mappingStatus is error', () => {

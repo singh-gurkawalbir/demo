@@ -1,14 +1,15 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import DynaSortOrderSelect from './DynaSortOrderSelect';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 const mockOnFieldChange = jest.fn();
 const mockOnOrderChange = jest.fn();
 const mockUnderScore = '_';
 
 function initDynaSortOrderSelect(props) {
-  render(<DynaSortOrderSelect {...props} />);
+  renderWithProviders(<DynaSortOrderSelect {...props} />);
 }
 
 jest.mock('../../FieldHelp', () => ({
@@ -56,36 +57,36 @@ describe('Testsuite for Dyna Sort Order Select', () => {
     expect(screen.getByText(/test label/i)).toBeInTheDocument();
     expect(screen.getByText(/Mocking Field Help/i)).toBeInTheDocument();
   });
-  test('should test the Dyna Sort Order Select onfieldChange function when there is no new value passed', () => {
+  test('should test the Dyna Sort Order Select onfieldChange function when there is no new value passed', async () => {
     initDynaSortOrderSelect({id: '123', label: 'Test Label', value: '123', onFieldChange: mockOnFieldChange, isLoggable: true});
     const dynaRefreshableSelectTextBoxNode = screen.getByTestId('DynaRefreshableSelectWithNoValue');
 
     expect(dynaRefreshableSelectTextBoxNode).toBeInTheDocument();
-    userEvent.click(dynaRefreshableSelectTextBoxNode);
+    await userEvent.click(dynaRefreshableSelectTextBoxNode);
     expect(mockOnFieldChange).toHaveBeenCalledWith('testid', undefined);
   });
-  test('should test the Dyna Sort Order Select onfieldChange function when there is new value passed', () => {
+  test('should test the Dyna Sort Order Select onfieldChange function when there is new value passed', async () => {
     initDynaSortOrderSelect({id: '123', label: 'Test Label', value: '123', onFieldChange: mockOnFieldChange, isLoggable: true});
     const dynaRefreshableSelectTextBoxNode = screen.getByTestId('DynaRefreshableSelectWithValue');
 
     expect(dynaRefreshableSelectTextBoxNode).toBeInTheDocument();
-    userEvent.click(dynaRefreshableSelectTextBoxNode);
+    await userEvent.click(dynaRefreshableSelectTextBoxNode);
     expect(mockOnFieldChange).toHaveBeenCalledWith('testid', 'test');
   });
-  test('should test the Dyna Sort Order Select onfieldChange function when there is new value passed which has multiple words in it', () => {
+  test('should test the Dyna Sort Order Select onfieldChange function when there is new value passed which has multiple words in it', async () => {
     initDynaSortOrderSelect({id: '123', label: 'Test Label', value: 'Test 123', onFieldChange: mockOnFieldChange, isLoggable: true});
     const dynaRefreshableSelectTextBoxNode = screen.getByTestId('DynaRefreshableSelectWithValue');
 
     expect(dynaRefreshableSelectTextBoxNode).toBeInTheDocument();
-    userEvent.click(dynaRefreshableSelectTextBoxNode);
+    await userEvent.click(dynaRefreshableSelectTextBoxNode);
     expect(mockOnFieldChange).toHaveBeenCalledWith('testid', 'test 123');
   });
-  test('should test the Dyna Sort Order Select onOrderChange function when there is new value passed in it', () => {
+  test('should test the Dyna Sort Order Select onOrderChange function when there is new value passed in it', async () => {
     initDynaSortOrderSelect({id: '123', label: 'Test Label', value: 'Test', onFieldChange: mockOnOrderChange, isLoggable: true});
     const dynaSelectNode = screen.getByTestId('DynaSelect');
 
     expect(dynaSelectNode).toBeInTheDocument();
-    userEvent.click(dynaSelectNode);
+    await userEvent.click(dynaSelectNode);
     expect(mockOnOrderChange).toHaveBeenCalledWith('123', 'Test test');
   });
 });

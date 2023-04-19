@@ -64,13 +64,13 @@ describe('arrowPopper component Test cases', () => {
       const buttonRef = screen.getByRole('button', {name: 'Toggle Popper'});
 
       expect(buttonRef).toBeInTheDocument();
-      userEvent.click(buttonRef);
+      await userEvent.click(buttonRef);
     };
 
     clickAway = async textToBeTested => {
       const divRef = screen.queryByText('Test Clickaway');
 
-      userEvent.click(divRef);
+      await userEvent.click(divRef);
       await waitFor(() => expect(screen.queryByText(textToBeTested)).not.toBeInTheDocument());
     };
   });
@@ -87,7 +87,7 @@ describe('arrowPopper component Test cases', () => {
     await waitFor(() => expect(screen.queryByText('Test Popper')).toBeInTheDocument());
     const testPopper = screen.queryByText('Test Popper');
 
-    userEvent.click(testPopper);
+    await userEvent.click(testPopper);
     await waitFor(() => expect(screen.queryByText('Test Popper')).toBeInTheDocument());
 
     clickAway('Test Popper');
@@ -106,7 +106,7 @@ describe('arrowPopper component Test cases', () => {
     await waitFor(() => expect(screen.queryByText('Testy div')).toBeInTheDocument());
     const testPopper = screen.queryByText('Testy div');
 
-    userEvent.click(testPopper);
+    await userEvent.click(testPopper);
     await waitFor(() => expect(screen.queryByText('Testy div')).toBeInTheDocument());
 
     clickAway('Testy div');
@@ -125,9 +125,9 @@ describe('arrowPopper component Test cases', () => {
     const item1 = screen.queryByText('Item 1');
     const item2 = screen.queryByText('Item 2');
 
-    userEvent.click(item1);
+    await userEvent.click(item1);
     await waitFor(() => expect(screen.queryByText('Item 1')).toBeInTheDocument());
-    userEvent.click(item2);
+    await userEvent.click(item2);
     await waitFor(() => expect(screen.queryByText('Item 2')).toBeInTheDocument());
 
     clickAway('Item 1');

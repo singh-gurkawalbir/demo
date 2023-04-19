@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import RenewIcon from '../../../../../icons/RenewIcon';
 import { selectors } from '../../../../../../reducers';
 import { isIntegrationAppVersion2 } from '../../../../../../utils/integrationApps';

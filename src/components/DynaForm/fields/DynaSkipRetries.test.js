@@ -17,7 +17,7 @@ describe('test suite for skipRetries field', () => {
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
   });
 
-  test('should respond to change in value', () => {
+  test('should respond to change in value', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'skipRetries',
@@ -41,11 +41,11 @@ describe('test suite for skipRetries field', () => {
 
     expect(checkBox).not.toBeChecked();
 
-    userEvent.click(checkBox);
+    await userEvent.click(checkBox);
     expect(checkBox).toBeChecked();
     expect(onFieldChange).toHaveBeenCalledWith(props.id, true);
 
-    userEvent.click(checkBox);
+    await userEvent.click(checkBox);
     expect(checkBox).not.toBeChecked();
     expect(onFieldChange).toHaveBeenCalledWith(props.id, false);
   });

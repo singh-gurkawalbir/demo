@@ -157,18 +157,18 @@ describe('uI test cases for SelectSource', () => {
   const flowId = '5ea16c600e2fab71928a6152';
   const resourceId = '621ce7db7988314f51662c09';
 
-  test('should test source options are checked and filterkey is set to resolved', () => {
+  test('should test source options are checked and filterkey is set to resolved', async () => {
     renderWithProviders(<SelectSource flowId={flowId} resourceId={resourceId} isResolved="true" />, {initialStore});
     const sourcebutton = screen.getByRole('button');
 
-    userEvent.click(sourcebutton);
+    await userEvent.click(sourcebutton);
     const options = screen.getAllByRole('checkbox');
 
-    userEvent.click(options[1]);
+    await userEvent.click(options[1]);
 
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
@@ -176,36 +176,36 @@ describe('uI test cases for SelectSource', () => {
     }));
   });
 
-  test('should test source options are checked and filter key is set to open', () => {
+  test('should test source options are checked and filter key is set to open', async () => {
     renderWithProviders(<SelectSource flowId={flowId} resourceId={resourceId} isResolved="false" />, {initialStore});
     const sourcebutton = screen.getByRole('button');
 
-    userEvent.click(sourcebutton);
+    await userEvent.click(sourcebutton);
     const options = screen.getAllByRole('checkbox');
 
-    userEvent.click(options[1]);
+    await userEvent.click(options[1]);
 
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
       isResolved: 'false',
     }));
   });
-  test('should test cancel button is working fine', () => {
+  test('should test cancel button is working fine', async () => {
     renderWithProviders(<SelectSource flowId={flowId} resourceId={resourceId} isResolved="true" />, {initialStore});
     const sourcebutton = screen.getByRole('button');
 
-    userEvent.click(sourcebutton);
+    await userEvent.click(sourcebutton);
     const options = screen.getAllByRole('checkbox');
 
-    userEvent.click(options[1]);
+    await userEvent.click(options[1]);
 
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(screen.queryByText('Apply')).not.toBeInTheDocument();
   });
 });

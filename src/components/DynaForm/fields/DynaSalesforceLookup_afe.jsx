@@ -3,8 +3,8 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
@@ -96,7 +96,7 @@ export default function DynaSalesforceLookup_afe(props) {
 
   return (
     <>
-      <FormControl className={classes.dynaTextFormControl}>
+      <FormControl variant="standard" className={classes.dynaTextFormControl}>
         <div className={classes.dynaTextLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
@@ -114,11 +114,11 @@ export default function DynaSalesforceLookup_afe(props) {
               disabled
               value={value}
               variant="filled"
-            />
+          />
             <FieldMessage
               isValid={isValid}
               errorMessages={errorMessages}
-            />
+          />
           </div>
           <ActionButton
             data-test={id}

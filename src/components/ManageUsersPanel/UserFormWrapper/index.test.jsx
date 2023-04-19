@@ -12,6 +12,24 @@ import { getCreatedStore } from '../../../store';
 const history = createMemoryHistory();
 let initialStore;
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initUserFormWrapper(userprops) {
   mutateStore(initialStore, draft => {
     draft.user.org.users = [
@@ -173,7 +191,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = screen.getByText('Access level');
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     expect(screen.getByText('Administer account')).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
@@ -200,7 +218,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = screen.getByText('Access level');
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     expect(screen.getByText('Administer account')).toBeInTheDocument();
     const cancelMessage = screen.getByText('Cancel');
 
@@ -240,7 +258,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'administrator');
 
     expect(administratorMessage).toBeInTheDocument();
@@ -257,7 +275,7 @@ describe('user Form Wrapper', () => {
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
     expect(history.goBack).toHaveBeenCalledWith();
-  }, 30000);
+  });
   test('should be able to invite a user with manage access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -285,7 +303,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'manage');
 
     expect(administratorMessage).toBeInTheDocument();
@@ -299,7 +317,7 @@ describe('user Form Wrapper', () => {
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
     expect(history.goBack).toHaveBeenCalledTimes(1);
-  }, 30000);
+  });
   test('should be able to invite a user with monitor access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -326,7 +344,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'monitor');
 
     expect(administratorMessage).toBeInTheDocument();
@@ -334,16 +352,16 @@ describe('user Form Wrapper', () => {
     const pleaseSelectMessage = screen.getByRole('button', {name: 'Please select'});
 
     expect(pleaseSelectMessage).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage);
+    await userEvent.click(pleaseSelectMessage);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
 
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'USER_CREATE',
       user: {
@@ -361,7 +379,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  }, 30000);
+  }, 10000);
   test('should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -388,28 +406,28 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select', hidden: true }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
-    const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
+    await userEvent.click(accessLevelText);
+    const administratorMessage = await waitFor(() => screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'}));
 
     expect(administratorMessage).toBeInTheDocument();
     fireEvent.click(administratorMessage);
     const pleaseSelectMessage = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-integrationsToManage');
 
     expect(pleaseSelectMessage).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage);
+    await userEvent.click(pleaseSelectMessage);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'USER_CREATE',
       user: {
@@ -427,7 +445,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  }, 30000);
+  });
   test('should be able to invite a user with monitor integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -454,7 +472,7 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select', hidden: true }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
 
     expect(administratorMessage).toBeInTheDocument();
@@ -462,20 +480,20 @@ describe('user Form Wrapper', () => {
     const pleaseSelectMessage = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-integrationsToMonitor');
 
     expect(pleaseSelectMessage).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage);
+    await userEvent.click(pleaseSelectMessage);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    userEvent.click(saveMessage);
+    await userEvent.click(saveMessage);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'USER_CREATE',
       user: {
@@ -493,7 +511,7 @@ describe('user Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  }, 30000);
+  });
   test('should be able to verify the monitor integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f985');
     await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
@@ -513,20 +531,20 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select' }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-  }, 30000);
+  });
   test('should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
     await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
@@ -546,18 +564,18 @@ describe('user Form Wrapper', () => {
     const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select' }));
 
     expect(accessLevelText).toBeInTheDocument();
-    userEvent.click(accessLevelText);
+    await userEvent.click(accessLevelText);
     const integration = screen.getByRole('option', {name: '3PL Central'});
 
     expect(integration).toBeInTheDocument();
-    userEvent.click(integration);
+    await userEvent.click(integration);
     const doneMessage = await screen.findByText('Done');
 
-    userEvent.click(doneMessage);
+    await fireEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-  }, 30000);
+  });
 });

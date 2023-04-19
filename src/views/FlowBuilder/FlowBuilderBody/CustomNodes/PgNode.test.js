@@ -61,7 +61,7 @@ describe('Testsuite for PageGeneratorNode', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the delete option on the page generator node', () => {
+  test('should test the delete option on the page generator node', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
       flow: {_integrationId: '345'}, flowId: '234',
     });
@@ -80,7 +80,7 @@ describe('Testsuite for PageGeneratorNode', () => {
     });
 
     expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteStep('234', 'Deleting..'));
   });
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../../test/test-utils';
@@ -40,30 +40,34 @@ describe('Sign up form test cases', () => {
   });
   test('should fill the sign up form and click on sign up button', () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
-    const nameTextBox = screen.getByPlaceholderText('Name*');
-    const emailTextBox = screen.getByPlaceholderText('Business email*');
+    waitFor(async () => {
+      const nameTextBox = screen.getByPlaceholderText('Name*');
+      const emailTextBox = screen.getByPlaceholderText('Business email*');
 
-    userEvent.type(nameTextBox, 'first second');
-    userEvent.type(emailTextBox, 'abc@celigo.com');
+      await userEvent.type(nameTextBox, 'first second');
+      await userEvent.type(emailTextBox, 'abc@celigo.com');
 
-    userEvent.click(screen.getByRole('checkbox'));
+      await userEvent.click(screen.getByRole('checkbox'));
+    });
 
-    const signupButton = screen.getByRole('button');
+    waitFor(async () => {
+      const signupButton = screen.getByRole('button');
 
-    userEvent.click(signupButton);
+      await userEvent.click(signupButton);
 
-    expect(mockDispatchFn).toHaveBeenCalledWith(
-      actions.auth.signup(
-        {
-          name: 'first second',
-          email: 'abc@celigo.com',
-          company: undefined,
-          role: undefined,
-          phone: undefined,
-          agreeTOSAndPP: true,
-        }
-      )
-    );
+      expect(mockDispatchFn).toHaveBeenCalledWith(
+        actions.auth.signup(
+          {
+            name: 'first second',
+            email: 'abc@celigo.com',
+            company: undefined,
+            role: undefined,
+            phone: undefined,
+            agreeTOSAndPP: true,
+          }
+        )
+      );
+    });
   });
   test('should click the sign up button when search param is present in URL', () => {
     renderWithProviders(
@@ -73,31 +77,35 @@ describe('Sign up form test cases', () => {
         </Route>
       </MemoryRouter>, {initialStore}
     );
-    const nameTextBox = screen.getByPlaceholderText('Name*');
-    const emailTextBox = screen.getByPlaceholderText('Business email*');
+    waitFor(async () => {
+      const nameTextBox = screen.getByPlaceholderText('Name*');
+      const emailTextBox = screen.getByPlaceholderText('Business email*');
 
-    userEvent.type(nameTextBox, 'first second');
-    userEvent.type(emailTextBox, 'abc@celigo.com');
+      await userEvent.type(nameTextBox, 'first second');
+      await userEvent.type(emailTextBox, 'abc@celigo.com');
 
-    userEvent.click(screen.getByRole('checkbox'));
+      await userEvent.click(screen.getByRole('checkbox'));
+    });
 
-    const signupButton = screen.getByRole('button');
+    waitFor(async () => {
+      const signupButton = screen.getByRole('button');
 
-    userEvent.click(signupButton);
+      await userEvent.click(signupButton);
 
-    expect(mockDispatchFn).toHaveBeenCalledWith(
-      actions.auth.signup({
-        name: 'first second',
-        email: 'abc@celigo.com',
-        company: undefined,
-        role: undefined,
-        phone: undefined,
-        agreeTOSAndPP: true,
-        utm_source: 'google',
-      })
-    );
+      expect(mockDispatchFn).toHaveBeenCalledWith(
+        actions.auth.signup({
+          name: 'first second',
+          email: 'abc@celigo.com',
+          company: undefined,
+          role: undefined,
+          phone: undefined,
+          agreeTOSAndPP: true,
+          utm_source: 'google',
+        })
+      );
+    });
   });
-  test('should click the sign up button when unknown search param is present in URL', () => {
+  test('should click the sign up button when unknown search param is present in URL', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{pathname: '/signup', search: 'source=google'}]}>
         <Route path="/signup" >
@@ -105,28 +113,32 @@ describe('Sign up form test cases', () => {
         </Route>
       </MemoryRouter>, {initialStore}
     );
-    const nameTextBox = screen.getByPlaceholderText('Name*');
-    const emailTextBox = screen.getByPlaceholderText('Business email*');
+    waitFor(async () => {
+      const nameTextBox = screen.getByPlaceholderText('Name*');
+      const emailTextBox = screen.getByPlaceholderText('Business email*');
 
-    userEvent.type(nameTextBox, 'first second');
-    userEvent.type(emailTextBox, 'abc@celigo.com');
+      await userEvent.type(nameTextBox, 'first second');
+      await userEvent.type(emailTextBox, 'abc@celigo.com');
 
-    userEvent.click(screen.getByRole('checkbox'));
+      await userEvent.click(screen.getByRole('checkbox'));
+    });
 
-    const signupButton = screen.getByRole('button');
+    waitFor(async () => {
+      const signupButton = screen.getByRole('button');
 
-    userEvent.click(signupButton);
+      await userEvent.click(signupButton);
 
-    expect(mockDispatchFn).toHaveBeenCalledWith(
-      actions.auth.signup({
-        name: 'first second',
-        email: 'abc@celigo.com',
-        company: undefined,
-        role: undefined,
-        phone: undefined,
-        agreeTOSAndPP: true,
-      })
-    );
+      expect(mockDispatchFn).toHaveBeenCalledWith(
+        actions.auth.signup({
+          name: 'first second',
+          email: 'abc@celigo.com',
+          company: undefined,
+          role: undefined,
+          phone: undefined,
+          agreeTOSAndPP: true,
+        })
+      );
+    });
   });
   test('should show error message when sign in fails', () => {
     const initialStore = getCreatedStore();

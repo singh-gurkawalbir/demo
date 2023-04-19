@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import RefreshGenericResource from './RefreshGenericResource';
 import { getCreatedStore } from '../../../../store';
@@ -81,15 +81,15 @@ describe('refreshGenericResource UI tests', () => {
     const openResButton = document.querySelector('[data-test="openResource"]');
 
     expect(openResButton).toBeInTheDocument();
-    userEvent.click(openResButton);
+    await userEvent.click(openResButton);
     await waitFor(() => expect(mockOpenUrl).toHaveBeenCalledWith({ url: props.urlToOpen }));
   });
-  test('should call the onRefresh button passed in props when clicked on removeRefresh button', () => {
+  test('should call the onRefresh button passed in props when clicked on removeRefresh button', async () => {
     initRefreshGenericResource(props);
     const removeRefreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(removeRefreshButton).toBeInTheDocument();
-    userEvent.click(removeRefreshButton);
+    await userEvent.click(removeRefreshButton);
     expect(mockOnRefresh).toHaveBeenCalled();
   });
   test('should call the onFieldChange function passed in props when resourceToFetch prop is true', () => {

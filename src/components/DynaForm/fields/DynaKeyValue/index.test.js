@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { screen, waitFor} from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaKeyValue from './index';
-import {renderWithProviders} from '../../../../test/test-utils';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 jest.mock('../../../Sortable/SortableList', () => ({
   __esModule: true,
@@ -11,7 +11,7 @@ jest.mock('../../../Sortable/SortableList', () => ({
   default: props => (
     <div>
       {props.children}
-      <button type="button" onClick={() => props.onSortEnd({oldIndex: 0, newIndex: 1})} >Sort</button>
+      <button type="button" onClick={() => props.onSortEnd({ oldIndex: 0, newIndex: 1 })} >Sort</button>
     </div>
   ),
 }));
@@ -31,7 +31,7 @@ describe('dynaKeyValue UI tests', () => {
   const mockOnUpdate = jest.fn();
   const mockOnFieldChange = jest.fn();
   const props = {
-    value: [{key: 'id1', value: 'key1'}],
+    value: [{ key: 'id1', value: 'key1' }],
     onUpdate: mockOnUpdate,
     label: 'demo label',
     dataTest: 'demotest',
@@ -74,35 +74,35 @@ describe('dynaKeyValue UI tests', () => {
     renderWithProviders(<DynaKeyValue {...newprops} />);
     const fields = screen.getAllByRole('textbox');
 
-    userEvent.type(fields[0], 'a');
+    await userEvent.type(fields[0], 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should call the handleValueUpdate and handleUpdate functions when a value field is edited', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     const fields = screen.getAllByRole('textbox');
 
-    userEvent.type(fields[1], 'a');
+    await userEvent.type(fields[1], 'a');
 
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should call the mockOnUpdate function passed in props when clicked on the openHandlebars button', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
-    const handlebarButton = document.querySelector('[title="Open handlebars editor"]');
+    const handlebarButton = document.querySelector('#handleBar-0');
 
-    userEvent.click(handlebarButton);
+    await userEvent.click(handlebarButton);
     await waitFor(() => expect(mockhandleEditorClick).toHaveBeenCalled());
   });
   test('should call the onFieldChange function when clicked on the delete button', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     const deleteButton = document.querySelector('[title="Delete"]');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should call the onSortEnd function when attempted to sort', async () => {
     renderWithProviders(<DynaKeyValue {...props} />);
     expect(screen.getByText('Sort')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Sort'));
+    await userEvent.click(screen.getByText('Sort'));
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
 });

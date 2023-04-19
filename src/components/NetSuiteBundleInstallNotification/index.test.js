@@ -81,7 +81,7 @@ describe('netSuiteBundleInstallNotification test cases', () => {
     expect(screen.queryByText(/integrator.io SuiteBundle/i)).toBeInTheDocument();
     expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript APIs./i)).toBeInTheDocument();
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(utils.container).toBeEmptyDOMElement();
   });
   test('should displayy suiteApp installation notification for default value/ exports resource', async () => {

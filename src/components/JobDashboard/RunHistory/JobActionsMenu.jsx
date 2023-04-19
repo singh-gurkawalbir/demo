@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import Menu from '@material-ui/core/Menu';
-import { makeStyles } from '@material-ui/core';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
+import { ArrowPopper } from '@celigo/fuse-ui';
+import makeStyles from '@mui/styles/makeStyles';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 import actions from '../../../actions';
 import JobFilesDownloadDialog from '../JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
@@ -103,13 +103,13 @@ export default function JobActionsMenu({
   return (
     <>
       {showFilesDownloadDialog && (
-        <JobFilesDownloadDialog
-          job={job}
-          onCloseClick={handleJobFilesDownloadDialogCloseClick}
-        />
+      <JobFilesDownloadDialog
+        job={job}
+        onCloseClick={handleJobFilesDownloadDialogCloseClick}
+      />
       )}
 
-      <Menu
+      <ArrowPopper
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}>
@@ -122,12 +122,13 @@ export default function JobActionsMenu({
             {opt.icon}{opt.label}
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
       <IconButton
         data-test="moreJobActionsMenu"
         className={classes.iconBtn}
         onClick={handleMenuClick}
-        disabled={menuOptions.length === 0}>
+        disabled={menuOptions.length === 0}
+        size="large">
         <EllipsisHorizontallIcon />
       </IconButton>
     </>

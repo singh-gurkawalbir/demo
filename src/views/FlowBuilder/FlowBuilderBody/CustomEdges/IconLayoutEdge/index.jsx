@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo} from 'react';
-import { getSmoothStepPath } from 'react-flow-renderer';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDragDropManager } from 'react-dnd';
+import { getSmoothStepPath } from 'reactflow';
 import {
   handleOffset,
   nodeSize,

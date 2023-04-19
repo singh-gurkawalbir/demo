@@ -80,34 +80,34 @@ describe('dynaReferencedFields UI tests', () => {
 
     expect(editButton).toBeInTheDocument();
   });
-  test('should open the modal dialogue when clicked on the edit button', () => {
+  test('should open the modal dialogue when clicked on the edit button', async () => {
     initDynaReferencedFields(props);
     const editButton = document.querySelector('[data-test="editReferencedFields"]');
 
     expect(editButton).toBeInTheDocument();
-    userEvent.click(editButton);
+    await userEvent.click(editButton);
   });
-  test('should render the form inside the modal when clicked on edit button', () => {
+  test('should render the form inside the modal when clicked on edit button', async () => {
     initDynaReferencedFields(props);
     const editButton = document.querySelector('[data-test="editReferencedFields"]');
 
     expect(editButton).toBeInTheDocument();
-    userEvent.click(editButton);
+    await userEvent.click(editButton);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
 
     expect(screen.getByText('Referenced fields:')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
-  test('should call the onFieldChange function passed in props when field is edited', () => {
+  test('should call the onFieldChange function passed in props when field is edited', async () => {
     initDynaReferencedFields(props);
     const editButton = document.querySelector('[data-test="editReferencedFields"]');
 
     expect(editButton).toBeInTheDocument();
-    userEvent.click(editButton);
+    await userEvent.click(editButton);
     const inputField = screen.getByRole('textbox');
 
-    userEvent.type(inputField, 'a');
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.type(inputField, 'a');
+    await userEvent.click(screen.getByText('Save'));
     expect(mockonFieldChange).toHaveBeenCalled();
   });
 });

@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { Divider } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Divider } from '@mui/material';
 import clsx from 'clsx';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
     '& .MuiFormControlLabel-root': {
       marginRight: 0,
     },
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('xl')]: {
       width: '150%',
     },
   },

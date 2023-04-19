@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 import clsx from 'clsx';
-import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
+import { Drawer, IconButton, Tab, Tabs, useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
@@ -414,7 +415,8 @@ export default function BottomDrawer({
                     />
                           <IconButton
                             className={classes.closeBtn}
-                            onClick={handleScriptLogsClose(resourceId)}>
+                            onClick={handleScriptLogsClose(resourceId)}
+                            size="large">
                             <CloseIcon />
                           </IconButton>
                         </div>
@@ -442,7 +444,8 @@ export default function BottomDrawer({
                           />
                           <IconButton
                             className={classes.closeBtn}
-                            onClick={handleDebugLogsClose(resourceId)}>
+                            onClick={handleDebugLogsClose(resourceId)}
+                            size="large">
                             <CloseIcon />
                           </IconButton>
                         </div>

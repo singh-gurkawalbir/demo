@@ -1,7 +1,7 @@
 
 import React from 'react';
 import JSONPretty from 'react-json-pretty';
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles({
   jsonPrettier: {

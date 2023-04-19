@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { screen, render} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import MappingCell from './index';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 const mockHistoryPush = jest.fn();
 
@@ -20,12 +21,12 @@ describe('suite script MappingCell ui test', () => {
     jest.clearAllMocks();
   });
   test('should show empty dom when no flow is provided', () => {
-    const utils = render(<MemoryRouter><MappingCell flow={{}} /></MemoryRouter>);
+    const utils = renderWithProviders(<MemoryRouter><MappingCell flow={{}} /></MemoryRouter>);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(utils.container).toBeUndefined();
   });
-  test('should call history push after clikcing the mapping button', () => {
-    render(
+  test('should call history push after clikcing the mapping button', async () => {
+    renderWithProviders(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
           path="/initialURL"
@@ -36,7 +37,7 @@ describe('suite script MappingCell ui test', () => {
     const mappingButton = screen.getByRole('button');
 
     expect(mappingButton).toBeInTheDocument();
-    userEvent.click(mappingButton);
+    await userEvent.click(mappingButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/initialURL/flowID/mapping');
   });
 });

@@ -238,7 +238,7 @@ describe('selectableCheckBox component Test cases', () => {
 
       expect(checkBox).toBeInTheDocument();
 
-      userEvent.click(checkBox);
+      await userEvent.click(checkBox);
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
       expect(onSelectChange).toHaveBeenCalledTimes(1);
@@ -246,7 +246,7 @@ describe('selectableCheckBox component Test cases', () => {
 
       expect(checkBox1).toBeInTheDocument();
 
-      userEvent.click(checkBox1);
+      await userEvent.click(checkBox1);
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
       expect(onSelectChange).toHaveBeenCalledTimes(2);
     });
@@ -281,7 +281,7 @@ describe('selectableCheckBox component Test cases', () => {
 
       expect(checkBox).toBeInTheDocument();
 
-      userEvent.click(checkBox);
+      await userEvent.click(checkBox);
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
       expect(onSelectChange).toHaveBeenCalledTimes(1);
@@ -290,7 +290,7 @@ describe('selectableCheckBox component Test cases', () => {
 
       expect(checkBox1).toBeInTheDocument();
 
-      userEvent.click(checkBox1);
+      await userEvent.click(checkBox1);
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
       expect(onSelectChange).toHaveBeenCalledTimes(2);

@@ -103,7 +103,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
   test('Should able to test the TemplatePreview With template with user and, not from Celigo', async () => {
@@ -124,7 +124,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
   test('Should able to test the TemplatePreview With template with user from Celigo', async () => {
@@ -142,7 +142,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
 
@@ -154,7 +154,7 @@ describe('TemplatePreview tests', () => {
     const readme = screen.getByRole('button', {name: 'View Readme'});
 
     expect(readme).toBeInTheDocument();
-    userEvent.click(readme);
+    await userEvent.click(readme);
     expect(screen.getByText('Readme')).toBeInTheDocument();
     expect(screen.getByText('Readme message')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Ok'})).toBeInTheDocument();

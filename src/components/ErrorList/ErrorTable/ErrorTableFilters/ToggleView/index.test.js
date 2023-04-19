@@ -62,12 +62,12 @@ describe('toggleViewSelect component Test cases', () => {
     });
     const buttonRef = screen.getByRole('button');
 
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     const drawerOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === OPEN_ERRORS_VIEW_TYPES.LIST);
 
     expect(drawerOption).toBeInTheDocument();
-    userEvent.click(drawerOption);
+    await userEvent.click(drawerOption);
     expect(handleToggleChange).toHaveBeenCalledTimes(1);
   });
 });

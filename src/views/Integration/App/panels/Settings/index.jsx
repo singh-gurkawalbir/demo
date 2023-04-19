@@ -6,9 +6,9 @@ import {
   useHistory,
 } from 'react-router-dom';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { List, ListItem, Divider } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import { List, ListItem, Divider } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import { selectors } from '../../../../../reducers';
 import GeneralSection from './sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';

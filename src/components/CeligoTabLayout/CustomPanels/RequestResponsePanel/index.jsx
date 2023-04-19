@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { makeStyles } from '@material-ui/core/styles';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import makeStyles from '@mui/styles/makeStyles';
 import DefaultPanel from '../DefaultPanel';
 import { getErrorReqResFields, getContentType } from '../../../../utils/http';
 
@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   },
   panelTabs: {
     borderBottom: `1px solid ${theme.palette.background.paper2}`,
+    '& .MuiTab-root': {
+      minWidth: theme.spacing(20),
+    },
   },
 }));
 

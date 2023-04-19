@@ -1,5 +1,6 @@
 import React from 'react';
-import {makeStyles, Typography, Snackbar, LinearProgress} from '@material-ui/core';
+import { Typography, Snackbar, LinearProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({

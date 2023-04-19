@@ -79,15 +79,15 @@ describe('mapping cell  ui test cases', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should redirect to mapping page', () => {
+  test('should redirect to mapping page', async () => {
     initMappingPage({flowId: '5ea16c600e2fab71928a6152'});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/62662cc4e06ff462c3db470e/flows/mapping/5ea16c600e2fab71928a6152');
   });
-  test('should redirect to Utility Mapping page', () => {
+  test('should redirect to Utility Mapping page', async () => {
     initMappingPage({flowId: '5ea16c600e2fab71928a6153', childId: 'someChildId'});
 
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/62662cc4e06ff462c3db470e/flows/5ea16c600e2fab71928a6153/utilitymapping/commonAttributes');
   });
   test('should show icon indicator if flow has mappings', () => {

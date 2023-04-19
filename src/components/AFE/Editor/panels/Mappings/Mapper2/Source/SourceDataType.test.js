@@ -49,7 +49,7 @@ describe('source Data type Ui test cases', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should change the Source Data type to number', () => {
+  test('should change the Source Data type to number', async () => {
     const props = {
       nodeKey: 'someNodeKey',
       anchorEl,
@@ -57,7 +57,7 @@ describe('source Data type Ui test cases', () => {
     };
     const {utils} = initFunction(props);
 
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(setAnchorEl).toHaveBeenCalledTimes(1);
     const props2 = {
       nodeKey: 'someNodeKey',
@@ -66,12 +66,12 @@ describe('source Data type Ui test cases', () => {
     };
 
     initFunction(props2, utils.rerender);
-    userEvent.click(screen.getByText('number'));
+    await userEvent.click(screen.getByText('number'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.updateDataType('someNodeKey', 'number', true)
     );
   });
-  test('should update active key (via dispatch call) and call history push to rediect', () => {
+  test('should update active key (via dispatch call) and call history push to rediect', async () => {
     anchorEl = null;
     const props = {
       nodeKey: 'someNodeKey', sourceDataTypes: ['string', 'number'], anchorEl, setAnchorEl,
@@ -81,7 +81,7 @@ describe('source Data type Ui test cases', () => {
 
     expect(screen.getByText('string,number')).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.updateActiveKey('someNodeKey')
     );
@@ -96,7 +96,7 @@ describe('source Data type Ui test cases', () => {
     initFunction(props);
 
     expect(screen.getByText('string,number')).toBeInTheDocument();
-    expect(screen.getByTitle('The data type of handlebars expressions is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
+    expect(screen.getByLabelText('The data type of handlebars expressions is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
   });
   test('should verify the presense of tootip title for hardcoded', () => {
     anchorEl = null;
@@ -107,6 +107,6 @@ describe('source Data type Ui test cases', () => {
     initFunction(props);
 
     expect(screen.getByText('string,number')).toBeInTheDocument();
-    expect(screen.getByTitle('The data type of hard-coded values is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
+    expect(screen.getByLabelText('The data type of hard-coded values is auto-set to "string" and cannot be changed.')).toBeInTheDocument();
   });
 });

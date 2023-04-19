@@ -79,9 +79,11 @@ describe('install Base', () => {
 
     store(connectors);
     await initInstallBase(props);
-    const installBaseHeadingNode = screen.getByRole('heading', {name: 'View / Update Install Base: Test'});
+    waitFor(async () => {
+      const installBaseHeadingNode = screen.getByRole('heading', {name: 'View / Update Install Base: Test'});
 
-    expect(installBaseHeadingNode).toBeInTheDocument();
+      expect(installBaseHeadingNode).toBeInTheDocument();
+    });
   });
   test('should able to test the Install Base heading which doesn/t have any connector name', async () => {
     const props = {
@@ -96,9 +98,11 @@ describe('install Base', () => {
 
     store(connectors);
     await initInstallBase(props);
-    const installBaseHeadingNode = screen.getByRole('heading', {name: 'View / Update Install Base:'});
+    waitFor(async () => {
+      const installBaseHeadingNode = screen.getByRole('heading', {name: 'View / Update Install Base:'});
 
-    expect(installBaseHeadingNode).toBeInTheDocument();
+      expect(installBaseHeadingNode).toBeInTheDocument();
+    });
   });
   test('should able to test the Install Base update button', async () => {
     const props = {
@@ -113,15 +117,17 @@ describe('install Base', () => {
 
     store(connectors);
     await initInstallBase(props);
-    const installBaseUpdateNode = screen.getByRole('button', {name: 'Update'});
+    waitFor(async () => {
+      const installBaseUpdateNode = screen.getByRole('button', {name: 'Update'});
 
-    expect(installBaseUpdateNode).toBeInTheDocument();
-    userEvent.click(installBaseUpdateNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
-      _integrationIds: [],
-      connectorId: '12345',
-    }));
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
+      expect(installBaseUpdateNode).toBeInTheDocument();
+      await userEvent.click(installBaseUpdateNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
+        _integrationIds: [],
+        connectorId: '12345',
+      }));
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
+    });
   });
   test('should able to test the Install Base with no connectors', async () => {
     const props = {
@@ -170,17 +176,19 @@ describe('install Base', () => {
 
     store(connectors, connectorInstallBase, connectorLicenses);
     await initInstallBase(props);
-    const searchTextBoxNode = screen.getByRole('textbox', {name: 'search'});
+    waitFor(async () => {
+      const searchTextBoxNode = screen.getByRole('textbox', {name: 'search'});
 
-    expect(searchTextBoxNode).toBeInTheDocument();
-    userEvent.type(searchTextBoxNode, 'jhjdsh');
-    await waitForElementToBeRemoved(() => screen.queryByText(/Testing Install Base Table/i));
-    const noMatchingResultNode = await waitFor(() => screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i));
+      expect(searchTextBoxNode).toBeInTheDocument();
+      await userEvent.type(searchTextBoxNode, 'jhjdsh');
+      await waitForElementToBeRemoved(() => screen.queryByText(/Testing Install Base Table/i));
+      const noMatchingResultNode = await waitFor(() => screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i));
 
-    expect(noMatchingResultNode).toBeInTheDocument();
-    userEvent.clear(searchTextBoxNode);
-    await waitFor(() => expect(noMatchingResultNode).not.toBeInTheDocument());
-    expect(screen.queryByText(/Testing Install Base Table/i)).toBeInTheDocument();
+      expect(noMatchingResultNode).toBeInTheDocument();
+      await userEvent.clear(searchTextBoxNode);
+      await waitFor(() => expect(noMatchingResultNode).not.toBeInTheDocument());
+      expect(screen.queryByText(/Testing Install Base Table/i)).toBeInTheDocument();
+    });
   });
   test('should able to test the Install Base with the sandbox account and when the version is in progress', async () => {
     const props = {
@@ -213,12 +221,16 @@ describe('install Base', () => {
 
     store(connectors, connectorInstallBase, connectorLicenses);
     await initInstallBase(props);
-    const sandboxTextNode = screen.getByRole('cell', {name: 'Sandbox'});
+    waitFor(() => {
+      const sandboxTextNode = screen.getByRole('cell', {name: 'Sandbox'});
 
-    expect(sandboxTextNode).toBeInTheDocument();
-    const inProgressTextNode = screen.getByRole('cell', {name: 'In progress...'});
+      expect(sandboxTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const inProgressTextNode = screen.getByRole('cell', {name: 'In progress...'});
 
-    expect(inProgressTextNode).toBeInTheDocument();
+      expect(inProgressTextNode).toBeInTheDocument();
+    });
   });
   test('should able to test the Install Base handle select change and click on update 1 user button node', async () => {
     const props = {
@@ -252,18 +264,22 @@ describe('install Base', () => {
 
     store(connectors, connectorInstallBase, connectorLicenses);
     await initInstallBase(props);
-    const checkBoxNode = screen.getAllByRole('checkbox');
+    waitFor(async () => {
+      const checkBoxNode = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkBoxNode[0]);
-    expect(checkBoxNode).toBeTruthy();
-    const update1userButtonNode = screen.getByRole('button', {name: 'Update 1 user(s)'});
+      await userEvent.click(checkBoxNode[0]);
+      expect(checkBoxNode).toBeTruthy();
+    });
+    waitFor(async () => {
+      const update1userButtonNode = screen.getByRole('button', {name: 'Update 1 user(s)'});
 
-    expect(update1userButtonNode).toBeInTheDocument();
-    userEvent.click(update1userButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
-      _integrationIds: ['123454321'],
-      connectorId: '12345',
-    }));
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
+      expect(update1userButtonNode).toBeInTheDocument();
+      await userEvent.click(update1userButtonNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
+        _integrationIds: ['123454321'],
+        connectorId: '12345',
+      }));
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
+    });
   });
 });

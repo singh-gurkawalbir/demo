@@ -1,9 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Typography, IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { Typography, IconButton } from '@mui/material';
 import { reverse } from 'lodash';
 import CeligoTable from '../CeligoTable';
 import { JOB_STATUS } from '../../constants';
@@ -59,7 +59,7 @@ export default function JobRetriesDialog({
 
   return (
     <Dialog open maxWidth={false}>
-      <DialogTitle className={classes.title} disableTypography>
+      <DialogTitle className={classes.title}>
         <Typography variant="h6">
           {`${integrationName} > ${job && job.name}`}
         </Typography>
@@ -70,7 +70,8 @@ export default function JobRetriesDialog({
         <IconButton
           className={classes.closeButton}
           data-test="closeJobRetriesDialog"
-          onClick={onCloseClick}>
+          onClick={onCloseClick}
+          size="large">
           <CloseIcon />
         </IconButton>
       </DialogTitle>

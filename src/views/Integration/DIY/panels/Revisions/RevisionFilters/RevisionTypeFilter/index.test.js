@@ -101,7 +101,7 @@ describe('Testsuite for RevisionTypeFilter', () => {
     });
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     const snapshotMenuOption = screen.getByRole('option', {
       name: /snapshot/i,
     });

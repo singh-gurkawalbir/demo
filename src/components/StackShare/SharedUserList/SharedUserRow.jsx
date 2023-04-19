@@ -5,11 +5,11 @@ import {
   TableRow,
   Typography,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
+import { Switch } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useConfirmDialog from '../../ConfirmDialog';
 import DeleteIcon from '../../icons/TrashIcon';
-import CeligoSwitch from '../../CeligoSwitch';
 import { TextButton } from '../../Buttons';
 
 export default function SharedUserRow({ user }) {
@@ -79,7 +79,7 @@ export default function SharedUserRow({ user }) {
       </TableCell>
       <TableCell>
         {user.accepted && (
-          <CeligoSwitch
+          <Switch
             data-test="disableUser"
             checked={!user.disabled}
             onChange={handleToggleSharingClick}
@@ -93,7 +93,8 @@ export default function SharedUserRow({ user }) {
         <IconButton
           data-test="deleteStackShareInvite"
           aria-label="delete"
-          onClick={handleDeleteUserClick}>
+          onClick={handleDeleteUserClick}
+          size="large">
           <DeleteIcon />
         </IconButton>
       </TableCell>

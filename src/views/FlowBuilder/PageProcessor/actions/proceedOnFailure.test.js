@@ -143,9 +143,9 @@ describe('ProceedOnFailure test cases', () => {
     expect(mockremountAfterSaveFn).toBeInTheDocument();
     expect(mockonSave).toBeInTheDocument();
 
-    userEvent.click(mockOnClose);
-    userEvent.click(mockremountAfterSaveFn);
-    userEvent.click(mockonSave);
+    await userEvent.click(mockOnClose);
+    await userEvent.click(mockremountAfterSaveFn);
+    await userEvent.click(mockonSave);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id', [
       {
         op: 'replace',
@@ -180,7 +180,7 @@ describe('ProceedOnFailure test cases', () => {
     expect(mockremountAfterSaveFn).toBeInTheDocument();
     expect(mockonSave).toBeInTheDocument();
 
-    userEvent.click(mockonSave);
+    await userEvent.click(mockonSave);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_1', [
       {
         op: 'replace',

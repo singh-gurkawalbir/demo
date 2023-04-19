@@ -93,7 +93,7 @@ describe('buttonPanel component Test cases', () => {
     expect(screen.queryByText(/Save & close/i)).toBeInTheDocument();
     expect(previewButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.save({ match: {
       isExact: true,
@@ -102,7 +102,7 @@ describe('buttonPanel component Test cases', () => {
       url: '/',
     } }));
 
-    userEvent.click(previewButton);
+    await userEvent.click(previewButton);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.requestPreview());
   });
@@ -119,7 +119,7 @@ describe('buttonPanel component Test cases', () => {
     expect(screen.queryByText(/Save & close/i)).toBeInTheDocument();
     expect(previewButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toHaveBeenCalledTimes(0);
 
     await expect(screen.findByText('just some random error')).resolves.toBeInTheDocument();

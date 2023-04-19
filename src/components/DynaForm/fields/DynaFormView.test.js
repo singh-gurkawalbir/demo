@@ -8,6 +8,25 @@ import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test
 import FormView from './DynaFormView';
 
 const onFieldChange = jest.fn();
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const props = { resourceType: 'imports', id: 'id', label: 'FieldLabel', resourceId: 'imp1', formKey: '_formKey', value: {}, flowId: 'flow1' };
 
 async function initFormView(props) {
@@ -85,24 +104,24 @@ describe('formView tests', () => {
   test('should able to test FormView with googledrive Assistant type http', async () => {
     await initFormView(props);
     expect(screen.getByText('FieldLabel')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menuitem', { name: 'Please select' })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('menuitem', { name: 'Google Drive' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Google Drive' }));
     expect(mockDispatchFn).toHaveBeenCalled();
   });
   test('should able to test FormView with acumaticaecommerce Assistant type rest', async () => {
     await initFormView({...props, resourceId: 'imp3'});
-    userEvent.click(screen.getByRole('button'));
-    userEvent.click(screen.getByRole('menuitem', { name: 'REST API' }));
+    await userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'REST API' }));
   });
   test('should able to test FormView with graph_ql', async () => {
     await initFormView({...props, resourceId: 'imp2'});
     expect(screen.getByText('FieldLabel')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
-    userEvent.click(screen.getByRole('menuitem', { name: 'HTTP' }));
+    await userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'HTTP' }));
     expect(mockDispatchFn).not.toHaveBeenCalledWith();
-    userEvent.click(screen.getByRole('button'));
-    userEvent.click(screen.getByRole('menuitem', { name: 'GraphQL' }));
+    await userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'GraphQL' }));
   });
   test('should able to test FormView with invalid resource', async () => {
     await initFormView({ ...props, resourceId: undefined, resourceType: 'something' });

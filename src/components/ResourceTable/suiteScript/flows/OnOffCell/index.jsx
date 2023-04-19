@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import CeligoSwitch from '../../../../CeligoSwitch';
+import makeStyles from '@mui/styles/makeStyles';
+import { Switch } from '@celigo/fuse-ui';
 import Spinner from '../../../../Spinner';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
-const useStyles = makeStyles(theme => ({
-  celigoSwitchOnOff: {
-    marginTop: theme.spacing(1),
-  },
+const useStyles = makeStyles(() => ({
   spinnerOnOff: {
     marginLeft: 12,
   },
@@ -57,8 +54,8 @@ export default function OnOffCell({ ssLinkedConnectionId, flow, tooltip }) {
 
   return (
 
-    <CeligoSwitch
-      className={classes.celigoSwitchOnOff}
+    <Switch
+      sx={{mt: 1}}
       data-test={`toggleOnAndOffFlow${flowName}`}
       disabled={!isManageLevelUser}
       checked={!flow.disabled}

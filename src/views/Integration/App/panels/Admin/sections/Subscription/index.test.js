@@ -126,15 +126,15 @@ describe('Subscription Section UI tests', () => {
   });
   test('should display the confirm dialogue box when clicked on request upgrade button', async () => {
     await initSubscriptionSection({integrationId: '61604a5a8364267b8a378084'});
-    userEvent.click(screen.getByText('Request upgrade'));
+    await userEvent.click(screen.getByText('Request upgrade'));
     expect(screen.getByText('We will contact you to discuss your business needs and recommend an ideal subscription plan.')).toBeInTheDocument();
     expect(screen.getByText('Submit request')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
   test('should make the respective dispatch call when clicked on "Submit request" in the dialog box', async () => {
     await initSubscriptionSection({integrationId: '61604a5a8364267b8a378084', edition: false});
-    userEvent.click(screen.getByText('Request upgrade'));
-    userEvent.click(screen.getByText('Submit request'));
+    await userEvent.click(screen.getByText('Request upgrade'));
+    await userEvent.click(screen.getByText('Submit request'));
     expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.settings.requestUpgrade('61604a5a8364267b8a378084', {
       licenseId: '5a6ec1bae9aaa11c9bc86106',
     }));
@@ -173,7 +173,7 @@ describe('Subscription Section UI tests', () => {
     };
 
     await initSubscriptionSection({integrationId: '61604a5a8364267b8a378084', edition: true});
-    userEvent.click(screen.getByText('Upgrade'));
+    await userEvent.click(screen.getByText('Upgrade'));
     expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.settings.upgrade('61604a5a8364267b8a378084', license));
   });
 });

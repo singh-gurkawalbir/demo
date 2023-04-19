@@ -1,8 +1,8 @@
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { Typography } from '@material-ui/core'; import clsx from 'clsx';
+import { Typography } from '@mui/material'; import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';

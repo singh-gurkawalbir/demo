@@ -37,6 +37,6 @@ describe('test suite for RouterGuide', () => {
   test('Should render TitleHelp button', async () => {
     await initTitleHelp('231c3', 'Field help');
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
   });
 });

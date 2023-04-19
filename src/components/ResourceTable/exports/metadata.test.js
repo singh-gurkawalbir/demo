@@ -38,7 +38,7 @@ function initExports(data = {}) {
 }
 
 describe('test suite for Exports', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: 'exp123',
       name: 'The Export',
@@ -59,10 +59,10 @@ describe('test suite for Exports', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name})).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'The Export',
       'Netsuite',
       '1 week ago',
       '',
@@ -71,7 +71,7 @@ describe('test suite for Exports', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

@@ -27,6 +27,20 @@ async function initReAuthModal({mfaValues, onClose, isQRCode} = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('Testsuite for ReAuthModal', () => {
   runServer();
   let mockDispatchFn;
@@ -63,11 +77,11 @@ describe('Testsuite for ReAuthModal', () => {
     const passwordTextboxNode = document.querySelector('input[name="password"]');
 
     expect(passwordTextboxNode).toBeInTheDocument();
-    userEvent.type(passwordTextboxNode, 'testpassword');
+    await userEvent.type(passwordTextboxNode, 'testpassword');
     const viewCodeButtonNode = screen.getByRole('button', {name: /view code/i});
 
     expect(viewCodeButtonNode).toBeInTheDocument();
-    userEvent.click(viewCodeButtonNode);
+    await userEvent.click(viewCodeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_REQUEST_SECRET_CODE',
       password: 'testpassword',
@@ -92,11 +106,11 @@ describe('Testsuite for ReAuthModal', () => {
     const passwordTextboxNode = document.querySelector('input[name="password"]');
 
     expect(passwordTextboxNode).toBeInTheDocument();
-    userEvent.type(passwordTextboxNode, 'testpassword');
+    await userEvent.type(passwordTextboxNode, 'testpassword');
     const viewCodeButtonNode = screen.getByRole('button', {name: /view key/i});
 
     expect(viewCodeButtonNode).toBeInTheDocument();
-    userEvent.click(viewCodeButtonNode);
+    await userEvent.click(viewCodeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_REQUEST_SECRET_CODE',
       password: 'testpassword',

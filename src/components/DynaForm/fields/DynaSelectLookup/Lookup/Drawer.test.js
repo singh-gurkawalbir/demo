@@ -79,7 +79,7 @@ describe('Testsuite for Lookup Drawer', () => {
     expect(screen.getByText(/title = create lookup/i)).toBeInTheDocument();
     expect(screen.getByText(/mock lookup/i)).toBeInTheDocument();
   });
-  test('should test the cancel button of the right drawer', () => {
+  test('should test the cancel button of the right drawer', async () => {
     initLookupDrawer({test: '123'}, {pathData: '/test/lookups', paramsData: '', pathnameData: '/test/lookups'});
     expect(screen.getByText(/mock right drawer/i)).toBeInTheDocument();
     expect(screen.getByText(/height = tall/i)).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe('Testsuite for Lookup Drawer', () => {
     });
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(mockSetCancelTriggered).toHaveBeenCalled();
   });
 });

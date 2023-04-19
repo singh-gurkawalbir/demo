@@ -1,8 +1,9 @@
 import React from 'react';
-import { MenuItem, Typography, makeStyles, Divider, ClickAwayListener } from '@material-ui/core';
+import { MenuItem, Typography, Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import ArrowPopper from '../../../../../components/ArrowPopper';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import { useFlowContext } from '../../Context';
 import { getAllFlowBranches } from '../../lib';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
@@ -55,29 +56,25 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
       anchorEl={anchorEl}
       placement="bottom-end"
       onClose={handleClose}>
+      <div className={classes.content}>
+        <div className={classes.titleBox}>
+          <Typography className={classes.title} variant="h6">
+            Select branch to add to
+          </Typography>
 
-      <ClickAwayListener onClickAway={handleClose}>
-        <div className={classes.content}>
-          <div className={classes.titleBox}>
-            <Typography className={classes.title} variant="h6">
-              Select branch to add to
-            </Typography>
-
-            <Divider />
-          </div>
-
-          {branches.map(({name, id}) => (
-            <MenuItem
-              button
-              className={classes.menuItem}
-              onClick={handleCallback(id)}
-              key={name}>
-              {name}
-            </MenuItem>
-          ))}
+          <Divider />
         </div>
 
-      </ClickAwayListener>
+        {branches.map(({name, id}) => (
+          <MenuItem
+            button
+            className={classes.menuItem}
+            onClick={handleCallback(id)}
+            key={name}>
+            {name}
+          </MenuItem>
+        ))}
+      </div>
     </ArrowPopper>
   );
 }

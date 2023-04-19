@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import { selectors } from '../../reducers';
 // eslint-disable-next-line import/no-extraneous-dependencies

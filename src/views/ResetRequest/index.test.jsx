@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, cleanup } from '@testing-library/react';
+import { screen, cleanup, fireEvent } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../test/test-utils';
@@ -117,12 +117,12 @@ describe('resetPassword', () => {
 
     expect(password).toBeInTheDocument();
 
-    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    fireEvent.change(password, {target: {value: 'xbsbxsxazl223xbsbixi'}});
 
     expect(password.value).toBe('xbsbxsxazl223xbsbixi');
     const setpasswordButtonNode = screen.getByRole('button', {name: 'Save'});
 
     expect(setpasswordButtonNode).toBeInTheDocument();
-    userEvent.click(setpasswordButtonNode);
+    await userEvent.click(setpasswordButtonNode);
   });
 });

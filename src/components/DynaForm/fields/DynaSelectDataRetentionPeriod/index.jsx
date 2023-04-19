@@ -1,6 +1,6 @@
-import { FormLabel, MenuItem } from '@material-ui/core';
+import { FormLabel, MenuItem } from '@mui/material';
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoSelect from '../../../CeligoSelect';
 import FieldHelp from '../../FieldHelp';
 

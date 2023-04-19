@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormLabel, FormControl } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel, FormControl } from '@mui/material';
 import { isEqual } from 'lodash';
 import clsx from 'clsx';
 import { generateId } from '../../../../utils/string';
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaValueTitle: {
     paddingLeft: '28px',
-    width: `calc(100% - ${theme.spacing(2)}px)`,
+    width: `calc(100% - ${theme.spacing(2)})`,
   },
 }));
 
@@ -205,6 +205,7 @@ export function KeyValueComponent(props) {
   return (
     <>
       <FormControl
+        variant="standard"
         disabled={disabled}
         data-test={dataTest}
         className={classes.container}>
@@ -256,9 +257,9 @@ export function KeyValueComponent(props) {
                     handleEditorClick={handleEditorClick && handleEditorClickWithIndex}
                     isEndSearchIcon={isEndSearchIcon}
                     isInlineClose={isInlineClose}
-               />
-              )}
-              />
+             />
+            )}
+            />
             ))}
           </SortableList>
         </>

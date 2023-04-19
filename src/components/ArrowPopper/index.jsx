@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import { ClickAwayListener, Popper, Paper } from '@material-ui/core';
+import { ClickAwayListener, Popper, Paper } from '@mui/material';
 
 const useStyles = makeStyles(theme => ({
   arrow: {

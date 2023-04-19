@@ -1,6 +1,7 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import DateTimeDisplay from '.';
 import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
@@ -11,8 +12,8 @@ describe('Date and time UI tests', () => {
     const resourceType = 'preferences';
     const profile = {timezone: 'Asia/Kolkata'};
 
-    store.dispatch(actions.user.profile.update(profile));
-    store.dispatch(actions.resource.received(resourceType, {}));
+    act(() => { store.dispatch(actions.user.profile.update(profile)); });
+    act(() => { store.dispatch(actions.resource.received(resourceType, {})); });
   }
   test('should run when no date is provided', () => {
     renderFunction();

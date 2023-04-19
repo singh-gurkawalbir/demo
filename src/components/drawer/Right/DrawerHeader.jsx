@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
@@ -23,13 +24,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
-  },
-  helpTextButton: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& svg': {
-      fontSize: 20,
-    },
   },
 }));
 
@@ -89,11 +83,12 @@ export default function DrawerHeader({
         {title}
         {helpKey && (
           <Help
+            size="small"
             title={helpTitle}
-            className={classes.helpTextButton}
             helpKey={helpKey}
             fieldId={helpKey}
-      />
+            sx={{ml: 0.5}}
+          />
         )}
         {infoText && <InfoIconButton info={infoText} title={title} />}
       </Typography>

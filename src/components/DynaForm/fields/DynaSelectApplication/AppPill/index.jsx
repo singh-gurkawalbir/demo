@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { IconButton } from '@mui/material';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import {applicationsList} from '../../../../../constants/applications';
 import CloseIcon from '../../../../icons/CloseIcon';

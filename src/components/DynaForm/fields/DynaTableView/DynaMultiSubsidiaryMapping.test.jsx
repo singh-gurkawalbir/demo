@@ -69,7 +69,7 @@ mutateStore(initialStore, draft => {
   };
 });
 describe('dynaMultiSubsidiaryMapping UI test cases', () => {
-  test('should populate the saved values and refreshing the fields of exports', () => {
+  test('should populate the saved values and refreshing the fields of exports', async () => {
     initDynaMultiSubsidiaryMapping(genralProps);
     expect(screen.getByText('Export field value')).toBeInTheDocument();
     expect(screen.getByText('Import field value')).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe('dynaMultiSubsidiaryMapping UI test cases', () => {
     expect(screen.getByDisplayValue('Honeycomb Inc3')).toBeInTheDocument();
     expect(screen.getByDisplayValue('s4')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Honeycomb Inc4')).toBeInTheDocument();
-    userEvent.click(document.querySelector('svg[class="MuiSvgIcon-root makeStyles-refreshIcon-11"]'));
+    await userEvent.click(document.querySelector('.makeStyles-refreshIcon-11'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('subsidiary', 'someid', 'someintegrationId', {
       key: 'columnName',
     }));

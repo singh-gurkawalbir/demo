@@ -142,13 +142,13 @@ describe('test suite for ResourceFormFactory', () => {
     const optionsButton = screen.getByRole('button', {name: 'Handle Options'});
     const validationsButton = screen.getByRole('button', {name: 'Handle Validations'});
 
-    userEvent.click(initButton);
+    await userEvent.click(initButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.init(
       resourceType, resourceId, isNew, true, undefined
     ));
-    userEvent.click(optionsButton);
+    await userEvent.click(optionsButton);
     expect(mockOptionsHandler).toHaveBeenCalledTimes(1);
-    userEvent.click(validationsButton);
+    await userEvent.click(validationsButton);
     expect(mockValidationHandler).toHaveBeenCalledTimes(1);
   });
 });

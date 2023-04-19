@@ -54,7 +54,7 @@ describe('script Logs test suite', () => {
     mockHistoryPush.mockClear();
   });
 
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       time: 'TIME',
       _resourceId: 'RESOURCE_ID',
@@ -78,10 +78,11 @@ describe('script Logs test suite', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].time})).toBeInTheDocument();
+
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      data[0].time,
       data[0]._resourceId,
       data[0].functionType,
       data[0].logLevel,
@@ -91,13 +92,13 @@ describe('script Logs test suite', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual(['View log']);
   });
 
-  test('should be able to view log details for a script', () => {
+  test('should be able to view log details for a script', async () => {
     mockIds = {
       flowId: 'FLOW_ID',
       scriptId: 'SCRIPT_ID',
@@ -112,10 +113,10 @@ describe('script Logs test suite', () => {
     }];
 
     renderWithProviders(<CeligoTable {...metadata} data={data} />);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const viewButton = screen.getByRole('menuitem', {name: 'View log'});
 
-    userEvent.click(viewButton);
+    await userEvent.click(viewButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.LOGS.FLOW_SCRIPT_DETAIL,
       baseUrl: 'PATHNAME',
@@ -126,7 +127,7 @@ describe('script Logs test suite', () => {
     }));
   });
 
-  test('should route to a different path if flowId not present', () => {
+  test('should route to a different path if flowId not present', async () => {
     mockIds = {
       scriptId: 'SCRIPT_ID',
     };
@@ -140,10 +141,10 @@ describe('script Logs test suite', () => {
     }];
 
     renderWithProviders(<CeligoTable {...metadata} data={data} />);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const viewButton = screen.getByRole('menuitem', {name: 'View log'});
 
-    userEvent.click(viewButton);
+    await userEvent.click(viewButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.LOGS.SCRIPT_DETAIL,
       baseUrl: 'PATHNAME',

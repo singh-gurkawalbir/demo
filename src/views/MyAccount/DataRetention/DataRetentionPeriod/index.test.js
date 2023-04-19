@@ -97,12 +97,12 @@ describe('DataRetentionPeriod component tests', () => {
     const button = screen.getByRole('button', {name: '30 days'});
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const sixtyDaysOption = screen.getByRole('option', {name: '60 days'});
 
     expect(sixtyDaysOption).toBeInTheDocument();
-    userEvent.click(sixtyDaysOption);
+    await userEvent.click(sixtyDaysOption);
 
     expect(screen.getByText(/Learn more about data retention/i)).toBeInTheDocument();
   });
@@ -117,17 +117,17 @@ describe('DataRetentionPeriod component tests', () => {
     const button = screen.getByRole('button', {name: '30 days'});
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const sixtyDaysOption = screen.getByRole('option', {name: '60 days'});
 
     expect(sixtyDaysOption).toBeInTheDocument();
-    userEvent.click(sixtyDaysOption);
+    await userEvent.click(sixtyDaysOption);
 
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
     expect(saveButton).toBeInTheDocument();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
 
     expect(screen.getByText(/Changing the retention period will/i)).toBeInTheDocument();
     const confirmSaveButton = screen.getByRole('button', {name: 'Save'});
@@ -135,7 +135,7 @@ describe('DataRetentionPeriod component tests', () => {
 
     expect(confirmSaveButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(confirmSaveButton);
+    await userEvent.click(confirmSaveButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.accountSettings.update({
       dataRetentionPeriod: 60,
     })));

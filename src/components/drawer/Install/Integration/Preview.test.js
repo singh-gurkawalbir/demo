@@ -92,14 +92,14 @@ describe('IntegrationPreview tests', () => {
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Description')).toBeInTheDocument();
 
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     const proceed = screen.getByRole('button', {name: 'Proceed'});
     const cancel = screen.getByRole('button', {name: 'Cancel'});
 
     expect(proceed).toBeInTheDocument();
     expect(cancel).toBeInTheDocument();
     expect(screen.getByText('Disclaimer')).toBeInTheDocument();
-    userEvent.click(proceed);
+    await userEvent.click(proceed);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.integrationApp.clone.clearIntegrationClonedStatus('_templateId'));
   });
 

@@ -32,10 +32,10 @@ jest.mock('../../RunFlowButton', () => ({
   ),
 }));
 
-jest.mock('../../CeligoSwitch', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoSwitch'),
-  default: () => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Switch: () => (
     <><div>Mocked CeligoSwitch</div></>
   ),
 }));
@@ -117,78 +117,80 @@ describe('flows metadata UI test case', () => {
   test('should verify the coulmns when resource is not integration app', () => {
     initflowTable(actionProps);
     headerIndex = indexOfCell('Name', 'columnheader');
-    cellIndex = indexOfCell('Name of the flow', 'cell');
+    cellIndex = indexOfCell('Name of the flow', 'rowheader');
     expectFunction(headerIndex, cellIndex);
     headerIndex = indexOfCell('Last updated', 'columnheader');
     cellIndex = indexOfCell('05/03/2022 6:24:08 am', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Last run', 'columnheader');
     cellIndex = indexOfCell('03/03/2022 9:06:36 pm', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Mapping', 'columnheader');
     cellIndex = indexOfCell('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Schedule', 'columnheader');
     cellIndex = indexOfCell('Mocked CalendarIcon', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Run', 'columnheader');
     cellIndex = indexOfCell('Mocked RunFlowButton', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Off/On', 'columnheader');
     cellIndex = indexOfCell('Mocked CeligoSwitch', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should show child with header as App', () => {
     initflowTable({...actionProps, showChild: true}, {...resource, childName: 'ChildName'});
     headerIndex = indexOfCell('App', 'columnheader');
     cellIndex = indexOfCell('ChildName', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should show child when header is provided', () => {
     initflowTable({...actionProps, showChild: true, childHeader: 'someChildHeader', integrationChildren: [{value: '5d95f77174836b1acdcd2788', label: 'someLabel'}]});
     headerIndex = indexOfCell('someChildHeader', 'columnheader');
     cellIndex = indexOfCell('someLabel', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should verify the coulmns when resource is integration app', () => {
     initflowTable({...actionProps, isIntegrationApp: true, isUserInErrMgtTwoDotZero: true});
     headerIndex = indexOfCell('Name', 'columnheader');
-    cellIndex = indexOfCell('Name of the flow', 'cell');
+    cellIndex = indexOfCell('Name of the flow', 'rowheader');
     expectFunction(headerIndex, cellIndex);
     headerIndex = indexOfCell('Last updated', 'columnheader');
     cellIndex = indexOfCell('05/03/2022 6:24:08 am', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Last run', 'columnheader');
     cellIndex = indexOfCell('03/03/2022 9:06:36 pm', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Mapping', 'columnheader');
     cellIndex = indexOfCell('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Schedule', 'columnheader');
     cellIndex = indexOfCell('Mocked CalendarIcon', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Run', 'columnheader');
     cellIndex = indexOfCell('Mocked RunFlowButton', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Off/On', 'columnheader');
     cellIndex = indexOfCell('Mocked CeligoSwitch', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Settings', 'columnheader');
     cellIndex = indexOfCell('Mocked SettingsIcon', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Errors', 'columnheader');
     cellIndex = indexOfCell('Success', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expectFunction(headerIndex - 1, cellIndex);
   });
-  test('should verify action for integration app', () => {
+  test('should verify action for integration app', async () => {
     initflowTable({...actionProps, isIntegrationApp: true});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
   });
-  test('should show detach option when flow does not belongs to standalone', () => {
+  test('should show detach option when flow does not belongs to standalone', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();
@@ -197,9 +199,9 @@ describe('flows metadata UI test case', () => {
     expect(screen.getByText('Detach flow')).toBeInTheDocument();
     expect(screen.getByText('Delete flow')).toBeInTheDocument();
   });
-  test('should show detach option when flow belongs to standalone', () => {
+  test('should show detach option when flow belongs to standalone', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null, _integrationId: null});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();

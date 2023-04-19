@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ManageLookupDialog from '../../../Lookup/Manage/Dialog';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 

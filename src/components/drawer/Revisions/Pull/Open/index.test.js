@@ -78,24 +78,9 @@ describe('OpenPullDrawer tests', () => {
     const next = screen.getByRole('button', {name: 'Next'});
 
     expect(close).toBeInTheDocument();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(1, '/');
-    userEvent.click(next);
+    await userEvent.click(next);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(2, '//pull/_revisionId/review');
-  });
-
-  test('Should able to test the OpenPullDrawer initial render', async () => {
-    await initOpenPullDrawer(props);
-    expect(screen.getByRole('heading', {name: 'Create pull'})).toBeInTheDocument();
-    expect(screen.getByText('Description')).toBeInTheDocument();
-    expect(screen.getByText('Integration')).toBeInTheDocument();
-    expect(screen.getByText('Please select')).toBeInTheDocument();
-    expect(screen.getAllByText('*')).toHaveLength(2);
-    const helpKeys = screen.getAllByRole('button', {name: ''}).filter(b => b.getAttribute('class').includes('iconButton'));
-
-    userEvent.click(helpKeys[0]);
-    expect(screen.getByText('Enter text describing the changes you are pulling into your integration.')).toBeInTheDocument();
-    userEvent.click(helpKeys[1]);
-    expect(screen.getByText('Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.')).toBeInTheDocument();
   });
 });

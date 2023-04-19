@@ -1,4 +1,5 @@
-import { Divider, makeStyles } from '@material-ui/core';
+import { Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import TextButton from '../../Buttons/TextButton';
 import InputDataIcon from '../../icons/InputDataIcon';

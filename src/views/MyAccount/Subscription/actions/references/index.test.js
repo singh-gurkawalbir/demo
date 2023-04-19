@@ -43,12 +43,12 @@ describe('references test cases', () => {
     const buttonRef = screen.getByRole('button');
 
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     const closeButton = screen.getByRole('button', {name: /Mock Test Button/i});
 
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(closeButton).not.toBeInTheDocument();
   });
 });

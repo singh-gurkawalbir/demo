@@ -94,7 +94,7 @@ describe('mappingAssistantTitle UI tests', () => {
   test('should pass the initial render for salesforce assistant', () => {
     initMappingAssistantTitle({editorId: 'filecsv'});
     expect(screen.getByText('Salesforce mapping assistant')).toBeInTheDocument();
-    const refreshIcon = document.querySelector('[title="Refresh data"]');
+    const refreshIcon = screen.getByLabelText('Refresh data');
 
     expect(refreshIcon).toBeInTheDocument();
   });
@@ -109,10 +109,10 @@ describe('mappingAssistantTitle UI tests', () => {
     const commMetaPath = 'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote/layouts?recordTypeId=demoId';
 
     initMappingAssistantTitle({editorId: 'filecsv'});
-    const refreshIcon = document.querySelector('[title="Refresh data"]');
+    const refreshIcon = screen.getByLabelText('Refresh data');
 
     expect(refreshIcon).toBeInTheDocument();
-    userEvent.click(refreshIcon);
+    await userEvent.click(refreshIcon);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('5efd8663a56953365bd28541', commMetaPath, {refreshCache: true})));
   });
 });

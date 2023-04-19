@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import NotificationToaster from '../../NotificationToaster';

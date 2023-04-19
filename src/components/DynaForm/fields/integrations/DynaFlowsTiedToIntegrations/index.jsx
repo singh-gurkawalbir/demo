@@ -1,5 +1,6 @@
-import { Chip, makeStyles } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
+import { Chip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Checkbox from '@mui/material/Checkbox';
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';

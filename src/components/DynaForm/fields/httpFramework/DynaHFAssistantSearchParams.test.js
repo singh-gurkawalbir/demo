@@ -97,24 +97,24 @@ describe('DynaHFAssistantSearchParams UI tests', () => {
     mockHistoryPush.mockClear();
   });
 
-  test('should pass the initial render with required field set', () => {
+  test('should pass the initial render with required field set', async () => {
     initDynaHFAssistantSearchParams({ ...props, required: true });
     expect(screen.getByText('demo label')).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState(props.formKey)(props.id, { isValid: false, errorMessages: 'A value must be provided' }));
-    expect(screen.getAllByRole('button', { name: 'tooltip' })[0]).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[1]);
+    expect(screen.getAllByRole('button', { name: 'Open handlebars editor' })[0]).toBeInTheDocument();
+    await userEvent.click(screen.getAllByRole('button', { name: 'Open handlebars editor' })[1]);
     expect(mockDispatchFn).toHaveBeenCalled();
     expect(mockHistoryPush).toHaveBeenCalledWith('//editor/formId');
   });
-  test('should pass the initial render with empty label', () => {
+  test('should pass the initial render with empty label', async () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, label: null });
     expect(screen.getByText('Query parameters')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
+    await userEvent.click(screen.getAllByRole('button', { name: 'Open handlebars editor' })[2]); // delete button
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: 'HOLD', levels: '3'});
   });
-  test('should pass the initial render with key-value provided using props', () => {
+  test('should pass the initial render with key-value provided using props', async () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, keyName: 'name', valueName: 'value', showDelete: true });
-    userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
+    await userEvent.click(screen.getAllByRole('button', { name: 'Open handlebars editor' })[2]); // delete button
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: 'HOLD', levels: '3'});
   });
   test('should pass the initial render with paramLocation as "body"', () => {

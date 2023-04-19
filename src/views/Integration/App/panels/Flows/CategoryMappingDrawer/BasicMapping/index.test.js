@@ -40,7 +40,7 @@ describe('MappingWrapper UI tests', () => {
   test('should test when status is received', () => {
     initStoreAndRender({ id: {status: 'received'}});
 
-    expect(screen.getAllByRole('textbox')).toHaveLength(2);
+    expect(screen.getAllByRole('combobox')).toHaveLength(2);
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'INTEGRATION_APPS_SETTINGS_CATEGORY_MAPPINGS_INIT',

@@ -3,11 +3,11 @@ import {
   ClickAwayListener,
   IconButton,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
-import ArrowPopper from '../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../icons/EllipsisHorizontalIcon';
 import TrashIcon from '../../../icons/TrashIcon';
 import useConfirmDialog from '../../../ConfirmDialog';

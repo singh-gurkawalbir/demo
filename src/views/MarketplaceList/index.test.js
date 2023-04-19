@@ -185,54 +185,54 @@ describe('Marketplace test cases', () => {
     expect(reqDemoButton).toBeInTheDocument();
     expect(screen.queryByText(/NetSuite Integrations/i)).toBeInTheDocument();
 
-    userEvent.click(installButtons[0]); // install the IA for 1st time
+    await userEvent.click(installButtons[0]); // install the IA for 1st time
     expect(mockDispatchFn).toBeCalledWith(actions.marketplace.installConnector('connector_id_1', false));
     expect(mockHistoryPush).toBeCalledWith('/home');
 
     mockHistoryPush.mockClear();
-    userEvent.click(installButtons[1]); // install the IA 2nd time
+    await userEvent.click(installButtons[1]); // install the IA 2nd time
     const tagInput = screen.getByRole('textbox');
     const installButton = screen.getByRole('button', { name: /Install/i});
 
     expect(screen.queryByText(/Confirm multiple installs/i)).toBeInTheDocument();
     expect(tagInput).toBeInTheDocument();
     expect(installButton).toBeInTheDocument();
-    userEvent.type(tagInput, 'test');
-    userEvent.click(installButton);
+    await userEvent.type(tagInput, 'test');
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toBeCalledWith(actions.marketplace.installConnector('connector_id_5', false, 'test'));
     expect(mockHistoryPush).toBeCalledWith('/home');
 
-    userEvent.click(freeTrialButtons[0]); // free trial
+    await userEvent.click(freeTrialButtons[0]); // free trial
     const freeTrialDialogButton = screen.getByRole('button', { name: /Start free trial/i});
 
     expect(freeTrialDialogButton).toBeInTheDocument();
     expect(screen.queryByText(/to start your free trial of name 6 Integration App./i)).toBeInTheDocument();
 
     mockHistoryPush.mockClear();
-    userEvent.click(freeTrialDialogButton);
+    await userEvent.click(freeTrialDialogButton);
     expect(mockDispatchFn).toBeCalledWith(actions.marketplace.installConnector('connector_id_6', false));
     expect(mockHistoryPush).toBeCalledWith('/home');
 
-    userEvent.click(freeTrialButtons[1]); // free trial already used
+    await userEvent.click(freeTrialButtons[1]); // free trial already used
     const demoButton = screen.getByRole('button', { name: /Request demo/i});
 
     expect(demoButton).toBeInTheDocument();
     expect(screen.queryByText(/You have already used up your trial license/i)).toBeInTheDocument();
 
-    userEvent.click(demoButton);
+    await userEvent.click(demoButton);
     const closeButton = screen.getByRole('button', { name: /Close/i});
 
     expect(screen.queryByText(/Thanks for your request!/i)).toBeInTheDocument();
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByText(/Thanks for your request!/i)).not.toBeInTheDocument();
 
-    userEvent.click(reqDemoButton); // request demo
+    await userEvent.click(reqDemoButton); // request demo
     const closeButtonRef = screen.getByRole('button', { name: /Close/i});
 
     expect(screen.queryByText(/Thanks for your request!/i)).toBeInTheDocument();
     expect(closeButtonRef).toBeInTheDocument();
-    userEvent.click(closeButtonRef);
+    await userEvent.click(closeButtonRef);
     expect(screen.queryByText(/Thanks for your request!/i)).not.toBeInTheDocument();
   });
 
@@ -253,7 +253,7 @@ describe('Marketplace test cases', () => {
     expect(installButton).toBeInTheDocument();
     expect(screen.queryByText(/Salesforce Integrations/i)).toBeInTheDocument();
 
-    userEvent.click(installButton); // V2 IA
+    await userEvent.click(installButton); // V2 IA
     expect(mockHistoryPush).toBeCalledWith('/suitescript/integrationapps/suitescript-salesforce-netsuite/setup');
   });
 });

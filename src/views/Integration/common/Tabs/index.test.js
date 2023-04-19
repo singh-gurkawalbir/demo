@@ -87,7 +87,7 @@ describe('test suite for IntegrationTabs', () => {
     expect(screen.getByText('Flows Panel')).toBeInTheDocument();
     const connectionTab = screen.getByText('Connections Icon');
 
-    userEvent.click(connectionTab);
+    await userEvent.click(connectionTab);
     expect(mockHistoryPush).toHaveBeenLastCalledWith('/integrations/none/connections');
     await initIntegrationTabs({tabs}, {renderFun: utils.rerender});
     await waitFor(() => expect(screen.queryByText('Flows Panel')).not.toBeInTheDocument());
@@ -114,7 +114,7 @@ describe('test suite for IntegrationTabs', () => {
     const { utils } = await initIntegrationTabs({tabs}, {initialStore});
     const connectionTab = screen.getByRole('tab', {name: /connections/i});
 
-    userEvent.click(connectionTab);
+    await userEvent.click(connectionTab);
     await initIntegrationTabs({tabs}, {initialStore, renderFun: utils.rerender});
     await waitFor(() => expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument());
   });
@@ -131,7 +131,7 @@ describe('test suite for IntegrationTabs', () => {
     const { utils } = await initIntegrationTabs({tabs}, {initialStore});
     const connectionTab = screen.getByRole('tab', {name: /connections/i});
 
-    userEvent.click(connectionTab);
+    await userEvent.click(connectionTab);
     await initIntegrationTabs({tabs}, {initialStore, renderFun: utils.rerender});
     await waitFor(() => expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument());
   });

@@ -12,11 +12,11 @@ describe('Header action test', () => {
     renderWithProviders(<HeaderAction variants={options} />);
     const x = screen.getByLabelText('more');
 
-    userEvent.click(x);
+    await userEvent.click(x);
     const y = screen.getByText('view errors');
 
     expect(y).toBeVisible();
-    userEvent.click(y);
+    await userEvent.click(y);
     expect(y).not.toBeVisible();
   });
 });

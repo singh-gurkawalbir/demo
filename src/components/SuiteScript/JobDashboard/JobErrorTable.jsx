@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import TablePagination from '@material-ui/core/TablePagination';
+import makeStyles from '@mui/styles/makeStyles';
+import TablePagination from '@mui/material/TablePagination';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -236,12 +236,12 @@ export default function JobErrorTable({
                 : 'Mark resolved'}
             </OutlinedButton>
             { job.errorFileId && (
-              <OutlinedButton
-                color="secondary"
-                data-test="downloadAllErrors"
-                onClick={handleDownloadAllErrorsClick}>
-                Download all errors
-              </OutlinedButton>
+            <OutlinedButton
+              color="secondary"
+              data-test="downloadAllErrors"
+              onClick={handleDownloadAllErrorsClick}>
+              Download all errors
+            </OutlinedButton>
             )}
           </ActionGroup>
 
@@ -259,9 +259,9 @@ export default function JobErrorTable({
               nextIconButtonProps={{
                 'aria-label': 'Next Page',
               }}
-              onChangePage={handleChangePage}
-              // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            />
+              onPageChange={handleChangePage}
+            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
 
             <CeligoTable
               data={jobErrorsInCurrentPage}
@@ -270,7 +270,7 @@ export default function JobErrorTable({
               onSelectChange={handleJobErrorSelectChange}
               useColumns={useColumns}
               className={classes.errorMessageTable}
-            />
+          />
           </>
         </>
       )}

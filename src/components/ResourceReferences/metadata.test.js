@@ -23,13 +23,13 @@ function renderFunction(data = {}) {
   );
 }
 describe('running flows metadata column UI Tests', () => {
-  test('should verify Name', () => {
+  test('should verify Name', async () => {
     renderFunction({resourceType: 'someType', name: 'someName'});
     expect(screen.getByText('Name')).toBeInTheDocument();
     const name = screen.getByText('someName');
 
     expect(name).toBeInTheDocument();
-    userEvent.click(name);
+    await userEvent.click(name);
     expect(onClose).toHaveBeenCalled();
   });
   test('should verify Type', () => {

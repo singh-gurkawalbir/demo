@@ -1,13 +1,14 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import ResetPassword from '.';
+import { renderWithProviders } from '../../../test/test-utils';
 
 function initResetPassword(props) {
   const ui = (
     <ResetPassword {...props} />
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 
 // Mocking Reset Password Form as part of unit testing

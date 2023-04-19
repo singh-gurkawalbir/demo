@@ -72,7 +72,7 @@ describe('ReplaceConnectionDrawer test cases', () => {
 
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(mockHistoryGoBack).toBeCalled();
   });
 });

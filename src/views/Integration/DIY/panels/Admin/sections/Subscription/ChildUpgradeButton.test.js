@@ -99,7 +99,7 @@ describe('ChildUpgradeButton Unit tests', () => {
 
     expect(upgrade).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.deleteStatus('122'));
-    userEvent.click(upgrade);
+    await userEvent.click(upgrade);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.settings.integrationAppV2.upgrade('122'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('122', { inQueue: false }));
   });

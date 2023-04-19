@@ -27,7 +27,7 @@ async function initPurgeMultipleErrors(rowData) {
   );
   const { utils, store } = await renderWithProviders(ui);
 
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 
   return { utils, store };
 }
@@ -68,14 +68,14 @@ describe('purgeMultipleErrors action Test cases', () => {
     const purgeError = screen.getByText(/Purge 3 selected errors/i);
 
     expect(purgeError).toBeInTheDocument();
-    userEvent.click(purgeError);
+    await userEvent.click(purgeError);
     expect(screen.getByText('Confirm purge error(s)')).toBeInTheDocument();
     const confirmPurgeButton = screen.getByRole('button', {name: 'Purge error(s)'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     expect(confirmPurgeButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(confirmPurgeButton);
+    await userEvent.click(confirmPurgeButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, isRowAction: false})
     );

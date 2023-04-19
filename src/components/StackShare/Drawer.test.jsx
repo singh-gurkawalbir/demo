@@ -10,7 +10,7 @@ import StackShareDrawer from './Drawer';
 import reduxStore from '../../store';
 import { runServer } from '../../test/api/server';
 
-function initDrawer() {
+async function initDrawer() {
   const initialStore = reduxStore;
 
   mutateStore(initialStore, draft => {
@@ -67,27 +67,28 @@ describe('Invite Users UI tests', () => {
     const refreshText = screen.getByText('Refresh');
 
     expect(refreshText).toBeInTheDocument();
-    userEvent.click(refreshText);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
+    await userEvent.click(refreshText);
+    await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(2));
     const inviteStackUserText = screen.getByText('Invite user');
 
     expect(inviteStackUserText).toBeInTheDocument();
-    userEvent.click(inviteStackUserText);
+    await userEvent.click(inviteStackUserText);
     const emailText = screen.getByText('Email');
 
     expect(emailText).toBeInTheDocument();
     const textBox = screen.getByRole('textbox');
 
-    fireEvent.change(textBox, { target: { value: 'testuser' } });
-    fireEvent.change(textBox, { target: { value: '' } });
+    await fireEvent.change(textBox, { target: { value: 'testuser' } });
+    await fireEvent.change(textBox, { target: { value: '' } });
     const warningText = screen.getByText('A value must be provided');
 
     expect(warningText).toBeInTheDocument();
-    fireEvent.change(textBox, { target: { value: 'testuser@celigo.com' } });
+    await fireEvent.change(textBox, { target: { value: 'testuser@celigo.com' } });
     const saveAndCloseButton = screen.getByText('Invite user & close');
 
     expect(saveAndCloseButton).toBeInTheDocument();
-    userEvent.click(saveAndCloseButton);
+    await userEvent.click(saveAndCloseButton);
     await waitFor(() => expect(mockPostResolverFunction).toHaveBeenCalledTimes(1));
   });
 });

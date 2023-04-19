@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../../test/test-utils';
 import DynaHFAssistantPathParams from './DynaHFAssistantPathParams';
@@ -73,28 +72,30 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     expect(screen.getByText(props.description)).toBeInTheDocument();
   });
 
-  test('should render dropdown field when options are provided', () => {
+  test('should render dropdown field when options are provided', async () => {
     const extraProps = {
       labelName: 'name',
       valueName: 'value',
       value: undefined,
-      options: {suggestions: [{name: 'option1', value: 'value1'}]},
+      options: { suggestions: [{ name: 'option1', value: 'value1' }] },
     };
 
     renderWithProviders(<DynaHFAssistantPathParams {...props} {...extraProps} />);
     const label = document.querySelector('label');
 
     expect(label).toHaveTextContent(props.label);
-    userEvent.click(screen.getByRole('textbox'));
-    expect(screen.getByRole('option', {name: 'option1'})).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('textbox'));
+    expect(screen.getByRole('option', { name: 'option1' })).toBeInTheDocument();
   });
 
-  test('should open handlebars editor on clicking AFE Icon', () => {
+  test('should open handlebars editor on clicking AFE Icon', async () => {
     renderWithProviders(<DynaHFAssistantPathParams {...props} />);
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
-    expect(openAfeBtn).toHaveAttribute('title', 'Open handlebars editor');
-    userEvent.click(openAfeBtn);
+    await userEvent.hover(openAfeBtn);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Open handlebars editor'));
+
+    await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('assistantMetadatapathParamspathField', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -110,7 +111,7 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith('/exports/edit/exports/export-123/editor/assistantMetadatapathParamspathField');
   });
 
-  test('should be able to save the changes in AFE', () => {
+  test('should be able to save the changes in AFE', async () => {
     mockRouteMatch = {
       path: '/exports/:operation(add|edit)/:resourceType/:id',
       url: '/exports/edit/exports/export-123',
@@ -124,13 +125,13 @@ describe('DynaHFAssistantPathParams UI tests', () => {
     renderWithProviders(
       <>
         <DynaHFAssistantPathParams {...props} />
-        <button type="button" onClick={() => mockSave({rule: 'SampleRule'})}>Save</button>
+        <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
-    userEvent.click(openAfeBtn);
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(openAfeBtn);
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

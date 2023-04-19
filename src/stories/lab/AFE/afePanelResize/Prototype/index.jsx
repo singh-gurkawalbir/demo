@@ -6,7 +6,7 @@ import React, { useState, useRef } from 'react';
 // I do not want to bump the version as we need to re-test each part of the existing UI which is
 // using the now-older version, as the interface may have slightly changed over 2 major releases.
 import ReactResizeDetector from 'react-resize-detector';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import SinglePanelGridItem from '../../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
 import DragHandleGridItem from './DragHandleGridItem';
 

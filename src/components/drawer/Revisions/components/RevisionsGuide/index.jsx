@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
+import { useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Icon from '../../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../../Buttons';
 import { REVISIONS_GUIDE_URL } from '../../../../../constants';
@@ -35,7 +36,8 @@ export default function RevisionsGuide() {
           <IconButton
             {...anchorProps}
             className={classes.button}
-            aria-label="revisions guide">
+            aria-label="revisions guide"
+            size="large">
             <Icon />
           </IconButton>
         </Tooltip>

@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
 import Help from '../../../../Help';
 
 const useStyles = makeStyles(theme => ({
@@ -12,10 +12,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  helpButton: {
-    padding: 0,
-    margin: 2,
   },
   titleWrapper: {
     width: '100%',
@@ -39,8 +35,8 @@ export default function PanelTitle({ title, children, className, helpKey, titleC
           {helpKey && (
           <Help
             title={title}
-            className={classes.helpButton}
             helpKey={helpKey}
+            sx={{margin: 0.5}}
         />
           )}
         </Typography>

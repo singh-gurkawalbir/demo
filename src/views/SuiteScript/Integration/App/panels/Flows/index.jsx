@@ -1,5 +1,5 @@
-import { Grid, List, ListItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Grid, List, ListItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, Redirect, Route, useRouteMatch } from 'react-router-dom';

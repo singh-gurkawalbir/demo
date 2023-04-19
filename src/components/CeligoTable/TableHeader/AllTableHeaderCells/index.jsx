@@ -1,5 +1,6 @@
 import React, { useCallback} from 'react';
-import { makeStyles, TableSortLabel } from '@material-ui/core';
+import { TableSortLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';

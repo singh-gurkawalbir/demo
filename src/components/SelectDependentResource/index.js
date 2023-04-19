@@ -1,9 +1,9 @@
-import { FormLabel, FormControlLabel, Checkbox } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel, FormControlLabel, Checkbox } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useState, useMemo } from 'react';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import ActionGroup from '../ActionGroup';
-import ArrowPopper from '../ArrowPopper';
 import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 
@@ -38,10 +38,6 @@ const useStyles = makeStyles(theme => ({
   },
   child: {
     flexBasis: '100%',
-  },
-  dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
   },
   actions: {
     margin: theme.spacing(3, 1, 2),
@@ -148,64 +144,62 @@ export default function SelectDependentResource({resources = emptySet, selectedR
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
-        {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <div className={classes.row}>
+        <Box display="flex" flexDirection="column">
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <div className={classes.row}>
+                <FormControlLabel
+                  className={clsx(classes.selectResourceItem, classes.headerLabel)}
+                  control={(
+                    <Checkbox
+                      color="primary"
+                      checked={!!(checked?.length && checked?.length === resources?.length)}
+                      onChange={toggleAllSelection}
+                      value="required"
+                      className={classes.selectResourceCheck}
+                          />
+                      )}
+                  label="Type"
+                    />
+                <FormLabel className={classes.headerLabel}>Name</FormLabel>
+              </div>
+              {resources.map(m => (
+                <div className={classes.row} key={m.id}>
                   <FormControlLabel
-                    className={clsx(classes.selectResourceItem, classes.headerLabel)}
+                    className={classes.selectResourceItem}
+                    id={m.id}
+                    name={m.id}
                     control={(
                       <Checkbox
                         color="primary"
-                        checked={!!(checked?.length && checked?.length === resources?.length)}
-                        onChange={toggleAllSelection}
+                        checked={checked.some(({id}) => id === m.id)}
+                        id={m.id}
+                        onChange={handleResourceToggle}
                         value="required"
                         className={classes.selectResourceCheck}
                           />
                       )}
-                    label="Type"
+                    label={m.type}
                     />
-                  <FormLabel className={classes.headerLabel}>Name</FormLabel>
+                  <FormLabel className={classes.label}>{m.name}</FormLabel>
                 </div>
-                {resources.map(m => (
-                  <div className={classes.row} key={m.id}>
-                    <FormControlLabel
-                      className={classes.selectResourceItem}
-                      id={m.id}
-                      name={m.id}
-                      control={(
-                        <Checkbox
-                          color="primary"
-                          checked={checked.some(({id}) => id === m.id)}
-                          id={m.id}
-                          onChange={handleResourceToggle}
-                          value="required"
-                          className={classes.selectResourceCheck}
-                          />
-                      )}
-                      label={m.type}
-                    />
-                    <FormLabel className={classes.label}>{m.name}</FormLabel>
-                  </div>
-                ))}
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <FilledButton onClick={handleSave}>
-                    Apply
-                  </FilledButton>
-                  <TextButton onClick={handleClose}>
-                    Cancel
-                  </TextButton>
-                </ActionGroup>
-              </div>
+              ))}
+            </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <FilledButton onClick={handleSave}>
+                  Apply
+                </FilledButton>
+                <TextButton onClick={handleClose}>
+                  Cancel
+                </TextButton>
+              </ActionGroup>
             </div>
           </div>
-        )}
+        </Box>
       </ArrowPopper>
     </>
   );

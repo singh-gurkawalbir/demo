@@ -19,7 +19,7 @@ function onChangeRowsPerPage(e) {
 }
 
 describe('celigoPagination test', () => {
-  test('rendering and clicking on', () => {
+  test('rendering and clicking on', async () => {
     const props = {
       loading: false,
       page: 1,
@@ -32,13 +32,13 @@ describe('celigoPagination test', () => {
     renderWithProviders(<CeligoPagination {...props} />);
     const buttons = screen.getAllByRole('button');
 
-    userEvent.click(buttons[0]);
+    await userEvent.click(buttons[0]);
     expect(screen.getByText(`Go to ${props.page - 1}`)).toBeInTheDocument();
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     expect(screen.getByText(`Go to ${props.page + 1}`)).toBeInTheDocument();
   });
 
-  test('rendering and clicking on loadmore handler', () => {
+  test('rendering and clicking on loadmore handler', async () => {
     const props = {
       loading: false,
       page: 1,
@@ -52,7 +52,7 @@ describe('celigoPagination test', () => {
     renderWithProviders(<CeligoPagination {...props} />);
     const buttons = screen.getAllByRole('button');
 
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     expect(screen.getByText('LoadMore Handler')).toBeInTheDocument();
   });
   test('disables next page', () => {
@@ -123,10 +123,10 @@ describe('celigoPagination test', () => {
     renderWithProviders(<CeligoPagination {...props} />);
     const rowsPerPage = screen.getByText('2');
 
-    userEvent.click(rowsPerPage);
+    await userEvent.click(rowsPerPage);
     const currentrowsPerPage = screen.getByText('1');
 
-    userEvent.click(currentrowsPerPage);
+    await userEvent.click(currentrowsPerPage);
     expect(screen.getByText('Rows Per Page Changed to 1')).toBeInTheDocument();
   });
 });

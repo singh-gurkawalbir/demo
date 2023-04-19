@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { MenuItem, InputLabel, FormControl} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { MenuItem, InputLabel, FormControl} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useSelector, shallowEqual } from 'react-redux';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
-import ArrowPopper from '../ArrowPopper';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import CancelIcon from '../icons/CancelIcon';
@@ -31,8 +31,6 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
     padding: theme.spacing(2),
     minWidth: 224,
   },
@@ -46,11 +44,6 @@ const useStyles = makeStyles(theme => ({
   row: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  dateRangePopper: {
-    zIndex: 1300,
-    left: '45px !important',
-    top: '5px !important',
   },
   dropdown: {
     marginTop: '0px !important',
@@ -69,10 +62,6 @@ const useStyles = makeStyles(theme => ({
       fontSize: 18,
     },
   },
-  dateRangePopperArrow: {
-    left: '110px !important',
-  },
-
 }));
 
 const MenuProps = {
@@ -194,59 +183,53 @@ export default function StartDebugEnhanced({
         disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        restrictToParent={false}
-        classes={{
-          popper: classes.dateRangePopper,
-          arrow: classes.dateRangePopperArrow,
-        }}
+        preventOverflow={false}
         placement="bottom-end"
         onClose={toggleClick}>
-        {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <div className={classes.row}>
-                  <InputLabel className={classes.formLabel}>
-                    Capture debug logs:
-                  </InputLabel>
-                  <FormControl className={classes.formControl}>
+        <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <div className={classes.row}>
+                <InputLabel className={classes.formLabel}>
+                  Capture debug logs:
+                </InputLabel>
+                <FormControl variant="standard" className={classes.formControl}>
 
-                    <CeligoSelect
-                      data-test="selectDebugInterval"
-                      className={classes.dropdown}
-                      onChange={handleChange}
-                      value={value || ''}
-                      MenuProps={MenuProps}
-                    >
-                      {debugOptions.map(opt => (
-                        <MenuItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </MenuItem>
-                      ))}
+                  <CeligoSelect
+                    data-test="selectDebugInterval"
+                    className={classes.dropdown}
+                    onChange={handleChange}
+                    value={value || ''}
+                    MenuProps={MenuProps}
+                  >
+                    {debugOptions.map(opt => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))}
 
-                    </CeligoSelect>
-                  </FormControl>
-                  {!!pastDebugUntil && (
-                    <div className={classes.lastDebug}>
-                      Last debug: <TimeAgo date={pastDebugUntil} formatter={lastRunFormatter} />
-                    </div>
-                  )}
-
+                  </CeligoSelect>
+                </FormControl>
+                {!!pastDebugUntil && (
+                <div className={classes.lastDebug}>
+                  Last debug: <TimeAgo date={pastDebugUntil} formatter={lastRunFormatter} />
                 </div>
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <OutlinedButton onClick={updateTimeHandler}>
-                    Apply
-                  </OutlinedButton>
-                  <TextButton onClick={handleClose}>
-                    Close
-                  </TextButton>
-                </ActionGroup>
+                )}
+
               </div>
             </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <OutlinedButton onClick={updateTimeHandler}>
+                  Apply
+                </OutlinedButton>
+                <TextButton onClick={handleClose}>
+                  Close
+                </TextButton>
+              </ActionGroup>
+            </div>
           </div>
-        )}
+        </Box>
       </ArrowPopper>
     </>
   );

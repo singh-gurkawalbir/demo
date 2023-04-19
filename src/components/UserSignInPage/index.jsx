@@ -1,7 +1,8 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import CeligoLogo from '../CeligoLogo';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import MarketingContentWithIframe from '../LoginScreen/MarketingContentWithIframe';
 import UserSignInPageFooter from './UserSignInPageFooter';
 import { getDomain } from '../../utils/resource';
@@ -13,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '30% 70%',
     background: theme.palette.background.paper,
     height: '100vh',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '100%',
     },
   },
@@ -54,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontSize: '29px',
-    lineHeight: `${theme.spacing(5)}px`,
+    lineHeight: theme.spacing(5),
     marginBottom: theme.spacing(2),
     textAlign: 'center',
   },
@@ -68,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.error.dark,
   },
   userSignInRightContainer: {
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       display: 'none',
     },
   },
@@ -82,7 +83,8 @@ export default function UserSignInPage(props) {
     footerLinkLabel = '',
     footerLinkText = '',
     footerLink = '',
-    children} = props;
+    children,
+  } = props;
   const classes = useStyles();
 
   let contentUrl;
@@ -104,32 +106,37 @@ export default function UserSignInPage(props) {
               <CeligoLogo />
             </div>
             {pageTitle && (
-            <Typography variant="h3" className={classes.title}>
-              {pageTitle}
-            </Typography>
+              <Typography variant="h3" className={classes.title}>
+                {pageTitle}
+              </Typography>
             )}
             {(successMessage || alertMessage) && (
-            <Typography
-              variant="body2" className={clsx(classes.subHeading,
-                {[classes.successMsg]: successMessage},
-                {[classes.alertMsg]: alertMessage})}>
-              {successMessage || alertMessage}
-            </Typography>
+              <Typography
+                variant="body2"
+                className={clsx(
+                  classes.subHeading,
+                  { [classes.successMsg]: successMessage },
+                  { [classes.alertMsg]: alertMessage }
+                )}
+              >
+                {successMessage || alertMessage}
+              </Typography>
             )}
             {pageSubHeading && (
-            <Typography variant="body2" className={classes.subHeading}>
-              {pageSubHeading}
-            </Typography>
+              <Typography variant="body2" className={classes.subHeading}>
+                {pageSubHeading}
+              </Typography>
             )}
-
           </div>
 
-          <div className={classes.userSignInLeftBody}>
-            {children}
-          </div>
+          <div className={classes.userSignInLeftBody}>{children}</div>
 
           <div className={classes.userSignInLeftFooter}>
-            <UserSignInPageFooter linkLabel={footerLinkLabel} linkText={footerLinkText} link={footerLink} />
+            <UserSignInPageFooter
+              linkLabel={footerLinkLabel}
+              linkText={footerLinkText}
+              link={footerLink}
+            />
           </div>
         </div>
       </div>

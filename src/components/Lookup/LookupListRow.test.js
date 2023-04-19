@@ -57,7 +57,7 @@ describe('lookupListRow component Test cases', () => {
 
     expect(actionButton).toBeInTheDocument();
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
 
     const editLookup = await screen.getByRole('menuitem', {name: /Edit lookup/i});
     const deleteLookup = screen.getByRole('menuitem', {name: /Delete lookup/i});
@@ -65,13 +65,13 @@ describe('lookupListRow component Test cases', () => {
     expect(editLookup).toBeInTheDocument();
     expect(deleteLookup).toBeInTheDocument();
 
-    userEvent.click(editLookup);
+    await userEvent.click(editLookup);
     expect(onEdit).toHaveBeenCalledTimes(1);
 
-    userEvent.click(deleteLookup);
+    await userEvent.click(deleteLookup);
     expect(onDelete).toHaveBeenCalledTimes(1);
 
-    userEvent.keyboard('{esc}');
+    await userEvent.click(document.querySelector('#row-actions'));
 
     await waitFor(() => expect(screen.queryByText(/Edit lookup/i)).not.toBeInTheDocument());
   });

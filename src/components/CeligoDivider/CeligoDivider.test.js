@@ -1,19 +1,20 @@
 import React from 'react';
-import { render} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import CeligoDivider from '.';
+import { renderWithProviders } from '../../test/test-utils';
 
 describe('celigoDivider UI test', () => {
   test('should render at left position', () => {
-    const {container} = render(<CeligoDivider position="left" />);
+    renderWithProviders(<CeligoDivider position="left" />);
 
-    expect(container.firstChild.className).toEqual(expect.stringContaining('makeStyles-left-'));
-    expect(container.firstChild.className).not.toEqual(expect.stringContaining('makeStyles-right-'));
+    expect(screen.getByRole('separator')).toHaveAttribute('class', expect.stringContaining('makeStyles-left-'));
+    expect(screen.getByRole('separator')).not.toHaveAttribute('class', expect.stringContaining('makeStyles-right-'));
   });
 
   test('should render at right position', () => {
-    const {container} = render(<CeligoDivider position="right" />);
+    renderWithProviders(<CeligoDivider position="right" />);
 
-    expect(container.firstChild.className).toEqual(expect.stringContaining('makeStyles-right-'));
-    expect(container.firstChild.className).not.toEqual(expect.stringContaining('makeStyles-left-'));
+    expect(screen.getByRole('separator')).toHaveAttribute('class', expect.stringContaining('makeStyles-right-'));
+    expect(screen.getByRole('separator')).not.toHaveAttribute('class', expect.stringContaining('makeStyles-left-'));
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import ShowContentIcon from '../../../../icons/ShowContentIcon';
 import EditIcon from '../../../../icons/EditIcon';

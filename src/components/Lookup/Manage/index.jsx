@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 // import shortid from 'shortid';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';

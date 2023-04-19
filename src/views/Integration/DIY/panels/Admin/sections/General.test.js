@@ -36,9 +36,9 @@ describe('General Section UI tests', () => {
     await initGeneralSection({integrationId: '678901234567890'});
     const input = document.querySelector('[name="name"]');
 
-    userEvent.click(input);
+    await userEvent.click(input);
     await userEvent.type(input, 'demo');
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     expect(input).toHaveValue('demo integrationdemo');
   });
 });

@@ -108,7 +108,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -142,7 +142,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -205,7 +205,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -227,7 +227,7 @@ describe('PageGenerator UI tests', () => {
 
     expect(screen.queryByText('Connector Type: dataLoader')).toBeInTheDocument();
   });
-  test('should test the case when export is provided', () => {
+  test('should test the case when export is provided', async () => {
     const pg = {
       id: 'somePGId',
       _exportId: '5e7068331c056a75e6df19b2',
@@ -241,7 +241,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
@@ -264,7 +264,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
@@ -291,7 +291,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
@@ -315,7 +315,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
@@ -327,7 +327,7 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('Connector Type: someprovider')).toBeInTheDocument();
   });
 
-  test('should test the case when allowschedule is true', () => {
+  test('should test the case when allowschedule is true', async () => {
     const pg = {
       id: 'somePGId',
       _exportId: '5e7068331c056a75e6df19b2',
@@ -343,7 +343,7 @@ describe('PageGenerator UI tests', () => {
 
     renderFunction(pg, history, initialStore);
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
@@ -354,7 +354,7 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('actionsname : exportFilter')).toBeInTheDocument();
     expect(screen.getByText('actionsname : exportHooks')).toBeInTheDocument();
   });
-  test('should test history.push call', () => {
+  test('should test history.push call', async () => {
     const pg = {
       id: 'somePGId',
       _exportId: '5e7068331c056a75e6df19b2',
@@ -372,7 +372,7 @@ describe('PageGenerator UI tests', () => {
       <PageGenerator.WrappedComponent history={history} match={{url: 'someinitiaUrL', isExact: true}} {...pg} />,
       {initialStore});
 
-    userEvent.click(screen.getByText('mock onBlockClick'));
+    await userEvent.click(screen.getByText('mock onBlockClick'));
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
@@ -393,7 +393,7 @@ describe('PageGenerator UI tests', () => {
       <PageGenerator.WrappedComponent history={history} match={{url: 'someinitiaUrL'}} {...pg} onDelete={onDelete} />,
       {initialStore});
 
-    userEvent.click(screen.getByText('mock onDelete'));
+    await userEvent.click(screen.getByText('mock onDelete'));
     expect(onDelete).toHaveBeenCalled();
   });
 });

@@ -44,7 +44,7 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
         />
       </MemoryRouter>, {initialStore});
   }
-  test('should test the change in mapping fields', () => {
+  test('should test the change in mapping fields', async () => {
     initStoreAndRender();
     const mappingtext = screen.getByText('sometext');
 
@@ -55,7 +55,7 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
     const textbox = allTextBox[0];
 
     fireEvent.focusIn(textbox);
-    userEvent.click(screen.getByText('sometext2'));
+    await userEvent.click(screen.getByText('sometext2'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'INTEGRATION_APPS_SETTINGS_CATEGORY_MAPPINGS_PATCH_FIELD',
@@ -67,13 +67,13 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
         value: 'sometext2',
       });
   });
-  test('should test the delete button', () => {
+  test('should test the delete button', async () => {
     initStoreAndRender();
     const buttons = screen.getAllByRole('button');
 
     const deletebutton = buttons.find(each => each.getAttribute('data-test') === 'fieldMappingRemove-someKey');
 
-    userEvent.click(deletebutton);
+    await userEvent.click(deletebutton);
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -85,11 +85,11 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
       }
     );
   });
-  test('should test the change in extract mapping fields and required tootip', () => {
+  test('should test the change in extract mapping fields and required tootip', async () => {
     initStoreAndRender(true);
     const mappingtext = screen.getByText('sometext');
 
-    expect(screen.getByTitle('This field is required by the application you are importing into')).toBeInTheDocument();
+    expect(screen.getByLabelText('This field is required by the application you are importing into')).toBeInTheDocument();
 
     expect(mappingtext).toBeInTheDocument();
     const allTextBox = screen.getAllByRole('textbox');
@@ -99,7 +99,7 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
 
     fireEvent.focusIn(textbox);
 
-    userEvent.click(screen.getByText('sometext2'));
+    await userEvent.click(screen.getByText('sometext2'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'INTEGRATION_APPS_SETTINGS_CATEGORY_MAPPINGS_PATCH_FIELD',

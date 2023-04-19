@@ -1,7 +1,7 @@
 import React from 'react';
-import TableCell from '@material-ui/core/TableCell';
-import { makeStyles } from '@material-ui/core/styles';
-import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@mui/material/TableCell';
+import makeStyles from '@mui/styles/makeStyles';
+import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';

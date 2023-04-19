@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Box } from '@celigo/fuse-ui';
 
 const useStyles = makeStyles(theme => ({
   drawerContent: {
@@ -12,13 +13,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerContent({ children, noPadding, className }) {
+export default function DrawerContent({ children, noPadding, className, sxCss }) {
   const classes = useStyles();
 
   return (
-    <div
+    <Box
+      sx={[...(Array.isArray(sxCss) ? sxCss : [sxCss])]}
       className={clsx(classes.drawerContent, { [classes.withPadding]: !noPadding }, className)}>
       {children}
-    </div>
+    </Box>
   );
 }

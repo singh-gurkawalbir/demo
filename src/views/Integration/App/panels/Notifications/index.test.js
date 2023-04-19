@@ -223,16 +223,16 @@ describe('NotificationsSection UI tests', () => {
     expect(screen.getByText('Notify me of job error')).toBeInTheDocument();
     expect(screen.getByText('Notify me when connection goes offline')).toBeInTheDocument();
   });
-  test('should test for jobs notification options', () => {
+  test('should test for jobs notification options', async () => {
     const mockDispatch = initStoreAndRender(false);
 
     expect(screen.getByText('Notifications')).toBeInTheDocument();
     expect(screen.getByText('Notify me of job error')).toBeInTheDocument();
 
-    userEvent.click(screen.getByText('All flows'));
-    userEvent.click(screen.getByText('Second flow'));
-    userEvent.click(screen.getByText('Done'));
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('All flows'));
+    await userEvent.click(screen.getByText('Second flow'));
+    await userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Save'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -246,16 +246,16 @@ describe('NotificationsSection UI tests', () => {
       }
     );
   });
-  test('should test for flows notification options', () => {
+  test('should test for flows notification options', async () => {
     const mockDispatch = initStoreAndRender(true);
 
     expect(screen.getByText('Notifications')).toBeInTheDocument();
     expect(screen.getByText('Notify me of flow error')).toBeInTheDocument();
 
-    userEvent.click(screen.getByText('All flows'));
-    userEvent.click(screen.getByText('Second flow'));
-    userEvent.click(screen.getByText('Done'));
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('All flows'));
+    await userEvent.click(screen.getByText('Second flow'));
+    await userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Save'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -269,13 +269,13 @@ describe('NotificationsSection UI tests', () => {
       }
     );
   });
-  test('should test for connection notification options', () => {
+  test('should test for connection notification options', async () => {
     const mockDispatch = initStoreAndRender(true);
 
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByText('First connection'));
-    userEvent.click(screen.getByText('Done'));
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('First connection'));
+    await userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Save'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       {

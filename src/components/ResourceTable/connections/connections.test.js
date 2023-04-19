@@ -1,7 +1,7 @@
 
 import React from 'react';
 import * as reactRedux from 'react-redux';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import moment from 'moment';
@@ -87,7 +87,7 @@ describe('test suite for Connections', () => {
     mockHistoryPush.mockClear();
   });
 
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -115,10 +115,10 @@ describe('test suite for Connections', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'HTTP Connection',
       'Offline',
       'HTTP',
       'https://xyz.pqr',
@@ -128,7 +128,7 @@ describe('test suite for Connections', () => {
     ]);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -138,13 +138,13 @@ describe('test suite for Connections', () => {
     ]);
     const connectionRow = screen.getAllByRole('row')[1];
 
-    userEvent.hover(connectionRow);
+    await userEvent.hover(connectionRow);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.setActive('conn123'));
-    userEvent.unhover(connectionRow);
+    await userEvent.unhover(connectionRow);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.setActive());
   });
 
-  test('should be able to debug connection in flowBuilder', () => {
+  test('should be able to debug connection in flowBuilder', async () => {
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -161,10 +161,11 @@ describe('test suite for Connections', () => {
     });
 
     initConnections(data, initialStore);
+
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'HTTP Connection',
       'Offline',
       'HTTP',
       'https://xyz.pqr',
@@ -174,7 +175,7 @@ describe('test suite for Connections', () => {
     ]);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -187,14 +188,14 @@ describe('test suite for Connections', () => {
 
     const openDebugger = screen.getByRole('menuitem', {name: 'Debug connection'});
 
-    userEvent.click(openDebugger);
+    await userEvent.click(openDebugger);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.bottomDrawer.addTab({
       tabType: 'connectionLogs',
       resourceId: 'conn123',
     }));
   });
 
-  test('should be able to replace connection in flowBuilder', () => {
+  test('should be able to replace connection in flowBuilder', async () => {
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -212,10 +213,11 @@ describe('test suite for Connections', () => {
     });
 
     initConnections(data, initialStore);
+
+    expect(screen.getByRole('rowheader', { name: data[0].name })).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'HTTP Connection',
       'Offline',
       'HTTP',
       'https://xyz.pqr',
@@ -225,10 +227,10 @@ describe('test suite for Connections', () => {
     ]);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const replaceConnection = screen.getByRole('menuitem', {name: 'Replace connection'});
 
-    userEvent.click(replaceConnection);
+    await userEvent.click(replaceConnection);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: 'replaceConnection/:connId',
       baseUrl: 'https://sample.url',
@@ -236,7 +238,7 @@ describe('test suite for Connections', () => {
     }));
   });
 
-  test('should be able to revoke http oauth token', () => {
+  test('should be able to revoke http oauth token', async () => {
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -260,7 +262,7 @@ describe('test suite for Connections', () => {
     initConnections(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -271,7 +273,7 @@ describe('test suite for Connections', () => {
     ]);
     const revokeToken = screen.getByRole('menuitem', {name: 'Revoke'});
 
-    userEvent.click(revokeToken);
+    await userEvent.click(revokeToken);
     const confirmDialog = screen.getByRole('dialog');
     const confirmRevoke = screen.getByRole('button', {name: 'Revoke'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
@@ -281,11 +283,11 @@ describe('test suite for Connections', () => {
     expect(confirmDialog.textContent).toContain('Confirm revoke');
     expect(confirmDialog.textContent).toContain('Are you sure you want to revoke this token?');
 
-    userEvent.click(confirmRevoke);
+    await userEvent.click(confirmRevoke);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.requestRevoke('conn123'));
   });
 
-  test('should be able to download debug logs for a connection', () => {
+  test('should be able to download debug logs for a connection', async () => {
     delete mockTableContext.type;
     const data = [{
       _id: 'conn123',
@@ -300,7 +302,7 @@ describe('test suite for Connections', () => {
     initConnections(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -316,7 +318,7 @@ describe('test suite for Connections', () => {
     expect(downloadDebugLogs).toHaveAttribute('href', '/api/connections/conn123/debug');
   });
 
-  test('should be able to debug a connection when not in flowBuilder', () => {
+  test('should be able to debug a connection when not in flowBuilder', async () => {
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -335,7 +337,7 @@ describe('test suite for Connections', () => {
     initConnections(data, initialStore);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -347,7 +349,7 @@ describe('test suite for Connections', () => {
     ]);
     const debugConnection = screen.getByRole('menuitem', {name: 'Debug connection'});
 
-    userEvent.click(debugConnection);
+    await userEvent.click(debugConnection);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: 'configDebugger/:connectionId',
       baseUrl: 'https://sample.url',
@@ -355,8 +357,9 @@ describe('test suite for Connections', () => {
     }));
   });
 
-  test('should be able to de register a connection', () => {
+  test('should be able to de register a connection', async () => {
     mockTableContext.integrationId = 'int123';
+    delete mockTableContext.type;
     const data = [{
       _id: 'conn123',
       name: 'HTTP Connection',
@@ -372,11 +375,11 @@ describe('test suite for Connections', () => {
     mutateStore(initialStore, draft => {
       draft.user.preferences.defaultAShareId = 'own';
     });
-    initConnections(data, initialStore);
-    const actionButton = screen.getByRole('button', {name: /more/i});
+    await initConnections(data, initialStore);
+    const actionButton = await waitFor(() => screen.getByRole('button', {name: /more/i}));
 
-    userEvent.click(actionButton);
-    const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+    await userEvent.click(actionButton);
+    const actionItems = await waitFor(() => screen.getAllByRole('menuitem').map(ele => ele.textContent));
 
     expect(actionItems).toEqual([
       'Edit connection',
@@ -387,7 +390,7 @@ describe('test suite for Connections', () => {
     ]);
     const deregisterConnection = screen.getByRole('menuitem', {name: 'Deregister connection'});
 
-    userEvent.click(deregisterConnection);
+    await userEvent.click(deregisterConnection);
     const confirmDialog = screen.getByRole('dialog');
     const confirmButton = screen.getByRole('button', {name: 'Deregister'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
@@ -395,12 +398,12 @@ describe('test suite for Connections', () => {
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog).toContainElement(cancelButton);
 
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.requestDeregister('conn123', 'int123'));
   });
 
   describe('should be able to refresh metadata for netsuite and salesforce connections', () => {
-    test('for netsuite connections', () => {
+    test('for netsuite connections', async () => {
       const data = [{
         _id: 'conn123',
         name: 'HTTP Connection',
@@ -419,8 +422,8 @@ describe('test suite for Connections', () => {
       initConnections(data, initialStore);
       const actionButton = screen.getByRole('button', {name: /more/i});
 
-      userEvent.click(actionButton);
-      const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+      await userEvent.click(actionButton);
+      const actionItems = await waitFor(() => screen.getAllByRole('menuitem').map(ele => ele.textContent));
 
       expect(actionItems).toEqual([
         'Edit connection',
@@ -428,9 +431,9 @@ describe('test suite for Connections', () => {
         'Used by',
         'Refresh metadata',
       ]);
-      const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
+      const refreshMetadata = await waitFor(() => screen.getByRole('menuitem', {name: 'Refresh metadata'}));
 
-      userEvent.click(refreshMetadata);
+      await userEvent.click(refreshMetadata);
       [
         'netsuite/metadata/suitescript/connections/conn123/recordTypes',
         'netsuite/metadata/suitescript/connections/conn123/savedSearches',
@@ -444,7 +447,7 @@ describe('test suite for Connections', () => {
       );
     });
 
-    test('for salesforce connections', () => {
+    test('for salesforce connections', async () => {
       const data = [{
         _id: 'conn123',
         name: 'HTTP Connection',
@@ -462,10 +465,10 @@ describe('test suite for Connections', () => {
       });
 
       initConnections(data, initialStore);
-      userEvent.click(screen.getByRole('button', {name: /more/i}));
-      const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
+      await userEvent.click(screen.getByRole('button', {name: /more/i}));
+      const refreshMetadata = await waitFor(() => screen.getByRole('menuitem', {name: 'Refresh metadata'}));
 
-      userEvent.click(refreshMetadata);
+      await userEvent.click(refreshMetadata);
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request(
         'conn123',
         'salesforce/metadata/connections/conn123/sObjectTypes',
@@ -473,7 +476,7 @@ describe('test suite for Connections', () => {
       ));
     });
 
-    test('should not refresh metadata if connection is offline', () => {
+    test('should not refresh metadata if connection is offline', async () => {
       const data = [{
         _id: 'conn123',
         name: 'HTTP Connection',
@@ -491,16 +494,16 @@ describe('test suite for Connections', () => {
       });
 
       initConnections(data, initialStore);
-      userEvent.click(screen.getByRole('button', {name: /more/i}));
-      const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
+      await userEvent.click(screen.getByRole('button', {name: /more/i}));
+      const refreshMetadata = await waitFor(() => screen.getByRole('menuitem', {name: 'Refresh metadata'}));
 
-      userEvent.click(refreshMetadata);
-      expect(document.querySelector('[aria-describedby="client-snackbar"]').textContent).toBe('Connection is offline.');
+      await userEvent.click(refreshMetadata);
+      expect(document.querySelector('[aria-describedby="notistack-snackbar"]').textContent).toBe('Connection is offline.');
     });
   });
 
   describe('should be able to mark or unmark a connection as trading partner', () => {
-    test('should be able to mark a connection as trading partner', () => {
+    test('should be able to mark a connection as trading partner', async () => {
       mockTableContext.showTradingPartner = true;
       const data = [{
         _id: 'conn123',
@@ -524,7 +527,7 @@ describe('test suite for Connections', () => {
       });
 
       initConnections(data, globalStore);
-      userEvent.click(screen.getByRole('button', {name: /more/i}));
+      await userEvent.click(screen.getByRole('button', {name: /more/i}));
       const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
       expect(actionItems).toEqual([
@@ -535,7 +538,7 @@ describe('test suite for Connections', () => {
       ]);
       const markTradingPartner = screen.getByRole('menuitem', {name: 'Mark as trading partner'});
 
-      userEvent.click(markTradingPartner);
+      await userEvent.click(markTradingPartner);
 
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.requestTradingPartnerConnections('conn123'));
       const confirmDialog = screen.getByRole('dialog');
@@ -552,7 +555,7 @@ describe('test suite for Connections', () => {
 
       expect(connectionsListNames).toEqual(['conn1', 'conn2']);
 
-      userEvent.click(confirmButton);
+      await userEvent.click(confirmButton);
       expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.updateTradingPartner('conn123'));
     });
   });

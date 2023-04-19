@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
+import { useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoDivider from '../../../CeligoDivider';
 import Icon from '../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../Buttons';
@@ -35,7 +36,8 @@ export default function HandlebarGuide() {
           <IconButton
             {...anchorProps}
             className={classes.button}
-            aria-label="handlebars guide">
+            aria-label="handlebars guide"
+            size="large">
             <Icon />
           </IconButton>
         </Tooltip>

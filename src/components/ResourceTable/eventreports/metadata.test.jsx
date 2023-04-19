@@ -102,6 +102,24 @@ jest.mock('../../CeligoTable/TableContext', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initImports(data = []) {
   const ui = (
     <MemoryRouter>
@@ -116,7 +134,7 @@ describe('test suite for eventreports', () => {
   const endDate = new Date('2022-10-02T10:33:30.000+05:30');
   const createdDate = new Date('2022-12-22T10:33:30.000+05:30');
 
-  test('should render the table accordingly and status is set to completed', () => {
+  test('should render the table accordingly and status is set to completed', async () => {
     const data = [{_id: 'flow_id_1', status: 'completed', _flowIds: ['flow_id_1'], startTime: startDate, endTime: endDate, createdAt: createdDate, requestedByUser: {name: 'def', email: 'def@gmail.com'}}];
 
     initImports(data);
@@ -136,11 +154,11 @@ describe('test suite for eventreports', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: 'integrationTestName'})).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'integrationTestName',
-      'flownametest...',
+      'flownametest',
       '12/24/2018 10:33:30 am',
       '10/02/2022 10:33:30 am',
       '12/22/2022 10:33:30 am',
@@ -150,7 +168,7 @@ describe('test suite for eventreports', () => {
     ]);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -158,13 +176,13 @@ describe('test suite for eventreports', () => {
       'Download results',
     ]);
   });
-  test('should render the table accordingly and status is set to running', () => {
+  test('should render the table accordingly and status is set to running', async () => {
     const data = [{_id: 'flow_id_1', status: 'running', _flowIds: ['flow_id_1'], startTime: startDate, endTime: endDate, createdAt: createdDate, requestedByUser: {name: 'def', email: 'def@gmail.com'}}];
 
     initImports(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([
@@ -172,13 +190,13 @@ describe('test suite for eventreports', () => {
       'Cancel Report',
     ]);
   });
-  test('should render the table accordingly and status is set to queued', () => {
+  test('should render the table accordingly and status is set to queued', async () => {
     const data = [{_id: 'flow_id_1', status: 'queued', _flowIds: ['flow_id_1'], startTime: startDate, endTime: endDate, createdAt: createdDate, requestedByUser: {name: 'def', email: 'def@gmail.com'}}];
 
     initImports(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

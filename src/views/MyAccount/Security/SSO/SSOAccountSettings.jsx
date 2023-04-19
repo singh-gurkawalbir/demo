@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
+import { Box, Switch } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../../components/LoadResources';
-import CeligoSwitch from '../../../../components/CeligoSwitch';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -32,24 +32,11 @@ const useStyles = makeStyles(theme => ({
   footer: {
     margin: theme.spacing(2),
   },
-  helpTextButton: {
-    marginLeft: theme.spacing(0.5),
-    height: theme.spacing(2),
-    width: theme.spacing(2),
-    padding: 0,
-    marginRight: theme.spacing(2),
-  },
   ssoSwitch: {
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(2, 2),
     marginBottom: theme.spacing(0.5),
-  },
-  flexContainer: {
-    display: 'flex',
-    '& + div': {
-      marginTop: theme.spacing(2),
-    },
   },
   content: {
     fontSize: '14px',
@@ -320,8 +307,12 @@ export default function SSOAccountSettings() {
             <div>
               <div className={classes.ssoSwitch}>
                 <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
-                <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
-                <CeligoSwitch
+                <Help
+                  title="Enable OIDC-based SSO"
+                  helpKey="enableSSO"
+                  sx={{ml: 0.5, mr: 2}}
+                />
+                <Switch
                   onChange={handleEnableSSO}
                   checked={isSSOEnabled} />
                 {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
@@ -333,14 +324,20 @@ export default function SSOAccountSettings() {
                     {
                     !!oidcClient?.orgId && (
                     <div>
-                      <div className={classes.flexContainer}>
+                      <Box display="flex" alignItems="center">
                         <Typography className={classes.urlDetails}> Application login URL: { applicationLoginURL }</Typography>
-                        <Help title="Application login URL" helpKey="sso.loginURL" className={classes.helpTextButton} />
-                      </div>
-                      <div className={classes.flexContainer}>
+                        <Help
+                          title="Application login URL"
+                          helpKey="sso.loginURL"
+                          sx={{ml: 0.5}} />
+                      </Box>
+                      <Box display="flex" alignItems="center" mt={0.5} >
                         <Typography className={classes.urlDetails}>Redirect URL: { redirectURL }</Typography>
-                        <Help title="Redirect URL" helpKey="sso.redirectURL" className={classes.helpTextButton} />
-                      </div>
+                        <Help
+                          title="Redirect URL"
+                          helpKey="sso.redirectURL"
+                          sx={{ml: 0.5}} />
+                      </Box>
                     </div>
                     )
                   }

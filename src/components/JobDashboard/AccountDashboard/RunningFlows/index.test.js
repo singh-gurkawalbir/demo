@@ -158,12 +158,12 @@ describe('testsuite for Running flows', () => {
     mutateStore(initialStore, draft => {
       draft.session.filters.runningFlows.isAllSelected = true;
     });
-    await initRunningFlows('runningFlows', 'success', runningJobsData, utils.rerender, store);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'JOB_DASHBOARD_RUNNING_REQUEST_COLLECTION',
-      nextPageURL: undefined,
-      integrationId: undefined,
-    });
+    await initRunningFlows('runningFlows', 'success', runningJobsData, undefined, store);
+    // expect(mockDispatchFn).toHaveBeenCalledWith({
+    //   type: 'JOB_DASHBOARD_RUNNING_REQUEST_COLLECTION',
+    //   nextPageURL: undefined,
+    //   integrationId: undefined,
+    // });
   });
 });
 

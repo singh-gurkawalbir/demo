@@ -99,20 +99,20 @@ describe('CreateSnapshotDrawer tests', () => {
     expect(create).toBeEnabled();
     expect(cancelSnapshot).toBeEnabled();
     expect(close).toBeEnabled();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/_integrationId/revisions/snapshot/_revId/open');
   });
   test('Should able to test the CreateSnapshotDrawer\'s infoText and description helpText', async () => {
     await initCreateSnapshotDrawer();
     const buttons = screen.getAllByRole('button');
     const info = buttons.find(btn => btn.getAttribute('data-test') === 'openPageInfo');
-    const descriptionHelpText = buttons.find(btn => btn.getAttribute('class').includes('iconButton'));
+    const descriptionHelpText = buttons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
 
     expect(info).toBeEnabled();
-    userEvent.click(info);
+    await userEvent.click(info);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     expect(screen.getByText('A snapshot is a saved capture of your integration that you can use to revert your integration at any point.')).toBeInTheDocument();
-    userEvent.click(descriptionHelpText);
+    await userEvent.click(descriptionHelpText);
     expect(screen.getByRole('heading', {name: 'Description'})).toBeInTheDocument();
     expect(screen.getByText('Describe your snapshot so you can quickly identify the revision and any important details.')).toBeInTheDocument();
     expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
@@ -129,7 +129,7 @@ describe('CreateSnapshotDrawer tests', () => {
     const buttons = screen.getAllByRole('button');
     const createBtn = buttons.find(btn => btn.getAttribute('data-test') === 'create');
 
-    userEvent.click(createBtn);
+    await userEvent.click(createBtn);
     expect(mockDispatchFn).toHaveBeenCalled();
   });
 });

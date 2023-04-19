@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import FormLabel from '@mui/material/FormLabel';
 import { useDispatch } from 'react-redux';
 import CodeEditor from '../../../CodeEditor';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';

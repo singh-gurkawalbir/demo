@@ -67,7 +67,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <ConfirmDialogProvider>
       <MemoryRouter>
@@ -78,15 +78,15 @@ function renderFuntion(data) {
       </MemoryRouter>
     </ConfirmDialogProvider>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI tests for cancel revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should make a dispatch call when cancel revision is clicked', () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790',
+  test('should make a dispatch call when cancel revision is clicked', async () => {
+    await renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
       _integrationId: '5e44ee816fb284424f693b43',
@@ -94,15 +94,15 @@ describe('uI tests for cancel revision', () => {
       type: 'pull'});
     const cancelrevision = screen.getByText('Cancel revision');
 
-    userEvent.click(cancelrevision);
+    await userEvent.click(cancelrevision);
     const cancelmerge = screen.getByText('Cancel merge');
 
-    userEvent.click(cancelmerge);
+    await userEvent.click(cancelmerge);
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
   });
 
-  test('should test continue merge button', () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790',
+  test('should test continue merge button', async () => {
+    await renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
       _integrationId: '5e44ee816fb284424f693b43',
@@ -110,15 +110,15 @@ describe('uI tests for cancel revision', () => {
       type: 'pull'});
     const cancelrevision = screen.getByText('Cancel revision');
 
-    userEvent.click(cancelrevision);
+    await userEvent.click(cancelrevision);
     const continueMerge = screen.getByText('Continue merge');
 
-    userEvent.click(continueMerge);
+    await userEvent.click(continueMerge);
     expect(continueMerge).not.toBeInTheDocument();
   });
 
-  test('should not display cancel revision button when type is set to snapshot and status is set to completed', () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790',
+  test('should not display cancel revision button when type is set to snapshot and status is set to completed', async () => {
+    await renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'completed',
       _integrationId: '5e44ee816fb284424f693b43',

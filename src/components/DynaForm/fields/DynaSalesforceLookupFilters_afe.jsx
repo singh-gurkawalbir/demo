@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormLabel, IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel, IconButton } from '@mui/material';
 import { isBoolean } from 'lodash';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';

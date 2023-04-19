@@ -37,6 +37,20 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 const flows = [
   {
     _id: '5ea16c600e2fab71928a6152',
@@ -144,7 +158,7 @@ describe('FlowBuilder hooks UI tests', () => {
     });
   });
   describe('useHandleDelete hook test', () => {
-    test('should test handle delete when type is PageProcessor', () => {
+    test('should test handle delete when type is PageProcessor', async () => {
       const initialStore = getCreatedStore();
 
       mutateStore(initialStore, draft => {
@@ -157,9 +171,9 @@ describe('FlowBuilder hooks UI tests', () => {
         </ConfirmDialogProvider>,
         {initialStore}
       );
-      userEvent.click(screen.getByText('Delete button'));
+      await userEvent.click(screen.getByText('Delete button'));
       expect(screen.getByText('Are you sure you want to remove this resource?')).toBeInTheDocument();
-      userEvent.click(screen.getByText('Remove'));
+      await userEvent.click(screen.getByText('Remove'));
       expect(mockDispatch).toHaveBeenCalledWith(
         {
           type: 'RESOURCE_STAGE_PATCH_AND_COMMIT',
@@ -173,7 +187,7 @@ describe('FlowBuilder hooks UI tests', () => {
         }
       );
     });
-    test('should test handle delete when type is PageGenerator', () => {
+    test('should test handle delete when type is PageGenerator', async () => {
       const initialStore = getCreatedStore();
 
       mutateStore(initialStore, draft => {
@@ -186,9 +200,9 @@ describe('FlowBuilder hooks UI tests', () => {
         </ConfirmDialogProvider>,
         {initialStore}
       );
-      userEvent.click(screen.getByText('Delete button'));
+      await userEvent.click(screen.getByText('Delete button'));
       expect(screen.getByText('Are you sure you want to remove this resource?')).toBeInTheDocument();
-      userEvent.click(screen.getByText('Remove'));
+      await userEvent.click(screen.getByText('Remove'));
       expect(mockDispatch).toHaveBeenCalledWith(
         {
           type: 'RESOURCE_STAGE_PATCH_AND_COMMIT',

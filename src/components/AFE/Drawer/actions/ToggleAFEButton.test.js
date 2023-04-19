@@ -69,23 +69,23 @@ describe('ToggleAFEButton UI tests', () => {
 
     expect(afe2dot0Button).toHaveAttribute('aria-pressed', 'true');
   });
-  test('Should make a dispatch call when toggle afe button is set to AFE 1.0', () => {
+  test('Should make a dispatch call when toggle afe button is set to AFE 1.0', async () => {
     initToggleAFEButton({editorId: 'httprelativeURI'});
     const afe1dot0Button = screen.getByRole('button', {name: 'AFE 1.0'});
 
     expect(afe1dot0Button).toBeInTheDocument();
-    userEvent.click(afe1dot0Button);
+    await userEvent.click(afe1dot0Button);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.toggleVersion('httprelativeURI', 1));
     const afe2dot0Button = screen.getByRole('button', {name: 'AFE 2.0'});
 
     expect(afe2dot0Button).toBeInTheDocument();
   });
-  test('Should display help text when clicked on Help text button', () => {
+  test('Should display help text when clicked on Help text button', async () => {
     initToggleAFEButton({editorId: 'httprelativeURI'});
     const helpTextButton = screen.getAllByRole('button');
 
     expect(helpTextButton[2]).toBeInTheDocument();
-    userEvent.click(helpTextButton[2]);
+    await userEvent.click(helpTextButton[2]);
     const tooltip = screen.getByRole('tooltip');
 
     expect(tooltip).toBeInTheDocument();

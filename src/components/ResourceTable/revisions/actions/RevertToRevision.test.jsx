@@ -66,7 +66,7 @@ jest.mock('../../../../utils/string', () => ({
     'randomvalue'
   ),
 }));
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
       <Route path="/integrations/:integrationId">
@@ -77,7 +77,7 @@ function renderFuntion(data) {
       </Route>
     </MemoryRouter>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for revert to revision', () => {
@@ -88,15 +88,15 @@ describe('uI test cases for revert to revision', () => {
   afterEach(() => {
     enqueueSnackbar.mockClear();
   });
-  test('redirect to revert revision URL when clicked on revert to this revision button', () => {
-    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f', type: 'snapshot'});
+  test('redirect to revert revision URL when clicked on revert to this revision button', async () => {
+    await renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f', type: 'snapshot'});
     const revertrevisionButton = screen.getByText('Revert to this revision');
 
-    userEvent.click(revertrevisionButton);
+    await userEvent.click(revertrevisionButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44efa28015c9464272256f/revert/randomvalue/open/toBefore/revision/5cadc8b42b1034709483790');
   });
 
-  test('should display a prompt when the status is in progress', () => {
+  test('should display a prompt when the status is in progress', async () => {
     mutateStore(initialStore, draft => {
       draft.data.revisions = {
         '5e44ee816fb284424f693b43': {
@@ -107,10 +107,10 @@ describe('uI test cases for revert to revision', () => {
           }],
         }};
     });
-    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'snapshot'});
+    await renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'snapshot'});
     const revertrevisionButton = screen.getByText('Revert to this revision');
 
-    userEvent.click(revertrevisionButton);
+    await userEvent.click(revertrevisionButton);
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: <ErrorContent error="You have a pull, snapshot, or revert in progress." />, variant: 'error'});
   });
 });

@@ -6,7 +6,7 @@ import {
   generatePath,
   useParams,
 } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Tooltip,
   IconButton,
@@ -14,7 +14,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-} from '@material-ui/core';
+} from '@mui/material';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -104,7 +104,7 @@ const useStyles = makeStyles(theme => ({
   },
   secondaryHeading: {
     fontFamily: 'Roboto500',
-    lineHeight: `${theme.spacing(3)}px`,
+    lineHeight: theme.spacing(3),
   },
   subNav: {
     width: '20%',

@@ -1,8 +1,8 @@
 import Iframe from 'react-iframe';
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { getDomain } from '../../../utils/resource';
 import Spinner from '../../../components/Spinner';
 import { selectors } from '../../../reducers';

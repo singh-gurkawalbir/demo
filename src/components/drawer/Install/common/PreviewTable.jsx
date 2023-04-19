@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { selectors } from '../../../../reducers';

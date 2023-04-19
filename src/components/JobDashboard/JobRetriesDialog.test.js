@@ -46,18 +46,18 @@ describe('testsuite for JobDialog', () => {
       integrationName: 'test integration name',
       onCloseClick: mockClose,
     });
-    expect(screen.getByRole('heading', { name: /test integration name > test job name/i, hidden: true })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'test integration name > test job name', hidden: true })).toBeInTheDocument();
     expect(screen.getByText(/success: 1 ignore: 0 error: 0/i)).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /retry #/i, hidden: true })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /duration/i, hidden: true })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /completed/i, hidden: true })).toBeInTheDocument();
-    expect(screen.getByRole('cell', { name: /1/i, hidden: true })).toBeInTheDocument();
+    expect(screen.getByRole('rowheader', { name: /1/i, hidden: true })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: /30 sec/i, hidden: true })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: /mockdate/i, hidden: true })).toBeInTheDocument();
     const closeButtonNode = screen.getAllByRole('button').find(eachOptions => eachOptions.getAttribute('data-test') === 'closeJobRetriesDialog');
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockClose).toHaveBeenCalled();
   });
   test('should render the job dialog with the job data with no job name', async () => {
@@ -77,7 +77,7 @@ describe('testsuite for JobDialog', () => {
       onCloseClick: mockClose,
     });
     expect(screen.getByRole('heading', {
-      name: /undefined > undefined/i,
+      name: 'undefined > undefined',
       hidden: true,
     })).toBeInTheDocument();
   });

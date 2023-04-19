@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { FormControl, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { get } from 'lodash';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
@@ -136,20 +136,20 @@ export default function (props) {
   return (
     <>
       {showScopesModal && (
-        <TransferListModal
-          id={id}
-          scopesOrig={flattenedScopes}
-          subHeaderMap={subHeaderMap}
-          availableScopes={defaultAvailableScopes}
-          selectedScopes={updatedScopes}
-          onFieldChange={onFieldChange}
-          handleClose={() => {
-            setShowScopesModal(false);
-          }}
-          helpLink={helpLink}
-        />
+      <TransferListModal
+        id={id}
+        scopesOrig={flattenedScopes}
+        subHeaderMap={subHeaderMap}
+        availableScopes={defaultAvailableScopes}
+        selectedScopes={updatedScopes}
+        onFieldChange={onFieldChange}
+        handleClose={() => {
+          setShowScopesModal(false);
+        }}
+        helpLink={helpLink}
+      />
       )}
-      <FormControl className={classes.dynaSelectScopesContainer}>
+      <FormControl variant="standard" className={classes.dynaSelectScopesContainer}>
         <div className={classes.dynaTextLabelWrapper}>
           <FormLabel htmlFor={id} className={classes.scopesLabel} required={required}>
             {label}

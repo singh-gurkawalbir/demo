@@ -1,21 +1,9 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import TextToggle from '../../../TextToggle';
 import { selectors } from '../../../../reducers';
 import Help from '../../../Help';
-
-const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
-  mapperTextToggle: {
-    '&>button': {
-      minWidth: `${theme.spacing(11)}px !important`,
-    },
-  },
-}));
 
 const toggleMapperOptions = [
   { label: 'Mapper 1.0', value: 1 },
@@ -23,7 +11,6 @@ const toggleMapperOptions = [
 ];
 
 export default function ToggleMapperVersion({ editorId }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const showToggle = useSelector(state => {
     const isMapper2Supported = selectors.isMapper2Supported(state);
@@ -52,11 +39,14 @@ export default function ToggleMapperVersion({ editorId }) {
         onChange={handleVersionToggle}
         exclusive
         options={toggleMapperOptions}
-        className={classes.mapperTextToggle}
+        className={{
+          '&>button': {
+            minWidth: theme => `${theme.spacing(11)} !important`,
+          },
+        }}
       />
       <Help
         title="Mapper"
-        className={classes.helpTextButton}
         helpKey="afe.mappings.toggle"
       />
     </>

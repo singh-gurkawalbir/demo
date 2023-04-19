@@ -1,8 +1,6 @@
 import React from 'react';
-import { makeStyles,
-  Typography,
-  Tooltip,
-  Badge} from '@material-ui/core';
+import { Typography, Tooltip, Badge } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FilterIcon from '../../icons/FilterIcon';
 import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 import { getTextAfterCount } from '../../../utils/string';
@@ -28,7 +26,7 @@ const FilterLabel = () => {
 
   return (
     <Tooltip title={`${getTextAfterCount('filter', filters.length)} applied`} placement="bottom" aria-label="Filters">
-      <Badge color="secondary" overlap="circle" variant="dot">
+      <Badge color="secondary" overlap="circular" variant="dot">
         <FilterIcon fontSize="small" />
       </Badge>
     </Tooltip>

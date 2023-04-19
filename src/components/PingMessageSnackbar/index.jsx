@@ -1,5 +1,5 @@
 import React from 'react';
-import { Snackbar } from '@material-ui/core';
+import { Box, Snackbar } from '@mui/material';
 import { PING_STATES } from '../../reducers/comms/ping';
 import NotificationToaster from '../NotificationToaster';
 import TestConnectionSnackbar from './TestConnectionSnackbar';
@@ -29,13 +29,15 @@ export default function PingMessageSnackbar({ commStatus, onClose, onCancelTask 
       open
       autoHideDuration={6000}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-      <NotificationToaster
-        variant={variant || 'info'}
-        size="medium"
-        fullWidth
-        onClose={onClose}>
-        <ErrorContent error={message[0]} />
-      </NotificationToaster>
+      <Box>
+        <NotificationToaster
+          variant={variant || 'info'}
+          size="medium"
+          fullWidth
+          onClose={onClose}>
+          <ErrorContent error={message[0]} />
+        </NotificationToaster>
+      </Box>
     </Snackbar>
   );
 }

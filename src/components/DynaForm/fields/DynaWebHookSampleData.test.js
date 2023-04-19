@@ -85,19 +85,19 @@ describe('dynaWebHookSampleData UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show the message "Webhook url is mandatory"', () => {
+  test('should show the message "Webhook url is mandatory"', async () => {
     initDynaWebHookSampleData(
       {label: 'PropsLabel', value: 'PropsValue', id: 'SomeId', onFieldChange: mockOnFieldChange }
     );
 
-    userEvent.click(screen.getByText('Click to show'));
+    await userEvent.click(screen.getByText('Click to show'));
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Webhook url is mandatory.', variant: 'error'});
   });
-  test('should make resource request dispatch call when clicked on "Click to show" button', () => {
+  test('should make resource request dispatch call when clicked on "Click to show" button', async () => {
     initDynaWebHookSampleData(
       {label: 'PropsLabel', value: 'PropsValue', id: 'SomeId', resourceId: 'someresourceId', webhookUrl: '/webhook/url', onFieldChange: mockOnFieldChange }
     );
-    userEvent.click(screen.getByText('Click to show'));
+    await userEvent.click(screen.getByText('Click to show'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.resource.request('exports', 'someresourceId')
     );

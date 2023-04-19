@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl } from '@mui/material';
 import DynaText from './DynaText';
 import FieldMessage from './FieldMessage';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
@@ -213,6 +213,7 @@ export default function DynaTypeableSelect(props) {
 
   return (
     <FormControl
+      variant="standard"
       ref={ref}
       error={!isValid}
       disabled={disabled}

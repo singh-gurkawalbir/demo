@@ -30,7 +30,7 @@ describe('PreviewButtonGroup UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test preview button', () => {
+  test('should test preview button', async () => {
     const mustateState = draft => {
       draft.session.editors = {
         'mappings-632950280dbc53086e899759': {
@@ -60,9 +60,9 @@ describe('PreviewButtonGroup UI tests', () => {
     );
 
     expect(previewButton).toBeEnabled();
-    userEvent.click(previewButton);
+    await userEvent.click(previewButton);
     const spanEle = document.querySelector(
-      'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+      '.MuiTouchRipple-rippleVisible'
     );
 
     expect(spanEle).toBeInTheDocument();
@@ -70,7 +70,7 @@ describe('PreviewButtonGroup UI tests', () => {
       actions.editor.previewRequest('mappings-632950280dbc53086e899759')
     );
   });
-  test('should test autopreview checkbox', () => {
+  test('should test autopreview checkbox', async () => {
     const mustateState = draft => {
       draft.session.editors = {
         'mappings-632950280dbc53086e899759': {
@@ -98,7 +98,7 @@ describe('PreviewButtonGroup UI tests', () => {
     const checkBox = screen.getByRole('checkbox');
 
     expect(checkBox).toBeChecked();
-    userEvent.click(checkBox);
+    await userEvent.click(checkBox);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.editor.toggleAutoPreview('mappings-632950280dbc53086e899759')
     );

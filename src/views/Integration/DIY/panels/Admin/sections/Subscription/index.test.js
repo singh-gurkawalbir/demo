@@ -122,19 +122,19 @@ describe('SubscriptionSection UI tests', () => {
     const props = {integrationId: '61604a5a8364267b8a378084', edition: 'starter', childId: '61604a5a8364267b8a378143', childSupport: true};
 
     await initSubscriptionSection(props);
-    userEvent.click(screen.getByText('Request upgrade'));
+    await userEvent.click(screen.getByText('Request upgrade'));
     expect(screen.getByText('We will contact you to discuss your business needs and recommend an ideal subscription plan.')).toBeInTheDocument();
     expect(screen.getByText('Submit request')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Submit request'));
+    await userEvent.click(screen.getByText('Submit request'));
   });
   test('should make the respective dispatch call when clicked on Submit request button in the dialog box', async () => {
     const props = {integrationId: '61604a5a8364267b8a378084', edition: 'starter', childSupport: true, version: '1.27.3'};
 
     await initSubscriptionSection(props);
-    userEvent.click(screen.getByText('Request upgrade'));
+    await userEvent.click(screen.getByText('Request upgrade'));
     expect(screen.getByText('We will contact you to discuss your business needs and recommend an ideal subscription plan.')).toBeInTheDocument();
     expect(screen.getByText('Submit request')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Submit request'));
+    await userEvent.click(screen.getByText('Submit request'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.settings.requestUpgrade('61604a5a8364267b8a378084', {
       licenseId: '5a6ec1bae9aaa11c9bc86106',
     })));
@@ -175,7 +175,7 @@ describe('SubscriptionSection UI tests', () => {
 
     await initSubscriptionSection(props);
     await waitFor(() => expect(screen.getByText('Upgrade')).toBeInTheDocument());
-    userEvent.click(screen.getByText('Upgrade'));
+    await userEvent.click(screen.getByText('Upgrade'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.settings.upgrade('61604a5a8364267b8a378084', license)));
   });
 });

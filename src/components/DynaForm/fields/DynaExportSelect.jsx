@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';

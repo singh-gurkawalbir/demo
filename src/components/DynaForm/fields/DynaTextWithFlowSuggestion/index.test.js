@@ -25,7 +25,7 @@ describe('dynaTextWithFlowSuggestion UI tests', () => {
     renderWithProviders(<DynaTextWithFlowSuggestion onFieldChange={mockOnFieldChange} />);
     const textfield = screen.getByRole('textbox');
 
-    userEvent.type(textfield, 'a');
+    await userEvent.type(textfield, 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should not render the suggestions component when both showExtract and showLookup props are false', () => {
@@ -36,9 +36,9 @@ describe('dynaTextWithFlowSuggestion UI tests', () => {
     const mockOnFieldChange = jest.fn();
 
     renderWithProviders(<DynaTextWithFlowSuggestion onFieldChange={mockOnFieldChange} />);
-    const textfield = screen.getByRole('textbox');
+    screen.getByRole('textbox').focus();
 
-    userEvent.paste(textfield, '{{"data"}}');
-    await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith(undefined, "{{'data'}}"));
+    await userEvent.paste('{{"data"}}');
+    expect(mockOnFieldChange).toHaveBeenCalledWith(undefined, "{{'data'}}");
   });
 });

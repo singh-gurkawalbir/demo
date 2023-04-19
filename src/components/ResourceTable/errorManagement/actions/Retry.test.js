@@ -17,7 +17,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-function renderFuntion(actionProps, data) {
+async function renderFuntion(actionProps, data) {
   renderWithProviders(
     <ConfirmDialogProvider>
       <MemoryRouter>
@@ -29,33 +29,33 @@ function renderFuntion(actionProps, data) {
       </MemoryRouter>
     </ConfirmDialogProvider>
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error management retry action tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show "Enable the flow to retry" message when flow is disabled', () => {
-    renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    const retry = screen.getByTitle('Enable the flow to retry');
+  test('should show "Enable the flow to retry" message when flow is disabled', async () => {
+    await renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    const retry = screen.getByLabelText('Enable the flow to retry');
 
     expect(retry).toBeInTheDocument();
     expect(retry.textContent).toBe('Retry');
   });
-  test('should make dispatch call for retry on clicking retry button', () => {
-    renderFuntion({
+  test('should make dispatch call for retry on clicking retry button', async () => {
+    await renderFuntion({
       isFlowDisabled: false,
       isResolved: false,
       flowId: 'someflowId',
       resourceId: 'someresourceId',
     }, {retryDataKey: 'someKey', errorId: 'errorId'});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const retry = screen.getByText('Retry');
 
     expect(retry).toBeInTheDocument();
-    userEvent.click(retry);
+    await userEvent.click(retry);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.errorManager.flowErrorDetails.retry(
         {
@@ -67,20 +67,20 @@ describe('error management retry action tests', () => {
       )
     );
   });
-  test('should show "Enable the flow to retry" message when flow is disabled.', () => {
-    renderFuntion({
+  test('should show "Enable the flow to retry" message when flow is disabled.', async () => {
+    await renderFuntion({
       isFlowDisabled: false,
       isResolved: true,
       flowId: 'someflowId',
       resourceId: 'someresourceId',
     }, {retryDataKey: 'someKey', errorId: 'errorId'});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const retry = screen.getByText('Retry');
 
     expect(retry).toBeInTheDocument();
-    userEvent.click(retry);
+    await userEvent.click(retry);
     expect(screen.getByText('Confirm retry')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Retry'));
+    await userEvent.click(screen.getByText('Retry'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.errorManager.flowErrorDetails.retry(
         {

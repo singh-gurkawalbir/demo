@@ -99,7 +99,7 @@ describe('DataRetentionPeriod component tests', () => {
     const button = screen.getByRole('button', {name: 'Request upgrade'});
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
 
     expect(screen.getByText(/We will contact you to discuss your business needs and recommend an ideal subscription plan./i)).toBeInTheDocument();
     const confirmSubmitButton = screen.getByRole('button', {name: 'Submit request'});
@@ -107,7 +107,7 @@ describe('DataRetentionPeriod component tests', () => {
 
     expect(confirmSubmitButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(confirmSubmitButton);
+    await userEvent.click(confirmSubmitButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('upgrade', {feature: 'dataRetention'})));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.license.dataRetentionLicenseUpgradeRequested()));
   });
@@ -122,12 +122,12 @@ describe('DataRetentionPeriod component tests', () => {
     const button = screen.getByRole('button', {name: '30 days'});
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const sixtyDaysOption = screen.getByRole('option', {name: '60 days'});
 
     expect(sixtyDaysOption).toBeInTheDocument();
-    userEvent.click(sixtyDaysOption);
+    await userEvent.click(sixtyDaysOption);
 
     expect(screen.getByText('Learn more about data retention')).toBeInTheDocument();
   });

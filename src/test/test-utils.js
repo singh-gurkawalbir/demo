@@ -1,25 +1,27 @@
-import { MuiThemeProvider } from '@material-ui/core';
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import produce from 'immer';
-import themeProvider from '../theme/themeProvider';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
 import rootReducer from '../reducers';
+import themeProvider from '../theme/themeProvider';
 
-const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
   const reduxStore = initialStore || getCreatedStore();
+  const theme = themeProvider('light');
   const utils = renderFun(
     <Provider store={reduxStore}>
-      <MuiThemeProvider theme={theme}>
-        <SnackbarProvider>
-          {ui}
-        </SnackbarProvider>
-      </MuiThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider>
+            {ui}
+          </SnackbarProvider>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>
   );
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -29,7 +28,7 @@ describe('dynaTable UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should render the values accordingly in static mappings dynatable', () => {
+  test('should render the values accordingly in static mappings dynatable', async () => {
     const props = {
       label: '',
       value: [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'Type', import: 'type'}, {export: 'Invoice', import: 'invoice'}],
@@ -67,7 +66,7 @@ describe('dynaTable UI test cases', () => {
       formKey: 'formKey',
     };
 
-    initDynaTable(props);
+    await initDynaTable(props);
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
@@ -75,7 +74,7 @@ describe('dynaTable UI test cases', () => {
     expect(screen.getByDisplayValue('Type')).toBeInTheDocument();
     expect(screen.getByDisplayValue('type')).toBeInTheDocument();
   });
-  test('for updating the text in a row in static map dynatable', () => {
+  test('for updating the text in a row in static map dynatable', async () => {
     const props = {
       label: '',
       rowIndex: 2,
@@ -116,12 +115,12 @@ describe('dynaTable UI test cases', () => {
       isLoggable: false,
     };
 
-    initDynaTable(props);
-    const inputs = screen.getAllByRole('textbox');
+    await initDynaTable(props);
+    const inputs = screen.getAllByRole('combobox');
 
     expect(inputs[4]).toHaveValue('Type');
-    fireEvent.change(inputs[4], { target: { value: '' } });
-    userEvent.type(inputs[4], 'TextChanged');
+    await fireEvent.change(inputs[4], { target: { value: '' } });
+    await userEvent.type(inputs[4], 'TextChanged');
     expect(inputs[4]).toHaveValue('TextChanged');
     expect(mockOnFieldChange).toHaveBeenCalledWith('lookup.mapList', [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'TextChanged', import: 'type'}, {export: 'Invoice', import: 'invoice'}]);
   });

@@ -1,13 +1,11 @@
-import MomentDateFnsUtils from '@date-io/moment';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import {FormLabel} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {FormLabel} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FieldMessage from '../FieldMessage';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
@@ -100,16 +98,19 @@ export default function DynaDate(props) {
         <FormLabel>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
-      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
-
-        <KeyboardDatePicker
+      <LocalizationProvider dateAdapter={AdapterMoment} variant="filled">
+        <DatePicker
           {...isLoggableAttr(isLoggable)}
-          autoOk={closeOnSelect}
-          disableToolbar
+          // disableToolbar
           disabled={disabled}
-          className={classes.keyBoardDateWrapper}
-          variant="inline"
-          fullWidth
+          // className={classes.keyBoardDateWrapper}
+          // variant="inline"
+          closeOnSelect={closeOnSelect}
+          value={dateValue}
+          onChange={setDateValue}
+          slots={{openPickerIcon: CalendarIcon }}
+          disableFuture={props.disableFuture}
+          maxDate={doNotAllowFutureDates && moment()}
           format={dateFormat}
           onKeyDown={e => {
             // this is specifically for qa to inject their date time string
@@ -126,15 +127,10 @@ export default function DynaDate(props) {
 
             e.preventDefault();
           }}
-          value={dateValue}
-          onChange={setDateValue}
-          disableFuture={props.disableFuture}
-          InputProps={{ className: classes.inputDate }}
-          keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
-          maxDate={doNotAllowFutureDates && moment()}
+          // InputProps={{ className: classes.   }}
           />
         <FieldMessage {...props} />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
     </>
   );
 }

@@ -48,12 +48,12 @@ describe('dynaNSSearchCriteria UI tests', () => {
     expect(screen.getByText('Additional search criteria')).toBeInTheDocument();
     expect(screen.getByText('Launch')).toBeInTheDocument();
   });
-  test('should display the search criteria dialog when clicked on Launch button', () => {
+  test('should display the search criteria dialog when clicked on Launch button', async () => {
     renderWithProviders(<DynaNSSearchCriteria {...props} />);
     const launchButton = screen.getByText('Launch');
 
     expect(launchButton).toBeInTheDocument();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     expect(screen.getByText('Operator')).toBeInTheDocument();
     expect(screen.getByText('Search Value')).toBeInTheDocument();
     expect(screen.getByText('Search Value 2')).toBeInTheDocument();
@@ -69,24 +69,24 @@ describe('dynaNSSearchCriteria UI tests', () => {
     const launchButton = screen.getByText('Launch');
 
     expect(launchButton).toBeInTheDocument();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const refreshButton = screen.getByText('Refresh button');
 
     expect(refreshButton).toBeInTheDocument();
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
   });
-  test('should close the form when clocked on Close button', () => {
+  test('should close the form when clocked on Close button', async () => {
     renderWithProviders(<DynaNSSearchCriteria {...props} />);
     const launchButton = screen.getByText('Launch');
 
     expect(launchButton).toBeInTheDocument();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const closeButton = screen.getByText('Close');
 
     expect(closeButton).toBeInTheDocument();
     expect(screen.getByText('Operator')).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByText('Operator')).toBeNull();
   });
 });

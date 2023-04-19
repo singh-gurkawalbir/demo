@@ -4,8 +4,8 @@ import {
   Radio,
   FormLabel,
   FormControl,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -124,6 +124,7 @@ export default function DynaNSSavedSearch(props) {
     <>
       <div>
         <FormControl
+          variant="standard"
           required={required}
           disabled={disabled}
           className={classes.nsSavedSearch}
@@ -144,20 +145,23 @@ export default function DynaNSSavedSearch(props) {
                   value="public"
                   control={<Radio color="primary" />}
                   label="Public"
-                />
+              />
                 <FormControlLabel
                   value="private"
                   control={<Radio color="primary" />}
                   label="Private"
                   className={classes.labelSpace}
-                />
+              />
               </RadioGroup>
               <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />
             </div>
           </div>
         </FormControl>
       </div>
-      <FormControl component="fieldset" className={classes.dynaNsSearched}>
+      <FormControl
+        variant="standard"
+        component="fieldset"
+        className={classes.dynaNsSearched}>
         {searchType === 'public' ? (
           <div className={classes.dynaNsInternalID}>
             <DynaRefreshableSelect
@@ -168,7 +172,7 @@ export default function DynaNSSavedSearch(props) {
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
               helpKey="export.netsuite.restlet.searchId"
-            />
+          />
           </div>
         ) : (
           <div className={classes.dynaNsInternalID}>
@@ -178,7 +182,7 @@ export default function DynaNSSavedSearch(props) {
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
               helpKey="export.netsuite.restlet.searchInternalId"
-            />
+          />
           </div>
         )}
       </FormControl>

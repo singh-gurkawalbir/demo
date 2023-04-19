@@ -1,7 +1,7 @@
-import { FormLabel, TextField } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import { makeStyles } from '@material-ui/core/styles';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import { FormLabel, TextField } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import makeStyles from '@mui/styles/makeStyles';
+import Autocomplete from '@mui/material/Autocomplete';
 import clsx from 'clsx';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
@@ -144,6 +144,7 @@ export default function DynaAutocomplete(props) {
         <FieldHelp {...props} />
       </div>
       <FormControl
+        variant="standard"
         key={id}
         disabled={disabled}
         required={required}

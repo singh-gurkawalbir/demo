@@ -145,48 +145,50 @@ describe('licenses', () => {
     store(connectors, connectorLicenses);
     await initLicenses(props);
 
-    expect(screen.getByRole('columnheader', {name: 'Email'})).toBeInTheDocument();
+    const columnHeaders = screen.getAllByRole('columnheader').map(e => e.textContent);
 
-    expect(screen.getByRole('columnheader', {name: 'Status'})).toBeInTheDocument();
+    expect(columnHeaders).toEqual([
+      'Email',
+      'Status',
+      'Created',
+      'Integration ID',
+      'Expiressorted descending',
+      'Trial expiressorted descending',
+      'Environment',
+      'Actions',
+    ]);
+    expect(screen.getByRole('rowheader', {name: connectorLicenses[0].user.email})).toBeInTheDocument();
+    const rowValues = screen.getAllByRole('cell').map(e => e.textContent);
 
-    expect(screen.getByRole('columnheader', {name: 'Created'})).toBeInTheDocument();
+    expect(rowValues).toEqual([
+      'Installed',
+      '08/28/2022 7:09:16 pm',
+      '123454321',
+      '01/10/2022 (01/10/2022 6:29:59 pm)',
+      '',
+      'Production',
+      '',
+    ]);
 
-    expect(screen.getByRole('columnheader', {name: 'Integration ID'})).toBeInTheDocument();
+    const actionsButton = screen.getByRole('button', {name: 'more'});
 
-    expect(screen.getByRole('columnheader', {name: 'Expires sorted descending'})).toBeInTheDocument();
-
-    expect(screen.getByRole('columnheader', {name: 'Trial expires sorted descending'})).toBeInTheDocument();
-
-    expect(screen.getByRole('columnheader', {name: 'Environment'})).toBeInTheDocument();
-
-    expect(screen.getByRole('columnheader', {name: 'Actions'})).toBeInTheDocument();
-
-    expect(screen.getAllByRole('columnheader')).toHaveLength(8);
-
-    expect(screen.getAllByRole('cell')).toHaveLength(8);
-
-    expect(screen.getByRole('cell', {name: 'Production'})).toBeInTheDocument();
-
-    expect(screen.getByRole('cell', {name: 'Installed'})).toBeInTheDocument();
-    const moreButtonNode = screen.getByRole('button', {name: 'more'});
-
-    expect(moreButtonNode).toBeInTheDocument();
-    userEvent.click(moreButtonNode);
-    const editLicenseButtonNode = await waitFor(() => screen.getByRole('menuitem', {name: 'Edit license'}));
+    expect(actionsButton).toBeInTheDocument();
+    await userEvent.click(actionsButton);
+    const editLicenseButtonNode = screen.getByRole('menuitem', {name: 'Edit license'});
 
     expect(editLicenseButtonNode).toBeInTheDocument();
-    userEvent.click(editLicenseButtonNode);
+    await userEvent.click(editLicenseButtonNode);
     expect(editLicenseButtonNode).not.toBeInTheDocument();
-    const linkNode = document.querySelector('[href="//edit/connectorLicenses/654321"]');
+    const linkNode = screen.getByRole('link', {name: connectorLicenses[0].user.email});
 
-    expect(linkNode).toBeInTheDocument();
-    userEvent.click(moreButtonNode);
-    const deleteLicenseButtonNode = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete license'}));
+    expect(linkNode).toHaveAttribute('href', '//edit/connectorLicenses/654321');
+    await userEvent.click(actionsButton);
+    const deleteLicenseButtonNode = screen.getByRole('menuitem', {name: 'Delete license'});
 
     expect(deleteLicenseButtonNode).toBeInTheDocument();
-    userEvent.click(deleteLicenseButtonNode);
+    await userEvent.click(deleteLicenseButtonNode);
     expect(deleteLicenseButtonNode).not.toBeInTheDocument();
-  }, 30000);
+  });
   test('should able to test the licenses page with no license', async () => {
     const props = {
       match: {
@@ -234,7 +236,7 @@ describe('licenses', () => {
     const noLicenceNode = screen.getByText(/You don't have any licenses/i);
 
     expect(noLicenceNode).toBeInTheDocument();
-    userEvent.click(newLicenseButtonNode);
+    await userEvent.click(newLicenseButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('somegeneratedID', [
       {
         op: 'add',
@@ -289,7 +291,7 @@ describe('licenses', () => {
     const backButtonNode = screen.getAllByRole('button');
 
     expect(backButtonNode[0]).toBeInTheDocument();
-    userEvent.click(backButtonNode[0]);
+    await userEvent.click(backButtonNode[0]);
     expect(mockReplace).toHaveBeenCalledTimes(1);
   });
   test('should able to test the search button on license page', async () => {
@@ -339,7 +341,7 @@ describe('licenses', () => {
 
     store(connectors, connectorLicenses);
     await initLicenses(props);
-    const searchButtonNode = screen.getByRole('textbox', {name: 'search'});
+    const searchButtonNode = screen.getByRole('textbox', {name: /search/i});
 
     expect(searchButtonNode).toBeInTheDocument();
     userEvent.type(searchButtonNode, 'Hey there!');

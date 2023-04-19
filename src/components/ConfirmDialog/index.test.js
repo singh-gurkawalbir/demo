@@ -1,7 +1,7 @@
 
 import React, { useCallback } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import useConfirmDialog, { ConfirmDialogProvider } from '.';
 import { renderWithProviders } from '../../test/test-utils';
@@ -131,9 +131,23 @@ function Test5() {
   );
 }
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('confirm Dialogue Component Testing', () => {
   test('testing what is rendered in the DOM', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test />
@@ -143,14 +157,14 @@ describe('confirm Dialogue Component Testing', () => {
     const value = screen.getByText('Button Clicked');
 
     expect(value).toBeInTheDocument();
-    fireEvent.click(value);
+    await fireEvent.click(value);
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
     const value1 = screen.getByText('Cancel');
 
     expect(value1).toBeInTheDocument();
-    userEvent.click(value1);
+    await userEvent.click(value1);
   });
 
   test('testing dialogue box without userevents', async () => {
@@ -164,15 +178,15 @@ describe('confirm Dialogue Component Testing', () => {
     const value = screen.getByText('Button Clicked');
 
     expect(value).toBeInTheDocument();
-    userEvent.click(value);
+    await userEvent.click(value);
     const value1 = screen.getByRole('textbox');
 
     expect(value1).toBeInTheDocument();
-    userEvent.type(value1, 'Hello, World!');
+    await userEvent.type(value1, 'Hello, World!');
   });
 
   test('testing saveDiscardDialogue', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test2 />
@@ -182,7 +196,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value = screen.getByText('Button Clicked');
 
     expect(value).toBeInTheDocument();
-    fireEvent.click(value);
+    await fireEvent.click(value);
     const value1 = screen.getByText('You’ve got unsaved changes');
 
     expect(value1).toBeInTheDocument();
@@ -202,12 +216,12 @@ describe('confirm Dialogue Component Testing', () => {
     const value4 = screen.getByText('Discard changes');
 
     expect(value4).toBeInTheDocument();
-    fireEvent.click(value3);
+    await fireEvent.click(value3);
     expect(value3).not.toBeInTheDocument();
   });
 
   test('testing defaultConfirmDialog', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test3 />
@@ -217,7 +231,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value = screen.getByText('Button Clicked');
 
     expect(value).toBeInTheDocument();
-    fireEvent.click(value);
+    await fireEvent.click(value);
     const value2 = screen.getByText('Confirm');
 
     expect(value2).toBeInTheDocument();
@@ -227,12 +241,12 @@ describe('confirm Dialogue Component Testing', () => {
     const value4 = screen.getByText('Cancel');
 
     expect(value4).toBeInTheDocument();
-    fireEvent.click(value3);
+    await fireEvent.click(value3);
     expect(value3).not.toBeInTheDocument();
   });
 
   test('testing onClose', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test4 />
@@ -242,11 +256,11 @@ describe('confirm Dialogue Component Testing', () => {
     const value1 = screen.getByText('Button Clicked');
 
     expect(value1).toBeInTheDocument();
-    fireEvent.click(value1);
+    await fireEvent.click(value1);
   });
 
   test('testing Confirm Dialogue with isHtml true', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <ConfirmDialogProvider>
           <Test5 />
@@ -256,7 +270,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value = screen.getByText('Button Clicked');
 
     expect(value).toBeInTheDocument();
-    fireEvent.click(value);
+    await fireEvent.click(value);
     const value1 = screen.getByText('No');
 
     expect(value1).toBeInTheDocument();
@@ -264,7 +278,7 @@ describe('confirm Dialogue Component Testing', () => {
     const value2 = screen.getAllByRole('button');
 
     expect(value2[0]).toBeInTheDocument();
-    userEvent.click(value2[0]);
+    await userEvent.click(value2[0]);
   });
 });
 

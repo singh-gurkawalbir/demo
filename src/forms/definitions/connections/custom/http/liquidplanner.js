@@ -2,13 +2,6 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/http/auth/type'] === 'basic') {
-      retValues['/http/auth/token/token'] = undefined;
-    } else {
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
-    }
-
     return {
       ...retValues,
       '/type': 'http',
@@ -42,11 +35,13 @@ export default {
       fieldId: 'http.auth.basic.username',
       helpKey: 'liquidplanner.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      removeWhen: [{field: 'http.auth.type', isNot: ['basic']}],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'liquidplanner.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      removeWhen: [{field: 'http.auth.type', isNot: ['basic']}],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -56,6 +51,7 @@ export default {
       label: 'API token',
       helpKey: 'liquidplanner.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{field: 'http.auth.type', is: ['basic']}],
     },
     application: {
       fieldId: 'application',

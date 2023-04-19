@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import * as DynaText from './DynaText';
+import { renderWithProviders } from '../../../test/test-utils';
 
 const mockOnBlur = jest.fn();
 const mockOnTouch = jest.fn();
@@ -12,7 +13,7 @@ function initDynaTypeableSelect({props}) {
     <DynaTypeableSelect {...props} />
   );
 
-  render(ui);
+  renderWithProviders(ui);
 }
 
 describe('Testsuite for DynaTypeableSelect', () => {
@@ -20,7 +21,7 @@ describe('Testsuite for DynaTypeableSelect', () => {
     mockOnBlur.mockClear();
     mockOnTouch.mockClear();
   });
-  test('should test the focus in and focus out when focused on a textarea', () => {
+  test('should test the focus in and focus out when focused on a textarea', async () => {
     jest.spyOn(DynaText, 'default').mockImplementation(props => (
       <div>
         <div>id = {props.id}</div>
@@ -57,14 +58,14 @@ describe('Testsuite for DynaTypeableSelect', () => {
     };
 
     initDynaTypeableSelect({props});
-    fireEvent.focusIn(screen.getByTestId('someinput'));
+    await fireEvent.focusIn(screen.getByTestId('someinput'));
     expect(mockOnTouch).toHaveBeenCalledWith('123');
-    expect(screen.getByText('test value')).toBeInTheDocument();
-    fireEvent.focusOut(document.querySelector('input[id="react-select-2-input"]'));
+    await waitFor(() => { expect(screen.getByDisplayValue('test value')).toBeInTheDocument(); });
+    await fireEvent.focusOut(document.querySelector('input[id="react-select-2-input"]'));
     expect(screen.queryByText('test value')).not.toBeInTheDocument();
     expect(document.querySelector('input[id="react-select-2-input"]')).not.toBeInTheDocument();
   });
-  test('should test the focus in when we focused on a input and it should result to not call mockOnTouch', () => {
+  test('should test the focus in when we focused on a input and it should result to not call mockOnTouch', async () => {
     jest.spyOn(DynaText, 'default').mockImplementationOnce(props => (
       <div>
         <div>id = {props.id}</div>
@@ -101,7 +102,7 @@ describe('Testsuite for DynaTypeableSelect', () => {
     };
 
     initDynaTypeableSelect({props});
-    fireEvent.focusIn(screen.getByTestId('someinput'));
+    await fireEvent.focusIn(screen.getByTestId('someinput'));
     expect(mockOnTouch).not.toHaveBeenCalledWith('123');
   });
   test('should test the focus in when focused on a textarea and should test the value', async () => {
@@ -148,17 +149,21 @@ describe('Testsuite for DynaTypeableSelect', () => {
 
     initDynaTypeableSelect({props});
     expect(screen.getByText(/value = label_name/i)).toBeInTheDocument();
-    fireEvent.focusIn(screen.getByTestId('someinput'));
-    const textBoxNode = screen.getByRole('textbox');
+    await fireEvent.focusIn(screen.getByTestId('someinput'));
+    let textBoxNode;
 
-    expect(textBoxNode).toBeInTheDocument();
-    expect(textBoxNode).toHaveValue('label_Name');
-    await userEvent.clear(textBoxNode);
-    expect(textBoxNode).not.toHaveValue('label_Name');
-    await userEvent.type(textBoxNode, 'label_Name_1');
+    waitFor(async () => {
+      textBoxNode = screen.getByRole('textbox');
+
+      expect(textBoxNode).toBeInTheDocument();
+      expect(textBoxNode).toHaveValue('label_Name');
+      await userEvent.clear(textBoxNode);
+      expect(textBoxNode).not.toHaveValue('label_Name');
+      await userEvent.type(textBoxNode, 'label_Name_1');
+    });
     await userEvent.click(document.querySelector('div[tabindex="-1"]'));
-    expect(mockOnBlur).toHaveBeenCalledWith('123', 'value 1');
+    waitFor(() => { expect(mockOnBlur).toHaveBeenCalledWith('123', 'value 1'); });
     expect(screen.queryByText('value = label_name')).not.toBeInTheDocument();
-    expect(screen.queryByText(/value = label_name_1/i)).toBeInTheDocument();
+    waitFor(() => { expect(screen.queryByText(/value = label_name_1/i)).toBeInTheDocument(); });
   });
 });

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {useSelector, shallowEqual, useDispatch} from 'react-redux';
-import {makeStyles, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel } from '@mui/material';
 import clsx from 'clsx';
 import FieldHelp from '../../FieldHelp';
 import useFormContext from '../../../Form/FormContext';

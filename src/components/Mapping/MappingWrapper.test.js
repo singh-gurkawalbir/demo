@@ -163,7 +163,7 @@ describe('mappingWrapper component Test cases', () => {
     });
     const onSortEnd = screen.getByRole('button', {name: 'Mock onSortEnd'});
 
-    userEvent.click(onSortEnd);
+    await userEvent.click(onSortEnd);
 
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.shiftOrder('key_2', 2));

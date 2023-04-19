@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { TableCell } from '@material-ui/core';
+import { TableCell } from '@mui/material';
 import userEvent from '@testing-library/user-event';
 import JobDetail from './JobDetail';
 import { renderWithProviders } from '../../test/test-utils';
@@ -101,7 +101,7 @@ describe('testsuite for JobDetail', () => {
     mockOnViewErrorsClick.mockClear();
     mockOnSelectChange.mockClear();
   });
-  test('should test the spinner when the child job status is in queued', () => {
+  test('should test the spinner when the child job status is in queued', async () => {
     initJobDetail({
       job: {
         numError: 3,
@@ -147,7 +147,7 @@ describe('testsuite for JobDetail', () => {
     const dropDownButtonNode = document.querySelector('button[data-test="toggleJobDetail"]');
 
     expect(dropDownButtonNode).toBeInTheDocument();
-    userEvent.click(dropDownButtonNode);
+    await userEvent.click(dropDownButtonNode);
     expect(screen.getByRole('progressbar').className).toEqual(expect.stringContaining('MuiCircularProgress-'));
   });
   test('should test the job detail when there are no jobs', () => {
@@ -204,7 +204,7 @@ describe('testsuite for JobDetail', () => {
 
     expect(dropDownButtonNode).not.toBeInTheDocument();
   });
-  test('should test the error count by clicking on it', () => {
+  test('should test the error count by clicking on it', async () => {
     initJobDetail({
       job: {
         numError: 3,
@@ -243,11 +243,11 @@ describe('testsuite for JobDetail', () => {
     const viewErrorJobsNode = document.querySelector('td[data-test="view-job-error"]');
 
     expect(viewErrorJobsNode).toBeInTheDocument();
-    userEvent.click(viewErrorJobsNode);
+    await userEvent.click(viewErrorJobsNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.requestFamily({ jobId: '321' }));
     expect(mockOnViewErrorsClick).toHaveBeenCalledWith({jobId: '321', showResolved: false});
   });
-  test('should test the resolved count by clicking on it', () => {
+  test('should test the resolved count by clicking on it', async () => {
     initJobDetail({
       job: {
         numError: 3,
@@ -286,11 +286,11 @@ describe('testsuite for JobDetail', () => {
     const resolvedCountNode = document.querySelector('td[data-test="view-job-resolved"]');
 
     expect(resolvedCountNode).toBeInTheDocument();
-    userEvent.click(resolvedCountNode);
+    await userEvent.click(resolvedCountNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.requestFamily({ jobId: '321' }));
     expect(mockOnViewErrorsClick).toHaveBeenCalledWith({jobId: '321', showResolved: true});
   });
-  test('should test the child job details by clicking on arrow button', () => {
+  test('should test the child job details by clicking on arrow button', async () => {
     initJobDetail({
       job: {
         numError: 3,
@@ -333,11 +333,11 @@ describe('testsuite for JobDetail', () => {
     const dropDownButtonNode = document.querySelector('button[data-test="toggleJobDetail"]');
 
     expect(dropDownButtonNode).toBeInTheDocument();
-    userEvent.click(dropDownButtonNode);
+    await userEvent.click(dropDownButtonNode);
     const childButtonNode = document.querySelector('button[data-test="button"]');
 
     expect(childButtonNode).toBeInTheDocument();
-    userEvent.click(childButtonNode);
+    await userEvent.click(childButtonNode);
     expect(mockOnSelectChange).toHaveBeenCalledWith({flowDisabled: false, selected: true, selectedChildJobIds: [839]}, '321');
   });
 });

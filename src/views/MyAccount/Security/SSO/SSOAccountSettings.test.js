@@ -130,9 +130,9 @@ describe('testsuite for SSO Account Settings', () => {
     expect(screen.getByText(/enable oidc-based sso/i)).toBeInTheDocument();
     const switchButtonNode = document.querySelector('div > div > div > div:nth-child(2) > div > div > div > div > div > div > div');
 
-    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+    expect(switchButtonNode).toHaveAttribute('class', expect.stringContaining('react-toggle'));
     await userEvent.click(switchButtonNode);
-    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitchChecked-'));
+    expect(switchButtonNode).toHaveAttribute('class', expect.stringContaining('react-toggle react-toggle--checked react-toggle--focus'));
   });
   test('should test the SSO when OIDC-based is enabled and should test the loading spinner when isEnableSSOSwitchInProgress is true', async () => {
     await initSSOAccountSettings({
@@ -199,7 +199,7 @@ describe('testsuite for SSO Account Settings', () => {
     });
     const switchButtonNode = document.querySelector('div > div > div > div:nth-child(2) > div > div > div > div > div > div > div');
 
-    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+    expect(switchButtonNode).toHaveAttribute('class', expect.stringContaining('react-toggle react-toggle--checked'));
     await userEvent.click(switchButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'RESOURCE_PATCH',
@@ -238,21 +238,21 @@ describe('testsuite for SSO Account Settings', () => {
     const issueURLInputNode = document.querySelector('#issuerURL > div > div > div:nth-child(2) > div > input');
 
     expect(issueURLInputNode).toBeInTheDocument();
-    userEvent.type(issueURLInputNode, 'https://test.com');
+    await userEvent.type(issueURLInputNode, 'https://test.com');
     const clientIdInputNode = document.querySelector('#clientId > div > div > div:nth-child(2) > div > input');
 
     expect(clientIdInputNode).toBeInTheDocument();
-    userEvent.type(clientIdInputNode, 'sampleClientId');
+    await userEvent.type(clientIdInputNode, 'sampleClientId');
 
     const clientSecretInputNode = document.querySelector('#clientSecret > div > div > div:nth-child(2) > div > input');
 
     expect(clientSecretInputNode).toBeInTheDocument();
-    userEvent.type(clientSecretInputNode, '12345');
+    await userEvent.type(clientSecretInputNode, '12345');
 
     const orgIdInputNode = document.querySelector('#orgId > div > div > div > div:nth-child(2) > div > input');
 
     expect(orgIdInputNode).toBeInTheDocument();
-    userEvent.type(orgIdInputNode, 'testorg');
+    await userEvent.type(orgIdInputNode, 'testorg');
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'SSO_ORG_ID_VALIDATION_REQUEST', orgId: 'testorg' }));
   });
   test('should test the SSO Account settings page by clicking switch button', async () => {
@@ -454,7 +454,7 @@ describe('testsuite for SSO Account Settings', () => {
     const cancelButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Cancel');
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     await waitFor(() => expect(cancelButtonNode).not.toBeInTheDocument());
     await userEvent.click(requestUpgradeButton);
     const submitRequestButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Submit request');
@@ -492,7 +492,7 @@ describe('testsuite for SSO Account Settings', () => {
     const closeButtonNode = screen.getByRole('button', {name: /close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     await waitFor(() => expect(closeButtonNode).not.toBeInTheDocument());
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'LICENSE_CLEAR_ACTION_MESSAGE' });
   });

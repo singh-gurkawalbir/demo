@@ -64,7 +64,7 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
     expect(screen.getByText('End')).toBeInTheDocument();
     expect(screen.getByText('Length')).toBeInTheDocument();
     expect(screen.getByText('Regex')).toBeInTheDocument();
-    const textfields = screen.getAllByRole('textbox');
+    const textfields = screen.getAllByRole('combobox');
 
     expect(textfields).toHaveLength(10);
   });
@@ -97,9 +97,9 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
     ];
 
     renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />, {initialStore});
-    const fields = screen.getAllByRole('textbox');
+    const fields = screen.getAllByRole('combobox');
 
-    userEvent.type(fields[0], 'a');
+    await userEvent.type(fields[0], 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('testId', newval));
   });
 });

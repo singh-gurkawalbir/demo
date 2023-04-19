@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -196,23 +196,25 @@ describe('Testsuite for SelectApplications', () => {
     };
 
     initSelectApplication({props});
-    const textBox = screen.getByRole('textbox');
+    waitFor(async () => {
+      const textBox = screen.getByRole('textbox');
 
-    expect(textBox).toBeInTheDocument();
-    expect(document.querySelector('input').getAttribute('value')).toBe('');
-    await userEvent.type(textBox, 'test');
-    expect(screen.getByText('test')).toBeInTheDocument();
-    expect(document.querySelector('input').getAttribute('value')).toBe('test');
-    expect(screen.getByText(/test_label/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText('Test Group App'));
-    expect(screen.queryByText(/test_label/i)).not.toBeInTheDocument();
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit('connections', 'test_resource_id', {name: 'Test Group App', test_id: 'test_groupapp_id'}, {
-      isExact: true,
-      params: {
-        operation: 'add',
-      },
-      path: '/test/:operation',
-      url: '/test/add',
-    }, false, false, 'test_flow_id'));
+      expect(textBox).toBeInTheDocument();
+      expect(document.querySelector('input').getAttribute('value')).toBe('');
+      await userEvent.type(textBox, 'test');
+      expect(screen.getByText('test')).toBeInTheDocument();
+      expect(document.querySelector('input').getAttribute('value')).toBe('test');
+      expect(screen.getByText(/test_label/i)).toBeInTheDocument();
+      await userEvent.click(screen.getByText('Test Group App'));
+      expect(screen.queryByText(/test_label/i)).not.toBeInTheDocument();
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit('connections', 'test_resource_id', {name: 'Test Group App', test_id: 'test_groupapp_id'}, {
+        isExact: true,
+        params: {
+          operation: 'add',
+        },
+        path: '/test/:operation',
+        url: '/test/add',
+      }, false, false, 'test_flow_id'));
+    });
   });
 });

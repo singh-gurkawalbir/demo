@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { FormControl, InputLabel } from '@material-ui/core';
+import { FormControl, InputLabel } from '@mui/material';
 import Select, { components } from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
@@ -145,11 +145,14 @@ export default function SelectApplication(props) {
   const dispatch = useDispatch();
   const handleChange = useCallback(e => {
     ref?.current?.select?.blur();
-    const newValue = isMulti ? [...value, e.value] : e.value;
-    const label = !isMulti && e.label;
+    const inputVal = e ? e.value : '';
+    const newValue = isMulti ? [...value, inputVal] : inputVal;
+    const label = !isMulti && (e ? e.label : '');
 
     setInputValue(value.label);
-    setMenuIsOpen(false);
+    if (e?.value) {
+      setMenuIsOpen(false);
+    }
     if (onFieldChange) {
       onFieldChange(id, newValue);
     }
@@ -194,6 +197,7 @@ export default function SelectApplication(props) {
 
   const handleInputChange = (newVal, event) => {
     if (event.action === 'input-change') {
+      setMenuIsOpen(true);
       setInputValue(newVal);
     }
   };
@@ -205,7 +209,7 @@ export default function SelectApplication(props) {
     if (selectedValue) {
       setInputValue(selectedValue);
     }
-    setMenuIsOpen(!value);
+    setMenuIsOpen(false);
   };
 
   const customReactSelectStyles = CustomReactSelectStyles();
@@ -225,6 +229,7 @@ export default function SelectApplication(props) {
 
   return (
     <FormControl
+      variant="standard"
       data-test={id}
       key={id}
       disabled={disabled}
@@ -252,6 +257,8 @@ export default function SelectApplication(props) {
         autoFocus
         onBlur={handleBlur}
         styles={customStyles}
+        isClearable
+        backspaceRemovesValue
         filterOption={filterOptions}
       />
 

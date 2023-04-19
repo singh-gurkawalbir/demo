@@ -1,11 +1,12 @@
 import { withRouter, useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useState, useCallback } from 'react';
-import { Typography, Link } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Typography, Link } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import clsx from 'clsx';
+import {EditableText} from '@celigo/fuse-ui';
 import CeligoPageBar from '../../../components/CeligoPageBar';
-import EditableText from '../../../components/EditableText';
 import { selectors } from '../../../reducers';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import PageGenerator from './PageGenerator';
@@ -104,15 +105,6 @@ const useStyles = makeStyles(theme => ({
   dataLoaderHelp: {
     margin: theme.spacing(5, 0, 0, 5),
     maxWidth: 450,
-  },
-  // NOTE: 52px is collapsed left side bar. 410px is right page header action buttons + padding
-  // we use these to force the input to be as large as possible in the pageBar
-  // without causing any weird wrapping.
-  editableTextInput: {
-    width: `calc(100vw - ${52 + 410}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
@@ -232,15 +224,9 @@ function FlowBuilder() {
           title={(
             <EditableText
               disabled={isViewMode || !flow.editable || isIntegrationApp}
-              text={flow.ioFlowName || flow.name}
+              text={flow.ioFlowName || flow.name || `Unnamed (id:${flowId})`}
             // multiline
-              defaultText={`Unnamed (id:${flowId})`}
               onChange={handleTitleChange}
-              inputClassName={
-              drawerOpened
-                ? classes.editableTextInputShift
-                : classes.editableTextInput
-            }
           />
           )}
           subtitle={(
@@ -310,7 +296,7 @@ function FlowBuilder() {
               <Typography className={classes.resultContainer}>
                 The ability to change settings for the data flow you have
                 selected is not currently supported. Please{' '}
-                <Link href="https://celigo.com/support" target="_blank">
+                <Link href="https://celigo.com/support" target="_blank" underline="hover">
                   contact Celigo Support
                 </Link>{' '}
                 to request changes.
@@ -355,7 +341,7 @@ function FlowBuilder() {
                 className={classes.fabContainer}
                 style={{
                   bottom: bottomDrawerSize
-                    ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
+                    ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)})`
                     : bottomDrawerMin + theme.spacing(3),
                 }}
               />

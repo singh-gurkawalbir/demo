@@ -39,7 +39,7 @@ function initImports(actionProps, data = []) {
   renderWithProviders(ui, {initialStore});
 }
 describe('uI test cases for metadata', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: '5ffad3d156784935214ed200g7',
       alias: 'aliastest',
@@ -60,10 +60,11 @@ describe('uI test cases for metadata', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: 'aliastest'})).toBeInTheDocument();
+
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'aliastest',
       'concur expense',
       'Import',
       '',
@@ -71,7 +72,7 @@ describe('uI test cases for metadata', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

@@ -50,7 +50,7 @@ describe('test suite for UpgradeErrorManagement', () => {
 
   beforeEach(() => {
     initialStore = getCreatedStore();
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
     jest.advanceTimersByTime(1000);
   });
 
@@ -104,7 +104,7 @@ describe('test suite for UpgradeErrorManagement', () => {
     await initUpgradeErrorManagement(initialStore);
     const cancelButton = document.querySelector('[data-test="em2.0_later"]');
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(mockReplaceFn).toHaveBeenLastCalledWith('/');
   });
 
@@ -115,7 +115,7 @@ describe('test suite for UpgradeErrorManagement', () => {
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
 
-    userEvent.click(upgradeButton);
+    await userEvent.click(upgradeButton);
 
     const dialog = screen.getByRole('dialog');
     const { getByRole, getByText, getByTestId } = within(dialog);
@@ -140,14 +140,14 @@ describe('test suite for UpgradeErrorManagement', () => {
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
 
-    userEvent.click(upgradeButton);
+    await userEvent.click(upgradeButton);
 
     const dialog = screen.getByRole('dialog');
     const { getByTestId } = within(dialog);
     const closeButton = getByTestId('closeModalDialog');
 
     expect(closeButton).toBeEnabled();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -158,14 +158,14 @@ describe('test suite for UpgradeErrorManagement', () => {
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
 
-    userEvent.click(upgradeButton);
+    await userEvent.click(upgradeButton);
 
     const dialog = screen.getByRole('dialog');
     const { getByRole } = within(dialog);
     const cancelButton = getByRole('button', {name: 'No, cancel'});
 
     expect(cancelButton).toBeEnabled();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -182,14 +182,14 @@ describe('test suite for UpgradeErrorManagement', () => {
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = document.querySelector('[data-test="em2.0_upgrade"]');
 
-    userEvent.click(upgradeButton);
+    await userEvent.click(upgradeButton);
 
     const dialog = screen.getByRole('dialog');
     const { getByRole } = within(dialog);
     const confirmButton = getByRole('button', {name: 'Yes, upgrade'});
 
     expect(confirmButton).toBeEnabled();
-    userEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(upgradeButton).toHaveTextContent('Upgrading...');
     await waitFor(() => expect(upgradeButton).toHaveTextContent('Upgrading...'));

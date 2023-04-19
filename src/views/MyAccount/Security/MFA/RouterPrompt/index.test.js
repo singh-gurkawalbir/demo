@@ -37,6 +37,20 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('Testsuite for Router prompt', () => {
   test('should test the router prompt when show is true and click on cancel button on modal dialog box', async () => {
     mockHistoryBlock = jest.fn(cb => {
@@ -49,7 +63,7 @@ describe('Testsuite for Router prompt', () => {
     const cancelButtonNode = screen.getByRole('button', {name: 'Cancel'});
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(utils.container).toBeEmptyDOMElement();
   });
   test('should test the router prompt when show is true and click on continue setup button on modal dialog box', async () => {

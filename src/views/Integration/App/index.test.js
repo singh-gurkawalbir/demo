@@ -2,6 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 import { renderWithProviders} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions/index';
@@ -65,8 +66,10 @@ describe('IntegrationApp UI testing', () => {
   async function renderWithStore(integrationId) {
     const {store} = renderWithProviders(<MemoryRouter><IntegrationApp integrationId={integrationId} /></MemoryRouter>);
 
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    waitFor(async () => {
+      act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+      await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    });
   }
 
   test('should test when no integration id is provided', () => {
@@ -81,9 +84,11 @@ describe('IntegrationApp UI testing', () => {
   });
   test('should test the components which are rendered', async () => {
     await renderWithStore('5ff579d745ceef7dcd797c15');
-    expect(screen.getByText('PageBar')).toBeInTheDocument();
-    expect(screen.getByText('IntegrationTabs')).toBeInTheDocument();
-    expect(screen.getByText('Resource')).toBeInTheDocument();
-    expect(screen.getByText('QueuedJobsDrawer')).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByText('PageBar')).toBeInTheDocument();
+      expect(screen.getByText('IntegrationTabs')).toBeInTheDocument();
+      expect(screen.getByText('Resource')).toBeInTheDocument();
+      expect(screen.getByText('QueuedJobsDrawer')).toBeInTheDocument();
+    });
   });
 });

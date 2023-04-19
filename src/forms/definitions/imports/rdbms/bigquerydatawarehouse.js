@@ -4,13 +4,8 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/rdbms/queryType'] === 'BULK INSERT') {
-      newValues['/rdbms/query'] = undefined;
-    }
     if (newValues['/rdbms/queryType'] === 'MERGE') {
       newValues['/rdbms/bulkInsert'] = undefined;
-      delete newValues['/rdbms/bulkInsert/tableName'];
-      delete newValues['/rdbms/bulkInsert/batchSize'];
     }
 
     newValues['/rdbms/queryType'] = [newValues['/rdbms/queryType']];
@@ -39,6 +34,7 @@ export default {
           is: ['BULK INSERT'],
         },
       ],
+      deleteWhen: [{field: 'rdbms.queryType', is: ['MERGE']}],
     },
     'rdbms.query': {
       id: 'rdbms.query',
@@ -59,9 +55,11 @@ export default {
           is: ['MERGE', 'COPY'],
         },
       ],
+      removeWhen: [{ field: 'rdbms.queryType', is: ['BULK INSERT'] }],
     },
     'rdbms.bulkInsert.tableName': {
       fieldId: 'rdbms.bulkInsert.tableName',
+      deleteWhen: [{field: 'rdbms.queryType', is: ['MERGE']}],
     },
     advancedSettings: { formId: 'advancedSettings' },
     'rdbms.queryType': {

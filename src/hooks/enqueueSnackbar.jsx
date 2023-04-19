@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@mui/material/IconButton';
 import CloseIcon from '../components/icons/CloseIcon';
 import { TextButton } from '../components/Buttons';
 
@@ -46,7 +46,8 @@ export default function useEnqueueSnackbar() {
               onClick={() => {
                 closeSnackbar(key);
                 handleClose && handleClose(null, 'close');
-              }}>
+              }}
+              size="large">
               <CloseIcon />
             </IconButton>
           </>

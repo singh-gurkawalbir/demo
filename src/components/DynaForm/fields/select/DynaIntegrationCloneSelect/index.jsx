@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import {useSelector } from 'react-redux';
-import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Select, { components } from 'react-select';
 import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
@@ -74,6 +75,7 @@ export const CloneSelect = props => {
         <FieldHelp {...props} />
       </div>
       <FormControl
+        variant="standard"
         className={classes.fullWidth}
         error={!isValid}
         disabled={disabled}
@@ -89,7 +91,7 @@ export const CloneSelect = props => {
             styles={customStyles}
             isSearchable={false}
             defaultMenuIsOpen={options?.length}
-          />
+        />
         </span>
         { !!options?.length && <FieldMessage {...props} /> }
       </FormControl>

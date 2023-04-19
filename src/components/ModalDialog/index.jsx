@@ -1,12 +1,12 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
+import Dialog from '@mui/material/Dialog';
 import clsx from 'clsx';
-import DialogActions from '@material-ui/core/DialogActions';
-import { Typography } from '@material-ui/core';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
+import DialogActions from '@mui/material/DialogActions';
+import { Typography } from '@mui/material';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '../icons/CloseIcon';
 import { OutlinedButton } from '../Buttons';
 
@@ -14,14 +14,14 @@ const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
     padding: theme.spacing(1.5, 2),
-
+    marginBottom: theme.spacing(2),
   },
   actionButton: {
     float: 'right',
     textTransform: 'inherit',
   },
   titleText: {
-    maxWidth: `calc(100% - ${theme.spacing(4)}px)`,
+    maxWidth: `calc(100% - ${theme.spacing(4)})`,
     flex: 1,
     wordBreak: 'break-word',
     '& > .MuiTypography-root': {
@@ -30,9 +30,9 @@ const useStyles = makeStyles(theme => ({
   },
   closeButton: {
     position: 'absolute',
-    top: theme.spacing(1) + 4,
-    right: theme.spacing(2) + 2,
-    padding: theme.spacing(1) - 3,
+    top: theme.spacing(1),
+    right: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   actions: {
     justifyContent: 'flex-start',
@@ -80,9 +80,7 @@ export default function ModalDialog({
       fullScreen={fullScreen}
       PaperProps={{ className: classes.paper }}>
       {children[0] && (
-        <DialogTitle
-          className={clsx(classes.dialogTitle, classes[minWidth])}
-          disableTypography>
+        <DialogTitle className={clsx(classes.dialogTitle, classes[minWidth])}>
           <Typography variant="h3" component="div" className={classes.titleText}>
             {children[0]}
           </Typography>
@@ -91,7 +89,8 @@ export default function ModalDialog({
               onClick={onClose}
               className={classes.closeButton}
               disabled={disableClose}
-              autoFocus>
+              autoFocus
+              size="large">
               <CloseIcon data-testid="closeModalDialog" />
             </IconButton>
           )}

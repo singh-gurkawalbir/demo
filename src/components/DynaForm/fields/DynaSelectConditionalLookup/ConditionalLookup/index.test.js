@@ -77,7 +77,7 @@ describe('Testsuite for Conditional Lookup', () => {
     expect(screen.getByRole('button', { name: /on save/i })).toBeDisabled();
     expect(screen.getByRole('button', { name: /on cancel/i })).toBeDisabled();
   });
-  test('should test the Manage lookup as it should render the value with data when there is lookup name and value name and should test the save and close button', () => {
+  test('should test the Manage lookup as it should render the value with data when there is lookup name and value name and should test the save and close button', async () => {
     initConditionalLookup({onSave: mockOnSave, disabled: false, importId: '123', flowId: '234', props: {test: 'test1'}, paramsData: {lookupName: 'testLookupName'}, pathData: '/test/:lookupName', pathnameData: '/test/testLookupName', mappingData: {mapping: {lookups: [{isConditionalLookup: true, name: 'testLookupName'}]}}});
     expect(screen.getByText(/mock manage lookup/i)).toBeInTheDocument();
     expect(screen.getByText(/value = \{"isconditionallookup":true,"name":"testlookupname"\}/i)).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe('Testsuite for Conditional Lookup', () => {
     });
 
     expect(onSaveButtonNode).toBeInTheDocument();
-    userEvent.click(onSaveButtonNode);
+    await userEvent.click(onSaveButtonNode);
     expect(mockOnSave).toHaveBeenCalledWith(true, {isConditionalLookup: true, name: 'testLookupName'}, undefined);
     expect(mockHistoryGoBack).toHaveBeenCalled();
     mockHistoryGoBack.mockClear();
@@ -99,7 +99,7 @@ describe('Testsuite for Conditional Lookup', () => {
     });
 
     expect(onCancelButtonNode).toBeInTheDocument();
-    userEvent.click(onCancelButtonNode);
+    await userEvent.click(onCancelButtonNode);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 });

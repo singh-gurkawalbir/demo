@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
@@ -60,7 +59,7 @@ describe('test suite for generate URL field', () => {
     onFieldChange.mockClear();
   });
 
-  test('should not be able to manually edit the URL', () => {
+  test('should not be able to manually edit the URL', async () => {
     const props = {
       resourceId: '626abc',
       resourceType: 'exports',
@@ -97,19 +96,19 @@ describe('test suite for generate URL field', () => {
     renderWithProviders(<GenerateUrl {...props} />);
     const label = document.querySelector('label');
     const inputUrlField = screen.getByRole('textbox');
-    const copyButton = screen.getByTitle('Copy to clipboard');
+    const copyButton = screen.getByLabelText('Copy to clipboard');
 
     expect(label).toHaveTextContent(`${props.label} *`);
     expect(inputUrlField).toHaveValue(props.value);
     expect(inputUrlField).toBeDisabled();
     expect(inputUrlField).toBeRequired();
 
-    userEvent.click(copyButton);
+    await userEvent.click(copyButton);
     expect(screen.getByRole('alert')).toHaveTextContent('URL copied to clipboard.');
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'https://api.localhost/v1/exports/626abc/data', true);
   });
 
-  test("should be able to generate URL ( if value doesn't exist )", () => {
+  test("should be able to generate URL ( if value doesn't exist )", async () => {
     const props = {
       resourceId: 'new-k65a',
       resourceType: 'exports',
@@ -144,7 +143,10 @@ describe('test suite for generate URL field', () => {
     renderWithProviders(<GenerateUrl {...props} />);
     const generateUrlBtn = screen.getAllByRole('button')[1];
 
-    userEvent.click(generateUrlBtn);
+    await userEvent.hover(generateUrlBtn);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Generate URL'));
+
+    await userEvent.click(generateUrlBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit(
       'exports',
       props.resourceId,
@@ -156,7 +158,7 @@ describe('test suite for generate URL field', () => {
     ));
   });
 
-  test('should not generate URL for a new webhook listener if username, password, or path is invalid', () => {
+  test('should not generate URL for a new webhook listener if username, password, or path is invalid', async () => {
     mockFormContext.fields['webhook.username'].isValid = false;
     mockFormContext.fields['webhook.path'].value = 'valid path';
     delete mockFormContext.fields['webhook.password'];
@@ -194,7 +196,7 @@ describe('test suite for generate URL field', () => {
     renderWithProviders(<GenerateUrl {...props} />);
     const generateUrlBtn = screen.getAllByRole('button')[1];
 
-    userEvent.click(generateUrlBtn);
+    await userEvent.click(generateUrlBtn);
     expect(mockDispatchFn).not.toHaveBeenCalled();
     expect(onFieldChange).toHaveBeenCalledWith('webhook.path', 'valid path');
     expect(onFieldChange).toHaveBeenCalledWith('webhook.username', undefined);

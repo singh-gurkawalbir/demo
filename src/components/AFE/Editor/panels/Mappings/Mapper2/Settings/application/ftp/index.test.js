@@ -7,6 +7,24 @@ import { renderWithProviders, reduxStore, mutateStore} from '../../../../../../.
 
 const initialStore = reduxStore;
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 mutateStore(initialStore, draft => {
   draft.session.mapping = {mapping: {
     flowId: '62f0bdfaf8b63672312bbe36',
@@ -75,33 +93,33 @@ describe('metadata for FTP type file test cases', () => {
   test('should show only two option for array type data', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const numberArray = screen.getByRole('menuitem', {name: '[number]'});
 
-    userEvent.click(numberArray);
+    await userEvent.click(numberArray);
     await waitFor(() => expect(numberArray).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
 
     const menuItem = screen.getAllByRole('menuitem');
 
     const list = menuItem.map(each => each.textContent);
 
     expect(list).toEqual(
-      ['Please select...', 'Standard...', 'Hard-coded...']
+      ['Please select', 'Standard', 'Hard-coded']
     );
   });
   test('should show handle look up change option for date field should be shown', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const numberOption = screen.getByRole('menuitem', {name: 'number'});
 
-    userEvent.click(numberOption);
+    await userEvent.click(numberOption);
     await waitFor(() => expect(numberOption).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const standardOption = screen.getByRole('menuitem', {name: 'Standard'});
 
-    userEvent.click(standardOption);
+    await userEvent.click(standardOption);
 
     await waitFor(() => expect(standardOption).not.toBeInTheDocument());
 
@@ -110,15 +128,15 @@ describe('metadata for FTP type file test cases', () => {
   test('should not show option for data field for boolean data', async () => {
     initFunction();
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const booleanOption = screen.getByRole('menuitem', {name: 'boolean'});
 
-    userEvent.click(booleanOption);
+    await userEvent.click(booleanOption);
     await waitFor(() => expect(booleanOption).not.toBeInTheDocument());
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const standardOption = screen.getByRole('menuitem', {name: 'Standard'});
 
-    userEvent.click(standardOption);
+    await userEvent.click(standardOption);
 
     await waitFor(() => expect(standardOption).not.toBeInTheDocument());
 

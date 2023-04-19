@@ -1,5 +1,5 @@
 
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -144,7 +144,7 @@ describe('testsuite for JobErrorTable', () => {
       onCloseClick: mockOnCloseClick,
       jobErrorsPreviewStatus: 'requested',
     });
-    const loadingJoBErrorsSpinner = document.querySelector('div > div:nth-child(3) > div:nth-child(1) > svg');
+    const loadingJoBErrorsSpinner = document.querySelector('svg');
 
     expect(loadingJoBErrorsSpinner).toBeInTheDocument();
     expect(screen.getByText(/Loading job errors/i)).toBeInTheDocument();
@@ -232,7 +232,7 @@ describe('testsuite for JobErrorTable', () => {
   //     });
 
   //     expect(retryAllButtonNode).toBeInTheDocument();
-  //     userEvent.click(retryAllButtonNode);
+  //     await userEvent.click(retryAllButtonNode);
   //     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retrySelected({
   //       jobs: [{ _flowJobId: 234, _id: 123 }],
   //       match: { path: '/', url: '/', params: {}, isExact: true },
@@ -243,7 +243,7 @@ describe('testsuite for JobErrorTable', () => {
   //     });
 
   //     expect(undoButtonNode).toBeInTheDocument();
-  //     userEvent.click(undoButtonNode);
+  //     await userEvent.click(undoButtonNode);
   //     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retryUndo({ parentJobId: 234, childJobId: 123 }));
   //   });
   test('should test the retry all button when there are job errors and the job status is success when number of errors is 1', async () => {
@@ -277,7 +277,7 @@ describe('testsuite for JobErrorTable', () => {
     });
 
     expect(retryAllButtonNode).toBeInTheDocument();
-    userEvent.click(retryAllButtonNode);
+    await userEvent.click(retryAllButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retrySelected({
       jobs: [{ _flowJobId: '234', _id: '123' }],
       match: { path: '/', url: '/', params: {}, isExact: true },
@@ -288,7 +288,7 @@ describe('testsuite for JobErrorTable', () => {
     });
 
     expect(undoButtonNode).toBeInTheDocument();
-    userEvent.click(undoButtonNode);
+    await userEvent.click(undoButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retryUndo({ parentJobId: '234', childJobId: '123' }));
     await waitFor(() => expect(undoButtonNode).not.toBeInTheDocument());
   });
@@ -330,18 +330,18 @@ describe('testsuite for JobErrorTable', () => {
     });
 
     expect(retryAllButtonNode).toBeInTheDocument();
-    userEvent.click(retryAllButtonNode);
+    await userEvent.click(retryAllButtonNode);
     expect(screen.getByText(/2 errors retried\./i)).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {
       name: /close/i,
     });
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retryCommit({jobs: [{_flowJobId: '234'}]}));
     await waitFor(() => expect(closeButtonNode).not.toBeInTheDocument());
   });
-  test('should test the retry all button after selecting an error', () => {
+  test('should test the retry all button after selecting an error', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -384,17 +384,17 @@ describe('testsuite for JobErrorTable', () => {
     const checkboxButtonNode = screen.getAllByRole('checkbox');
 
     expect(checkboxButtonNode[0]).toBeInTheDocument();
-    userEvent.click(checkboxButtonNode[0]);
+    await userEvent.click(checkboxButtonNode[0]);
     const retry2errorsButtonNode = screen.getByRole('button', {name: 'Retry 2 errors'});
 
     expect(retry2errorsButtonNode).toBeInTheDocument();
-    userEvent.click(retry2errorsButtonNode);
+    await userEvent.click(retry2errorsButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retrySelectedRetries({jobId: '123',
       flowJobId: '234',
       selectedRetryIds: ['987', '765'],
       match: { path: '/', url: '/', params: {}, isExact: true }}));
   });
-  test('should test the retry all button after selecting a single error', () => {
+  test('should test the retry all button after selecting a single error', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -429,11 +429,11 @@ describe('testsuite for JobErrorTable', () => {
     const checkboxButtonNode = screen.getAllByRole('checkbox');
 
     expect(checkboxButtonNode[0]).toBeInTheDocument();
-    userEvent.click(checkboxButtonNode[0]);
+    await userEvent.click(checkboxButtonNode[0]);
     const retry1errorButtonNode = screen.getByRole('button', {name: 'Retry 1 error'});
 
     expect(retry1errorButtonNode).toBeInTheDocument();
-    userEvent.click(retry1errorButtonNode);
+    await userEvent.click(retry1errorButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.retrySelectedRetries({jobId: '123',
       flowJobId: '234',
       selectedRetryIds: ['987'],
@@ -471,7 +471,7 @@ describe('testsuite for JobErrorTable', () => {
     expect(markResolvedButtonNode).toBeInTheDocument();
     expect(markResolvedButtonNode).toBeDisabled();
   });
-  test('should test the mark resolved button when there are no resolved jobs and only 1 job error', () => {
+  test('should test the mark resolved button when there are no resolved jobs and only 1 job error', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -504,15 +504,15 @@ describe('testsuite for JobErrorTable', () => {
     const checkboxNode = screen.getAllByRole('checkbox');
 
     expect(checkboxNode[0]).toBeInTheDocument();
-    userEvent.click(checkboxNode[0]);
+    await userEvent.click(checkboxNode[0]);
     expect(markResolvedButtonNode.textContent).toBe('Mark resolved 1 error');
-    userEvent.click(markResolvedButtonNode);
+    await userEvent.click(markResolvedButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelectedErrors({jobId: '123',
       flowJobId: '234',
       selectedErrorIds: ['1'],
       match: { path: '/', url: '/', params: {}, isExact: true }}));
   });
-  test('should test the mark resolved button when there are no resolved jobs and more than more than 1 job error', () => {
+  test('should test the mark resolved button when there are no resolved jobs and more than more than 1 job error', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -553,9 +553,9 @@ describe('testsuite for JobErrorTable', () => {
     const checkboxNode = screen.getAllByRole('checkbox');
 
     expect(checkboxNode[0]).toBeInTheDocument();
-    userEvent.click(checkboxNode[0]);
+    await userEvent.click(checkboxNode[0]);
     expect(markResolvedButtonNode.textContent).toBe('Mark resolved 2 errors');
-    userEvent.click(markResolvedButtonNode);
+    await userEvent.click(markResolvedButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelectedErrors({
       jobId: '123',
       flowJobId: '234',
@@ -563,7 +563,7 @@ describe('testsuite for JobErrorTable', () => {
       match: { path: '/', url: '/', params: {}, isExact: true },
     }));
   });
-  test('should test the mark resolved button without selecting a job and by clicking on undo button of snackbar', () => {
+  test('should test the mark resolved button without selecting a job and by clicking on undo button of snackbar', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -593,7 +593,7 @@ describe('testsuite for JobErrorTable', () => {
     const markResolvedButtonNode = screen.getByRole('button', {name: /mark resolved/i});
 
     expect(markResolvedButtonNode).toBeInTheDocument();
-    userEvent.click(markResolvedButtonNode);
+    await userEvent.click(markResolvedButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelected({
       jobs: [{ _flowJobId: '234', _id: '123' }],
       match: { path: '/', url: '/', params: {}, isExact: true },
@@ -604,10 +604,10 @@ describe('testsuite for JobErrorTable', () => {
     });
 
     expect(undoButtonNode).toBeInTheDocument();
-    userEvent.click(undoButtonNode);
+    await userEvent.click(undoButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveUndo({ parentJobId: '234', childJobId: '123' }));
   });
-  test('should test the mark resolved button without selecting a job and by clicking on close button of snackbar', () => {
+  test('should test the mark resolved button without selecting a job and by clicking on close button of snackbar', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -637,7 +637,7 @@ describe('testsuite for JobErrorTable', () => {
     const markResolvedButtonNode = screen.getByRole('button', {name: /mark resolved/i});
 
     expect(markResolvedButtonNode).toBeInTheDocument();
-    userEvent.click(markResolvedButtonNode);
+    await userEvent.click(markResolvedButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelected({
       jobs: [{ _flowJobId: '234', _id: '123' }],
       match: { path: '/', url: '/', params: {}, isExact: true },
@@ -648,10 +648,10 @@ describe('testsuite for JobErrorTable', () => {
     });
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveCommit({ parentJobId: '234', childJobId: '123' }));
   });
-  test('should test the download all errors button', () => {
+  test('should test the download all errors button', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -681,11 +681,11 @@ describe('testsuite for JobErrorTable', () => {
     const downloadAllErrorsButtonNode = screen.getByRole('button', {name: /download all errors/i});
 
     expect(downloadAllErrorsButtonNode).toBeInTheDocument();
-    userEvent.click(downloadAllErrorsButtonNode);
+    await userEvent.click(downloadAllErrorsButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.downloadFiles({jobId: '123',
       fileType: 'errors'}));
   });
-  test('should test the Upload processed errors button and upload the non csv file', () => {
+  test('should test the Upload processed errors button and upload the non csv file', async () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     initJobErrorTable({
       job: {
@@ -725,21 +725,22 @@ describe('testsuite for JobErrorTable', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const input = document.querySelector('input[data-test="uploadFile"]');
 
-    userEvent.click(uploadProcessedErrorsButtonNode);
+    await userEvent.click(uploadProcessedErrorsButtonNode);
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(screen.getByText(/confirm upload/i)).toBeInTheDocument();
     const uploadButtonNode = screen.getByRole('button', {name: 'Upload'});
 
     expect(uploadButtonNode).toBeInTheDocument();
-    userEvent.click(uploadButtonNode);
+    await userEvent.click(uploadButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.processFile({
       fileId: 'somegeneratedID',
       file,
       fileType: 'csv',
     }));
   });
-  test('should test the Upload processed errors button and upload the csv file', () => {
+  test('should test the Upload processed errors button and upload the csv file', async () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     initJobErrorTable({
       job: {
@@ -779,16 +780,17 @@ describe('testsuite for JobErrorTable', () => {
     File.prototype.text = jest.fn().mockResolvedValueOnce(str);
     const input = document.querySelector('input[data-test="uploadFile"]');
 
-    userEvent.click(uploadProcessedErrorsButtonNode);
+    await userEvent.click(uploadProcessedErrorsButtonNode);
 
-    userEvent.upload(input, file);
+    // userEvent.upload(input, file);
+    fireEvent.change(input, { target: { files: { item: () => file, length: 1, 0: file } } });
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.processFile({
       fileId: 'somegeneratedID',
       file,
       fileType: 'csv',
     }));
   });
-  test('should test the Upload processed errors button when we not select a file', () => {
+  test('should test the Upload processed errors button when we not select a file', async () => {
     initJobErrorTable({
       job: {
         _id: '123',
@@ -820,9 +822,10 @@ describe('testsuite for JobErrorTable', () => {
     expect(uploadProcessedErrorsButtonNode).toBeInTheDocument();
     const input = document.querySelector('input[data-test="uploadFile"]');
 
-    userEvent.click(uploadProcessedErrorsButtonNode);
+    await userEvent.click(uploadProcessedErrorsButtonNode);
 
-    userEvent.upload(input, '');
+    // userEvent.upload(input, '');
+    fireEvent.change(input, { target: { files: { item: () => '', length: 1, 0: '' } } });
     expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.file.processFile({}));
     expect(screen.queryByText(/confirm upload/i)).not.toBeInTheDocument();
   });

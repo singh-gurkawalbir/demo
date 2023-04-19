@@ -383,14 +383,14 @@ describe('RouterMenu UI tests', () => {
     expect(screen.queryByText('Delete branching')).not.toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
-  test('Should able to test MoreActionsButton with action options provided', () => {
+  test('Should able to test MoreActionsButton with action options provided', async () => {
     initRouterMenu({editorId: 'router-YP3Xa6'});
     // for delete banching
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const deleteOption = screen.getByRole('menuitem', {name: 'Delete branching'});
 
     expect(deleteOption).toBeInTheDocument();
-    userEvent.click(deleteOption);
+    await userEvent.click(deleteOption);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to delete this branching?')).toBeInTheDocument();
@@ -400,7 +400,7 @@ describe('RouterMenu UI tests', () => {
 
     expect(Delete).toBeEnabled();
     expect(Cancel).toBeEnabled();
-    userEvent.click(Delete);
+    await userEvent.click(Delete);
     expect(mockDispatch).toHaveBeenCalledWith(actions.flow.deleteRouter('63a54e63d9e20c15d94da0f1', 'YP3Xa6'));
     expect(mockGoback).toHaveBeenCalledWith();
   });

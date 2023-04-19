@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import { selectors } from '../../../../reducers';

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { generateId } from '../../../../../../utils/string';
 import { selectors } from '../../../../../../reducers';
 import { REVISION_TYPES } from '../../../../../../constants';

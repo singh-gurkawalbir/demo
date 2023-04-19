@@ -1,10 +1,11 @@
 /* eslint-disable react/state-in-constructor */
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import LogRocket from 'logrocket';
+import { Box } from '@celigo/fuse-ui';
 import DynaFormGenerator from './DynaFormGenerator';
 import { selectors } from '../../reducers';
 import useAutoScrollErrors from './useAutoScrollErrors';
@@ -81,6 +82,7 @@ export default function DynaForm(props) {
     className,
     formKey,
     autoFocus,
+    sxCss,
     ...rest
   } = props;
   const classes = useStyles();
@@ -104,7 +106,7 @@ export default function DynaForm(props) {
   if (!fieldMap) return null;
 
   return (
-    <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
+    <Box ref={formRef} className={clsx(classes.fieldContainer, className)} sx={[...(Array.isArray(sxCss) ? sxCss : [sxCss])]}>
       <DynaFormErrorBoundary fieldMap={fieldMap} key={remountKey}>
         <DynaFormGenerator
           {...rest}
@@ -114,7 +116,7 @@ export default function DynaForm(props) {
           key={remountKey}
         />
       </DynaFormErrorBoundary>
-    </div>
+    </Box>
   );
 }
 

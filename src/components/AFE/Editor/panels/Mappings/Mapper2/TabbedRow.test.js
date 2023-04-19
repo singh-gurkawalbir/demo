@@ -62,13 +62,13 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('tabbedRow test case', () => {
-  test('should make a dispatch call when a tab is selected', () => {
+  test('should make a dispatch call when a tab is selected', async () => {
     renderWithProviders(<TabbedRow parentKey="qruRI-RD35w_UbFrJz_m5" />, {initialStore});
     const tabs = screen.getAllByRole('tab');
 
-    userEvent.click(tabs[0]);
+    await userEvent.click(tabs[1]);
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.mapping.v2.changeArrayTab('qruRI-RD35w_UbFrJz_m5', 0, '$[*].name1')
+      actions.mapping.v2.changeArrayTab('qruRI-RD35w_UbFrJz_m5', 1, '$[*].name2')
     );
   });
   test('should show tab 3 and 4 as disabled', () => {
@@ -77,8 +77,8 @@ describe('tabbedRow test case', () => {
 
     expect(tabs[2]).toBeDisabled();
     expect(tabs[3]).toBeDisabled();
-    expect(screen.getByTitle('No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".')).toBeInTheDocument();
-    expect(screen.getByTitle('No matching fields in this tab')).toBeInTheDocument();
+    expect(screen.getByLabelText('No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".')).toBeInTheDocument();
+    expect(screen.getByLabelText('No matching fields in this tab')).toBeInTheDocument();
   });
 
   test('should show no tabs when no tabs provided', () => {

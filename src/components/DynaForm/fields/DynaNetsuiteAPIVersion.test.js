@@ -204,7 +204,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.showSuiteAppInstallNotification('/demourl/demochildurl', props.resourceType, props.resourceId));
   });
 
-  test('should make a showSuiteappInstall dispatch call when the integrator suiteApp is not installed in the NS account and SuiteApp SuiteScript 1.0 is selected', () => {
+  test('should make a showSuiteappInstall dispatch call when the integrator suiteApp is not installed in the NS account and SuiteApp SuiteScript 1.0 is selected', async () => {
     const props = {
       resourceId: 'new-So3JJHSqd4',
       resourceType: 'exports',
@@ -271,7 +271,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
 
     const apiVersion1 = screen.getByRole('radio', {name: 'SuiteApp SuiteScript 1.0'});
 
-    userEvent.click(apiVersion1);
+    await userEvent.click(apiVersion1);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp1.0');
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.getBundleInstallStatus(props.connectionId));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.hideBundleInstallNotification(props.resourceType, props.resourceId));
@@ -404,7 +404,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
     expect(screen.getByText('Invalid URL')).toBeInTheDocument();
   });
 
-  test('should be able to switch between the available versions', () => {
+  test('should be able to switch between the available versions', async () => {
     const props = {
       resourceId: 'So3JJHSqd4',
       resourceType: 'exports',
@@ -461,7 +461,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
     expect(onFieldChange).not.toHaveBeenCalled();
     const apiVersion1 = screen.getByRole('radio', {name: 'SuiteBundle SuiteScript 1.0'});
 
-    userEvent.click(apiVersion1);
+    await userEvent.click(apiVersion1);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suitebundle');
   });
 });

@@ -70,11 +70,11 @@ describe('startDebugEnhanced UI tests', () => {
       date: '2022-06-28T08:22:50.781Z',
     });
     expect(screen.getByText(/Start Debug/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText(/Start Debug/i));
+    await userEvent.click(screen.getByText(/Start Debug/i));
     const screenspace = screen.getByText(/ScreenSpace/i);
 
-    userEvent.click(screenspace);
-    expect(screen.queryByText(/Last Debug/i)).not.toBeInTheDocument();
+    await userEvent.click(screenspace);
+    await waitFor(() => expect(screen.queryByText(/Last Debug/i)).not.toBeInTheDocument());
   });
   test('should render the popover when clicked on Start Debug button', async () => {
     DebugEnhanced({
@@ -86,7 +86,7 @@ describe('startDebugEnhanced UI tests', () => {
       date: '2022-06-28T08:22:50.781Z',
     });
     await waitFor(() => expect(screen.getByText(/Start Debug/i)).toBeInTheDocument());
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText(/Capture debug logs/i, {exact: false})).toBeInTheDocument();
     expect(screen.getByText(/Last debug/i)).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Apply'})).toBeInTheDocument();
@@ -102,11 +102,11 @@ describe('startDebugEnhanced UI tests', () => {
       date: '2022-06-28T08:22:50.781Z',
     });
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     await waitFor(() => expect(screen.getByText(/Capture debug logs/i, {exact: false})).toBeInTheDocument());
     const option = screen.getByRole('button', {name: 'Next 15 minutes'});
 
-    userEvent.click(option);
+    await userEvent.click(option);
     waitFor(() => expect(screen.getByText(/Next 30 minutes/i, {exact: false})).toBeInTheDocument());
     expect(screen.getByText(/Next 45 minutes/i, {exact: false})).toBeInTheDocument();
     expect(screen.getByText(/Next 60 minutes/i, {exact: false})).toBeInTheDocument();
@@ -121,13 +121,13 @@ describe('startDebugEnhanced UI tests', () => {
       date: '2022-06-28T08:22:50.781Z',
     });
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     await waitFor(() => expect(screen.getByText(/Capture debug logs/i, {exact: false})).toBeInTheDocument());
     const option = screen.getByRole('button', {name: 'Next 15 minutes'});
 
-    userEvent.click(option);
-    userEvent.click(screen.getByRole('option', {name: 'Next 30 minutes'}));
-    userEvent.click(screen.getByRole('button', {name: 'Apply'}));
+    await userEvent.click(option);
+    await userEvent.click(screen.getByRole('option', {name: 'Next 30 minutes'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Apply'}));
     expect(mockStartHandler).toHaveBeenCalledTimes(1);
     expect(mockStartHandler).toHaveBeenCalledWith('30');
   });
@@ -141,11 +141,11 @@ describe('startDebugEnhanced UI tests', () => {
       date: '2022-06-28T08:22:50.781Z',
     });
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     await waitFor(() => expect(screen.getByText(/Capture debug logs/i, {exact: false})).toBeInTheDocument());
     expect(screen.getByRole('button', {name: 'Next 15 minutes'})).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('button', {name: 'Close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Close'}));
     expect(screen.getByText(/Start Debug/i)).toBeInTheDocument();
   });
 });
@@ -174,13 +174,13 @@ describe('use cases where debug date is after current moment', () => {
 
     renderWithProviders(<MemoryRouter><StartDebugEnhanced {...props} /></MemoryRouter>);
     expect(screen.getByRole('button')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     await waitFor(() => expect(screen.getByText(/Capture debug logs/i, {exact: false})).toBeInTheDocument());
     const option = screen.getByRole('button', {name: 'Next 15 minutes'});
 
-    userEvent.click(option);
-    userEvent.click(screen.getByRole('option', {name: 'Next 30 minutes'}));
-    userEvent.click(screen.getByRole('button', {name: 'Apply'}));
+    await userEvent.click(option);
+    await userEvent.click(screen.getByRole('option', {name: 'Next 30 minutes'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Apply'}));
     expect(screen.queryByText('Next 15 minutes')).toBeNull();
   });
 });

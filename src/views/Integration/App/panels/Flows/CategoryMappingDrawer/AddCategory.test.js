@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -14,6 +13,24 @@ jest.mock('react-router-dom', () => ({
   useHistory: () => ({
     push: mockHistoryPush,
   }),
+}));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
 }));
 
 jest.mock('../../../../../../components/LoadResources', () => ({
@@ -90,7 +107,7 @@ describe('AddCategoryMappingDrawerRoute UI tests', () => {
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should test when meta data loaded click on addcoategpry no child', () => {
+  test('should test when meta data loaded click on addcoategpry no child', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -108,13 +125,13 @@ describe('AddCategoryMappingDrawerRoute UI tests', () => {
           }]}}],
       }
     );
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByText('name1'));
-    userEvent.click(screen.getByText('Add category'));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('name1'));
+    await userEvent.click(screen.getByText('Add category'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/5ff579d745ceef7dcd797c15/5ea16c600e2fab71928a6152');
   });
 
-  test('should test when meta data loaded click on help text', () => {
+  test('should test when meta data loaded click on help text', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -130,7 +147,7 @@ describe('AddCategoryMappingDrawerRoute UI tests', () => {
           }]}}],
       }
     );
-    userEvent.click(screen.getAllByRole('button')[1]);
+    await userEvent.click(screen.getAllByRole('button')[1]);
     expect(screen.getByText('Helptext is useful to give detailed information')).toBeInTheDocument();
   });
   test('should test when meta data loaded click on some child', async () => {
@@ -168,20 +185,20 @@ describe('AddCategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    userEvent.click(screen.getByText('Please select'));
-    userEvent.click(screen.getByText('name1'));
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
-    userEvent.click(screen.getByText('child'));
+    await userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('name1'));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByText('child'));
 
     expect(screen.getByText('Choose nested-category')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
-    userEvent.click(screen.getByText('grandchild'));
-    userEvent.click(screen.getByText('Add category'));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByText('grandchild'));
+    await userEvent.click(screen.getByText('Add category'));
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/5ff579d745ceef7dcd797c15/5ea16c600e2fab71928a6152');
   });
 
-  test('should test when meta data loaded click on cancel', () => {
+  test('should test when meta data loaded click on cancel', async () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',
@@ -196,7 +213,7 @@ describe('AddCategoryMappingDrawerRoute UI tests', () => {
       }
     );
 
-    userEvent.click(screen.getByText('Cancel'));
+    await userEvent.click(screen.getByText('Cancel'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/5ff579d745ceef7dcd797c15/5ea16c600e2fab71928a6152');
   });
 });

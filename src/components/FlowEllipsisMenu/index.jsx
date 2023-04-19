@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, MenuItem } from '@mui/material';
+import { ArrowPopper } from '@celigo/fuse-ui';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import useConfirmDialog from '../ConfirmDialog';
@@ -274,7 +275,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         <EllipsisIcon />
       </IconButton>
 
-      <Menu
+      <ArrowPopper
         elevation={2}
         variant="menu"
         id={actionsPopoverId}
@@ -290,7 +291,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             <Icon /> {label}
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
 
       {showAudit && (
         <AuditLogDialog

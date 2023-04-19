@@ -81,51 +81,51 @@ describe('ToggleLayout UI tests', () => {
     initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
     expect(document.querySelector('input')).toHaveValue('compact2');
   });
-  test('Should make a dispatch call when toggle layout is set to compactRow', () => {
+  test('Should make a dispatch call when toggle layout is set to compactRow', async () => {
     initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'compactRow');
 
     expect(layoutOption).toBeInTheDocument();
-    userEvent.click(layoutOption);
+    await userEvent.click(layoutOption);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('mappings-6320bf1151852e73fb07fcf8', 'compactRow'));
   });
-  test('Should make a dispatch call when toggle layout is set to assistantTopRight', () => {
+  test('Should make a dispatch call when toggle layout is set to assistantTopRight', async () => {
     initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'assistantTopRight');
 
     expect(layoutOption).toBeInTheDocument();
-    userEvent.click(layoutOption);
+    await userEvent.click(layoutOption);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('mappings-6320bf1151852e73fb07fcf8', 'assistantTopRight'));
   });
-  test('Should make a dispatch call when toggle layout is set to assistantRight', () => {
+  test('Should make a dispatch call when toggle layout is set to assistantRight', async () => {
     initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'assistantRight');
 
     expect(layoutOption).toBeInTheDocument();
-    userEvent.click(layoutOption);
+    await userEvent.click(layoutOption);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('mappings-6320bf1151852e73fb07fcf8', 'assistantRight'));
   });
-  test('Should make a dispatch call when toggle layout is set to column', () => {
+  test('Should make a dispatch call when toggle layout is set to column', async () => {
     initToggleLayout({editorId: 'iFilter-631f9f1d3bfc725f006327e3' });
     expect(document.querySelector('input')).toHaveValue('compact');
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'column');
 
     expect(layoutOption).toBeInTheDocument();
-    userEvent.click(layoutOption);
+    await userEvent.click(layoutOption);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('iFilter-631f9f1d3bfc725f006327e3', 'column'));
   });
-  test('Should make a dispatch call when toggle layout is set to row', () => {
+  test('Should make a dispatch call when toggle layout is set to row', async () => {
     initToggleLayout({editorId: 'iFilter-631f9f1d3bfc725f006327e3' });
     expect(document.querySelector('input')).toHaveValue('compact');
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'row');
 
     expect(layoutOption).toBeInTheDocument();
-    userEvent.click(layoutOption);
+    await userEvent.click(layoutOption);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('iFilter-631f9f1d3bfc725f006327e3', 'row'));
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SettingsDrawer from '.';
 import actions from '../../../../actions';
@@ -163,67 +163,75 @@ describe('SettingsDrawer test cases', () => {
     mockHistoryGoBack.mockClear();
   });
 
-  test('should pass the initial render with default value', () => {
+  test('should pass the initial render with default value', async () => {
     initSettingsDrawer();
-    const saveButton = screen.getByRole('button', { name: 'mock Save'});
-    const closeButton = screen.getByRole('button', { name: 'mock Close'});
-    const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
+    let saveButton;
 
-    expect(screen.queryByText('Settings')).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountAfterSaveFnButton).toBeInTheDocument();
+    waitFor(async () => {
+      saveButton = screen.getByRole('button', { name: 'mock Save'});
+      const closeButton = screen.getByRole('button', { name: 'mock Close'});
+      const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
 
-    userEvent.click(remountAfterSaveFnButton);
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(closeButton);
-    expect(mockHistoryGoBack).toBeCalled();
+      await userEvent.click(remountAfterSaveFnButton);
 
-    const notifyOnFlowError = screen.getByRole('radiogroup', { name: 'Notify me of flow errors'});
+      await userEvent.click(closeButton);
+      expect(mockHistoryGoBack).toBeCalled();
+    });
 
-    expect(notifyOnFlowError).toBeInTheDocument();
+    waitFor(() => {
+      const notifyOnFlowError = screen.getByRole('radiogroup', { name: 'Notify me of flow errors'});
 
-    const yesRadio = screen.getAllByRole('radio', { name: 'Yes'}).find(eachInput => eachInput.getAttribute('name') === 'notifyOnFlowError');
+      expect(notifyOnFlowError).toBeInTheDocument();
+    });
 
-    expect(yesRadio).toBeInTheDocument();
+    waitFor(async () => {
+      const yesRadio = screen.getAllByRole('radio', { name: 'Yes'}).find(eachInput => eachInput.getAttribute('name') === 'notifyOnFlowError');
 
-    userEvent.click(yesRadio);
-    userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id', [
-      {
-        op: 'replace',
-        path: '/name',
-        value: 'name',
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: undefined,
-      },
-      {
-        op: 'replace',
-        path: '/_runNextFlowIds',
-        value: [],
-      },
-      {
-        op: 'replace',
-        path: '/autoResolveMatchingTraceKeys',
-        value: true,
-      },
-      {
-        op: 'replace',
-        path: '/_integrationId',
-        value: 'integration_id',
-      },
-      {
-        op: 'replace',
-        path: '/settings',
-        value: {setting1: 'value1' },
-      },
-    ], { asyncKey: 'flowbuildersettings' }));
+      expect(yesRadio).toBeInTheDocument();
+
+      await userEvent.click(yesRadio);
+      await userEvent.click(saveButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id', [
+        {
+          op: 'replace',
+          path: '/name',
+          value: 'name',
+        },
+        {
+          op: 'replace',
+          path: '/description',
+          value: undefined,
+        },
+        {
+          op: 'replace',
+          path: '/_runNextFlowIds',
+          value: [],
+        },
+        {
+          op: 'replace',
+          path: '/autoResolveMatchingTraceKeys',
+          value: true,
+        },
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: 'integration_id',
+        },
+        {
+          op: 'replace',
+          path: '/settings',
+          value: {setting1: 'value1' },
+        },
+      ], { asyncKey: 'flowbuildersettings' }));
+    });
   });
 
-  test('should pass the initial render with invliad setting value', () => {
+  test('should pass the initial render with invliad setting value', async () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_2',
@@ -231,61 +239,65 @@ describe('SettingsDrawer test cases', () => {
         resourceId: 'flow_id_2',
       },
     });
-    const saveButton = screen.getByRole('button', { name: 'mock Save'});
-    const closeButton = screen.getByRole('button', { name: 'mock Close'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock Save'});
+      const closeButton = screen.getByRole('button', { name: 'mock Close'});
 
-    expect(screen.queryByText('Settings')).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_2', [
-      {
-        op: 'replace',
-        path: '/name',
-        value: 'name 2',
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: undefined,
-      },
-      {
-        op: 'replace',
-        path: '/_runNextFlowIds',
-        value: [],
-      },
-      {
-        op: 'replace',
-        path: '/autoResolveMatchingTraceKeys',
-        value: true,
-      },
-      {
-        op: 'replace',
-        path: '/settings',
-        value: 'djfnj',
-      },
-    ], { asyncKey: 'flowbuildersettings' }));
+      await userEvent.click(saveButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_2', [
+        {
+          op: 'replace',
+          path: '/name',
+          value: 'name 2',
+        },
+        {
+          op: 'replace',
+          path: '/description',
+          value: undefined,
+        },
+        {
+          op: 'replace',
+          path: '/_runNextFlowIds',
+          value: [],
+        },
+        {
+          op: 'replace',
+          path: '/autoResolveMatchingTraceKeys',
+          value: true,
+        },
+        {
+          op: 'replace',
+          path: '/settings',
+          value: 'djfnj',
+        },
+      ], { asyncKey: 'flowbuildersettings' }));
+    });
   });
 
-  test('should pass the initial render with monitor level access', () => {
+  test('should pass the initial render with monitor level access', async () => {
     initSettingsDrawer({
       accessLevel: 'monitor',
       accountId: 'account_id_1',
     });
-    const saveButton = screen.getByRole('button', { name: 'mock Save'});
-    const closeButton = screen.getByRole('button', { name: 'mock Close'});
-    const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock Save'});
+      const closeButton = screen.getByRole('button', { name: 'mock Close'});
+      const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
 
-    expect(screen.queryByText('Settings')).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountAfterSaveFnButton).toBeInTheDocument();
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+      await userEvent.click(saveButton);
+    });
   });
 
-  test('should pass the initial render with integration app flow', () => {
+  test('should pass the initial render with integration app flow', async () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_1',
@@ -294,51 +306,53 @@ describe('SettingsDrawer test cases', () => {
         resourceId: 'flow_id_1',
       },
     });
-    const saveButton = screen.getByRole('button', { name: 'mock Save'});
-    const closeButton = screen.getByRole('button', { name: 'mock Close'});
-    const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock Save'});
+      const closeButton = screen.getByRole('button', { name: 'mock Close'});
+      const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
 
-    expect(screen.queryByText('Settings')).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountAfterSaveFnButton).toBeInTheDocument();
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_1', [
-      {
-        op: 'replace',
-        path: '/name',
-        value: 'name 1',
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: undefined,
-      },
-      {
-        op: 'replace',
-        path: '/_runNextFlowIds',
-        value: [],
-      },
-      {
-        op: 'replace',
-        path: '/autoResolveMatchingTraceKeys',
-        value: true,
-      },
-      {
-        op: 'replace',
-        path: '/_integrationId',
-        value: 'integration_id_1',
-      },
-      {
-        op: 'replace',
-        path: '/settings',
-        value: {setting1: 'value1'},
-      },
-    ], { asyncKey: 'flowbuildersettings' }));
+      await userEvent.click(saveButton);
+      expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', 'flow_id_1', [
+        {
+          op: 'replace',
+          path: '/name',
+          value: 'name 1',
+        },
+        {
+          op: 'replace',
+          path: '/description',
+          value: undefined,
+        },
+        {
+          op: 'replace',
+          path: '/_runNextFlowIds',
+          value: [],
+        },
+        {
+          op: 'replace',
+          path: '/autoResolveMatchingTraceKeys',
+          value: true,
+        },
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: 'integration_id_1',
+        },
+        {
+          op: 'replace',
+          path: '/settings',
+          value: {setting1: 'value1'},
+        },
+      ], { asyncKey: 'flowbuildersettings' }));
+    });
   });
 
-  test('should pass the initial render with integration app flow with monitor access', () => {
+  test('should pass the initial render with integration app flow with monitor access', async () => {
     initSettingsDrawer({
       props: {
         flowId: 'flow_id_1',
@@ -349,16 +363,18 @@ describe('SettingsDrawer test cases', () => {
       accessLevel: 'monitor',
       accountId: 'account_id_2',
     });
-    const saveButton = screen.getByRole('button', { name: 'mock Save'});
-    const closeButton = screen.getByRole('button', { name: 'mock Close'});
-    const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock Save'});
+      const closeButton = screen.getByRole('button', { name: 'mock Close'});
+      const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
 
-    expect(screen.queryByText('Settings')).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountAfterSaveFnButton).toBeInTheDocument();
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountAfterSaveFnButton).toBeInTheDocument();
 
-    userEvent.click(saveButton);
+      await userEvent.click(saveButton);
+    });
   });
 
   test('should pass the initial render with integration app flow duplicate', () => {
@@ -369,13 +385,15 @@ describe('SettingsDrawer test cases', () => {
         resourceId: 'flow_id_0',
       },
     });
-    const saveButton = screen.getByRole('button', { name: 'mock Save'});
-    const closeButton = screen.getByRole('button', { name: 'mock Close'});
-    const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
+    waitFor(async () => {
+      const saveButton = screen.getByRole('button', { name: 'mock Save'});
+      const closeButton = screen.getByRole('button', { name: 'mock Close'});
+      const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
 
-    expect(screen.queryByText('Settings')).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(closeButton).toBeInTheDocument();
-    expect(remountAfterSaveFnButton).toBeInTheDocument();
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(saveButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(remountAfterSaveFnButton).toBeInTheDocument();
+    });
   });
 });

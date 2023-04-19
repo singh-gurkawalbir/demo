@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,15 +31,6 @@ export const isNestedDrawer = url => !!matchPath(url, {
   strict: false});
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    height: '100vh',
-    width: props => {
-      if (props.occupyFullWidth) return '100%';
-
-      return props.match.isExact ? 822 : 0;
-    },
-    overflowX: 'hidden',
-  },
   baseFormWithPreview: {
     display: 'grid',
     gridTemplateColumns: '50% 48%',
@@ -173,7 +164,13 @@ export default function Panel(props) {
   return (
     <>
       <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
-      <DrawerContent className={classes.root}>
+      <DrawerContent
+        sxCss={{
+          height: '100vh',
+          // eslint-disable-next-line no-nested-ternary
+          width: occupyFullWidth ? '100%' : match.isExact ? 822 : 0,
+          overflowX: 'hidden',
+        }}>
         <LoadResources required integrationId={integrationId} resources={requiredResources}>
           <LoadUIFields resourceId={id} resourceType={resourceType} flowId={flowId}>
             <div

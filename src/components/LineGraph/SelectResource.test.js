@@ -1,22 +1,23 @@
 
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SelectResource from './SelectResource';
+import { renderWithProviders } from '../../test/test-utils';
 
 const flowResources = [{_id: 's1', name: 'name'}, {_id: 's2'}, {_id: 's3'}, {_id: 's4'}, {_id: 's5'}, {_id: 's6'}, {_id: 's7'}, {_id: 's8'}, {_id: 's9'}];
 const selectedResources = ['s1', 's2'];
 
 describe('selectResource UI Tests', () => {
-  test('should select one more flow through checkbox', () => {
+  test('should select one more flow through checkbox', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).toBeChecked();
@@ -28,26 +29,26 @@ describe('selectResource UI Tests', () => {
     expect(checkboxes[6]).not.toBeChecked();
     expect(checkboxes[7]).not.toBeChecked();
 
-    userEvent.click(checkboxes[3]);
+    await userEvent.click(checkboxes[3]);
     expect(checkboxes[3]).toBeChecked();
     const applyButton = screen.getByText('Apply');
 
     expect(applyButton).toBeInTheDocument();
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
 
     expect(onSave).toHaveBeenCalledWith(['s1', 's2', 's4']);
     expect(button.textContent).toBe('3 flows selected');
   });
 
-  test('should click on the checked flow twice', () => {
+  test('should click on the checked flow twice', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).toBeChecked();
@@ -59,25 +60,25 @@ describe('selectResource UI Tests', () => {
     expect(checkboxes[6]).not.toBeChecked();
     expect(checkboxes[7]).not.toBeChecked();
 
-    userEvent.click(checkboxes[0]);
+    await userEvent.click(checkboxes[0]);
     expect(checkboxes[0]).not.toBeChecked();
     const applyButton = screen.getByText('Apply');
 
     expect(applyButton).toBeInTheDocument();
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
 
     expect(onSave).toHaveBeenCalledWith(['s2']);
   });
 
-  test('should click the cancel button after selecting', () => {
+  test('should click the cancel button after selecting', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).toBeChecked();
@@ -89,16 +90,16 @@ describe('selectResource UI Tests', () => {
     expect(checkboxes[6]).not.toBeChecked();
     expect(checkboxes[7]).not.toBeChecked();
 
-    userEvent.click(checkboxes[3]);
+    await userEvent.click(checkboxes[3]);
     expect(checkboxes[3]).toBeChecked();
     const cancelButton = screen.getByText('Cancel');
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(checkboxes[0]).not.toBeVisible();
     expect(button).toBeVisible();
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     expect(checkboxes[0]).toBeChecked();
     expect(checkboxes[1]).toBeChecked();
@@ -109,46 +110,46 @@ describe('selectResource UI Tests', () => {
     expect(checkboxes[6]).not.toBeChecked();
     expect(checkboxes[7]).not.toBeChecked();
   });
-  test('should select one item in start', () => {
+  test('should select one item in start', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
 
     const button = screen.getByText('name');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     const checkboxes = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkboxes[1]);
+    await userEvent.click(checkboxes[1]);
 
     const applyButton = screen.getByText('Apply');
 
     expect(applyButton).toBeInTheDocument();
-    userEvent.click(applyButton);
+    await userEvent.click(applyButton);
 
     expect(button.textContent).toBe('2 flows selected');
   });
 
-  test('should select all 8 flows', () => {
+  test('should select all 8 flows', async () => {
     const onSave = jest.fn();
 
-    render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
+    renderWithProviders(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
 
     const button = screen.getByText('name');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     const checkboxes = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkboxes[1]);
-    userEvent.click(checkboxes[2]);
-    userEvent.click(checkboxes[3]);
-    userEvent.click(checkboxes[4]);
-    userEvent.click(checkboxes[5]);
-    userEvent.click(checkboxes[6]);
-    userEvent.click(checkboxes[7]);
-    userEvent.click(checkboxes[8]);
+    await userEvent.click(checkboxes[1]);
+    await userEvent.click(checkboxes[2]);
+    await userEvent.click(checkboxes[3]);
+    await userEvent.click(checkboxes[4]);
+    await userEvent.click(checkboxes[5]);
+    await userEvent.click(checkboxes[6]);
+    await userEvent.click(checkboxes[7]);
+    await userEvent.click(checkboxes[8]);
 
     expect(screen.getByText('8 flows selected')).toBeInTheDocument();
   });
@@ -156,7 +157,7 @@ describe('selectResource UI Tests', () => {
   test('should test when no flow is selected', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource onSave={onSave} />);
+    renderWithProviders(<SelectResource onSave={onSave} />);
     expect(screen.getByText('No flows selected')).toBeInTheDocument();
   });
 });

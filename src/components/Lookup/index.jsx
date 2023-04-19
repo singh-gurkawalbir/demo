@@ -1,12 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import {
-  makeStyles,
-  TableCell,
-  TableRow,
-  Table,
-  TableBody,
-  TableHead,
-} from '@material-ui/core';
+import { TableCell, TableRow, Table, TableBody, TableHead } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { filter } from 'lodash';
 import ModalDialog from '../ModalDialog';
 import ManageLookup from './Manage';

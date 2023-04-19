@@ -65,7 +65,7 @@ describe('dynaSelectOptionsGenerator UI tests', () => {
 
   test('should pass the initial render', () => {
     initDynaSelectOptionsGenerator(props);
-    const dropdown = document.querySelector('[class="MuiSelect-nativeInput"]');
+    const dropdown = document.querySelector('input');
 
     expect(dropdown).toBeInTheDocument();
   });
@@ -77,7 +77,7 @@ describe('dynaSelectOptionsGenerator UI tests', () => {
     initDynaSelectOptionsGenerator(props);
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.refresh(
       '5efd8663a56953365bd28541',
       'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote',
@@ -92,7 +92,7 @@ describe('dynaSelectOptionsGenerator UI tests', () => {
     initDynaSelectOptionsGenerator({...props, disableFetch: true});
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(0));
   });
   test('should make a dispatch call on initial render when data is undefined and disableFetch is false', async () => {

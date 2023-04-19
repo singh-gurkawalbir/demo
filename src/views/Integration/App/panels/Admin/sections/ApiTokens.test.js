@@ -88,7 +88,7 @@ describe('ApiTokensSection UI tests', () => {
   });
   test('should make a dispatch call and url redirection on clicking "Create API token" button', async () => {
     await initApiTokenSection({integrationId: '60e6f83f3499084a689178cc', accesstokens: demoTokens});
-    userEvent.click(screen.getByText('Create API token'));
+    await userEvent.click(screen.getByText('Create API token'));
     await waitFor(() => expect(mockDispatchFn).toBeCalled());
     await waitFor(() => expect(mockHistoryPush).toBeCalled());
   });

@@ -2,10 +2,6 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/mode'] === 'cloud') {
-      retValues['/_agentId'] = undefined;
-    }
-
     return {
       ...retValues,
       '/type': 'http',
@@ -81,6 +77,7 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     application: {
       fieldId: 'application',

@@ -1,4 +1,5 @@
-import { Typography, Dialog, makeStyles } from '@material-ui/core';
+import { Typography, Dialog } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import SignInForm from '../../views/SignIn/SigninForm';

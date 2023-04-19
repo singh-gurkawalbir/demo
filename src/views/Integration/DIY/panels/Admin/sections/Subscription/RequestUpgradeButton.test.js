@@ -77,7 +77,7 @@ describe('RequestUpgradeButton Unit tests', () => {
     });
 
     expect(upgrade).toBeInTheDocument();
-    userEvent.click(upgrade);
+    await userEvent.click(upgrade);
     expect(handleUpgrade).toBeCalled();
   });
   test('Should render disabled Request Upgrade Button in case upgrade text is empty', async () => {

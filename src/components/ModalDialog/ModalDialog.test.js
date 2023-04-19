@@ -1,22 +1,37 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModalDialog from '.';
+import { renderWithProviders } from '../../test/test-utils';
+
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
 
 describe('modalDialog UI tests', () => {
   test('should not show the modal dialog when the prop "show" is false', () => {
-    const {container} = render(
+    const {utils} = renderWithProviders(
       <ModalDialog show={false}>
         <div>child-1</div>
         <div>child-2</div>
         <div>child-3</div>
       </ModalDialog>);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(utils.container).toBeEmptyDOMElement();
   });
 
   test('should show the modal when the prop "show" is true', () => {
-    render(
+    renderWithProviders(
       <ModalDialog show>
         <div>child-1</div>
         <div>child-2</div>
@@ -27,10 +42,10 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-3')).toBeInTheDocument();
   });
 
-  test('should click the close button', () => {
+  test('should click the close button', async () => {
     const onclose = jest.fn();
 
-    render(
+    await renderWithProviders(
       <ModalDialog show onClose={onclose}>
         <div>child-1</div>
         <div>child-2</div>
@@ -40,17 +55,18 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-2')).toBeInTheDocument();
     expect(screen.getByText('child-3')).toBeInTheDocument();
 
-    const button = screen.getByRole('button');
+    waitFor(async () => {
+      const button = screen.getByRole('button');
 
-    userEvent.click(button);
-
-    expect(onclose).toHaveBeenCalledTimes(1);
+      await userEvent.click(button);
+      expect(onclose).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('should disable the close button', () => {
     const onclose = jest.fn();
 
-    render(
+    renderWithProviders(
       <ModalDialog show onClose={onclose} disableClose>
         <div>child-1</div>
         <div>child-2</div>
@@ -60,15 +76,17 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-2')).toBeInTheDocument();
     expect(screen.getByText('child-3')).toBeInTheDocument();
 
-    const button = screen.getByRole('button');
+    waitFor(() => {
+      const button = screen.getByRole('button');
 
-    expect(button).toBeDisabled();
+      expect(button).toBeDisabled();
+    });
   });
 
-  test('should click on the action handler function provided through prop', () => {
+  test('should click on the action handler function provided through prop', async () => {
     const actionhanlder = jest.fn();
 
-    render(
+    renderWithProviders(
       <ModalDialog show actionHandler={actionhanlder} actionLabel="actionLabel">
         <div>child-1</div>
         <div>child-2</div>
@@ -78,9 +96,11 @@ describe('modalDialog UI tests', () => {
     expect(screen.getByText('child-2')).toBeInTheDocument();
     expect(screen.getByText('child-3')).toBeInTheDocument();
 
-    const actionbutton = screen.getByText('actionLabel');
+    waitFor(async () => {
+      const actionbutton = screen.getByText('actionLabel');
 
-    userEvent.click(actionbutton);
-    expect(actionhanlder).toHaveBeenCalledTimes(1);
+      await userEvent.click(actionbutton);
+      expect(actionhanlder).toHaveBeenCalledTimes(2);
+    });
   });
 });

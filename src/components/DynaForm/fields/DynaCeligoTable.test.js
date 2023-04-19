@@ -37,7 +37,7 @@ describe('dynaCeligoTable tests', () => {
 
     await renderWithProviders(<DynaCeligoTable {...props} />);
     expect(screen.getByRole('button', {name: 'Table title'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 });

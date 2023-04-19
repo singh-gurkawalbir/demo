@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
-import { Typography, makeStyles, IconButton } from '@material-ui/core';
+import { Typography, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
@@ -49,7 +50,7 @@ const RefreshButton = ({className, ...props}) => (
     color="secondary"
     className={className}
     {...props}
-      >
+    size="large">
     <RefreshIcon />
   </IconButton>
 );

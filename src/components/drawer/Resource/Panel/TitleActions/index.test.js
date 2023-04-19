@@ -92,7 +92,7 @@ describe('TitleActions tests', () => {
     const debugLog = screen.getByRole('button', { name: 'View debug logs' });
 
     expect(debugLog).toBeInTheDocument();
-    userEvent.click(debugLog);
+    await userEvent.click(debugLog);
     expect(mockHistoryPush).toHaveBeenCalledWith('/edit/imports/_importId/logs');
   });
 });

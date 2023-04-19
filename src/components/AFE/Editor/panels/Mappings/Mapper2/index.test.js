@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, screen} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { getCreatedStore } from '../../../../../../store';
@@ -237,14 +237,16 @@ describe('ewrv', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should scroll left when whell is scrolled', () => {
+  test('should scroll left when whell is scrolled', async () => {
     renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
 
-    userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
+    await userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
 
-    fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
-    fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
-    expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toBe(12);
+    waitFor(async () => {
+      await fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
+      await fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
+      expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toBe(12);
+    });
   });
   test('should show message when no destination fiels is matched', () => {
     const initialStore = getCreatedStore();

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import FormControl from '@material-ui/core/FormControl';
-import { makeStyles } from '@material-ui/core';
+import FormControl from '@mui/material/FormControl';
+import makeStyles from '@mui/styles/makeStyles';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ActionGroup from '../../../../../../components/ActionGroup';
@@ -69,13 +69,13 @@ export default function RevisionFilters() {
       <form className={classes.root} autoComplete="off">
         <ActionGroup>
           <CreatedAtFilter />
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <RevisionStatusFilter />
           </FormControl>
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <RevisionTypeFilter />
           </FormControl>
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <UserFilter />
           </FormControl>
         </ActionGroup>

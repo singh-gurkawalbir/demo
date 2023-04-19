@@ -57,30 +57,30 @@ describe('agents metadata UI tests', () => {
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('AgentName')).toBeInTheDocument();
     headerI = existanceOfCellInDom('Name', 'columnheader');
-    cellI = existanceOfCellInDom('AgentNameShared', 'cell');
+    cellI = existanceOfCellInDom('AgentNameShared', 'rowheader');
     expectFunction(headerI, cellI);
 
     headerI = existanceOfCellInDom('Status', 'columnheader');
     cellI = existanceOfCellInDom('Offline', 'cell');
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Last heartbeat', 'columnheader');
     cellI = existanceOfCellInDom('03/20/2021 5:17:55 am', 'cell');
 
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Last updated', 'columnheader');
     cellI = existanceOfCellInDom('03/20/2020 5:17:55 am', 'cell');
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Access token', 'columnheader');
     cellI = existanceOfCellInDom('Show token', 'cell');
 
-    expectFunction(headerI, cellI);
+    expectFunction(headerI - 1, cellI);
   });
-  test('should test Actions fields', () => {
+  test('should test Actions fields', async () => {
     expect(screen.getByText('Actions')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit agent')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();
     expect(screen.getByText('Generate new token')).toBeInTheDocument();

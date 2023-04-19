@@ -153,16 +153,6 @@ jest.mock('../../LastRun', () => ({
     )
   ,
 }));
-jest.mock('../../../../components/EditableText', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../../components/EditableText'),
-  default: props =>
-    (
-      // eslint-disable-next-line react/button-has-type
-      <div><button onClick={props.onChange}>Editable Text</button></div>
-    )
-  ,
-}));
 describe('FlowBuilder Body PageBar UI tests', () => {
   test('should display the flowSchedule icon for Flows with export type which are not simple,distributed or webhook', () => {
     const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010'};
@@ -219,8 +209,10 @@ describe('FlowBuilder Body PageBar UI tests', () => {
     const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010'};
 
     initPageBar(props);
-    userEvent.click(screen.getByText('Editable Text'));
-    expect(screen.getByText('Editable Text')).toBeInTheDocument();
+    const editableText = await waitFor(() => screen.getByText('New flow'));
+
+    await userEvent.click(editableText);
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveValue('New flow'));
   });
   test('should display the last saved time as never for new flows', () => {
     const props = {flowId: 'newFlowId_12345', integrationId: '6253af74cddb8a1ba550a010'};

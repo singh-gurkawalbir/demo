@@ -10,7 +10,7 @@ describe('DynaSwitch test cases', () => {
   });
   const mockOnFieldChange = jest.fn();
 
-  test('should test the checkbox which is initially checked', () => {
+  test('should test the checkbox which is initially checked', async () => {
     const props = {
       id: 'someId', onFieldChange: mockOnFieldChange, value: true, label: 'somelabel',
     };
@@ -19,10 +19,10 @@ describe('DynaSwitch test cases', () => {
     expect(screen.getByText('somelabel')).toBeInTheDocument();
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     expect(mockOnFieldChange).toHaveBeenCalledWith('someId', false);
   });
-  test('should test the checkbox which is initially not checked', () => {
+  test('should test the checkbox which is initially not checked', async () => {
     const props = {
       id: 'someId', onFieldChange: mockOnFieldChange, value: false, label: 'somelabel',
     };
@@ -31,7 +31,7 @@ describe('DynaSwitch test cases', () => {
     expect(screen.getByText('somelabel')).toBeInTheDocument();
     const checkbox = screen.getByRole('checkbox');
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
     expect(mockOnFieldChange).toHaveBeenCalledWith('someId', true);
   });
   test('should test the checkbox which is disabled', () => {
@@ -40,7 +40,7 @@ describe('DynaSwitch test cases', () => {
     };
 
     renderWithProviders(<DynaSwitch {...props} />);
-    const tooltipcalled = screen.queryByTitle('sometooltip');
+    const tooltipcalled = screen.getByLabelText('sometooltip');
 
     expect(tooltipcalled).toBeInTheDocument();
     const checkbox = screen.getByRole('checkbox');

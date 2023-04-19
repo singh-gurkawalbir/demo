@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { fireEvent, screen } from '@testing-library/react';
+import { cleanup, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';
@@ -49,6 +49,7 @@ describe('routerPanel tests', () => {
   });
 
   afterEach(() => {
+    cleanup;
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
@@ -57,8 +58,8 @@ describe('routerPanel tests', () => {
     await initRouterPanel();
     expect(screen.getByRole('heading', {name: 'Branching type'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Branches'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'R1B1'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'R1B2'})).toBeInTheDocument();
+    expect(screen.getAllByRole('button', {name: 'R1B1'})[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('button', {name: 'R1B2'})[0]).toBeInTheDocument();
     expect(screen.getByRole('radiogroup', {name: 'Records will flow through:'})).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'First matching branch'})).toBeInTheDocument();
     const allMatchingBranchesOption = screen.getByRole('radio', {name: 'All matching branches'});
@@ -75,17 +76,14 @@ describe('routerPanel tests', () => {
     const addBranch = screen.getByRole('button', {name: 'Add branch'});
 
     expect(addBranch).toBeInTheDocument();
-    userEvent.click(addBranch);
+    await userEvent.click(addBranch);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', undefined, {actionType: 'addBranch'}));
-    userEvent.click(allMatchingBranchesOption);
+    await userEvent.click(allMatchingBranchesOption);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.editor.patchRule('router-abcd', 'all_matching_branches', {rulePath: 'routeRecordsTo'}));
   });
   test('should able to pass initial render having branches >= 25', async () => {
     await initRouterPanel(true);
-    const spans = document.querySelectorAll('span');
-    const tooltip = spans[spans.length - 2];
-
-    expect(tooltip.getAttribute('title')).toBe('You have reached the maximum of 25 branches in a branching');
+    expect(screen.getByLabelText('You have reached the maximum of 25 branches in a branching')).toBeInTheDocument();
   });
   test('should able to pass initial render with sampleData loading', async () => {
     await initRouterPanel(false, true);
