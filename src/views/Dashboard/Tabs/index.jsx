@@ -90,7 +90,7 @@ export default function DashboardTabs() {
           aria-labelledby={`tab-${i}`}
           sx={{
             background: theme => theme.palette.background.paper,
-            border: '10px solid',
+            border: '1px solid',
             borderColor: theme => theme.palette.secondary.lightest,
             padding: theme => theme.spacing(1, 0),
             overflow: 'visible',
