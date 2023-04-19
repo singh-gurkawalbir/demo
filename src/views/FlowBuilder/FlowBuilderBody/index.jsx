@@ -413,8 +413,9 @@ export default function FlowBuilderBody({ flowId, integrationId}) {
   useEffect(
     () => () => {
       dispatch(actions.bottomDrawer.clear());
+      dispatch(actions.flow.clear(flowId));
     },
-    [dispatch]
+    [dispatch, flowId]
   );
 
   return (

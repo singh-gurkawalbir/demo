@@ -98,7 +98,7 @@ export const getParsedMessage = message => {
 export const escapeSpecialChars = message => {
   let escapedMessage = message;
 
-  if (!escapedMessage) return escapedMessage;
+  if (escapedMessage === undefined) return escapedMessage;
 
   try {
     // stringify escapes special chars
