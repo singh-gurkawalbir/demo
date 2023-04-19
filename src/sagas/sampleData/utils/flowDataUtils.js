@@ -264,6 +264,7 @@ export function* requestSampleDataForExports({
   flowId,
   resourceId,
   sampleDataStage,
+  hidden = false,
 }) {
   const resourceType = 'exports';
   const isPageGeneratorExport = yield select(
@@ -286,6 +287,7 @@ export function* requestSampleDataForExports({
         flowId,
         _pageProcessorId: resourceId,
         previewType: sampleDataStage,
+        hidden,
       });
     }
   } else {

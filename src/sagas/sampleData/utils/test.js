@@ -1821,6 +1821,7 @@ describe('Flow sample data utility sagas', () => {
             flowId,
             _pageProcessorId: resourceId,
             previewType: sampleDataStage,
+            hidden: false,
           })
           .run();
       });

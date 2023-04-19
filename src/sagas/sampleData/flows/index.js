@@ -170,6 +170,7 @@ export function* requestSampleData({
         flowId,
         resourceId,
         sampleDataStage,
+        hidden: true,
       });
     }
 
