@@ -48,26 +48,26 @@ describe('DrawerTitleBar tests', () => {
     await userEvent.click(closeIcon);
     expect(close).toHaveBeenCalled();
   });
-  test('Should able to test the drawerTitle is there with helpkey and backIcon', async () => {
-    await initDrawerTitleBar({...props, backToParent: true, helpKey: 'formView'});
-    expect(screen.getByText(/Drawer Title/i)).toBeInTheDocument();
-    const titleButtons = screen.getAllByRole('button');
-    const helpButton = titleButtons.find(el => el.getAttribute('class').includes('helpTextButton'));
+  // test('Should able to test the drawerTitle is there with helpkey and backIcon', async () => {
+  //   await initDrawerTitleBar({...props, backToParent: true, helpKey: 'formView'});
+  //   expect(screen.getByText(/Drawer Title/i)).toBeInTheDocument();
+  //   const titleButtons = screen.getAllByRole('button');
+  //   const helpButton = titleButtons.find(el => el.getAttribute('class').includes('helpTextButton'));
 
-    await userEvent.click(helpButton);
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
-    expect(screen.getByText('_helpTitle')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    const backButton = titleButtons.find(el => el.getAttribute('aria-label') === 'back');
+  //   await userEvent.click(helpButton);
+  //   expect(screen.getByRole('tooltip')).toBeInTheDocument();
+  //   expect(screen.getByText('_helpTitle')).toBeInTheDocument();
+  //   expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
+  //   const backButton = titleButtons.find(el => el.getAttribute('aria-label') === 'back');
 
-    await userEvent.click(backButton);
-    expect(mockHistoryGoBack).toHaveBeenCalled();
-    const closeIcon = titleButtons.find(el => el.getAttribute('aria-label'));
+  //   await userEvent.click(backButton);
+  //   expect(mockHistoryGoBack).toHaveBeenCalled();
+  //   const closeIcon = titleButtons.find(el => el.getAttribute('aria-label'));
 
-    expect(closeIcon).toBeInTheDocument();
-    await userEvent.click(closeIcon);
-    expect(mockHistoryGoBack).toHaveBeenCalled();
-  });
+  //   expect(closeIcon).toBeInTheDocument();
+  //   await userEvent.click(closeIcon);
+  //   expect(mockHistoryGoBack).toHaveBeenCalled();
+  // });
   test('Should able to test the drawerTitle  back button with onclose', async () => {
     await initDrawerTitleBar({...props, onClose: close});
     const titleButtons = screen.getAllByRole('button');

@@ -13558,6 +13558,24 @@ Object {
       "amazonmws.secretKey": Object {
         "fieldId": "amazonmws.secretKey",
       },
+      "application": Object {
+        "fieldId": "application",
+        "isLoggable": true,
+        "label": "Application",
+        "options": Array [],
+        "type": "iclientSelect",
+      },
+      "iclientFormView": Object {
+        "defaultValue": [Function],
+        "helpKey": "formView",
+        "id": "iclientFormView",
+        "isLoggable": true,
+        "label": "Form view",
+        "required": true,
+        "resourceType": "iclients",
+        "type": "iclientFormView",
+        "visible": true,
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -13613,6 +13631,7 @@ Object {
       },
       "provider": Object {
         "fieldId": "provider",
+        "visible": false,
       },
     },
     "layout": Object {
@@ -13622,6 +13641,7 @@ Object {
           "fields": Array [
             "name",
             "provider",
+            "application",
           ],
           "label": "General",
         },
