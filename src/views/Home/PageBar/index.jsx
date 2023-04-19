@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -18,25 +19,25 @@ import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
-const StyledActionGroup = styled(ActionGroup)(({ theme }) => ({
-  borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-  paddingLeft: parseInt(theme.spacing(3), 10),
+const useStyles = makeStyles(theme => ({
+  viewsWrapper: {
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingLeft: parseInt(theme.spacing(3), 10),
+  },
 }));
 
 const StyledIconButtonWithTooltip = styled(IconButtonWithTooltip, {
   shouldForwardProp: prop => prop !== 'active',
 })(({ theme, active }) => ({
-  viewIcon: {
-    position: 'relative',
-    marginLeft: theme.spacing(2),
-    color: theme.palette.secondary.main,
-    '&:hover': {
-      background: 'none',
-      color: theme.palette.primary.main,
-    },
-    '&:last-child': {
-      marginLeft: -parseInt(theme.spacing(0.5), 10),
-    },
+  position: 'relative',
+  marginLeft: theme.spacing(2),
+  color: theme.palette.secondary.main,
+  '&:hover': {
+    background: 'none',
+    color: theme.palette.primary.main,
+  },
+  '&:last-child': {
+    marginLeft: -parseInt(theme.spacing(0.5), 10),
   },
   ...(active && {
     color: theme.palette.primary.main,
@@ -54,6 +55,7 @@ const StyledIconButtonWithTooltip = styled(IconButtonWithTooltip, {
 const emptyObject = {};
 export default function IntegrationCeligoPageBar() {
   const location = useLocation();
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const permission = useSelector(state => {
@@ -112,7 +114,7 @@ export default function IntegrationCeligoPageBar() {
           Install integration
         </TextButton>
         )}
-        <StyledActionGroup>
+        <ActionGroup className={classes.viewsWrapper}>
           <StyledIconButtonWithTooltip
             data-test="tileView"
             active={!isListView}
@@ -130,7 +132,7 @@ export default function IntegrationCeligoPageBar() {
             buttonSize={{size: 'small'}}>
             <ListViewIcon />
           </StyledIconButtonWithTooltip>
-        </StyledActionGroup>
+        </ActionGroup>
       </ActionGroup>
     </CeligoPageBar>
   );
