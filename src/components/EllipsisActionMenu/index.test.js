@@ -9,25 +9,17 @@ const mockOnClick = jest.fn();
 const actionsMenu = [
   {
     action: 'cloneIntegration',
-    label: 'Clone integration',
+    label: 'Clone-integration',
   },
   {
     action: 'generateTemplateZip',
-    label: 'Download integration',
+    label: 'Download-integration',
   },
   {
     action: 'deleteIntegration',
-    label: 'Delete integration',
+    label: 'Delete-integration',
   },
 ];
-
-jest.mock('../icons/TrashIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../icons/TrashIcon'),
-  default: () => (
-    <div>Delete</div>
-  ),
-}));
 
 describe('ellipsis menu ui tests', () => {
   test('should display the ellipsis menu icon', () => {
@@ -36,7 +28,7 @@ describe('ellipsis menu ui tests', () => {
 
     expect(actionButton).toHaveLength(1);
   });
-  test('should display the same number of options that are passed in props on clicking the ellipsis icon', async () => {
+  test('should display the same number of options that are passed in props on clicking the ellipsis icon', () => {
     renderWithProviders(
 
       <EllipsisActionMenu
@@ -45,10 +37,9 @@ describe('ellipsis menu ui tests', () => {
         alignment="vertical"
         />
     );
-    screen.debug();
-    const actionButton = document.querySelector('[type="button"]');
+    const actionButton = screen.getByRole('button');
 
-    await waitFor(() => expect(actionButton).toBeInTheDocument());
+    expect(actionButton).toBeInTheDocument();
     userEvent.click(actionButton);
     const numberOfActions = screen.getAllByRole('menuitem');
 
@@ -68,7 +59,7 @@ describe('ellipsis menu ui tests', () => {
 
     expect(actionButton).toBeInTheDocument();
     userEvent.click(actionButton);
-    const cloned = screen.getByText('Clone integration');
+    const cloned = screen.getByText('Clone-integration');
 
     userEvent.click(cloned);
     await waitFor(() =>
