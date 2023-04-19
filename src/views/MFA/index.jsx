@@ -74,7 +74,6 @@ export default function MfaVerify() {
       footerLink="signup"
       pageSubHeading={(
         <StyledNotificationToaster
-          className={classes.notificationToasterMessage}
           noBorder
           variant="info"
           transparent>{infoMessage}
