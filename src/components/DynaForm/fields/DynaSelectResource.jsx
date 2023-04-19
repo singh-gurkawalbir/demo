@@ -428,6 +428,7 @@ export default function DynaSelectResource(props) {
 
       dispatch(actions.resource.patchStaged(value, patchSet));
     }
+
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.EDIT,
       baseUrl: location.pathname,
