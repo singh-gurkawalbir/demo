@@ -195,7 +195,14 @@ export default {
     type: 'select',
     label: 'Header scheme',
     skipDefault: true,
-    defaultValue: r => r?.oauth2?.scheme || '',
+    defaultValue: r => {
+      if (!['Bearer', 'MAC', ' '].includes(r?.oauth2?.scheme)) return 'Custom';
+      if (r?.oauth2?.scheme) {
+        return r.oauth2.scheme;
+      }
+
+      return '';
+    },
     options: [
       {
         items: [

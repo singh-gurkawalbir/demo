@@ -72,10 +72,13 @@ export default function TitleBar({ flowId, formKey, onClose }) {
   let app;
 
   if (resource?._httpConnectorId) {
+    // existing iClinet
     app = applications.find(a => a._httpConnectorId === resource?._httpConnectorId) || {};
   } else if (resource?.http?._httpConnectorId) {
+    // existing connection and new iclient
     app = applications.find(a => a._httpConnectorId === resource?.http?._httpConnectorId) || {};
   } else if (resource?.assistant) {
+    // new connection and new Iclient
     app = applications.find(a => a.id === resource?.assistant) || {};
   }
   const refreshIclient = resourceType === 'iClients' || (resourceType === 'connections' && checkEditIclient);

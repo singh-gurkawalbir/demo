@@ -43,8 +43,7 @@ export default function IclientSelect(props) {
       isNew: false,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, stagedRes);
-    const newFinalValues = { ...finalValues };
+    const newFinalValues = { ...preSave(formContext.value, stagedRes) };
 
     if (selectedValue) {
       stagedRes['/application'] = selectedValue;
