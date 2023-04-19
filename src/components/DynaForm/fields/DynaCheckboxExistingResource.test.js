@@ -1,7 +1,6 @@
 
 import React from 'react';
 import {screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
@@ -150,15 +149,5 @@ describe('dynaSelectFlowResource UI test cases', () => {
 
       expect(checkBox).toBeDisabled();
     });
-    // test('should call the onChange function passed in props when checkbox is checked', () => {
-    //   const mockOnChange = jest.fn();
-
-    //   renderWithProviders(<DynaCheckboxExistingResource {...props} onFieldChange={mockOnChange} />);
-    //   expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    //   const checkBox = screen.getByRole('checkbox');
-
-    //   userEvent.click(checkBox);
-    //   expect(mockOnChange).toHaveBeenCalled();
-    // });
   });
 });
