@@ -175,6 +175,7 @@ import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
 import DynaMultiFieldExpression from './DynaMultiFieldExpression';
+import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -362,4 +363,5 @@ export default {
   shopifyconnectionselect: DynaShopifyConnectionSelect,
   hashalgorithm: DynaHashAlgorithm,
   multifieldexpression: DynaMultiFieldExpression,
+  existingCheckresource: DynaCheckboxExistingResource,
 };

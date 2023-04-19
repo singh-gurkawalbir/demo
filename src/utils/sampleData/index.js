@@ -565,7 +565,9 @@ export const wrapSampleDataWithContext = ({
   stage,
   fieldType,
   editorType,
-  parentIntegration}) => {
+  parentIntegration,
+  lastExportDateTime,
+}) => {
   const { status, data, templateVersion } = sampleData || {};
 
   let resourceType = 'export';
@@ -617,13 +619,9 @@ export const wrapSampleDataWithContext = ({
   const contextFields = {};
 
   if (isDeltaExport) {
-    contextFields.lastExportDateTime = moment()
-      .startOf('day')
-      .add(-7, 'd')
+    contextFields.lastExportDateTime = lastExportDateTime || moment()
       .toISOString();
     contextFields.currentExportDateTime = moment()
-      .startOf('day')
-      .add(-24, 'h')
       .toISOString();
   }
 
