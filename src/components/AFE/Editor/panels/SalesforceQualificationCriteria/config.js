@@ -25,8 +25,8 @@ export default {
 
       begins_with: 'starts with',
     },
-    add_rule: 'Add filter',
-    add_group: 'Add group',
+    add_rule: 'Add Filter',
+    add_group: 'Add Group',
     delete_rule: ' ',
     delete_group: ' ',
   },
