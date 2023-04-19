@@ -11,7 +11,6 @@ export default {
       newValues['/adaptorType'] = 'NetSuiteImport';
       newValues['/blob'] = true;
     } else {
-      delete newValues['/blobKeyPath'];
       delete newValues['/blob'];
     }
 
@@ -69,7 +68,7 @@ export default {
     'netsuite_da.batchSize': {
       fieldId: 'netsuite_da.batchSize',
     },
-    blobKeyPath: { fieldId: 'blobKeyPath' },
+    blobKeyPath: { fieldId: 'blobKeyPath', deleteWhen: [{field: 'inputMode', isNot: ['blob']}] },
     distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
     'netsuite_da.mapping': { fieldId: 'netsuite_da.mapping' },

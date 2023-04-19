@@ -13,10 +13,7 @@ export default {
       }.myshopify.com/admin/oauth/access_token`;
       retValues['/http/auth/token/headerName'] = 'X-Shopify-Access-Token';
       retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
-      delete retValues['/http/auth/basic/username'];
-      delete retValues['/http/auth/basic/password'];
 
       retValues['/http/auth/basic'] = undefined;
 
@@ -32,12 +29,9 @@ export default {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Shopify-Access-Token';
       retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
-      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/ping/relativeURI'] = '/orders.json';
       retValues['/http/ping/method'] = 'GET';
       retValues['/http/ping/successPath'] = '';
@@ -204,11 +198,15 @@ export default {
       label: 'API key',
       helpKey: 'shopify.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'shopify.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -217,6 +215,7 @@ export default {
       required: true,
       helpKey: 'shopify.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -288,6 +287,7 @@ export default {
 
         return [{ field: 'http.auth.type', is: ['oauth'] }];
       },
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     application: {
       fieldId: 'application',
