@@ -164,6 +164,16 @@ export function* validateCustomSettings({ id, result }) {
     const index = displayAfter?.indexOf('.');
     const displayAfterRef = displayAfter?.substr(index + 1);
 
+    // if ref is settings  ref, pass settings metadata and validate against settings fields
+    if (displayAfterRef.startsWith('settings.')) {
+      const index = displayAfterRef?.indexOf('.');
+      const settingsRef = displayAfterRef?.substr(index + 1);
+
+      if (!isValidDisplayAfterRef(settingsRef, result?.data)) {
+        return true;
+      }
+    }
+    // else, validate against resourceForm's metadata fields
     if (!isValidDisplayAfterRef(displayAfterRef, formContext.fieldMeta)) {
       return true;
     }
