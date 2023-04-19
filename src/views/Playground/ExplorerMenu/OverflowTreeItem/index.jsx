@@ -3,11 +3,9 @@ import { makeStyles } from '@material-ui/core';
 import { TreeItem } from '@material-ui/lab';
 
 const useStyles = makeStyles({
-  label:
-  {
+  label: {
+    width: '100%',
     whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
   },
 });
 
