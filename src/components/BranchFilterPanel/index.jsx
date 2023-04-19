@@ -34,7 +34,6 @@ import { message } from '../../utils/messageStore';
 const defaultData = {};
 
 export default function BranchFilterPanel({ editorId, position, type, rule, handlePatchEditor }) {
-  // console.log(editorId, rule, event);
   const qbuilder = useRef(null);
   const disabled = useSelector(state =>
     selectors.isEditorDisabled(state, editorId)
@@ -59,11 +58,10 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   const [rulesState, setRulesState] = useState({});
   const dispatch = useDispatch();
 
-  const setSkipEmptyRuleCleanup = useCallback(() => {
+  const setSkipEmptyRuleCleanup = useCallback(value => {
     if (type === 'branchFilter') {
-    // console.log('setSkipEmptyRuleCleanup: ', position);
       dispatch(
-        actions.editor.patchRule(editorId, true, {
+        actions.editor.patchRule(editorId, value, {
           rulePath: `branches[${position}].skipEmptyRuleCleanup`,
         })
       );
@@ -879,7 +877,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
         if (type === 'branchFilter') {
-          setSkipEmptyRuleCleanup();
+          setSkipEmptyRuleCleanup(true);
         }
       });
 
@@ -920,7 +918,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
     // iterate over rulesState and find empty rules
       if (!rulesState || skipEmptyRuleCleanup) return;
 
-      // console.log('rulesState', rulesState);
       const $qb = jQuery(qbuilder.current);
 
       Object.keys(rulesState).forEach(ruleId => {
@@ -930,7 +927,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
           typeof state.data.lhs === 'object' &&
         typeof state.data.rhs === 'object'
         ) {
-        // console.log('both lhs and rhs have data');
         // eslint-disable-next-line camelcase
           const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
@@ -938,7 +934,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
           const $emptyRule = state.rule;
 
-          // console.log('delete', $emptyRule);
           $qb.queryBuilder('deleteRule', $emptyRule);
         }
       });
@@ -954,10 +949,21 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       .on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
         if (type === 'branchFilter') {
-          setSkipEmptyRuleCleanup();
+          setSkipEmptyRuleCleanup(true);
         }
       });
   }, [position, filtersMetadata, type, setSkipEmptyRuleCleanup]);
+
+  // On component unmount,
+  // 1. Reset editor validations,
+  // 2. Cleanup any empty rules on remount,
+  // this useEffect handles switching between rules and javascript panels
+  useEffect(() => () => {
+    patchEditorValidation();
+    setSkipEmptyRuleCleanup(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleCloseOperandSettings = () => {
     setShowOperandSettingsFor();
   };
