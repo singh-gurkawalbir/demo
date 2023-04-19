@@ -5,32 +5,41 @@ import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 
-const useStyles = makeStyles(() => ({
-  label: {
-    fontSize: '16px',
-  },
+const useStyles = makeStyles(theme => ({
   menutitle: {
-    fontSize: '10px',
+    fontSize: 11,
   },
   description: {
-    fontSize: '12px',
+    fontSize: 12,
+    color: theme.palette.secondary.light,
+  },
+  createMenu: {
+    '& .MuiMenu-paper': {
+      border: `1px solid ${theme.palette.secondary.lightest}`,
+    },
   },
   icon: {
-    maxwidth: '12px',
-    marginRight: '12px',
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(2, 1.5),
+    display: 'flex',
+    marginRight: theme.spacing(1.5),
+    '& svg': {
+      fontSize: theme.spacing(2.5),
+    },
+  },
+  menuItem: {
+    padding: theme.spacing(1, 2),
   },
 }));
 
 const ActionLabel = ({label, classes, description, Icon}) => (
   <>
-    <Icon className={classes.icon} />
+    <span className={classes.icon}>
+      <Icon />
+    </span>
     <div>
-      <span className={classes.label}>
-        {label}
-      </span>
-      <div className={classes.description}>
-        {description}
-      </div>
+      <Typography variant="subtitle2">{label}</Typography>
+      <Typography variant="subtitle2" className={classes.description}>{description}</Typography>
     </div>
   </>
 );
@@ -57,13 +66,18 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle}
         {label}
       </PillButton>
       <Menu
-        elevation={2}
+        elevation={0}
         id={actionsPopoverId}
         open={open}
         variant="Menu"
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleMenuClose}
+        className={classes.createMenu}
+        transformOrigin={{
+          vertical: -34,
+          horizontal: 'center',
+        }}
       >
         {menuTitle && (
         <ListItem>
@@ -76,7 +90,9 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle}
             data-test={`Create-${label}`}
             disabled={disabled}
             component={Link}
-            to={link}>
+            to={link}
+            onClick={handleMenuClose}
+            className={classes.menuItem}>
             <ActionLabel
               classes={classes} Icon={Icon} label={label} description={description}
               disabled={disabled} />
