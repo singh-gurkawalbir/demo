@@ -1,11 +1,19 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
+import makeStyles from '@mui/styles/makeStyles';
 import { Tabs, Tab, Box } from '@mui/material';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
 import TabContent from '../../../components/TabContent';
+
+// eslint-disable-next-line no-unused-vars
+const useStyles = makeStyles(theme => ({
+  tabContainer: {
+    padding: theme.spacing(0, 3),
+  },
+}));
 
 const tabs = [
   {
@@ -84,7 +92,7 @@ export default function DashboardTabs() {
             background: theme => theme.palette.background.paper,
             border: '10px solid',
             borderColor: theme => theme.palette.secondary.lightest,
-            padding: theme => theme.spacing(1, 2),
+            padding: theme => theme.spacing(1, 0),
             overflow: 'visible',
           }}
         >
