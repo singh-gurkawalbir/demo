@@ -865,13 +865,14 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     'oauth2.refresh.headers': 'http.auth.oauth.refreshHeaders',
     'oauth2.refresh.body': 'http.auth.oauth.refreshBody',
     'oauth2.accessTokenLocation': 'http.auth.token.location',
-    'oauth2.accessTokenHeaderName': 'auth.token.headerName',
+    'oauth2.accessTokenHeaderName': 'http.auth.token.headerName',
     'oauth2.scheme': 'http.auth.token.scheme',
     'oauth2.customAuthScheme': 'http.customAuthScheme',
     'oauth2.accessTokenParamName': 'http.auth.token.paramName',
     'oauth2.failStatusCode': 'http.auth.failStatusCode',
     'oauth2.failPath': 'http.auth.failPath',
     'oauth2.failValues': 'http.auth.failValues',
+    'oauth2.validDomainNames': 'oauth2.validDomainNames',
   };
 
   if (!isGenericHTTP) {
@@ -884,10 +885,16 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     const preConfiguredField = httpConnectorData?.supportedBy?.connection?.preConfiguredFields?.find(field => iClientPathMap[key] === field?.path);
 
     if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
+      // new Iclient
       !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0]);
-    } else if (resource?.application && preConfiguredField) {
-      tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0];
+    } else if (resource?.application && (resource._httpConnectorId !== httpConnectorData._id)) {
+      // change application in existing iclient should refresh all the preconfigured values
+      tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField ? preConfiguredField?.values[0] : '';
+    } else if (resource?.application && preConfiguredField && (resource._httpConnectorId === httpConnectorData._id)) {
+      // If application is not changed in the existing Iclient it should not change preconfigured value
+      tempFiledMeta?.fieldMap[key]?.defaultValue;
     } else if (resource?.application === 'custom_oauth2') {
+      // when application is not a httpconnector then all preconfigured values should replaces with ''
       tempFiledMeta.fieldMap[key].defaultValue = '';
       tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
     }
@@ -906,16 +913,6 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
 
   const connectorData = app?._httpConnectorId ? getHttpConnector(app?._httpConnectorId) : getHttpConnector(resource?._httpConnectorId);
 
-  const authUrlValue = tempFiledMeta.fieldMap?.['oauth2.auth.uri']?.defaultValue;
-  const tokenUrlValues = tempFiledMeta.fieldMap?.['oauth2.token.uri']?.defaultValue;
-
-  if (tempFiledMeta.fieldMap['oauth2.auth.uri'] || tempFiledMeta.fieldMap['oauth2.token.uri']) {
-    const authUrlDomainNames = tempFiledMeta.fieldMap['oauth2.auth.uri'] ? authUrlValue.substring(authUrlValue.indexOf('https://') + 8, authUrlValue.indexOf('.com')) : '';
-
-    const tokenUrlDomainNames = tempFiledMeta.fieldMap['oauth2.token.uri'] ? tokenUrlValues.substring(tokenUrlValues.indexOf('https://') + 8, tokenUrlValues.indexOf('.com')) : '';
-
-    tempFiledMeta.fieldMap['oauth2.validDomainNames'].defaultValue = (authUrlDomainNames && tokenUrlDomainNames) ? `${authUrlDomainNames},${tokenUrlDomainNames}` : (authUrlDomainNames || tokenUrlDomainNames);
-  }
   tempFiledMeta.fieldMap?.application?.options.push({items});
   if (resource?.application === 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
