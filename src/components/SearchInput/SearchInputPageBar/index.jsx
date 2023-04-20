@@ -84,7 +84,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HomeSearchInput({value, onChange, placeHolder, openWithFocus, className, autoFocus}) {
+export default function SearchInputPageBar({value, onChange, placeHolder, openWithFocus, className, autoFocus}) {
   const inputRef = useRef();
   const classes = useStyles();
   const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
