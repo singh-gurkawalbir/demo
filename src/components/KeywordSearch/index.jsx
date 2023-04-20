@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect } from 'react';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import HomeSearchInput from '../SearchInput/HomeSearchInput';
+import SearchInputPageBar from '../SearchInput/SearchInputPageBar';
 import useDebouncedValue from '../../hooks/useDebouncedInput';
 
 export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHolder}) {
@@ -31,7 +31,7 @@ export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHold
   }, [setText]);
 
   return (
-    <HomeSearchInput
+    <SearchInputPageBar
       value={text}
       onChange={handleKeywordChange}
       autoFocus={autoFocus}
