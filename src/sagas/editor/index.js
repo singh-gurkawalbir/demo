@@ -24,7 +24,8 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION, emptyObject } from '../../constants';
+import { getLastExportDateTime } from '../flows';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -211,7 +212,7 @@ export function* requestPreview({ id }) {
             errorMessage.push(`Stack: ${errJSON.stack}`);
           }
 
-          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine}));
+          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine, errSourceProcessor: editor.activeProcessor}));
         }
       }
     }
@@ -224,7 +225,7 @@ export function* requestPreview({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message}));
+    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message, errSourceProcessor: editor.activeProcessor}));
   }
 
   return yield put(actions.editor.previewResponse(id, finalResult));
@@ -728,6 +729,13 @@ export function* requestEditorSampleData({
   const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
+    if (flowId) {
+      const { status } = yield select(selectors.getLastExportDateTime, flowId) || emptyObject;
+
+      if (!status) {
+        yield call(getLastExportDateTime, { flowId });
+      }
+    }
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,
@@ -945,8 +953,6 @@ export function* requestChatCompletion({ id, prompt }) {
  The data to apply the rule to is:\n ${data}\n
  ${prompt}`,
   });
-
-  console.log('completion saga body', body);
 
   try {
     response = yield call(apiCallWithRetry, {

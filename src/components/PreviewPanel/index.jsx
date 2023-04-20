@@ -68,15 +68,15 @@ function PreviewInfo({
 }) {
   const dispatch = useDispatch();
 
-  const fetchExportPreviewData = useCallback(() => {
-    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
+  const fetchExportPreviewData = useCallback(customStartDate => {
+    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, customStartDate }));
   }, [
     dispatch,
     formKey,
   ]);
 
-  const handlePreview = useCallback(() => {
-    fetchExportPreviewData();
+  const handlePreview = useCallback(customStartDate => {
+    fetchExportPreviewData(customStartDate);
     setShowPreviewData(showPreviewData => ({...showPreviewData, [toggleValue]: true}));
   }, [fetchExportPreviewData, setShowPreviewData, toggleValue]);
 
