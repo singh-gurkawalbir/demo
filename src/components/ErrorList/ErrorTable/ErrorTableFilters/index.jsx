@@ -150,7 +150,7 @@ export default function ErrorTableFilters({
         hasErrors &&
           (
             <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} />
+              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} autoFocus />
             </div>
           )
         }
