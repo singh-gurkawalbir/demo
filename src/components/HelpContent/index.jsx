@@ -59,7 +59,6 @@ export default function HelpContent({ title, children, ...rest }) {
         )}
       </div>
       <Typography variant="subtitle2" component="div" className={classes.content} {...rest}>{children}</Typography>
-
     </div>
   );
 }
