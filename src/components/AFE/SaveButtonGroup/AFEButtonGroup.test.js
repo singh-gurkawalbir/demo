@@ -20,20 +20,6 @@ async function initSaveButtonGroup(props = {editorId: 'mappings', onClose: mockC
         rule: {javascript: {_init_code: 'something', entryFunction: 'entryFunction', scriptId: 'scriptId'}},
         originalRule: {javascript: {}},
       },
-      router: {
-        editorType: 'router',
-        activeProcessor: 'javascript',
-        data: {javascript: '{}'},
-        rule: {javascript: {_init_code: 'something', entryFunction: 'sometext', scriptId: ''}},
-        originalRule: {javascript: {}},
-      },
-      router2: {
-        editorType: 'router',
-        activeProcessor: 'javascript',
-        data: {javascript: '{}'},
-        rule: {javascript: {_init_code: 'something', entryFunction: '', scriptId: 'scriptId'}},
-        originalRule: {javascript: {}},
-      },
     };
   });
 
@@ -61,18 +47,6 @@ describe('saveButtonGroup tests', () => {
     expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
     userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.saveRequest('inputFilter'));
-  });
-  test('should click SaveButtonGroup in javascript editor when script is not selected', async () => {
-    await initSaveButtonGroup({makeDirty: true, editorId: 'router'});
-    expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
-    expect(mockDispatchFn).not.toHaveBeenCalled();
-  });
-  test('should click SaveButtonGroup in javascript editor when function field is empty', async () => {
-    await initSaveButtonGroup({makeDirty: true, editorId: 'router2'});
-    expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
-    expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 });
 

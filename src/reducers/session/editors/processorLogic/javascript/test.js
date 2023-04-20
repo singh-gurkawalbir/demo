@@ -72,6 +72,22 @@ describe('javascript processor logic', () => {
 
       expect(validate(editor)).toEqual(expectedOutput);
     });
+    test('should correctly return script when script is not present', () => {
+      delete editor.rule.scriptId;
+      const expectedOutput = {
+        ruleError: 'Script is required',
+      };
+
+      expect(validate(editor)).toEqual(expectedOutput);
+    });
+    test('should correctly return script when entry fucntion is not present', () => {
+      delete editor.rule.entryFunction;
+      const expectedOutput = {
+        ruleError: 'Function is required',
+      };
+
+      expect(validate(editor)).toEqual(expectedOutput);
+    });
   });
   describe('dirty util', () => {
     test('should return true if original code is different from new code', () => {

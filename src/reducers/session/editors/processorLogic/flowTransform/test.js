@@ -189,6 +189,7 @@ describe('flowTransform processor logic', () => {
     });
     test('should correctly call the javascript validate util if active processor is script type', () => {
       editor.activeProcessor = 'javascript';
+      editor.rule.javascript.scriptId = 'scriptId';
       const expectedOutput = {
         dataError: false,
       };
