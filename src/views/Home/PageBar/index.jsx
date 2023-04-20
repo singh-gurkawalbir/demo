@@ -1,11 +1,14 @@
 import React from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
+import AddIcon from '../../../components/icons/AddIcon';
+import ZipUpIcon from '../../../components/icons/InstallIntegrationIcon';
 import { generateNewId } from '../../../utils/resource';
+import TextButton from '../../../components/Buttons/TextButton';
 import ActionGroup from '../../../components/ActionGroup';
 // import CeligoDivider from '../../../components/CeligoDivider';
 import TilesViewIcon from '../../../components/icons/TilesViewIcon';
@@ -15,11 +18,6 @@ import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-import PillButtonWithMenu from '../../../components/Buttons/PillButtonWithMenu';
-import FlowsIcon from '../../../components/icons/FlowsIcon';
-import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
-import FileIcon from '../../../components/icons/FileIcon';
-import DownloadIntegrationIcon from '../../../components/icons/DownloadIntegrationIcon';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {
@@ -52,7 +50,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObject = {};
-
 export default function IntegrationCeligoPageBar() {
   const location = useLocation();
   const classes = useStyles();
@@ -65,45 +62,6 @@ export default function IntegrationCeligoPageBar() {
   }, shallowEqual);
   const homePreferences = useSelector(state => selectors.userPreferences(state).dashboard || emptyObject, shallowEqual);
   const isListView = useSelector(state => selectors.isHomeListView(state));
-  const uploadActions = [
-    {
-      label: 'Integration',
-      description: 'Upload an existing integration',
-      link: buildDrawerUrl({
-        path: drawerPaths.INSTALL.INTEGRATION,
-        baseUrl: location.pathname,
-      }),
-      Icon: DownloadIntegrationIcon,
-    },
-  ];
-  const createActions = [
-    {
-      label: 'Flow',
-      description: 'Sync data between apps',
-      link: '/integrations/none/flowBuilder/new',
-      Icon: FlowsIcon,
-    },
-    {
-      label: 'Connection',
-      description: 'Store credentials to apps',
-      Icon: ConnectionsIcon,
-      link: buildDrawerUrl({
-        path: drawerPaths.RESOURCE.ADD,
-        baseUrl: location.pathname,
-        params: { resourceType: 'connections', id: generateNewId() },
-      }),
-    },
-    {
-      label: 'Integration',
-      description: 'Organize flows in a folder',
-      link: buildDrawerUrl({
-        path: drawerPaths.RESOURCE.ADD,
-        baseUrl: location.pathname,
-        params: { resourceType: 'integrations', id: generateNewId() },
-      }),
-      Icon: FileIcon,
-    },
-  ];
 
   return (
     <CeligoPageBar title="My integrations">
@@ -112,11 +70,38 @@ export default function IntegrationCeligoPageBar() {
       <ActionGroup>
         {permission.create && (
           <>
-            <PillButtonWithMenu label="Create" menuTitle="CREATE" fill actionsMenu={createActions} />
+            <TextButton
+              data-test="createFlow"
+              component={Link}
+              startIcon={<AddIcon />}
+              to="/integrations/none/flowBuilder/new"
+              >
+              Create flow
+            </TextButton>
+            <TextButton
+              data-test="newIntegration"
+              component={Link}
+              startIcon={<AddIcon />}
+              to={buildDrawerUrl({
+                path: drawerPaths.RESOURCE.ADD,
+                baseUrl: location.pathname,
+                params: { resourceType: 'integrations', id: generateNewId() },
+              })} >
+              Create integration
+            </TextButton>
           </>
         )}
         {permission.install && (
-        <PillButtonWithMenu label="Upload" menuTitle="UPLOAD" actionsMenu={uploadActions} />
+        <TextButton
+          data-test="installZip"
+          component={Link}
+          startIcon={<ZipUpIcon />}
+          to={buildDrawerUrl({
+            path: drawerPaths.INSTALL.INTEGRATION,
+            baseUrl: location.pathname,
+          })} >
+          Install integration
+        </TextButton>
         )}
         <ActionGroup className={classes.viewsWrapper}>
           <IconButtonWithTooltip
