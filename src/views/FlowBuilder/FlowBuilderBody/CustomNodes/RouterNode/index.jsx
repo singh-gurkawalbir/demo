@@ -56,7 +56,6 @@ export default function RouterNode({id: routerId, data = {}}) {
   const badgeContent = routeRecordsTo === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
   const handleRouterClick = useHandleRouterClick(routerId);
-  // const nameGap = name?.length > 25 && name.indexOf(' ') > -1;
 
   return (
     <div className={classes.container}>
