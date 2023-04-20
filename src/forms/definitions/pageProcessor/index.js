@@ -95,7 +95,7 @@ export default {
     checkExistingImport: {
       id: 'checkExistingImport',
       name: 'checkExistingImport',
-      label: 'Use existing Import',
+      label: 'Use existing import',
       type: 'existingCheckresource',
       flowResourceType: 'pp',
       resourceType: 'imports',
@@ -120,7 +120,7 @@ export default {
       resourceType: 'imports',
       label: '',
       defaultValue: '',
-      required: false,
+      required: true,
       allowEdit: true,
       defaultOpen: true,
       refreshOptionsOnChangesTo: [
@@ -140,7 +140,7 @@ export default {
     checkExistingExport: {
       id: 'checkExistingExport',
       name: 'checkExistingExport',
-      label: 'Use existing Export',
+      label: 'Use existing lookup',
       flowResourceType: 'pp',
       resourceType: 'exports',
       type: 'existingCheckresource',
@@ -165,7 +165,7 @@ export default {
       resourceType: 'exports',
       label: '',
       defaultValue: '',
-      required: false,
+      required: true,
       allowEdit: true,
       defaultOpen: true,
       refreshOptionsOnChangesTo: [
@@ -343,12 +343,16 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
-      let importLabel = `Would you like to use an existing ${
-        resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
-      }?`;
+      let importLabel = '';
 
-      if (fieldId === 'exportId') {
-        importLabel = 'Would you like to use an existing lookup?';
+      if (fieldId === 'checkExistingImport') {
+        importLabel = `Use existing ${
+          resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
+        }`;
+      }
+
+      if (fieldId === 'checkExistingExport') {
+        importLabel = 'Use existing lookup';
       }
 
       const visible = !!connectionField.value;
