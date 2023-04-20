@@ -35,6 +35,7 @@ export default {
     'http.scopePeople': {
       id: 'http.scopePeople',
       type: 'selectscopes',
+      isLoggable: true,
       label: 'Configure scopes',
       helpKey: 'googlecontacts.connection.http.scopePeople',
       scopes: [
