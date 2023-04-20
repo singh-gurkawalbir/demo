@@ -86,7 +86,7 @@ describe('preview Info Component', () => {
     await initPreviewInfo({fetchExportPreviewData, resourceSampleData, formKey});
     const previewBtn = screen.getByRole('button', {name: 'Preview'});
 
-    userEvent.click(previewBtn);
+    await userEvent.click(previewBtn);
     expect(fetchExportPreviewData).toBeCalled();
   });
 });
