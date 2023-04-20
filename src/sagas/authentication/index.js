@@ -249,6 +249,7 @@ export function* initializeLogrocket() {
     // RELEASE_VERSION is defined by webpack
     // eslint-disable-next-line no-undef
     release: RELEASE_VERSION,
+    mergeIframes: true,
     console: {
       isEnabled: {
         debug: false,
