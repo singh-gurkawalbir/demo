@@ -486,7 +486,7 @@ export default function BottomDrawer({
                   : <RunDashboardPanel flowId={flowId} />;
                 break;
               case 'runHistory':
-                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} /> : null;
+                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={integrationId} /> : null;
                 break;
 
               case 'connections':

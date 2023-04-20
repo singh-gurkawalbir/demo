@@ -22,6 +22,7 @@ import JobTable from './JobTable';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import messageStore, { message } from '../../../utils/messageStore';
 import MultiSelectFilter from '../../MultiSelectFilter';
+import FilterIconWrapper from '../../ResourceTable/commonCells/FilterIconWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -75,7 +76,7 @@ const useStyles = makeStyles(theme => ({
 
 const ROWS_PER_PAGE = 50;
 
-export default function RunHistory({ flowId, className }) {
+export default function RunHistory({ flowId, className, integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [currentPage, setCurrentPage] = useState(0);
@@ -85,6 +86,19 @@ export default function RunHistory({ flowId, className }) {
 
     return !status || status === 'requested';
   });
+  const allUsers = useSelector(state => {
+    const usersList = selectors.availableUsersList(state, integrationId);
+
+    return usersList.reduce((acc, {sharedWithUser}) => {
+      const { _id, name, email } = sharedWithUser;
+
+      acc[_id] = name || email;
+
+      return acc;
+    }, {});
+  });
+
+  console.log({allUsers});
   const [selectedUsersFilter, setSelectedUsersFilter] = useState(['all']);
   const defaultRange = useMemo(
     () => ({
@@ -195,24 +209,26 @@ export default function RunHistory({ flowId, className }) {
   );
 
   const canceledByUsersList = useMemo(() => {
+    let usersList = [];
+
     if (runHistory?.length) {
-      let usersList = runHistory.reduce((acc, job) => job.canceledBy ? acc.add(job.canceledBy) : acc, new Set());
+      usersList = runHistory.reduce((acc, job) => job.canceledBy ? acc.add(job.canceledBy) : acc, new Set());
 
-      usersList = [...usersList].map(name => ({_id: name, name}));
-
-      return [
-        {
-          _id: 'all',
-          name: 'All users',
-        },
-        ...usersList,
-        {
-          _id: 'system',
-          name: 'System',
-        },
-      ];
+      usersList = [...usersList].map(_id => ({_id, name: allUsers[_id]}));
     }
-  }, [runHistory]);
+
+    return [
+      {
+        _id: 'all',
+        name: 'All users',
+      },
+      ...usersList,
+      {
+        _id: 'system',
+        name: 'System',
+      },
+    ];
+  }, [runHistory, allUsers]);
 
   useEffect(() => {
     if (!areUserAccountSettingsLoaded && isAccountOwnerOrAdmin) {
@@ -233,7 +249,7 @@ export default function RunHistory({ flowId, className }) {
 
   const ButtonLabel = useMemo(() => {
     if (selectedUsersFilter.length === 1) {
-      const selectedUser = canceledByUsersList?.find(r => r._id === selectedUsersFilter[0]);
+      const selectedUser = canceledByUsersList.find(r => r._id === selectedUsersFilter[0]);
 
       return selectedUser?._id === 'all' ? 'Select canceled by' : selectedUser?.name;
     }
@@ -259,6 +275,8 @@ export default function RunHistory({ flowId, className }) {
 
     return [...selectedIds, id];
   }, []);
+
+  const FilterIcon = () => <FilterIconWrapper selected={!selectedUsersFilter.includes('all')} />;
 
   return (
     <div className={clsx(classes.wrapper, className)}>
@@ -288,6 +306,7 @@ export default function RunHistory({ flowId, className }) {
             </CeligoSelect>
             {filter?.status === 'canceled' && (
               <MultiSelectFilter
+                Icon={FilterIcon}
                 ButtonLabel={ButtonLabel}
                 disabled={!runHistory?.length}
                 items={canceledByUsersList}
