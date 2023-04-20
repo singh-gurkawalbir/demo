@@ -887,10 +887,10 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
       // new Iclient
       !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0]);
-    } else if (resource?.application && (resource._httpConnectorId !== httpConnectorData._id)) {
+    } else if (resource?.application && (resource?._httpConnectorId !== httpConnectorData?._id)) {
       // change application in existing iclient should refresh all the preconfigured values
       tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField ? preConfiguredField?.values[0] : '';
-    } else if (resource?.application && preConfiguredField && (resource._httpConnectorId === httpConnectorData._id)) {
+    } else if (resource?.application && preConfiguredField && (resource?._httpConnectorId === httpConnectorData?._id)) {
       // If application is not changed in the existing Iclient it should not change preconfigured value
       tempFiledMeta?.fieldMap[key]?.defaultValue;
     } else if (resource?.application === 'custom_oauth2') {
@@ -917,8 +917,8 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
   if (resource?.application === 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
   } else if ((resource?.application || resource?.assistant) && resource?.application !== 'custom_oauth2') {
-    tempFiledMeta.fieldMap.application.defaultValue = connectorData?.legacyId || connectorData?.name;
-  } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.legacyId || connectorData?.name) : 'custom_oauth2'); }
+    tempFiledMeta.fieldMap.application.defaultValue = connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId;
+  } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId) : 'custom_oauth2'); }
 
   return tempFiledMeta;
 };

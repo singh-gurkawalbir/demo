@@ -916,6 +916,7 @@ export function* initFormValues({
       customFieldMeta,
       accountOwner,
       parentConnectionId,
+      applicationFieldState,
     });
 
     const form = defaultFormAssets.fieldMeta;
