@@ -1,21 +1,7 @@
 import { isNewId } from '../../../utils/resource';
-import { getFieldIdsInLayoutOrder } from '../../../utils/form/metadata';
-import { getMetadataWithFilteredDisplayRef } from '../../../utils/httpConnector';
+import { fetchMetadataFieldList } from '../../../utils/form/metadata';
+import { getMetadataWithFilteredDisplayRef, fetchOnlyRequiredFieldMetadata } from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
-
-function fetchMetadataFieldList(metadata) {
-  // modify
-  const { fieldMap, layout } = metadata;
-
-  if (!fieldMap) return [];
-  // if no layout, return all keys from field map
-
-  if (!layout) return Object.keys(fieldMap);
-
-  // if layout, go through all containers and accumulate fieldIds
-
-  return getFieldIdsInLayoutOrder(metadata?.layout);
-}
 
 export function pushField(layout, refId, fieldId) {
   if (!layout) return;
@@ -80,9 +66,9 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
 
 function getAttachedCustomSettingsMetadata(metadata, csMetadata, settings) {
   const updatedFieldMetadata = customCloneDeep(metadata);
-  const { fieldMap: csFieldMap = {}, layout: csLayout } = csMetadata || {};
+  const { fieldMap: csFieldMap = {} } = csMetadata || {};
 
-  const fields = csLayout ? getFieldIdsInLayoutOrder(csLayout) : Object.keys(csFieldMap);
+  const fields = fetchMetadataFieldList(csMetadata);
 
   fields.forEach(fieldId => {
     const field = csFieldMap[fieldId];
@@ -111,12 +97,13 @@ export function initializeHttpConnectorForm(fieldMeta, resource) {
   const { settingsForm, settings } = resource;
 
   if (settingsForm?.form) {
+    const settingsFormMetadata = fetchOnlyRequiredFieldMetadata(settingsForm.form);
     // create stubs for utils to call and update
-    let updatedFieldMetadata = getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsForm.form, settings);
+    let updatedFieldMetadata = getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsFormMetadata, settings);
 
     if (isNewId(resource?._id)) {
       // Incase of new resource, create a cs container
-      const leftOverCustomSettings = getMetadataWithFilteredDisplayRef(updatedFieldMetadata, settingsForm.form);
+      const leftOverCustomSettings = getMetadataWithFilteredDisplayRef(updatedFieldMetadata, settingsFormMetadata);
 
       // now fetch the  left over settings fields and create a cs container
       updatedFieldMetadata = getAttachedCustomSettingsMetadata(updatedFieldMetadata, leftOverCustomSettings);

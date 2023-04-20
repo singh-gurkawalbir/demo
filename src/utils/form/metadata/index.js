@@ -40,3 +40,15 @@ export function layoutHasField(layout, fieldId) {
     return layout.fields.includes(fieldId);
   }
 }
+
+export function fetchMetadataFieldList(metadata) {
+  const { fieldMap, layout } = metadata;
+
+  if (!fieldMap) return [];
+
+  // if no layout, return all keys from field map
+  if (!layout) return Object.keys(fieldMap);
+
+  // if layout, go through all containers and accumulate fieldIds
+  return getFieldIdsInLayoutOrder(layout);
+}

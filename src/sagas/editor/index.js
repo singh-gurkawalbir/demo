@@ -23,7 +23,7 @@ import { isValidDisplayAfterRef } from '../../utils/httpConnector';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import { getFieldIdsInLayoutOrder } from '../../utils/form/metadata';
+import { fetchMetadataFieldList } from '../../utils/form/metadata';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION, emptyObject } from '../../constants';
@@ -156,9 +156,9 @@ export function* validateCustomSettings({ id, result }) {
   const formKey = `${resourceType}-${resourceId}`;
   // fetch form fields list of fields
   const formContext = yield select(selectors.formState, formKey);
-
-  const { fieldMap, layout } = result?.data || {};
-  const fields = layout ? getFieldIdsInLayoutOrder(layout) : Object.keys(fieldMap || {});
+  const csMetadata = result?.data || {};
+  const { fieldMap } = csMetadata;
+  const fields = fetchMetadataFieldList(csMetadata);
   const displayAfterFieldIds = fields.filter(fieldId => !!fieldMap[fieldId]?.displayAfter);
   const invalidFieldId = displayAfterFieldIds.find(fieldId => {
     const {displayAfter} = fieldMap[fieldId];
@@ -170,12 +170,12 @@ export function* validateCustomSettings({ id, result }) {
       const index = displayAfterRef?.indexOf('.');
       const settingsRef = displayAfterRef?.substr(index + 1);
 
-      if (!isValidDisplayAfterRef(settingsRef, result?.data)) {
+      if (!isValidDisplayAfterRef(settingsRef, csMetadata)) {
         return true;
       }
-    }
-    // else, validate against resourceForm's metadata fields
-    if (!isValidDisplayAfterRef(displayAfterRef, formContext.fieldMeta)) {
+    } else if (!isValidDisplayAfterRef(displayAfterRef, formContext.fieldMeta)) {
+      // else, validate against resourceForm's metadata fields
+
       return true;
     }
 

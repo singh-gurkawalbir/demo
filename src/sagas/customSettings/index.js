@@ -5,7 +5,7 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
-import { getMetadataWithFilteredDisplayRef } from '../../utils/httpConnector';
+import { getMetadataWithFilteredDisplayRef, fetchOnlyRequiredFieldMetadata } from '../../utils/httpConnector';
 
 export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
   const isHttpConnector = yield select(selectors.isHttpConnector, resourceId, resourceType);
@@ -17,7 +17,7 @@ export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType 
 
   const formContext = yield select(selectors.formState, formKey);
 
-  return getMetadataWithFilteredDisplayRef(formContext.fieldMeta, metadata);
+  return getMetadataWithFilteredDisplayRef(formContext.fieldMeta, fetchOnlyRequiredFieldMetadata(metadata));
 }
 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {

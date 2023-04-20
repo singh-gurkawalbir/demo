@@ -1,4 +1,4 @@
-import { layoutHasField, getFieldIdsInLayoutOrder, removeFieldFromLayout } from '../form/metadata';
+import { layoutHasField, removeFieldFromLayout, fetchMetadataFieldList } from '../form/metadata';
 import customCloneDeep from '../customCloneDeep';
 
 export function isValidDisplayAfterRef(refId, refMetadata) {
@@ -12,11 +12,11 @@ export function isValidDisplayAfterRef(refId, refMetadata) {
 }
 
 export function getMetadataWithFilteredDisplayRef(resourceMetadata, csMetadata) {
-  const { fieldMap = {}, layout } = csMetadata || {};
-  const fieldsList = layout ? getFieldIdsInLayoutOrder(layout) : Object.keys(fieldMap);
+  const { fieldMap = {} } = csMetadata || {};
+  const fieldList = fetchMetadataFieldList(csMetadata);
 
   // if the metadata has displayAfter and ref is valid , remove from cs fields
-  const validDisplayAfterFieldIds = fieldsList.filter(fieldId => {
+  const validDisplayAfterFieldIds = fieldList.filter(fieldId => {
     const field = fieldMap[fieldId];
 
     if (!field.displayAfter) return false;
@@ -30,8 +30,27 @@ export function getMetadataWithFilteredDisplayRef(resourceMetadata, csMetadata) 
   const updatedFieldMetadata = customCloneDeep(csMetadata);
 
   validDisplayAfterFieldIds.forEach(fieldId => {
-    // remove field from form metadata
+    if (!updatedFieldMetadata.layout) {
+      delete updatedFieldMetadata.fieldMap[fieldId];
+    } else {
+      removeFieldFromLayout(updatedFieldMetadata.layout, fieldId);
+    }
+  });
 
+  return updatedFieldMetadata;
+}
+
+export function fetchOnlyRequiredFieldMetadata(fieldMetadata) {
+  if (!fieldMetadata || !fieldMetadata.fieldMap) return fieldMetadata;
+
+  const updatedFieldMetadata = customCloneDeep(fieldMetadata);
+  const { fieldMap } = updatedFieldMetadata || {};
+
+  const fieldList = fetchMetadataFieldList(updatedFieldMetadata);
+
+  const nonMandatoryFields = fieldList.filter(fieldId => !fieldMap[fieldId].required);
+
+  nonMandatoryFields.forEach(fieldId => {
     if (!updatedFieldMetadata.layout) {
       delete updatedFieldMetadata.fieldMap[fieldId];
     } else {
