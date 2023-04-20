@@ -44,7 +44,7 @@ const messages = {
   FILTERSTREE_VALIDATE_FIELDOP_TYPECONV: 'Field operation {{{operationName}}} must be called by a Type Conversion Operation but was called by {{{callingOperation}}}.',
   FILTERSTREE_VALIDATE_FIELDOP_ARGSIZE: 'Field operation {{{operationName}}} expects exactly 1 argument but received {{{argCount}}}.',
   // #endregion
-
+  INVALID_DISPLAY_REF_CUSTOM_SETTINGS: 'The field path set in displayAfter does not exist: {{{invalidFieldPath}}}',
   // #region jsonEditor error messages
   INVALID_JSON_VALUE: '{{{label}}} must be a valid JSON',
 };

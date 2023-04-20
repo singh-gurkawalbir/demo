@@ -28,6 +28,7 @@ import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllP
 import responseMappingUtil from '../../utils/responseMapping';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION, emptyObject } from '../../constants';
 import { getLastExportDateTime } from '../flows';
+import errorMessageStore from '../../utils/errorStore';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -151,7 +152,6 @@ export function* invokeProcessor({ editorId, processor, body }) {
 
 export function* validateCustomSettings({ id, result }) {
   const editor = yield select(selectors.editor, id);
-  // TODO add http connector view condition as well
   const { resourceType, resourceId } = editor;
   const formKey = `${resourceType}-${resourceId}`;
   // fetch form fields list of fields
@@ -186,7 +186,7 @@ export function* validateCustomSettings({ id, result }) {
     const invalidFieldPath = fieldMap[invalidFieldId].displayAfter;
     const errorMessage = `The field path set in displayAfter does not exist: ${invalidFieldPath}`;
 
-    return errorMessage;
+    return errorMessageStore('INVALID_DISPLAY_REF_CUSTOM_SETTINGS', { invalidFieldPath });
   }
 }
 
