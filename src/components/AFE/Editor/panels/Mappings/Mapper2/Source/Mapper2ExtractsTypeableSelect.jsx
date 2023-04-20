@@ -237,7 +237,7 @@ export default function Mapper2ExtractsTypeableSelect({
   const handleOnClick = useCallback(event => {
     dispatchLocalAction({type: 'onCursorChange', value: event.target.selectionStart});
   }, []);
-  const handleKeydown = useCallback(evt => {
+  const handleKeyDown = useCallback(evt => {
     if (evt.key === 'Home') {
       evt.preventDefault();
       // eslint-disable-next-line no-param-reassign
@@ -291,7 +291,7 @@ export default function Mapper2ExtractsTypeableSelect({
           multiline={isFocused}
           placeholder={disabled ? '' : 'Source field'}
           onClick={handleOnClick}
-          onKeyDown={handleKeydown}
+          onKeyDown={handleKeyDown}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
