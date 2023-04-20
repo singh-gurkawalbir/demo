@@ -434,6 +434,7 @@ const Header = ({integrationId, childId}) => {
       <div className={classes.action}>
         <KeywordSearch
           filterKey={filterKey}
+          autoFocus
         />
       </div>
     </PanelHeader>
