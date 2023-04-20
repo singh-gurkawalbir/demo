@@ -63,7 +63,7 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
-        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose}>
+        <HelpContent title={title}>
           <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains}>{info}</TooltipContent>
         </HelpContent>
       </ArrowPopper>

@@ -46,19 +46,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HelpContent({ title, children, supportFeedback = true, ...rest }) {
+export default function HelpContent({ title, children, ...rest }) {
   const classes = useStyles();
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.titleWrapper}>
+        {title && (
         <Typography className={classes.title} variant="h6">
           {title}
         </Typography>
+        )}
       </div>
-      {supportFeedback && (
       <Typography variant="subtitle2" component="div" className={classes.content} {...rest}>{children}</Typography>
-      )}
+
     </div>
   );
 }
