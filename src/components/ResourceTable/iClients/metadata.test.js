@@ -62,10 +62,7 @@ describe('test suite for default', () => {
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-<<<<<<< HEAD
       'iClient test',
-=======
->>>>>>> 3b0feec4169fdd88b95c09955e89d4ac6f9844f0
       'Custom OAuth2.0',
       '2020-08-24T13:18:06.179Z',
       '',
