@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import DynaSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
@@ -8,7 +8,7 @@ import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
-import { getHelpKey } from '../../../../utils/httpConnector';
+import { getHelpKey, getEndPointCustomSettings } from '../../../../utils/httpConnector';
 
 const emptyObj = {};
 export const useHFSetInitializeFormData = ({
@@ -170,6 +170,31 @@ function DynaAssistantOptions(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, value]);
+
+  const getCustomSettingsPatch = useCallback((id, value) => {
+    if (assistantFieldType === 'resource') {
+      return [{
+        op: 'replace',
+        path: '/settingsForm',
+        value: undefined,
+      }];
+    }
+    if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
+      const resource = fields.find(field => field.id === 'assistantMetadata.resource')?.value;
+
+      const httpConnectorMetaData = assistantData[resourceType === 'imports' ? 'import' : 'export'];
+      const endpointCustomSettings = getEndPointCustomSettings(httpConnectorMetaData, resource, value);
+
+      return [{
+        op: 'replace',
+        path: '/settingsForm',
+        value: endpointCustomSettings ? { form: endpointCustomSettings } : undefined,
+      }];
+    }
+
+    return [];
+  }, [assistantData, assistantFieldType, fields, resourceType]);
+
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
     const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
@@ -278,6 +303,11 @@ function DynaAssistantOptions(props) {
           value: endpointDetails?.id,
         });
       }
+
+      // custom settings patch
+      const csPatch = getCustomSettingsPatch(id, value) || [];
+
+      patch.push(...csPatch);
 
       dispatch(
         actions.resource.patchStaged(

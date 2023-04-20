@@ -1,5 +1,6 @@
 import { isNewId } from '../../../utils/resource';
 import { getFieldIdsInLayoutOrder } from '../../../utils/form/metadata';
+import { getMetadataWithFilteredDisplayRef } from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
 
 function fetchMetadataFieldList(metadata) {
@@ -77,17 +78,50 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
   return updatedFieldMetadata;
 }
 
-export function initializeHttpConnectorExportForm(fieldMeta, resource) {
-  // return metadata for new resources
-  if (isNewId(resource?._id)) {
-    return fieldMeta;
-  }
+function getMetadataWithCustomSettingsContainer(resourceFieldMetadata, customSettingsMetadata) {
+  const updatedFieldMetadata = customCloneDeep(resourceFieldMetadata);
+  const leftOverCustomSettings = getMetadataWithFilteredDisplayRef(resourceFieldMetadata, customSettingsMetadata);
+  // now fetch the  left over settings fields and create a cs container
+
+  const { fieldMap: csFieldMap, layout: csLayout } = leftOverCustomSettings || {};
+
+  const leftOverFields = csLayout ? getFieldIdsInLayoutOrder(csLayout) : Object.keys(csFieldMap);
+
+  leftOverFields.forEach(fieldId => {
+    const field = csFieldMap[fieldId];
+
+    updatedFieldMetadata.fieldMap[fieldId] = {
+      ...field,
+      name: `/settings/${fieldId}`,
+      id: fieldId,
+      fieldId,
+    };
+  });
+
+  // create a cs container and push the leftover fields
+    updatedFieldMetadata.layout?.containers?.push({
+      collapsed: true,
+      label: 'Custom settings',
+      fields: leftOverFields,
+    });
+
+    return updatedFieldMetadata;
+}
+
+export function initializeHttpConnectorForm(fieldMeta, resource) {
   // fetch fieldMeta and resource custom settings
   const { settingsForm, settings } = resource;
 
   if (settingsForm?.form) {
     // create stubs for utils to call and update
-    return getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsForm.form, settings);
+    let updatedFieldMetadata = getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsForm.form, settings);
+
+    if (isNewId(resource?._id)) {
+      // Incase of new resource, create a cs container
+      updatedFieldMetadata = getMetadataWithCustomSettingsContainer(updatedFieldMetadata, settingsForm.form);
+    }
+
+    return updatedFieldMetadata;
   }
   // return updated metadata
 
