@@ -145,7 +145,7 @@ export default function HomeSearchInput({value, onChange, placeHolder, openWithF
           root: classes.inputRoot,
           input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
         }}
-        inputProps={{ 'aria-label': placeHolder || 'Search…'}}
+        inputProps={{ 'aria-label': placeHolder || 'search'}}
         autoFocus={autoFocus}
         />
       <IconButton size="small" onClick={onClearInput} className={clsx(classes.closeIcon, {[classes.hideCloseBtn]: isCloseIconHidden})}>
