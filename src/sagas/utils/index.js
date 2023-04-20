@@ -850,7 +850,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
 
 export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow, httpConnectorData, isGenericHTTP) => {
   const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
-  const app = applications.find(a => a.id === (resource?.assistant || resource?.application)) || {};
+  const app = applications.find(a => a.id === (resource?.application || resource?.assistant)) || {};
   const tempFiledMeta = customCloneDeep(fieldMeta);
 
   const iClientPathMap = {
