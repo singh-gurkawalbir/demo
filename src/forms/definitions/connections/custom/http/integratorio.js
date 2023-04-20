@@ -14,7 +14,6 @@ export default {
       }
     }
     delete retValues['/integrator/environment'];
-    delete retValues['/integrator/region'];
     // To do: remove headrs as after migration we will not have any headers in the connection doc.
     delete retValues['/http/headers'];
     retValues['/http/headers'] = undefined;
@@ -66,6 +65,7 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',

@@ -16,11 +16,7 @@ export default {
       }.myshopify.com/admin/oauth/access_token`;
       retValues['/http/auth/token/headerName'] = 'X-Shopify-Access-Token';
       retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
-      delete retValues['/http/auth/basic/username'];
-      delete retValues['/http/auth/basic/password'];
-
       retValues['/http/auth/basic'] = undefined;
 
       if (
@@ -35,12 +31,9 @@ export default {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Shopify-Access-Token';
       retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
-      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/ping/relativeURI'] = '/orders.json';
       retValues['/http/ping/method'] = 'GET';
       retValues['/http/ping/successPath'] = '';
@@ -51,7 +44,6 @@ export default {
       retValues['/http/auth/basic/password'] = `${
         formValues['/http/auth/basic/password']
       }`;
-      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/token'] = undefined;
@@ -233,12 +225,16 @@ export default {
       helpKey: 'shopify.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
       helpLink: SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK,
+      deleteWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'shopify.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
       helpLink: SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK,
+      deleteWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -247,6 +243,7 @@ export default {
       required: true,
       helpKey: 'shopify.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -310,6 +307,7 @@ export default {
           ]},
       ],
       visible: false,
+      removeWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
       defaultValue: r =>
         r?.http?.auth?.oauth?.scope || (r?.http?.auth?.type === 'oauth' && !r?.http?._iClientId ? SHOPIFY_SCOPES : undefined),
     },

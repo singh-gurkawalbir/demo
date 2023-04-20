@@ -10,26 +10,6 @@ export default {
       delete newValues['/ftp/entryParser'];
     }
 
-    if (newValues['/as2/partnerStationInfo/auth/type'] === 'basic') {
-      newValues['/as2/partnerStationInfo/auth/token/token'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/location'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/headerName'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/scheme'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/paramName'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshMethod'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshRelativeURI'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshBody'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshTokenPath'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshMediaType'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshHeaders'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/token/refreshToken'] = undefined;
-    } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'token') {
-      newValues['/as2/partnerStationInfo/auth/basic/username'] = undefined;
-      newValues['/as2/partnerStationInfo/auth/basic/password'] = undefined;
-    } else if (newValues['/as2/partnerStationInfo/auth/type'] === 'none') {
-      newValues['/as2/partnerStationInfo/auth/type'] = undefined;
-    }
-
     if (
       !newValues['/as2/contentBasedFlowRouter'] ||
       !newValues['/as2/contentBasedFlowRouter']._scriptId ||
@@ -37,7 +17,6 @@ export default {
     ) {
       newValues['/as2/contentBasedFlowRouter'] = undefined;
     }
-
     newValues['/as2/partnerStationInfo/mdn/mdnSigning'] =
       newValues['/as2/partnerStationInfo/mdn/mdnSigning'] || 'NONE';
 
@@ -144,6 +123,7 @@ export default {
 
         return output || 'none';
       },
+      removeWhen: [{field: 'as2.partnerStationInfo.auth.type', is: ['none'] }],
     },
     'as2.partnerStationInfo.auth.failStatusCode': {
       fieldId: 'as2.partnerStationInfo.auth.failStatusCode',
@@ -156,12 +136,15 @@ export default {
     },
     'as2.partnerStationInfo.auth.basic.username': {
       fieldId: 'as2.partnerStationInfo.auth.basic.username',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['token'] }],
     },
     'as2.partnerStationInfo.auth.basic.password': {
       fieldId: 'as2.partnerStationInfo.auth.basic.password',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['token'] }],
     },
     'as2.partnerStationInfo.auth.token.token': {
       fieldId: 'as2.partnerStationInfo.auth.token.token',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     tokenHeader: {
       id: 'tokenHeader',
@@ -173,15 +156,21 @@ export default {
     },
     'as2.partnerStationInfo.auth.token.location': {
       fieldId: 'as2.partnerStationInfo.auth.token.location',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
+
     },
     'as2.partnerStationInfo.auth.token.headerName': {
       fieldId: 'as2.partnerStationInfo.auth.token.headerName',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.scheme': {
       fieldId: 'as2.partnerStationInfo.auth.token.scheme',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.paramName': {
       fieldId: 'as2.partnerStationInfo.auth.token.paramName',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
+
     },
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
@@ -215,24 +204,31 @@ export default {
     },
     'as2.partnerStationInfo.auth.token.refreshToken': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshToken',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.refreshRelativeURI': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshRelativeURI',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.refreshMediaType': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshMediaType',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.refreshMethod': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshMethod',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.refreshBody': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshBody',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.refreshTokenPath': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshTokenPath',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.auth.token.refreshHeaders': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshHeaders',
+      removeWhen: [{ field: 'as2.partnerStationInfo.auth.type', is: ['basic'] }],
     },
     'as2.partnerStationInfo.rateLimit.limit': {
       fieldId: 'as2.partnerStationInfo.rateLimit.limit',

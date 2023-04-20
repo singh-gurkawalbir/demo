@@ -4,10 +4,6 @@ export default {
   preSave: (formValues, res) => {
     const newValues = { ...formValues};
 
-    if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
-      newValues['/salesforce/username'] = undefined;
-    }
-
     newValues['/assistant'] = res && res.assistant;
 
     return newValues;
@@ -39,7 +35,7 @@ export default {
         r.salesforce.info &&
         r.salesforce.info.organization_id,
     },
-    'salesforce.username': { fieldId: 'salesforce.username' },
+    'salesforce.username': { fieldId: 'salesforce.username', removeWhen: [{field: 'salesforce.oauth2FlowType', is: ['refreshToken'] }] },
     _borrowConcurrencyFromConnectionId: {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
