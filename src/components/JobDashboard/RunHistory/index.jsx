@@ -98,7 +98,6 @@ export default function RunHistory({ flowId, className, integrationId }) {
     }, {});
   });
 
-  console.log({allUsers});
   const [selectedUsersFilter, setSelectedUsersFilter] = useState(['all']);
   const defaultRange = useMemo(
     () => ({
@@ -308,9 +307,9 @@ export default function RunHistory({ flowId, className, integrationId }) {
               <MultiSelectFilter
                 Icon={FilterIcon}
                 ButtonLabel={ButtonLabel}
-                disabled={!runHistory?.length}
+                disabled={!runHistory?.length || isLoadingHistory}
                 items={canceledByUsersList}
-                selected={selectedUsersFilter || ['all']}
+                selected={selectedUsersFilter}
                 onSelect={handleSelect}
                 onSave={values => setSelectedUsersFilter(values?.length ? values : ['all'])}
               />
