@@ -120,11 +120,11 @@ function DynaAssistantOptions(props) {
       resourceType,
       resourceId
     ) || /* istanbul ignore next */ {};
-  const staggedResource = merged || emptyObject;
+  const stagedResource = merged || emptyObject;
 
   const connection = useSelector(
     state =>
-      selectors.resource(state, 'connections', staggedResource._connectionId) ||
+      selectors.resource(state, 'connections', stagedResource._connectionId) ||
       emptyObj
   );
 
@@ -172,12 +172,19 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
 
   const getCustomSettingsPatch = useCallback((id, value) => {
+    const emptySettingsPatch = {
+      op: 'replace',
+      path: '/settings',
+      value: undefined,
+    };
+    const emptySettingsFormPatch = {
+      op: 'replace',
+      path: '/settingsForm',
+      value: undefined,
+    };
+
     if (assistantFieldType === 'resource') {
-      return [{
-        op: 'replace',
-        path: '/settingsForm',
-        value: undefined,
-      }];
+      return [emptySettingsFormPatch, emptySettingsPatch];
     }
     if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
       const resource = fields.find(field => field.id === 'assistantMetadata.resource')?.value;
@@ -189,7 +196,7 @@ function DynaAssistantOptions(props) {
         op: 'replace',
         path: '/settingsForm',
         value: endpointCustomSettings ? { form: endpointCustomSettings } : undefined,
-      }];
+      }, emptySettingsPatch];
     }
 
     return [];

@@ -69,9 +69,17 @@ export default function DynaSettings(props) {
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
 
-  const hasSettingsForm = useSelector(state =>
-    selectors.hasSettingsForm(state, resourceType, resourceId, sectionId)
-  );
+  const hasSettingsForm = useSelector(state => {
+    if (['exports', 'imports'].includes(resourceType)) {
+      const settingsForm = selectors.resourceData(state, resourceType, resourceId)?.merged?.settingsForm;
+      // TODO : need to include in the existing selector
+      const hasFormData = !!(settingsForm && (settingsForm.form || settingsForm.init));
+
+      return hasFormData;
+    }
+
+    return selectors.hasSettingsForm(state, resourceType, resourceId, sectionId);
+  });
 
   const handleResourceFormRemount = useCallback(() => {
     if (!isHttpConnectorResource) {

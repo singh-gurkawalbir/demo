@@ -893,7 +893,12 @@ export function* initEditor({ id, editorType, options }) {
       });
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
-      const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
+      let sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
+
+      if (['exports', 'imports'].includes(resourceType)) {
+        // TODO : need to include in the existing above selector
+        sectionMeta = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
+      }
       const { settingsForm, settings} = sectionMeta || {};
       const integrationAllSections = yield select(selectors.getAllSections, 'integrations', integrationId);
 

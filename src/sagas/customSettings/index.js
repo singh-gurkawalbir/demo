@@ -8,6 +8,11 @@ import inferErrorMessages from '../../utils/inferErrorMessages';
 import { getMetadataWithFilteredDisplayRef } from '../../utils/httpConnector';
 
 export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
+  const isHttpConnector = yield select(selectors.isHttpConnector, resourceId, resourceType);
+
+  if (!isHttpConnector) {
+    return metadata;
+  }
   const formKey = `${resourceType}-${resourceId}`;
 
   const formContext = yield select(selectors.formState, formKey);
@@ -16,8 +21,12 @@ export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType 
 }
 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
-  const resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
+  let resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
+  if (['exports', 'imports'].includes(resourceType)) {
+    // TODO : need to include in the existing above selector
+    resource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
+  }
   if (!resource) return; // nothing to do.
 
   let initScriptId; let

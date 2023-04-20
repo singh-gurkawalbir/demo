@@ -39,9 +39,9 @@ function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSetti
   return updatedLayout;
 }
 
-function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSettingsMetadata, customSettings) {
+function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSettingsMetadata = {}, customSettings) {
   const updatedFieldMetadata = customCloneDeep(resourceFieldMetadata);
-  const { fieldMap: customSettingsFieldMap } = customSettingsMetadata;
+  const { fieldMap: customSettingsFieldMap = {} } = customSettingsMetadata;
   const customSettingsFields = fetchMetadataFieldList(customSettingsMetadata);
   const displayAfterFieldIds = customSettingsFields.reduce((acc, fieldId) => {
     if (customSettingsFieldMap[fieldId]?.displayAfter) {
@@ -78,16 +78,13 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
   return updatedFieldMetadata;
 }
 
-function getMetadataWithCustomSettingsContainer(resourceFieldMetadata, customSettingsMetadata) {
-  const updatedFieldMetadata = customCloneDeep(resourceFieldMetadata);
-  const leftOverCustomSettings = getMetadataWithFilteredDisplayRef(resourceFieldMetadata, customSettingsMetadata);
-  // now fetch the  left over settings fields and create a cs container
+function getAttachedCustomSettingsMetadata(metadata, csMetadata, settings) {
+  const updatedFieldMetadata = customCloneDeep(metadata);
+  const { fieldMap: csFieldMap = {}, layout: csLayout } = csMetadata || {};
 
-  const { fieldMap: csFieldMap, layout: csLayout } = leftOverCustomSettings || {};
+  const fields = csLayout ? getFieldIdsInLayoutOrder(csLayout) : Object.keys(csFieldMap);
 
-  const leftOverFields = csLayout ? getFieldIdsInLayoutOrder(csLayout) : Object.keys(csFieldMap);
-
-  leftOverFields.forEach(fieldId => {
+  fields.forEach(fieldId => {
     const field = csFieldMap[fieldId];
 
     updatedFieldMetadata.fieldMap[fieldId] = {
@@ -95,6 +92,7 @@ function getMetadataWithCustomSettingsContainer(resourceFieldMetadata, customSet
       name: `/settings/${fieldId}`,
       id: fieldId,
       fieldId,
+      defaultValue: settings?.[fieldId],
     };
   });
 
@@ -102,7 +100,7 @@ function getMetadataWithCustomSettingsContainer(resourceFieldMetadata, customSet
     updatedFieldMetadata.layout?.containers?.push({
       collapsed: true,
       label: 'Custom settings',
-      fields: leftOverFields,
+      fields,
     });
 
     return updatedFieldMetadata;
@@ -118,7 +116,10 @@ export function initializeHttpConnectorForm(fieldMeta, resource) {
 
     if (isNewId(resource?._id)) {
       // Incase of new resource, create a cs container
-      updatedFieldMetadata = getMetadataWithCustomSettingsContainer(updatedFieldMetadata, settingsForm.form);
+      const leftOverCustomSettings = getMetadataWithFilteredDisplayRef(updatedFieldMetadata, settingsForm.form);
+
+      // now fetch the  left over settings fields and create a cs container
+      updatedFieldMetadata = getAttachedCustomSettingsMetadata(updatedFieldMetadata, leftOverCustomSettings);
     }
 
     return updatedFieldMetadata;
@@ -128,3 +129,11 @@ export function initializeHttpConnectorForm(fieldMeta, resource) {
   return fieldMeta;
 }
 
+export function initializeHttpForm(fieldMeta, resource) {
+  if (isNewId(resource?._id)) {
+    // Incase of new resource, create a cs container
+    return getAttachedCustomSettingsMetadata(fieldMeta, resource?.settingsForm?.form, resource?.settings);
+  }
+
+  return fieldMeta;
+}

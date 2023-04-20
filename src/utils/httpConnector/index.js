@@ -12,7 +12,7 @@ export function isValidDisplayAfterRef(refId, refMetadata) {
 }
 
 export function getMetadataWithFilteredDisplayRef(resourceMetadata, csMetadata) {
-  const { fieldMap, layout } = csMetadata || {};
+  const { fieldMap = {}, layout } = csMetadata || {};
   const fieldsList = layout ? getFieldIdsInLayoutOrder(layout) : Object.keys(fieldMap);
 
   // if the metadata has displayAfter and ref is valid , remove from cs fields
