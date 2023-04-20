@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, Typography } from '@material-ui/core';
+import { Divider, Tooltip, Typography } from '@material-ui/core';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
-import {getFinalSelectedExtracts, getSelectedKeys} from '../../../../../../../utils/mapping';
+import {getSelectedKeyInDestinationDropdown} from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -88,23 +88,28 @@ const useStyles = makeStyles(theme => ({
 })
 );
 
-const TitleExtracts = ({generate, dataType, required}) => {
+const TitleExtracts = ({generate, dataType, isRequired, disabled}) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.treeTitle} >
-      {required
-        ? <span className={classes.treePropName}>{`${generate}* (required)`}</span>
-        : <span className={classes.treePropName}>{generate}</span>}
-      <Typography
-        variant="body2" color="textSecondary" >
-        {dataType === 'objectarray' ? '[oject]' : dataType}
-      </Typography>
-    </div>
+    <Tooltip
+      title={disabled ? 'This field has already been mapped. A destination structure cannot have duplicate fields.' : ''}
+      placement="bottom" >
+      {/* this div needs to be added to render the tooltip correctly */}
+      <div className={classes.treeTitle} >
+        {isRequired
+          ? <span className={classes.treePropName}>{`${generate}* (required)`}</span>
+          : <span className={classes.treePropName}>{generate}</span>}
+        <Typography
+          variant="body2" color="textSecondary" >
+          {dataType === 'objectarray' ? '[object]' : dataType}
+        </Typography>
+      </div>
+    </Tooltip>
   );
 };
 
-// this is the component rendered for each row inside extracts tree
+// this is the component rendered for each row inside destination tree
 const TreeTitle = props => {
   if (props.hidden) return null;
 
@@ -117,47 +122,24 @@ const TreeTitle = props => {
 // based on the sample data
 const DestinationTree = React.memo((
   {
-    nodeKey,
     destDataType,
     propValue,
-    inputValue = '',
-    setInputValue,
     setIsFocused,
-    patchField,
   }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isArrayType = destDataType.includes('array');
-  const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
-  const mappingsTreeData = useSelector(state => selectors.v2MappingsTreeData(state));
   const destinationTreeData = useSelector(state => selectors.v2MappingsDestinationTree(state));
 
-  useEffect(() => {
-    if (destinationTreeData) {
-      dispatch(actions.mapping.v2.makeFinalDestinationTree(nodeKey));
-    }
-  }, [destinationTreeData, dispatch, nodeKey]);
+  // highlight selected keys, based on the saved generate and destDataType values
+  const selectedKeys = useMemo(() => getSelectedKeyInDestinationDropdown(destinationTreeData[0], propValue, destDataType), [destDataType, destinationTreeData, propValue]);
 
-  // highlight selected keys, based on the saved extract values
-  // const selectedKeys = useMemo(() => {
-  //   // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
-  //   // for better searching
-  //   const selectedValues = propValue.replace(/(\$\.)|(\$\[\*\]\.)/g, '').split(',');
+  const onSelect = useCallback((keys, e) => {
+    dispatch(actions.mapping.v2.addSelectedDestination(e.node.key));
 
-  //   // pass the first index of tree as the tree length is always 1 because the parent is either $ or $[*]
-  //   return getSelectedKeys(extractsTreeData[0], selectedValues);
-  // }, [extractsTreeData, propValue]);
-
-  // const onSelect = useCallback((keys, e) => {
-  //   const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData, cursorPosition);
-
-  //   setInputValue(newValue);
-  //   setIsFocused(false);
-  //   patchField(propValue, newValue, e.node?.jsonPath);
-  // }, [inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData, cursorPosition, setInputValue, setIsFocused, patchField, propValue]);
+    setIsFocused(false);
+  }, [dispatch, setIsFocused]);
 
   if (isEmpty(destinationTreeData)) return null;
-  console.log({destinationTreeData});
 
   return (
     <div className={classes.dropdown}>
@@ -171,12 +153,12 @@ const DestinationTree = React.memo((
         prefixCls="childTree"
         titleRender={TreeTitle}
         multiple
-        // defaultSelectedKeys={selectedKeys}
+        defaultSelectedKeys={selectedKeys}
         treeData={destinationTreeData}
         showLine={false}
         switcherIcon={SwitcherIcon}
         defaultExpandAll
-        // onSelect={onSelect}
+        onSelect={onSelect}
          />
     </div>
   );

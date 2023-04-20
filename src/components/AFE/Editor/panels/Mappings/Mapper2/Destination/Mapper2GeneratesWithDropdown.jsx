@@ -85,7 +85,6 @@ export default function Mapper2GeneratesWithDropdown(props) {
   const newRowKey = useSelector(state => selectors.newRowKey(state));
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
-  // const [inputValue, setInputValue] = useState(propValue);
   const [isTruncated, setIsTruncated] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorElDataType, setAnchorElDataType] = useState(null);
@@ -106,6 +105,12 @@ export default function Mapper2GeneratesWithDropdown(props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!isFocused) return;
+    dispatch(actions.mapping.v2.makeFinalDestinationTree(nodeKey));
+  }, [dispatch, isFocused, nodeKey]);
+
   useScrollIntoView(containerRef, nodeKey === newRowKey);
 
   const handleChange = useCallback(event => {
@@ -124,11 +129,11 @@ export default function Mapper2GeneratesWithDropdown(props) {
   }, []);
 
   const patchField = useCallback((propValue, newValue) => {
-    // on blur, patch the extracts tree with empty input so all values in the
+    // on blur, patch the destination tree with empty input so all values in the
     // dropdown will be visible
-    dispatch(actions.mapping.v2.patchDestinationFilter('', ''));
+    // dispatch(actions.mapping.v2.patchDestinationFilter('', ''));
     if (propValue !== newValue) { onBlur(newValue); }
-  }, [dispatch, onBlur]);
+  }, [onBlur]);
 
   const handleBlur = useCallback(event => {
     // handleBlur gets called by ClickAwayListener inside ArrowPopper to close the dropdown
@@ -238,15 +243,15 @@ export default function Mapper2GeneratesWithDropdown(props) {
         }}
         >
         {isFocused && !disabled && (
-        <DestinationTree
-          key={id}
-          nodeKey={nodeKey}
-          destDataType={dataType}
-          propValue={propValue}
-          inputValue={inputValue}
-          patchField={patchField}
-          setInputValue={setInputValue}
-          setIsFocused={setIsFocused}
+          <DestinationTree
+            key={id}
+            nodeKey={nodeKey}
+            destDataType={dataType}
+            propValue={propValue}
+            inputValue={inputValue}
+            patchField={patchField}
+            setInputValue={setInputValue}
+            setIsFocused={setIsFocused}
           />
         )}
       </ArrowPopper>

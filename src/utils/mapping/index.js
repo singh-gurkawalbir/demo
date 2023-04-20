@@ -1584,6 +1584,9 @@ export const findNodeInTree = (data, prop, value) => {
   return {node, nodeSubArray, nodeIndexInSubArray};
 };
 
+// will return all the parent nodes of the given node which is to be searched
+// if tree is like a->b->c then it will return [a, b, c]
+// only goes inside children if generate value is set
 export const findNodeInTreeWithParents = (data, prop, value) => {
   let node;
   let nodeSubArray;
@@ -1620,15 +1623,18 @@ export const findNodeInTreeWithParents = (data, prop, value) => {
   return {node, nodeSubArray, nodeIndexInSubArray, parentsList};
 };
 
+// if data is a tree like a->b->c->d and parentsList is [a1, b1, c1]
+// it will match generate and jsonPath till c and return node c
+// if no match found it will return undefined
 export const findNodeWithGivenParentsList = (data, parentsList) => {
   let node;
 
   // using lodash forEach here as it provides a way to exit from loop
   // unlike Array forEach function
   forEach(data, item => {
-    const parent = parentsList[0];
+    const parentsListNode = parentsList[0];
 
-    if (item?.generate === parent?.generate && item?.dataType === parent?.dataType) {
+    if (item?.generate === parentsListNode?.generate && item?.dataType === parentsListNode?.dataType) {
       if (parentsList.length === 1) {
         node = item;
 
@@ -1645,6 +1651,115 @@ export const findNodeWithGivenParentsList = (data, parentsList) => {
   });
 
   return {node};
+};
+
+// here if data is a tree with structure a1->b1->c1->d->e and parentsList is [a2, b2, c2, d2, e2]
+// it will match till generate and jsonPath matches hence return node c1 as the node and [d2, e2] as the remaining leftParentsList
+export const finaLastNodeWithMatchingParent = (data, parentsList) => {
+  let node;
+  let leftParentsList;
+
+  // using lodash forEach here as it provides a way to exit from loop
+  // unlike Array forEach function
+  forEach(data, item => {
+    const parentsListNode = parentsList[0];
+
+    if (item?.generate && item?.jsonPath === parentsListNode?.jsonPath && item?.dataType === parentsListNode?.dataType) {
+      if (item.children) {
+        const returnToParent = finaLastNodeWithMatchingParent(item.children, parentsList.slice(1));
+
+        if (returnToParent.node) {
+          node = returnToParent.node;
+          leftParentsList = returnToParent.leftParentsList;
+
+          return false;
+        }
+        node = item;
+        leftParentsList = parentsList.slice(1);
+      }
+    }
+  });
+
+  return {node, leftParentsList};
+};
+
+// if parentsList is [a, b, c] then this will return a tree like a->b->c
+// will add a empty row in the end of c if the dataType is object or objectarray
+export const constructDestinationTreeFromParentsList = parentsList => {
+  let node = {};
+
+  if (parentsList.length === 1) {
+    node = customCloneDeep(parentsList[0]);
+
+    node.key = generateId();
+    if (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      node.children = [{
+        key: generateId(),
+        title: '',
+        dataType: MAPPING_DATA_TYPES.STRING,
+        isEmptyRow: true,
+        parentKey: node.key,
+      }];
+    }
+
+    return node;
+  }
+
+  node = customCloneDeep(parentsList[0]);
+  node.key = generateId();
+  const childNode = constructDestinationTreeFromParentsList(parentsList.slice(1));
+
+  if (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+    childNode.parentKey = node.key;
+    node.children = [childNode];
+  }
+
+  return node;
+};
+
+// to create the set of jsonPath+dataType from the given tree
+const getJsonPathSet = (data, jsonPathSet) => {
+  forEach(data, item => {
+    if (item?.generate && item.dataType) {
+      jsonPathSet.add(`${item.jsonPath}+${item.dataType}`);
+      if (item?.children) getJsonPathSet(item.children, jsonPathSet);
+    }
+  });
+};
+
+// will check each node jsonPath+dataType value in the given set
+// if present then mark it disabled=true
+const markDestinationTree = (data, jsonPathSet) => {
+  if (!jsonPathSet) return data;
+
+  const clonedChildren = data.map(item => {
+    const clonedNode = {...item};
+
+    if (item?.generate && jsonPathSet.has(`${item.jsonPath}+${item.dataType}`)) {
+      clonedNode.disabled = true;
+
+      if (item?.children) {
+        clonedNode.children = markDestinationTree(item.children, jsonPathSet);
+      }
+    }
+
+    return clonedNode;
+  });
+
+  return clonedChildren;
+};
+
+// will mark all destinations of destinationTree already present in treeData
+export const markPresentDestinations = (treeData, destinationTree) => {
+  if (!destinationTree || isEmpty(treeData) || !destinationTree[0]?.children) return destinationTree;
+  const jsonPathSet = new Set();
+
+  // create a set of jsonPaths+dataType
+  getJsonPathSet(treeData, jsonPathSet);
+
+  const markedDestinationTree = {...destinationTree[0], children: markDestinationTree(destinationTree[0].children, jsonPathSet)};
+
+  return [markedDestinationTree];
 };
 
 export const getNewChildrenToAdd = (parentNode, destinationNode) => {
@@ -2145,6 +2260,23 @@ export const getSelectedKeys = (extractsTreeNode, selectedValues = [], selectedK
 
     if (node.children) {
       getSelectedKeys(node, selectedValues, selectedKeys);
+    }
+  });
+
+  return selectedKeys;
+};
+
+// for the given selectedValue and type it will match node in the given tree and add its key to selectedKeys
+export const getSelectedKeyInDestinationDropdown = (treeData, selectedValue, type) => {
+  const selectedKeys = [];
+
+  if (isEmpty(treeData) || !treeData.children?.length) return selectedKeys;
+
+  treeData.children.forEach(node => {
+    const {key, generate, dataType} = node;
+
+    if (generate === selectedValue && dataType === type) {
+      selectedKeys.push(key);
     }
   });
 
