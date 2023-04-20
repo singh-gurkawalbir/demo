@@ -1,7 +1,7 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import ResourceDrawerLink from '../ResourceDrawerLink';
 import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
-import CeligoTimeAgo from '../CeligoTimeAgo';
 import { useGetTableContext } from '../CeligoTable/TableContext';
 import Status from '../Buttons/Status';
 
@@ -58,7 +58,7 @@ export default {
       key: 'lastModified',
       heading: 'Last updated',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
       width: '170px',
     },

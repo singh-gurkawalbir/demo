@@ -34,10 +34,10 @@ function initChildJobDetail({job}) {
 
   return renderWithProviders(ui, {initialStore});
 }
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: props => (
     <div>{props.date}</div>
   ),
 }));

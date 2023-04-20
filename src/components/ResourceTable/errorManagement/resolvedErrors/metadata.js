@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { TimeAgo } from '@celigo/fuse-ui';
 import Retry from '../actions/Retry';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import ViewHttpRequest from '../actions/ViewHttpRequest';
@@ -7,7 +8,6 @@ import ViewHttpResponse from '../actions/ViewHttpResponse';
 import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
@@ -96,7 +96,7 @@ export default {
         return <SelectDate {...tableContext} />;
       },
       width: '12%',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.occurredAt} />,
     },
     {
       key: 'resolvedBy',
@@ -122,7 +122,7 @@ export default {
         );
       },
       width: '12%',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.resolvedAt} />,
     },
   ],
   useRowActions: ({ retryDataKey, reqAndResKey }) => {

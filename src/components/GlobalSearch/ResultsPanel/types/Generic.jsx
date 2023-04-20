@@ -4,7 +4,7 @@ import { Divider, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 import InfoIconButton from '../../../InfoIconButton';
 import useScrollIntoView from '../../../../hooks/useScrollIntoView';
 import useSyncedRef from '../../../../hooks/useSyncedRef';
@@ -113,7 +113,7 @@ function GenericRow({result, children, includeDivider, focussed, type}) {
 
         <div className={classes.filler} />
         <div className={classes.time}>
-          <CeligoTimeAgo date={result.lastModified} />
+          <TimeAgo date={result.lastModified} />
         </div>
       </div>
     </>

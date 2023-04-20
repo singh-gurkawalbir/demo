@@ -2,11 +2,11 @@ import React, { useEffect, useCallback } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
+import { TimeAgo } from '@celigo/fuse-ui';
 import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import { selectors } from '../../../reducers';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import RightDrawer from '../../../components/drawer/Right';
-import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
@@ -87,7 +87,7 @@ const ScriptLogDrawerBody = () => {
     <div className={classes.wrapper}>
       <div className={classes.container}>
         <div>
-          Timestamp: <CeligoTimeAgo date={time} />
+          Timestamp: <TimeAgo date={time} />
         </div>
         <div>
           Type: {logLevel}

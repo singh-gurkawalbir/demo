@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import NameCell from '../../commonCells/Name';
 import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
 import JobStatus from '../../../JobDashboard/JobStatus';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import { getPages, getSuccess } from '../../../../utils/jobdashboard';
 import Cancel from './actions/Cancel';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
@@ -94,7 +94,7 @@ export default {
         key: 'startedAt',
         heading: 'Started',
         isLoggable: true,
-        Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
+        Value: ({rowData: r}) => <TimeAgo date={r.startedAt} />,
         orderBy: 'startedAt',
         width: '10%',
       },

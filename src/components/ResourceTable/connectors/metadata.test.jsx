@@ -3,10 +3,10 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
 import Link from '@mui/material/Link';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { renderWithProviders } from '../../../test/test-utils';
 import LogoStrip from '../../LogoStrip';
 import OnOffCell from './cells/OnOffCell';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import defaultRef from './metadata';
 import Delete from '../commonActions/Delete';
 import Edit from '../commonActions/Edit';
@@ -72,7 +72,7 @@ describe('uI test cases for ResourceTable connectors', () => {
     });
 
     expect(value2Ref).toEqual(
-      <CeligoTimeAgo date="2022-10-17T03:13:57.480Z" />
+      <TimeAgo date="2022-10-17T03:13:57.480Z" />
     );
 
     const valuelinkRef = columns[3].Value({

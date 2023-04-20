@@ -9,10 +9,10 @@ import metadata from './metadata';
 
 const mockTableContext = { resourceType: 'scripts'};
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: ({date}) => date,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: ({date}) => date,
 }));
 
 jest.mock('../../CeligoTable/TableContext', () => ({

@@ -1,8 +1,8 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default resourceType => ({
   useColumns: () => [
@@ -15,7 +15,7 @@ export default resourceType => ({
     {
       key: 'lastUpdated',
       heading: 'Last updated',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],

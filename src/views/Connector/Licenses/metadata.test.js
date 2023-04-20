@@ -1,7 +1,7 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import metadata from './metadata';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
-import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 import Delete from '../../../components/ResourceTable/commonActions/Delete';
 import Edit from '../../../components/ResourceTable/commonActions/Edit';
@@ -38,7 +38,7 @@ describe('licenses metadata test cases', () => {
       },
     });
 
-    expect(createdValue).toEqual(<CeligoTimeAgo date="" />);
+    expect(createdValue).toEqual(<TimeAgo date="" />);
 
     const integrationId = useColumns.find(eachColumn => eachColumn.key === 'integrationId');
     const integrationIdValue = integrationId.Value({

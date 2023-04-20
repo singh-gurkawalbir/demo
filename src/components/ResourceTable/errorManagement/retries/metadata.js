@@ -1,6 +1,6 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import FlowStepStatus from '../../latestJobs/cells/FlowStepStatus';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ErrorCell from '../../../JobDashboard/RunHistory/ErrorCell';
 import UserName from '../cells/UserName';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
@@ -24,13 +24,13 @@ export default {
       key: 'started',
       heading: 'Retry started',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.startedAt} />,
     },
     {
       key: 'completed',
       heading: 'Retry completed',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.endedAt} />,
     },
     {
       key: 'success',
