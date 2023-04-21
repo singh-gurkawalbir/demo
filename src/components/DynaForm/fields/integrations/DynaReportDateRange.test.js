@@ -74,6 +74,7 @@ describe('dynaReportDateRange UI tests', () => {
     expect(screen.getByText(/last 24 hours/i)).toBeInTheDocument();
     expect(screen.getByText(/custom/i)).toBeInTheDocument();
   });
+
   test('should open the calendar view to select start and end date when clicked on Custom preset', async () => {
     initDynaReportDateRange(props);
     await userEvent.click(screen.getByText('Select range'));
@@ -89,6 +90,7 @@ describe('dynaReportDateRange UI tests', () => {
     expect(screen.getAllByText('Sat')).toHaveLength(2);
     expect(screen.getByText('You can generate a report for up to 3 days of data.')).toBeInTheDocument();
   });
+
   test('should display the range in the field when range is already passed', () => {
     initDynaReportDateRange({...props,
       value: {

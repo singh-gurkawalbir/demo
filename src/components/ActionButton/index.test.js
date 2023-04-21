@@ -38,14 +38,14 @@ describe('actionButton component Test cases', () => {
       props: {
         className: 'test-classname',
       }});
-    const buttonRef = screen.getByRole('button', {name: 'tooltip'});
+    const buttonRef = screen.getByRole('button', {name: 'Test Button'});
 
     expect(buttonRef).toBeInTheDocument();
   });
 
   test('should pass the intial render by setting children and title', async () => {
     await initActionButton({children: 'Test Button', tooltip: 'button title for you'});
-    const buttonRef = screen.getByRole('button', {name: 'tooltip'});
+    const buttonRef = screen.getByText('Test Button');
 
     expect(buttonRef).toBeInTheDocument();
     expect(screen.queryByText('button title for you')).not.toBeInTheDocument();
@@ -63,7 +63,7 @@ describe('actionButton component Test cases', () => {
     const mockOnClick = jest.fn();
 
     await initActionButton({children: 'Test Button', props: {onClick: mockOnClick}});
-    const buttonRef = screen.getByRole('button', {name: 'tooltip'});
+    const buttonRef = screen.getByRole('button', {name: 'Test Button'});
 
     expect(buttonRef).toBeInTheDocument();
     await userEvent.click(buttonRef);
@@ -75,11 +75,11 @@ describe('actionButton component Test cases', () => {
 
   test('should pass the intial render by setting children and disabled true/false', async () => {
     const {utils} = await initActionButton({children: 'Test Button', props: {disabled: true}});
-    const buttonRef = screen.getByRole('button', {name: 'tooltip'});
+    const buttonRef = screen.getByRole('button', {name: 'Test Button'});
 
     expect(buttonRef).toBeDisabled();
     utils.rerender(<AppShell><ActionButton disabled={false}>Test Button</ActionButton></AppShell>);
-    const buttonRef1 = screen.getByRole('button', {name: 'tooltip'});
+    const buttonRef1 = screen.getByRole('button', {name: 'Test Button'});
 
     expect(buttonRef1).not.toBeDisabled();
   });
@@ -90,7 +90,7 @@ describe('actionButton component Test cases', () => {
         component: Link,
         to: '/test/to',
       }});
-    const buttonRef = screen.getByRole('button', {name: 'tooltip'});
+    const buttonRef = screen.getByRole('button', {name: 'Test Button'});
 
     expect(buttonRef).toHaveAttribute('href', '/test/to');
   });

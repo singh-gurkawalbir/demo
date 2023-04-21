@@ -64,6 +64,7 @@ describe('DrawerHeader tests', () => {
     await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
+
   test('Should able to test the DrawerHeader render with helpButton and Info icon', async () => {
     await initRightDrawerComponents({helpKey: 'formView', infoText: 'get info from here'});
     const buttons = screen.getAllByRole('button');

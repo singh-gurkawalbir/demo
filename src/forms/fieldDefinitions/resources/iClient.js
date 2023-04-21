@@ -196,11 +196,12 @@ export default {
     label: 'Header scheme',
     skipDefault: true,
     defaultValue: r => {
-      if (!r?.oauth2?.scheme) return ' ';
+      if (!['Bearer', 'MAC', ' '].includes(r?.oauth2?.scheme)) return 'Custom';
+      if (r?.oauth2?.scheme) {
+        return r.oauth2.scheme;
+      }
 
-      if (!['Bearer', 'MAC', ' '].includes(r.oauth2.scheme)) return 'Custom';
-
-      return r.oauth2.scheme;
+      return '';
     },
     options: [
       {

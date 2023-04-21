@@ -89,7 +89,10 @@ describe('explorerMenu test suite', () => {
   test('should able to click on an integration and it should verify the expanded flow tree', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
 
-    expect(screen.getByRole('treeitem', {name: /Test integration name/i})).toBeInTheDocument();
+    const truncatedIntegrationName = screen.getByRole('treeitem');
+
+    expect(truncatedIntegrationName).toBeInTheDocument();
+    expect(truncatedIntegrationName).toHaveTextContent(/^T.*(\.{3})?$/i);
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
 
     expect(integrationNameSvgNode).toBeInTheDocument();
@@ -140,7 +143,7 @@ describe('explorerMenu test suite', () => {
       draft.data.resources.flows = [];
     });
 
-    expect(screen.getByRole('treeitem', {name: /Test integration name/i})).toBeInTheDocument();
+    expect(screen.getByRole('treeitem', {name: /^T.*(\.{3})?$/i})).toBeInTheDocument();  // truncated Integartion name
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
 
     expect(integrationNameSvgNode).toBeInTheDocument();

@@ -24,7 +24,7 @@ jest.mock('../../../../../../icons/ArrowDownFilledIcon', () => ({
 
 const mockHandleBlur = jest.fn();
 let anchor = null;
-const mockSetAnchorel = jest.fn(anchorEl => { anchor = anchorEl; });
+let mockSetAnchorel;
 
 function initFunction(dataType = 'string', anchorEl = null, renderFun = render) {
   const ui = (
@@ -40,6 +40,9 @@ function initFunction(dataType = 'string', anchorEl = null, renderFun = render) 
 }
 
 describe('mapper2 DestinationDataType test cases', () => {
+  beforeEach(() => {
+    mockSetAnchorel = jest.fn(anchorEl => { anchor = anchorEl; });
+  });
   afterEach(() => {
     jest.clearAllMocks();
   });

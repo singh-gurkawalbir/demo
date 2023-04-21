@@ -9,7 +9,6 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = 'https://app.pagerduty.com/oauth/token';
       retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/token/scheme'] = 'Bearer';
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/grantType'] = 'authorizecode';
       retValues['/http/auth/oauth/clientCredentialsLocation'] = 'body';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -20,7 +19,6 @@ export default {
       retValues['/http/auth/token/scheme'] = 'Token token=';
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
-      retValues['/http/_iClientId'] = undefined;
       retValues['/http/auth/oauth/grantType'] = undefined;
       retValues['/http/auth/oauth/clientCredentialsLocation'] = undefined;
       retValues['/http/auth/token/refreshMethod'] = undefined;
@@ -76,6 +74,7 @@ export default {
       required: true,
       helpKey: 'pagerduty.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',
@@ -87,6 +86,7 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'pagerduty.connection.http._iClientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',

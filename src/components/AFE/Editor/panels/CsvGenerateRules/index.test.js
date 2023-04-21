@@ -169,13 +169,10 @@ describe('csvGeneratePanel UI tests', () => {
   });
   test('should make the respective dispatch call when row delimiter value is changed', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
-
     const rowField = screen.getByRole('option', {name: 'LF (\\n)'});
 
     expect(rowField).toBeInTheDocument();
-
     await userEvent.click(rowField);
-
     await userEvent.click(document.querySelector('[value="\r"]'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(1));
   });

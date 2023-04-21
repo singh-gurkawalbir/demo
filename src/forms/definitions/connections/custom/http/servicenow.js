@@ -22,9 +22,6 @@ export default {
       retValues['/http/auth/oauth/accessTokenBody'] = '{"grant_type":"password","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}","username":"{{{connection.http.unencrypted.username}}}","password":"{{{connection.http.encrypted.password}}}"}';
       retValues['/http/auth/token/refreshBody'] = '{"grant_type":"refresh_token","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}","username":"{{{connection.http.unencrypted.username}}}","password":"{{{connection.http.encrypted.password}}}"}';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
-      delete retValues['/http/auth/basic/username'];
-      delete retValues['/http/auth/basic/password'];
-
       retValues['/http/auth/basic'] = undefined;
     } else {
       retValues['/http/auth/basic/username'] = `${
@@ -37,7 +34,6 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/token/scheme'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
-      retValues['/http/_iClientId'] = undefined;
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/token/refreshToken'] = undefined;
       retValues['/http/auth/oauth/grantType'] = undefined;
@@ -48,9 +44,6 @@ export default {
       retValues['/http/auth/token/location'] = undefined;
       retValues['/http/auth/token/refreshMediaType'] = undefined;
       retValues['/http/auth/token/refreshBody'] = undefined;
-
-      retValues['/http/unencrypted/username'] = undefined;
-      retValues['/http/encrypted/password'] = undefined;
     }
 
     return {
@@ -118,11 +111,13 @@ export default {
       fieldId: 'http.auth.basic.username',
       helpKey: 'servicenow.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'servicenow.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
@@ -131,6 +126,7 @@ export default {
       required: true,
       type: 'text',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -143,6 +139,7 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',
@@ -154,6 +151,7 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'servicenow.connection.http._iClientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',

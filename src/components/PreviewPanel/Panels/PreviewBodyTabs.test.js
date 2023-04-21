@@ -7,14 +7,14 @@ import PreviewBodyTabs from './PreviewBodyTabs';
 
 describe('Testsuite for PreviewBodyTabs', () => {
   test('should return empty dom if state is absent', () => {
-    const {utils} = renderWithProviders(<PreviewBodyTabs
+    renderWithProviders(<PreviewBodyTabs
       resourceSampleData={{}}
       handlePanelViewChange={jest.fn()}
       showDefaultPreviewBody
       availablePreviewStages={[]}
         />);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(document.querySelector('.MuiBox-root').firstChild).not.toBeInTheDocument();
   });
   test('should render correct tabs when preview data status is received', () => {
     renderWithProviders(<PreviewBodyTabs

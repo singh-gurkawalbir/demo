@@ -44,7 +44,7 @@ describe('filled Button component test', () => {
   });
 
   test('testing by className', () => {
-    const {container} = renderWithProviders(
+    renderWithProviders(
       <MemoryRouter>
         <FilledButton
           error
@@ -54,7 +54,7 @@ describe('filled Button component test', () => {
        > Close
         </FilledButton>
       </MemoryRouter>);
-    const m = container.querySelector("[data-test='cancel']");
+    const m = document.querySelector("[data-test='cancel']");
 
     expect(m).toBeInTheDocument();
   });

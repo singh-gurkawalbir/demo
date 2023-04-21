@@ -13,15 +13,33 @@ import { PageProcessorPathRegex } from '../../../../constants';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import { useHandleMovePP } from '../../hooks';
 import messageStore from '../../../../utils/messageStore';
+import CeligoTruncate from '../../../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: 250,
     cursor: 'default',
   },
+  newroot: {
+    cursor: 'default',
+  },
   contentContainer: {
     display: 'flex',
     alignItems: 'center',
+  },
+  newcontentContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    position: 'relative',
+    backgroundColor: theme.palette.background.paper,
+    // padding: theme.spacing(2),
+    height: 95,
+    transition: 'ease all 0.3s',
+    // boxShadow: '0 0 0 rgba(0,0,0,0)',
+    borderRadius: 6,
+    '&:hover': {
+      // boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+    },
   },
   branchContainer: {
     padding: theme.spacing(4, 2),
@@ -29,28 +47,42 @@ const useStyles = makeStyles(theme => ({
     marginBottom: -90,
     borderRadius: theme.spacing(2.5, 2.5, 0, 0),
     overflow: 'hidden',
+    width: '100%',
     '&:hover': {
-      // backgroundColor: theme.palette.background.paper2,
       backgroundColor: theme.palette.background.default,
-      '& > span': {
-        display: 'block !important',
+      '& > $branchName': {
+        display: 'flex',
       },
     },
   },
+  newbranchContainer: {
+    marginTop: theme.spacing(0.5),
+    '&:hover': {
+      // backgroundColor: theme.palette.background.paper2,
+      backgroundColor: theme.palette.background.default,
+    },
+  },
   firstBranchStep: {
-    '& > span': {
-      display: 'block !important',
+    '& > $branchName': {
+      display: 'flex',
     },
   },
   branchName: {
     display: 'none',
     textTransform: 'none',
     color: theme.palette.text.secondary,
+    whiteSpace: 'nowrap',
+    width: theme.spacing(29),
+  },
+  newbranchName: {
+    textTransform: 'none',
+    color: theme.palette.text.secondary,
+    whiteSpace: 'nowrap',
   },
 }));
 
-export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {}, showLeft = false, showRight = false } = data;
+export default function PageProcessorNode({ data = {}}) {
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {}, showLeft = false, showRight = false, isSubFlow } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
@@ -61,6 +93,10 @@ export default function PageProcessorNode({ data = {} }) {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+
   const {confirmDialog} = useConfirmDialog();
   const handlePPMove = useHandleMovePP();
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
@@ -93,19 +129,22 @@ export default function PageProcessorNode({ data = {} }) {
   }, [dispatch, flowId]);
 
   return (
-    <div className={classes.root}>
+    <div className={clsx({[classes.newroot]: isIconView}, {[classes.root]: !isIconView})}>
       <DefaultHandle type="target" position={Position.Left} />
 
-      <div className={classes.contentContainer} >
+      <div className={clsx({[classes.newcontentContainer]: isIconView}, {[classes.contentContainer]: !isIconView})} >
         <div>
+          {!isIconView && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
             {!isVirtual && (
               <Typography variant="overline" className={classes.branchName}>
-                {branch.name}
+                <CeligoTruncate lines={1}>
+                  {branch.name}
+                </CeligoTruncate>
               </Typography>
             )}
           </div>
-
+          )}
           <PageProcessor
             {...data.resource}
             onDelete={showDelete && handleDelete}
@@ -118,9 +157,11 @@ export default function PageProcessorNode({ data = {} }) {
             showLeft={!!showLeft}
             showRight={!!showRight}
             path={path}
+            isSubFlow={isSubFlow}
             onMove={handlePPMove}
             routerIndex={routerIndex}
             branchIndex={branchIndex}
+            isIconView={isIconView}
             pageProcessorIndex={pageProcessorIndex}
           />
         </div>

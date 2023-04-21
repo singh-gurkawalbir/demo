@@ -148,6 +148,7 @@ import DynaAliasId from './aliases/DynaAliasId';
 import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaAPISelect from './httpFramework/DynaAPISelect';
+import DynaIclientSelect from './httpFramework/DynaIclientSelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
 import DynaHFAssistantPathParams from './httpFramework/DynaHFAssistantPathParams';
@@ -156,6 +157,7 @@ import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
 import DynaMFASecretKey from './DynaMFASecretKey';
 import DynaConnectionFormView from './DynaConnectionFormView';
+import DynaIclientFormView from './DynaIcielntFormView';
 import DynaSwitch from './DynaSwitch';
 import DynaMapper2SourceField from './mapper2/DynaMapper2SourceField';
 import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
@@ -173,6 +175,7 @@ import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
 import DynaMultiFieldExpression from './DynaMultiFieldExpression';
+import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -341,6 +344,8 @@ export default {
   mfamobilecode: DynaMFAMobileCode,
   mfasecretkey: DynaMFASecretKey,
   connectionFormView: DynaConnectionFormView,
+  iclientFormView: DynaIclientFormView,
+  iclientSelect: DynaIclientSelect,
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
@@ -358,4 +363,5 @@ export default {
   shopifyconnectionselect: DynaShopifyConnectionSelect,
   hashalgorithm: DynaHashAlgorithm,
   multifieldexpression: DynaMultiFieldExpression,
+  existingCheckresource: DynaCheckboxExistingResource,
 };

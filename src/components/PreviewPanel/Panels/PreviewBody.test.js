@@ -13,7 +13,7 @@ describe('testsuite for PreviewBody', () => {
       availablePreviewStages={[]}
         />);
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(utils.container).toHaveTextContent('');
   });
   test('should test the Preview Body with data and with the status requested', () => {
     renderWithProviders(<PreviewBody

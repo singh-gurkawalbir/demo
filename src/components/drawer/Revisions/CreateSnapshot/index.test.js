@@ -106,7 +106,7 @@ describe('CreateSnapshotDrawer tests', () => {
     await initCreateSnapshotDrawer();
     const buttons = screen.getAllByRole('button');
     const info = buttons.find(btn => btn.getAttribute('data-test') === 'openPageInfo');
-    const descriptionHelpText = buttons.find(btn => btn.getAttribute('class').includes('iconButton'));
+    const descriptionHelpText = buttons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
 
     expect(info).toBeEnabled();
     await userEvent.click(info);

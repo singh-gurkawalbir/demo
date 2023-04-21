@@ -20,9 +20,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginBottom: 0,
     width: '100%',
-    '& > .MuiFilledInput-multiline': {
+    '& .MuiInputBase-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
-      paddingRight: 0,
+      minHeight: theme.spacing(5),
+      padding: 0,
     },
     '& > div': {
       width: '100%',

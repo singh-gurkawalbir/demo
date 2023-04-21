@@ -6,10 +6,6 @@ export default {
       newValues['/export/salesforce/soql'].entityName;
     delete newValues['/export/salesforce/soql'].entityName;
 
-    if (newValues['/export/salesforce/exportType'] !== 'once') {
-      newValues['/export/salesforce/booleanField'] = undefined;
-    }
-
     newValues['/export/salesforce/errorMessageField/id'] =
       newValues['/export/salesforce/soqlErrorMessageField/id'];
     delete newValues['/export/salesforce/soqlErrorMessageField/id'];
@@ -28,9 +24,12 @@ export default {
     'export.salesforce.soql': {
       fieldId: 'export.salesforce.soql',
     },
-    'export.salesforce.exportType': { fieldId: 'export.salesforce.exportType' },
+    'export.salesforce.exportType': {
+      fieldId: 'export.salesforce.exportType',
+    },
     'export.salesforce.booleanField': {
       fieldId: 'export.salesforce.booleanField',
+      removeWhen: [{ field: 'export.salesforce.exportType', isNot: ['once'] }],
     },
     'export.salesforce.soqlErrorMessageField.id': {
       fieldId: 'export.salesforce.soqlErrorMessageField.id',
