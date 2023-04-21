@@ -193,7 +193,7 @@ export default function Subscription() {
           </Typography>
           <div className={classes.wrapper}>
             <FilledButton onClick={onStartFreeTrialClick}>
-              Get unlimited flows
+              Start free trial
             </FilledButton>
             <Typography variant="body2" className={classes.description}>
               {message.SUBSCRIPTION.FREE_ONE_ACTIVE_FLOW_FOREEVER}
@@ -319,7 +319,7 @@ export default function Subscription() {
                         'start-free-trial'
                       ) > -1 && (
                         <FilledButton onClick={onStartFreeTrialClick} id="unlimited-flows-button">
-                          Get unlimited flows
+                          Start free trial
                         </FilledButton>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
