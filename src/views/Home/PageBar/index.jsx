@@ -18,7 +18,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import PillButtonWithMenu from '../../../components/Buttons/PillButtonWithMenu';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
-import FileIcon from '../../../components/icons/FileIcon';
+import IntegrationFolder from '../../../components/icons/IntegrationFolder';
 import DownloadIntegrationIcon from '../../../components/icons/DownloadIntegrationIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -47,6 +47,16 @@ const useStyles = makeStyles(theme => ({
       borderBottom: `2px solid ${theme.palette.primary.main}`,
       bottom: -theme.spacing(0.5),
       left: 0,
+    },
+  },
+  buttonWrapper: {
+    marginRight: theme.spacing(2),
+  },
+  homePillButton: {
+    padding: '6px 12px',
+    marginRight: 6,
+    '& .MuiButton-endIcon': {
+      marginLeft: 0,
     },
   },
 }));
@@ -104,7 +114,7 @@ export default function IntegrationCeligoPageBar() {
         baseUrl: location.pathname,
         params: { resourceType: 'integrations', id: generateNewId() },
       }),
-      Icon: FileIcon,
+      Icon: IntegrationFolder,
     },
   ];
 
@@ -120,14 +130,16 @@ export default function IntegrationCeligoPageBar() {
       <KeywordSearch filterKey={FILTER_KEY} autoFocus placeHolder="Search integrations & flows" />
 
       <ActionGroup>
-        {permission.create && (
-          <>
-            <PillButtonWithMenu label="Create" menuTitle="CREATE" fill actionsMenu={createActions} />
-          </>
-        )}
-        {permission.install && (
-        <PillButtonWithMenu label="Upload" menuTitle="UPLOAD" actionsMenu={uploadActions} />
-        )}
+        <div className={classes.buttonWrapper}>
+          {permission.create && (
+          <PillButtonWithMenu
+            label="Create" menuTitle="CREATE" className={classes.homePillButton} fill
+            actionsMenu={createActions} />
+          )}
+          {permission.install && (
+          <PillButtonWithMenu label="Upload" menuTitle="UPLOAD" className={classes.homePillButton} actionsMenu={uploadActions} />
+          )}
+        </div>
         <ActionGroup className={classes.viewsWrapper}>
           <IconButtonWithTooltip
             data-test="tileView"
