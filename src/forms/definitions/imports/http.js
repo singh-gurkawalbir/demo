@@ -1,8 +1,10 @@
 import { HTTP_IMPORT_CREATE_FEED_RELATIVE_URI } from '../../../constants';
 import { safeParse } from '../../../utils/string';
+import { initializeHttpForm } from '../../metaDataUtils/httpConnectorUtils';
 
 /* eslint-disable no-param-reassign */
 export default {
+  init: initializeHttpForm,
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
