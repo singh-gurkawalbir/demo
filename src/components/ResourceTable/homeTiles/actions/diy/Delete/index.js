@@ -7,6 +7,7 @@ import useHandleDelete from '../../../../../../views/Integration/hooks/useHandle
 export default {
   key: 'deleteIntegration',
   useLabel: () => 'Delete integration',
+  mode: 'delete',
   icon: TrashIcon,
   useHasAccess: tile => {
     const canDelete = useSelector(state => selectors.resourcePermissionsForTile(

@@ -9,6 +9,7 @@ export default {
   key: 'purgeMultipleErrors',
   useLabel: ({selectedErrorCount}) => `Purge ${selectedErrorCount} selected errors`,
   icon: PurgeIcon,
+  mode: 'delete',
   useDisabled: ({selectedErrorCount}) => !selectedErrorCount,
   useOnClick: ({flowId, resourceId}) => {
     const dispatch = useDispatch();
