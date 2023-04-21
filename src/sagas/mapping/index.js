@@ -586,11 +586,12 @@ export function* validateMappings() {
     lookups,
     validationErrMsg,
     isGroupedSampleData,
+    requiredMappingsJsonPaths,
   } = yield select(selectors.mapping);
   const {
     isSuccess,
     errMessage,
-  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
+  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData, requiredMappingsJsonPaths);
   const newValidationErrMsg = isSuccess ? undefined : errMessage;
 
   if (newValidationErrMsg !== validationErrMsg) {

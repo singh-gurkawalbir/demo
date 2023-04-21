@@ -2524,6 +2524,28 @@ const validateSourceDataType = mapping => {
   return errorArr;
 };
 
+// this util will delete values in the jsonPathsSet if the value is present in v2TreeData
+const recursivelyValidateV2MappingsForRequiredfields = (v2TreeData, jsonPathsSet) => {
+  if (isEmpty(v2TreeData)) return;
+
+  forEach(v2TreeData, mapping => {
+    const {
+      generate,
+      generateDisabled,
+      jsonPath = '',
+      dataType = '',
+      isTabNode,
+    } = mapping;
+
+    if (isTabNode) return;
+    if (generateDisabled || generate) {
+      if (jsonPath && dataType) jsonPathsSet.delete(`${jsonPath}+${dataType}`);
+
+      if (mapping.children) recursivelyValidateV2MappingsForRequiredfields(mapping.children, jsonPathsSet);
+    }
+  });
+};
+
 const recursivelyValidateV2Mappings = ({
   v2TreeData,
   lookups,
@@ -2642,7 +2664,7 @@ const recursivelyValidateV2Mappings = ({
   });
 };
 
-const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
+const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData, requiredMappingsJsonPaths) => {
   const duplicateMappings = [];
   const mappingsWithoutGenerates = [];
   const missingExtractGenerateNames = [];
@@ -2717,6 +2739,19 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
       isSuccess: false,
       errMessage: errMessageList.join('\n'),
     };
+  }
+
+  if (requiredMappingsJsonPaths?.length) {
+    const jsonPathsSet = new Set(requiredMappingsJsonPaths);
+
+    recursivelyValidateV2MappingsForRequiredfields(v2TreeData, jsonPathsSet);
+
+    if (jsonPathsSet.size !== 0) {
+      return {
+        isSuccess: false,
+        errMessage: errorMessageStore('MAPPER2_MISSING_REQUIRED_FIELDS'),
+      };
+    }
   }
 
   return { isSuccess: true };
@@ -3953,10 +3988,10 @@ export default {
       return mappings;
   },
 
-  validateMappings: (mappings, lookups, v2TreeData, isGroupedSampleData) => {
+  validateMappings: (mappings, lookups, v2TreeData, isGroupedSampleData, requiredMappingsJsonPaths = []) => {
     // validate only v2 mappings if exist
     if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
-      return validateV2Mappings(v2TreeData, lookups, isGroupedSampleData);
+      return validateV2Mappings(v2TreeData, lookups, isGroupedSampleData, requiredMappingsJsonPaths);
     }
 
     const duplicateMappings = mappings
