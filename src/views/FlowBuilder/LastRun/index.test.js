@@ -26,10 +26,10 @@ function initLastRun(props) {
 
   return renderWithProviders(<LastRun {...props} />, {initialStore});
 }
-jest.mock('../../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../components/Spinner'),
-  default: () =>
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () =>
     (
       <div>Spinner</div>
     )

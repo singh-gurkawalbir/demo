@@ -86,10 +86,10 @@ jest.mock('../../components/Loader', () => ({
 }));
 
 // Mocking Spinner as per unit testing
-jest.mock('../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../components/Spinner'),
-  default: jest.fn().mockReturnValue(<div>Mock Spinner</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: jest.fn().mockReturnValue(<div>Mock Spinner</div>),
 }));
 
 // Mocking NotificationToaster as per unit testing

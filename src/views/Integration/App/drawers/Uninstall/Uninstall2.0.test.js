@@ -52,10 +52,10 @@ jest.mock('react-router-dom', () => ({
 }));
 
 // Mocking Spinner as part of unit testing
-jest.mock('../../../../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../../components/Spinner'),
-  default: () => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (
     <div>
       <div>Mocking Spinner</div>
     </div>
