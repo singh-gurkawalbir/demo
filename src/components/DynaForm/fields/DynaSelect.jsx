@@ -256,7 +256,7 @@ export default function DynaSelect(props) {
     defaultOpen = false,
     isSelectFlowResource,
   } = props;
-  const isDefaultOpen = options.length === 1 ? false : defaultOpen;
+  const isDefaultOpen = disabled ? false : defaultOpen;
   const listRef = React.createRef();
   const [open, setOpen] = useState(isDefaultOpen || false);
   const [isConnectorCalled, setIsConnectorCalled] = useState({});
