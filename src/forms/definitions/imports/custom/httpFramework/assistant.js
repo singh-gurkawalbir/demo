@@ -24,6 +24,7 @@ export default function assistantDefinition(
         'operation',
         'ignoreExisting',
         'ignoreMissing',
+        'queryParams',
         // 'lookupUrl',
         'lookupType',
         'lookupQueryParams',

@@ -2232,6 +2232,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     resource,
     operation,
     pathParams = {},
+    queryParams = {},
     lookupType,
     ignoreExisting = false,
     ignoreMissing = false,
@@ -2519,21 +2520,31 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     });
   }
 
-  let defaultQueryString = '';
+  const allQueryParams = {};
 
   if (operationDetails.queryParameters) {
-    operationDetails.queryParameters.forEach(p => {
-      if (defaultQueryString.length > 0) {
-        defaultQueryString += '&';
+    operationDetails.queryParameters.forEach(queryParam => {
+      allQueryParams[queryParam.id] = queryParam.defaultValue;
+      if (!queryParam.readOnly) {
+        allQueryParams[queryParam.id] = queryParams[queryParam.id];
       }
-
-      defaultQueryString += [p.id, p.defaultValue].join('=');
     });
   }
+  if (queryParams) {
+    Object.keys(queryParams).forEach(qp => {
+      if (!allQueryParams[qp]) {
+        allQueryParams[qp] = queryParams[qp];
+      }
+    });
+  }
+  const queryString = qs.stringify(allQueryParams, {
+    encode: false,
+    indices: false,
+  });
 
-  if (defaultQueryString) {
+  if (queryString) {
     importDoc.relativeURI = importDoc.relativeURI.map(
-      u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
+      u => u + (u.indexOf('?') === -1 ? '?' : '&') + queryString
     );
   }
 
