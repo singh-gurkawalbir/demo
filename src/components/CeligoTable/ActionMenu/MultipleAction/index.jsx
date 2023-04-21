@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import clsx from 'clsx';
 import { useGetAllActionProps } from '../hooks';
+import { DELETE_ACTION_KEYS } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   deleteWrapper: {
@@ -22,8 +23,6 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
     disabled,
   } = useGetAllActionProps({meta, rowData, setSelectedComponent, handleMenuClose});
 
-  const deleteActions = ['delete', 'deleteIntegration', 'purge', 'purgeResolvedError', 'removeUserFromAccount', 'deleteLog'];
-
   if (!hasAccess) {
     return null;
   }
@@ -41,7 +40,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
   }
 
   return (
-    <MenuItem className={clsx({[classes.deleteWrapper]: deleteActions.includes(key)})} data-test={key} onClick={handleActionClick} disabled={disabled}>
+    <MenuItem className={clsx({[classes.deleteWrapper]: DELETE_ACTION_KEYS.includes(key)})} data-test={key} onClick={handleActionClick} disabled={disabled}>
       {actionIcon}{label}
     </MenuItem>
   );

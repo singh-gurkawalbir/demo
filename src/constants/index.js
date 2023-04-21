@@ -62,3 +62,4 @@ export const TEMPLATE_ZIP_UPLOAD_ASYNC_KEY = 'TEMPLATE_ZIP_UPLOAD_ASYNC_KEY';
 export const ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY = 'ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY';
 export const MAX_DATA_RETENTION_PERIOD = 180;
 export const MAX_BRANCHES = 25;
+export const DELETE_ACTION_KEYS = ['delete', 'deleteIntegration', 'purge', 'purgeResolvedError', 'removeUserFromAccount', 'deleteLog', 'deleteTransfer', 'deleteAlias', 'deleteDevice', 'uninstallConnector'];
