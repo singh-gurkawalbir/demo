@@ -12,6 +12,7 @@ export default {
   key: 'deleteDevice',
   useLabel: () => 'Delete device',
   icon: TrashIcon,
+  mode: 'delete',
   Component: ({ rowData }) => {
     const { _id: deviceId} = rowData;
     const dispatch = useDispatch();
