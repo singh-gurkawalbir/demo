@@ -1,6 +1,10 @@
 import { isNewId } from '../../../utils/resource';
 import { fetchMetadataFieldList, pushField } from '../../../utils/form/metadata';
-import { getMetadataWithFilteredDisplayRef, fetchOnlyRequiredFieldMetadata } from '../../../utils/httpConnector';
+import {
+  getMetadataWithFilteredDisplayRef,
+  fetchOnlyRequiredFieldMetadata,
+  shouldShowOnlyRequiredCustomSettings,
+} from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
 
 function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSettingsFieldId) {
@@ -83,7 +87,11 @@ export function initializeHttpConnectorForm(fieldMeta, resource) {
   const { settingsForm, settings } = resource;
 
   if (settingsForm?.form) {
-    const settingsFormMetadata = fetchOnlyRequiredFieldMetadata(settingsForm.form);
+    let settingsFormMetadata = settingsForm.form;
+
+    if (shouldShowOnlyRequiredCustomSettings(resource)) {
+      settingsFormMetadata = fetchOnlyRequiredFieldMetadata(settingsForm.form);
+    }
     // create stubs for utils to call and update
     let updatedFieldMetadata = getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsFormMetadata, settings);
 

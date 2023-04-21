@@ -1,5 +1,6 @@
 import { layoutHasField, removeFieldFromLayout, fetchMetadataFieldList } from '../form/metadata';
 import customCloneDeep from '../customCloneDeep';
+import { isNewId } from '../resource';
 
 export function isValidDisplayAfterRef(refId, refMetadata) {
   const { layout, fieldMap } = refMetadata;
@@ -79,4 +80,24 @@ export function getEndPointCustomSettings(connectorMetadata = {}, resourceId, op
   const endPointMetadata = getEndPointMetadata(connectorMetadata, resourceId, operationId);
 
   return endPointMetadata?.settingsForm;
+}
+
+export function shouldShowOnlyRequiredCustomSettings(resource) {
+  if (resource && !isNewId(resource._id) && !resource.assistantMetadata?.operationChanged) {
+    return true;
+  }
+
+  return false;
+}
+
+export function getConnectorCustomSettings(resourceFormMetadata, csMetadata, resource) {
+  let customSettings = csMetadata;
+
+  if (shouldShowOnlyRequiredCustomSettings(resource)) {
+    // We filter incase user opens a resource's custom settings ( edit mode )
+    customSettings = fetchOnlyRequiredFieldMetadata(csMetadata);
+  }
+
+  // Incase the resource is new or user changed endpoint, we show all custom settings
+  return getMetadataWithFilteredDisplayRef(resourceFormMetadata, customSettings);
 }

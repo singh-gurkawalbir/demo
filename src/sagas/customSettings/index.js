@@ -5,19 +5,21 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
-import { getMetadataWithFilteredDisplayRef, fetchOnlyRequiredFieldMetadata } from '../../utils/httpConnector';
+import { getConnectorCustomSettings } from '../../utils/httpConnector';
 
 export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
   const isHttpConnector = yield select(selectors.isHttpConnector, resourceId, resourceType);
 
-  if (!isHttpConnector) {
+  if (!['exports', 'imports'].includes(resourceType) || !isHttpConnector) {
     return metadata;
   }
   const formKey = `${resourceType}-${resourceId}`;
 
   const formContext = yield select(selectors.formState, formKey);
 
-  return getMetadataWithFilteredDisplayRef(formContext.fieldMeta, fetchOnlyRequiredFieldMetadata(metadata));
+  const resource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
+
+  return getConnectorCustomSettings(formContext?.fieldMeta, metadata, resource);
 }
 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
