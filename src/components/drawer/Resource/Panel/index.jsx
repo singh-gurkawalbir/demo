@@ -81,6 +81,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 export const redirectURlToParentListing = url => url.split('/')
   .slice(0, -3)
   .join('/');
+export const isConnectionCreatedFromHomePage = (url, resourceType) => url.split('/').slice(0, -3)[1] === 'home' && resourceType === 'connections';
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
   const match = useRouteMatch();
