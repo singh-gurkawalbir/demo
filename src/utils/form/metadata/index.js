@@ -17,6 +17,20 @@ export function getFieldIdsInLayoutOrder(layout) {
   return fields;
 }
 
+export function pushField(layout, refId, fieldId) {
+  if (!layout) return;
+  if (layout.fields?.length) {
+    if (layout.fields.includes(refId)) {
+      const refIndex = layout.fields.indexOf(refId);
+
+      layout.fields.splice(refIndex + 1, 0, fieldId);
+    }
+  }
+  if (layout.containers?.length) {
+    layout.containers.forEach(container => pushField(container, refId, fieldId));
+  }
+}
+
 export function removeFieldFromLayout(layout, fieldId) {
   if (!layout) return;
   if (layout.fields?.length) {

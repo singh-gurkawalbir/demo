@@ -184,7 +184,6 @@ export function* validateCustomSettings({ id, result }) {
 
   if (invalidFieldId) {
     const invalidFieldPath = fieldMap[invalidFieldId].displayAfter;
-    const errorMessage = `The field path set in displayAfter does not exist: ${invalidFieldPath}`;
 
     return errorMessageStore('INVALID_DISPLAY_REF_CUSTOM_SETTINGS', { invalidFieldPath });
   }

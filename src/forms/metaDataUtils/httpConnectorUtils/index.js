@@ -1,21 +1,7 @@
 import { isNewId } from '../../../utils/resource';
-import { fetchMetadataFieldList } from '../../../utils/form/metadata';
+import { fetchMetadataFieldList, pushField } from '../../../utils/form/metadata';
 import { getMetadataWithFilteredDisplayRef, fetchOnlyRequiredFieldMetadata } from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
-
-export function pushField(layout, refId, fieldId) {
-  if (!layout) return;
-  if (layout.fields?.length) {
-    if (layout.fields.includes(refId)) {
-      const refIndex = layout.fields.indexOf(refId);
-
-      layout.fields.splice(refIndex + 1, 0, fieldId);
-    }
-  }
-  if (layout.containers?.length) {
-    layout.containers.forEach(container => pushField(container, refId, fieldId));
-  }
-}
 
 function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSettingsFieldId) {
   const updatedLayout = customCloneDeep(layout);
