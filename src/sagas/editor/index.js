@@ -19,7 +19,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { isValidDisplayAfterRef } from '../../utils/httpConnector';
+import { isValidDisplayAfterRef, isDisplayRefSupportedType } from '../../utils/httpConnector';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
@@ -894,7 +894,7 @@ export function* initEditor({ id, editorType, options }) {
       let parentResource = {};
       let sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
-      if (['exports', 'imports'].includes(resourceType)) {
+      if (isDisplayRefSupportedType(resourceType)) {
         // TODO : need to include in the existing above selector
         sectionMeta = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
       }

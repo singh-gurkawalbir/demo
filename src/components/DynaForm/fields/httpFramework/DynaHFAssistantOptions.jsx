@@ -11,6 +11,17 @@ import { getExportOperationDetails, getImportOperationDetails } from '../../../.
 import { getHelpKey, getEndPointCustomSettings } from '../../../../utils/httpConnector';
 
 const emptyObj = {};
+const emptySettingsPatch = {
+  op: 'replace',
+  path: '/settings',
+  value: undefined,
+};
+const emptySettingsFormPatch = {
+  op: 'replace',
+  path: '/settingsForm',
+  value: undefined,
+};
+
 export const useHFSetInitializeFormData = ({
   resourceType,
   resourceId,
@@ -172,17 +183,6 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
 
   const getCustomSettingsPatch = useCallback((id, value) => {
-    const emptySettingsPatch = {
-      op: 'replace',
-      path: '/settings',
-      value: undefined,
-    };
-    const emptySettingsFormPatch = {
-      op: 'replace',
-      path: '/settingsForm',
-      value: undefined,
-    };
-
     if (assistantFieldType === 'resource') {
       return [emptySettingsFormPatch, emptySettingsPatch];
     }

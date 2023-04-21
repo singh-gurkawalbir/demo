@@ -5,12 +5,12 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
-import { getConnectorCustomSettings } from '../../utils/httpConnector';
+import { getConnectorCustomSettings, isDisplayRefSupportedType } from '../../utils/httpConnector';
 
 export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
   const isHttpConnector = yield select(selectors.isHttpConnector, resourceId, resourceType);
 
-  if (!['exports', 'imports'].includes(resourceType) || !isHttpConnector) {
+  if (!isDisplayRefSupportedType(resourceType) || !isHttpConnector) {
     return metadata;
   }
   const formKey = `${resourceType}-${resourceId}`;
@@ -25,7 +25,7 @@ export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
   let resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
-  if (['exports', 'imports'].includes(resourceType)) {
+  if (isDisplayRefSupportedType(resourceType)) {
     // TODO : need to include in the existing above selector
     resource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
   }

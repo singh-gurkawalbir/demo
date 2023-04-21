@@ -2,6 +2,9 @@ import { layoutHasField, removeFieldFromLayout, fetchMetadataFieldList } from '.
 import customCloneDeep from '../customCloneDeep';
 import { isNewId } from '../resource';
 
+export const DISPLAY_REF_SUPPORTED_RESOURCE_TYPES = ['exports', 'imports'];
+
+export const isDisplayRefSupportedType = resourceType => DISPLAY_REF_SUPPORTED_RESOURCE_TYPES.includes(resourceType);
 export function isValidDisplayAfterRef(refId, refMetadata) {
   const { layout, fieldMap } = refMetadata;
 
