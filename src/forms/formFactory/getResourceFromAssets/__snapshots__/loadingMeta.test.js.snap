@@ -13405,6 +13405,7 @@ Object {
         "id": "exportId",
         "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
@@ -13602,6 +13603,7 @@ Object {
         "id": "exportId",
         "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
@@ -13647,6 +13649,7 @@ Object {
         "id": "importId",
         "label": "",
         "name": "importId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
