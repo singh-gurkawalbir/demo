@@ -143,6 +143,7 @@ const Mapper2Row = React.memo(props => {
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
   const mapper2Filter = useSelector(selectors.mapper2Filter);
   const importSampleData = useSelector(state => selectors.mappingImportSampleData(state));
+  const searchKey = useSelector(state => selectors.searchKey(state));
 
   const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
   const hasChildren = !!children?.length;
@@ -225,7 +226,7 @@ const Mapper2Row = React.memo(props => {
       key={nodeKey}
       className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
       <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
-        {importSampleData
+        {(importSampleData && searchKey === undefined)
           ? (
             <Mapper2GeneratesWithDropdown
               key={generate}

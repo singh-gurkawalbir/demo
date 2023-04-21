@@ -320,7 +320,7 @@ export default (state = {}, action) => {
     isSettingsPatch,
     selectedExtractJsonPath,
     destinationTree,
-    // dropdownKey,
+    requiredMappingsJsonPaths,
   } = action;
 
   return produce(state, draft => {
@@ -361,6 +361,7 @@ export default (state = {}, action) => {
           lookupsCopy: customCloneDeep(lookups),
           v2TreeDataCopy: customCloneDeep(v2TreeData),
           destinationTree: customCloneDeep(destinationTree),
+          requiredMappingsJsonPaths: customCloneDeep(requiredMappingsJsonPaths),
         };
         break;
       }

@@ -5,7 +5,7 @@ import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree, makeBaseDestinationTree} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree, makeBaseDestinationTree, getRequiredMappingsJsonPaths} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
@@ -270,6 +270,7 @@ export function* mappingInit({
   let extractsTree;
   let importSampleData;
   let destinationTree;
+  const requiredMappingsJsonPaths = [];
 
   // only http and file imports are supported
   if (isFileAdaptor(importResource) ||
@@ -297,6 +298,7 @@ export function* mappingInit({
 
       // generate tree structure based on import sample data for destination field
       destinationTree = makeBaseDestinationTree(importSampleData, options.assistant?.requiredMappings || [], false);
+      getRequiredMappingsJsonPaths(destinationTree, requiredMappingsJsonPaths);
 
       // this needs to be updated when v2 mappings are supported for other adaptors like NS
       if (importResource.mappings?.length || isEmpty(importResource.mapping)) {
@@ -323,6 +325,7 @@ export function* mappingInit({
       isGroupedSampleData,
       isMonitorLevelAccess,
       destinationTree,
+      requiredMappingsJsonPaths,
     })
   );
   yield call(refreshGenerates, {isInit: true});
@@ -786,6 +789,7 @@ export const mappingSagas = [
     actionTypes.MAPPING.V2.TOGGLE_OUTPUT,
     actionTypes.MAPPING.V2.UPDATE_DATA_TYPE,
     actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE,
+    actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION,
   ], validateMappings),
   takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

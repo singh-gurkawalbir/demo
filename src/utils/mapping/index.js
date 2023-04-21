@@ -1719,10 +1719,23 @@ export const constructDestinationTreeFromParentsList = parentsList => {
 
 // to create the set of jsonPath+dataType from the given tree
 const getJsonPathSet = (data, jsonPathSet) => {
+  if (isEmpty(data)) return new Set();
+
   forEach(data, item => {
     if (item?.generate && item.dataType) {
       jsonPathSet.add(`${item.jsonPath}+${item.dataType}`);
       if (item?.children) getJsonPathSet(item.children, jsonPathSet);
+    }
+  });
+};
+
+export const getRequiredMappingsJsonPaths = (data, jsonPathList = []) => {
+  if (isEmpty(data)) return jsonPathList;
+
+  forEach(data, item => {
+    if (item?.generate && item.dataType && item?.isRequired) {
+      jsonPathList.push(`${item.jsonPath}+${item.dataType}`);
+      if (item?.children) getRequiredMappingsJsonPaths(item.children, jsonPathList);
     }
   });
 };
