@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
 
 const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
   const classes = useStyles();
-  const {key} = meta;
+  const {key, mode} = meta;
   const {
     handleActionClick,
     actionIcon,
@@ -39,7 +39,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
   }
 
   return (
-    <MenuItem className={clsx({[classes.deleteWrapper]: key === 'delete'})} data-test={key} onClick={handleActionClick} disabled={disabled}>
+    <MenuItem className={clsx({[classes.deleteWrapper]: mode === 'delete'})} data-test={key} onClick={handleActionClick} disabled={disabled}>
       {actionIcon}{label}
     </MenuItem>
   );

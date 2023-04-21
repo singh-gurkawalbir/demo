@@ -40,6 +40,8 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
     onAction(action);
   }, [onAction, handleMenuClose]);
 
+  const isDeleteOption = label => (/^Delete/.test(label) || /^Uninstall/.test(label) || /^Purge/.test(label));
+
   return (
     <>
       {label ? (
@@ -77,7 +79,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             key={label}
             data-test={`${action}`}
             disabled={disabled}
-            className={clsx({[classes.deleteWrapper]: /^Delete/.test(label)})}
+            className={clsx({[classes.deleteWrapper]: isDeleteOption(label)})}
             onClick={handleAction(action)}>
             <ActionLabel classes={classes} label={label} Icon={Icon} />
           </MenuItem>
