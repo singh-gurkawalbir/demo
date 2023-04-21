@@ -50,7 +50,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
     }
 
-    return false;
+    return selectors.editor(state, editorId)?.skipEmptyRuleCleanup;
   });
 
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -63,8 +63,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
     if (type === 'branchFilter') {
       dispatch(
         actions.editor.patchRule(editorId, value, {
-          rulePath: `branches[${position}].skipEmptyRuleCleanup`,
+          actionType: 'setSkipEmptyRuleCleanup',
+          position,
         })
+      );
+    } else {
+      dispatch(
+        actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: value})
       );
     }
   }, [dispatch, type, position, editorId]);
@@ -884,9 +889,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       // don't change the sequence of these events
       qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
-        if (type === 'branchFilter') {
-          setSkipEmptyRuleCleanup(true);
-        }
+        setSkipEmptyRuleCleanup(true);
       });
 
       // eslint-disable-next-line no-restricted-syntax
@@ -922,30 +925,28 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   // 2. only need to check if rule length=1.
   // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
   useEffect(() => {
-    if (type === 'branchFilter') {
     // iterate over rulesState and find empty rules
-      if (!rulesState || skipEmptyRuleCleanup) return;
+    if (!rulesState || skipEmptyRuleCleanup) return;
 
-      const $qb = jQuery(qbuilder.current);
+    const $qb = jQuery(qbuilder.current);
 
-      Object.keys(rulesState).forEach(ruleId => {
-        const state = rulesState[ruleId];
+    Object.keys(rulesState).forEach(ruleId => {
+      const state = rulesState[ruleId];
 
-        if (
-          typeof state.data.lhs === 'object' &&
+      if (
+        typeof state.data.lhs === 'object' &&
         typeof state.data.rhs === 'object'
-        ) {
+      ) {
         // eslint-disable-next-line camelcase
-          const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
+        const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-          if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
+        if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
 
-          const $emptyRule = state.rule;
+        const $emptyRule = state.rule;
 
-          $qb.queryBuilder('deleteRule', $emptyRule);
-        }
-      });
-    }
+        $qb.queryBuilder('deleteRule', $emptyRule);
+      }
+    });
     // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
     // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -956,9 +957,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
     qbContainer.off('afterCreateRuleInput.queryBuilder')
       .on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
-        if (type === 'branchFilter') {
-          setSkipEmptyRuleCleanup(true);
-        }
+        setSkipEmptyRuleCleanup(true);
       });
   }, [position, filtersMetadata, type, setSkipEmptyRuleCleanup]);
 

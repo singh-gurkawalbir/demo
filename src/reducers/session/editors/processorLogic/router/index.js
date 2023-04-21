@@ -217,7 +217,7 @@ export default {
     return patches;
   },
   updateRule: (draft, action, shouldReplace) => {
-    const { actionType, oldIndex, newIndex, rulePatch } = action;
+    const { actionType, oldIndex, newIndex, rulePatch, position } = action;
 
     if (actionType === 'reorder') {
       draft.rule.branches = moveArrayItem(draft.rule.branches, oldIndex, newIndex);
@@ -229,6 +229,10 @@ export default {
         name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
         pageProcessors: [{setupInProgress: true}],
       }];
+    } else if (actionType === 'setSkipEmptyRuleCleanup') {
+      if (draft.rule.branches?.[position]?.id) {
+        draft.rule.branches[position].skipEmptyRuleCleanup = rulePatch;
+      }
     } else if (!shouldReplace) {
       Object.assign(draft.rule, customCloneDeep(rulePatch));
     } else {

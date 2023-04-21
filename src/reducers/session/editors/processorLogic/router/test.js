@@ -489,6 +489,78 @@ describe('router processor logic', () => {
         },
       });
     });
+
+    describe('should update the draft correctly for setSkipEmptyRuleCleanup type', () => {
+      test('should update the draft only if branch exists', () => {
+        const options = {
+          actionType: 'setSkipEmptyRuleCleanup',
+          position: 1,
+          rulePatch: true,
+        };
+        const draft = {
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [{id: 1}, {id: 2}, {id: 3}],
+          },
+        };
+
+        updateRule(draft, options, true);
+
+        expect(draft).toEqual({
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [
+              {
+                id: 1,
+              },
+              {
+                id: 2,
+                skipEmptyRuleCleanup: true,
+              },
+              {
+                id: 3,
+              },
+            ],
+          },
+        });
+      });
+      test('should not update the draft if branch does not exist', () => {
+        const options = {
+          actionType: 'setSkipEmptyRuleCleanup',
+          position: 3,
+          rulePatch: true,
+        };
+        const draft = {
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [{id: 1}, {id: 2}, {id: 3}],
+          },
+        };
+
+        updateRule(draft, options, true);
+
+        expect(draft).toEqual({
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [
+              {
+                id: 1,
+              },
+              {
+                id: 2,
+              },
+              {
+                id: 3,
+              },
+            ],
+          },
+        });
+      });
+    });
     test('should update the draft correctly for when shouldReplace is true', () => {
       const options = {
         rulePatch: {name: 'yes', id: 'yes'},

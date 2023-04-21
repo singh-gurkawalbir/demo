@@ -80,6 +80,7 @@ describe('exportFilter processor logic', () => {
           },
         },
         activeProcessor: 'javascript',
+        skipEmptyRuleCleanup: true,
       };
 
       expect(init({resource, options})).toEqual(expectedOutput);
@@ -102,6 +103,7 @@ describe('exportFilter processor logic', () => {
           },
         },
         activeProcessor: 'filter',
+        skipEmptyRuleCleanup: true,
       };
 
       expect(init({resource, options})).toEqual(expectedOutput);
@@ -130,6 +132,7 @@ describe('exportFilter processor logic', () => {
           },
         },
         activeProcessor: 'filter',
+        skipEmptyRuleCleanup: true,
         context: scriptContext,
       };
 

@@ -28,6 +28,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      skipEmptyRuleCleanup: true,
       context: scriptContext,
     };
   },
