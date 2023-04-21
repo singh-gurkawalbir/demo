@@ -351,7 +351,7 @@ export default function Endpoint() {
                 onClick={onStartFreeTrialClick}
                 className={classes.subscriptionUpgradeBtn}
                 id="myaccout-unlimited-flows-button">
-                Get unlimited flows
+                Start free trial
               </FilledButton>
               )}
               {(licenseActionDetails.subscriptionActions.actions.indexOf(

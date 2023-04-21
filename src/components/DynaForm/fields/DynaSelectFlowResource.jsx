@@ -70,6 +70,7 @@ export default function DynaSelectFlowResource(props) {
       options={updatedOptions}
       label={label || props.label}
       hideOnEmptyList
+      isSelectFlowResource
     />
   );
 }
