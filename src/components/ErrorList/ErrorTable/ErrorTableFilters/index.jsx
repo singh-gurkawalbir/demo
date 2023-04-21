@@ -74,6 +74,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  errorSearch: {
+    width: '100%',
+    height: theme.spacing(4),
+  },
 }));
 
 export default function ErrorTableFilters({
@@ -150,7 +154,7 @@ export default function ErrorTableFilters({
         hasErrors &&
           (
             <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} autoFocus />
+              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} autoFocus className={classes.errorSearch} />
             </div>
           )
         }
