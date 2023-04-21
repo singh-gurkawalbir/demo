@@ -14,12 +14,6 @@ import UserSignInPage from '../../components/UserSignInPage';
 import RawHtml from '../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
-  backToSignIn: {
-    marginTop: 130,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   rawHTML: {
     '& > p': {
       display: 'flex',
@@ -62,7 +56,7 @@ function ForgotPassword(props) {
       pageTitle="Forgot your password?"
       pageSubHeading={<RawHtml html={message} className={classes.rawHTML} />}
       alertMessage={alertMessage}>
-      {successView
+      {!successView
         ? (
           <ForgotPasswordForm
             {...props}
@@ -71,8 +65,15 @@ function ForgotPassword(props) {
             email={queryParams.get('email')}
           />
         ) : ''}
-      {!successView ? (
-        <Typography variant="body2" className={classes.backToSignIn}>
+      {successView ? (
+        <Typography
+          variant="body2"
+          sx={{
+            marginTop: '130px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
           Back to
           <TextButton
             data-test="signin"
