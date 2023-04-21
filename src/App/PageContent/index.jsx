@@ -41,7 +41,7 @@ export default function PageContent() {
   const isAccountSwitchInProgress = useSelector(state => selectors.isAccountSwitchInProgress(state));
   const { email, name } = useSelector(state => selectors.userProfile(state), shallowEqual) || {};
 
-  useScript(scriptUrl, scriptId, () => {
+  useScript(scriptUrl, scriptId, agreeTOSAndPPRequired, () => {
     // Hiding the default launcher
     window.zE('webWidget', 'hide');
 

@@ -84,7 +84,7 @@ describe('homeSearchInput UI tests', () => {
       isCloseIconHidden: true,
     }, mockdispatch]);
 
-    renderWithProviders(<HomeSearchInput onChange={onchange} />);
+    renderWithProviders(<HomeSearchInput onChange={onchange} placeHolder="Search integrations & flows" />);
     const clearButton = screen.getByRole('button');
     const input = screen.getByDisplayValue('');
 

@@ -130,6 +130,7 @@ export default function InstallBase(props) {
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={filterKey}
+            autoFocus
           />
           <TextButton onClick={handleUpdateClick}>
             {selectedUsers ? `Update ${selectedUsers} user(s)` : 'Update'}

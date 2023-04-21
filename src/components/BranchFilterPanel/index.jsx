@@ -30,6 +30,7 @@ import getJSONPaths from '../../utils/jsonPaths';
 import { safeParse, isNumber } from '../../utils/string';
 import customCloneDeep from '../../utils/customCloneDeep';
 import { message } from '../../utils/messageStore';
+import {validateRecursive} from '../../utils/filter';
 
 const defaultData = {};
 
@@ -413,15 +414,22 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.lhs.type === 'expression') {
       try {
-        const parsedExp = JSON.parse(r.lhs.expression);
+        let parsedExp;
+
+        try {
+          parsedExp = JSON.parse(r.lhs.expression);
+        } catch (ex) {
+          throw new Error();
+        }
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
           toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
+        validateRecursive(parsedExp, null);
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
+        toReturn.error = ex.message || message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {

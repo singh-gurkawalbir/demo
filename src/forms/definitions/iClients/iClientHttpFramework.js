@@ -17,10 +17,10 @@ export default {
       app = applications.find(a => a._httpConnectorId === resource?._httpConnectorId) || {};
     } else if ((isNewId(resource?._id) && !resource?.assistant) || (resource?._id && resource?.application) || (resource?._id && !resource?.assistant && !resource?._httpConnectorId)) {
       // recource-> iclient create and edit case
-      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData);
+      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData, false);
     }
     if (app?._httpConnectorId || resource?._httpConnectorId) {
-      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData);
+      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData, false);
     }
 
     return fieldMeta;
@@ -144,7 +144,7 @@ export default {
     },
     'oauth2.accessTokenParamName': {
       fieldId: 'oauth2.accessTokenParamName',
-      visibleWhenAll: [{ field: 'oauth2.accessTokenLocation', is: ['url'] }],
+      visible: false,
     },
     'oauth2.failStatusCode': { fieldId: 'oauth2.failStatusCode', visible: false },
     'oauth2.failPath': { fieldId: 'oauth2.failPath', visible: false },

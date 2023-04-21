@@ -66,6 +66,7 @@ export default function TemplateList(props) {
           <ActionGroup>
             <KeywordSearch
               filterKey={filterKey}
+              autoFocus
             />
 
             <TextButton
