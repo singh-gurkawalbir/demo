@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import { DISPLAY_REF_SUPPORTED_RESOURCE_TYPES } from '../../../../utils/httpConnector';
+import { isDisplayRefSupportedType } from '../../../../utils/httpConnector';
 import actions from '../../../../actions';
 import FormView from './FormView';
 import RawView from './RawView';
@@ -83,7 +83,7 @@ export default function DynaSettings(props) {
   });
 
   const handleResourceFormRemount = useCallback(() => {
-    if (!DISPLAY_REF_SUPPORTED_RESOURCE_TYPES.includes(resourceType) || !isHttpConnectorResource) {
+    if (!isDisplayRefSupportedType(resourceType) || !isHttpConnectorResource) {
       return;
     }
     // Do this change only for http connector simple view as display after effects only there
