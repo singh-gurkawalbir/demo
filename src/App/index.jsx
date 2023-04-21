@@ -42,6 +42,7 @@ import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
 import Spinner from '../components/Spinner';
 import Loader from '../components/Loader';
+import { FeatureFlagProvider } from '../components/FeatureFlag';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -228,28 +229,30 @@ export default function App() {
           <Fragment key={reloadCount}>
             <ConfirmDialogProvider>
               <FormOnCancelProvider>
-                <SnackbarProvider
-                  classes={snackbarClasses} maxSnack={3} ContentProps={{
-                    classes: { root: classes.root },
-                  }}>
-                  <FontStager />
-                  <CssBaseline />
-                  {/* Define empty call back for getUserConfirmation to not let Prompt
+                <FeatureFlagProvider>
+                  <SnackbarProvider
+                    classes={snackbarClasses} maxSnack={3} ContentProps={{
+                      classes: { root: classes.root },
+                    }}>
+                    <FontStager />
+                    <CssBaseline />
+                    {/* Define empty call back for getUserConfirmation to not let Prompt
                 * get triggered when history.block is defined in any specific component
                 * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
                 */}
-                  <BrowserRouter getUserConfirmation={() => {}}>
-                    <div className={classes.root}>
-                      <LoadingNotification />
-                      <ErrorNotifications />
-                      {/* Headers */}
-                      <Headers />
-                      {/* page content */}
-                      <PageContentWrapper />
-                    </div>
-                  </BrowserRouter>
-                  <ConflictAlertDialog />
-                </SnackbarProvider>
+                    <BrowserRouter getUserConfirmation={() => {}}>
+                      <div className={classes.root}>
+                        <LoadingNotification />
+                        <ErrorNotifications />
+                        {/* Headers */}
+                        <Headers />
+                        {/* page content */}
+                        <PageContentWrapper />
+                      </div>
+                    </BrowserRouter>
+                    <ConflictAlertDialog />
+                  </SnackbarProvider>
+                </FeatureFlagProvider>
               </FormOnCancelProvider>
             </ConfirmDialogProvider>
           </Fragment>
