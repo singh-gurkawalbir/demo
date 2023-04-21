@@ -120,7 +120,7 @@ export default function IntegrationCeligoPageBar() {
 
   useEffect(() => {
     if (isConnectionCreated) {
-      history.replace('/connections');
+      history.push('/connections');
       setTempConnId(generateNewId());
     }
   }, [history, isConnectionCreated]);
