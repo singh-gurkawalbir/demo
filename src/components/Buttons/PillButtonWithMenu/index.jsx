@@ -6,9 +6,6 @@ import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 
 const useStyles = makeStyles(theme => ({
-  menutitle: {
-    fontSize: 11,
-  },
   description: {
     fontSize: 12,
     color: theme.palette.secondary.light,
@@ -16,19 +13,38 @@ const useStyles = makeStyles(theme => ({
   createMenu: {
     '& .MuiMenu-paper': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      width: 256,
     },
   },
   icon: {
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(2, 1.5),
+    padding: theme.spacing(1.5),
     display: 'flex',
     marginRight: theme.spacing(1.5),
+    color: theme.palette.secondary.light,
+    borderRadius: theme.spacing(0.5),
     '& svg': {
       fontSize: theme.spacing(2.5),
     },
   },
   menuItem: {
-    padding: theme.spacing(1, 2),
+    padding: theme.spacing(1, 2, 2),
+    '&:hover': {
+      backgroundColor: theme.palette.background.paper,
+      '&:before': {
+        display: 'none',
+      },
+    },
+    '&+$menuItem': {
+      border: 0,
+      padding: theme.spacing(0.5, 2),
+    },
+    '&:nth-child(3)': {
+      marginTop: theme.spacing(1.5),
+    },
+    '&:last-child': {
+      paddingBottom: theme.spacing(1),
+    },
   },
 }));
 
@@ -44,7 +60,7 @@ const ActionLabel = ({label, classes, description, Icon}) => (
   </>
 );
 
-export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle}) {
+export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle, className}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
@@ -62,6 +78,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle}
         fill={fill}
         aria-controls={actionsPopoverId}
         endIcon={open ? <ArrowUpIcon /> : <ArrowDownIcon />}
+        className={className}
      >
         {label}
       </PillButton>
@@ -76,12 +93,12 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle}
         className={classes.createMenu}
         transformOrigin={{
           vertical: -34,
-          horizontal: 'center',
+          horizontal: 176,
         }}
       >
         {menuTitle && (
         <ListItem>
-          <Typography className={classes.menutitle}>{menuTitle}</Typography>
+          <Typography variant="caption">{menuTitle}</Typography>
         </ListItem>
         )}
         {actionsMenu?.map(({ Icon, label, disabled, description, link }) => (
