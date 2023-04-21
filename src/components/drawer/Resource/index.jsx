@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../Right';
-import Panel, { redirectURlToParentListing, isConnectionCreatedFromHomePage } from './Panel';
+import Panel, { redirectURlToParentListing } from './Panel';
 import { selectors } from '../../../reducers';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
@@ -18,16 +18,13 @@ function ResourceDrawerContent(props) {
   // flowId need not to be passed.
   const isAsyncHelper = resourceType === 'asyncHelpers';
   const handleClose = useCallback(() => {
-    if (isConnectionCreatedFromHomePage(match.url, resourceType)) {
-      return history.replace('/connections');
-    }
     if (history.length > 2) {
       history.goBack();
     }
     const listingPageUrl = redirectURlToParentListing(match.url);
 
     history.replace(listingPageUrl);
-  }, [history, match.url, resourceType]);
+  }, [history, match.url]);
   const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
     selectors.isPreviewPanelAvailableForResource(

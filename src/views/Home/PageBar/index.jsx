@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -57,6 +57,9 @@ export default function IntegrationCeligoPageBar() {
   const location = useLocation();
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const [tempConnId, setTempConnId] = useState(generateNewId());
+  const isConnectionCreated = useSelector(state => selectors.createdResourceId(state, tempConnId));
 
   const permission = useSelector(state => {
     const {create, install} = selectors.resourcePermissions(state, 'integrations');
@@ -90,7 +93,7 @@ export default function IntegrationCeligoPageBar() {
       link: buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
         baseUrl: location.pathname,
-        params: { resourceType: 'connections', id: generateNewId() },
+        params: { resourceType: 'connections', id: tempConnId },
       }),
     },
     {
@@ -104,6 +107,13 @@ export default function IntegrationCeligoPageBar() {
       Icon: FileIcon,
     },
   ];
+
+  useEffect(() => {
+    if (isConnectionCreated) {
+      history.replace('/connections');
+      setTempConnId(generateNewId());
+    }
+  }, [history, isConnectionCreated]);
 
   return (
     <CeligoPageBar title="My integrations">
