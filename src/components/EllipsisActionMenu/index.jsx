@@ -1,6 +1,7 @@
 import React, { useCallback, useState} from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
 import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
 import {TextButton} from '../Buttons';
@@ -10,6 +11,9 @@ const useStyles = makeStyles(theme => ({
     '& > .MuiMenu-paper': {
       marginLeft: theme.spacing(-2),
     },
+  },
+  deleteWrapper: {
+    color: theme.palette.error.dark,
   },
 }));
 
@@ -73,8 +77,9 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             key={label}
             data-test={`${action}`}
             disabled={disabled}
+            className={clsx({[classes.deleteWrapper]: /^Delete/.test(label)})}
             onClick={handleAction(action)}>
-            <ActionLabel label={label} Icon={Icon} />
+            <ActionLabel classes={classes} label={label} Icon={Icon} />
           </MenuItem>
         ))}
       </Menu>
