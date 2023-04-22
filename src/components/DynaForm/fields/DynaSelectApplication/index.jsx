@@ -145,14 +145,11 @@ export default function SelectApplication(props) {
   const dispatch = useDispatch();
   const handleChange = useCallback(e => {
     ref?.current?.select?.blur();
-    const inputVal = e ? e.value : '';
-    const newValue = isMulti ? [...value, inputVal] : inputVal;
-    const label = !isMulti && (e ? e.label : '');
+    const newValue = isMulti ? [...value, e.value] : e.value;
+    const label = !isMulti && e.label;
 
     setInputValue(value.label);
-    if (e?.value) {
-      setMenuIsOpen(false);
-    }
+    setMenuIsOpen(false);
     if (onFieldChange) {
       onFieldChange(id, newValue);
     }
@@ -197,7 +194,6 @@ export default function SelectApplication(props) {
 
   const handleInputChange = (newVal, event) => {
     if (event.action === 'input-change') {
-      setMenuIsOpen(true);
       setInputValue(newVal);
     }
   };
@@ -209,7 +205,7 @@ export default function SelectApplication(props) {
     if (selectedValue) {
       setInputValue(selectedValue);
     }
-    setMenuIsOpen(false);
+    setMenuIsOpen(!value);
   };
 
   const customReactSelectStyles = CustomReactSelectStyles();
@@ -257,8 +253,6 @@ export default function SelectApplication(props) {
         autoFocus
         onBlur={handleBlur}
         styles={customStyles}
-        isClearable
-        backspaceRemovesValue
         filterOption={filterOptions}
       />
 
