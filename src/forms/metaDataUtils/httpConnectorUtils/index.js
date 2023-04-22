@@ -2,8 +2,8 @@ import { isNewId } from '../../../utils/resource';
 import { fetchMetadataFieldList, pushField } from '../../../utils/form/metadata';
 import {
   getMetadataWithFilteredDisplayRef,
-  fetchOnlyRequiredFieldMetadata,
-  shouldShowOnlyRequiredCustomSettings,
+  fetchMetadataWithDefinedFields,
+  shouldShowOnlyDefinedCustomSettings,
 } from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
 
@@ -89,8 +89,8 @@ export function initializeHttpConnectorForm(fieldMeta, resource) {
   if (settingsForm?.form) {
     let settingsFormMetadata = settingsForm.form;
 
-    if (shouldShowOnlyRequiredCustomSettings(resource)) {
-      settingsFormMetadata = fetchOnlyRequiredFieldMetadata(settingsForm.form);
+    if (shouldShowOnlyDefinedCustomSettings(resource)) {
+      settingsFormMetadata = fetchMetadataWithDefinedFields(settingsForm.form, settings);
     }
     // create stubs for utils to call and update
     let updatedFieldMetadata = getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsFormMetadata, settings);

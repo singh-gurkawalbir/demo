@@ -65,6 +65,26 @@ export function fetchOnlyRequiredFieldMetadata(fieldMetadata) {
   return updatedFieldMetadata;
 }
 
+export function fetchMetadataWithDefinedFields(fieldMetadata, values = {}) {
+  if (!fieldMetadata || !fieldMetadata.fieldMap) return fieldMetadata;
+
+  const updatedFieldMetadata = customCloneDeep(fieldMetadata);
+
+  const fieldList = fetchMetadataFieldList(updatedFieldMetadata);
+
+  const fieldsWithoutValue = fieldList.filter(fieldId => !Object.hasOwnProperty.call(values, fieldId));
+
+  fieldsWithoutValue.forEach(fieldId => {
+    if (!updatedFieldMetadata.layout) {
+      delete updatedFieldMetadata.fieldMap[fieldId];
+    } else {
+      removeFieldFromLayout(updatedFieldMetadata.layout, fieldId);
+    }
+  });
+
+  return updatedFieldMetadata;
+}
+
 export function getHelpKey(resourceType, id) {
   return `${resourceType}.${id}`;
 }
@@ -85,7 +105,7 @@ export function getEndPointCustomSettings(connectorMetadata = {}, resourceId, op
   return endPointMetadata?.settingsForm;
 }
 
-export function shouldShowOnlyRequiredCustomSettings(resource) {
+export function shouldShowOnlyDefinedCustomSettings(resource) {
   if (resource && !isNewId(resource._id) && !resource.assistantMetadata?.operationChanged) {
     return true;
   }
@@ -96,9 +116,9 @@ export function shouldShowOnlyRequiredCustomSettings(resource) {
 export function getConnectorCustomSettings(resourceFormMetadata, csMetadata, resource) {
   let customSettings = csMetadata;
 
-  if (shouldShowOnlyRequiredCustomSettings(resource)) {
+  if (shouldShowOnlyDefinedCustomSettings(resource)) {
     // We filter incase user opens a resource's custom settings ( edit mode )
-    customSettings = fetchOnlyRequiredFieldMetadata(csMetadata);
+    customSettings = fetchMetadataWithDefinedFields(csMetadata, resource?.settings);
   }
 
   // Incase the resource is new or user changed endpoint, we show all custom settings
