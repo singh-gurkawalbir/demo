@@ -56,7 +56,7 @@ export function layoutHasField(layout, fieldId) {
 }
 
 export function fetchMetadataFieldList(metadata) {
-  const { fieldMap, layout } = metadata;
+  const { fieldMap, layout } = metadata || {};
 
   if (!fieldMap) return [];
 

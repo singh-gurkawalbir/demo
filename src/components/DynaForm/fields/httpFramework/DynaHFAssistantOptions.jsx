@@ -19,7 +19,7 @@ const emptySettingsPatch = {
 const emptySettingsFormPatch = {
   op: 'replace',
   path: '/settingsForm',
-  value: undefined,
+  value: {},
 };
 
 export const useHFSetInitializeFormData = ({
@@ -192,10 +192,14 @@ function DynaAssistantOptions(props) {
       const httpConnectorMetaData = assistantData[resourceType === 'imports' ? 'import' : 'export'];
       const endpointCustomSettings = getEndPointCustomSettings(httpConnectorMetaData, resource, value);
 
+      if (!endpointCustomSettings) {
+        return [emptySettingsFormPatch, emptySettingsPatch];
+      }
+
       return [{
         op: 'replace',
         path: '/settingsForm',
-        value: endpointCustomSettings ? { form: endpointCustomSettings } : undefined,
+        value: { form: endpointCustomSettings },
       }, emptySettingsPatch];
     }
 
