@@ -123,6 +123,7 @@ export default {
       required: true,
       allowEdit: true,
       defaultOpen: true,
+      omitWhenHidden: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -168,6 +169,7 @@ export default {
       required: true,
       allowEdit: true,
       defaultOpen: true,
+      omitWhenHidden: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
