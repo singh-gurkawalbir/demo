@@ -13,6 +13,7 @@ import { PageProcessorPathRegex } from '../../../../constants';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import { useHandleMovePP } from '../../hooks';
 import messageStore from '../../../../utils/messageStore';
+import CeligoTruncate from '../../../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,11 +47,11 @@ const useStyles = makeStyles(theme => ({
     marginBottom: -90,
     borderRadius: theme.spacing(2.5, 2.5, 0, 0),
     overflow: 'hidden',
+    width: '100%',
     '&:hover': {
-      // backgroundColor: theme.palette.background.paper2,
       backgroundColor: theme.palette.background.default,
-      '& > span': {
-        display: 'block !important',
+      '& > $branchName': {
+        display: 'flex',
       },
     },
   },
@@ -62,14 +63,16 @@ const useStyles = makeStyles(theme => ({
     },
   },
   firstBranchStep: {
-    '& > span': {
-      display: 'block !important',
+    '& > $branchName': {
+      display: 'flex',
     },
   },
   branchName: {
     display: 'none',
     textTransform: 'none',
     color: theme.palette.text.secondary,
+    whiteSpace: 'nowrap',
+    width: theme.spacing(29),
   },
   newbranchName: {
     textTransform: 'none',
@@ -134,9 +137,11 @@ export default function PageProcessorNode({ data = {}}) {
           {!isIconView && (
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
             {!isVirtual && (
-            <Typography variant="overline" className={classes.branchName}>
-              {branch.name}
-            </Typography>
+              <Typography variant="overline" className={classes.branchName}>
+                <CeligoTruncate lines={1}>
+                  {branch.name}
+                </CeligoTruncate>
+              </Typography>
             )}
           </div>
           )}

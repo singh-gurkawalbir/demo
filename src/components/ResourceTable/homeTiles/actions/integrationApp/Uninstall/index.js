@@ -7,6 +7,7 @@ export default {
   key: 'uninstallConnector',
   useLabel: () => 'Uninstall integration',
   icon: TrashIcon,
+  mode: 'delete',
   useHasAccess: ({_integrationId}) => {
     const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
 

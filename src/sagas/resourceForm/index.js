@@ -21,13 +21,13 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorRegex } from '../../constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, CONNECTORS_TO_IGNORE, EMPTY_RAW_DATA, PageProcessorRegex } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
-import { getAssistantConnectorType, getHttpConnector } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector, applicationsList } from '../../constants/applications';
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
@@ -889,6 +889,22 @@ export function* initFormValues({
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   } else if (resourceType === 'exports') {
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.webhook?._httpConnectorId);
+  } else if (resourceType === 'iClients') {
+    const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
+    let app;
+
+    if (resource?.application) {
+      // new iclent inside resource
+      app = applications.find(a => a.id === resource.application) || {};
+    } else if (resource?._httpConnectorId) {
+      // existing Iclient
+      app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
+    } else if (connectionAssistant) {
+      // new Iclient inside connection
+      app = applications.find(a => a.id === connectionAssistant) || {};
+    }
+
+    httpPublishedConnector = getHttpConnector(app?._httpConnectorId);
   }
   try {
     const defaultFormAssets = getResourceFormAssets({
@@ -899,6 +915,8 @@ export function* initFormValues({
       connection,
       customFieldMeta,
       accountOwner,
+      parentConnectionId,
+      applicationFieldState,
     });
 
     const form = defaultFormAssets.fieldMeta;

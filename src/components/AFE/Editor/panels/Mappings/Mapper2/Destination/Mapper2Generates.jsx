@@ -112,6 +112,25 @@ export default function Mapper2Generates(props) {
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
+  const handleKeyDown = useCallback(
+    evt => {
+      if (evt.key === 'Home') {
+        evt.preventDefault();
+        // eslint-disable-next-line no-param-reassign
+        if (evt.shiftKey) evt.target.selectionStart = 0;
+        else evt.target.setSelectionRange(0, 0);
+      }
+      if (evt.key === 'End') {
+        evt.preventDefault();
+        const len = evt.target.value.length;
+
+        // eslint-disable-next-line no-param-reassign
+        if (evt.shiftKey) evt.target.selectionEnd = len;
+        else evt.target.setSelectionRange(len, len);
+      }
+    }, [],
+  );
+
   // adding the anchorEl dependency becuase if data type is clicked,
   // we want to handle the blur function after the data type has been updated
   // Ref: IO-26909
@@ -147,6 +166,7 @@ export default function Mapper2Generates(props) {
             value={inputValue}
             onChange={handleChange}
             onFocus={handleFocus}
+            onKeyDown={handleKeyDown}
             disabled={disabled}
             multiline={isFocused}
             placeholder={disabled ? '' : 'Destination field'} />

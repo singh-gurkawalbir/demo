@@ -160,6 +160,7 @@ export default {
           id: 'http.auth.oauth.scope',
           name: '/http/auth/oauth/scope',
           type: 'selectscopes',
+          isLoggable: true,
           label: 'Configure scopes',
           scopes: metadata.fieldMap['http.auth.oauth.scope'].scopes,
           helpKey: 'connection.http.auth.oauth.scope',

@@ -7,7 +7,7 @@ import actions from '../../../../../../actions';
 import ActionGroup from '../../../../../ActionGroup';
 import CloseIcon from '../../../../../icons/CloseIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import HomeSearchInput from '../../../../../SearchInput/HomeSearchInput';
+import SearchInputPageBar from '../../../../../SearchInput/SearchInputPageBar';
 import useDebouncedValue from '../../../../../../hooks/useDebouncedInput';
 import { emptyList } from '../../../../../../constants';
 import NotificationToaster from '../../../../../NotificationToaster';
@@ -97,7 +97,7 @@ export default function SearchBar() {
   return (
     <div className={classes.searchWrapper}>
       <ActionGroup>
-        <HomeSearchInput
+        <SearchInputPageBar
           value={text}
           onChange={handleKeywordChange}
           className={classes.searchField}

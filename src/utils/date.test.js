@@ -1,7 +1,7 @@
 
 import momenttz from 'moment-timezone';
 
-const { convertUtcToTimezone} = require('./date');
+const { convertUtcToTimezone, getNDaysBeforeDate } = require('./date');
 
 describe('date util function test', () => {
   let momentSpy;
@@ -58,6 +58,18 @@ describe('date util function test', () => {
 
     test('should return in system timezone when timezone not passed in params', () => {
       expect(convertUtcToTimezone(testDate, undefined, undefined)).toBe('12/24/2018 5:03:30 am');
+    });
+  });
+
+  describe('getNDaysBeforeDate test cases', () => {
+    test('get 1 day before date', () => {
+      jest.spyOn(Date.prototype, 'setDate').mockReturnValue(Date.now());
+      jest.spyOn(Date.prototype, 'setDate').mockImplementation(num => num);
+      jest.spyOn(Date.prototype, 'getDate').mockReturnValue(10);
+
+      const date = getNDaysBeforeDate(1);
+
+      expect(date).toEqual(new Date(new Date().setDate(new Date().getDate() - 1)));
     });
   });
 });
