@@ -215,7 +215,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
           {ButtonLabel}
         </OutlinedButton>
       ) : (
-        <ActionButton onClick={toggleClick}>
+        <ActionButton disabled={disabled} onClick={toggleClick}>
           <Icon />
         </ActionButton>
       )}

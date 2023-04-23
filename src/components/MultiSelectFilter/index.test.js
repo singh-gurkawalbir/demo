@@ -259,4 +259,21 @@ describe('multiSelectFilter component Test cases', () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect).toHaveBeenCalledWith([], 'id_0');
   });
+
+  test('should not be able to open filter if disabled', async () => {
+    initMultiSelectFilter({
+      props: {
+        items: [
+          {
+            _id: 'id_0',
+            name: 'parent 0',
+          },
+        ],
+        selected: [],
+        ButtonLabel: 'Select canceled by',
+        disabled: true,
+      },
+    });
+    expect(screen.getByRole('button', {name: 'Select canceled by'})).toBeDisabled();
+  });
 });
