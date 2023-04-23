@@ -13360,7 +13360,7 @@ Object {
       "checkExistingExport": Object {
         "flowResourceType": "pg",
         "id": "checkExistingExport",
-        "label": "Use existing Export",
+        "label": "Use existing export",
         "name": "checkExistingExport",
         "refreshOptionsOnChangesTo": Array [
           "application",
@@ -13425,13 +13425,14 @@ Object {
         "id": "exportId",
         "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "type",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13517,7 +13518,7 @@ Object {
       "checkExistingExport": Object {
         "flowResourceType": "pp",
         "id": "checkExistingExport",
-        "label": "Use existing Export",
+        "label": "Use existing lookup",
         "name": "checkExistingExport",
         "refreshOptionsOnChangesTo": Array [
           "application",
@@ -13552,7 +13553,7 @@ Object {
       "checkExistingImport": Object {
         "flowResourceType": "pp",
         "id": "checkExistingImport",
-        "label": "Use existing Import",
+        "label": "Use existing import",
         "name": "checkExistingImport",
         "refreshOptionsOnChangesTo": Array [
           "application",
@@ -13621,13 +13622,14 @@ Object {
         "id": "exportId",
         "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13666,13 +13668,14 @@ Object {
         "id": "importId",
         "label": "",
         "name": "importId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "importId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "imports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [

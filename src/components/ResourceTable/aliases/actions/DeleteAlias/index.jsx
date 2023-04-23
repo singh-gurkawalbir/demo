@@ -11,6 +11,7 @@ export default {
   key: 'deleteAlias',
   useLabel: () => 'Delete alias',
   icon: TrashIcon,
+  mode: 'delete',
   useOnClick: ({alias: aliasId}) => {
     const {resourceId: aliasContextResourceId, resourceType: aliasContextResourceType} = useGetTableContext();
     const dispatch = useDispatch();

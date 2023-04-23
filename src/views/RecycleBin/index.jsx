@@ -84,6 +84,7 @@ export default function RecycleBin(props) {
           <ActionGroup>
             <KeywordSearch
               filterKey={filterKey}
+              autoFocus
             />
           </ActionGroup>
         </CeligoPageBar>

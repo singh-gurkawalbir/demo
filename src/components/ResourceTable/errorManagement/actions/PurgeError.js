@@ -10,6 +10,7 @@ export default {
   key: 'purgeResolvedError',
   useLabel: () => 'Purge error',
   icon: PurgeIcon,
+  mode: 'delete',
   useOnClick: rowData => {
     const { errorId } = rowData;
     const dispatch = useDispatch();

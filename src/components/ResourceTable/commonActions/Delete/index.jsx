@@ -10,6 +10,7 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   key: 'delete',
+  mode: 'delete',
   useLabel: rowData => {
     const tableContext = useGetTableContext();
 
