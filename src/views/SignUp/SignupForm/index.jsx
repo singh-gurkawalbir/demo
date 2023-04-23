@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useCallback, useEffect, useMemo} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import { useHistory } from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -9,7 +9,6 @@ import getFieldMeta from './metadata';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
-import getRoutePath from '../../../utils/routePaths';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import useQuery from '../../../hooks/useQuery';
@@ -36,6 +35,7 @@ function validateQueryParam(params) {
 const formKey = 'signupForm';
 export default function SignUp() {
   const classes = useStyles();
+  const [signUpInProgress, setSignUpInProgress] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
@@ -51,6 +51,7 @@ export default function SignUp() {
   }, [dispatch, validatedParam]);
 
   const handleOnSubmit = useCallback(values => {
+    setSignUpInProgress(true);
     handleSignup(values);
   }, [handleSignup]);
 
@@ -61,7 +62,9 @@ export default function SignUp() {
   useEffect(() => {
     if (signupStatus === 'success') {
       dispatch(actions.auth.signupStatus('done', SIGN_UP_SUCCESS));
-      history.replace(getRoutePath('/signin'));
+    }
+    if (signupStatus === 'failed') {
+      setSignUpInProgress(false);
     }
   }, [dispatch, history, signupStatus]);
 
@@ -69,16 +72,21 @@ export default function SignUp() {
     <LoginFormWrapper>
       { signupStatus === 'failed' && error && (
       <ShowErrorMessage error={error} className={classes.errorMessageSignup} />
+      )}{signupStatus !== 'done' && (
+        <>
+          <DynaForm formKey={formKey} />
+          <DynaSubmit
+            fullWidth
+            submit
+            formKey={formKey}
+            onClick={handleOnSubmit}
+            ignoreFormTouchedCheck
+            disabled={signUpInProgress}
+        >
+            Sign up
+          </DynaSubmit>
+        </>
       )}
-      <DynaForm formKey={formKey} />
-      <DynaSubmit
-        fullWidth
-        submit
-        formKey={formKey}
-        onClick={handleOnSubmit}
-        ignoreFormTouchedCheck>
-        Sign up
-      </DynaSubmit>
     </LoginFormWrapper>
   );
 }
