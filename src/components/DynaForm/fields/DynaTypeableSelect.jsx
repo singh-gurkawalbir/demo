@@ -133,6 +133,20 @@ export default function DynaTypeableSelect(props) {
         setValue(propValue);
         setIsFocused(false);
       }
+      if (evt.key === 'Home') {
+        evt.preventDefault();
+        // eslint-disable-next-line no-param-reassign
+        if (evt.shiftKey) evt.target.selectionStart = 0;
+        else evt.target.setSelectionRange(0, 0);
+      }
+      if (evt.key === 'End') {
+        evt.preventDefault();
+        const len = evt.target.value.length;
+
+        // eslint-disable-next-line no-param-reassign
+        if (evt.shiftKey) evt.target.selectionEnd = len;
+        else evt.target.setSelectionRange(len, len);
+      }
     },
     [propValue],
   );
