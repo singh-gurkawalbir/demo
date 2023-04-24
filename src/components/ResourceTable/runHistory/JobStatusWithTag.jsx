@@ -9,7 +9,7 @@ const InfoTag = ({color, label, info}) => (
   <Box display="flex">
     <Tag color={color} label={label} />
     <Box>
-      <InfoIconButton info={info} size="xs" placement="right" plainInfo />
+      <InfoIconButton info={info} size="xs" placement="right" basicInfo />
     </Box>
   </Box>
 );
