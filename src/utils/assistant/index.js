@@ -1989,8 +1989,8 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   }
 
   const pathParams = {};
-  let queryParams = {};
   const bodyParams = {};
+  let queryParams = {};
   let lookupUrl;
   let lookupQueryParams;
   let identifierValue;
@@ -2167,30 +2167,33 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importAdaptorSubSchema.relativeURI &&
     importAdaptorSubSchema.relativeURI[0].indexOf('?') > 0
   ) {
+    let toParseQueryString = importAdaptorSubSchema.relativeURI[0].split('?')?.[1];
+
     if (url1Info.urlParts && url1Info.urlParts[url1Info.urlParts.length - 1]) {
-      queryParams = qs.parse(url1Info.urlParts[url1Info.urlParts.length - 1], {
-        delimiter: /[?&]/,
-        depth: 0,
-        decoder(str, defaultDecoder) {
-          if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-          // a unique case where query name contains '=' operator
-          // IO-1683
-          if (str === 'filter[]') {
-            return 'filter[]=name';
-          }
-          if (str.startsWith('name=')) {
-            return defaultDecoder(str.substring(5));
-          }
-
-          return defaultDecoder(str);
-        },
-      }); /* depth should be 0 to handle IO-1683 */
-      url1Info.urlParts.splice(
-        url1Info.urlParts.length - 1
-      ); /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
+      toParseQueryString = url1Info.urlParts[url1Info.urlParts.length - 1];
+      url1Info.urlParts.splice(url1Info.urlParts.length - 1);
+      /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
     }
+    queryParams = qs.parse(toParseQueryString, {
+      delimiter: /[?&]/,
+      depth: 0,
+      decoder(str, defaultDecoder) {
+        if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+        // a unique case where query name contains '=' operator
+        // IO-1683
+        if (str === 'filter[]') {
+          return 'filter[]=name';
+        }
+        if (str.startsWith('name=')) {
+          return defaultDecoder(str.substring(5));
+        }
+
+        return defaultDecoder(str);
+      },
+    }); /* depth should be 0 to handle IO-1683 */
   }
+
   if (importAdaptorSubSchema.existingExtract) {
     identifierValue = importAdaptorSubSchema.existingExtract;
     lookupType = 'source';
