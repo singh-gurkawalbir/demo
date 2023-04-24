@@ -185,7 +185,7 @@ export default function DateTimePicker(props) {
               disabled={disabled}
               data-test="date"
               format={dateFormat}
-              value={(typeof dateValue === 'string' || dateValue instanceof String) ? convertUtcToTimezone(dateValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}) : dateValue}
+              value={convertUtcToTimezone(dateValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true})}
               onChange={setFormatDateValue}
               label={dateLabel || 'Date'}
               onKeyDown={e => {
@@ -223,7 +223,7 @@ export default function DateTimePicker(props) {
 
                 e.preventDefault();
               }}
-              value={(typeof timeValue === 'string' || timeValue instanceof String) ? convertUtcToTimezone(timeValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}) : timeValue}
+              value={convertUtcToTimezone(timeValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true})}
               onChange={setFormatTimeValue}
               slots={{openPickerIcon: AccessTimeIcon}}
             />
