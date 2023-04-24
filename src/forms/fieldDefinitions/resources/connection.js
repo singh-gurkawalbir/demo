@@ -2359,7 +2359,7 @@ export default {
   'jdbc.host': {
     type: 'text',
     required: true,
-    label: 'Server Name',
+    label: 'Server name',
     defaultValue: r => r?.jdbc?.host,
   },
   'jdbc.port': {
