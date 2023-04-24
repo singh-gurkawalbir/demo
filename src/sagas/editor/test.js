@@ -592,7 +592,7 @@ describe('editor sagas', () => {
             message: '{"message":"invalid processor", "code":"code"}',
           }))],
         ])
-        .put(actions.editor.previewFailed(editorId, {errorMessage: ['Message: invalid processor'], errorLine: undefined }))
+        .put(actions.editor.previewFailed(editorId, {errorMessage: ['Message: invalid processor'], errorLine: undefined, errSourceProcessor: undefined }))
         .run();
     });
     test('should dispatch preview response action with the final result if invokeProcesor succeeds', () => {
@@ -688,7 +688,7 @@ describe('editor sagas', () => {
             body: {} }), {errors: [{errors: 'test'}]}],
         ])
         .put(actions.mapping.requestPreview(editorId))
-        .put(actions.editor.previewFailed(editorId, { errorMessage: 'Message: [{"errors":"test"}]' }))
+        .put(actions.editor.previewFailed(editorId, { errorMessage: 'Message: [{"errors":"test"}]', errSourceProcessor: undefined }))
         .run();
     });
     test('should validate mappings and dispatch request preview action when mappingPreviewType is netsuite and call invokeProcessor saga', () => {

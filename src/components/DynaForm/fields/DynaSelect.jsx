@@ -138,6 +138,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  fieldWrapperFlow: {
+    alignItems: 'flex-start',
+    display: 'none',
+  },
   dynaSelectWrapper: {
     width: '100%',
   },
@@ -250,8 +254,8 @@ export default function DynaSelect(props) {
     dataTest,
     isLoggable,
     defaultOpen = false,
+    isSelectFlowResource,
   } = props;
-
   const isDefaultOpen = disabled ? false : defaultOpen;
   const listRef = React.createRef();
   const [open, setOpen] = useState(isDefaultOpen || false);
@@ -399,7 +403,7 @@ export default function DynaSelect(props) {
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
-      <div className={classes.fieldWrapper}>
+      <div className={clsx({[classes.fieldWrapper]: !isSelectFlowResource}, {[classes.fieldWrapperFlow]: isSelectFlowResource})}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
