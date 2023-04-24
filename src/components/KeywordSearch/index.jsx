@@ -36,7 +36,7 @@ export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHold
       onChange={handleKeywordChange}
       autoFocus={autoFocus}
       onFocus={onFocus}
-      placeHolder={placeHolder || 'Search…'}
+      placeHolder={placeHolder}
       className={className}
   />
   );
