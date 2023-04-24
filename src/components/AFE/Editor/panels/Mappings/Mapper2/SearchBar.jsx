@@ -102,7 +102,7 @@ export default function SearchBar() {
             height: 29,
           }}
           placeholder="Search destination fields"
-          openWithFocus
+          autoFocus
         />
 
         {searchKey && <SearchCount />}
