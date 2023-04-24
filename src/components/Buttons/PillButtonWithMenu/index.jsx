@@ -101,10 +101,10 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
           <Typography variant="caption">{menuTitle}</Typography>
         </ListItem>
         )}
-        {actionsMenu?.map(({ Icon, label, disabled, description, link }) => (
+        {actionsMenu?.map(({ Icon, dataTestId, label, disabled, description, link }) => (
           <MenuItem
             key={label}
-            data-test={`Create-${label}`}
+            data-test={dataTestId || `Create-${label}`}
             disabled={disabled}
             component={Link}
             to={link}
