@@ -135,7 +135,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
   const isValid = () => {
     try {
-      return jQuery(qbuilder.current).queryBuilder('validate');
+      const toReturn = jQuery(qbuilder.current).queryBuilder('validate');
+
+      if (toReturn) {
+        const result = jQuery(qbuilder.current).queryBuilder('getRules', {get_flags: 'all'});
+
+        if (Array.isArray(result.rules)) {
+          return !result.rules.some(rule => rule.data.lhs.type === 'expression' && !rule.data.lhs.expression);
+        }
+      }
+
+      return toReturn;
     // eslint-disable-next-line no-empty
     } catch (e) {}
 
@@ -662,6 +672,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             }
 
             if (r.lhs.type === 'expression') {
+              const textarea = rule.$el.find('.rule-filter-container textarea[name=expression]');
+
+              if (!textarea.val()) {
+                setTimeout(() => {
+                  textarea.closest('.rule-container').addClass('has-error');
+                });
+              }
               try {
                 lhsValue = JSON.parse(lhsValue);
               } catch (ex) {
