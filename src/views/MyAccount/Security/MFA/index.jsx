@@ -116,14 +116,17 @@ function MFADetails() {
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const profile = useSelector(state => selectors.userProfile(state)) || {};
 
   useEffect(() => {
     if (!areUserSettingsLoaded) {
       dispatch(actions.mfa.requestUserSettings());
     }
     dispatch(actions.user.preferences.request('Retrieving user profile Info'));
-    dispatch(actions.user.profile.request('Retrieving user profile Info'));
-  }, [areUserSettingsLoaded, dispatch]);
+    if (!Object.keys(profile)) {
+      dispatch(actions.user.profile.request('Retrieving user profile Info'));
+    }
+  }, [areUserSettingsLoaded, dispatch, profile]);
 
   if (isAccountOwnerOrAdmin && !isMFASetupIncomplete) {
     return (

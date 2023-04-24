@@ -11,6 +11,7 @@ import { selectors } from '../../../../../reducers';
 export default {
   key: 'removeUserFromAccount',
   useLabel: () => 'Remove user from account',
+  mode: 'delete',
   Component: ({rowData: user}) => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();

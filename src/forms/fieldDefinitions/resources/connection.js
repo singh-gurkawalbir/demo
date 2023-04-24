@@ -351,6 +351,7 @@ export default {
     type: 'selectscopes',
     label: 'Configure scopes',
     required: true,
+    isLoggable: true,
     helpKey: 'connection.http.auth.oauth.scope',
   },
 
@@ -820,6 +821,7 @@ export default {
     type: 'selectscopes',
     label: 'Configure scopes',
     required: true,
+    isLoggable: true,
   },
   'http.auth.oauth.accessTokenPath': {
     isLoggable: true,

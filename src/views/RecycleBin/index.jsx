@@ -82,9 +82,7 @@ export default function RecycleBin(props) {
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
           <ActionGroup>
-            <KeywordSearch
-              filterKey={filterKey}
-            />
+            <KeywordSearch filterKey={filterKey} />
           </ActionGroup>
         </CeligoPageBar>
         <PageContent>

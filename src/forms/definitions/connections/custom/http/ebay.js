@@ -107,6 +107,7 @@ export default {
     'http.scopeSandbox': {
       id: 'http.scopeSandbox',
       type: 'selectscopes',
+      isLoggable: true,
       label: 'Configure scopes',
       visibleWhen: [{ field: 'accountType', is: ['sandbox'] }],
       scopes: [
@@ -156,6 +157,7 @@ export default {
     'http.scopeProduction': {
       id: 'http.scopeProduction',
       type: 'selectscopes',
+      isLoggable: true,
       label: 'Configure scopes',
       scopes: [
         {

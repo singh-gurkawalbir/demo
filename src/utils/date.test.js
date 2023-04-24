@@ -63,6 +63,10 @@ describe('date util function test', () => {
 
   describe('getNDaysBeforeDate test cases', () => {
     test('get 1 day before date', () => {
+      jest.spyOn(Date.prototype, 'setDate').mockReturnValue(Date.now());
+      jest.spyOn(Date.prototype, 'setDate').mockImplementation(num => num);
+      jest.spyOn(Date.prototype, 'getDate').mockReturnValue(10);
+
       const date = getNDaysBeforeDate(1);
 
       expect(date).toEqual(new Date(new Date().setDate(new Date().getDate() - 1)));

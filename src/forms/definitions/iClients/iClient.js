@@ -17,7 +17,7 @@ export default {
       app = applications.find(a => a._httpConnectorId === resource?._httpConnectorId) || {};
     } else if ((isNewId(resource?._id) && !resource?.assistant) || (resource?._id && resource?.application) || (resource?._id && !resource?.assistant && !resource?._httpConnectorId)) {
       // recource-> iclient create and edit case
-      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData);
+      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData, true);
     }
     if (app?.assistant && !app?._httpConnectorId) {
       // pure assistant without http2.0
@@ -54,7 +54,7 @@ export default {
       return finalFieldMeta;
     }
     if (app?._httpConnectorId || resource?._httpConnectorId) {
-      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData);
+      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData, true);
     }
 
     return fieldMeta;
