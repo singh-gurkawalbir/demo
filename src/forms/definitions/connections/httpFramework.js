@@ -210,6 +210,11 @@ export default {
     'http._httpConnectorApiId': {
       fieldId: 'http._httpConnectorApiId',
     },
+    'http._httpConnectorVersionId': {
+      fieldId: 'http._httpConnectorVersionId',
+      type: 'text',
+      label: 'API version',
+    },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
       fieldId: 'http.headers',
@@ -389,6 +394,7 @@ export default {
           'http._httpConnectorApiId',
           'mode',
           '_agentId',
+          'http._httpConnectorVersionId',
         ],
       },
       {
