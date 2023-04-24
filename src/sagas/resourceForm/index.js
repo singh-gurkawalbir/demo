@@ -895,7 +895,7 @@ export function* initFormValues({
 
     if (resource?.application) {
       // new iclent inside resource
-      app = applications.find(a => a.id === resource.application) || {};
+      app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource.application.toLowerCase().replace(/\.|\s/g, '')) || {};
     } else if (resource?._httpConnectorId) {
       // existing Iclient
       app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
