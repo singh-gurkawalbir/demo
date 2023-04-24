@@ -515,10 +515,10 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           },
         ];
 
-        if (versionOptions?.length) {
+        if (versionOptions?.length > 1) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options: versionOptions, type: 'select', defaultValue: resetToDefaultValue ? connector.versions?.[0]?._id : resource?.http?._httpConnectorVersionId };
         } else {
-          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false, defaultValue: connector.versions?.[0]?._id};
         }
       } else if (key === 'http.auth.oauth.scope') {
         const field = preConfiguredField || fieldUserMustSet;
