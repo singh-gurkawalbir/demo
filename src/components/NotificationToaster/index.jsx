@@ -133,7 +133,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-start',
       },
     },
-    '& >*.MuiTypography-root': {
+    '& >.MuiTypography-root': {
       fontSize: 13,
     },
     '& > * svg': {

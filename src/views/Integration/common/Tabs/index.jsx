@@ -74,8 +74,15 @@ export default function IntegrationTabs({ tabs, className }) {
             data-test={label}
             id={`tab-${i}`}
             {...{ 'aria-controls': `tabpanel-${i}` }}
-            icon={<Icon />}
+            icon={<Icon className={classes.karthik} />}
             label={label}
+            sx={{
+              padding: '9px 12px 4px',
+              lineHeight: 1.75,
+              '&>.MuiTab-iconWrapper': {
+                marginRight: theme => theme.spacing(0.5),
+              },
+            }}
           />
         ))}
       </Tabs>

@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: '100%',
+    fontSize: 14,
   },
   description: {
     flexGrow: 1,
@@ -55,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     position: 'absolute',
-    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
+    left: 16,
   },
   listItem: {
     display: 'flex',
@@ -209,6 +210,9 @@ export default function BranchItem({
             }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
+            sx={{
+              ...(allowSorting ? {'& .MuiAccordionSummary-expandIconWrapper': {left: 40}} : {}),
+            }}
           >
             <div className={classes.summaryContainer}>
               {allowSorting && <DragHandle />}
@@ -223,6 +227,7 @@ export default function BranchItem({
                   text={branchName}
                   placeholder="Unnamed branch: Click to add name"
                   onChange={title => handleNameChange(title, position)}
+                  sx={{fontSize: 14}}
                 />
               </div>
 
