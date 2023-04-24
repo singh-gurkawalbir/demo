@@ -17,9 +17,7 @@ export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType 
 
   const formContext = yield select(selectors.formState, formKey);
 
-  const resource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
-
-  return getConnectorCustomSettings(formContext?.fieldMeta, metadata, resource);
+  return getConnectorCustomSettings(formContext?.fieldMeta, metadata);
 }
 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
