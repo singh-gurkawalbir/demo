@@ -101,6 +101,7 @@ export default function SignUp() {
 
   return (
     <LoginFormWrapper>
+      {signupStatus !== 'done' && (
       <div>
         {
         isGoogleSignInAllowed() && (
@@ -126,6 +127,7 @@ export default function SignUp() {
         )
 }
       </div>
+      )}
       { signupStatus === 'failed' && error && (
       <ShowErrorMessage error={error} className={classes.errorMessageSignup} />
       )}{signupStatus !== 'done' && (
