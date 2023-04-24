@@ -52,7 +52,7 @@ describe('DrawerTitleBar tests', () => {
     await initDrawerTitleBar({...props, backToParent: true, helpKey: 'formView'});
     expect(screen.getByText(/Drawer Title/i)).toBeInTheDocument();
     const titleButtons = screen.getAllByRole('button');
-    const helpButton = titleButtons.find(el => el.getAttribute('class').includes('helpTextButton'));
+    const helpButton = titleButtons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
 
     await userEvent.click(helpButton);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe('DrawerTitleBar tests', () => {
   test('Should able to test the drawerTitle Help title without helptitle', async () => {
     await initDrawerTitleBar({...props, helpKey: 'formView', helpTitle: ''});
     const titleButtons = screen.getAllByRole('button');
-    const helpButton = titleButtons.find(el => el.getAttribute('class').includes('helpTextButton'));
+    const helpButton = titleButtons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
 
     await userEvent.click(helpButton);
     expect(screen.queryByText('_helpTitle')).not.toBeInTheDocument();

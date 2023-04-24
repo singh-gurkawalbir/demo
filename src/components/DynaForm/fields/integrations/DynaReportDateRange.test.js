@@ -79,10 +79,10 @@ describe('dynaReportDateRange UI tests', () => {
     initDynaReportDateRange(props);
     await userEvent.click(screen.getByText('Select range'));
     await userEvent.click(screen.getByText('Custom'));
-    expect(screen.getByText(/Start date/i)).toBeInTheDocument();
-    expect(screen.getByText(/Start time/i)).toBeInTheDocument();
-    expect(screen.getByText(/End date/i)).toBeInTheDocument();
-    expect(screen.getByText(/End time/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Start date/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Start time/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/End date/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/End time/i)).toBeInTheDocument();
     const months = screen.getAllByText(/[a-zA-Z]{3} [0-9]{4}\s*/g);
 
     expect(months).toHaveLength(3);

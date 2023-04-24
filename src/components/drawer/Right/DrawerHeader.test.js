@@ -68,7 +68,7 @@ describe('DrawerHeader tests', () => {
   test('Should able to test the DrawerHeader render with helpButton and Info icon', async () => {
     await initRightDrawerComponents({helpKey: 'formView', infoText: 'get info from here'});
     const buttons = screen.getAllByRole('button');
-    const helpIcon = buttons.find(btn => btn.getAttribute('class').includes('helpTextButton'));
+    const helpIcon = buttons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
 
     expect(helpIcon).toBeInTheDocument();
     await userEvent.click(helpIcon);
