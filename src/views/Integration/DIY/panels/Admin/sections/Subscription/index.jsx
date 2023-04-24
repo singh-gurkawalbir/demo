@@ -4,7 +4,7 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@mui/styles';
-import { Grid, Divider, Typography } from '@mui/material';
+import { Grid, Divider, Typography, Box, styled } from '@mui/material';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
@@ -72,45 +72,13 @@ const metadata = {
   },
 };
 const useStyles = makeStyles(theme => ({
-  header: {
-    background: theme.palette.background.paper,
-    textAlign: 'left',
-    padding: theme.spacing(1, 2),
-    borderRadius: [4, 4, 0, 0],
-  },
-  message: {
-    paddingBottom: theme.spacing(2),
-    textAlign: 'left',
-    paddingLeft: theme.spacing(2),
-  },
-  heading: {
-    paddingBottom: theme.spacing(1),
-  },
-  content: {
-    padding: theme.spacing(2, 0),
-  },
-  container: {
-    paddingLeft: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-  },
   button: {
     margin: theme.spacing(1),
   },
-  planContent: {
-    margin: 0,
-    lineHeight: '16px',
-  },
-  customisedBlock: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: theme.spacing(0.5),
-    padding: theme.spacing(1, 2),
-    textAlign: 'left',
-  },
-  leftBlock: {
-    flexBasis: '80%',
-  },
+}));
+
+const StyledHeading = styled(Typography)(({ theme }) => ({
+  paddingBottom: theme.spacing(1),
 }));
 
 export default function SubscriptionSection({ childId, integrationId }) {
@@ -252,9 +220,18 @@ export default function SubscriptionSection({ childId, integrationId }) {
     <>
       <PanelHeader title="Subscription details" />
       <div className={classes.root}>
-        <div className={classes.content}>
-          <div className={classes.planContent}>
-            <Grid container className={classes.container}>
+        <Box sx={{ padding: theme => theme.spacing(2, 0) }}>
+          <Box
+            sx={{
+              margin: 0,
+              lineHeight: '16px',
+            }}>
+            <Grid
+              container
+              sx={{
+                paddingLeft: theme => theme.spacing(2),
+                paddingBottom: theme => theme.spacing(2),
+              }}>
               <Grid item xs={2}>
                 <Typography data-test="iaPlan">
                   {' '}
@@ -286,10 +263,15 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 />
               </Grid>
             </Grid>
-          </div>
+          </Box>
           <Divider />
-        </div>
-        <Typography className={classes.message}>
+        </Box>
+        <Typography
+          sx={{
+            paddingBottom: theme => theme.spacing(2),
+            textAlign: 'left',
+            paddingLeft: theme => theme.spacing(2),
+          }}>
           {message.SUBSCRIPTION.CONTACT_ACCOUNT_MANAGER}
         </Typography>
         <LoadResources required integrationId={integrationId} resources="integrations">
@@ -301,15 +283,23 @@ export default function SubscriptionSection({ childId, integrationId }) {
           ) : null}
         </LoadResources>
         {hasAddOns && !hasSubscribedAddOns && (
-          <div className={classes.customisedBlock}>
-            <div className={classes.leftBlock}>
-              <Typography variant="h4" className={classes.heading}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              backgroundColor: theme => theme.palette.background.paper,
+              borderRadius: theme => theme.spacing(0.5),
+              padding: theme => theme.spacing(1, 2),
+              textAlign: 'left',
+            }}>
+            <Box sx={{ flexBasis: '80%' }}>
+              <StyledHeading variant="h4">
                 Add-ons
-              </Typography>
+              </StyledHeading>
               <Typography className={classes.message}>
                 {message.ADDONS.NOT_EXIST}
               </Typography>
-            </div>
+            </Box>
             <div>
               <FilledButton
                 className={classes.button}
@@ -319,18 +309,24 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 Get add-ons
               </FilledButton>
             </div>
-          </div>
+          </Box>
         )}
         {hasAddOns && hasSubscribedAddOns && (
           <>
-            <div className={classes.header}>
-              <Typography variant="h4" className={classes.heading}>
+            <Box
+              sx={{
+                background: theme => theme.palette.background.paper,
+                textAlign: 'left',
+                padding: theme => theme.spacing(1, 2),
+                borderRadius: [4, 4, 0, 0],
+              }}>
+              <StyledHeading variant="h4">
                 Add-ons
-              </Typography>
+              </StyledHeading>
               <Typography variant="body2">
                 {message.ADDONS.CUSTOMIZE}
               </Typography>
-            </div>
+            </Box>
 
             <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children }} />
           </>

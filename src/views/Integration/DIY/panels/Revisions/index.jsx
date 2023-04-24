@@ -29,14 +29,8 @@ import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions
 import infoText from '../infoText';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    overflowX: 'auto',
-    paddingBottom: theme.spacing(2),
-  },
+const useStyles = makeStyles(({
+
 }));
 
 function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {

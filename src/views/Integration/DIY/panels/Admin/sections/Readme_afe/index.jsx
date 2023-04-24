@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch} from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box } from '@mui/material';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import RawHtml from '../../../../../../../components/RawHtml';
@@ -12,9 +13,6 @@ import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDra
 import infoText from '../../../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginLeft: theme.spacing(2),
-  },
   previewContainer: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderRadius: 4,
@@ -72,9 +70,9 @@ export default function ReadmeSection({ integrationId }) {
           Edit readme
         </TextButton>
       </PanelHeader>
-      <div className={classes.root}>
+      <Box sx={{ marginLeft: theme => theme.spacing(2) }}>
         <RawHtml className={classes.previewContainer} html={readmeValue} />
-      </div>
+      </Box>
 
       <EditorDrawer hidePreview />
     </>

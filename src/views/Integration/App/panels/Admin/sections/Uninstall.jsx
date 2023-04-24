@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Typography, Divider } from '@mui/material';
+import { Typography, Divider, Box, styled } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
@@ -16,15 +16,13 @@ const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(3, 0, 3, 2),
   },
-  divider: {
-    margin: theme.spacing(2, 0),
-  },
-  message: {
-    padding: theme.spacing(0, 2),
-  },
   parentViewMessage: {
     padding: theme.spacing(2),
   },
+}));
+
+const StyledMessage = styled(Typography)(({ theme }) => ({
+  padding: theme.spacing(0, 2),
 }));
 
 export default function UninstallSection({ childId, integrationId }) {
@@ -69,11 +67,11 @@ export default function UninstallSection({ childId, integrationId }) {
       <div className={classes.root}>
         <PanelHeader title="Uninstall" />
         <Divider />
-        <div className={classes.parentViewMessage}>
+        <Box sx={{ padding: theme => theme.spacing(2) }}>
           <span>
             {getEmptyMessage(integration?.settings?.storeLabel, 'uninstall')}
           </span>
-        </div>
+        </Box>
       </div>
     );
   }
@@ -83,19 +81,19 @@ export default function UninstallSection({ childId, integrationId }) {
       <PanelHeader title="Uninstall" />
 
       <div>
-        <Typography className={classes.message}>
+        <StyledMessage>
           Use this page to uninstall this instance (i.e. this tile) of the
           Integration App. Uninstalling an Integration App will remove all
           components, including the integration tile, from your integrator.io
           account. After uninstalling you can re-install from the marketplace as
           long as you have a valid subscription. Please be very certain that you
           want to uninstall as this action cannot be undone.
-        </Typography>
-        <Divider className={classes.divider} />
-        <Typography className={classes.message}>
+        </StyledMessage>
+        <Divider sx={{ margin: theme => theme.spacing(2, 0) }} />
+        <StyledMessage>
           Once you uninstall this Integration App there is no going back. Please
           be certain.
-        </Typography>
+        </StyledMessage>
         <OutlinedButton
           data-test="uninstallConnector"
           error
