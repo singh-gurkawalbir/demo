@@ -21,7 +21,7 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, CONNECTORS_TO_IGNORE, EMPTY_RAW_DATA, PageProcessorRegex } from '../../constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorRegex } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -890,12 +890,12 @@ export function* initFormValues({
   } else if (resourceType === 'exports') {
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.webhook?._httpConnectorId);
   } else if (resourceType === 'iClients') {
-    const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
+    const applications = applicationsList().filter(app => app._httpConnectorId);
     let app;
 
     if (resource?.application) {
       // new iclent inside resource
-      app = applications.find(a => a.id === resource.application) || {};
+      app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource.application.toLowerCase().replace(/\.|\s/g, '')) || {};
     } else if (resource?._httpConnectorId) {
       // existing Iclient
       app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
