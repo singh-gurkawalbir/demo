@@ -8,6 +8,7 @@ export default {
   key: 'deleteIntegration',
   useLabel: () => 'Delete integration',
   icon: TrashIcon,
+  mode: 'delete',
   useHasAccess: tile => {
     const canDelete = useSelector(state => selectors.resourcePermissionsForTile(
       state,
