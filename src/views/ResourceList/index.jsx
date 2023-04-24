@@ -151,6 +151,7 @@ export default function ResourceList(props) {
         <ActionGroup>
           <KeywordSearch
             filterKey={resourceType}
+            autoFocus
           />
           <TextButton
             data-test="addNewResource"

@@ -2504,7 +2504,6 @@ Object {
 }
 `;
 
-
 exports[`getResourceFromAssets load correct form connections rdbms within rdbms schema should load a oracle connection form 1`] = `
 Object {
   "fieldMeta": Object {
@@ -2940,7 +2939,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7548,7 +7547,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -11193,7 +11192,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -13176,6 +13175,24 @@ Object {
       "amazonmws.secretKey": Object {
         "fieldId": "amazonmws.secretKey",
       },
+      "application": Object {
+        "fieldId": "application",
+        "isLoggable": true,
+        "label": "Application",
+        "options": Array [],
+        "type": "iclientSelect",
+      },
+      "iclientFormView": Object {
+        "defaultValue": [Function],
+        "helpKey": "formView",
+        "id": "iclientFormView",
+        "isLoggable": true,
+        "label": "Form view",
+        "required": true,
+        "resourceType": "iclients",
+        "type": "iclientFormView",
+        "visible": true,
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -13223,6 +13240,7 @@ Object {
       },
       "provider": Object {
         "fieldId": "provider",
+        "visible": false,
       },
     },
     "layout": Object {
@@ -13232,6 +13250,7 @@ Object {
           "fields": Array [
             "name",
             "provider",
+            "application",
           ],
           "label": "General",
         },
@@ -13334,9 +13353,31 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
+      },
+      "checkExistingExport": Object {
+        "flowResourceType": "pg",
+        "id": "checkExistingExport",
+        "label": "Use existing export",
+        "name": "checkExistingExport",
+        "refreshOptionsOnChangesTo": Array [
+          "application",
+          "connection",
+          "type",
+        ],
+        "required": false,
+        "resourceType": "exports",
+        "type": "existingCheckresource",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "application",
+            "isNot": Array [
+              "",
+            ],
+          },
+        ],
       },
       "connection": Object {
         "allowEdit": true,
@@ -13378,18 +13419,20 @@ Object {
       },
       "existingExport": Object {
         "allowEdit": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pg",
         "id": "exportId",
-        "label": "Would you like to use an existing export?",
+        "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "type",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13399,10 +13442,17 @@ Object {
               "",
             ],
           },
+          Object {
+            "field": "checkExistingExport",
+            "is": Array [
+              true,
+            ],
+          },
         ],
       },
       "type": Object {
         "dataTest": "exportType",
+        "defaultOpen": true,
         "defaultValue": "",
         "id": "type",
         "label": "What would you like to do?",
@@ -13431,6 +13481,7 @@ Object {
             "application",
             "type",
             "connection",
+            "checkExistingExport",
             "existingExport",
           ],
         },
@@ -13457,12 +13508,82 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],
         "required": true,
         "type": "selectapplication",
+      },
+      "checkExistingExport": Object {
+        "flowResourceType": "pp",
+        "id": "checkExistingExport",
+        "label": "Use existing lookup",
+        "name": "checkExistingExport",
+        "refreshOptionsOnChangesTo": Array [
+          "application",
+          "connection",
+          "resourceType",
+        ],
+        "required": false,
+        "resourceType": "exports",
+        "type": "existingCheckresource",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "application",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "connection",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "resourceType",
+            "is": Array [
+              "lookupRecords",
+              "lookupFiles",
+            ],
+          },
+        ],
+      },
+      "checkExistingImport": Object {
+        "flowResourceType": "pp",
+        "id": "checkExistingImport",
+        "label": "Use existing import",
+        "name": "checkExistingImport",
+        "refreshOptionsOnChangesTo": Array [
+          "application",
+          "connection",
+          "resourceType",
+        ],
+        "required": false,
+        "resourceType": "imports",
+        "type": "existingCheckresource",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "application",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "connection",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "resourceType",
+            "is": Array [
+              "importRecords",
+              "transferFiles",
+            ],
+          },
+        ],
       },
       "connection": Object {
         "allowEdit": true,
@@ -13495,18 +13616,20 @@ Object {
       },
       "existingExport": Object {
         "allowEdit": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pp",
         "id": "exportId",
-        "label": "Would you like to use an existing lookup?",
+        "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13529,22 +13652,30 @@ Object {
               "lookupFiles",
             ],
           },
+          Object {
+            "field": "checkExistingExport",
+            "is": Array [
+              true,
+            ],
+          },
         ],
       },
       "existingImport": Object {
         "allowEdit": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pp",
         "id": "importId",
-        "label": "Would you like to use an existing import?",
+        "label": "",
         "name": "importId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "importId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "imports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13567,10 +13698,17 @@ Object {
               "transferFiles",
             ],
           },
+          Object {
+            "field": "checkExistingImport",
+            "is": Array [
+              true,
+            ],
+          },
         ],
       },
       "resourceType": Object {
         "dataTest": "exportType",
+        "defaultOpen": true,
         "id": "resourceType",
         "label": "What would you like to do?",
         "mode": "destination",
@@ -13598,7 +13736,9 @@ Object {
             "application",
             "resourceType",
             "connection",
+            "checkExistingImport",
             "existingImport",
+            "checkExistingExport",
             "existingExport",
           ],
         },

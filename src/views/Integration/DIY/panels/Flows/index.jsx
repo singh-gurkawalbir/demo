@@ -517,6 +517,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           <ActionGroup>
             <KeywordSearch
               filterKey={searchFilterKey}
+              autoFocus
             />
             {canCreate && !isIntegrationApp && (
             <TextButton

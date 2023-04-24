@@ -1,7 +1,10 @@
 import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
-import { FB_SOURCE_COLUMN_WIDTH } from '../../../../constants';
+import { useSelector } from 'react-redux';
+import { FB_ICON_VIEW_SOURCE_COLUMN_WIDTH, FB_SOURCE_COLUMN_WIDTH } from '../../../../constants';
+import { useFlowContext } from '../Context';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   svgBg: {
@@ -19,7 +22,13 @@ export function Background() {
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
   const [x, , scale] = useStoreState(s => s.transform);
-  const width = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
+  const {flowId} = useFlowContext();
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+
+  const sourceColumnWidth = isIconView ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
+  const width = Math.max(0, sourceColumnWidth * scale + x);
 
   return (
     <svg className={classes.svgBg}>

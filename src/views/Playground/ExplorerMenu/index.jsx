@@ -15,6 +15,7 @@ import ExportsIcon from '../../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../../components/icons/FlowBuilderIcon';
 import ResourceActionsBranch from './ResourceActionsBranch';
 import OverflowTreeItem from './OverflowTreeItem';
+import CeligoTruncate from '../../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -124,7 +125,7 @@ export default function ExplorerMenu({ onEditorChange }) {
           <OverflowTreeItem
             icon={<IntegrationIcon />}
             className={classes.editorItem}
-            key={id} nodeId={id} label={name}
+            key={id} nodeId={id} label={<CeligoTruncate lines={1}>{name}</CeligoTruncate>}
             onClick={() => setIntegrationId(id)}>
             <FlowBranch id={id} />
           </OverflowTreeItem>

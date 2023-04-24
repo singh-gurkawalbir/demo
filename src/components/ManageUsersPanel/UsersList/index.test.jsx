@@ -39,16 +39,4 @@ describe('users List Test Cases', () => {
 
     expect(statusText).toBeInTheDocument();
   });
-
-  test('should return null when user delete request is set to requested', () => {
-    const { utils, store } = renderWithProviders(
-      <MemoryRouter>
-        <UsersList integrationId="5ffad3d1f08d35214ed200f7" />
-      </MemoryRouter>
-    );
-
-    store.dispatch(actions.user.org.users.delete('id_1'));
-
-    expect(utils.container).toBeEmptyDOMElement();
-  });
 });

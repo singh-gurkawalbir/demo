@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import AddEmptyStepIcon from '../../../../../components/icons/AddEmptyStepIcon';
 import BranchIcon from '../../../../../components/icons/BranchIcon';
@@ -31,6 +32,22 @@ const useStyles = makeStyles(theme => ({
     '& * svg': {
       width: 20,
       height: 20,
+    },
+  },
+  iconViewAddButton: {
+    position: 'static',
+    backgroundColor: theme.palette.background.paper,
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: 0,
+    height: '15px',
+    width: '15px',
+    '& > span': {
+      width: 18,
+      height: 18,
+    },
+    '& * svg': {
+      width: 15,
+      height: 15,
     },
   },
   listItemIcon: {
@@ -86,7 +103,7 @@ const AddNodeMenuPopper = ({
   );
 };
 
-const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
+const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId, isIconView }) => {
   const classes = useStyles();
 
   const { elementsMap } = useFlowContext();
@@ -102,7 +119,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
         title={isConnectedToRouterOrTerminal ? 'Add destination / lookup' : ''}
         placement="top"
       >
-        <IconButton onClick={handleAddNode} className={classes.addButton}>
+        <IconButton onClick={handleAddNode} className={clsx({[classes.iconViewAddButton]: isIconView}, {[classes.addButton]: !isIconView})}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -110,7 +127,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
   }
 
   return (
-    <IconButton className={classes.addButton} onClick={handleOpenMenu}>
+    <IconButton className={clsx({[classes.iconViewAddButton]: isIconView}, {[classes.addButton]: !isIconView})} onClick={handleOpenMenu}>
       <AddIcon />
     </IconButton>
   );
@@ -118,6 +135,12 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
 
 export default ({ edgeId, disabled }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const {flowId} = useFlowContext();
+
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -136,6 +159,7 @@ export default ({ edgeId, disabled }) => {
         <span>
           <AddNodeToolTip
             handleOpenMenu={handleOpenMenu}
+            isIconView={isIconView}
             edgeId={edgeId}
             handleAddNode={handleAddNode}
           />

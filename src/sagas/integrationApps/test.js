@@ -586,7 +586,7 @@ describe('installer saga', () => {
   });
   describe('verifyBundleOrPackageInstall generator for packages', () => {
     const id = '1234';
-    const connectionId = '5678';
+    const connectionId = '567834';
     const path = `/connections/${connectionId}/distributed`;
     const installerFunction = 'Installer_Function';
 
@@ -708,7 +708,7 @@ describe('installer saga', () => {
 
   describe('netsuite suitebundle variant related verifyBundleOrPackageInstall generator', () => {
     const id = '1234';
-    const connectionId = '5678';
+    const connectionId = '567856';
     const path = `/connections/${connectionId}/distributed?type=suitebundle`;
     const installerFunction = 'Installer_Function';
     const variant = 'suitebundle';
@@ -785,7 +785,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification })
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, variant, isFrameWork2, isManualVerification })
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
@@ -848,7 +848,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, variant, isFrameWork2, isManualVerification})
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(
@@ -864,7 +864,7 @@ describe('installer saga', () => {
 
   describe('netsuite suiteapp variant related verifyBundleOrPackageInstall generator', () => {
     const id = '1234';
-    const connectionId = '5678';
+    const connectionId = '567812';
     const path = `/connections/${connectionId}/distributed?type=suiteapp`;
     const installerFunction = 'Installer_Function';
     const isManualVerification = true;
@@ -879,7 +879,7 @@ describe('installer saga', () => {
       const response = { success: true };
 
       expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification})
-        .provide([[call(apiCallWithRetry, args), response]])
+        .provide([[matchers.call.fn(apiCallWithRetry), response]])
         .call(apiCallWithRetry, args)
         .put(
           actions.integrationApp.installer.scriptInstallStep(id)
@@ -942,7 +942,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, variant, isFrameWork2, isManualVerification})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
@@ -1005,7 +1005,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, variant, isFrameWork2, isManualVerification})
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(
@@ -2859,7 +2859,7 @@ describe('upgrade saga', () => {
   });
   describe('upgradeVerifyBundleOrPackageInstall generator', () => {
     const id = '1234';
-    const connectionId = '5678';
+    const connectionId = '567878';
     const path = `/connections/${connectionId}/distributed`;
     const installerFunction = 'Installer_Function';
 

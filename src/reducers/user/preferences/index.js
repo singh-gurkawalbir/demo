@@ -17,6 +17,7 @@ const GLOBAL_PREFERENCES = [
   'lastLoginAt',
   'darkTheme',  // TODO @Lalit: no need for darkMode prop once changes are in Production
   'colorTheme',
+  'showIconView',
 ];
 
 const getAccountPreferences = draft => {

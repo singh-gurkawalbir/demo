@@ -26,11 +26,16 @@ do
   fi
 done
 
-if [ "$skipBuildAndCopyIndexFileForEUDeployment" = true ] ; then
-    echo 'copying NA build index file to EU eu-index file ...'
+INDEX_FILE="index.html"
+if [ "$INDEX_FILE_NAME" ]; then 
+  INDEX_FILE=$INDEX_FILE_NAME 
+fi
+
+if [ "$skipBuildAndCopyIndexFileForNADeployment" = true ] ; then
+    echo 'copying EU build eu_index file to NA index file ...'
     aws configure set aws_access_key_id $ACCESS_KEY_ID
     aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
-    aws s3 cp s3://$S3_BUCKET/react/index.html s3://$S3_BUCKET/react/eu_index.html --acl public-read
+    aws s3 cp s3://$S3_BUCKET/react/eu_index.html s3://$S3_BUCKET/react/$INDEX_FILE --acl public-read
     aws configure set aws_access_key_id ''
     aws configure set aws_secret_access_key ''
     exit
@@ -41,15 +46,18 @@ echo "building version $version ..."
 export RELEASE_VERSION="$version"
 
 URL_PREFIX="~/react/$version/"
+
 echo "LogRocket URL prefix $URL_PREFIX ..."
 echo "S3 bucket name $S3_BUCKET ..."
 yarn install
 NODE_ENV=production webpack --mode=production
 
+# create logrocket release with generated release number
 echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER ..."
 logrocket release $version --apikey=$LOGROCKET_API_KEY
 logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
 
+# create logrocket release for EU region
 if [ ! -z "$LOGROCKET_IDENTIFIER_EU" ]; then
   echo "creating logrocket release (for EU) and uploading source maps for $LOGROCKET_IDENTIFIER_EU ..."
   logrocket release $version --apikey=$LOGROCKET_API_KEY_EU
@@ -62,6 +70,6 @@ mkdir -p build/sourcemaps && mv build/*.js.map build/sourcemaps/
 aws configure set aws_access_key_id $ACCESS_KEY_ID
 aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
 aws s3 cp build/ s3://$S3_BUCKET/react/$version/ --recursive --acl public-read
-aws s3 cp build/index.html s3://$S3_BUCKET/react/index.html --acl public-read
+aws s3 cp build/index.html s3://$S3_BUCKET/react/$INDEX_FILE --acl public-read
 aws configure set aws_access_key_id ''
 aws configure set aws_secret_access_key ''

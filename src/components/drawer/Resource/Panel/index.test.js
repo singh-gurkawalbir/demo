@@ -129,7 +129,7 @@ describe('Panel tests', () => {
     mockDispatchFn.mockClear();
     mockHistoryReplace.mockClear();
   });
-  test('Should able to test the Panel\'s initial render with form init Failed and non full width', async () => {
+  test('Should able to test the Panel initial render with form init Failed and non full width', async () => {
     await initPanel({...props, occupyFullWidth: false}, true);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/parentURL');
   });
@@ -149,15 +149,15 @@ describe('Panel tests', () => {
     await initPanel(props, false, 'pageGenerator', 'new_pageGeneratorId');
     expect(screen.queryByText('Preview data')).not.toBeInTheDocument();
   });
-  test('Should able to test the Panel\'s initial render in full width', async () => {
+  test('Should able to test the Panel initial render in full width', async () => {
     await initPanel(props);
     expect(screen.getByRole('img', { name: 'NetSuiteExport' })).toBeInTheDocument();
     expect(screen.getByText('Preview data')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button', {name: 'Next'}));
     expect(mockClose).toHaveBeenCalled();
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resourceForm.submitAborted('exports', '_resourceId'));
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.resource.clearStaged('_resourceId'));
-    expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.resourceFormSampleData.updateType('_resourceId', 'preview'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submitAborted('exports', '_resourceId'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.clearStaged('_resourceId'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceFormSampleData.updateType('_resourceId', 'preview'));
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/parentURL/edit/exports/_resourceId');
     expect(isNestedDrawer('/add/pageGenerator/_id')).toBe(false);

@@ -279,7 +279,7 @@ export default {
     const lists = [];
     const fields = [];
     // eslint-disable-next-line camelcase
-    const isSS2 = !!(importResource?.netsuite_da?.useSS2Restlets);
+    const isSS2 = !!(importResource?.netsuite_da?.restletVersion === 'suiteapp2.0' || importResource?.netsuite_da?.useSS2Restlets);
     let generateListPath;
     let isItemSubtypeRecord = false;
 

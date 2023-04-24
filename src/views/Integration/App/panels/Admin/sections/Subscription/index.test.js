@@ -4,11 +4,14 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import {MemoryRouter, Route} from 'react-router-dom';
+import moment from 'moment';
 import {mutateStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import SubscriptionSection from './index';
 import { ConfirmDialogProvider } from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
+
+const futureDate = moment().add(1, 'years').toISOString();
 
 async function initSubscriptionSection(props = {}) {
   const initialStore = getCreatedStore();
@@ -55,7 +58,7 @@ async function initSubscriptionSection(props = {}) {
         _id: '5a6ec1bae9aaa11c9bc86106',
         created: '2018-01-29T06:39:54.268Z',
         lastModified: '2022-06-27T07:52:09.014Z',
-        expires: '2023-05-05T00:00:00.000Z',
+        expires: futureDate,
         type: 'connector',
         _connectorId: '58777a2b1008fb325e6c0953',
         opts: {
@@ -115,7 +118,7 @@ describe('Subscription Section UI tests', () => {
     expect(screen.getByText('Version 1.27.3')).toBeInTheDocument();
     expect(screen.getByText('Integration ID 61604a5a8364267b8a378084')).toBeInTheDocument();
     expect(screen.getByText('Started on Jan 29th, 2018')).toBeInTheDocument();
-    expect(screen.getByText('Expires on May 5th, 2023')).toBeInTheDocument();
+    expect(screen.getByText(`Expires on ${moment(futureDate).format('MMM Do, YYYY')}`)).toBeInTheDocument();
     expect(screen.getByText('Your subscription gives you access to install and run one instance (tile) of this Integration App. Contact your Account Manager for more info.')).toBeInTheDocument();
     expect(screen.getByText('Add-ons')).toBeInTheDocument();
     expect(screen.getByText('Add-ons let you customize your subscription to meet your specific business requirements. They will expire when your Integration App subscription expires.')).toBeInTheDocument();
@@ -141,7 +144,7 @@ describe('Subscription Section UI tests', () => {
       _id: '5a6ec1bae9aaa11c9bc86106',
       created: '2018-01-29T06:39:54.268Z',
       lastModified: '2022-06-27T07:52:09.014Z',
-      expires: '2023-05-05T00:00:00.000Z',
+      expires: futureDate,
       nextPlan: '',
       isHighestPlan: false,
       type: 'connector',
@@ -163,7 +166,7 @@ describe('Subscription Section UI tests', () => {
       upgradeText: 'Upgrade',
       _integrationId: '61604a5a8364267b8a378084',
       resumable: false,
-      expiresText: 'Expires on May 5th, 2023',
+      expiresText: `Expires on ${moment(futureDate).format('MMM Do, YYYY')}`,
       upgradeRequested: false,
       createdText: 'Started on Jan 29th, 2018',
       showLicenseExpiringWarning: false,

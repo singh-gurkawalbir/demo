@@ -208,8 +208,8 @@ export const getCurrentExportDateTime = resource => {
   return moment().toISOString();
 };
 
-export const getPostDataForDeltaExport = resource => ({
-  lastExportDateTime: getLastExportDateTime(resource),
+export const getPostDataForDeltaExport = (resource, customDate) => ({
+  lastExportDateTime: customDate || getLastExportDateTime(resource),
   currentExportDateTime: getCurrentExportDateTime(resource),
 });
 
@@ -400,7 +400,8 @@ export const generatePostResponseMapData = (flowData, rawData = {}) => {
 export const getFormattedResourceForPreview = (
   resourceObj,
   resourceType,
-  flowType
+  flowType,
+  customStartDate
 ) => {
   const resource = deepClone(resourceObj || {});
 
@@ -422,7 +423,7 @@ export const getFormattedResourceForPreview = (
   }
 
   if (isPostDataNeededInResource(resource)) {
-    resource.postData = getPostDataForDeltaExport(resource);
+    resource.postData = getPostDataForDeltaExport(resource, customStartDate);
   }
 
   if (resource.mockOutput && validateMockOutputField(resource.mockOutput)) {

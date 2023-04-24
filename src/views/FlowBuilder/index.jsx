@@ -97,7 +97,9 @@ export default function FlowBuilder() {
           integrationId={integrationId}
           childId={childId} />
 
-        <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
+        <FBComponent
+          flowId={flowId} integrationId={integrationId}
+          childId={childId} />
         <MappingDrawerRoute integrationId={integrationId} />
       </Redirection>
     </LoadResources>

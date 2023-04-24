@@ -1,4 +1,6 @@
 import isEqual from 'lodash/isEqual';
+import { getDomain } from '../../../../forms/formFactory/utils';
+
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
 import jsonParser from './jsonParser';
@@ -67,6 +69,9 @@ export function getLogic(editor) {
   return logic;
 }
 
+const validateChatResponse = (editor, response) =>
+  getLogic(editor).validateChatResponse(editor, response);
+
 const validate = editor => {
   if (!editor) return;
   const violations = getLogic(editor).validate(editor);
@@ -133,6 +138,25 @@ const init = editorType => {
   return logic.init;
 };
 
+const getChatOptions = editorType => {
+  if (!editorType) return;
+
+  // for now, while we have no "feature flag" user setting, we'll just
+  // disable chat options for all domains except localhost and QA
+  if (
+    !['localhost', 'localhost.io', 'qa.staging.integrator.io'].includes(
+      getDomain()
+    )
+  ) {
+    return;
+  }
+
+  const logic = getLogic({ editorType });
+
+  if (logic.getChatOptions) {
+    return logic.getChatOptions();
+  }
+};
 const updateRule = editor => {
   if (!editor) return;
   let logic;
@@ -272,7 +296,9 @@ export const featuresMap = options => ({
     // the same layout as for settings form. We need to find a generic name
     // for the pair of layouts.
     // also the css grid template needs to rename "hook" to "script".
-    layout: `${options?.rule?.activeProcessor === 'filter' ? 'json' : 'script'}FormBuilder`,
+    layout: `${
+      options?.rule?.activeProcessor === 'filter' ? 'json' : 'script'
+    }FormBuilder`,
   },
 });
 
@@ -283,6 +309,8 @@ export default {
   init,
   processResult,
   getPatchSet,
+  getChatOptions,
+  validateChatResponse,
   buildData,
   preSaveValidate,
   updateRule,

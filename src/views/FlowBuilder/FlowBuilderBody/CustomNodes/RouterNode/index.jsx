@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
   nameContainer: {
     top: -25,
-    width: '187px',
+    width: theme.spacing(20),
     height: '38px',
     position: 'absolute',
   },
@@ -46,6 +46,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.secondary,
     wordBreak: 'break-all',
     background: theme.palette.background.paper,
+    ' & > * br': {
+      display: 'none',
+    },
   },
 }));
 
