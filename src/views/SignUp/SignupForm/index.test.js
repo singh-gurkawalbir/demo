@@ -39,9 +39,9 @@ describe('Sign up form test cases', () => {
     expect(screen.getByPlaceholderText('Phone')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Sign up with Google'})).toBeInTheDocument();
   });
-  test('should click the Sign up with Google button', () => {
+  test('should click the Sign up with Google button', async () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
-    userEvent.click(screen.getByRole('button', {name: 'Sign up with Google'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Sign up with Google'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.auth.signUpWithGoogle('/', {})
     );
