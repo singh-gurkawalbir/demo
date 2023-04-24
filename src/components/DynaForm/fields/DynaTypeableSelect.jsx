@@ -78,7 +78,6 @@ export default function DynaTypeableSelect(props) {
   const [value, setValue] = useState(propValue?.toString() || '');
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [isMenuOpen, setMenuIsOpen] = useState(false);
   const handleFocusIn = useCallback(evt => {
     // this component is a combo of textArea and react-select. trigger focus in when user tries to focus in textarea
     if (evt.target.type !== 'textarea') {
@@ -161,15 +160,10 @@ export default function DynaTypeableSelect(props) {
         onBlur(id, newValue);
         setIsTyping(false);
         setIsFocused(false);
-        setMenuIsOpen(false);
       }
     },
     [id, onBlur, propValue, suggestions, value],
   );
-
-  const handleFocus = useCallback(() => {
-    setMenuIsOpen(true);
-  }, []);
 
   const selectedValue = !isTyping && suggestions.find(suggestionItem => suggestionItem.value === value);
   // Dont resolve to value while user is typing
@@ -242,10 +236,9 @@ export default function DynaTypeableSelect(props) {
         autoFocus
         openOnFocus
         components={components}
-        onFocus={handleFocus}
         options={suggestions}
         filterOption={filterOption}
-        menuIsOpen={isMenuOpen}
+        menuIsOpen
         className={classes.dynaTypeableSelect}
         {...menuPortalTargetProp}
         />
