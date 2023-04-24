@@ -2,7 +2,7 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { userEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
 
