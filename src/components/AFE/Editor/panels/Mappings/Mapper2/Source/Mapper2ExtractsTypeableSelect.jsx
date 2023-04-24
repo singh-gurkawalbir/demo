@@ -211,7 +211,23 @@ export default function Mapper2ExtractsTypeableSelect({
   const handleOnClick = useCallback(event => {
     dispatchLocalAction({type: 'onCursorChange', value: event.target.selectionStart});
   }, []);
+  const handleKeyDown = useCallback(evt => {
+    if (evt.key === 'Home') {
+      evt.preventDefault();
+      // eslint-disable-next-line no-param-reassign
+      if (evt.shiftKey) evt.target.selectionStart = 0;
+      else evt.target.setSelectionRange(0, 0);
+    }
+    if (evt.key === 'End') {
+      evt.preventDefault();
+      const len = evt.target.value.length;
 
+      // eslint-disable-next-line no-param-reassign
+      if (evt.shiftKey) evt.target.selectionEnd = len;
+      else evt.target.setSelectionRange(len, len);
+    }
+  }, [],
+  );
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
   const menuOpen = isFocused && !disabled && !hideSourceDropdown;
 
@@ -257,6 +273,7 @@ export default function Mapper2ExtractsTypeableSelect({
           multiline={isFocused}
           placeholder={disabled ? '' : 'Source field'}
           onClick={handleOnClick}
+          onKeyDown={handleKeyDown}
           InputProps={{
             endAdornment: !hideSourceDropdown && (
             <InputAdornment

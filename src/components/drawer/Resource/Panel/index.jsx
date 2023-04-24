@@ -32,12 +32,14 @@ export const isNestedDrawer = url => !!matchPath(url, {
 
 const useStyles = makeStyles(theme => ({
   baseFormWithPreview: {
-    display: 'grid',
-    gridTemplateColumns: '50% 48%',
-    gridColumnGap: theme.spacing(1),
+    display: 'flex',
     '& > div:first-child': {
       padding: 0,
-      paddingRight: theme.spacing(2),
+      paddingRight: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
+    '& > div': {
+      flex: 1,
     },
   },
   resourceFormWrapper: {

@@ -129,7 +129,7 @@ describe('dynaDateTime UI tests', () => {
     });
 
     fireEvent.click(dateField);
-    fireEvent.click(screen.getByLabelText('Choose date'));
+    fireEvent.click(screen.getByLabelText(/Choose date/i));
     fireEvent.click(screen.getByText('30'));
     expect(mockOnFieldChangeFn).toHaveBeenCalled();
 

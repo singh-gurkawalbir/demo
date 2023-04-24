@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { IconButton, Tooltip, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowPopper } from '@celigo/fuse-ui';
+import clsx from 'clsx';
 import EllipsisIcon from '../../../../../icons/EllipsisHorizontalIcon';
 import AddIcon from '../../../../../icons/AddIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
@@ -17,6 +18,9 @@ import { useSelectorMemo } from '../../../../../../hooks';
 const useStyles = makeStyles(theme => ({
   menuList: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest} !important`,
+  },
+  deleteWrapper: {
+    color: theme.palette.error.dark,
   },
 }));
 
@@ -110,7 +114,7 @@ export default function MoreActions({importId, disabled}) {
           {actionsMenu.map(({action, label, Icon, toolTip, optionDisabled}) => (
             <Tooltip key={action} title={toolTip ? <RawHtml html={toolTip} /> : ''} placement="bottom" >
               <div>
-                <MenuItem data-test={action} onClick={handleAction(action)} className={classes.menuList} disabled={disabled || optionDisabled}>
+                <MenuItem data-test={action} onClick={handleAction(action)} className={clsx(classes.menuList, {[classes.deleteWrapper]: action === 'deleteall'})} disabled={disabled || optionDisabled}>
                   {Icon}
                   {label}
                 </MenuItem>

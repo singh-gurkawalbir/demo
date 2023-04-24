@@ -74,6 +74,23 @@ describe('dynaReportDateRange UI tests', () => {
     expect(screen.getByText(/last 24 hours/i)).toBeInTheDocument();
     expect(screen.getByText(/custom/i)).toBeInTheDocument();
   });
+
+  test('should open the calendar view to select start and end date when clicked on Custom preset', async () => {
+    initDynaReportDateRange(props);
+    await userEvent.click(screen.getByText('Select range'));
+    await userEvent.click(screen.getByText('Custom'));
+    expect(screen.getByLabelText(/Start date/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Start time/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/End date/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/End time/i)).toBeInTheDocument();
+    const months = screen.getAllByText(/[a-zA-Z]{3} [0-9]{4}\s*/g);
+
+    expect(months).toHaveLength(3);
+    expect(screen.getAllByText('Sun')).toHaveLength(2);
+    expect(screen.getAllByText('Sat')).toHaveLength(2);
+    expect(screen.getByText('You can generate a report for up to 3 days of data.')).toBeInTheDocument();
+  });
+
   test('should display the range in the field when range is already passed', () => {
     initDynaReportDateRange({...props,
       value: {
