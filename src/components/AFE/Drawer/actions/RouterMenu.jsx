@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import {
   ClickAwayListener,
   IconButton,
-  makeStyles,
   MenuItem,
 } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { ArrowPopper } from '@celigo/fuse-ui';

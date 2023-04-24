@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { ListItem, makeStyles, Menu, MenuItem, Typography } from '@mui/material';
+import { ListItem, Menu, MenuItem, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';

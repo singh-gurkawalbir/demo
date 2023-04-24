@@ -4,10 +4,10 @@ import { useHistory } from 'react-router-dom';
 import {
   ClickAwayListener,
   IconButton,
-  makeStyles,
   MenuItem,
   Tooltip,
 } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowPopper } from '@celigo/fuse-ui';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
