@@ -271,7 +271,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         aria-haspopup="true"
         disabled={isNewId(flowId)}
         size="small"
-        onClick={handleMenuClick}>
+        onClick={handleMenuClick}
+        sx={{padding: '3px'}}>
         <EllipsisIcon />
       </IconButton>
 

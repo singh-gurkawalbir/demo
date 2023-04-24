@@ -129,6 +129,9 @@ const useStyles = makeStyles(theme => ({
     '& span': {
       padding: [[0, 5]],
     },
+    '&.MuiChip-outlined': {
+      backgroundColor: 'transparent',
+    },
   },
   iconHoverSandbox: {
     '&:hover svg': {

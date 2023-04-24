@@ -99,6 +99,12 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(1),
     },
   },
+  content: {
+    margin: '10px 0',
+    '&.Mui-expanded': {
+      margin: '10px 0',
+    },
+  },
 }));
 
 const DragHandle = sortableHandle(() => (
@@ -197,8 +203,9 @@ export default function BranchItem({
         >
           <AccordionSummary
             classes={{
-              expandIcon: classes.expandIcon,
+              expandIconWrapper: classes.expandIcon,
               focused: classes.focused,
+              content: classes.content,
             }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
