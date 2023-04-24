@@ -33,6 +33,7 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
       type: 'hfoptions',
       label: 'Resource',
+      helpKey: 'import.http._httpConnectorResourceId',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
@@ -40,12 +41,14 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       value: operationDefaultValue,
       required: true,
       label: 'API endpoint',
+      helpKey: 'import.http._httpConnectorEndpointId',
     },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       type: 'hfoptions',
       required: true,
+      helpKey: 'import.http._httpConnectorVersionId',
     },
     createEndpoint: {
       fieldId: 'assistantMetadata.createEndpoint',

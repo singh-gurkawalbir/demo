@@ -23,6 +23,9 @@ export function getDisplayRef(field, resourceType) {
 
   const displayAfterRef = displayAfter.substr(index + 1);
 
+  // If it matches any of the mentioned assistant metadata ids, should not consider as a valid displayRef
+  if (Object.values(HTTP_CONNECTOR_DISPLAY_REF_MAP).includes(displayAfterRef)) return;
+
   // In cases where displayRef should point to another value from the given refMap, we use this map
   // Ex: end point field help text is 'http._httpConnectorEndpointId' but the fieldId to look for is 'assistantMetadata.operation'.
   // hence, we use this map to fetch the same

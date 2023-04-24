@@ -34,6 +34,7 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
       type: 'hfoptions',
       label: 'Resources',
+      helpKey: 'export.http._httpConnectorResourceId',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
@@ -41,12 +42,14 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       required: true,
       type: 'hfoptions',
       label: 'API endpoint',
+      helpKey: 'export.http._httpConnectorEndpointId',
     },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       required: true,
       type: 'hfoptions',
+      helpKey: 'export.http._httpConnectorVersionId',
     },
 
   };
