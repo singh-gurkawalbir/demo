@@ -34,6 +34,17 @@ const messages = {
   MOCK_RESPONSE_SIZE_EXCEED: 'Mock response cannot be larger than 1 MB. Decrease your data size and try again.',
   // #endregion
 
+  // #region Filter error
+  FILTER_RULES_VALIDATE_NONEMPTY: 'Filters Tree must be a non-empty Array.',
+  FILTERSTREE_VALIDATE_OPERATIONNAME: 'Invalid operation: {{{operationName}}}.',
+  FILTERSTREE_VALIDATE_FIELDOP_STRINGARG: 'Field operation {{{operationName}}} expects a String argument but received {{{argType}}}.',
+  FILTERSTREE_VALIDATE_ARGSIZE: 'Operation {{{operationName}}} expects {{{expectedArgCount}}} argument(s) but received {{{actualArgCount}}}.',
+  FILTERSTREE_VALIDATE_ARGSTYPESMATCH: 'Argument #{{{argNumber}}} for operation {{{operationName}}} is a different data type: {{{dataType}}}.',
+  FILTERSTREE_VALIDATE_EXPECTEDARGTYPES: 'Argument #{{{argNumber}}} for operation {{{operationName}}} is an incorrect data type. Expected: {{{expectedArgType}}}, received: {{{actualArgType}}}.',
+  FILTERSTREE_VALIDATE_FIELDOP_TYPECONV: 'Field operation {{{operationName}}} must be called by a Type Conversion Operation but was called by {{{callingOperation}}}.',
+  FILTERSTREE_VALIDATE_FIELDOP_ARGSIZE: 'Field operation {{{operationName}}} expects exactly 1 argument but received {{{argCount}}}.',
+  // #endregion
+
   // #region jsonEditor error messages
   INVALID_JSON_VALUE: '{{{label}}} must be a valid JSON',
 };

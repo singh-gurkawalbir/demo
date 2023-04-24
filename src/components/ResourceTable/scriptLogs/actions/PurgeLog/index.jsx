@@ -10,6 +10,7 @@ export default {
   useLabel: () => 'Purge all logs of this script',
   useDisabledActionText: ({isPurgeAvailable}) => isPurgeAvailable ? '' : 'This script does not have any logs.',
   icon: PurgeIcon,
+  mode: 'delete',
   useOnClick: ({scriptId, flowId}) => {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();

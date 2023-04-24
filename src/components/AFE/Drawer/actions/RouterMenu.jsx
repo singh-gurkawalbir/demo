@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import {
   ClickAwayListener,
   IconButton,
+  makeStyles,
   MenuItem,
 } from '@mui/material';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -15,7 +16,14 @@ import RawHtml from '../../../RawHtml';
 import messageStore from '../../../../utils/messageStore';
 import actions from '../../../../actions';
 
+const useStyles = makeStyles(theme => ({
+  deleteWrapper: {
+    color: theme.palette.error.dark,
+  },
+}));
+
 export default function RouterMenu({ editorId }) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
@@ -80,7 +88,7 @@ export default function RouterMenu({ editorId }) {
         placement="bottom-end"
         onClose={handleCloseMenu}
       >
-        <MenuItem data-test="deleteBranching" disabled={isViewMode} onClick={handleDelete}>
+        <MenuItem data-test="deleteBranching" className={classes.deleteWrapper} disabled={isViewMode} onClick={handleDelete}>
           <TrashIcon /> Delete branching
         </MenuItem>
       </ArrowPopper>

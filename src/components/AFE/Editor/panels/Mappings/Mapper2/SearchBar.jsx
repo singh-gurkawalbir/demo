@@ -21,11 +21,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     zIndex: theme.zIndex.drawer,
   },
-  searchField: {
-    backgroundColor: theme.palette.background.paper,
-    borderColor: theme.palette.primary.main,
-    height: 29,
-  },
   searchCount: {
     marginRight: theme.spacing(1),
     whiteSpace: 'nowrap',
@@ -101,6 +96,11 @@ export default function SearchBar() {
           value={text}
           onChange={handleKeywordChange}
           className={classes.searchField}
+          sx={{
+            backgroundColor: 'background.paper',
+            borderColor: 'primary.main',
+            height: 29,
+          }}
           placeholder="Search destination fields"
           openWithFocus
         />

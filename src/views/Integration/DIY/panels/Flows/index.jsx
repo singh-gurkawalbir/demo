@@ -516,9 +516,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
         <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle}>
           <ActionGroup>
-            <KeywordSearch
-              filterKey={searchFilterKey}
-            />
+            <KeywordSearch filterKey={searchFilterKey} />
             {canCreate && !isIntegrationApp && (
             <TextButton
               component={Link}

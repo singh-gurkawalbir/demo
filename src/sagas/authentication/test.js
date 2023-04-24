@@ -30,6 +30,7 @@ import {
   linkWithGoogle,
   reSignInWithGoogle,
   signInWithGoogle,
+  signUpWithGoogle,
   initializeLogrocket,
   fetchUIVersion,
   validateSession,
@@ -1029,6 +1030,50 @@ describe('testcases with window dom setup', () => {
         method: 'POST',
         target: '_blank',
         submit,
+      });
+      expect(submit).toHaveBeenCalled();
+      expect(appendChildFn).toHaveBeenCalled();
+      expect(removeChildFn).toHaveBeenCalled();
+    }
+    );
+  });
+  describe('signUpWithGoogle', () => {
+    test('should fabricate the signUpWithGoogle body correctly and call all of its mocks as well', () => {
+      expectSaga(signUpWithGoogle, {returnTo: 'something'})
+        .provide([
+          [call(getCSRFTokenBackend), 'someCsrf',
+          ]])
+
+        .run();
+
+      expect(form).toEqual({
+        action: '/auth/google?returnTo=something',
+        id: 'signinWithGoogle',
+        innerHTML: '<input name="_csrf" value="someCsrf">',
+        method: 'POST',
+        submit,
+        target: '_blank',
+      });
+      expect(submit).toHaveBeenCalled();
+      expect(appendChildFn).toHaveBeenCalled();
+      expect(removeChildFn).toHaveBeenCalled();
+    }
+    );
+    test('should fabricate the signUpWithGoogle body correctly and call all of its mocks as well and with UTM params', () => {
+      expectSaga(signUpWithGoogle, {returnTo: 'something', utmParams: {key: 'value'}})
+        .provide([
+          [call(getCSRFTokenBackend), 'someCsrf',
+          ]])
+
+        .run();
+
+      expect(form).toEqual({
+        action: '/auth/google?returnTo=something',
+        id: 'signinWithGoogle',
+        innerHTML: '<input name="_csrf" value="someCsrf"><input name="key" value="value">',
+        method: 'POST',
+        submit,
+        target: '_blank',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();

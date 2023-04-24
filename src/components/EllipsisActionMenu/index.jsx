@@ -1,9 +1,22 @@
 import React, { useCallback, useState} from 'react';
 import { IconButton, MenuItem } from '@mui/material';
 import { ArrowPopper } from '@celigo/fuse-ui';
+import makeStyles from '@mui/styles/makeStyles';
+import clsx from 'clsx';
 import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
 import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
 import {TextButton} from '../Buttons';
+
+const useStyles = makeStyles(theme => ({
+  wrapper: {
+    '& > .MuiMenu-paper': {
+      marginLeft: theme.spacing(-2),
+    },
+  },
+  deleteWrapper: {
+    color: theme.palette.error.dark,
+  },
+}));
 
 const ActionLabel = (({ label, Icon }) => {
   if (Icon) {
@@ -14,6 +27,7 @@ const ActionLabel = (({ label, Icon }) => {
 });
 
 export default function EllipsisActionMenu({ actionsMenu, label, onAction, alignment }) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenuClick = useCallback(event => {
     setAnchorEl(event.currentTarget);
@@ -26,6 +40,8 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
     handleMenuClose();
     onAction(action);
   }, [onAction, handleMenuClose]);
+
+  const isDeleteOption = label => (/^Delete/.test(label) || /^Uninstall/.test(label) || /^Purge/.test(label));
 
   return (
     <>
@@ -61,8 +77,9 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             key={label}
             data-test={`${action}`}
             disabled={disabled}
+            className={clsx({[classes.deleteWrapper]: isDeleteOption(label)})}
             onClick={handleAction(action)}>
-            <ActionLabel label={label} Icon={Icon} />
+            <ActionLabel classes={classes} label={label} Icon={Icon} />
           </MenuItem>
         ))}
       </ArrowPopper>
