@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { IconButton, MenuItem } from '@mui/material';
 import { ArrowPopper } from '@celigo/fuse-ui';
 import makeStyles from '@mui/styles/makeStyles';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import useConfirmDialog from '../ConfirmDialog';
@@ -30,6 +31,9 @@ const useStyles = makeStyles(theme => ({
     '& > .MuiMenu-paper': {
       marginLeft: theme.spacing(-2),
     },
+  },
+  deleteWrapper: {
+    color: theme.palette.error.dark,
   },
 }));
 const allActions = {
@@ -288,6 +292,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           <MenuItem
             key={label}
             data-test={`${action}Flow`}
+            className={clsx({[classes.deleteWrapper]: action === 'delete'})}
             onClick={handleActionClick(action)}>
             <Icon /> {label}
           </MenuItem>
