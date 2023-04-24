@@ -1,6 +1,6 @@
 import { isNewId } from '../../../utils/resource';
 import { fetchMetadataFieldList, pushField } from '../../../utils/form/metadata';
-import { getMetadataWithFilteredDisplayRef } from '../../../utils/httpConnector';
+import { getMetadataWithFilteredDisplayRef, refineCustomSettings } from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
 
 function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSettingsFieldId) {
@@ -29,9 +29,6 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
   displayAfterFieldIds.forEach(fieldId => {
     // fetch cs fieldmap
     const field = customSettingsFieldMap[fieldId];
-    // fetch ref
-    const index = field.displayAfter?.indexOf('.');
-    const displayAfterRef = field.displayAfter?.substr(index + 1);
 
     // add this cs field in field map
     const newFieldId = `settings.${fieldId}`;
@@ -44,7 +41,7 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
       defaultValue: customSettings?.[fieldId],
     };
     // find the ref index in fields and push this cs fieldId there
-    updatedFieldMetadata.layout = getUpdatedFormLayoutWithCustomSettings(updatedFieldMetadata.layout, displayAfterRef, newFieldId);
+    updatedFieldMetadata.layout = getUpdatedFormLayoutWithCustomSettings(updatedFieldMetadata.layout, field.displayAfter, newFieldId);
   });
 
   return updatedFieldMetadata;
@@ -78,14 +75,13 @@ function getAttachedCustomSettingsMetadata(metadata, csMetadata, settings) {
     return updatedFieldMetadata;
 }
 
-export function initializeHttpConnectorForm(fieldMeta, resource) {
+export function initializeHttpConnectorForm(fieldMeta, resource, resourceType) {
   // fetch fieldMeta and resource custom settings
   const { settingsForm, settings } = resource;
 
   if (settingsForm?.form) {
-    const settingsFormMetadata = settingsForm.form;
+    const settingsFormMetadata = refineCustomSettings(settingsForm.form, resourceType);
 
-    // create stubs for utils to call and update
     let updatedFieldMetadata = getUpdatedFieldMetaWithCustomSettings(fieldMeta, settingsFormMetadata, settings);
 
     if (isNewId(resource?._id)) {

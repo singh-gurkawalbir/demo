@@ -19,7 +19,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { isValidDisplayAfterRef, isDisplayRefSupportedType } from '../../utils/httpConnector';
+import { isValidDisplayAfterRef, isDisplayRefSupportedType, getDisplayRef } from '../../utils/httpConnector';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
@@ -161,14 +161,14 @@ export function* validateCustomSettings({ id, result }) {
   const fields = fetchMetadataFieldList(csMetadata);
   const displayAfterFieldIds = fields.filter(fieldId => !!fieldMap[fieldId]?.displayAfter);
   const invalidFieldId = displayAfterFieldIds.find(fieldId => {
-    const {displayAfter} = fieldMap[fieldId];
-    const index = displayAfter?.indexOf('.');
-    const displayAfterRef = displayAfter?.substr(index + 1);
+    const displayAfterRef = getDisplayRef(fieldMap[fieldId], resourceType);
+
+    if (!displayAfterRef) return true;
 
     // if ref is settings  ref, pass settings metadata and validate against settings fields
     if (displayAfterRef.startsWith('settings.')) {
-      const index = displayAfterRef?.indexOf('.');
-      const settingsRef = displayAfterRef?.substr(index + 1);
+      const index = displayAfterRef.indexOf('.');
+      const settingsRef = displayAfterRef.substr(index + 1);
 
       if (!isValidDisplayAfterRef(settingsRef, csMetadata)) {
         return true;

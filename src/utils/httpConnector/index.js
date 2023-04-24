@@ -3,9 +3,50 @@ import customCloneDeep from '../customCloneDeep';
 
 export const DISPLAY_REF_SUPPORTED_RESOURCE_TYPES = ['exports', 'imports'];
 
+export const HTTP_CONNECTOR_DISPLAY_REF_MAP = {
+  'http._httpConnectorResourceId': 'assistantMetadata.resource',
+  'http._httpConnectorEndpointId': 'assistantMetadata.operation',
+  'http._httpConnectorVersionId': 'assistantMetadata.version',
+};
+
+export function getDisplayRef(field, resourceType) {
+  const displayAfter = field?.displayAfter;
+
+  if (!displayAfter) return;
+  const index = displayAfter.indexOf('.');
+
+  if (resourceType && DISPLAY_REF_SUPPORTED_RESOURCE_TYPES.includes(resourceType)) {
+    const type = resourceType === 'exports' ? 'export' : 'import';
+
+    if (displayAfter.substr(0, index) !== type) return;
+  }
+
+  const displayAfterRef = displayAfter.substr(index + 1);
+
+  // In cases where displayRef should point to another value from the given refMap, we use this map
+  // Ex: end point field help text is 'http._httpConnectorEndpointId' but the fieldId to look for is 'assistantMetadata.operation'.
+  // hence, we use this map to fetch the same
+  return HTTP_CONNECTOR_DISPLAY_REF_MAP[displayAfterRef] || displayAfterRef;
+}
+
+export function refineCustomSettings(settingsFormMetadata, resourceType) {
+  const updatedFieldMetadata = customCloneDeep(settingsFormMetadata) || {};
+  const fieldIds = Object.keys(updatedFieldMetadata.fieldMap);
+
+  fieldIds.forEach(fieldId => {
+    const displayAfterRef = getDisplayRef(updatedFieldMetadata.fieldMap[fieldId], resourceType);
+
+    updatedFieldMetadata.fieldMap[fieldId].displayAfter = displayAfterRef;
+  });
+
+  return updatedFieldMetadata;
+}
+
 export const isDisplayRefSupportedType = resourceType => DISPLAY_REF_SUPPORTED_RESOURCE_TYPES.includes(resourceType);
 export function isValidDisplayAfterRef(refId, refMetadata) {
   const { layout, fieldMap } = refMetadata;
+
+  if (!refId) return false;
 
   if (!layout) {
     return !!fieldMap[refId];
@@ -22,12 +63,7 @@ export function getMetadataWithFilteredDisplayRef(resourceMetadata, csMetadata) 
   const validDisplayAfterFieldIds = fieldList.filter(fieldId => {
     const field = fieldMap[fieldId];
 
-    if (!field.displayAfter) return false;
-
-    const index = field.displayAfter?.indexOf('.');
-    const displayAfterRef = field.displayAfter?.substr(index + 1);
-
-    return isValidDisplayAfterRef(displayAfterRef, resourceMetadata);
+    return isValidDisplayAfterRef(field.displayAfter, resourceMetadata);
   });
 
   const updatedFieldMetadata = customCloneDeep(csMetadata);
@@ -104,7 +140,8 @@ export function getEndPointCustomSettings(connectorMetadata = {}, resourceId, op
   return endPointMetadata?.settingsForm;
 }
 
-export function getConnectorCustomSettings(resourceFormMetadata, csMetadata) {
-  // Incase the resource is new or user changed endpoint, we show all custom settings
+export function getConnectorCustomSettings(resourceFormMetadata, settingsFormMetadata, resourceType) {
+  const csMetadata = refineCustomSettings(settingsFormMetadata, resourceType);
+
   return getMetadataWithFilteredDisplayRef(resourceFormMetadata, csMetadata);
 }

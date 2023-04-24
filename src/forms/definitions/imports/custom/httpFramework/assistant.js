@@ -10,7 +10,7 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
-    init: initializeHttpConnectorForm,
+    init: (fieldMeta, resource) => initializeHttpConnectorForm(fieldMeta, resource, 'imports'),
     ...fieldMeta({ resource, assistantData }),
     preSave: (formValues = {}) => {
       const assistantMetadata = {
