@@ -82,6 +82,7 @@ export default function IntegrationCeligoPageBar() {
     {
       label: 'Integration',
       description: 'Upload an existing integration',
+      dataTestId: 'installZip',
       link: buildDrawerUrl({
         path: drawerPaths.INSTALL.INTEGRATION,
         baseUrl: location.pathname,
@@ -92,6 +93,7 @@ export default function IntegrationCeligoPageBar() {
   const createActions = [
     {
       label: 'Flow',
+      dataTestId: 'createFlow',
       description: 'Sync data between apps',
       link: '/integrations/none/flowBuilder/new',
       Icon: FlowsIcon,
@@ -99,6 +101,7 @@ export default function IntegrationCeligoPageBar() {
     {
       label: 'Connection',
       description: 'Store credentials to apps',
+      dataTestId: 'createConnection',
       Icon: ConnectionsIcon,
       link: buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
@@ -109,6 +112,7 @@ export default function IntegrationCeligoPageBar() {
     {
       label: 'Integration',
       description: 'Organize flows in a folder',
+      dataTestId: 'newIntegration',
       link: buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
         baseUrl: location.pathname,
@@ -133,11 +137,14 @@ export default function IntegrationCeligoPageBar() {
         <div className={classes.buttonWrapper}>
           {permission.create && (
           <PillButtonWithMenu
-            label="Create" menuTitle="CREATE" className={classes.homePillButton} fill
+            label="Create" data-test="createResource" menuTitle="CREATE" className={classes.homePillButton}
+            fill
             actionsMenu={createActions} />
           )}
           {permission.install && (
-          <PillButtonWithMenu label="Upload" menuTitle="UPLOAD" className={classes.homePillButton} actionsMenu={uploadActions} />
+          <PillButtonWithMenu
+            label="Upload" data-test="uploadZip" menuTitle="UPLOAD" className={classes.homePillButton}
+            actionsMenu={uploadActions} />
           )}
         </div>
         <ActionGroup className={classes.viewsWrapper}>
