@@ -357,7 +357,7 @@ const SUBSCRIPTION = {
 
   <a target="_blank" rel="noopener noreferrer"
   href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with integration apps & templates.`,
-  TRY_UNLIMITED: 'Try unlimited flows free for 30 days',
+  TRY_FULL_ACCESS: 'Try full access free for 30 days',
   UNLIMITED_FLOWS_START: 'Congratulations! Your unlimited flows trial starts now.',
   REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out<br>for an email from one of our associates soon.',
   UPGRADE_TO_NEXT_PLAN: 'Upgrade to a {{nextPlan}} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.',
