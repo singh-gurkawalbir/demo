@@ -3471,6 +3471,7 @@ describe('mapping reducer', () => {
           importId: 'imp-123',
           flowId: 'flow-123',
           version: 2,
+          showNotificationFlag: true,
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
@@ -5642,6 +5643,429 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
   });
+  describe('MAPPING.V2.PATCH_DESTINATION_FILTER', () => {
+    test('should change tree on the basis of value typed', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                key: 'v11',
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd1',
+            dataType: 'object',
+            generate: 'test',
+            jsonPath: 'test',
+            children: [{
+              key: 'd11',
+              dataType: 'string',
+              generate: 'id',
+              jsonPath: 'test.id',
+            },
+            {
+              key: 'd12',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'test.name',
+            }],
+          },
+          {
+            key: 'd2',
+            dataType: 'string',
+            generate: 'address',
+            jsonPath: 'address',
+          }],
+          finalDestinationTree: [{
+            key: 'f1',
+            dataType: 'object',
+            title: '',
+            children: [{
+              key: 'd1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              disabled: true,
+              children: [{
+                key: 'd11',
+                dataType: 'string',
+                generate: 'id',
+                jsonPath: 'test.id',
+                disabled: true,
+              },
+              {
+                key: 'd12',
+                dataType: 'string',
+                generate: 'name',
+                jsonPath: 'test.name',
+              }],
+            },
+            {
+              key: 'd2',
+              dataType: 'number',
+              generate: 'ipin',
+              jsonPath: 'ipin',
+            }],
+          }],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.patchDestinationFilter('i', 'ipin'));
+
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                key: 'v11',
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd1',
+            dataType: 'object',
+            generate: 'test',
+            jsonPath: 'test',
+            children: [{
+              key: 'd11',
+              dataType: 'string',
+              generate: 'id',
+              jsonPath: 'test.id',
+            },
+            {
+              key: 'd12',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'test.name',
+            }],
+          },
+          {
+            key: 'd2',
+            dataType: 'string',
+            generate: 'address',
+            jsonPath: 'address',
+          }],
+          finalDestinationTree: [{
+            key: 'f1',
+            dataType: 'object',
+            title: '',
+            childMatchFound: true,
+            children: [{
+              key: 'd1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              disabled: true,
+              childMatchFound: true,
+              children: [{
+                key: 'd11',
+                dataType: 'string',
+                generate: 'id',
+                jsonPath: 'test.id',
+                disabled: true,
+              },
+              {
+                key: 'd12',
+                dataType: 'string',
+                generate: 'name',
+                jsonPath: 'test.name',
+                className: 'hideRow',
+                hidden: true,
+              }],
+            },
+            {
+              key: 'd2',
+              dataType: 'number',
+              generate: 'ipin',
+              jsonPath: 'ipin',
+            }],
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.FINAL_DESTINATION_TREE', () => {
+    test('should make the final destination tree to be rendered in dropdown', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                key: 'v11',
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd1',
+            dataType: 'object',
+            generate: 'test',
+            jsonPath: 'test',
+            children: [{
+              key: 'd11',
+              dataType: 'string',
+              generate: 'id',
+              jsonPath: 'test.id',
+            },
+            {
+              key: 'd12',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'test.name',
+            }],
+          },
+          {
+            key: 'd2',
+            dataType: 'string',
+            generate: 'address',
+            jsonPath: 'address',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.makeFinalDestinationTree('v1'));
+
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                key: 'v11',
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd1',
+            dataType: 'object',
+            generate: 'test',
+            jsonPath: 'test',
+            children: [{
+              key: 'd11',
+              dataType: 'string',
+              generate: 'id',
+              jsonPath: 'test.id',
+            },
+            {
+              key: 'd12',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'test.name',
+            }],
+          },
+          {
+            key: 'd2',
+            dataType: 'string',
+            generate: 'address',
+            jsonPath: 'address',
+          }],
+          finalDestinationTree: [{
+            key: 'new_key',
+            dataType: 'object',
+            title: '',
+            children: [{
+              key: 'd1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              disabled: true,
+              children: [{
+                key: 'd11',
+                dataType: 'string',
+                generate: 'id',
+                jsonPath: 'test.id',
+                disabled: true,
+              },
+              {
+                key: 'd12',
+                dataType: 'string',
+                generate: 'name',
+                jsonPath: 'test.name',
+              }],
+            },
+            {
+              key: 'd2',
+              dataType: 'string',
+              generate: 'address',
+              jsonPath: 'address',
+            }],
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.ADD_SELECTED_DESTINATION', () => {
+    test('should correctly update treeData based on the value selected in dropdown', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d11'));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+            {
+              key: 'new_key',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'name',
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.TOGGLE_NOTIFICATION_FLAG action', () => {
+    test('delete the showNotificationFlag from mappings', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          showNotificationFlag: true,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleShowNotificationFlag());
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
 
   test('should do nothing and not fail for all below actions if state does not exist', () => {
     const afterSave = reducer({}, actions.mapping.save({}));
@@ -6078,6 +6502,45 @@ describe('mapping selectors', () => {
       };
 
       expect(selectors.v2ActiveKey(state)).toBe('key1');
+    });
+  });
+  describe('selectors.v2MappingsDestinationTree', () => {
+    test('should return undefined if state does not exist', () => {
+      expect(selectors.v2ActiveKey()).toBeUndefined();
+      expect(selectors.v2ActiveKey(null)).toBeUndefined();
+      expect(selectors.v2ActiveKey({})).toBeUndefined();
+      expect(selectors.v2ActiveKey({mapping: {}})).toBeUndefined();
+    });
+    test('should return destination tree for dropdown key', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          version: 2,
+          finalDestinationTree: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+
+      const expectedValue = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+        },
+      ];
+
+      expect(selectors.v2MappingsDestinationTree(state)).toEqual(expectedValue);
     });
   });
 });

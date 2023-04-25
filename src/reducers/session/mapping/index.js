@@ -26,7 +26,7 @@ import {
   findNodeWithGivenParentsList,
   markPresentDestinations,
   constructDestinationTreeFromParentsList,
-  finaLastNodeWithMatchingParent} from '../../../utils/mapping';
+  findLastNodeWithMatchingParent} from '../../../utils/mapping';
 import { generateId } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -785,6 +785,20 @@ export default (state = {}, action) => {
         // find drop position
         const {nodeSubArray: dropSubArr, nodeIndexInSubArray: dropSubArrIndex } = findNodeInTree(v2TreeData, 'key', dropKey);
 
+        // find dragObject parentNode
+        if (dragParentKey) {
+          const {node: dragParentNode} = findNodeInTree(v2TreeData, 'key', dragParentKey);
+
+          if (dragParentNode && dragParentNode?.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+            if (draft.mapping.isGroupedOutput && draft.mapping.v2TreeData[0]?.key === dragParentKey) {
+              // do not show notification
+            } else {
+              // show notification
+              draft.mapping.showNotificationFlag = true;
+            }
+          }
+        }
+
         // drag obj is inserted as the 0th child of a parent
         if (dropPosition === 0) {
           // It is the parent node which is also the drop node.
@@ -1206,7 +1220,7 @@ export default (state = {}, action) => {
         const treeData = draft.mapping.isGroupedOutput ? draft.mapping.v2TreeData[0].children : draft.mapping.v2TreeData;
 
         const {parentsList = []} = findNodeInTreeWithParents(draft.mapping.destinationTree, 'key', v2Key);
-        const {node = {}, leftParentsList = []} = finaLastNodeWithMatchingParent(treeData, parentsList);
+        const {node = {}, leftParentsList = []} = findLastNodeWithMatchingParent(treeData, parentsList);
 
         if (!isEmpty(node)) {
           const newNode = constructDestinationTreeFromParentsList(leftParentsList);
@@ -1226,6 +1240,10 @@ export default (state = {}, action) => {
             draft.mapping.v2TreeData.push(newNode);
           }
         }
+        break;
+      }
+      case actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG: {
+        delete draft.mapping.showNotificationFlag;
         break;
       }
       default:

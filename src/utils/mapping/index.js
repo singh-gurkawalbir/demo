@@ -1655,7 +1655,7 @@ export const findNodeWithGivenParentsList = (data, parentsList) => {
 
 // here if data is a tree with structure a1->b1->c1->d->e and parentsList is [a2, b2, c2, d2, e2]
 // it will match till generate and jsonPath matches hence return node c1 as the node and [d2, e2] as the remaining leftParentsList
-export const finaLastNodeWithMatchingParent = (data, parentsList) => {
+export const findLastNodeWithMatchingParent = (data, parentsList) => {
   let node;
   let leftParentsList;
 
@@ -1665,18 +1665,23 @@ export const finaLastNodeWithMatchingParent = (data, parentsList) => {
     const parentsListNode = parentsList[0];
 
     if (item?.generate && item?.jsonPath === parentsListNode?.jsonPath && item?.dataType === parentsListNode?.dataType) {
-      if (item.children) {
-        const returnToParent = finaLastNodeWithMatchingParent(item.children, parentsList.slice(1));
+      // item found set the node and remaining parentsList as leftParentsList
+      node = item;
+      leftParentsList = parentsList.slice(1);
 
+      // if children then explore
+      if (item.children) {
+        const returnToParent = findLastNodeWithMatchingParent(item.children, parentsList.slice(1));
+
+        // node found inside hence set node and leftParentsList to new values
         if (returnToParent.node) {
           node = returnToParent.node;
           leftParentsList = returnToParent.leftParentsList;
-
-          return false;
         }
-        node = item;
-        leftParentsList = parentsList.slice(1);
       }
+
+      // node found hence break out of loop
+      return false;
     }
   });
 
