@@ -197,7 +197,7 @@ const getFieldMeta = props => {
       helpKey: 'myaccount.showIconView',
       noApi: true,
       label: 'Enable flowbuilder iconic view',
-      defaultValue: preferences && preferences.showIconView && enabledFeatures.includes('flowbuilderIconView'),
+      defaultValue: preferences && preferences.showIconView,
       isLoggable: true,
       visible: enabledFeatures.includes('flowbuilderIconView'),
     },

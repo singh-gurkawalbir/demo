@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect} from 'react';
 import { useSelector } from 'react-redux';
-import { selectors } from '../../reducers/user';
+import { selectors } from '../../reducers';
 import { getDomain } from '../../utils/resource';
 import retry from '../../utils/retry';
 
@@ -26,7 +26,9 @@ export const useFeautureContext = () => useContext(FeatureFlagContext);
 export const useFeatureVisibility = () => {
   const featureData = useContext(FeatureFlagContext);
   const features = Object.keys(featureData);
-  const {_id: userId} = useSelector(state => selectors.userProfile(state));
+
+  console.log({features});
+  const {_id: userId} = useSelector(state => selectors.userProfile(state)) || {};
   const domain = getDomain();
   const enabledFeatures = features.filter(featureName => {
     if (!featureData || !featureData[featureName]) {
