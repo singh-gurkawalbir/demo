@@ -14,13 +14,6 @@ export default function BranchFilter({ editorId, position }) {
   const dispatch = useDispatch();
   const handlePatchEditor = useCallback(
     value => {
-      if (!value) {
-        dispatch(
-          actions.editor.patchRule(editorId, false, {
-            rulePath: `branches[${position}].skipEmptyRuleCleanup`,
-          })
-        );
-      }
       dispatch(
         actions.editor.patchRule(editorId, value, {
           rulePath: `branches[${position}].inputFilter.rules`,
