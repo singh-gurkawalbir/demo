@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
     },
     '&>div': {
       width: '100%',
-      border: '3px solid transparent',
     },
     '&:nth-of-type(2)': {
       '&>div': {
@@ -226,7 +225,7 @@ const Mapper2Row = React.memo(props => {
       key={nodeKey}
       className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
       <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
-        {(importSampleData && searchKey === undefined)
+        {(importSampleData && searchKey === undefined && !isFilterApplied)
           ? (
             <Mapper2GeneratesWithDropdown
               key={generate}

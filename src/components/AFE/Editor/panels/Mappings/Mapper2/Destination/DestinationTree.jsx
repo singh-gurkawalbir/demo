@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
     },
     '& .childTree-indent-unit': {
-      width: theme.spacing(1),
+      width: theme.spacing(3),
       position: 'relative',
       height: '100%',
     },
@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
       cursor: 'pointer',
       display: 'flex',
       position: 'relative',
-      padding: theme.spacing(1, 0, 1, 2),
+      padding: theme.spacing(0.5, 0, 0.5, 2),
       alignItems: 'center',
       borderLeft: '3px solid transparent',
       '&.hideRow': {
@@ -71,19 +71,28 @@ const useStyles = makeStyles(theme => ({
       width: '12px',
       height: '12px',
     },
+    '& .childTree-treenode-disabled': {
+      '& .MuiTypography-root': {
+        color: theme.palette.text.hint,
+      },
+    },
   },
   treeTitle: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    '& .MuiTypography-root': {
-      fontStyle: 'italic',
-      size: 14,
-      paddingLeft: theme.spacing(1),
-    },
+  },
+  destinationDataType: {
+    fontStyle: 'italic',
+    size: 14,
+    paddingLeft: theme.spacing(1),
   },
   treePropName: {
-    wordBreak: 'break-all',
+    fontStyle: 'italic',
+    color: theme.palette.secondary.light,
+  },
+  destinationDropdownValue: {
+    wordBreak: 'break-word',
   },
 })
 );
@@ -98,10 +107,12 @@ const TitleExtracts = ({generate, dataType, isRequired, disabled}) => {
       {/* this div needs to be added to render the tooltip correctly */}
       <div className={classes.treeTitle} >
         {isRequired
-          ? <span className={classes.treePropName}>{`${generate}* (required)`}</span>
-          : <span className={classes.treePropName}>{generate}</span>}
+          ? <Typography variant="subtitle2" className={classes.destinationDropdownValue}><b>{generate} *</b> <span className={classes.treePropName}>(required)</span></Typography>
+          : <Typography variant="subtitle2" className={classes.destinationDropdownValue}>{generate}</Typography>}
         <Typography
-          variant="body2" color="textSecondary" >
+          variant="body2"
+          color="textSecondary"
+          className={classes.destinationDataType}>
           {dataType === 'objectarray' ? '[object]' : dataType}
         </Typography>
       </div>

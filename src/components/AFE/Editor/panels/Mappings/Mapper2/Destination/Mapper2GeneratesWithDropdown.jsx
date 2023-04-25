@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, InputAdornment, TextField, Tooltip } from '@material-ui/core';
+import { Divider, FormControl, InputAdornment, TextField, Tooltip } from '@material-ui/core';
 import clsx from 'clsx';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
@@ -24,9 +24,15 @@ const useStyles = makeStyles(theme => ({
     '& > * .MuiFilledInput-input': {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+      paddingRight: theme.spacing(15),
     },
     '& .MuiFilledInput-multiline': {
       border: 'none',
+    },
+    '& .Mui-disabled': {
+      '& .MuiFilledInput-input': {
+        paddingRight: theme.spacing(16),
+      },
     },
   },
   mapField: {
@@ -38,7 +44,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     '& .MuiFilledInput-input': {
       border: 'none',
-      paddingRight: 0,
     },
     '&:hover': {
       border: `1px solid ${theme.palette.primary.main}`,
@@ -52,11 +57,19 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.hint,
     height: theme.spacing(3),
   },
+  fieldDataType: {
+    display: 'flex',
+    alignItems: 'center',
+    width: theme.spacing(9),
+    marginLeft: theme.spacing(-13),
+    justifyContent: 'end',
+    zIndex: 1,
+  },
   fieldDataTypeLocked: {
+    marginLeft: theme.spacing(-17),
     '& .MuiButtonBase-root': {
       width: theme.spacing(12),
       justifyContent: 'end',
-      paddingRight: theme.spacing(4.5),
       color: theme.palette.text.hint,
     },
   },
@@ -67,6 +80,36 @@ const useStyles = makeStyles(theme => ({
     marginTop: '0px !important',
     color: theme.palette.secondary.light,
     cursor: 'pointer',
+  },
+  divider: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 0.5),
+  },
+  extractPopperPaper: {
+    boxShadow: 'none',
+    borderRadius: 0,
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    '&:empty': {
+      display: 'none',
+    },
+  },
+  extractPopperArrow: {
+    display: 'none',
+  },
+  extractListPopper: {
+    width: theme.spacing(55),
+    borderRadius: 0,
+    top: '2px !important',
+    border: 'none',
+    marginLeft: theme.spacing(-2),
+  },
+  extractListPopperCompact: {
+    width: theme.spacing(44),
+    marginLeft: theme.spacing(-2),
+  },
+  arrowWithLockIcon: {
+    right: theme.spacing(4),
+    color: theme.palette.text.hint,
   },
 }));
 
@@ -79,7 +122,8 @@ export default function Mapper2GeneratesWithDropdown(props) {
     onBlur,
     nodeKey,
     isRequired,
-    // editorLayout,
+    popperClassName,
+    editorLayout,
   } = props;
   const dispatch = useDispatch();
   const newRowKey = useSelector(state => selectors.newRowKey(state));
@@ -189,7 +233,7 @@ export default function Mapper2GeneratesWithDropdown(props) {
             placeholder={disabled ? '' : 'Destination field'}
             InputProps={{
               endAdornment: (
-                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={() => { setIsFocused(true); }}>
+                <InputAdornment className={clsx(classes.autoSuggestDropdown, {[classes.arrowWithLockIcon]: isRequired})} position="start" onClick={() => { setIsFocused(true); }}>
                   <ArrowDownIcon />
                 </InputAdornment>
               ),
@@ -199,17 +243,16 @@ export default function Mapper2GeneratesWithDropdown(props) {
             }}
           />
         </Tooltip >
-
-        <DestinationDataType
-          anchorEl={anchorElDataType}
-          setAnchorEl={setAnchorElDataType}
-          handleBlur={handleBlur}
-          dataType={dataType}
-          disabled={disabled}
-          nodeKey={nodeKey}
-          className={clsx({[classes.fieldDataTypeLocked]: isRequired})}
-        />
-
+        <div className={clsx(classes.fieldDataType, {[classes.fieldDataTypeLocked]: isRequired})}>
+          <DestinationDataType
+            anchorEl={anchorElDataType}
+            setAnchorEl={setAnchorElDataType}
+            handleBlur={handleBlur}
+            dataType={dataType}
+            disabled={disabled}
+            nodeKey={nodeKey} />
+          <Divider className={classes.divider} orientation="vertical" />
+        </div>
         {isRequired && (
           <Tooltip
             title="This field is required by the application you are importing into"
@@ -227,7 +270,7 @@ export default function Mapper2GeneratesWithDropdown(props) {
       */}
 
       <ArrowPopper
-        placement="bottom"
+        placement="bottom-start"
         id="destiationPopper"
         open={isFocused}
         anchorEl={anchorEl}
@@ -235,9 +278,9 @@ export default function Mapper2GeneratesWithDropdown(props) {
         preventOverflow={false}
         offsetPopper="0,6"
         classes={{
-          // popper: clsx(classes.extractListPopper, {
-          //   [classes.extractListPopperCompact]: editorLayout === 'compact2',
-          // }, popperClassName),
+          popper: clsx(classes.extractListPopper, {
+            [classes.extractListPopperCompact]: editorLayout === 'compact2',
+          }, popperClassName),
           arrow: classes.extractPopperArrow,
           paper: classes.extractPopperPaper,
         }}
