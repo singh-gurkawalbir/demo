@@ -97,11 +97,10 @@ export default function SearchInputPageBar({value, onChange, placeHolder, openWi
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = placeHolder;
     }
     dispatchLocalAction({type: 'onInputChange', value: e.target.value});
     onChange(e);
-  }, [onChange, placeHolder]);
+  }, [onChange]);
 
   const blurHandler = useCallback(e => {
     dispatchLocalAction({type: 'onBlur', value: e.target.value});
@@ -121,10 +120,9 @@ export default function SearchInputPageBar({value, onChange, placeHolder, openWi
   useEffect(() => {
     if (openWithFocus) {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = placeHolder;
       dispatchLocalAction({type: 'onInputChange', value: ''});
     }
-  }, [openWithFocus, placeHolder]);
+  }, [openWithFocus]);
 
   return (
     <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused}, className)}>
