@@ -316,8 +316,7 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
       <Divider orientation="vertical" className={classes.divider} />
       <IconButton
         onClick={handleExitClick}
-        size="small"
-        sx={{padding: '3px'}}>
+        size="small">
         <CloseIcon />
       </IconButton>
     </div>

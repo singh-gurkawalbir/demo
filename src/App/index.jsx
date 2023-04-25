@@ -283,8 +283,20 @@ export default function App() {
                 <FormOnCancelProvider>
                   <SnackbarProvider
                     sx={{
-                      '& .SnackbarItem-variantInfo': {
+                      '& .SnackbarContent-root': {
                         bgcolor: theme => theme.palette.background.paper,
+                        color: theme => theme.palette.text.primary,
+                        '&:before': {
+                          content: '""',
+                          width: 5,
+                          height: '100%',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          borderRadius: '4px 0 0 4px',
+                        },
+                      },
+                      '& .SnackbarItem-variantInfo': {
                         '&:before': {
                           bgcolor: theme => theme.palette.primary.main,
                         },
@@ -293,7 +305,6 @@ export default function App() {
                         },
                       },
                       '& .SnackbarItem-variantSuccess': {
-                        bgcolor: theme => theme.palette.background.paper,
                         '&:before': {
                           bgcolor: theme => theme.palette.success.main,
                         },
@@ -302,7 +313,6 @@ export default function App() {
                         },
                       },
                       '& .SnackbarItem-variantWarning': {
-                        bgcolor: theme => theme.palette.background.paper,
                         '&:before': {
                           bgcolor: theme => theme.palette.warning.main,
                         },
@@ -311,8 +321,6 @@ export default function App() {
                         },
                       },
                       '& .SnackbarItem-variantError': {
-                        bgcolor: theme => theme.palette.background.paper,
-                        color: theme => theme.palette.text.primary,
                         '&:before': {
                           bgcolor: theme => theme.palette.error.main,
                         },

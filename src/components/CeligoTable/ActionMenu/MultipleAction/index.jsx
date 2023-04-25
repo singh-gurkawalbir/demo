@@ -43,8 +43,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
       className={clsx({[classes.deleteWrapper]: mode === 'delete'})}
       data-test={key}
       onClick={handleActionClick}
-      disabled={disabled}
-      sx={{fontSize: '14px'}}>
+      disabled={disabled}>
       {actionIcon}{label}
     </MenuItem>
   );

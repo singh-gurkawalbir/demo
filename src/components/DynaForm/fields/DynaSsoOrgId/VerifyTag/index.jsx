@@ -10,7 +10,6 @@ import Spinner from '../../../../Spinner';
 const useStyles = makeStyles(theme => ({
   message: {
     position: 'relative',
-    top: theme.spacing(-1),
     display: 'flex',
     alignItems: 'center',
     lineHeight: theme.spacing(2),

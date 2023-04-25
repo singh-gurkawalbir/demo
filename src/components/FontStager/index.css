@@ -74,7 +74,7 @@ html, body {
 .font-stage-primary body {
   font-family: Roboto400, sans-serif;
   color: #333D47;
-  
+  font-size: 0.875rem;
   /* Above color property is useful for styleguide icons to display,
     otherwise we have to keep one prop(fill) for all the svg icons
   */

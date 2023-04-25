@@ -39,8 +39,7 @@ export default function ManageUsersPanel({ integrationId, childId }) {
         {isAccountOwner && (
           <TextButton
             onClick={handleInvite}
-            startIcon={<AddIcon />}
-            sx={{padding: '6px 8px'}}>
+            startIcon={<AddIcon />}>
             Invite user
           </TextButton>
         )}

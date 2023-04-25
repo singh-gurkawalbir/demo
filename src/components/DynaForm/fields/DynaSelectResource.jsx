@@ -195,10 +195,13 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     '& > div:last-child': {
       position: 'absolute',
-      right: '50px',
+      right: theme.spacing(5),
       top: theme.spacing(4),
+      '& .MuiTypography-root': {
+        font: 'inherit',
+      },
     },
-    '& >* .MuiSelect-selectMenu': {
+    '& .MuiSelect-selectMenu': {
       paddingRight: 140,
     },
   },

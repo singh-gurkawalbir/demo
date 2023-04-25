@@ -29,7 +29,8 @@ export default function FieldHelp({
       disablePortal={disablePortal}
       sx={{
         ml: 0.5,
-        padding: '3px',
+        width: theme => theme.spacing(3),
+        height: theme => theme.spacing(3),
       }}
     />
   );

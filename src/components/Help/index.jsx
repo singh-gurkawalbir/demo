@@ -34,6 +34,11 @@ export default function HelpWrapper({ fieldId, resourceType, helpKey, helpText, 
       supportFeedback={supportFeedback}
       onHelpfulClick={onHelpfulClick}
       onFeedbackSubmit={onSupportFeedback}
+      sx={{
+        ml: 0.5,
+        width: theme => theme.spacing(3),
+        height: theme => theme.spacing(3),
+      }}
     />
   );
 }

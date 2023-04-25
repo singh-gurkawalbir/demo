@@ -18,6 +18,9 @@ const useStyles = makeStyles(theme => ({
     '&:empty': {
       display: 'none',
     },
+    '& .MuiSvgIcon-root': {
+      fontSize: theme.spacing(4),
+    },
   },
 }));
 

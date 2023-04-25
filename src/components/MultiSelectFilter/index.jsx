@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   moreIcon: {
-    marginTop: -theme.spacing(1),
+    marginTop: theme.spacing(-1),
   },
   heading: {
     fontWeight: 'bold',

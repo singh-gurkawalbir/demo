@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 0,
   },
   editReadmebutton: {
-    marginRight: -theme.spacing(1),
+    marginRight: theme.spacing(-1),
   },
 }));
 
