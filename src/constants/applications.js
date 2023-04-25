@@ -93,7 +93,7 @@ const connectors = [
   },
   {
     id: 'van',
-    name: 'VAN(Value Added Network)',
+    name: 'VAN (Value-added network)',
     type: 'van',
     keywords: 'technology,protocol',
     group: 'tech',
