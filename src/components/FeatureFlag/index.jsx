@@ -27,7 +27,6 @@ export const useFeatureVisibility = () => {
   const featureData = useContext(FeatureFlagContext);
   const features = Object.keys(featureData);
 
-  console.log({features});
   const {_id: userId} = useSelector(state => selectors.userProfile(state)) || {};
   const domain = getDomain();
   const enabledFeatures = features.filter(featureName => {
