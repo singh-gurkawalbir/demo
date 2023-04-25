@@ -15,7 +15,8 @@ import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
 import infoText from '../../components/Help/infoText';
 import { isProduction } from '../../forms/formFactory/utils';
-import { isGoogleSignInAllowed } from '../../utils/resource';
+import { getDomain, isGoogleSignInAllowed } from '../../utils/resource';
+import { useFeautureContext } from '../../components/FeatureFlag';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -143,6 +144,7 @@ export default function ProfilePanel() {
   );
 
   const dispatch = useDispatch();
+  const featureData = useFeautureContext();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
     const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView } = completePayloadCopy;
@@ -185,6 +187,34 @@ export default function ProfilePanel() {
       onSave: handleSubmit,
     }
   );
+  const {_id: userId} = useSelector(state => selectors.userProfile(state)) || {};
+
+  // const Visible = featureName => useFeatureVisibility(featureName, userId);
+
+  const isFeatureVisible = (featureName, userId) => {
+    if (!featureData || !featureData[featureName]) {
+      return false;
+    }
+    const domain = getDomain();
+    const feature = featureData[featureName];
+    const noUserRestirction = !feature?.allowedUsers || feature?.allowedUsers?.length === 0;
+    const noDomainRestriction = !feature?.enabledDomains || feature?.enabledDomains?.length === 0;
+    const isCurrentDomainEnabled = feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain));
+    const isCurrentUserEnabled = feature?.allowedUsers && (feature?.enabledDomains?.length === 0 || feature?.allowedUsers?.includes(userId));
+
+    if (feature?.enabled === 'true') {
+      if (noDomainRestriction) {
+        return noUserRestirction ? true : isCurrentUserEnabled;
+      }
+      if (isCurrentDomainEnabled) {
+        return noUserRestirction ? true : isCurrentUserEnabled;
+      }
+
+      return false;
+    }
+
+    return false;
+  };
 
   const fieldMeta = useMemo(() => ({
     fieldMap: {
@@ -315,9 +345,8 @@ export default function ProfilePanel() {
         noApi: true,
         label: 'Show flowbuilder icon view',
         defaultValue: preferences && preferences.showIconView,
-        // is this loggable
         isLoggable: true,
-        visible: (!isProduction() && process.env.ICON_VIEW_FLOWBUILDER === 'true'),
+        visible: isFeatureVisible('flowbuilderIconView', userId),
       },
       colorTheme: {
         id: 'colorTheme',

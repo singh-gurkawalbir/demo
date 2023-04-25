@@ -19,11 +19,10 @@ export const FeatureFlagProvider = ({ children }) => {
   );
 };
 
+export const useFeautureContext = () => useContext(FeatureFlagContext);
+
 export const useFeatureVisibility = (featureName, user) => {
   const featureData = useContext(FeatureFlagContext);
-
-  console.log({featureData});
-  console.log('fe', featureData[featureName]);
 
   if (!featureData || !featureData[featureName]) {
     return false;
@@ -34,10 +33,6 @@ export const useFeatureVisibility = (featureName, user) => {
   const noDomainRestriction = !feature?.enabledDomains || feature?.enabledDomains?.length === 0;
   const isCurrentDomainEnabled = feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain));
   const isCurrentUserEnabled = feature?.allowedUsers && (feature?.enabledDomains?.length === 0 || feature?.allowedUsers?.includes(user));
-
-  console.log({isCurrentDomainEnabled});
-  console.log({domain});
-  console.log({feature});
 
   if (feature?.enabled === 'true') {
     if (noDomainRestriction) {
