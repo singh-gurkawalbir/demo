@@ -49,6 +49,9 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
 
       delete resource.rest;
     }
+    if (connection?.type === 'van' && resource.adaptorType?.includes('AS2')) {
+      return {...resource, adaptorType: resourceType === 'exports' ? 'VANExport' : 'VANImport'};
+    }
     // remove UI heavy fields from the resource
     resource = resourceWithoutUIFields(resource);
   }
@@ -144,6 +147,9 @@ const addResourceCollection = (draft, resourceType, collection) => {
           delete newColl.rest;
 
           return newColl;
+        }
+        if (connection?.type === 'van' && coll.adaptorType?.includes('AS2')) {
+          return {...coll, adaptorType: resourceType === 'exports' ? 'VANExport' : 'VANImport'};
         }
 
         return coll;
