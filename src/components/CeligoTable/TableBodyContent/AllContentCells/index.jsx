@@ -8,6 +8,7 @@ export const BaseCellWrapper = ({isLoggable, children, ...rest}) => (
     <TableCell
       {...isLoggableAttr(isLoggable)}
       {...rest}
+      sx={{padding: '10px 16px'}}
       >
       {children}
     </TableCell>

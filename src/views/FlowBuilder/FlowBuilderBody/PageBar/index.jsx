@@ -114,11 +114,7 @@ const pageChildreUseStyles = makeStyles(theme => ({
     margin: [[-7, 0]],
   },
   flowToggle: {
-    marginRight: 12,
-    marginLeft: 12,
-    '& > div:first-child': {
-      padding: '8px 0px 4px 0px',
-    },
+    margin: theme.spacing(0, 1.5, '-6px'),
   },
   chartsIcon: { marginRight: theme.spacing(3) },
   circle: {
@@ -318,7 +314,10 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
         />
       )}
       <Divider orientation="vertical" className={classes.divider} />
-      <IconButton onClick={handleExitClick} size="small">
+      <IconButton
+        onClick={handleExitClick}
+        size="small"
+        sx={{padding: '3px'}}>
         <CloseIcon />
       </IconButton>
     </div>

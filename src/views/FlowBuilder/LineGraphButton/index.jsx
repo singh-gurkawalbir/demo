@@ -19,8 +19,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   iconGraph: {
-
-    width: 28,
+    width: theme.spacing(3),
   },
 }));
 

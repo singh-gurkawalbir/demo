@@ -11,7 +11,7 @@ import TooltipContent from '../TooltipContent';
 
 const useStyles = makeStyles(theme => ({
   small: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing('-2px', 1, 0),
   },
   infoText: {
     color: theme.palette.secondary.main,
@@ -62,6 +62,7 @@ export default function InfoIconButton({
         aria-owns={!anchorEl ? null : 'pageInfo'}
         tabIndex={tabIndex}
         aria-haspopup="true"
+        sx={{padding: '3px'}}
       >
         <InfoIcon />
       </IconButton>
