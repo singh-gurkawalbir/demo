@@ -37,9 +37,7 @@ export default function IconButtonWithTooltip({
           className={clsx(classes.actionButtonWithTooltip, {[classes.noPadding]: noPadding}, className)}
           {...buttonProps}
           size={buttonSize?.size || 'medium'}
-          sx={buttonSize?.size === 'small' && {
-            padding: '3px',
-          }}>
+          sx={{padding: buttonSize?.size === 'small' ? '3px' : 1.5}}>
           {children}
         </IconButton>
       </span>

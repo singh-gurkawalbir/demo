@@ -223,7 +223,8 @@ const Row = ({ index, style, data }) => {
         }
 
         setOpen(false);
-      }}>
+      }}
+      sx={{fontSize: '14px'}}>
       <CeligoTruncate isLoggable={isLoggable} placement="left" lines={1}>
         {label}
       </CeligoTruncate>
