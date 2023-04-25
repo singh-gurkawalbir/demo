@@ -5957,6 +5957,75 @@ describe('mapping reducer', () => {
     });
   });
   describe('MAPPING.V2.ADD_SELECTED_DESTINATION', () => {
+    test('should not do anything when key not found', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d2'));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+
     test('should correctly update treeData based on the value selected in dropdown', () => {
       generateId.mockReturnValue('new_key');
 

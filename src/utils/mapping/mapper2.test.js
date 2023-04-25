@@ -33,6 +33,9 @@ import util, {
   parentHasAnyChildMatch,
   applySearchFilter,
   countMatches,
+  findNodeInTreeWithParents,
+  findNodeWithGivenParentsList,
+  findLastNodeWithMatchingParent,
 } from '.';
 import {generateId} from '../string';
 
@@ -5996,6 +5999,460 @@ describe('v2 mapping utils', () => {
       ];
 
       expect(countMatches(v2TreeData, 'test')).toBe(5);
+    });
+  });
+  describe('findNodeInTreeWithParents util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(findNodeInTreeWithParents()).toEqual({
+        node: undefined,
+        nodeIndexInSubArray: undefined,
+        nodeSubArray: undefined,
+        parentsList: [],
+      });
+      expect(findNodeInTreeWithParents(null)).toEqual({
+        node: undefined,
+        nodeIndexInSubArray: undefined,
+        nodeSubArray: undefined,
+        parentsList: [],
+      });
+    });
+    test('should correctly return the node with its sub location in the array and its parents list', () => {
+      const treeData = [
+        {
+          key: 'key1',
+          title: '',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        },
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+          ],
+        },
+        {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        },
+      ];
+
+      expect(findNodeInTreeWithParents(treeData, 'key', 'key3')).toEqual({
+        node: {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        },
+        nodeSubArray: treeData,
+        nodeIndexInSubArray: 2,
+        parentsList: [{
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      });
+      expect(findNodeInTreeWithParents(treeData, 'key', 'c3')).toEqual({
+        node: {
+          key: 'c3',
+          title: '',
+          extract: '$.child3',
+          generate: 'child3',
+          parentKey: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        },
+        nodeSubArray: treeData[1].children,
+        nodeIndexInSubArray: 2,
+        parentsList: [{
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+          ],
+        },
+        {
+          key: 'c3',
+          title: '',
+          extract: '$.child3',
+          generate: 'child3',
+          parentKey: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      });
+      expect(findNodeInTreeWithParents(treeData, 'key', 'dummy')).toEqual({
+        node: undefined,
+        nodeIndexInSubArray: undefined,
+        nodeSubArray: undefined,
+        parentsList: [],
+      });
+    });
+  });
+  describe('findNodeWithGivenParentsList util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(findNodeWithGivenParentsList()).toEqual({
+        node: undefined,
+      });
+      expect(findNodeWithGivenParentsList(null)).toEqual({
+        node: undefined,
+      });
+    });
+    test('should correctly return the node from the tree for the given parentList', () => {
+      const treeData = [
+        {
+          key: 'key1',
+          title: '',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'fname',
+        },
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child2',
+            },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+            },
+          ],
+        },
+        {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'lname',
+        },
+      ];
+
+      let parentsList = [{
+        id: 'p1',
+        title: '',
+        generate: 'lname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      }];
+
+      expect(findNodeWithGivenParentsList(treeData, parentsList)).toEqual({
+        node: {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'lname',
+        },
+      });
+
+      parentsList = [{
+        id: 'p1',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+      },
+      {
+        id: 'p2',
+        title: '',
+        generate: 'child2',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      }];
+      expect(findNodeWithGivenParentsList(treeData, parentsList)).toEqual({
+        node: {
+          key: 'c2',
+          title: '',
+          extract: '$.child2',
+          generate: 'child2',
+          parentKey: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'mothers_side.child2',
+        },
+      });
+
+      parentsList = [{
+        id: 'p1',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+      }];
+      expect(findNodeWithGivenParentsList(treeData, parentsList)).toEqual({
+        node: {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child2',
+            },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+            },
+          ],
+        },
+      });
+
+      parentsList = [{
+        id: 'p1',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+      },
+      {
+        id: 'p2',
+        title: '',
+        generate: 'child4',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      }];
+      expect(findNodeWithGivenParentsList(treeData, parentsList)).toEqual({
+        node: undefined,
+      });
+    });
+  });
+  describe('findLastNodeWithMatchingParent util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(findLastNodeWithMatchingParent()).toEqual({
+        node: undefined,
+        leftParentsList: [],
+      });
+      expect(findLastNodeWithMatchingParent(null, [])).toEqual({
+        node: undefined,
+        leftParentsList: [],
+      });
+    });
+    test('should correctly return the node from tree and remaining parentsList', () => {
+      const treeData = [
+        {
+          key: 'key1',
+          title: '',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'fname',
+        },
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              jsonPath: 'mothers_side.child2',
+              children: [
+                {
+                  key: 'g1',
+                  title: '',
+                  extract: '$.grandchild1',
+                  generate: 'grandchild1',
+                  parentKey: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  jsonPath: 'mothers_side.child2.grandchild1',
+                },
+              ],
+            },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+            },
+          ],
+        },
+        {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'lname',
+        },
+      ];
+
+      let parentsList = [{
+        id: 'p1',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side',
+      },
+      {
+        id: 'p2',
+        title: '',
+        generate: 'child2',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side.child2',
+      },
+      {
+        id: 'p3',
+        title: '',
+        generate: 'grandchild2',
+        dataType: MAPPING_DATA_TYPES.STRING,
+        jsonPath: 'mothers_side.child2.grandchild2',
+      }];
+
+      expect(findLastNodeWithMatchingParent(treeData, parentsList)).toEqual({
+        node: {
+          key: 'c2',
+          title: '',
+          extract: '$.child2',
+          generate: 'child2',
+          parentKey: 'key2',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side.child2',
+          children: [
+            {
+              key: 'g1',
+              title: '',
+              extract: '$.grandchild1',
+              generate: 'grandchild1',
+              parentKey: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child2.grandchild1',
+            },
+          ],
+        },
+        leftParentsList: [{
+          id: 'p3',
+          title: '',
+          generate: 'grandchild2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'mothers_side.child2.grandchild2',
+        }],
+      });
+
+      parentsList = [{
+        id: 'p1',
+        title: '',
+        generate: 'fathers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'fathers_side',
+      }];
+      expect(findLastNodeWithMatchingParent(treeData, parentsList)).toEqual({
+        node: undefined,
+        leftParentsList: [],
+      }
+      );
     });
   });
 });

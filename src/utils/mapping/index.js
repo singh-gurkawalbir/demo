@@ -1613,7 +1613,7 @@ export const findNodeInTreeWithParents = (data, prop, value) => {
       nodeSubArray = returnToParent.nodeSubArray;
       nodeIndexInSubArray = returnToParent.nodeIndexInSubArray;
 
-      if (returnToParent.parentsList) parentsList = [item, ...returnToParent.parentsList];
+      if (returnToParent.node) parentsList = [item, ...returnToParent.parentsList];
 
       // if found exit from loop
       if (node) return false;
@@ -1626,6 +1626,7 @@ export const findNodeInTreeWithParents = (data, prop, value) => {
 // if data is a tree like a->b->c->d and parentsList is [a1, b1, c1]
 // it will match generate and jsonPath till c and return node c
 // if no match found it will return undefined
+// if data is a tree a->b->c and parentsList is [a1, b1, d1] then undefined will be returned as sequence does not matched
 export const findNodeWithGivenParentsList = (data, parentsList) => {
   let node;
 
@@ -1657,7 +1658,7 @@ export const findNodeWithGivenParentsList = (data, parentsList) => {
 // it will match till generate and jsonPath matches hence return node c1 as the node and [d2, e2] as the remaining leftParentsList
 export const findLastNodeWithMatchingParent = (data, parentsList) => {
   let node;
-  let leftParentsList;
+  let leftParentsList = [];
 
   // using lodash forEach here as it provides a way to exit from loop
   // unlike Array forEach function

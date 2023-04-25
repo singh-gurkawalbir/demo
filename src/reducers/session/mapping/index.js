@@ -253,6 +253,9 @@ const wrapUpInList = (value, isGroupedSampleData, skipNodeWrap) => {
   const copyValue = customCloneDeep(value);
 
   if (skipNodeWrap) {
+    // changing key as it will not match any node when searched
+    copyValue.key = generateId();
+
     return [copyValue];
   }
 
@@ -1220,6 +1223,9 @@ export default (state = {}, action) => {
         const treeData = draft.mapping.isGroupedOutput ? draft.mapping.v2TreeData[0].children : draft.mapping.v2TreeData;
 
         const {parentsList = []} = findNodeInTreeWithParents(draft.mapping.destinationTree, 'key', v2Key);
+
+        if (isEmpty(parentsList)) break;
+
         const {node = {}, leftParentsList = []} = findLastNodeWithMatchingParent(treeData, parentsList);
 
         if (!isEmpty(node)) {
