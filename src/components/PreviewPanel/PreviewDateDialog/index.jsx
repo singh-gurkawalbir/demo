@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
 export default function PreviewDateDialog(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { flowId, onClose, disabled, onRun, dateSelected } = props;
+  const { flowId, onClose, disabled, onRun, dateSelected, timeZoneSelected } = props;
   const [defaultDate] = useState(getNDaysBeforeDate(1));
   const { preferences, timeZone, origLastExportDateTime } = useSelector(state => ({
     origLastExportDateTime: selectors.getLastExportDateTime(state, flowId)?.data,
@@ -46,13 +46,12 @@ export default function PreviewDateDialog(props) {
   const handleSubmit = formVal => {
     const customStartDate = adjustTimezone(formVal.startDateCustom, formVal.timeZone);
 
-    onRun(customStartDate);
-
+    onRun(customStartDate, {timeZone: formVal.timeZone, startDateCustom: formVal.startDateCustom});
     onClose(false);
   };
 
   const fieldMeta = flowStartDateMetadata.getMetadata({
-    timeZone,
+    timeZone: timeZoneSelected || timeZone,
     startDate: dateSelected || lastExportDateTime,
     format: `${preferences.dateFormat} ${preferences.timeFormat}`,
   });
