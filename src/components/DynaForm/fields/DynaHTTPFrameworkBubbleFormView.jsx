@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextToggle } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -10,7 +11,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
@@ -82,7 +82,7 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
   if (!_httpConnectorId || !isHttpFramework) {
     return null;
   }
-  const onFieldChangeFn = selectedApplication => {
+  const onFieldChangeFn = (event, selectedApplication) => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
@@ -157,7 +157,6 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       <TextToggle
         value={value}
         onChange={onFieldChangeFn}
-        exclusive
         options={options}
       />
       <Help

@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { TextToggle } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import TextToggle from '../../../components/TextToggle';
 import getRoutePath from '../../../utils/routePaths';
 
 function EnvironmentToggle({ handleToggle }) {
@@ -17,8 +17,8 @@ function EnvironmentToggle({ handleToggle }) {
     selectors.accountHasSandbox(state)
   );
   const handleChange = useCallback(
-    environment => {
-      dispatch(actions.user.preferences.update({ environment }));
+    (event, newValue) => {
+      dispatch(actions.user.preferences.update({ environment: newValue }));
       if (handleToggle && typeof handleToggle === 'function') {
         handleToggle();
       } else {
@@ -34,7 +34,6 @@ function EnvironmentToggle({ handleToggle }) {
     <TextToggle
       value={environment}
       onChange={handleChange}
-      exclusive
       options={[
         { value: 'production', label: 'Production' },
         { value: 'sandbox', label: 'Sandbox' },

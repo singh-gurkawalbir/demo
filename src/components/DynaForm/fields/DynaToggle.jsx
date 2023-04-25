@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import TextToggle from '../../TextToggle';
+import { TextToggle } from '@celigo/fuse-ui';
 
 export default function DynaToggle(props) {
-  const { id, onFieldChange, label } = props;
+  const { id, onFieldChange, label, value, options, disabled } = props;
 
   return (
     <Grid container>
@@ -12,11 +12,12 @@ export default function DynaToggle(props) {
       </Grid>
       <Grid item xs={6}>
         <TextToggle
-          {...props}
-          onChange={val => {
+          disabled={disabled}
+          value={value}
+          options={options}
+          onChange={(event, val) => {
             onFieldChange(id, val);
           }}
-          exclusive
         />
       </Grid>
     </Grid>
