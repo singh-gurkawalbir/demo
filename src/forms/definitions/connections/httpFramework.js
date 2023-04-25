@@ -210,6 +210,11 @@ export default {
     'http._httpConnectorApiId': {
       fieldId: 'http._httpConnectorApiId',
     },
+    'http._httpConnectorVersionId': {
+      fieldId: 'http._httpConnectorVersionId',
+      type: 'text',
+      label: 'API version',
+    },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
       fieldId: 'http.headers',
@@ -246,8 +251,7 @@ export default {
       fieldId: 'http.encrypted',
       visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
       defaultValue: r =>
-        (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
-          '{"field": "value"}',
+        (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)),
     },
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
@@ -257,8 +261,7 @@ export default {
         (r &&
             r.http &&
             r.http.unencrypted &&
-            JSON.stringify(r.http.unencrypted)) ||
-          '{"field": "value"}',
+            JSON.stringify(r.http.unencrypted)),
     },
     httpBasic: {
       formId: 'httpBasic',
@@ -389,6 +392,7 @@ export default {
           'http._httpConnectorApiId',
           'mode',
           '_agentId',
+          'http._httpConnectorVersionId',
         ],
       },
       {

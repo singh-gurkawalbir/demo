@@ -729,7 +729,7 @@ export function* requestEditorSampleData({
   const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
-    if (flowId) {
+    if (flowId && !isNewId(flowId)) {
       const { status } = yield select(selectors.getLastExportDateTime, flowId) || emptyObject;
 
       if (!status) {

@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const typeFieldNames = ['/export/type', '/export/salesforce/exportType', '/restlet/type', '/type'];
+const typeFieldNames = ['/export/type', '/export/salesforce/exportType', '/assistantMetadata/exportType', '/restlet/type', '/type'];
 
 export default function PreviewInfo(props) {
   const {
@@ -108,8 +108,9 @@ export default function PreviewInfo(props) {
       clickOnPreview: false,
       isValidRecordSize: true,
       dateSelected: '',
+      timeZoneSelected: '',
     });
-  const { defaultDate, showDeltaStartDateDialog, clickOnPreview, isValidRecordSize, dateSelected } = previewState;
+  const { defaultDate, showDeltaStartDateDialog, clickOnPreview, isValidRecordSize, dateSelected, timeZoneSelected } = previewState;
   const { preferences, timeZone, origLastExportDateTime, status } = useSelector(state => ({
     origLastExportDateTime: selectors.getLastExportDateTime(state, flowId)?.data,
     timeZone: selectors.userTimezone(state),
@@ -261,11 +262,11 @@ export default function PreviewInfo(props) {
   }, [lastExportDateTime]);
 
   const handleRunPreview = useCallback(
-    customStartDate => {
+    (customStartDate, customDateDetails) => {
       const lastExportDate = customStartDate || lastExportDateTime;
 
       fetchExportPreviewData(lastExportDate);
-      dispatchLocalAction({payload: {dateSelected: lastExportDate}});
+      dispatchLocalAction({payload: {dateSelected: customDateDetails.startDateCustom, timeZoneSelected: customDateDetails.timeZone}});
     },
     [fetchExportPreviewData, lastExportDateTime]
   );
@@ -284,6 +285,7 @@ export default function PreviewInfo(props) {
               onClose={handleCloseDeltaDialog}
               onRun={handleRunPreview}
               dateSelected={dateSelected}
+              timeZoneSelected={timeZoneSelected}
             />
           )
         }
