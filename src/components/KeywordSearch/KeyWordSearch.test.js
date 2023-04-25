@@ -31,7 +31,8 @@ describe('KeyWordSearch UI tests', () => {
     await userEvent.type(input, 'somtext');
 
     await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe('somtext'));
-    await userEvent.type(input, '');
+    await userEvent.clear(input);
+    await userEvent.type(input, '' || '{tab}');
     await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe(''));
   });
 });
