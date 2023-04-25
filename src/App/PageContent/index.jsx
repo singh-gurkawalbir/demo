@@ -35,7 +35,7 @@ export default function PageContent() {
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
   const isDefaultAccountSet = useSelector(selectors.isDefaultAccountSet);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
-  const agreeTOSAndPPRequired = useSelector(selectors.agreeTOSAndPPRequired);
+  const agreeTOSAndPPRequired = useSelector(selectors.userRequiredToAgreeTOSAndPP);
   const environment = useSelector(state => selectors.userPreferences(state)?.environment);
   const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
   const isAccountSwitchInProgress = useSelector(state => selectors.isAccountSwitchInProgress(state));
