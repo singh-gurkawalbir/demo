@@ -300,7 +300,7 @@ export default function App() {
                         '&:before': {
                           bgcolor: theme => theme.palette.primary.main,
                         },
-                        '& div > span > svg': {
+                        '& div > svg': {
                           color: theme => theme.palette.primary.main,
                         },
                       },
@@ -308,7 +308,7 @@ export default function App() {
                         '&:before': {
                           bgcolor: theme => theme.palette.success.main,
                         },
-                        '& div > span > svg': {
+                        '& div > svg': {
                           color: theme => theme.palette.success.main,
                         },
                       },
@@ -316,7 +316,7 @@ export default function App() {
                         '&:before': {
                           bgcolor: theme => theme.palette.warning.main,
                         },
-                        '& div > span > svg': {
+                        '& div > svg': {
                           color: theme => theme.palette.warning.main,
                         },
                       },
