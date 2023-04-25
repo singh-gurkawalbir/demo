@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { Badge, IconButton, Tooltip } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import clsx from 'clsx';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useHandleRouterClick } from '../../../hooks';
@@ -36,16 +35,12 @@ const useStyles = makeStyles(theme => ({
     height: '38px',
     position: 'absolute',
   },
-  nameGap: {
-    top: -45,
-  },
   name: {
     textTransform: 'none',
-    fontSize: '15px',
     fontWeight: 600,
     color: theme.palette.text.secondary,
-    wordBreak: 'break-all',
     background: theme.palette.background.paper,
+    whiteSpace: 'nowrap',
     ' & > * br': {
       display: 'none',
     },
@@ -61,12 +56,11 @@ export default function RouterNode({id: routerId, data = {}}) {
   const badgeContent = routeRecordsTo === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
   const handleRouterClick = useHandleRouterClick(routerId);
-  const nameGap = name?.length > 25 && name.indexOf(' ') > -1;
 
   return (
     <div className={classes.container}>
-      <div className={clsx(classes.nameContainer, nameGap && classes.nameGap)}>
-        <CeligoTruncate isLoggable className={classes.name} lines={2}>{name}</CeligoTruncate>
+      <div className={classes.nameContainer}>
+        <CeligoTruncate isLoggable className={classes.name} lines={1}>{name}</CeligoTruncate>
       </div>
       <DefaultHandle type="target" position={Position.Left} />
       <Tooltip title="Edit branching" placement="bottom" aria-label="Edit branching">
