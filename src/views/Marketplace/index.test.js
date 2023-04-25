@@ -27,6 +27,6 @@ describe('Marketplace test cases', () => {
     await initMarketplace();
 
     expect(screen.queryByText(/Marketplace/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Search template & integration apps')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search templates & integration apps')).toBeInTheDocument();
   });
 });
