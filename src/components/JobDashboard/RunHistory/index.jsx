@@ -211,7 +211,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
     let usersList = [];
 
     if (runHistory?.length) {
-      usersList = runHistory.reduce((acc, job) => job.canceledBy ? acc.add(job.canceledBy) : acc, new Set());
+      usersList = runHistory.reduce((acc, job) => job.canceledBy && job.canceledBy !== 'system' ? acc.add(job.canceledBy) : acc, new Set());
 
       usersList = [...usersList].map(_id => ({_id, name: allUsers[_id]}));
     }
