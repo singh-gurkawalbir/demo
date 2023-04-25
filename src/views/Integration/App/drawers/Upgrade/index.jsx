@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Typography,
+  Box,
 } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
@@ -32,12 +33,6 @@ import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import messageStore, {message as messageStoreMessage} from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapper: {
-    padding: theme.spacing(2, 3),
-  },
-  installIntegrationWrapperContent: {
-    maxWidth: 750,
-  },
   message: {
     marginBottom: theme.spacing(2),
   },
@@ -52,10 +47,6 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
-  },
-  installIntegrationSteps: {
-    display: 'flex',
-    flexDirection: 'column',
   },
   noIntegrationMsg: {
     padding: theme.spacing(3),
@@ -344,8 +335,8 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
 
   return (
     <LoadResources required resources="connections,integrations,published">
-      <div className={classes.installIntegrationWrapper}>
-        <div className={classes.installIntegrationWrapperContent}>
+      <Box sx={{ padding: theme => theme.spacing(2, 3) }}>
+        <Box sx={{ maxWidth: 750 }}>
           {helpUrl ? (
             <RawHtml
               className={classes.message}
@@ -353,7 +344,7 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
               html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.<br />
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (
-            <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
+            <Typography sx={{ marginBottom: theme => theme.spacing(2) }}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {changeEditionSteps.map((step, index) => (
@@ -367,8 +358,8 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
               />
             ))}
           </div>
-        </div>
-      </div>
+        </Box>
+      </Box>
       <FormStepDrawer integrationId={integrationId} />
       <ResourceSetupDrawer
         integrationId={integrationId}

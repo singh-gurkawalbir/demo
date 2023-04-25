@@ -7,7 +7,7 @@ import { useHistory, Redirect } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import { selectors } from '../../../../../reducers';
 import LoadResource from '../../../../../components/LoadResource';
@@ -22,15 +22,6 @@ import {HOME_PAGE_PATH} from '../../../../../constants';
 import messageStore, { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapper: {
-    padding: theme.spacing(2, 3),
-  },
-  installIntegrationWrapperContent: {
-    maxWidth: 750,
-  },
-  message: {
-    marginBottom: theme.spacing(2),
-  },
   formHead: {
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
@@ -43,16 +34,13 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
   },
-  installIntegrationSteps: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
   noIntegrationMsg: {
     padding: theme.spacing(3),
   },
 }));
 
 export default function Uninstaller1({ integration, integrationId, childId }) {
+  // eslint-disable-next-line no-unused-vars
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -189,15 +177,19 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
         />
-      <div className={classes.installIntegrationWrapper}>
-        <div className={classes.installIntegrationWrapperContent}>
-          <Typography className={classes.message}>
+      <Box sx={{ padding: theme => theme.spacing(2, 3) }}>
+        <Box sx={{ maxWidth: 750 }}>
+          <Typography sx={{ marginBottom: theme => theme.spacing(2) }}>
             {childName
               ? messageStore('INTEGRATION.UNINSTALL_APP_CHILD', {childName})
               : message.INTEGRATION.UNINSTALL}
           </Typography>
 
-          <div className={classes.installIntegrationSteps}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
             {(uninstallSteps || []).map((step, index) => (
               <InstallationStep
                 key={step.name}
@@ -207,9 +199,9 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
                 step={step}
               />
             ))}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     </div>
   );
 }

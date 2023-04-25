@@ -8,33 +8,13 @@ import {
   Redirect,
 } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { List, ListItem } from '@mui/material';
+import { List, ListItem, Box } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.background.paper,
-  },
-  container: {
-    display: 'flex',
-  },
-  subNav: {
-    minWidth: 200,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-    paddingBottom: theme.spacing(3),
-    overflowX: 'auto',
-  },
   listItem: {
     color: theme.palette.secondary.main,
   },
@@ -99,9 +79,20 @@ export default function AdminPanel({
   }
 
   return (
-    <div className={classes.root}>
-      <div className={classes.container}>
-        <div className={classes.subNav}>
+    <Box
+      sx={{
+        padding: theme => theme.spacing(0),
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        backgroundColor: theme => theme.palette.background.paper,
+      }}>
+      <Box sx={{ display: 'flex' }}>
+        <Box
+          sx={{
+            minWidth: 200,
+            borderRight: theme => `solid 1px ${theme.palette.secondary.lightest}`,
+            paddingTop: theme => theme.spacing(2),
+          }}>
           <List>
             {availableSections.map(({ path, label, id }) => (
               <ListItem key={path}>
@@ -115,8 +106,14 @@ export default function AdminPanel({
               </ListItem>
             ))}
           </List>
-        </div>
-        <div className={classes.content}>
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            paddingBottom: theme => theme.spacing(3),
+            overflowX: 'auto',
+          }}>
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
@@ -128,8 +125,8 @@ export default function AdminPanel({
               </Route>
             ))}
           </Switch>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

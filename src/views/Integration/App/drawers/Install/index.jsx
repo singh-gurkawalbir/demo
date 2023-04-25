@@ -10,6 +10,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import {
   Typography,
   Link,
+  Box,
 } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
@@ -39,12 +40,6 @@ import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapper: {
-    padding: theme.spacing(2, 3),
-  },
-  installIntegrationWrapperContent: {
-    maxWidth: 750,
-  },
   message: {
     marginBottom: theme.spacing(2),
   },
@@ -59,13 +54,6 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
-  },
-  installIntegrationSteps: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  noIntegrationMsg: {
-    padding: theme.spacing(3),
   },
 }));
 
@@ -304,7 +292,7 @@ export default function ConnectorInstallation() {
   ]);
 
   if (!installSteps) {
-    return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
+    return <Typography sx={{ padding: theme => theme.spacing(3) }}>No integration found</Typography>;
   }
 
   const handleUninstall = e => {
@@ -583,8 +571,8 @@ export default function ConnectorInstallation() {
 
         </div>
       </CeligoPageBar>
-      <div className={classes.installIntegrationWrapper}>
-        <div className={classes.installIntegrationWrapperContent}>
+      <Box sx={{ padding: theme => theme.spacing(2, 3) }}>
+        <Box sx={{ maxWidth: 750 }}>
           {helpUrl ? (
             <RawHtml
               className={classes.message}
@@ -592,9 +580,13 @@ export default function ConnectorInstallation() {
               html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (
-            <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
+            <Typography sx={{ marginBottom: theme => theme.spacing(2) }}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
-          <div className={classes.installIntegrationSteps}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
             {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
@@ -605,9 +597,9 @@ export default function ConnectorInstallation() {
                 isFrameWork2={isFrameWork2}
               />
             ))}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
       <FormStepDrawer integrationId={integrationId} />
       <ResourceSetupDrawer
         integrationId={integrationId}
