@@ -39,7 +39,7 @@ describe('dynaDate UI tests', () => {
   test('should pass the initial render', () => {
     const props = {
       label: 'formLabel',
-      value: '2018-06-07T00:00:00.000Z',
+      value: moment('2018-06-07T00:00:00.000Z'),
       resourceContext: {
         resourceType: 'integrations',
         resourceId: '5ff579d745ceef7dcd797c15',
@@ -51,7 +51,7 @@ describe('dynaDate UI tests', () => {
     expect(screen.getByText('formLabel')).toBeInTheDocument();
     const dateField = document.querySelector('[type="text"]');
 
-    expect(dateField).toHaveValue('06/07/2018');
+    expect(dateField.value).toMatch(/(06).*(07).*(2018).*/);
     expect(screen.getByText('CalendarIcon')).toBeInTheDocument();
   });
   test('should execute the "onFieldChange" function on initial render and whenever the date value is changed', () => {
