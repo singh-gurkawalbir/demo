@@ -33,7 +33,7 @@ export default {
       dataError = util.validateJsonString(data);
     }
 
-    if (!(rule.scriptId || rule?.javascript?.scriptId)) {
+    if (!rule.scriptId) {
       return {ruleError: 'Script is required'};
     }
     if (!(rule.entryFunction || rule?.javascript?.entryFunction)) {
