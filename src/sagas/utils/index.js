@@ -916,6 +916,7 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     // disable application field for connection
     tempFiledMeta.fieldMap.application.defaultDisabled = true;
   }
+  !tempFiledMeta.fieldMap.provider.defaultValue && (tempFiledMeta.fieldMap.provider.defaultValue = 'custom_oauth2');
 
   return tempFiledMeta;
 };
