@@ -1,4 +1,6 @@
 import React, { useState, useContext, useEffect} from 'react';
+import { useSelector } from 'react-redux';
+import { selectors } from '../../reducers/user';
 import { getDomain } from '../../utils/resource';
 import retry from '../../utils/retry';
 
@@ -21,30 +23,35 @@ export const FeatureFlagProvider = ({ children }) => {
 
 export const useFeautureContext = () => useContext(FeatureFlagContext);
 
-export const useFeatureVisibility = (featureName, user) => {
+export const useFeatureVisibility = () => {
   const featureData = useContext(FeatureFlagContext);
-
-  if (!featureData || !featureData[featureName]) {
-    return false;
-  }
+  const features = Object.keys(featureData);
+  const {_id: userId} = useSelector(state => selectors.userProfile(state));
   const domain = getDomain();
-  const feature = featureData[featureName];
-  const noUserRestirction = !feature?.allowedUsers || feature?.allowedUsers?.length === 0;
-  const noDomainRestriction = !feature?.enabledDomains || feature?.enabledDomains?.length === 0;
-  const isCurrentDomainEnabled = feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain));
-  const isCurrentUserEnabled = feature?.allowedUsers && (feature?.enabledDomains?.length === 0 || feature?.allowedUsers?.includes(user));
-
-  if (feature?.enabled === 'true') {
-    if (noDomainRestriction) {
-      return noUserRestirction ? true : isCurrentUserEnabled;
+  const enabledFeatures = features.filter(featureName => {
+    if (!featureData || !featureData[featureName]) {
+      return false;
     }
-    if (isCurrentDomainEnabled) {
-      return noUserRestirction ? true : isCurrentUserEnabled;
+    const feature = featureData[featureName];
+    const noUserRestirction = !feature?.allowedUsers || feature?.allowedUsers?.length === 0;
+    const noDomainRestriction = !feature?.enabledDomains || feature?.enabledDomains?.length === 0;
+    const isCurrentDomainEnabled = feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain));
+    const isCurrentUserEnabled = feature?.allowedUsers && (feature?.enabledDomains?.length === 0 || feature?.allowedUsers?.includes(userId));
+
+    if (feature?.enabled === 'true') {
+      if (noDomainRestriction) {
+        return noUserRestirction ? true : isCurrentUserEnabled;
+      }
+      if (isCurrentDomainEnabled) {
+        return noUserRestirction ? true : isCurrentUserEnabled;
+      }
+
+      return false;
     }
 
     return false;
-  }
+  });
 
-  return false;
+  return enabledFeatures;
 };
 
