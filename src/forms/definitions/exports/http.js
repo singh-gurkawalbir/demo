@@ -249,10 +249,6 @@ export default {
 
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
-    if (retValues['/http/response/fileURLPaths']) {
-      retValues['/http/response/fileURLPaths'] = retValues['/http/response/fileURLPaths'].split(',');
-    }
-
     return {
       ...retValues,
     };

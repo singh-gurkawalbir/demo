@@ -504,6 +504,7 @@ export default {
   'http.response.fileURLPaths': {
     isLoggable: true,
     type: 'text',
+    delimiter: ',',
     label: 'Path to file URLs in HTTP response body',
     visibleWhenAll: [
       {
