@@ -2,11 +2,11 @@ import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
 import { isEmpty, set, unset, get } from 'lodash';
 import util from '../../utils/array';
-import { isNewId } from '../../utils/resource';
+import { getDomainUrl, isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
-import { AUTHENTICATION_LABELS, CONNECTORS_TO_IGNORE, emptyObject } from '../../constants';
+import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 import customCloneDeep from '../../utils/customCloneDeep';
 import { applicationsList, getHttpConnector } from '../../constants/applications';
 
@@ -849,8 +849,14 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
 };
 
 export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow, httpConnectorData, isGenericHTTP) => {
-  const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
-  const app = applications.find(a => a.id === (resource?.assistant || resource?.application)) || {};
+  const applications = applicationsList().filter(app => app._httpConnectorId);
+  let app;
+
+  if (resource?.application) {
+    app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource?.application) || {};
+  } else if (resource?.assistant) {
+    app = applications.find(a => a.id === resource?.assistant) || {};
+  }
   const tempFiledMeta = customCloneDeep(fieldMeta);
 
   const iClientPathMap = {
@@ -887,10 +893,16 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
       // new Iclient
       !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0]);
-    } else if (resource?.application && (resource._httpConnectorId !== httpConnectorData._id)) {
+      if (key === 'oauth2.callbackURL') {
+        !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = `${getDomainUrl()}/connection/oauth2callback`);
+      }
+    } else if (resource?.application && (resource?._httpConnectorId !== httpConnectorData?._id)) {
       // change application in existing iclient should refresh all the preconfigured values
       tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField ? preConfiguredField?.values[0] : '';
-    } else if (resource?.application && preConfiguredField && (resource._httpConnectorId === httpConnectorData._id)) {
+      if (key === 'oauth2.callbackURL') {
+        !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = `${getDomainUrl()}/connection/oauth2callback`);
+      }
+    } else if (resource?.application && preConfiguredField && (resource?._httpConnectorId === httpConnectorData?._id)) {
       // If application is not changed in the existing Iclient it should not change preconfigured value
       tempFiledMeta?.fieldMap[key]?.defaultValue;
     } else if (resource?.application === 'custom_oauth2') {
@@ -899,7 +911,7 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
       tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
     }
   });
-  if (!app._httpConnectorId) {
+  if (!app?._httpConnectorId) {
     delete tempFiledMeta.layout.containers[0].fields[3];
   }
   const httpApplicaions = applicationsList().filter(a => a._httpConnectorId);
@@ -917,8 +929,8 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
   if (resource?.application === 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = 'custom_oauth2';
   } else if ((resource?.application || resource?.assistant) && resource?.application !== 'custom_oauth2') {
-    tempFiledMeta.fieldMap.application.defaultValue = connectorData?.legacyId || connectorData?.name;
-  } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.legacyId || connectorData?.name) : 'custom_oauth2'); }
+    tempFiledMeta.fieldMap.application.defaultValue = connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId;
+  } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId) : 'custom_oauth2'); }
 
   return tempFiledMeta;
 };
@@ -1037,6 +1049,15 @@ export function resourceConflictResolution({ merged, master, origin }) {
   }
 
   return { conflict: null, merged: updatedMerged };
+}
+export function generateInnerHTMLForSignUp(params) {
+  let string = '';
+
+  Object.keys(params).forEach(key => {
+    string = `${string}<input name="${key}" value="${params[key]}">`;
+  });
+
+  return string;
 }
 
 export function* constructResourceFromFormValues({

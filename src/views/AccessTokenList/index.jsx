@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import ResourceTable from '../../components/ResourceTable';
@@ -7,8 +7,6 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import actions from '../../actions';
-import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
@@ -19,6 +17,7 @@ import { TextButton } from '../../components/Buttons';
 import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
+import KeywordSearch from '../../components/KeywordSearch';
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
@@ -26,20 +25,16 @@ const defaultFilter = {
 
 export default function AccessTokenList(props) {
   const { integrationId, location } = props;
+  const filterKey = 'accesstokens';
   const filter = useSelector(state =>
-    selectors.filter(state, 'accesstokens') || defaultFilter
+    selectors.filter(state, filterKey) || defaultFilter
   );
   const list = useSelector(state =>
     selectors.accessTokenList(state, { integrationId, ...filter })
   );
 
-  const dispatch = useDispatch();
-  const newProps = { ...props, resourceType: 'accesstokens' };
-  const handleKeywordChange = e => {
-    dispatch(
-      actions.patchFilter('accesstokens', { keyword: e.target.value })
-    );
-  };
+  const newProps = { ...props, resourceType: filterKey };
+
   const showPagingBar = list.count >= 100;
   const hidePagingBar = list.count === list.filtered;
 
@@ -55,7 +50,10 @@ export default function AccessTokenList(props) {
 
         <CeligoPageBar title="API tokens" infoText={infoText.accesstokens}>
           <ActionGroup>
-            <SearchInput onChange={handleKeywordChange} />
+            <KeywordSearch
+              filterKey={filterKey}
+              autoFocus
+          />
             <TextButton
               data-test="newAccessToken"
               component={Link}

@@ -5,7 +5,7 @@ import { selectors } from '../../reducers';
 import SearchInputPageBar from '../SearchInput/SearchInputPageBar';
 import useDebouncedValue from '../../hooks/useDebouncedInput';
 
-export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHolder}) {
+export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHolder, className}) {
   const dispatch = useDispatch();
   const filter =
     useSelector(state => selectors.filter(state, filterKey));
@@ -37,6 +37,7 @@ export default function KeywordSearch({ filterKey, onFocus, autoFocus, placeHold
       autoFocus={autoFocus}
       onFocus={onFocus}
       placeHolder={placeHolder}
+      className={className}
   />
   );
 }

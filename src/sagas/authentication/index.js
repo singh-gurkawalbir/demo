@@ -18,6 +18,7 @@ import {
   removeCSRFToken,
 } from '../../utils/session';
 import { safeParse } from '../../utils/string';
+import { generateInnerHTMLForSignUp } from '../utils/index';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -644,6 +645,20 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
+export function* signUpWithGoogle({ returnTo, utmParams = {}}) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const htmlForUtmParams = generateInnerHTMLForSignUp(utmParams);
+  const form = document.createElement('form');
+
+  form.id = 'signinWithGoogle';
+  form.method = 'POST';
+  form.action = `/auth/google?returnTo=${returnTo || getRoutePath('/')}`;
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">${htmlForUtmParams}`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 export function* signInWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
   const form = document.createElement('form');
@@ -740,6 +755,7 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH.SIGNUP_WITH_GOOGLE, signUpWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),

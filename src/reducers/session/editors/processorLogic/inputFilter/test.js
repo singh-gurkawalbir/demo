@@ -74,6 +74,7 @@ describe('inputFilter processor logic', () => {
           },
         },
         activeProcessor: 'javascript',
+        skipEmptyRuleCleanup: true,
       };
 
       expect(init({resource, options})).toEqual(expectedOutput);
@@ -102,6 +103,7 @@ describe('inputFilter processor logic', () => {
           },
         },
         activeProcessor: 'filter',
+        skipEmptyRuleCleanup: true,
       };
 
       expect(init({resource, options})).toEqual(expectedOutput);
