@@ -28,6 +28,7 @@ import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 import FlowIconView from '../../../../components/icons/FlowIconView';
 import Help from '../../../../components/Help';
+import { useFeatureVisibility } from '../../../../components/FeatureFlag';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -221,12 +222,14 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
   );
   const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
 
-  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const { showIconView } = preferences;
+  // const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  // const { showIconView } = preferences;
 
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
 
-  const showIconViewToggle = process.env.ICON_VIEW_FLOWBUILDER === 'true' && showIconView;
+  // const showIconViewToggle = process.env.ICON_VIEW_FLOWBUILDER === 'true' && showIconView;
+
+  const featureFlag = useFeatureVisibility('flowbuilderIconView', 'id1');
 
   const pushOrReplaceHistory = usePushOrReplaceHistory();
 
@@ -273,7 +276,7 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
 
   return (
     <div className={classes.actions}>
-      {(showIconViewToggle && (
+      {(featureFlag && (
         <>
           {(isIconView && (
           <Help

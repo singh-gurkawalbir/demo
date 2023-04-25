@@ -1,7 +1,7 @@
 {
   "flowbuilderIconView": {
     "enabled": "true",
-    "enabledDomains": ["qa.staging.integrator.io","core.dev.integrator.io"],
-    "allowedUsers":["634546cd73072a2dce9287fa","632846cd73072a2dce9287fa"]
+    "enabledDomains": ["qa.staging.integrator.io","core.dev.integrator.io","localhost.io"],
+    "allowedUsers":["630c77bbedde085ba0de1696"]
   }
 }

@@ -22,19 +22,32 @@ export const FeatureFlagProvider = ({ children }) => {
 export const useFeatureVisibility = (featureName, user) => {
   const featureData = useContext(FeatureFlagContext);
 
-  console.log(featureData);
+  console.log({featureData});
+  console.log('fe', featureData[featureName]);
+
   if (!featureData || !featureData[featureName]) {
     return false;
   }
   const domain = getDomain();
-  const feature = featureData.featureName;
+  const feature = featureData[featureName];
+  const noUserRestirction = !feature?.allowedUsers || feature?.allowedUsers?.length === 0;
+  const noDomainRestriction = !feature?.enabledDomains || feature?.enabledDomains?.length === 0;
+  const isCurrentDomainEnabled = feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain));
+  const isCurrentUserEnabled = feature?.allowedUsers && (feature?.enabledDomains?.length === 0 || feature?.allowedUsers?.includes(user));
 
-  if (feature.enabled === 'true' && feature.enabledDomains.includes(domain)) {
-    if (!feature.allowedUsers) {
-      return true;
+  console.log({isCurrentDomainEnabled});
+  console.log({domain});
+  console.log({feature});
+
+  if (feature?.enabled === 'true') {
+    if (noDomainRestriction) {
+      return noUserRestirction ? true : isCurrentUserEnabled;
+    }
+    if (isCurrentDomainEnabled) {
+      return noUserRestirction ? true : isCurrentUserEnabled;
     }
 
-    return feature.allowedUsers.includes(user);
+    return false;
   }
 
   return false;
