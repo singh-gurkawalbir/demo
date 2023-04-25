@@ -1,7 +1,7 @@
 import React from 'react';
-import {screen } from '@testing-library/react';
+import {cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { reduxStore, renderWithProviders } from '../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../test/test-utils';
 import BranchFilterPanel from '.';
 import actions from '../../actions';
 
@@ -20,6 +20,13 @@ const handlePatchEditor = jest.fn();
 const type = 'ioFilter';
 
 function initBranchFilterPanel(props = {}, ops = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {
+      [editorId]: {
+        skipEmptyRuleCleanup: true,
+      },
+    };
+  });
   const inputProps = {
     editorId,
     rule,
@@ -108,28 +115,23 @@ describe('Branch filter panel test cases', () => {
     initBranchFilterPanel({rule});
     expect(screen.getByText('record.sampleField')).toBeInTheDocument();
   });
-  test('should not call skipEmptyRuleCleanup for ioFilter', async () => {
-    const inputProps = {
-      rule: undefined,
-      position: 0,
-      type: 'ioFilter',
-    };
-
-    initBranchFilterPanel(inputProps);
+  test('should call skipEmptyRuleCleanup for ioFilter with correct action', async () => {
+    initBranchFilterPanel();
     const addRuleButton = screen.getByRole('button', {name: 'Add rule'});
 
     expect(addRuleButton).toBeInTheDocument();
     await userEvent.click(addRuleButton);
 
-    expect(mockDispatch).not.toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
-      rulePath: 'branches[0].skipEmptyRuleCleanup',
-    }));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: true})
+    );
   });
   test('should dispatch actions with correct params on rerender', async () => {
+    const position = 0;
     const inputProps = {
       rule: undefined,
-      position: 0,
       type: 'branchFilter',
+      position,
     };
     const renderUtil = initBranchFilterPanel(inputProps);
     const addRuleButton = screen.getByRole('button', {name: 'Add condition'});
@@ -137,7 +139,8 @@ describe('Branch filter panel test cases', () => {
     await userEvent.click(addRuleButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
-      rulePath: 'branches[0].skipEmptyRuleCleanup',
+      actionType: 'setSkipEmptyRuleCleanup',
+      position,
     }));
     const updatedProps = {...inputProps, position: 1};
 
@@ -145,7 +148,48 @@ describe('Branch filter panel test cases', () => {
 
     await userEvent.click(addRuleButton);
     expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, true, {
-      rulePath: 'branches[1].skipEmptyRuleCleanup',
+      actionType: 'setSkipEmptyRuleCleanup',
+      position,
     }));
+  });
+  describe('should dispatch actions with correct params on unmount', () => {
+    test('for branch filter', () => {
+      const position = 0;
+      const inputProps = {
+        rule: undefined,
+        position,
+        type: 'branchFilter',
+      };
+
+      initBranchFilterPanel(inputProps);
+
+      cleanup();
+
+      expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchFeatures(editorId, {
+        isInvalid: false,
+        error: undefined,
+        disablePreview: false,
+      }));
+
+      expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, false, {
+        actionType: 'setSkipEmptyRuleCleanup',
+        position,
+      }));
+    });
+    test('for ioFilter', () => {
+      initBranchFilterPanel();
+
+      cleanup();
+
+      expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchFeatures(editorId, {
+        isInvalid: false,
+        error: undefined,
+        disablePreview: false,
+      }));
+
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: false})
+      );
+    });
   });
 });
