@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
       border: `1px solid ${theme.palette.secondary.lightest}`,
       width: 256,
     },
+    '& .MuiBackdrop-root': {
+      backgroundColor: 'transparent',
+    },
   },
   icon: {
     backgroundColor: theme.palette.background.default,
@@ -93,7 +96,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         onClose={handleMenuClose}
         className={classes.createMenu}
         transformOrigin={{
-          vertical: -34,
+          vertical: 'top',
           horizontal: 176,
         }}
       >

@@ -67,7 +67,11 @@ export default function TableHeader({
           useColumns={useColumns}
         />
         {useRowActions && (
-        <TableCell align="center" className={classes.actionColHead}>
+        <TableCell
+          align="center"
+          className={classes.actionColHead}
+          sx={{padding: '10px 16px'}}
+        >
           Actions
         </TableCell>
         )}

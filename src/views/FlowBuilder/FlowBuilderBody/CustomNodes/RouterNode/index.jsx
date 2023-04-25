@@ -76,6 +76,7 @@ export default function RouterNode({id: routerId, data = {}}) {
           className={classes.button}
           onClick={handleRouterClick}
           disabled={isFlowSaveInProgress}
+          sx={{padding: '3px', width: 32 }}
         >
           <Badge
             badgeContent={badgeContent}
