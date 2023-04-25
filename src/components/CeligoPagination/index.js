@@ -53,6 +53,11 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
+  selectWrapper: {
+    '& .MuiBackdrop-root': {
+      backgroundColor: 'transparent',
+    },
+  },
 }));
 
 export default function Pagination({
@@ -92,7 +97,12 @@ export default function Pagination({
             IconComponent={ArrowDownIcon}
             disableUnderline
             displayEmpty
-            onChange={onChangeRowsPerPage}>
+            onChange={onChangeRowsPerPage}
+            inputProps={{
+              MenuProps: {
+                className: classes.selectWrapper,
+              },
+            }}>
             {rowsPerPageOptions.map(opt => (
               <MenuItem key={opt} value={opt}>
                 {opt}

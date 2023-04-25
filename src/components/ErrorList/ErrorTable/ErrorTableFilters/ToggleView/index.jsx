@@ -19,6 +19,11 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
     },
   },
+  selectWrapper: {
+    '& .MuiBackdrop-root': {
+      backgroundColor: 'transparent',
+    },
+  },
 }));
 
 const toggleOptions = {
@@ -42,7 +47,12 @@ export default function ToggleViewSelect({
       id="toggle-view"
       value={viewType || defaultView}
       className={classes.toggleViewSelect}
-      onChange={handleToggleChange}>
+      onChange={handleToggleChange}
+      inputProps={{
+        MenuProps: {
+          className: classes.selectWrapper,
+        },
+      }}>
       {toggleOptions[variant]?.map(item => (
         <MenuItem key={item.value} className={classes.item} value={item.value}>{item.Icon}</MenuItem>
       ))}

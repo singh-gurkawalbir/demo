@@ -17,8 +17,6 @@ import actions from '../../../../../actions';
 const useStyles = makeStyles(theme => ({
   title: {
     cursor: 'default',
-    left: ({ xOffset }) => xOffset,
-    width: ({ columnWidth }) => `calc(100% - ${columnWidth}px)`,
     background: `linear-gradient(${theme.palette.background.paper}, 95%, #FFF0)`,
   },
 }));
@@ -70,7 +68,12 @@ const DestinationTitle = () => {
 
   return (
     <>
-      <Title onClick={handleOpenMenu} className={classes.title}>
+      <Title
+        onClick={handleOpenMenu} className={classes.title}
+        sx={{
+          left: xOffset,
+          width: `calc(100% - ${columnWidth}px)`,
+        }}>
         {isDataLoaderFlow ? 'DESTINATION APPLICATION' : 'DESTINATIONS & LOOKUPS'}
       </Title>
 

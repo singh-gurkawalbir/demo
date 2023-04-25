@@ -32,7 +32,6 @@ import AcceptInvite from '../views/AcceptInvite';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
-import colors from '../theme/colors';
 import AppErroredModal from './AppErroredModal';
 import WithAuth from './AppRoutingWithAuth';
 import CrashReporter from './CrashReporter';
@@ -284,41 +283,41 @@ export default function App() {
                 <FormOnCancelProvider>
                   <SnackbarProvider
                     sx={{
-                      // '& .SnackbarItem-variantInfo': {
-                      //   bgcolor: colors.celigoWhite,
-                      //   '&:before': {
-                      //     bgcolor: colors.celigoAccent2,
-                      //   },
-                      //   '& div > span > svg': {
-                      //     color: colors.celigoAccent2,
-                      //   },
-                      // },
-                      // '& .SnackbarItem-variantSuccess': {
-                      //   bgcolor: colors.celigoWhite,
-                      //   '&:before': {
-                      //     bgcolor: colors.celigoSuccess,
-                      //   },
-                      //   '& div > span > svg': {
-                      //     color: colors.celigoSuccess,
-                      //   },
-                      // },
-                      // '& .SnackbarItem-variantWarning': {
-                      //   bgcolor: colors.celigoWhite,
-                      //   '&:before': {
-                      //     bgcolor: colors.celigoWarning,
-                      //   },
-                      //   '& div > span > svg': {
-                      //     color: colors.celigoWarning,
-                      //   },
-                      // },
-                      '& .SnackbarItem-variantError': {
-                        bgcolor: colors.celigoWhite,
-                        color: colors.celigoNeutral8,
+                      '& .SnackbarItem-variantInfo': {
+                        bgcolor: theme => theme.palette.background.paper,
                         '&:before': {
-                          bgcolor: colors.celigoError,
+                          bgcolor: theme => theme.palette.primary.main,
+                        },
+                        '& div > span > svg': {
+                          color: theme => theme.palette.primary.main,
+                        },
+                      },
+                      '& .SnackbarItem-variantSuccess': {
+                        bgcolor: theme => theme.palette.background.paper,
+                        '&:before': {
+                          bgcolor: theme => theme.palette.success.main,
+                        },
+                        '& div > span > svg': {
+                          color: theme => theme.palette.success.main,
+                        },
+                      },
+                      '& .SnackbarItem-variantWarning': {
+                        bgcolor: theme => theme.palette.background.paper,
+                        '&:before': {
+                          bgcolor: theme => theme.palette.warning.main,
+                        },
+                        '& div > span > svg': {
+                          color: theme => theme.palette.warning.main,
+                        },
+                      },
+                      '& .SnackbarItem-variantError': {
+                        bgcolor: theme => theme.palette.background.paper,
+                        color: theme => theme.palette.text.primary,
+                        '&:before': {
+                          bgcolor: theme => theme.palette.error.main,
                         },
                         '& div > svg': {
-                          color: colors.celigoError,
+                          color: theme => theme.palette.error.main,
                         },
                       },
                       '& .SnackbarItem-message': {
