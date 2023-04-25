@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -47,9 +46,9 @@ describe('jobStatusWithTag test cases', () => {
   test('should show empty dom when no props are provided', () => {
     const {utils} = initJobStatusWithTag({});
 
-    expect(utils.container).toBeUndefined();
+    expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should be able to view who canceled the flow', () => {
+  test('should be able to view who canceled the flow', async () => {
     const job = {
       status: 'canceled',
       type: 'flow',
@@ -73,7 +72,7 @@ describe('jobStatusWithTag test cases', () => {
     expect(screen.getByText('Canceled')).toBeInTheDocument();
     const infoButton = screen.getByRole('button');
 
-    userEvent.click(infoButton);
+    await userEvent.click(infoButton);
     const canceledByInfo = screen.getByRole('tooltip');
 
     expect(canceledByInfo).toHaveTextContent('Canceled by lorem ipsum dolor sit amet');

@@ -87,10 +87,10 @@ describe('Branch filter component test cases', () => {
     expect(screen.getByText(JSON.stringify(rule))).toBeInTheDocument();
   });
 
-  test('should dispatch correct action for patching the editor', () => {
+  test('should dispatch correct action for patching the editor', async () => {
     initBranchFilter();
 
-    userEvent.click(screen.getByText('Branch filter panel'));
+    await userEvent.click(screen.getByText('Branch filter panel'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.editor.patchRule(editorId, rule, {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { Router } from 'react-router-dom';
@@ -270,7 +269,7 @@ describe('Flow ellipsis menu ui tests', () => {
 
     expect(auditlogButton).toBeInTheDocument();
     await userEvent.click(auditlogButton);
-    waitFor(() => expect(screen.getByText('/Audit Log/i')).toBeInTheDocument());
+    expect(screen.getByText('Audit Log', {exact: false})).toBeInTheDocument();
   });
   test('should display and perform the functionality of Usedby references button', async () => {
     history.push = jest.fn();
