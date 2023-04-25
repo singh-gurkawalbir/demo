@@ -1,4 +1,4 @@
-import { layoutHasField, removeFieldFromLayout, fetchMetadataFieldList } from '../form/metadata';
+import { layoutHasField, removeFieldFromLayout, fetchMetadataFieldList, mergeMetadata } from '../form/metadata';
 import customCloneDeep from '../customCloneDeep';
 
 export const DISPLAY_REF_SUPPORTED_RESOURCE_TYPES = ['exports', 'imports'];
@@ -147,4 +147,24 @@ export function getConnectorCustomSettings(resourceFormMetadata, settingsFormMet
   const csMetadata = refineCustomSettings(settingsFormMetadata, resourceType);
 
   return getMetadataWithFilteredDisplayRef(resourceFormMetadata, csMetadata);
+}
+
+export function getUserDefinedWithEndPointCustomSettingsPatch(endpointCustomSettings, userDefinedCustomSettings) {
+  const mergedMetadata = mergeMetadata(userDefinedCustomSettings, endpointCustomSettings);
+
+  if (mergedMetadata) {
+    return [{
+      op: 'replace',
+      path: '/settingsForm',
+      value: { form: mergedMetadata },
+    }];
+  }
+
+  const emptySettingsFormPatch = {
+    op: 'replace',
+    path: '/settingsForm',
+    value: {},
+  };
+
+  return [emptySettingsFormPatch];
 }

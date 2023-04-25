@@ -1,3 +1,4 @@
+import customCloneDeep from '../../customCloneDeep';
 
 export function getFieldIdsInLayoutOrder(layout) {
   const fields = [];
@@ -65,4 +66,39 @@ export function fetchMetadataFieldList(metadata) {
 
   // if layout, go through all containers and accumulate fieldIds
   return getFieldIdsInLayoutOrder(layout);
+}
+
+export function mergeMetadata(src, toMerge) {
+  if (!src && !toMerge) return;
+  if (!src || !toMerge) return src || toMerge;
+
+  const srcFieldIds = fetchMetadataFieldList(src);
+  const toMergeFieldIds = fetchMetadataFieldList(toMerge);
+
+  const mergedMetadata = customCloneDeep(src);
+
+  const newFieldIds = [];
+
+  toMergeFieldIds.forEach(fieldId => {
+    // over ride field definition with toMerge's field definition
+    mergedMetadata.fieldMap[fieldId] = toMerge.fieldMap[fieldId];
+    if (!srcFieldIds.includes(fieldId) && mergedMetadata.layout) {
+      // if the mergedMetadata does not have this field add to the list
+      newFieldIds.push(fieldId);
+    }
+  });
+
+  if (newFieldIds.length) {
+    // If it is just a single container with list of fields, directly push the new fields to that list
+    if (mergedMetadata.layout.containers?.length === 1 && mergedMetadata.layout.containers[0].fields?.length) {
+      mergedMetadata.layout.containers[0].fields.push(...newFieldIds);
+    } else {
+        // push all new fieldIds into a new container in mergedMetadata
+        mergedMetadata.layout.containers?.push({
+          fields: newFieldIds,
+        });
+    }
+  }
+
+  return mergedMetadata;
 }

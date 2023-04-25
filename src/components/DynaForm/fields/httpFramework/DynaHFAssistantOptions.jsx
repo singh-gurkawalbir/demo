@@ -8,19 +8,9 @@ import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
-import { getHelpKey, getEndPointCustomSettings } from '../../../../utils/httpConnector';
+import { getHelpKey, getEndPointCustomSettings, getUserDefinedWithEndPointCustomSettingsPatch } from '../../../../utils/httpConnector';
 
 const emptyObj = {};
-const emptySettingsPatch = {
-  op: 'replace',
-  path: '/settings',
-  value: undefined,
-};
-const emptySettingsFormPatch = {
-  op: 'replace',
-  path: '/settingsForm',
-  value: {},
-};
 
 export const useHFSetInitializeFormData = ({
   resourceType,
@@ -57,6 +47,30 @@ export const useHFSetInitializeFormData = ({
     resourceType,
   ]);
 };
+
+function useGetCustomSettingsPatchOnFieldChange(props) {
+  const { resourceId, resourceType } = props;
+  // TODO: handle for form script as well
+  const userDefinedCustomSettingsForm = useSelector(state => selectors.resource(state, resourceType, resourceId)?.settingsForm?.form);
+
+  const getCustomSettingsPatch = useCallback((assistantFieldType, value, assistantData, fields) => {
+    if (assistantFieldType === 'resource') {
+      return getUserDefinedWithEndPointCustomSettingsPatch(undefined, userDefinedCustomSettingsForm);
+    }
+    if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
+      const resource = fields.find(field => field.id === 'assistantMetadata.resource')?.value;
+
+      const httpConnectorMetaData = assistantData[resourceType === 'imports' ? 'import' : 'export'];
+      const endpointCustomSettings = getEndPointCustomSettings(httpConnectorMetaData, resource, value);
+
+      return getUserDefinedWithEndPointCustomSettingsPatch(endpointCustomSettings, userDefinedCustomSettingsForm);
+    }
+
+    return [];
+  }, [resourceType, userDefinedCustomSettingsForm]);
+
+  return getCustomSettingsPatch;
+}
 
 function setDefaultValuesForDelta(paramName, paramsMeta, params, result) {
   const anyParamValuesSet = paramsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(params, field.id) && params[field.id] !== field.defaultValue);
@@ -144,6 +158,7 @@ function DynaAssistantOptions(props) {
   );
 
   const dispatch = useDispatch();
+  const getCustomSettingsPatch = useGetCustomSettingsPatchOnFieldChange({ resourceId, resourceType });
   const selectOptionsItems = useMemo(() => {
     if (['version', 'resource', 'operation', 'createEndpoint', 'updateEndpoint'].includes(assistantFieldType)) {
       return selectOptions({
@@ -181,30 +196,6 @@ function DynaAssistantOptions(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, value]);
-
-  const getCustomSettingsPatch = useCallback((id, value) => {
-    if (assistantFieldType === 'resource') {
-      return [emptySettingsFormPatch, emptySettingsPatch];
-    }
-    if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
-      const resource = fields.find(field => field.id === 'assistantMetadata.resource')?.value;
-
-      const httpConnectorMetaData = assistantData[resourceType === 'imports' ? 'import' : 'export'];
-      const endpointCustomSettings = getEndPointCustomSettings(httpConnectorMetaData, resource, value);
-
-      if (!endpointCustomSettings) {
-        return [emptySettingsFormPatch, emptySettingsPatch];
-      }
-
-      return [{
-        op: 'replace',
-        path: '/settingsForm',
-        value: { form: endpointCustomSettings },
-      }, emptySettingsPatch];
-    }
-
-    return [];
-  }, [assistantData, assistantFieldType, fields, resourceType]);
 
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
@@ -316,7 +307,7 @@ function DynaAssistantOptions(props) {
       }
 
       // custom settings patch
-      const csPatch = getCustomSettingsPatch(id, value) || [];
+      const csPatch = getCustomSettingsPatch(assistantFieldType, value, assistantData, fields) || [];
 
       patch.push(...csPatch);
 
