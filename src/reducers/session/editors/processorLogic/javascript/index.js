@@ -36,7 +36,7 @@ export default {
     if (!rule.scriptId) {
       return {ruleError: 'Script is required'};
     }
-    if (!(rule.entryFunction || rule?.javascript?.entryFunction)) {
+    if (!rule.entryFunction) {
       return {ruleError: 'Function is required'};
     }
 
