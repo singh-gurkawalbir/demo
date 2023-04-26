@@ -215,6 +215,29 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
+function extractQueryParameters(queryString, assistant) {
+  const queryParams = qs.parse(queryString, {
+    delimiter: /[?&]/,
+    depth: 0,
+    decoder(str, defaultDecoder) {
+      if (assistant !== 'liquidplanner') return defaultDecoder(str);
+
+      // a unique case where query name contains '=' operator
+      // IO-1683
+      if (str === 'filter[]') {
+        return 'filter[]=name';
+      }
+      if (str.startsWith('name=')) {
+        return defaultDecoder(str.substring(5));
+      }
+
+      return defaultDecoder(str);
+    },
+  }); /* depth should be 0 to handle IO-1683 */
+
+  return queryParams;
+}
+
 function populateDefaults({
   child = {},
   parent = {},
@@ -1094,25 +1117,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     if (urlMatch.urlParts && urlMatch.urlParts[urlMatch.urlParts.length - 1]) {
       toParseQueryString = urlMatch.urlParts[urlMatch.urlParts.length - 1];
     }
-
-    queryParams = qs.parse(toParseQueryString, {
-      delimiter: /[?&]/,
-      depth: 0,
-      decoder(str, defaultDecoder) {
-        if (exportDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-        // a unique case where query name contains '=' operator
-        // IO-1683
-        if (str === 'filter[]') {
-          return 'filter[]=name';
-        }
-        if (str.startsWith('name=')) {
-          return defaultDecoder(str.substring(5));
-        }
-
-        return defaultDecoder(str);
-      },
-    }); /* depth should be 0 to handle IO-1683 */
+    queryParams = extractQueryParameters(toParseQueryString, exportDoc.assistant);
   }
 
   if (exportAdaptorSubSchema.postBody) {
@@ -2220,26 +2225,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
             lookupUrlInfo.urlParts &&
             lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1]
           ) {
-            lookupQueryParams = qs.parse(
+            lookupQueryParams = extractQueryParameters(
               lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1],
-              { delimiter: /[?&]/,
-                depth: 0,
-                decoder(str, defaultDecoder) {
-                  if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-                  // a unique case where query name contains '=' operator
-                  // IO-1683
-                  if (str === 'filter[]') {
-                    return 'filter[]=name';
-                  }
-                  if (str.startsWith('name=')) {
-                    return defaultDecoder(str.substring(5));
-                  }
-
-                  return defaultDecoder(str);
-                },
-              }
-            ); /* depth should be 0 to handle IO-1683 */
+              importDoc.assistant
+            );
           }
 
           lookupUrl = lookupUrlInfo.urlMatch;
@@ -2261,24 +2250,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
       url1Info.urlParts.splice(url1Info.urlParts.length - 1);
       /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
     }
-    queryParams = qs.parse(toParseQueryString, {
-      delimiter: /[?&]/,
-      depth: 0,
-      decoder(str, defaultDecoder) {
-        if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-        // a unique case where query name contains '=' operator
-        // IO-1683
-        if (str === 'filter[]') {
-          return 'filter[]=name';
-        }
-        if (str.startsWith('name=')) {
-          return defaultDecoder(str.substring(5));
-        }
-
-        return defaultDecoder(str);
-      },
-    }); /* depth should be 0 to handle IO-1683 */
+    queryParams = extractQueryParameters(toParseQueryString, importDoc.assistant);
   }
 
   if (importAdaptorSubSchema.existingExtract) {
