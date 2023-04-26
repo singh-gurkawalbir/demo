@@ -364,7 +364,7 @@ export default function DynaSelectResource(props) {
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
-      assistant: merged?.assistant,
+      assistant: merged?.assistant || merged?.application.toLowerCase().replace(/\.|\s/g, ''),
     }),
     [merged]
   );
