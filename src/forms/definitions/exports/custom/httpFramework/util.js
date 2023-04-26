@@ -33,7 +33,7 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       value: resourceDefaultValue,
       required: true,
       type: 'hfoptions',
-      label: 'Resources',
+      label: 'Resource',
       helpKey: 'export.http._httpConnectorResourceId',
     },
     operation: {
