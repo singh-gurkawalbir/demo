@@ -870,34 +870,15 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
   const applications = applicationsList().filter(app => app._httpConnectorId);
   let app;
 
-  if (resource?.application) {
+  if (httpConnectorData?.name && !resource?.application) {
+    // when more than 1 local connectors present
+    app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === httpConnectorData?.name.toLowerCase().replace(/\.|\s/g, '')) || {};
+  } else if (resource?.application) {
     app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource?.application) || {};
   } else if (resource?.assistant) {
     app = applications.find(a => a.id === resource?.assistant) || {};
   }
   const tempFiledMeta = customCloneDeep(fieldMeta);
-
-  const iClientPathMap = {
-    'oauth2.grantType': 'http.auth.oauth.grantType',
-    'oauth2.clientCredentialsLocation': 'http.auth.oauth.clientCredentialsLocation',
-    'oauth2.auth.uri': 'http.auth.oauth.authURI',
-    'oauth2.callbackURL': 'http.auth.oauth.callbackURL',
-    'oauth2.token.uri': 'http.auth.oauth.tokenURI',
-    'oauth2.scopeDelimiter': 'http.auth.oauth.scopeDelimiter',
-    'oauth2.token.headers': 'http.auth.oauth.accessTokenHeaders',
-    'oauth2.token.body': 'http.auth.oauth.accessTokenBody',
-    'oauth2.refresh.headers': 'http.auth.oauth.refreshHeaders',
-    'oauth2.refresh.body': 'http.auth.oauth.refreshBody',
-    'oauth2.accessTokenLocation': 'http.auth.token.location',
-    'oauth2.accessTokenHeaderName': 'http.auth.token.headerName',
-    'oauth2.scheme': 'http.auth.token.scheme',
-    'oauth2.customAuthScheme': 'http.customAuthScheme',
-    'oauth2.accessTokenParamName': 'http.auth.token.paramName',
-    'oauth2.failStatusCode': 'http.auth.failStatusCode',
-    'oauth2.failPath': 'http.auth.failPath',
-    'oauth2.failValues': 'http.auth.failValues',
-    'oauth2.validDomainNames': 'oauth2.validDomainNames',
-  };
 
   if (!isGenericHTTP) {
     if (!httpConnectorData || !httpConnectorData?.supportedBy) {
@@ -905,8 +886,8 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     }
   }
 
-  Object.keys(iClientPathMap).forEach(key => {
-    const preConfiguredField = httpConnectorData?.supportedBy?.connection?.preConfiguredFields?.find(field => iClientPathMap[key] === field?.path);
+  Object.keys(tempFiledMeta.fieldMap).forEach(key => {
+    const preConfiguredField = httpConnectorData?.supportedBy?.iClient?.preConfiguredFields?.find(field => key === field?.path);
 
     if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
       // new Iclient
@@ -949,6 +930,11 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
   } else if ((resource?.application || resource?.assistant) && resource?.application !== 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId;
   } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId) : 'custom_oauth2'); }
+  if (resource?.formType === 'http') {
+    // disable application field for connection
+    tempFiledMeta.fieldMap.application.defaultDisabled = true;
+  }
+  !tempFiledMeta.fieldMap.provider.defaultValue && (tempFiledMeta.fieldMap.provider.defaultValue = 'custom_oauth2');
 
   return tempFiledMeta;
 };
