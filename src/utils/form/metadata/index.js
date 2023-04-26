@@ -19,7 +19,7 @@ export function getFieldIdsInLayoutOrder(layout) {
 }
 
 export function pushField(layout, refId, fieldId) {
-  if (!layout) return;
+  if (!layout || !refId || !fieldId) return;
   if (layout.fields?.length) {
     if (layout.fields.includes(refId)) {
       const refIndex = layout.fields.indexOf(refId);
@@ -33,7 +33,7 @@ export function pushField(layout, refId, fieldId) {
 }
 
 export function removeFieldFromLayout(layout, fieldId) {
-  if (!layout) return;
+  if (!layout || !fieldId) return;
   if (layout.fields?.length) {
     if (layout.fields.includes(fieldId)) {
       const fieldIndex = layout.fields.indexOf(fieldId);
@@ -47,7 +47,7 @@ export function removeFieldFromLayout(layout, fieldId) {
 }
 
 export function layoutHasField(layout, fieldId) {
-  if (!layout) return false;
+  if (!layout || !fieldId) return false;
   if (layout.containers?.length) {
     return layout.containers.some(container => layoutHasField(container, fieldId));
   }

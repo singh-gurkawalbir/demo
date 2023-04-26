@@ -19,7 +19,6 @@ import {
   determineChangedValues,
   getFirstErroredFieldId,
 } from '.';
-import { getFieldIdsInLayoutOrder } from './metadata';
 import {
   shouldOptionsBeRefreshed,
   getFirstDefinedValue,
@@ -1348,91 +1347,6 @@ describe('getFirstErroredFieldId', () => {
     };
 
     expect(getFirstErroredFieldId(state)).toBe('b');
-  });
-});
-
-describe('getFieldIdsInLayoutOrder', () => {
-  test('should return empty list incase of invalid layout', () => {
-    expect(getFieldIdsInLayoutOrder()).toEqual([]);
-    expect(getFieldIdsInLayoutOrder({})).toEqual([]);
-    expect(getFieldIdsInLayoutOrder({ fields: [], containers: []})).toEqual([]);
-  });
-  test('should return fieldIds in order for the passed layout', () => {
-    const layout = {
-      type: 'collapse',
-      containers: [
-        {
-          collapsed: true,
-          label: 'label 1',
-          fields: [
-            'a', 'b', 'c', 'd',
-          ],
-        },
-        {
-          collapsed: true,
-          label: 'label 2',
-          fields: [
-            'e', 'f', 'g',
-          ],
-        },
-      ],
-    };
-    const expectedOrderedFieldIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
-
-    expect(getFieldIdsInLayoutOrder(layout)).toEqual(expectedOrderedFieldIds);
-  });
-  test('should return fieldIds in proper visible order if the layout has nested containers', () => {
-    const layout = {
-      type: 'collapse',
-      containers: [
-        {
-          collapsed: true,
-          label: 'label 1',
-          fields: [
-            'a', 'b', 'c', 'd',
-          ],
-        },
-        {
-          collapsed: true,
-          label: 'label 2',
-          fields: [
-            'e', 'f', 'g',
-          ],
-        },
-        {
-          collapsed: true,
-          label: 'label 3',
-          fields: [
-            'h', 'i', 'j',
-          ],
-        },
-        {
-          collapsed: true,
-          label: 'label 4',
-          containers: [
-            {
-              fields: ['k'],
-            },
-            {
-              type: 'indent',
-              containers: [
-                {
-                  fields: [
-                    'l',
-                  ],
-                },
-              ],
-            },
-            {
-              fields: ['m', 'n', 'o'],
-            },
-          ],
-        },
-      ],
-    };
-    const expectedOrderedFieldIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'];
-
-    expect(getFieldIdsInLayoutOrder(layout)).toEqual(expectedOrderedFieldIds);
   });
 });
 
