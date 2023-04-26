@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
-import { Box, Switch } from '@celigo/fuse-ui';
+import { Box, Switch, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../../components/LoadResources';
@@ -12,7 +12,6 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import { generateNewId, isNewId, getDomainUrl } from '../../../../utils/resource';
 import { hashCode } from '../../../../utils/string';
 import Help from '../../../../components/Help';
-import Spinner from '../../../../components/Spinner';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import CollapsableContainer from '../../../../components/CollapsableContainer';
 import NotificationToaster from '../../../../components/NotificationToaster';
@@ -57,11 +56,6 @@ const useStyles = makeStyles(theme => ({
       marginBottom: 0,
     },
   },
-  spinner: {
-    marginLeft: theme.spacing(0.5),
-    display: 'flex',
-  },
-
   collapseContainer: {
     margin: theme.spacing(2),
     '& .MuiAccordionDetails-root': {
@@ -315,7 +309,7 @@ export default function SSOAccountSettings() {
                 <Switch
                   onChange={handleEnableSSO}
                   checked={isSSOEnabled} />
-                {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
+                {isEnableSSOSwitchInProgress && <Spinner size="small" sx={{display: 'flex', ml: 0.5}} />}
               </div>
               {isSSOEnabled && (
                 <>

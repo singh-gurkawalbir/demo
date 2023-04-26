@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import JobErrorTable from '../JobErrorTable';
-import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import { JOB_STATUS } from '../../../constants';
 import { drawerPaths } from '../../../utils/rightDrawer';
@@ -116,7 +116,7 @@ export default function ErrorDrawer({
       <DrawerContent>
         <div className={classes.wrapperErrorDrawer}>
           {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
-          <Spinner centerAll>
+          <Spinner center="screen" >
             <span>{anyChildJobsAreInProgress ? message.JOBS.CHILD_JOBS_IN_PROGRESS : message.JOBS.LOAD_CHILD_JOBS}</span>
           </Spinner>
           )}

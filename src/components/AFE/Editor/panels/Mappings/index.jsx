@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import {useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import {selectors} from '../../../../../reducers';
-import Spinner from '../../../../Spinner';
 import actions from '../../../../../actions';
 import TopPanel from '../../../../Mapping/TopPanel';
 import DragContainer from '../../../../DragContainer';
@@ -140,7 +140,7 @@ export default function MappingWrapper({ editorId }) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

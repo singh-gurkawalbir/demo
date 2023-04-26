@@ -8,13 +8,13 @@ import {
   FormLabel,
 } from '@mui/material';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { Spinner } from '@celigo/fuse-ui';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { hooksLabelMap, getScriptHookStub } from '../../../../../utils/hooks';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../../../Spinner';
 import CeligoSelect from '../../../../CeligoSelect';
 import OutlinedButton from '../../../../Buttons/OutlinedButton';
 
@@ -213,7 +213,7 @@ export default function JavaScriptPanel({ editorId }) {
         {/* hide the script content */}
         <div className={classes.scriptPanel}>
           {fetchScript ? (
-            <Spinner centerAll />
+            <Spinner center="screen" />
           ) : (
             <CodePanel
               name="code"

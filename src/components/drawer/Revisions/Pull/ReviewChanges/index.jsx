@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import Spinner from '../../../../Spinner';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
@@ -16,7 +16,7 @@ import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   drawerHeaderWrapper: {
     '& > h4': {
       whiteSpace: 'nowrap',
@@ -24,10 +24,6 @@ const useStyles = makeStyles(theme => ({
     '& > :not(:last-child)': {
       marginRight: 0,
     },
-  },
-  inProgressSpinner: {
-    marginRight: theme.spacing(0.5),
-    height: theme.spacing(2),
   },
 }));
 
@@ -87,7 +83,14 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
-          { isRevisionCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Next
+          { isRevisionCreationInProgress ? (
+            <Spinner
+              size="small"
+              sx={{
+                mr: 0.5,
+                height: 16,
+              }} />
+          ) : null } Next
         </FilledButton>
         <TextButton
           data-test="cancelReviewPulll"

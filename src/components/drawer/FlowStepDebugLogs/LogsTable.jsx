@@ -4,10 +4,10 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
+import { Spinner } from '@celigo/fuse-ui';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import Spinner from '../../Spinner';
 import PreviewLogDetails from './PreviewLogDetails';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { FILTER_KEY } from '../../../utils/flowStepLogs';
@@ -102,7 +102,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
 
   if (!logsStatus || logsStatus === 'requested') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 
@@ -124,7 +124,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
           )}
           {!hasDebugLogs && hasNextPage && fetchStatus === 'inProgress' && (
             <div className={classes.tableHeaderWithSpinner}>
-              <Spinner centerAll />
+              <Spinner center="screen" />
             </div>
           )}
         </div>

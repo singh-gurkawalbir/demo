@@ -2,9 +2,9 @@ import React, { useCallback, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-import Spinner from '../../../components/Spinner';
 import { useSelectorMemo } from '../../../hooks';
 import { emptyObject } from '../../../constants';
 import { RETRY_JOB_UI_STATUS } from '../../../utils/jobdashboard';
@@ -16,10 +16,6 @@ const useStyles = makeStyles(theme => ({
   flexContainer: {
     display: 'flex',
     alignItems: 'center',
-  },
-  spinner: {
-    marginRight: theme.spacing(0.5),
-    display: 'flex',
   },
   viewResultButton: {
     padding: theme.spacing(0, 0.5),
@@ -53,7 +49,7 @@ export default function RetryStatus({ flowId }) {
     if (isAnyRetryInProgress) {
       return (
         <>
-          <Spinner size={16} className={classes.spinner} />
+          <Spinner size="small" sx={{ mr: 0.5, display: 'flex'}} />
           <span>{RETRY_JOB_UI_STATUS.running}</span>
         </>
       );
@@ -75,7 +71,7 @@ export default function RetryStatus({ flowId }) {
         )}
       </>
     );
-  }, [isAnyRetryInProgress, classes.status, classes.icon, resourcesWithRetryCompleted, handleClick]);
+  }, [isAnyRetryInProgress, classes.status, classes.viewResultButton, resourcesWithRetryCompleted, handleClick]);
 
   if (!isAnyRetryInProgress && !resourcesWithRetryCompleted.length) {
     return null;

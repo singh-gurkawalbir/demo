@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Divider } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
-import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   divider: {
@@ -64,7 +64,7 @@ export default function LastRun({ flowId }) {
     if ([FLOW_RUNNING_STATUS, FLOW_IN_QUEUE_STATUS].includes(lastRunStatus)) {
       return (
         <>
-          <Spinner size={16} className={classes.icon} />
+          <Spinner size="small" sx={{ width: 16, height: 16, mr: 0.5}} />
           <span>{lastRunStatus}</span>
         </>
       );

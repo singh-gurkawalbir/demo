@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import Spinner from '../../../../../../../components/Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
 import { selectors } from '../../../../../../../reducers';

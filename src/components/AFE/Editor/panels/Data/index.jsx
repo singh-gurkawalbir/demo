@@ -1,9 +1,9 @@
 import React from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
-import Spinner from '../../../../Spinner';
 
 export default function DataPanel({ editorId, mode }) {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ export default function DataPanel({ editorId, mode }) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <CodePanel
           name="data"

@@ -29,6 +29,12 @@ jest.mock('@mui/material/IconButton', () => ({
   },
 }));
 
+jest.mock('../LoadResources', () => ({
+  __esModule: true,
+  ...jest.requireActual('../LoadResources'),
+  default: ({children}) => <>{children}</>,
+}));
+
 jest.mock('react-redux', () => ({
   __esModule: true,
   ...jest.requireActual('react-redux'),

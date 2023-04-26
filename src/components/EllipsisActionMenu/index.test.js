@@ -68,7 +68,7 @@ describe('ellipsis menu ui tests', () => {
 
     expect(actionButton).toBeInTheDocument();
     await userEvent.click(actionButton);
-    const cloned = screen.getByText('Clone-integration');
+    const cloned = screen.getByText('Clone integration');
 
     await userEvent.click(cloned);
     await waitFor(() =>

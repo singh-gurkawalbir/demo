@@ -38,7 +38,7 @@ export default function JobTable({
         <TableHead>
           <TableRow>
             <TableCell className={clsx(classes.name, jobDetailsClasses.name)}> <HeaderWithHelpText title="Flow" helpKey="runHistory.flow" /></TableCell>
-            <TableCell className={classes.status}>Status</TableCell>
+            <TableCell className={classes.status}><HeaderWithHelpText title="Status" helpKey="runHistory.status" /></TableCell>
             <TableCell className={classes.duration}>Duration</TableCell>
             <TableCell className={clsx(classes.started, jobDetailsClasses.started)}>Started</TableCell>
             <TableCell className={classes.completed}>Completed</TableCell>

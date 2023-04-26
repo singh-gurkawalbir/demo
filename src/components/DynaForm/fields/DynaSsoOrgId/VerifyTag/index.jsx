@@ -2,10 +2,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { FormHelperText } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import ErrorIcon from '../../../../icons/ErrorIcon';
 import SuccessIcon from '../../../../icons/SuccessIcon';
 import { selectors } from '../../../../../reducers';
-import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   message: {
@@ -39,7 +39,7 @@ export default function VerifyTag({ error }) {
   if (validationInProgress) {
     return (
       <FormHelperText className={classes.message}>
-        <Spinner className={classes.spinner} size="small" /> Verifying...
+        <Spinner size="small" /> Verifying...
       </FormHelperText>
     );
   }

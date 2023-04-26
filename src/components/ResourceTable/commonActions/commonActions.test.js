@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -67,7 +66,6 @@ async function initCommonActions(data = [{}]) {
   );
 
   renderWithProviders(ui, {initialStore});
-  await userEvent.click(screen.getByRole('button'));
 }
 
 describe('test suite for common actions', () => {
@@ -95,6 +93,9 @@ describe('test suite for common actions', () => {
     });
 
     await initCommonActions([{_id: connection._id}]);
+    const actionButton = screen.getByRole('button', { name: 'more' });
+
+    await userEvent.click(actionButton);
     const viewAuditLogsButton = screen.getByRole('menuitem', {name: 'View audit log'});
 
     await userEvent.click(viewAuditLogsButton);
@@ -113,6 +114,9 @@ describe('test suite for common actions', () => {
     const scriptId = 'script123';
 
     await initCommonActions([{_id: scriptId}]);
+    const actionButton = screen.getByRole('button', { name: 'more' });
+
+    await userEvent.click(actionButton);
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     await userEvent.click(viewExecutionLogsButton);
@@ -132,6 +136,9 @@ describe('test suite for common actions', () => {
     const scriptId = 'script123';
 
     await initCommonActions([{_id: scriptId}]);
+    const actionButton = screen.getByRole('button', { name: 'more' });
+
+    await userEvent.click(actionButton);
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     await userEvent.click(viewExecutionLogsButton);
@@ -147,6 +154,9 @@ describe('test suite for common actions', () => {
       mockTableContext.resourceType = 'exports';
       await initCommonActions([{ _id: 'export123' }]);
 
+      const actionButton = screen.getByRole('button', { name: 'more' });
+
+      await userEvent.click(actionButton);
       const cloneButton = screen.getByRole('menuitem', {name: 'Clone export'});
 
       await userEvent.click(cloneButton);
@@ -165,8 +175,10 @@ describe('test suite for common actions', () => {
       });
 
       await initCommonActions(data);
+      const actionButton = screen.getByRole('button', { name: 'more' });
 
-      await waitFor(() => expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument());
+      await userEvent.click(actionButton);
+      expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument();
     });
 
     test("should not be able to clone an integration flow if doesn't have permissions to clone", async () => {
@@ -177,7 +189,9 @@ describe('test suite for common actions', () => {
       }];
 
       await initCommonActions(data);
+      const actionButton = screen.getByRole('button', { name: 'more' });
 
+      await userEvent.click(actionButton);
       expect(screen.queryByRole('menuitem', {name: 'Clone flow'})).not.toBeInTheDocument();
     });
   });
@@ -197,7 +211,10 @@ describe('test suite for common actions', () => {
       type: 'integrationApp',
     }]);
 
-    const editButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Edit license'}));
+    const actionButton = screen.getByRole('button', { name: 'more' });
+
+    await userEvent.click(actionButton);
+    const editButton = screen.getByRole('menuitem', {name: 'Edit license'});
 
     await userEvent.click(editButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(`${mockRouteMatch.url}/edit/connectorLicenses/ia123`);
@@ -210,17 +227,18 @@ describe('test suite for common actions', () => {
       type: 'integrationApp',
     }]);
 
-    const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
-    const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: /Delete license/i}));
+    const deleteButton = screen.getByRole('menuitem', {name: 'Delete license'});
 
     await userEvent.click(deleteButton);
-    const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
-    const confirmButton = await waitFor(() => screen.getByRole('button', { name: /Delete/i }));
+    const confirmDialog = screen.getByRole('dialog');
+    const confirmButton = screen.getByRole('button', { name: 'Delete' });
 
     expect(confirmDialog).toContainElement(confirmButton);
     expect(confirmDialog.textContent).toContain('Are you sure you want to delete this license?');
+
     await userEvent.click(confirmButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.delete(mockTableContext.resourceType, 'ia123'));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
@@ -253,16 +271,16 @@ describe('test suite for common actions', () => {
     });
 
     await initCommonActions(data);
-    const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
-    const deleteButton = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete export'}));
+    const deleteButton = screen.getByRole('menuitem', {name: 'Delete export'});
 
     await userEvent.click(deleteButton);
-    const confirmDeleteButton = await waitFor(() => screen.getByRole('button', {name: 'Delete'}));
+    const confirmDeleteButton = screen.getByRole('button', {name: 'Delete'});
 
     await userEvent.click(confirmDeleteButton);
-    await waitFor(() => expect(screen.getByRole('dialog').textContent).toContain('Unable to delete export'));
+    expect(screen.getByRole('dialog').textContent).toContain('Unable to delete export');
     const closeDialogButton = screen.getByTestId('closeModalDialog');
 
     await userEvent.click(closeDialogButton);
@@ -276,10 +294,10 @@ describe('test suite for common actions', () => {
       name: 'Shopify template',
     }]);
 
-    const more = await waitFor(() => screen.getByRole('button', { name: /more/i }));
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
-    const downloadButton = await waitFor(() => screen.getByRole('menuitem', {name: /Download template zip/i}));
+    const downloadButton = screen.getByRole('menuitem', {name: 'Download template zip'});
 
     await userEvent.click(downloadButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.downloadFile('template123', 'templates'));
@@ -301,13 +319,13 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
-    const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
+    const generateTokenButton = screen.getByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
-    const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
+    const confirmDialog = screen.getByRole('dialog');
 
     expect(confirmDialog.textContent).toContain('Confirm generate');
     const confirmButton = screen.getByRole('button', {name: 'Generate'});
@@ -331,13 +349,13 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
-    const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
+    const generateTokenButton = screen.getByRole('menuitem', {name: 'Generate new token'});
 
     await userEvent.click(generateTokenButton);
-    const confirmDialog = await waitFor(() => screen.getByRole('dialog'));
+    const confirmDialog = screen.getByRole('dialog');
 
     expect(confirmDialog.textContent).toContain('Confirm generate');
     const confirmButton = screen.getByRole('button', {name: 'Generate'});
@@ -361,7 +379,7 @@ describe('test suite for common actions', () => {
     }];
 
     await initCommonActions(data);
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
     expect(screen.queryByRole('menuitem', {name: 'Generate new token'})).not.toBeInTheDocument();
@@ -392,13 +410,13 @@ describe('test suite for common actions', () => {
       _id: 'export123',
       name: 'Netsuite Export',
     }]);
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = screen.getByRole('button', { name: 'more' });
 
     await userEvent.click(more);
     const viewReferenceButton = screen.getByRole('menuitem', {name: 'Used by'});
 
     await userEvent.click(viewReferenceButton);
-    const dialogBox = await waitFor(() => screen.getByRole('dialog'));
+    const dialogBox = screen.getByRole('dialog');
 
     expect(dialogBox.textContent).toContain('Used by');
     const closeDialogButton = screen.getByTestId('closeModalDialog');

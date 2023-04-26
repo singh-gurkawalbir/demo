@@ -10,9 +10,9 @@ import {
   Switch,
   useRouteMatch,
 } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import Spinner from '../../../../../../components/Spinner';
 import { selectors } from '../../../../../../reducers';
 import inferErrorMessages from '../../../../../../utils/inferErrorMessages';
 import ConfigureSettings from './sections/ConfigureSettings';
@@ -43,7 +43,7 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!hasSettingsMetadata || isLoading) { return <Spinner centerAll />; }
+  if (!hasSettingsMetadata || isLoading) { return <Spinner center="screen" />; }
 
   // if settings is of type string...quiet likely its an error
   if (typeof resource === 'string' || resource?.errors) {

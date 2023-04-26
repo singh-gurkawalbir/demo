@@ -13,7 +13,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { AppShell } from '@celigo/fuse-ui';
+import { AppShell, Spinner } from '@celigo/fuse-ui';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
@@ -46,7 +46,6 @@ import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
-import Spinner from '../components/Spinner';
 import Loader from '../components/Loader';
 
 // The makeStyles function below does not have access to the theme.
