@@ -13,6 +13,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import { getParentResourceContext } from '../../../../utils/connections';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
+import { getHelpKey } from '../../../../utils/httpConnector';
 
 const useStyles = makeStyles(theme => ({
   dynaPathParamActionButton: {
@@ -85,11 +86,13 @@ export default function DynaHFAssistantPathParams(props) {
             stage={flowDataStage}
             placeholder="Please select"
             showAllSuggestions
-            {...props}
+            helpKey={getHelpKey(resourceType, id)}
+            {...props} // If helpKey is passed from the props, they will override the above helpKey
             />
         )
           : (
             <InputField
+              helpKey={getHelpKey(resourceType, id)}
               {...props}
               showExtract={false}
               description={description}

@@ -1363,6 +1363,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 "Use this field if the file returned by the API is not located at the root level of the HTTP response body. For example, an API could return files inside a container object like 'file.content'.",
   'export.http.response.successPath':
 "This field only needs to be set if the API always returns a successful HTTP status code, but then uses a field in the HTTP response body to indicate a successful request. For example, if the API always returns a 200 success HTTP status code, but then indicates success via a 'success' boolean field in the HTTP response body.",
+  'export.http.response.fileURLPaths': 'Enter any fields in the HTTP response body that contain URLs that can be used to download these files. Separate multiple path values with a comma. The files can be passed as-is via blobs to the subsequent flow steps.',
   'export.http.response.successValues':
 'Use this field to limit the exact values in the HTTP response body field that should be used to determine if the request succeeded. To provide multiple values, use a comma-separated list.',
   'export.http.response.blobFormat':
@@ -2606,4 +2607,10 @@ use the custom option.`,
   'amazonvendorcentral.connection.http.unencrypted.sellingRegion': 'Select AWS regions to associate your API Endpoints. The region is required for calculating a signature when calling the Selling Partner API.',
   'amazonvendorcentral.connection.http.unencrypted.marketplace': 'Select a country or marketplace for your connection request. This field is populated based on the selling region chosen above.',
   'amazonvendorcentral.connection.http.sellingPartnerId': 'The identifier selling partner who is authorizing your application.',
+  'export.http._httpConnectorResourceId': 'Select a resource. Resources are typically ‘Customers’ and ‘Orders’. Refer to the API documentation for the application you’re connecting.',
+  'export.http._httpConnectorEndpointId': 'Select an API endpoint to perform an operation on the selected resource. Typically, these endpoints create, update, retrieve, or delete records. Refer to the API documentation for the application you’re connecting.',
+  'export.http._httpConnectorVersionId': 'Select the required API version. For more information on the API version, see your application’s API documentation.',
+  'import.http._httpConnectorResourceId': 'Select a resource. Resources are typically ‘Customers’ and ‘Orders’. Refer to the API documentation for the application you’re connecting.',
+  'import.http._httpConnectorEndpointId': 'Select an API endpoint to perform an operation on the selected resource. Typically, these endpoints create, update, retrieve, or delete records. Refer to the API documentation for the application you’re connecting.',
+  'import.http._httpConnectorVersionId': 'Select the required API version. For more information on the API version, see your application’s API documentation.',
 };

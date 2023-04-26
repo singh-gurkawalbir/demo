@@ -14,7 +14,7 @@ function hiddenFieldsMeta({ values }) {
   }));
 }
 
-function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistantConfig, assistantData }) {
   let resourceDefaultValue = assistantConfig.resource;
   let operationDefaultValue = assistantConfig.operation || assistantConfig.operationUrl;
 
@@ -33,7 +33,8 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       value: resourceDefaultValue,
       required: true,
       type: 'hfoptions',
-      label: 'Resources',
+      label: 'Resource',
+      helpKey: 'export.http._httpConnectorResourceId',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
@@ -41,12 +42,14 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       required: true,
       type: 'hfoptions',
       label: 'API endpoint',
+      helpKey: 'export.http._httpConnectorEndpointId',
     },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       required: true,
       type: 'hfoptions',
+      helpKey: 'export.http._httpConnectorVersionId',
     },
 
   };
@@ -65,7 +68,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
-    fieldDefinitions[fieldId].helpKey = `${assistant}.export.${fieldId}`;
+
     if (helpTexts[fieldId]) {
       fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
     }
