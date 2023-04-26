@@ -352,6 +352,9 @@ export function* pingConnection({ resourceId, values, parentContext }) {
 
   if (resp && resp.errors) {
     yield put(actions.asyncTask.failed(asyncKey));
+    if (connectionPayload?.assistant === 'sapbydesign' && resp.errors?.[0]?.code === 401) {
+      resp.errors[0].message = 'The SAP credentials you entered are invalid. Check your username and password and try again.';
+    }
 
     return yield put(
       actions.resource.connections.testErrored(
