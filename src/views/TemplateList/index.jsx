@@ -64,9 +64,7 @@ export default function TemplateList(props) {
 
         <CeligoPageBar title="Templates" infoText={InfoText.templates}>
           <ActionGroup>
-            <KeywordSearch
-              filterKey={filterKey}
-            />
+            <KeywordSearch filterKey={filterKey} />
 
             <TextButton
               data-test="addNewListing"

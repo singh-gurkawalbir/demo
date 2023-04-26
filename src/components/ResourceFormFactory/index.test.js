@@ -56,10 +56,10 @@ jest.mock('../../forms/formFactory/getResourceFromAssets', () => ({
   }),
 }));
 
-jest.mock('../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../Spinner'),
-  default: () => (<div>Spinner</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<div>Spinner</div>),
 }));
 
 async function initResourceFormFactory(props = {}, initialStore) {

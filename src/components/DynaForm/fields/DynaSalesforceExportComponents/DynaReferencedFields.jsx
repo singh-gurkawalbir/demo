@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import { selectors } from '../../../../reducers';
@@ -7,7 +8,6 @@ import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
 import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
-import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';

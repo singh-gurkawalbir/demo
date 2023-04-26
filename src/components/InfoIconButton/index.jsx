@@ -11,7 +11,7 @@ import TooltipContent from '../TooltipContent';
 
 const useStyles = makeStyles(theme => ({
   small: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing('-2px', 1, 0),
   },
   infoText: {
     color: theme.palette.secondary.main,
@@ -26,16 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({
-  info,
-  size = 'small',
-  className,
-  escapeUnsecuredDomains,
-  tabIndex = 0,
-  placement = 'right-start',
-  preventOverflow,
-  title,
-}) {
+export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title, basicInfo = false }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -62,6 +53,7 @@ export default function InfoIconButton({
         aria-owns={!anchorEl ? null : 'pageInfo'}
         tabIndex={tabIndex}
         aria-haspopup="true"
+        sx={{padding: '3px'}}
       >
         <InfoIcon />
       </IconButton>
@@ -74,17 +66,8 @@ export default function InfoIconButton({
         onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
-        <HelpContent
-          title={title}
-          supportFeedback={false}
-          onClose={handleInfoClose}
-        >
-          <TooltipContent
-            className={classes.infoText}
-            escapeUnsecuredDomains={escapeUnsecuredDomains}
-          >
-            {info}
-          </TooltipContent>
+        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}>
+          <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} basicInfo={basicInfo}>{info}</TooltipContent>
         </HelpContent>
       </ArrowPopper>
     </>

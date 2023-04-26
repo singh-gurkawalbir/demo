@@ -51,13 +51,12 @@ jest.mock('../../LoadResources', () => ({
   ),
 }));
 // Mocking Spinner child component as part of unit testing
-jest.mock('../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../Spinner'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (
     <div>
       <div>Mocking Spinner</div>
-      <div>size = {props.size}</div>
     </div>
   ),
 }));
@@ -225,7 +224,6 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking load resources/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking spinner/i)).toBeInTheDocument();
-    expect(screen.getByText(/size = medium/i)).toBeInTheDocument();
     expect(screen.getByText(/resources = connections/i)).toBeInTheDocument();
   });
   test('should test the spinner and empty resources when mocked load resource component resource type is equal to connectorLicenses', () => {
@@ -270,7 +268,6 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking load resources/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking spinner/i)).toBeInTheDocument();
-    expect(screen.getByText(/size = medium/i)).toBeInTheDocument();
     expect(screen.getByText(/resources =/i)).toBeInTheDocument();
   });
   test('should test the dyna select options and it should render connection name followed by offline when there is no options and no filters and when offline set to true and check permission has set to false', () => {

@@ -3,9 +3,9 @@ import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import Spinner from '../../../components/Spinner';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import TopPanel from './TopPanel';
 import DragContainer from './DragContainer';
@@ -99,7 +99,7 @@ export default function SuiteScriptMappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

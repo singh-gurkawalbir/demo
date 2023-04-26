@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import { makeStyles } from '@mui/styles';
 import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { CHAT_STATUS } from '../../../../../reducers/session/editors';
@@ -12,7 +13,6 @@ import ActionButton from '../../../../ActionButton';
 import ThumbsUpIcon from '../../../../icons/ThumbsUpIcon';
 import ThumbsDownIcon from '../../../../icons/ThumbsDownIcon';
 import Help from '../../../../Help';
-import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles({
   flexContainer: {

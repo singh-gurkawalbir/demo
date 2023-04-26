@@ -1,13 +1,39 @@
 import { Typography } from '@mui/material';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { Box } from '@celigo/fuse-ui';
+import { selectors } from '../../../reducers';
 import Tag from '../../tags/Tag';
+import InfoIconButton from '../../InfoIconButton';
+
+const InfoTag = ({color, label, info}) => (
+  <Box display="flex">
+    <Tag color={color} label={label} />
+    <Box>
+      <InfoIconButton info={info} size="xs" placement="right" basicInfo />
+    </Box>
+  </Box>
+);
 
 export default function JobStatusWithTag({job}) {
-  let jobStatus = job?.status;
+  const { status, type, _integrationId, canceledBy } = job || {};
+  const isParentJob = type === 'flow';
+  const userName = useSelector(state => {
+    if (canceledBy === 'system') return 'system';
+    const user = selectors.availableUsersList(state, _integrationId)?.find(user => user.sharedWithUser?._id === canceledBy);
 
-  if (!jobStatus) {
+    return user?.sharedWithUser?.name || user?.sharedWithUser?.email;
+  });
+
+  if (!status) {
     return null;
   }
+
+  if (status === 'canceled' && isParentJob && job?.canceledBy) {
+    return <InfoTag color="warning" label="Canceled" info={`Canceled by ${userName}`} />;
+  }
+
+  let jobStatus = status;
 
   if (jobStatus === 'completed' && job.numOpenError) {
     jobStatus = 'completedWithErrors';

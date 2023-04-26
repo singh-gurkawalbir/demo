@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
-import { Switch } from '@celigo/fuse-ui';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import useConfirmDialog from '../ConfirmDialog';
 import { selectors } from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import Spinner from '../Spinner';
 import { useSelectorMemo } from '../../hooks';
 
-const useStyles = makeStyles({
-  spinnerFlowToggle: {
-    padding: '0 !important',
-  },
-});
 export default function FlowToggle({
   flowId,
   disabled,
@@ -22,7 +15,6 @@ export default function FlowToggle({
 }) {
   // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isIntegrationApp
   const { confirmDialog } = useConfirmDialog();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const flow = useSelectorMemo(selectors.mkFlowDetails, flowId, childId);
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
@@ -107,7 +99,7 @@ export default function FlowToggle({
   if (flow.disableSlider) return null;
 
   return onOffInProgressStatus ? (
-    <Spinner className={classes.spinnerFlowToggle} />
+    <Spinner sx={{padding: '0 !important'}} />
   ) : (
     <Switch
       disabled={disabled}

@@ -15,10 +15,10 @@ jest.mock('@mui/lab/TreeView', () => ({
   default: props => <div>{props.children}<button type="button" onClick={() => props.onNodeToggle('click', ['newReference,newone,"parent2,ref1"'])}>Node</button></div>,
 }));
 
-jest.mock('../../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../Spinner'),
-  default: () => <div>Spinner</div>,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => <div>Spinner</div>,
 }));
 
 function initRefreshableTreeComponent(props = {}) {

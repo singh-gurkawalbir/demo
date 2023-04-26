@@ -33,7 +33,8 @@ export default function AccessTokenList(props) {
     selectors.accessTokenList(state, { integrationId, ...filter })
   );
 
-  const newProps = { ...props, resourceType: 'accesstokens' };
+  const newProps = { ...props, resourceType: filterKey };
+
   const showPagingBar = list.count >= 100;
   const hidePagingBar = list.count === list.filtered;
 

@@ -49,6 +49,13 @@ jest.mock('../../../../DynaForm/DynaSubmit', () => ({
 
 }));
 
+// Mocking Help as per unit testing
+jest.mock('@celigo/fuse-ui', () => ({
+  __esModule: true,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Help: jest.fn().mockReturnValue(<div>Mock Help</div>),
+}));
+
 describe('OpenPullDrawer tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
@@ -82,5 +89,18 @@ describe('OpenPullDrawer tests', () => {
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(1, '/');
     await userEvent.click(next);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(2, '//pull/_revisionId/review');
+  });
+
+  test('Should able to test the OpenPullDrawer initial render', async () => {
+    await initOpenPullDrawer(props);
+    expect(screen.getByRole('heading', {name: 'Create pull'})).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+    expect(screen.getByText('Integration')).toBeInTheDocument();
+    expect(screen.getByText('Please select')).toBeInTheDocument();
+    expect(screen.getAllByText('*')).toHaveLength(2);
+    const helpKeys = screen.getAllByRole('button', {name: ''}).filter(b => b.getAttribute('class').includes('MuiIconButton-sizeSmall'));
+
+    await userEvent.click(helpKeys[0]);
+    expect(screen.queryAllByText('Mock Help')).toHaveLength(2);
   });
 });

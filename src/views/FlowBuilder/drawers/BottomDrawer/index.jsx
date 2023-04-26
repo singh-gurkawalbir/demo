@@ -4,6 +4,7 @@ import { Drawer, IconButton, Tab, Tabs, useTheme } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -24,7 +25,6 @@ import ScriptPanel from './panels/Script';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
-import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
 import ConnectionLogs from '../../../ConnectionLogs';
@@ -92,9 +92,6 @@ const useStyles = makeStyles(theme => ({
   },
   refreshButton: {
     marginRight: theme.spacing(1),
-  },
-  inProgress: {
-    marginLeft: theme.spacing(1),
   },
 }));
 // we use this to prevent the up and down resize buttons from passing mouse-down events
@@ -293,14 +290,14 @@ export default function BottomDrawer({
           Run console
           {
             isFlowRunInProgress &&
-            <Spinner size="small" className={classes.inProgress} />
+            <Spinner size="small" sx={{ml: 1}} />
           }
         </>
       );
     }
 
     return 'Dashboard';
-  }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
+  }, [isUserInErrMgtTwoDotZero, isFlowRunInProgress]);
   let tabIndex = 0;
   let tabContentIndex = 0;
 
@@ -489,7 +486,7 @@ export default function BottomDrawer({
                   : <RunDashboardPanel flowId={flowId} />;
                 break;
               case 'runHistory':
-                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} /> : null;
+                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={integrationId} /> : null;
                 break;
 
               case 'connections':

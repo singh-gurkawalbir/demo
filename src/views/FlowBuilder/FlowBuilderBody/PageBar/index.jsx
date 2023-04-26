@@ -114,11 +114,7 @@ const pageChildreUseStyles = makeStyles(theme => ({
     margin: [[-7, 0]],
   },
   flowToggle: {
-    marginRight: 12,
-    marginLeft: 12,
-    '& > div:first-child': {
-      padding: '8px 0px 4px 0px',
-    },
+    margin: theme.spacing(0, 1.5, '-6px'),
   },
   chartsIcon: { marginRight: theme.spacing(3) },
   circle: {
@@ -198,7 +194,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, isIconView}) => {
+const PageBarChildren = ({integrationId, flowId, isIconView, children}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -259,6 +255,7 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
 
   return (
     <div className={classes.actions}>
+      {children}
       {(showIconViewToggle && (
         <>
           {(isIconView && (
@@ -276,7 +273,7 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
         </>
       ))}
       {isUserInErrMgtTwoDotZero && (
-      <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
+        <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
       {!isDataLoaderFlow && (
         <div className={clsx(classes.flowToggle)}>
@@ -318,7 +315,10 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
         />
       )}
       <Divider orientation="vertical" className={classes.divider} />
-      <IconButton onClick={handleExitClick} size="small">
+      <IconButton
+        onClick={handleExitClick}
+        size="small"
+        sx={{padding: '3px'}}>
         <CloseIcon />
       </IconButton>
     </div>
@@ -373,10 +373,9 @@ export default function PageBar({flowId, integrationId}) {
       infoText={description}
       escapeUnsecuredDomains
     >
-      <TotalErrors flowId={flowId} />
-      <PageBarChildren
-        flowId={flowId} integrationId={integrationId} isIconView={isIconView}
-      />
+      <PageBarChildren flowId={flowId} integrationId={integrationId} isIconView={isIconView}>
+        <TotalErrors flowId={flowId} />
+      </PageBarChildren>
     </CeligoPageBar>
   );
 }

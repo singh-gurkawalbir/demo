@@ -58,10 +58,10 @@ jest.mock('../../utils/image', () => ({
 }));
 
 // Mocking Spinner as part of unit testing
-jest.mock('../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../components/Spinner'),
-  default: jest.fn().mockReturnValue(<div>Mocked Spinner</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: jest.fn().mockReturnValue(<div>Mocked Spinner</div>),
 }));
 
 // Mocking message store as part of unit testing

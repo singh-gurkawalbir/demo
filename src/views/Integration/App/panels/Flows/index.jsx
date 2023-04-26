@@ -433,9 +433,7 @@ const Header = ({integrationId, childId}) => {
   return (
     <PanelHeader title={`${section?.title || ''} flows`} >
       <div className={classes.action}>
-        <KeywordSearch
-          filterKey={filterKey}
-        />
+        <KeywordSearch filterKey={filterKey} />
       </div>
     </PanelHeader>
   );

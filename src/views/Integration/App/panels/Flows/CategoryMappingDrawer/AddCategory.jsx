@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
-import Spinner from '../../../../../../components/Spinner';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../../../components/Buttons';
 import RightDrawer from '../../../../../../components/drawer/Right';
@@ -191,7 +191,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl, flowId }) {
   });
 
   if (!metadataLoaded) {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
 
   return (

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { FixedSizeList } from 'react-window';
 import { InputAdornment, TextField, Autocomplete } from '@mui/material';
 import ListIcon from '@mui/icons-material/List';
+import { Spinner } from '@celigo/fuse-ui';
 import { generateId } from '../../../../../../../utils/string';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
@@ -18,7 +19,6 @@ import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import Help from '../../../../../../../components/Help';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../../../../../../components/Spinner';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({

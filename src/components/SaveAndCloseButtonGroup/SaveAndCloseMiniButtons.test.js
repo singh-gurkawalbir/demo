@@ -5,10 +5,10 @@ import userEvent from '@testing-library/user-event';
 import SaveAndCloseMiniButtons from './SaveAndCloseMiniButtons';
 import { renderWithProviders } from '../../test/test-utils';
 
-jest.mock('../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../Spinner'),
-  default: ({children}) => (<div role="status" >{children}</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: ({children}) => (<div role="status" >{children}</div>),
 }));
 
 describe('test suite for SaveAndCloseMiniButtons', () => {

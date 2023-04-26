@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -11,7 +12,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';
 import { flowbuilderUrl } from '../../../../utils/flows';
-import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
@@ -167,7 +167,7 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <Spinner centerAll withDrawerHeader />;
+    return <Spinner size="large" center="screen" />;
   }
 
   return (

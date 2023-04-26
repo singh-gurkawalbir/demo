@@ -5,12 +5,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ChildJobDetail from './ChildJobDetail';
 import JobStatusWithTag from '../../ResourceTable/runHistory/JobStatusWithTag';
 import JobActionsMenu from './JobActionsMenu';
-import Spinner from '../../Spinner';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import { getJobDuration } from '../../../utils/errorManagement';
@@ -67,7 +67,7 @@ export default function JobDetail({
 
   function RowIcon({expanded, childLoaded}) {
     if (expanded && !childLoaded) {
-      return <Spinner size={24} />;
+      return <Spinner />;
     }
 
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;

@@ -1,19 +1,10 @@
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Switch } from '@celigo/fuse-ui';
-import Spinner from '../../../../Spinner';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../ConfirmDialog';
-
-const useStyles = makeStyles(theme => ({
-
-  spinnerOnOff: {
-    marginLeft: theme.spacing(0.5),
-  },
-}));
 
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer
@@ -29,7 +20,6 @@ export default function OnOffCell({
   childId,
   actionProps,
 }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -132,7 +122,7 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner className={classes.spinnerOnOff} />;
+    return <Spinner sx={{ml: 0.5}} />;
   }
 
   if (!isFlowEnableLocked) {

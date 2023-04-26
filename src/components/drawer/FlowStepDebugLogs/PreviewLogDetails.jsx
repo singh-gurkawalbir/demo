@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
 import actions from '../../../actions';
-import Spinner from '../../Spinner';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles({
@@ -52,7 +52,7 @@ export default function PreviewLogDetails({ flowId, resourceId }) {
   const { request, response } = logDetails;
 
   if (status === 'requested') {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
 
   return (

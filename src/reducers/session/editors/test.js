@@ -1788,6 +1788,7 @@ describe('editors selectors', () => {
         rule: '{{id}}',
         error: 'some error',
         errorLine: 34,
+        errSourceProcessor: 'editor',
       };
       const state = reducer(
         undefined,
@@ -1796,6 +1797,7 @@ describe('editors selectors', () => {
       const expectedOutput = {
         error: 'some error',
         errorLine: 34,
+        errSourceProcessor: 'editor',
       };
 
       expect(selectors.editorPreviewError(state, editorId)).toEqual(expectedOutput);

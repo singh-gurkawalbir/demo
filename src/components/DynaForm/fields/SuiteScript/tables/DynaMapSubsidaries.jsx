@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import {BaseTableViewComponent, useGetSuiteScriptBaseCommPath} from './DynaSalesforceProductTable';
 import DynaRadio from '../../radiogroup/DynaRadioGroup';
 import DynaSelect from '../../DynaSelect';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../../../Spinner';
 import useFormContext from '../../../../Form/FormContext';
 
 const fieldMappingTypeOptions = [{items: ['Always Use', 'Map'].map(label => ({label, value: label}))}];

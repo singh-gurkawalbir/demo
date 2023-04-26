@@ -16,10 +16,10 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
-jest.mock('../../../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../Spinner'),
-  default: () => (<span data-testid="spinner">Spinner</span>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<span data-testid="spinner">Spinner</span>),
 }));
 
 describe('test for Reinviting User', () => {
