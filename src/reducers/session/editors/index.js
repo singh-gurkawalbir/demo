@@ -8,6 +8,11 @@ import { toggleData } from './processorLogic/settingsForm';
 
 const emptyObj = {};
 
+export const CHAT_STATUS = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+};
+
 export default function reducer(state = {}, action) {
   const {
     type,
@@ -41,12 +46,25 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.INIT: {
         // initStatus is used to determine if parent url
         // redirection needs to happen or not on page refresh
-        draft[id] = {initStatus: 'inProgress'};
+        draft[id] = { initStatus: 'inProgress' };
         break;
       }
 
       case actionTypes.EDITOR.INIT_COMPLETE: {
-        draft[id] = options;
+        const chatOptions = processorLogic.getChatOptions(options?.editorType);
+
+        draft[id] = {
+          ...options,
+          chat: !chatOptions
+            ? {
+              enabled: false,
+            }
+            : {
+              formKey: `chat-${id}`,
+              status: CHAT_STATUS.IDLE,
+              ...chatOptions,
+            },
+        };
         break;
       }
 
@@ -67,8 +85,14 @@ export default function reducer(state = {}, action) {
         const buildData = processorLogic.buildData(draft[id].editorType);
 
         if (buildData) {
-          if (draft[id].editorType === 'sql' || draft[id].editorType === 'databaseMapping') {
-            const {data, defaultData} = buildData(original(draft[id]), sampleData);
+          if (
+            draft[id].editorType === 'sql' ||
+            draft[id].editorType === 'databaseMapping'
+          ) {
+            const { data, defaultData } = buildData(
+              original(draft[id]),
+              sampleData
+            );
 
             draft[id].data = data;
             draft[id].defaultData = defaultData || '';
@@ -81,7 +105,10 @@ export default function reducer(state = {}, action) {
           // for file definition generator where post map data needs to be shown
           // this action gets called so we add the originalData here
           // ref IO-27516
-          if (draft[id].editorType === 'structuredFileGenerator' && draft[id].stage) {
+          if (
+            draft[id].editorType === 'structuredFileGenerator' &&
+            draft[id].stage
+          ) {
             draft[id].originalData = sampleData;
           }
         }
@@ -122,6 +149,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.EDITOR.PATCH.RULE: {
         if (!draft[id]) break;
+        // console.log('PATCH.RULE', JSON.stringify(rulePatch, null, 2));
         const ap = draft[id].activeProcessor;
         const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
         const shouldReplace =
@@ -133,7 +161,11 @@ export default function reducer(state = {}, action) {
         if (rulePath) {
           set(draftRule, rulePath, rulePatch);
         } else if (processorLogic.updateRule(draft[id])) {
-          processorLogic.updateRule(draft[id])(draft[id], action, shouldReplace);
+          processorLogic.updateRule(draft[id])(
+            draft[id],
+            action,
+            shouldReplace
+          );
         } else if (!shouldReplace) {
           Object.assign(draftRule, customCloneDeep(rulePatch));
         } else if (ap) {
@@ -159,7 +191,8 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.PATCH.DATA: {
         if (!draft[id]) break;
         // Object.assign(draft[id].data, deepClone(dataPatch));
-        const mode = draft[id].activeProcessor || draft[id]?.rule?.activeProcessor;
+        const mode =
+          draft[id].activeProcessor || draft[id]?.rule?.activeProcessor;
 
         if (mode) {
           if (!draft[id].data) {
@@ -185,7 +218,12 @@ export default function reducer(state = {}, action) {
         if (draft[id].editorType === 'settingsForm') {
           // if view was toggled, update form definition
           if (mode) {
-            const formData = toggleData(draft[id].data, mode, draft[id].flowGrouping, draft[id].resourceDocs);
+            const formData = toggleData(
+              draft[id].data,
+              mode,
+              draft[id].flowGrouping,
+              draft[id].resourceDocs
+            );
 
             draft[id].data = formData;
             draft[id].layout = `${mode}FormBuilder`;
@@ -197,7 +235,9 @@ export default function reducer(state = {}, action) {
           if (mode) {
             delete draft[id].activeProcessor;
             draft[id].rule.activeProcessor = mode;
-            draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
+            draft[id].layout = `${
+              mode === 'filter' ? 'json' : 'script'
+            }FormBuilder`;
             // clear the output panel
             delete draft[id].result;
           }
@@ -250,6 +290,7 @@ export default function reducer(state = {}, action) {
         if (!draft[id]) break;
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
+        draft[id].errSourceProcessor = error?.errSourceProcessor;
         draft[id].previewStatus = 'error';
         delete draft[id].result;
         break;
@@ -305,6 +346,25 @@ export default function reducer(state = {}, action) {
           editor.originalDefaultData = editor.defaultData;
         }
 
+        break;
+      }
+
+      case actionTypes.EDITOR.CHAT.REQUEST: {
+        draft[id].chat.status = CHAT_STATUS.PENDING;
+        draft[id].chat.errors = null;
+
+        break;
+      }
+
+      case actionTypes.EDITOR.CHAT.FAILED: {
+        draft[id].chat.status = CHAT_STATUS.IDLE;
+        draft[id].chat.errors = error;
+        break;
+      }
+
+      case actionTypes.EDITOR.CHAT.COMPLETE: {
+        draft[id].chat.status = CHAT_STATUS.IDLE;
+        draft[id].chat.errors = null;
         break;
       }
 
@@ -376,6 +436,7 @@ selectors.editorPreviewError = (state, id) => {
   return {
     error: editor?.error,
     errorLine: editor?.errorLine,
+    errSourceProcessor: editor?.errSourceProcessor,
   };
 };
 
@@ -399,4 +460,11 @@ selectors.editorViolations = (state, id) => processorLogic.validate(state?.[id])
 
 selectors.isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
 
+selectors.editorChatState = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
+
+  return editor?.chat || emptyObj;
+};
 // #endregion

@@ -39,7 +39,7 @@ export default function TransformPanel({ editorId }) {
   const data = useSelector(state => selectors.editorData(state, editorId));
   const rule = useSelector(state => selectors.editorRule(state, editorId));
   const hasError =
-    useSelector(state => !!selectors.editorPreviewError(state, editorId).error);
+  useSelector(state => selectors.editorPreviewError(state, editorId).errSourceProcessor) === 'transform';
   const classes = useStyles({hasError});
 
   const patchEditor = useCallback(value => {

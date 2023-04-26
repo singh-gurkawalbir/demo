@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import {
   ClickAwayListener,
   IconButton,
+  makeStyles,
   MenuItem,
   Tooltip,
 } from '@material-ui/core';
@@ -19,7 +20,14 @@ import RawHtml from '../../../../../RawHtml';
 import actions from '../../../../../../actions';
 import messageStore, { message } from '../../../../../../utils/messageStore';
 
+const useStyles = makeStyles(theme => ({
+  deleteWrapper: {
+    color: theme.palette.error.dark,
+  },
+}));
+
 export default function MoreActionsButton({editorId, position, pageProcessors = [], allowDeleting}) {
+  const classes = useStyles();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
@@ -98,7 +106,7 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
 
         <Tooltip title={allowDeleting ? '' : message.AFE_EDITOR_PANELS_INFO.DELETE_LAST_BRANCH_MESSAGE} placement="bottom" aria-label="no notifications">
           <span>
-            <MenuItem disabled={!allowDeleting} data-test={`deleteBranch-${position}`} onClick={handleDeleteBranch}>
+            <MenuItem disabled={!allowDeleting} className={classes.deleteWrapper} data-test={`deleteBranch-${position}`} onClick={handleDeleteBranch}>
               <TrashIcon /> Delete branch
             </MenuItem>
           </span>

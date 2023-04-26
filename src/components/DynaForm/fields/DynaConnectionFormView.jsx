@@ -44,9 +44,9 @@ export default function FormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return defaultValue;
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return defaultValue;
 
-    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
   }, [stagedResource, defaultValue]);
 
   const resourceFormState = useSelector(
@@ -102,8 +102,8 @@ export default function FormView(props) {
     // if assistant is selected back again assign it to the export to the export obj as well
 
     if (selectedApplication !== 'true') {
-      stagedRes['/http/formType'] = 'assistant';
-      newFinalValues['/http/formType'] = 'assistant';
+      stagedRes['/http/sessionFormType'] = 'assistant';
+      newFinalValues['/http/sessionFormType'] = 'assistant';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
           'Toggle Mode': 'Simple',
@@ -112,9 +112,9 @@ export default function FormView(props) {
         })
       );
     } else {
-      // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-      stagedRes['/http/formType'] = 'http';
-      newFinalValues['/http/formType'] = 'http';
+      // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
+      stagedRes['/http/sessionFormType'] = 'http';
+      newFinalValues['/http/sessionFormType'] = 'http';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
           'Toggle Mode': 'HTTP',

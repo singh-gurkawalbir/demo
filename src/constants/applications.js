@@ -91,6 +91,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
+  {
+    id: 'van',
+    name: 'VAN (Value-added network)',
+    type: 'van',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
   // Database connectors
   {
     id: 'mongodb',
@@ -159,7 +166,7 @@ const connectors = [
   },
   {
     id: 'netsuitejdbc',
-    name: 'Netsuite JDBC',
+    name: 'NetSuite JDBC',
     type: 'netsuitejdbc',
     keywords: 'database,db',
     group: 'db',

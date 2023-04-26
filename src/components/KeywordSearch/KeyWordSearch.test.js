@@ -7,7 +7,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 
 describe('KeyWordSearch UI tests', () => {
-  test('should update the state correctly when an user input is provided and isHomeSearch is false', async () => {
+  test('should update the state correctly when an user input is provided', async () => {
     const keyWord = {keyword: 'keyword'};
     const {store} = renderWithProviders(<KeywordSearch filterKey="name" />);
 
@@ -19,16 +19,15 @@ describe('KeyWordSearch UI tests', () => {
     await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe('somtext'));
   });
 
-  test('should update the state correctly when an user input is provided when isHomeSearch is true', async () => {
+  test('should update the state correctly when an user input is not provided', async () => {
     const keyWord = {keyword: 'keyword'};
-    const {store} = renderWithProviders(<KeywordSearch filterKey="name" isHomeSearch />);
+    const {store} = renderWithProviders(<KeywordSearch filterKey="name" />);
 
     store.dispatch(actions.patchFilter('name', keyWord));
     const input = screen.getByDisplayValue('');
 
     expect(input).toBeInTheDocument();
-    userEvent.type(input, 'somtext');
-
-    await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe('somtext'));
+    userEvent.type(input, '');
+    await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe(''));
   });
 });

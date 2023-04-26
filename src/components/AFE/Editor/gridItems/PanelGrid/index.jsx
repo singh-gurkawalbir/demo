@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function PanelGrid({ children, onMouseUp, onMouseMove, className }, ref) {
+function PanelGrid({ children, onMouseUp, onMouseMove, className, style }, ref) {
   const classes = useStyles();
 
   return (
@@ -20,9 +20,10 @@ function PanelGrid({ children, onMouseUp, onMouseMove, className }, ref) {
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
       ref={ref}
+      style={style}
       className={clsx(classes.gridContainer, className)}>
       {children}
-    </div>
+    </div >
   );
 }
 

@@ -31,17 +31,26 @@ const useStyles = makeStyles(theme => ({
 
 const overrides = { wrap: true };
 export default function ErrorGridItem({ editorId }) {
-  const {error, sampleDataStatus} = useSelector(state => selectors.editor(state, editorId));
+  const {error, sampleDataStatus, chatErrors} = useSelector(state => {
+    const editorState = selectors.editor(state, editorId);
+    const {error, sampleDataStatus, chat = {}} = editorState;
+    const {errors: chatErrors} = chat;
+
+    return {error, sampleDataStatus, chatErrors};
+  });
+
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId),
   );
   const classes = useStyles();
 
-  if (sampleDataStatus === 'requested' || (!error && !violations)) return null;
+  if (sampleDataStatus === 'requested' || (!error && !violations && !chatErrors)) return null;
+
   const errorText = [
     ...(Array.isArray(error) ? error : [error]),
     violations?.ruleError,
     violations?.dataError,
+    ...chatErrors || [],
   ]
     .filter(e => !!e)
     .join('\n');

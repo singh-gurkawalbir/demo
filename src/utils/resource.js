@@ -2,7 +2,7 @@ import { values, keyBy } from 'lodash';
 import parseLinkHeader from 'parse-link-header';
 import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, HELP_CENTER_BASE_URL_WITH_SIGN_IN, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import { message } from './messageStore';
 import customCloneDeep from './customCloneDeep';
@@ -644,7 +644,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   const domainUrl = getDomainUrl();
   const { href } = window.location;
   let connectorId;
-  let helpUrl = `${HELP_CENTER_BASE_URL}/hc/en-us`; // platform help url
+  let helpUrl = `${HELP_CENTER_BASE_URL_WITH_SIGN_IN}/hc/en-us`; // platform help url
   const newurl = href.replace(`${domainUrl}/`, '').split('/');
   let integrationId;
 

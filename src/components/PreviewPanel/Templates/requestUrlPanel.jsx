@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import { getRequestURL } from '../../../utils/exportPanel';
+import { getRequestURL, getDecodedURL } from '../../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -25,7 +25,7 @@ export default function RequestUrlPanel(props) {
   const isRequestUrlAvailable = useSelector(state =>
     selectors.isRequestUrlAvailableForPreviewPanel(state, resourceId, resourceType)
   );
-  const requestURL = getRequestURL(previewStageDataList);
+  const requestURL = getDecodedURL(getRequestURL(previewStageDataList));
 
   if (!isRequestUrlAvailable || (!showEmptyPanel && !requestURL)) {
     return null;

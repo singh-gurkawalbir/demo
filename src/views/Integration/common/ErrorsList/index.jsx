@@ -61,12 +61,11 @@ const metadata = {
         const { type, id, isLookup } = rowData;
         const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
         const category = resourceCategory(doc, isLookup, type === 'imports');
-        const handleClick = useCallback(() => {}, []);
 
         return (
           <ResourceButton
-            onClick={handleClick}
             variant={category}
+            type="icon"
       />
         );
       },

@@ -194,10 +194,12 @@ export default {
     }
 
     if (newValues['/http/clientCertificates/type'] === 'pem') {
+      newValues['/http/clientCertificates'] = undefined;
       delete newValues['/http/clientCertificates/pfx'];
     }
 
     if (newValues['/http/clientCertificates/type'] === 'pfx') {
+      newValues['/http/clientCertificates'] = undefined;
       delete newValues['/http/clientCertificates/cert'];
       delete newValues['/http/clientCertificates/key'];
       if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {
@@ -236,6 +238,12 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+    },
+    'http._httpConnectorVersionId': {
+      fieldId: 'http._httpConnectorVersionId',
+      type: 'text',
+      visible: false,
+      label: 'API version',
     },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
@@ -476,6 +484,7 @@ export default {
         collapsed: true,
         label: 'Application details',
         fields: [
+          'http._httpConnectorVersionId',
           'http.baseURI',
           'http.headers',
           'http.mediaType',

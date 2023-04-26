@@ -105,18 +105,17 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   return applicationsWithPreviewPanel.includes(appType);
 };
 
-export const getPreviewDataPageSizeInfo = (previewData, resourceType) => {
-  if (resourceType === 'imports') return '1 Page, 1 Records';
-  if (!previewData || isEmpty(previewData.data)) return '1 Page, 0 Records';
+export const getPreviewDataPageSizeLength = (previewData, resourceType) => {
+  if (resourceType === 'imports') return 1;
+  if (!previewData || isEmpty(previewData.data)) return 0;
   const records = previewData.data;
   const pageSize = Array.isArray(records) ? records.length : 1;
 
-  if (pageSize === 1) {
-    return '1 Page, 1 Record';
-  }
-
-  return `1 Page, ${pageSize} Records`;
+  return pageSize;
 };
+
+export const getPreviewDataPageSizeInfo = (previewData, resourceType) =>
+  `1 Page, ${getPreviewDataPageSizeLength(previewData, resourceType)} ${getPreviewDataPageSizeLength(previewData, resourceType) === 1 ? 'Record' : 'Records'}`;
 
 export const previewFileData = (previewData, recordSize) => {
   if (!previewData || !Array.isArray(previewData) || !recordSize || Number.isNaN(recordSize)) {
@@ -149,6 +148,19 @@ export const getLatestReqResData = (previewData, stage) => {
 };
 
 export const getRequestURL = previewData => getLatestReqResData(previewData, 'request')?.url;
+export const getDecodedURL = url => {
+  if (!url) return;
+
+  let decodedUrl;
+
+  try {
+    decodedUrl = decodeURIComponent(url);
+  } catch (e) {
+    // console.log(e);
+  }
+
+  return decodedUrl;
+};
 
 export const IMPORT_PREVIEW_ERROR_TYPES = [
   { label: 'Preview', value: 'preview' },

@@ -357,7 +357,7 @@ const SUBSCRIPTION = {
 
   <a target="_blank" rel="noopener noreferrer"
   href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with integration apps & templates.`,
-  TRY_UNLIMITED: 'Try unlimited flows free for 30 days',
+  TRY_FULL_ACCESS: 'Try full access free for 30 days',
   UNLIMITED_FLOWS_START: 'Congratulations! Your unlimited flows trial starts now.',
   REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out<br>for an email from one of our associates soon.',
   UPGRADE_TO_NEXT_PLAN: 'Upgrade to a {{nextPlan}} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.',
@@ -384,8 +384,8 @@ const SUBSCRIPTION = {
   RECEIVE_FOLLOW_UP_EMAIL: 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.',
   UNINSTALL_INSTANCE: ' Use this page to uninstall this instance (i.e. this tile) of the Integration App. Uninstalling an Integration App will remove all components, including the integration tile, from your integrator.io account. After uninstalling you can re-install from the marketplace as long as you have a valid subscription. Please be very certain that you want to uninstall as this action cannot be undone.',
   UNINSTALL_INFO: 'Once you uninstall this Integration App there is no going back. Please be certain.',
-  REQUEST_RECEIVED_VAN: '<a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN Connector</a> (Value Added Network) is not included in your accounts current subscription plan.<b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>',
-  VAN_LICENSE_APPROVED: '<b>Additional action required after saving</b><p>You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.</p>',
+  REQUEST_RECEIVED_VAN: '<a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN connector</a> (Value-added network) is not included in your account’s current subscription plan.<b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>',
+  VAN_LICENSE_APPROVED: '<b>Additional action required after saving</b><p>You must contact Celigo to gain access to our VAN customer portal to configure and manage your VAN service. After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.</p>',
   VAN_LICENSE_UPGRADE_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
 };
 // #endregion

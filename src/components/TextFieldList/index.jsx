@@ -12,6 +12,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(0.5),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: '0px 15px',
+    height: 38,
   },
   rowContainer: {
     display: 'flex',
@@ -93,6 +95,7 @@ export default function TextFieldList({ label, disabled, value, onChange, classN
           <ActionButton
             disabled={disabled || !(value)}
             data-test={`delete-${index}`}
+            tooltip="Delete"
             onClick={() => handleDelete(key)}>
             <TrashIcon />
           </ActionButton>

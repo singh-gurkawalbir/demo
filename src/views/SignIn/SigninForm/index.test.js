@@ -202,6 +202,21 @@ describe('SigninForm UI testcases', () => {
       actions.auth.reSignInWithSSO()
     );
   });
+
+  test('should disable the email field when SignInForm is opened in dialog', () => {
+    initialStore = getCreatedStore();
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+      draft.data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
+      draft.user.profile = {email: 'userEmail', auth_type_google: {id: 'someID'}};
+    });
+
+    initfunction(initialStore, true);
+    const email = screen.getByRole('textbox', {id: 'email'});
+
+    expect(email).toHaveValue('userEmail');
+    expect(email).toBeDisabled();
+  });
   test('should not show the option for sing in with google when domain is eu.inetgrator.io', () => {
     global.ALLOW_GOOGLE_SIGNIN = 'false';
     initialStore = getCreatedStore();

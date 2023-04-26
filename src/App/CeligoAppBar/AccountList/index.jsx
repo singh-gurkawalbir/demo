@@ -168,7 +168,7 @@ function AccountList() {
                 history.push(getRoutePath('/'));
               }
 
-              dispatch(actions.user.org.accounts.leave(account.id));
+              dispatch(actions.user.org.accounts.leave(account.id, userPreferences.defaultAShareId === account.id));
             },
           },
           {

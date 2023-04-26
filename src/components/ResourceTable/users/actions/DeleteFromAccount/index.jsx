@@ -1,20 +1,27 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import { selectors } from '../../../../../reducers';
 
 export default {
   key: 'removeUserFromAccount',
   useLabel: () => 'Remove user from account',
+  mode: 'delete',
   Component: ({rowData: user}) => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [enquesnackbar] = useEnqueueSnackbar();
     const { _id: userId, sharedWithUser = {} } = user;
+
+    const userPreferences = useSelector(state =>
+      selectors.userPreferences(state)
+    );
+
     const deleteFromAccount = useCallback(() => {
       confirmDialog({
         title: 'Confirm delete',
@@ -24,7 +31,7 @@ export default {
             label: 'Delete',
             error: true,
             onClick: () => {
-              dispatch(actions.user.org.users.delete(userId));
+              dispatch(actions.user.org.users.delete(userId, userPreferences.defaultAShareId === userId));
             },
           },
           {
@@ -33,7 +40,7 @@ export default {
           },
         ],
       });
-    }, [confirmDialog, dispatch, userId]);
+    }, [confirmDialog, dispatch, userId, userPreferences.defaultAShareId]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => deleteFromAccount(), []);

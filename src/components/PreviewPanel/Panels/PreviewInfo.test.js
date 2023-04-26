@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, mutateStore, reduxStore } from '../../../test/test-utils';
 import PreviewInfo from './PreviewInfo';
 
 let mockRecordValidity;
@@ -59,5 +59,34 @@ describe('preview Info Component', () => {
     userEvent.click(changeRecordValidityBtn);
     userEvent.click(previewBtn);
     expect(screen.getByText('Enter a valid record size')).toBeInTheDocument();
+  });
+
+  test('should pass when click on the preview button fetchExportPreviewData to be called', async () => {
+    const initialStore = reduxStore;
+    const mustateState = draft => {
+      draft.data = {
+        resources: {
+          exports: [
+            {
+              _id: 'export-123',
+              type: 'delta',
+            },
+          ],
+        },
+      };
+    };
+
+    mutateStore(initialStore, mustateState);
+    const formKey = 'export-123';
+    const fetchExportPreviewData = jest.fn();
+    const resourceSampleData = {};
+
+    mockRecordValidity = false;
+
+    await initPreviewInfo({fetchExportPreviewData, resourceSampleData, formKey});
+    const previewBtn = screen.getByRole('button', {name: 'Preview'});
+
+    userEvent.click(previewBtn);
+    expect(fetchExportPreviewData).toBeCalled();
   });
 });

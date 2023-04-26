@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useCallback, useReducer } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import ReactResizeDetector from 'react-resize-detector';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -11,6 +10,7 @@ import WarningGridItem from './gridItems/WarningGridItem';
 import ConsoleGridItem from './gridItems/ConsoleGridItem';
 import SinglePanelGridItem from './gridItems/SinglePanelGridItem';
 import TabbedPanelGridItem from './gridItems/TabbedPanelGridItem';
+import ChatBotGridItem from './gridItems/ChatGridItem';
 import layouts from './layouts';
 import editorMetadata from '../metadata';
 import DragHandleGridItem from './panels/DragHandlePanel';
@@ -18,7 +18,6 @@ import { resolveValue } from '../../../utils/editor';
 import reducer from './stateReducer';
 
 const minGridSize = 200;
-const useStyles = makeStyles(layouts);
 
 function getDragHandles(gridAreas, showErrorDragBar = false) {
   // strip all non-word characters and convert to an array.
@@ -120,8 +119,51 @@ const pxToFr = (pxSizes, resetLastRow) => {
   return fr.join(' ');
 };
 
+const getGridTemplateCSS = (layout, editorContext) => {
+  const layoutCSS = layouts[resolveValue(layout, editorContext)];
+
+  if (!editorContext.chatEnabled) {
+    return layoutCSS;
+  }
+
+  // we need to add 2 new row to the grid for the chatbot.
+  // The first row is for the horizontal drag bar, the second row is for the chatbot.
+  const cols = layoutCSS.gridTemplateColumns.split(' ');
+  const rows = layoutCSS.gridTemplateRows.split(' ');
+  const areas = layoutCSS.gridTemplateAreas
+    .split('" "')
+    .map(r => r.replace('"', ''));
+  const colCount = cols.length;
+  const errorDragBarIndex = +areas[areas.length - 2].split(' ')[0].slice(-1);
+
+  // add the chatbot row and respective dragBar row to the rows array
+  rows.splice(rows.length - 1, 0, '1fr', 'auto');
+  const gridRows = rows.join(' ');
+
+  // remove the error row and dragBar row from the areas array
+  areas.pop();
+  areas.pop();
+
+  // add the chatbot row and respective dragBar row to the areas array
+  areas.push(Array(colCount)
+    .fill(`dragBar_h_${errorDragBarIndex}`)
+    .join(' '));
+  areas.push(Array(colCount).fill('chat').join(' '));
+
+  // add the error row and respective dragBar row to the areas array
+  areas.push(Array(colCount)
+    .fill(`dragBar_h_${errorDragBarIndex + 1}`)
+    .join(' '));
+  areas.push(Array(colCount).fill('error').join(' '));
+
+  return {
+    gridTemplateRows: gridRows,
+    gridTemplateColumns: layoutCSS.gridTemplateColumns,
+    gridTemplateAreas: `"${areas.join('" "')}"`,
+  };
+};
+
 export default function Editor({ editorId }) {
-  const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [editorState, dispatchLocalAction] = useReducer(reducer,
     {
@@ -137,10 +179,10 @@ export default function Editor({ editorId }) {
   const showErrorDragBar = useSelector(state => {
     const violations = selectors.editorViolations(state, editorId);
     const { warning, logs } = selectors.editorResult(state, editorId);
-
+    const { errors: chatErrors } = selectors.editorChatState(state, editorId);
     const editor = selectors.editor(state, editorId);
 
-    return !!(violations || editor.error || warning || logs);
+    return !!(violations || editor.error || warning || logs || chatErrors);
   });
 
   const editorContext = useSelector(state => {
@@ -154,6 +196,7 @@ export default function Editor({ editorId }) {
     const activeProcessor = selectors.editorActiveProcessor(state, editorId);
 
     return {
+      chatEnabled: !!e.chat?.enabled,
       editorId,
       editorType: e.editorType,
       layout: e.layout,
@@ -251,8 +294,6 @@ export default function Editor({ editorId }) {
   // This implementation is a POC and should be reviewed/refined when the UI task
   // makes it to the UI codebase.
   const handleResize = useCallback(() => {
-    // console.log('handleResize', requireResize);
-
     if (!requireResize) return;
 
     const gridNode = gridRef.current;
@@ -277,17 +318,9 @@ export default function Editor({ editorId }) {
 
   const {editorType, layout} = editorContext;
 
-  const gridAreas = layouts[layout].gridTemplateAreas;
+  const gridTemplateCSS = getGridTemplateCSS(layout, editorContext);
+  const gridAreas = gridTemplateCSS.gridTemplateAreas;
   const handles = getDragHandles(gridAreas, showErrorDragBar);
-
-  // clear overriden styles any time the editor or layout changes...
-  useEffect(() => {
-    const gridNode = gridRef.current;
-
-    gridNode.style = {};
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorId, layout]);
 
   // any time the error panel is shown or hidden AND the gridRows are in px vs fr units,
   // we need to convert the css to fr so that the proper space is allocated for the new
@@ -306,13 +339,17 @@ export default function Editor({ editorId }) {
   if (!editorType) { return null; }
 
   const { panels } = editorMetadata[editorType];
-  const gridTemplate = classes[resolveValue(layout, editorContext)];
 
   return (
     <>
-      <PanelGrid className={gridTemplate} ref={gridRef} onMouseUp={handleDragEnd} onMouseMove={handleDrag}>
-        {resolveValue(panels, editorContext).map(p => !p.group
-          ? (
+      <PanelGrid
+        style={gridTemplateCSS}
+        ref={gridRef}
+        onMouseUp={handleDragEnd}
+        onMouseMove={handleDrag}
+      >
+        {resolveValue(panels, editorContext).map(p =>
+          !p.group ? (
             <SinglePanelGridItem
               area={p.area}
               key={p.area}
@@ -321,15 +358,18 @@ export default function Editor({ editorId }) {
               helpKey={resolveValue(p.helpKey, editorContext)}
               isLoggable={p?.isLoggable}
             >
-              <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
+              <p.Panel
+                editorId={editorId}
+                {...resolveValue(p.props, editorContext)}
+              />
             </SinglePanelGridItem>
-          )
-          : (
+          ) : (
             <TabbedPanelGridItem
               editorId={editorId}
               key={p.area}
               area={p.area}
-              panelGroup={p} />
+              panelGroup={p}
+            />
           )
         )}
         {handles.map(h => (
@@ -339,15 +379,21 @@ export default function Editor({ editorId }) {
             area={h.area}
             orientation={h.orientation}
             onMouseDown={handleDragStart}
-        />
+          />
         ))}
 
         <ErrorGridItem editorId={editorId} />
         <WarningGridItem editorId={editorId} />
         <ConsoleGridItem editorId={editorId} />
+        {editorContext.chatEnabled && <ChatBotGridItem editorId={editorId} />}
       </PanelGrid>
 
-      <ReactResizeDetector handleWidth handleHeight skipOnMount onResize={handleResize} />
+      <ReactResizeDetector
+        handleWidth
+        handleHeight
+        skipOnMount
+        onResize={handleResize}
+      />
     </>
   );
 }

@@ -28,7 +28,7 @@ import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
-import { getAssistantConnectorType, getHttpConnector } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector, applicationsList } from '../../constants/applications';
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
@@ -894,6 +894,22 @@ export function* initFormValues({
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   } else if (resourceType === 'exports') {
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.webhook?._httpConnectorId);
+  } else if (resourceType === 'iClients') {
+    const applications = applicationsList().filter(app => app._httpConnectorId);
+    let app;
+
+    if (resource?.application) {
+      // new iclent inside resource
+      app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource.application.toLowerCase().replace(/\.|\s/g, '')) || {};
+    } else if (resource?._httpConnectorId) {
+      // existing Iclient
+      app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
+    } else if (applicationFieldState?.value) {
+      // new Iclient inside connection
+      app = applications.find(a => a.name === applicationFieldState.value) || {};
+    }
+
+    httpPublishedConnector = getHttpConnector(app?._httpConnectorId);
   }
   try {
     const defaultFormAssets = getResourceFormAssets({
@@ -904,6 +920,8 @@ export function* initFormValues({
       connection,
       customFieldMeta,
       accountOwner,
+      parentConnectionId,
+      applicationFieldState,
     });
 
     const form = defaultFormAssets.fieldMeta;

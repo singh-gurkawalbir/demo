@@ -30,11 +30,11 @@ import getJSONPaths from '../../utils/jsonPaths';
 import { safeParse, isNumber } from '../../utils/string';
 import customCloneDeep from '../../utils/customCloneDeep';
 import { message } from '../../utils/messageStore';
+import {validateRecursive} from '../../utils/filter';
 
 const defaultData = {};
 
 export default function BranchFilterPanel({ editorId, position, type, rule, handlePatchEditor }) {
-  // console.log(editorId, rule, event);
   const qbuilder = useRef(null);
   const disabled = useSelector(state =>
     selectors.isEditorDisabled(state, editorId)
@@ -50,7 +50,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
     }
 
-    return false;
+    return selectors.editor(state, editorId)?.skipEmptyRuleCleanup;
   });
 
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -59,13 +59,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   const [rulesState, setRulesState] = useState({});
   const dispatch = useDispatch();
 
-  const setSkipEmptyRuleCleanup = useCallback(() => {
+  const setSkipEmptyRuleCleanup = useCallback(value => {
     if (type === 'branchFilter') {
-    // console.log('setSkipEmptyRuleCleanup: ', position);
       dispatch(
-        actions.editor.patchRule(editorId, true, {
-          rulePath: `branches[${position}].skipEmptyRuleCleanup`,
+        actions.editor.patchRule(editorId, value, {
+          actionType: 'setSkipEmptyRuleCleanup',
+          position,
         })
+      );
+    } else {
+      dispatch(
+        actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: value})
       );
     }
   }, [dispatch, type, position, editorId]);
@@ -140,7 +144,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     return false;
   };
-  const getRules = (options = {}) => {
+  const getRules = useCallback((options = {}) => {
     const result = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
     if (isEmpty(result) || (result && !result.valid)) {
@@ -148,9 +152,9 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
     }
 
     return generateIOFilterExpression(result, context);
-  };
+  }, [context]);
 
-  const handleFilterRulesChange = () => {
+  const handleFilterRulesChange = useCallback(() => {
     if (isValid()) {
       // reset editor errors
       patchEditorValidation();
@@ -158,7 +162,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
       handlePatchEditor(rule);
     }
-  };
+  }, [getRules, handlePatchEditor, patchEditorValidation]);
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
@@ -413,15 +417,22 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.lhs.type === 'expression') {
       try {
-        const parsedExp = JSON.parse(r.lhs.expression);
+        let parsedExp;
+
+        try {
+          parsedExp = JSON.parse(r.lhs.expression);
+        } catch (ex) {
+          throw new Error();
+        }
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
           toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
+        validateRecursive(parsedExp, null);
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
+        toReturn.error = ex.message || message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
@@ -445,15 +456,22 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.rhs.type === 'expression') {
       try {
-        const parsedExp = JSON.parse(r.rhs.expression);
+        let parsedExp;
+
+        try {
+          parsedExp = JSON.parse(r.rhs.expression);
+        } catch (ex) {
+          throw new Error();
+        }
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
           toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
+        validateRecursive(parsedExp, null);
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
+        toReturn.error = ex.message || message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
@@ -872,17 +890,13 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       );
       qbContainer
         .off('rulesChanged.queryBuilder')
-        .on('rulesChanged.queryBuilder', () => {
-          handleFilterRulesChange();
-        });
+        .on('rulesChanged.queryBuilder', handleFilterRulesChange);
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
 
       // don't change the sequence of these events
       qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
-        if (type === 'branchFilter') {
-          setSkipEmptyRuleCleanup();
-        }
+        setSkipEmptyRuleCleanup(true);
       });
 
       // eslint-disable-next-line no-restricted-syntax
@@ -913,42 +927,57 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtersMetadata]);
+  }, [filtersMetadata, position]);
   // TODO: 1. only run this code on component mount. we do not want re-order or other actions to remove incomplete rules
   // 2. only need to check if rule length=1.
   // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
   useEffect(() => {
-    if (type === 'branchFilter') {
     // iterate over rulesState and find empty rules
-      if (!rulesState || skipEmptyRuleCleanup) return;
+    if (!rulesState || skipEmptyRuleCleanup) return;
 
-      // console.log('rulesState', rulesState);
-      const $qb = jQuery(qbuilder.current);
+    const $qb = jQuery(qbuilder.current);
 
-      Object.keys(rulesState).forEach(ruleId => {
-        const state = rulesState[ruleId];
+    Object.keys(rulesState).forEach(ruleId => {
+      const state = rulesState[ruleId];
 
-        if (
-          typeof state.data.lhs === 'object' &&
+      if (
+        typeof state.data.lhs === 'object' &&
         typeof state.data.rhs === 'object'
-        ) {
-        // console.log('both lhs and rhs have data');
+      ) {
         // eslint-disable-next-line camelcase
-          const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
+        const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-          if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
+        if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
 
-          const $emptyRule = state.rule;
+        const $emptyRule = state.rule;
 
-          // console.log('delete', $emptyRule);
-          $qb.queryBuilder('deleteRule', $emptyRule);
-        }
-      });
-    }
+        $qb.queryBuilder('deleteRule', $emptyRule);
+      }
+    });
     // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
     // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
+  useEffect(() => {
+    const qbContainer = jQuery(qbuilder.current);
+
+    qbContainer.off('afterCreateRuleInput.queryBuilder')
+      .on('afterCreateRuleInput.queryBuilder', (e, rule) => {
+        rule.filter.valueGetter(rule, true);
+        setSkipEmptyRuleCleanup(true);
+      });
+  }, [position, filtersMetadata, type, setSkipEmptyRuleCleanup]);
+
+  // On component unmount,
+  // 1. Reset editor validations,
+  // 2. Cleanup any empty rules on remount,
+  // this useEffect handles switching between rules and javascript panels
+  useEffect(() => () => {
+    patchEditorValidation();
+    setSkipEmptyRuleCleanup(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleCloseOperandSettings = () => {
     setShowOperandSettingsFor();
   };

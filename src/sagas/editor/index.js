@@ -24,7 +24,8 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION } from '../../constants';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION, emptyObject } from '../../constants';
+import { getLastExportDateTime } from '../flows';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -211,7 +212,7 @@ export function* requestPreview({ id }) {
             errorMessage.push(`Stack: ${errJSON.stack}`);
           }
 
-          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine}));
+          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine, errSourceProcessor: editor.activeProcessor}));
         }
       }
     }
@@ -224,7 +225,7 @@ export function* requestPreview({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message}));
+    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message, errSourceProcessor: editor.activeProcessor}));
   }
 
   return yield put(actions.editor.previewResponse(id, finalResult));
@@ -728,6 +729,13 @@ export function* requestEditorSampleData({
   const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
+    if (flowId && !isNewId(flowId)) {
+      const { status } = yield select(selectors.getLastExportDateTime, flowId) || emptyObject;
+
+      if (!status) {
+        yield call(getLastExportDateTime, { flowId });
+      }
+    }
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,
@@ -915,21 +923,88 @@ export function* toggleEditorVersion({ id, version }) {
   );
 }
 
+export function* requestChatCompletion({ id, prompt }) {
+  let response;
+  const editor = yield select(selectors.editor, id);
+  const { data, rule: rawRule, chat } = editor;
+  const { formKey, rulePath } = chat;
+
+  let rule = rulePath ? rawRule[rulePath] : rawRule;
+
+  if (typeof rule === 'object') {
+    rule = JSON.stringify(rule, null, 2);
+  }
+
+  const chatFormValues = yield select(selectors.formValueTrimmed, formKey);
+  // this is part of the openAI api spec
+  // eslint-disable-next-line camelcase
+  const { messages, temperature, top_p, max_tokens } = chatFormValues;
+  const body = {
+    model: 'gpt-3.5-turbo',
+    max_tokens: parseInt(max_tokens, 10) || 512,
+    temperature: parseFloat(temperature) || 0,
+    top_p: parseFloat(top_p) || 1,
+    messages: JSON.parse(messages),
+  };
+
+  body.messages.push({
+    role: 'user',
+    content: `The current rule is:\n ${JSON.stringify(rule)}\n
+ The data to apply the rule to is:\n ${data}\n
+ ${prompt}`,
+  });
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: '/openai/chat/completions',
+      opts: {
+        method: 'POST',
+        body,
+      },
+    });
+  } catch (error) {
+    return yield put(actions.editor.chat.failed(id, [error.message]));
+  }
+  // we have a successful response, but we do not know if the response itself
+  // holds a valid result.
+  const newRule = response.choices[0].message.content;
+
+  const {isValid, validationErrors, parsedResponse} = processorLogic.validateChatResponse(editor, newRule);
+
+  if (!isValid) {
+    return yield put(actions.editor.chat.failed(id, validationErrors));
+  }
+
+  const value = rulePath ? {[rulePath]: parsedResponse} : parsedResponse;
+
+  yield put(actions.editor.patchRule(id, value));
+  yield put(actions.editor.chat.complete(id));
+}
+
 export default [
   takeLatest(
-    [actionTypes.EDITOR.PATCH.DATA,
+    [
+      actionTypes.EDITOR.PATCH.DATA,
       actionTypes.EDITOR.PATCH.RULE,
       actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW,
-      actionTypes.EDITOR.PATCH.FEATURES],
+      actionTypes.EDITOR.PATCH.FEATURES,
+    ],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as
   // both, csv parser and file key editor can be in use and would require
   // the preview API call parallel
-  takeLatest(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
+  takeLatest(
+    actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN,
+    autoEvaluateProcessorWithCancel
+  ),
   takeEvery(actionTypes.EDITOR.INIT, initEditor),
   takeLatest(actionTypes.EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes.EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes.EDITOR.SAVE.REQUEST, save),
-  takeLatest(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS, refreshHelperFunctions),
+  takeLatest(
+    actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS,
+    refreshHelperFunctions
+  ),
+  takeLatest(actionTypes.EDITOR.CHAT.REQUEST, requestChatCompletion),
 ];

@@ -6,6 +6,7 @@ import {
   HTTP_STAGES,
   PREVIEW_STAGE,
   getRequestURL,
+  getDecodedURL,
   isPreviewPanelAvailable,
   getLatestReqResData,
 } from '.';
@@ -229,6 +230,20 @@ describe('getRequestURL util', () => {
     const previewData = { request: sampleWithMultipleRequests };
 
     expect(getRequestURL(previewData)).toBe('url3');
+  });
+});
+
+describe('getDecodedURL util', () => {
+  test('should return undefined incase of empty/undefined url', () => {
+    expect(getDecodedURL('')).toBeUndefined();
+    expect(getDecodedURL(null)).toBeUndefined();
+  });
+  test('should return decoded request url from a valid url by removing escape sequences', () => {
+    const requestUrl1 = '/v1/labels?page=1&created_at_end=04%2F05%2F2022%2001%3A18%3A58';
+    const requestUrl2 = '/v1.0/teams/12345/channels?$filter=startswith(givenName,%22P%22)';
+
+    expect(getDecodedURL(requestUrl1)).toBe('/v1/labels?page=1&created_at_end=04/05/2022 01:18:58');
+    expect(getDecodedURL(requestUrl2)).toBe('/v1.0/teams/12345/channels?$filter=startswith(givenName,"P")');
   });
 });
 

@@ -97,8 +97,8 @@ export default {
 
       matches: 'matches',
     },
-    add_rule: 'Add Rule',
-    add_group: 'Add Group',
+    add_rule: 'Add rule',
+    add_group: 'Add group',
     delete_rule: ' ',
     delete_group: ' ',
   },

@@ -22,7 +22,6 @@ export default function UsersList({ integrationId, childId, className }) {
   );
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
   const isAccountOwnerMFAEnabled = useSelector(state => selectors.isAccountOwnerMFAEnabled(state));
-  const isUserDeleteRequested = useSelector(state => selectors.isUserDeleteRequested(state));
   const requiredResources = useMemo(() => ['integrations', 'connections', 'notifications'], []);
 
   useEffect(() => {
@@ -47,10 +46,6 @@ export default function UsersList({ integrationId, childId, className }) {
 
   if (isAccountOwner) {
     requiredResources.push('ssoclients');
-  }
-
-  if (isUserDeleteRequested) {
-    return null;
   }
 
   return (
