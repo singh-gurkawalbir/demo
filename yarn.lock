@@ -1263,10 +1263,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@celigo/fuse-ui@0.4.5":
-  version "0.4.5"
-  resolved "https://npm.pkg.github.com/download/@celigo/fuse-ui/0.4.5/c64060e55a58776cc5062d7b2a61fdbb4af5388a#c64060e55a58776cc5062d7b2a61fdbb4af5388a"
-  integrity sha512-70FQpH8y04V0LpSEUQ0GhVFA6kFiXhBb/s3p5jnKw2KwCkuX8FLbxL4Z8t8XujG/RQaSSxiUuFIcU9X8RaKgVA==
+"@celigo/fuse-ui@0.4.7":
+  version "0.4.7"
+  resolved "https://npm.pkg.github.com/download/@celigo/fuse-ui/0.4.7/8eadaa49511258def8aa6eb5f57f9f69720ba10b#8eadaa49511258def8aa6eb5f57f9f69720ba10b"
+  integrity sha512-jmq6HjXfHsztxm/x3lGj57fWhTn73pyNUASM7c+TOzfKJwBcVmJm99QLEN1Lx0twaSCF2Mtl0t/VSr4mVM/Pkw==
   dependencies:
     "@emotion/react" "11.10.5"
     "@emotion/styled" "11.10.5"
