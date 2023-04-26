@@ -54,6 +54,7 @@ export default function DynaSettings(props) {
     collapsed = true,
     fieldsOnly = false,
     formKey: parentFormKey,
+    flowId,
   } = props;
   const classes = useStyles();
   const match = useRouteMatch();
@@ -98,11 +99,11 @@ export default function DynaSettings(props) {
         resourceId,
         false,
         false,
-        '',
+        flowId,
         allTouchedFields
       )
     );
-  }, [dispatch, formContext.fields, resourceId, resourceType, isHttpConnectorResource]);
+  }, [dispatch, formContext.fields, resourceId, resourceType, isHttpConnectorResource, flowId]);
 
   const handleSettingFormChange = useCallback(
     (values, isValid, skipFieldTouched) => {
