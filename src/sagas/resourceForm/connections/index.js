@@ -352,6 +352,7 @@ export function* pingConnection({ resourceId, values, parentContext }) {
 
   if (resp && resp.errors) {
     yield put(actions.asyncTask.failed(asyncKey));
+    // This is added temporarily to fix IO-34226. We need to come up with generic solution in future.
     if (connectionPayload?.assistant === 'sapbydesign' && resp.errors?.[0]?.code === 401) {
       resp.errors[0].message = 'The SAP credentials you entered are invalid. Check your username and password and try again.';
     }
