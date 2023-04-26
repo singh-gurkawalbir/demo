@@ -282,13 +282,15 @@ describe('dynaAssistantSearchParams UI tests', () => {
     const LaunchButton = screen.getByRole('button', {name: 'Launch'});
 
     await userEvent.click(LaunchButton);
-    expect(screen.getByText('Please select')).toBeInTheDocument();
-    await userEvent.click(screen.getByText('Please select'));
-    waitFor(() => {
-      expect(screen.getByText('admin')).toBeInTheDocument();
-      expect(screen.getByText('agent')).toBeInTheDocument();
-      expect(screen.getByText('end-user')).toBeInTheDocument();
-    });
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    const options = screen.getAllByRole('menuitem').map(ele => ele.getAttribute('data-value'));
+
+    expect(options).toEqual([
+      '',
+      'admin',
+      'agent',
+      'end-user',
+    ]);
   });
   test('should make a dispatch call whenever the form is saved with changed values', async () => {
     initDynaDate(props);
