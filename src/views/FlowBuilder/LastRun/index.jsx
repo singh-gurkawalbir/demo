@@ -2,10 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Divider } from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
+import { TimeAgo, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../constants';
-import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -73,7 +72,7 @@ export default function LastRun({ flowId }) {
     return (
       <>
         <RefreshIcon className={classes.icon} />
-        <span className={classes.lastRun}>Last run:</span> <CeligoTimeAgo date={lastRunStatus} />
+        <span className={classes.lastRun}>Last run:</span> <TimeAgo date={lastRunStatus} />
       </>
     );
   }, [lastRunStatus, classes.icon, classes.lastRun]);

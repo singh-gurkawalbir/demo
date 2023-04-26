@@ -1,5 +1,5 @@
 import React from 'react';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 import Edit from '../../../ResourceTable/commonActions/Edit';
 import Delete from '../../../ResourceTable/commonActions/Delete';
 
@@ -9,7 +9,7 @@ export default {
       key: 'created',
       heading: 'Created',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.created} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
