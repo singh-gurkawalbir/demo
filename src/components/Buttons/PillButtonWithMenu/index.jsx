@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0.5),
     margin: theme.spacing(0, 1, 2),
     overflow: 'visible',
+    borderRadius: 2,
     border: 0,
     '&:hover': {
       backgroundColor: theme.palette.background.default,
