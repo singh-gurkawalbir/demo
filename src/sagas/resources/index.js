@@ -240,7 +240,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
     }
     merged.assistantMetadata = undefined;
   }
-  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
+  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
     if (merged.restToHTTPConverted) {
       merged.adaptorType = resourceType === 'exports' ? 'RESTExport' : 'RESTImport';
