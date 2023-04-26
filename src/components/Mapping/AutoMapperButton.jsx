@@ -1,17 +1,14 @@
 import React, { useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
-import Spinner from '../Spinner';
 import Help from '../Help';
 import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
-  spinner: {
-    marginRight: theme.spacing(1),
-  },
   betaLabel: {
     border: '1px solid',
     borderColor: theme.palette.background.paper,
@@ -64,7 +61,7 @@ export default function AutoMapperButton({disabled}) {
         onClick={handleButtonClick}
       >
         {isFetchingAutoSuggestions &&
-          (<Spinner size="small" className={classes.spinner} />)}
+          (<Spinner size="small" sx={{mr: 1}} />)}
         Auto-map fields
         <span className={classes.betaLabel}>
           BETA

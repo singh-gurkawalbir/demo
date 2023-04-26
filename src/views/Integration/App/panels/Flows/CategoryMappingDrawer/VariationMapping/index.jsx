@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
@@ -10,7 +11,6 @@ import ApplicationImg from '../../../../../../../components/icons/ApplicationImg
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
-import Spinner from '../../../../../../../components/Spinner';
 import { capitalizeFirstLetter } from '../../../../../../../utils/string';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import TextButton from '../../../../../../../components/Buttons/TextButton';
@@ -164,7 +164,7 @@ function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }
   }
 
   if (!metadataLoaded) {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
 
   return (

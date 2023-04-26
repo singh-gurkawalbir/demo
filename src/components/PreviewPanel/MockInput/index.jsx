@@ -4,6 +4,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Paper } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -13,7 +14,6 @@ import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import CodePanel from '../../AFE/Editor/panels/Code';
 import { unwrapExportFileSampleData, wrapExportFileSampleData, wrapMockInputData } from '../../../utils/sampleData';
-import Spinner from '../../Spinner';
 import { safeParse } from '../../../utils/string';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 function DrawerSpinner({visible}) {
   if (!visible) return null;
 
-  return (<Spinner centerAll />);
+  return (<Spinner center="screen" />);
 }
 
 function RouterWrappedContent(props) {

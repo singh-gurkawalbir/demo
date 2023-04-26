@@ -3,10 +3,10 @@ import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { getDomain } from '../../utils/resource';
 import { message } from '../../utils/messageStore';
 import nsMappingUtils from '../../utils/mapping/application/netsuite';
-import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -194,14 +194,14 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-      <Spinner centerAll />
+      <Spinner center="screen" />
       )}
       {suiteletUrl && (
         <Iframe

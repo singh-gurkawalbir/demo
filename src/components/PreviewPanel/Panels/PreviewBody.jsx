@@ -1,7 +1,6 @@
 import React from 'react';
-import {Box} from '@celigo/fuse-ui';
+import {Box, Spinner } from '@celigo/fuse-ui';
 import Templates from '../Templates';
-import Spinner from '../../Spinner';
 import PreviewBodyTabs from './PreviewBodyTabs';
 
 export default function PreviewBody(props) {
@@ -45,7 +44,7 @@ export default function PreviewBody(props) {
         position: 'relative',
       }}>
       {resourceSampleData.status === 'requested' && (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       )}
       {['received', 'error'].includes(resourceSampleData.status) && (
         <>
