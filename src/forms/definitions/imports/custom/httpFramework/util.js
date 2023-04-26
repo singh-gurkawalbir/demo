@@ -3,6 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
+  searchParameterFieldsMeta,
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
@@ -166,75 +167,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
 
       return pathParamField;
     });
-}
-
-function searchParameterFieldsMeta({
-  paramLocation,
-  parameters = [],
-  value,
-  operationChanged,
-  url,
-}) {
-  let searchParamsField;
-  const defaultValue = {};
-  const filteredValues = value;
-
-  if (url) {
-    const [, queryPart] = url.split('?');
-    const queryObj = new URLSearchParams(queryPart);
-    const parameterIds = parameters.map(param => param.id);
-
-    if (queryPart) {
-      [...queryObj.entries()].filter(([key]) => !parameterIds.includes(key)).map(([key]) => key).forEach(key => {
-        delete filteredValues[key];
-      });
-    }
-  }
-
-  parameters.forEach(p => {
-    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
-      if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
-        try {
-          defaultValue[p.id] = JSON.parse(p.defaultValue);
-        } catch (e) {
-          defaultValue[p.id] = [];
-        }
-      } else {
-        defaultValue[p.id] = p.defaultValue;
-      }
-    }
-  });
-
-  if (parameters.length > 0) {
-    searchParamsField = {
-      fieldId: 'assistantMetadata.searchParams',
-      id: paramLocation === PARAMETER_LOCATION.QUERY ? 'assistantMetadata.queryParams' : 'assistantMetadata.bodyParams',
-      type: 'hfsearchparams',
-      value: !isEmpty(filteredValues) ? filteredValues : defaultValue,
-      keyName: 'name',
-      valueName: 'value',
-      keyPlaceholder: 'Search, select or add a name',
-      paramMeta: {
-        paramLocation,
-        fields: parameters,
-      },
-    };
-
-    if (parameters.filter(p => !!p.required).length > 0) {
-      searchParamsField.required = true;
-      searchParamsField.validWhen = {
-        isNot: {
-          values: [undefined, {}, ''],
-        },
-      };
-    }
-  }
-
-  if (searchParamsField) {
-    return [searchParamsField];
-  }
-
-  return [];
 }
 
 function ignoreConfigFieldsMeta({ operationDetails = {}, values = {} }) {
@@ -443,9 +375,10 @@ export function fieldMeta({ resource, assistantData }) {
         searchParameterFields = searchParameterFieldsMeta({
           parameters: operationDetails.queryParameters,
           paramLocation: PARAMETER_LOCATION.QUERY,
-          url: operationDetails.url,
           value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
           operationChanged: resource.assistantMetadata?.operationChanged,
+          url: operationDetails.url,
+          isHTTPFramework: true,
         });
       }
       ignoreConfigFields = ignoreConfigFieldsMeta({

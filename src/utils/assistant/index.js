@@ -296,6 +296,93 @@ function populateDefaults({
   return childWithDefaults;
 }
 
+export function searchParameterFieldsMeta({
+  label,
+  paramLocation,
+  parameters = [],
+  oneMandatoryQueryParamFrom,
+  value,
+  operationChanged,
+  isDeltaExport,
+  deltaDefaults = {},
+  url,
+  isHTTPFramework = false,
+}) {
+  let searchParamsField;
+  const defaultValue = {};
+  const filteredValues = value;
+
+  if (url) {
+    const [, queryPart] = url.split('?');
+    const queryObj = new URLSearchParams(queryPart);
+    const parameterIds = parameters.map(param => param.id);
+
+    if (queryPart) {
+      [...queryObj.entries()].filter(([key]) => !parameterIds.includes(key)).map(([key]) => key).forEach(key => {
+        delete filteredValues[key];
+      });
+    }
+  }
+
+  parameters.forEach(p => {
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
+      if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
+        try {
+          defaultValue[p.id] = JSON.parse(p.defaultValue);
+        } catch (e) {
+          defaultValue[p.id] = [];
+        }
+      } else {
+        defaultValue[p.id] = p.defaultValue;
+      }
+    }
+  });
+
+  if (parameters.length > 0) {
+    searchParamsField = {
+      fieldId: 'assistantMetadata.searchParams',
+      id:
+        paramLocation === PARAMETER_LOCATION.QUERY
+          ? 'assistantMetadata.queryParams'
+          : 'assistantMetadata.bodyParams',
+      label,
+      value: !isEmpty(filteredValues) ? filteredValues : defaultValue,
+      paramMeta: {
+        paramLocation,
+        fields: parameters,
+        oneMandatoryQueryParamFrom,
+        isDeltaExport,
+        defaultValuesForDeltaExport: deltaDefaults,
+      },
+    };
+
+    if (isHTTPFramework) {
+      searchParamsField.type = 'hfsearchparams';
+      searchParamsField.keyName = 'name';
+      searchParamsField.valueName = 'value';
+      searchParamsField.keyPlaceholder = 'Search, select or add a name';
+    }
+
+    if (
+      parameters.filter(p => !!p.required).length > 0 ||
+      (oneMandatoryQueryParamFrom && oneMandatoryQueryParamFrom.length > 0)
+    ) {
+      searchParamsField.required = true;
+      searchParamsField.validWhen = {
+        isNot: {
+          values: [undefined, {}],
+        },
+      };
+    }
+  }
+
+  if (searchParamsField) {
+    return [searchParamsField];
+  }
+
+  return [];
+}
+
 export function getExportVersionAndResource({
   assistantVersion,
   assistantOperation,
