@@ -90,7 +90,7 @@ describe('DestinationTree test cases', () => {
 
     const tree = screen.getByRole('tree');
 
-    expect(tree.textContent).toBe('BillToAddressobjectidstringBillToAddress2* (required)objectid* (required)string');
+    expect(tree.textContent).toBe('BillToAddressobjectidstringBillToAddress2 * (required)objectid * (required)string');
 
     userEvent.click(screen.getByText('BillToAddress'));
 
