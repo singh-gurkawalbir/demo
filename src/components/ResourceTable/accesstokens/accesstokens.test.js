@@ -12,10 +12,10 @@ import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import metadata from './metadata';
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: ({date}) => (<span>{date}</span>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: ({date}) => (<span>{date}</span>),
 }));
 
 jest.mock('../../CeligoTable/TableContext', () => ({

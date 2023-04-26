@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { TimeAgo } from '@celigo/fuse-ui';
 import UserName from '../commonCells/IntegrationUserName';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../utils/revisions';
 import { REVISION_STATUS, REVISION_TYPES } from '../../../constants';
 import CreatePull from './actions/CreatePull';
@@ -26,7 +26,7 @@ export default {
     }, {
       key: 'createdAt',
       heading: 'Date created',
-      Value: ({ rowData: r }) => <CeligoTimeAgo date={r.createdAt} />,
+      Value: ({ rowData: r }) => <TimeAgo date={r.createdAt} />,
       orderBy: 'createdAt',
       width: 200,
     }, {
