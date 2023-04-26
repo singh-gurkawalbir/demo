@@ -104,6 +104,8 @@ describe('Sign up form test cases', () => {
         utm_source: 'google',
       })
     );
+
+    expect(signupButton).toBeDisabled();
   });
   test('should click the sign up button when unknown search param is present in URL', () => {
     renderWithProviders(
@@ -145,5 +147,15 @@ describe('Sign up form test cases', () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
 
     expect(screen.getByText('error message')).toBeInTheDocument();
+  });
+  test('should not show form fields when sign up is done', () => {
+    const initialStore = getCreatedStore();
+
+    mutateStore(initialStore, draft => {
+      draft.auth.signup = {status: 'done', message: 'success message' };
+    });
+    const {utils} = renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
+
+    expect(utils.container.textContent).toBe('');
   });
 });
