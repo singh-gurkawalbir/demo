@@ -124,7 +124,9 @@ export function fetchMetadataWithDefinedFields(fieldMetadata, values = {}) {
 }
 
 export function getHelpKey(resourceType, id) {
-  return `${resourceType}.${id}`;
+  const type = resourceType === 'exports' ? 'export' : 'import';
+
+  return `${type}.${id}`;
 }
 
 export function getEndPointMetadata(connectorMetadata = {}, resourceId, operationId) {
