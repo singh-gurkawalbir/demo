@@ -1,9 +1,9 @@
-
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor_afe';
 import actions from '../../../actions';
+import { renderWithProviders } from '../../../test/test-utils';
 
 const resourceId = '626abc';
 const mockHistoryPush = jest.fn();
@@ -61,7 +61,7 @@ jest.mock('react-redux', () => ({
 jest.mock('./DynaTimestampFileName', () => ({
   __esModule: true,
   ...jest.requireActual('./DynaTimestampFileName'),
-  default: ({label, value}) => (
+  default: ({ label, value }) => (
     <>
       <div data-testid="label">{label}</div>
       <div data-testid="value">{value}</div>
@@ -87,12 +87,12 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       onFieldChange,
     };
 
-    render(<DynaFTPFileNameWithEditor {...props} />);
+    renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
     expect(screen.getByTestId('label')).toHaveTextContent(props.label);
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
   });
 
-  test('should be able to open editor', () => {
+  test('should be able to open editor', async () => {
     const props = {
       id: 'file.fileName',
       label: 'File name',
@@ -103,10 +103,10 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       onFieldChange,
     };
 
-    render(<DynaFTPFileNameWithEditor {...props} />);
-    const openEditorBtn = screen.getByTitle('Open handlebars editor');
+    renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
+    const openEditorBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
-    userEvent.click(openEditorBtn);
+    await userEvent.click(openEditorBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('filefileName', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -119,7 +119,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith(`${mockRouteMatch.url}/editor/filefileName`);
   });
 
-  test('should be able to save value in AFE editor', () => {
+  test('should be able to save value in AFE editor', async () => {
     const props = {
       id: 'file.fileName',
       label: 'File name',
@@ -129,16 +129,16 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       onFieldChange,
     };
 
-    render(
+    renderWithProviders(
       <>
         <DynaFTPFileNameWithEditor {...props} />
-        <button type="button" onClick={() => mockSave({rule: 'SampleRule'})}>Save</button>
+        <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openEditorBtn = screen.getByTitle('Open handlebars editor');
+    const openEditorBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
-    userEvent.click(openEditorBtn);
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(openEditorBtn);
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 
@@ -163,12 +163,12 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const { utils } = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'json';
 
-      rerender(<DynaFTPFileNameWithEditor {...props} />);
+      renderWithProviders(<DynaFTPFileNameWithEditor {...props} />, { renderFun: utils.rerender });
       expect(onFieldChange).not.toHaveBeenCalled();
     });
 
@@ -181,12 +181,12 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const { utils } = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'fixed';
 
-      rerender(<DynaFTPFileNameWithEditor {...props} />);
+      renderWithProviders(<DynaFTPFileNameWithEditor {...props} />, { renderFun: utils.rerender });
       expect(onFieldChange).toHaveBeenCalledWith(props.id, 'file-{{timestamp}}.edi');
     });
 
@@ -200,12 +200,12 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const { utils } = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'delimited/edifact';
 
-      rerender(<DynaFTPFileNameWithEditor {...props} />);
+      renderWithProviders(<DynaFTPFileNameWithEditor {...props} />, { renderFun: utils.rerender });
       expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TC_9697.edi');
     });
 
@@ -219,12 +219,12 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
         formKey: `imports-${resourceId}`,
         onFieldChange,
       };
-      const {rerender} = render(<DynaFTPFileNameWithEditor {...props} />);
+      const { utils } = renderWithProviders(<DynaFTPFileNameWithEditor {...props} />);
 
       mockFormContext.fields['file.type'].touched = true;
       mockFormContext.fields['file.type'].value = 'filedefinition';
 
-      rerender(<DynaFTPFileNameWithEditor {...props} />);
+      renderWithProviders(<DynaFTPFileNameWithEditor {...props} />, { renderFun: utils.rerender });
       expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TC_9697.pfx.edi');
     });
   });

@@ -53,7 +53,7 @@ describe('test suite for Export Example Button', () => {
     const exportExampleButtonNode = screen.getByRole('button', {name: /Export example/i});
 
     expect(exportExampleButtonNode).toBeInTheDocument();
-    userEvent.click(exportExampleButtonNode);
+    await userEvent.click(exportExampleButtonNode);
     expect(screen.getByRole('dialog', {name: /Export example/i})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: /Export example/i})).toBeInTheDocument();
     const textBoxNode = screen.getAllByRole('textbox').find(eachOption => eachOption.getElementsByTagName('textarea'));
@@ -63,7 +63,7 @@ describe('test suite for Export Example Button', () => {
     const closeButtonNode = screen.getByRole('button', {name: /Close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     await waitForElementToBeRemoved(closeButtonNode);
   });
 });

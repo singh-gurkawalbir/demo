@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import ReactDiffViewer from 'react-diff-viewer';
 import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../../../constants/resource';
 import ModalDialog from '../../../ModalDialog';

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem from '@mui/material/MenuItem';
 import { useParams } from 'react-router-dom';
 import CeligoSelect from '../../../../../../../components/CeligoSelect';
 import useFetchIntegrationUsers from '../../../../../../../hooks/useFetchIntegrationUsers';

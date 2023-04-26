@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { FormControl, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import DynaText from '../DynaText';
 import FieldHelp from '../../FieldHelp';
@@ -29,7 +29,7 @@ export default function DynaMFAMobileCode(props) {
   const validationFailed = useSelector(selectors.isMobileCodeVerificationFailed);
 
   return (
-    <FormControl className={classes.container}>
+    <FormControl variant="standard" className={classes.container}>
       <div>
         <FormLabel htmlFor={id} required={required} error={!props.isValid || validationFailed}>
           {label}

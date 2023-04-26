@@ -1,6 +1,7 @@
-import { Tooltip, makeStyles } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
-import { Controls, ControlButton, useZoomPanHelper } from 'react-flow-renderer';
+import { Controls, ControlButton, useReactFlow } from 'reactflow';
 import ToggleMapIcon from '../../../../components/icons/ToggleMapIcon';
 import AddIcon from '../../../../components/icons/AddIcon';
 import SubtractIcon from '../../../../components/icons/SubtractIcon';
@@ -18,7 +19,7 @@ const useStyles = makeStyles(() => ({
 export default function CanvasControls({ showMiniMap, toggleMiniMap }) {
   // eslint-disable-next-line no-unused-vars
   const classes = useStyles();
-  const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   return (
     <Controls showInteractive={false} showZoom={false} showFitView={false}>

@@ -158,7 +158,6 @@ describe('dynaChildLicense UI tests', () => {
     expect(screen.getByText('Integration ID')).toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();           // Table headers //
 
-    screen.debug(null, Infinity);
     expect(screen.getByText('11/10/2022 5:15:46 am')).toBeInTheDocument();           // value for one of the table row //
   });
   test('should make 2 dispatch calls on initial render', async () => {
@@ -194,7 +193,7 @@ describe('dynaChildLicense UI tests', () => {
     const createButton = screen.getByText('Create child license');
 
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('new-Id', patchSet)));
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118/add/connectorLicenses/new-Id'));
   });

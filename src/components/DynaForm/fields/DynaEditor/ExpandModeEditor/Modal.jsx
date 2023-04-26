@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import CodeEditor from '../../../../CodeEditor';
 import ModalDialog from '../../../../ModalDialog';
 import { OutlinedButton } from '../../../../Buttons';

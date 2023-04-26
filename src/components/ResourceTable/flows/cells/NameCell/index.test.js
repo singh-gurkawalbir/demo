@@ -152,7 +152,7 @@ describe('name Cell of Flow Table UI test cases', () => {
     expect(link).toHaveAttribute(
       'href', '/integrationapps/someappName/someintegrationId/child/someChildId/flows/sections/somesectionId/dataLoader/SomeflowId');
   });
-  test('should show offline message', () => {
+  test('should show offline message', async () => {
     const props = {
       name: 'SomeName',
       description: 'somedescription',
@@ -166,7 +166,7 @@ describe('name Cell of Flow Table UI test cases', () => {
     const link = initNameCell(props, initialStore);
 
     expect(link.textContent).toBe('SomeName');
-    userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getAllByRole('button')[0]);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.patchFilter('bottomDrawer', {defaultTab: 'connections'})
     );

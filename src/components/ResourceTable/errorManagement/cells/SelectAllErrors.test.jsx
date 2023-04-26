@@ -40,11 +40,11 @@ describe('uI test cases for selectallerrors', () => {
   const isResolved = true;
   const actionInProgress = false;
 
-  test('should test allerrors checkbox is working fine', () => {
+  test('should test allerrors checkbox is working fine', async () => {
     renderWithProviders(<SelectAllErrors flowId={flowId} resourceId={resourceId} isResolved={isResolved} actionInProgress={actionInProgress} />);
     const allerrors = screen.getByRole('checkbox');
 
-    userEvent.click(allerrors);
+    await userEvent.click(allerrors);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.selectAllInCurrPage({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
@@ -52,11 +52,11 @@ describe('uI test cases for selectallerrors', () => {
       isResolved: true,
     }));
   });
-  test('should test allerrors checkbox is unchecked with initial store', () => {
+  test('should test allerrors checkbox is unchecked with initial store', async () => {
     renderWithProviders(<SelectAllErrors flowId={flowId} resourceId={resourceId} isResolved={isResolved} actionInProgress={actionInProgress} />, {initialStore});
     const allerrors = screen.getByRole('checkbox');
 
-    userEvent.click(allerrors);
+    await userEvent.click(allerrors);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.selectAllInCurrPage({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',

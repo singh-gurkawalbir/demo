@@ -20,12 +20,12 @@ describe('lookupActionItem UI tests', () => {
 
     expect(button).toBeInTheDocument();
   });
-  test('should render the manageLookup dialog when clicked on the button', () => {
+  test('should render the manageLookup dialog when clicked on the button', async () => {
     renderWithProviders(<LookupActionItem />);
     const button = screen.getByRole('button');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(screen.getByText('Add lookup')).toBeInTheDocument();
     expect(screen.getByText('Some unknown error')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
@@ -59,8 +59,8 @@ describe('lookupActionItem UI tests', () => {
     const button = screen.getByRole('button');
 
     expect(button).toBeInTheDocument();
-    userEvent.click(button);
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(button);
+    await userEvent.click(screen.getByText('Save'));
     await waitFor(() => expect(mockOnSave).toHaveBeenCalled());
   });
 });

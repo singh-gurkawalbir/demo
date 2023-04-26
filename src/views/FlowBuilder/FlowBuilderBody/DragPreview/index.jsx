@@ -1,5 +1,6 @@
 import { useDragLayer, XYCoord } from 'react-dnd';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import clsx from 'clsx';
 import Background from './Background';

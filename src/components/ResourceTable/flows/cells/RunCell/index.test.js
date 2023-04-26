@@ -45,19 +45,19 @@ describe('run cell UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should redirect to dashboard of standalone flow when flow starts', () => {
+  test('should redirect to dashboard of standalone flow when flow starts', async () => {
     initRunCell();
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/templates/templateName/none/dashboard');
   });
-  test('should redirect to dashboard of provided integration when flow starts', () => {
+  test('should redirect to dashboard of provided integration when flow starts', async () => {
     initRunCell({flowId: 'someflowId', integrationId: 'someintegrationId' });
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/templates/templateName/someintegrationId/dashboard');
   });
-  test('should redirect to no template', () => {
+  test('should redirect to no template', async () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -67,10 +67,10 @@ describe('run cell UI test cases', () => {
           />
       </MemoryRouter>);
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/someintegrationId/dashboard');
   });
-  test('should redirect to inetgration dashboard', () => {
+  test('should redirect to inetgration dashboard', async () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -80,10 +80,10 @@ describe('run cell UI test cases', () => {
           />
       </MemoryRouter>);
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/someintegrationId/dashboard');
   });
-  test('should redirect to integration app with childId', () => {
+  test('should redirect to integration app with childId', async () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -95,10 +95,10 @@ describe('run cell UI test cases', () => {
           />
       </MemoryRouter>);
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/appName/someintegrationId/child/somechildId/dashboard');
   });
-  test('should redirect to integration app with no childId', () => {
+  test('should redirect to integration app with no childId', async () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -109,10 +109,10 @@ describe('run cell UI test cases', () => {
           />
       </MemoryRouter>);
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/appName/someintegrationId/dashboard');
   });
-  test('should not redirect to any other url on run start when user is in ErrMgtTwoDotZero', () => {
+  test('should not redirect to any other url on run start when user is in ErrMgtTwoDotZero', async () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -123,7 +123,7 @@ describe('run cell UI test cases', () => {
           />
       </MemoryRouter>);
     expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onRunStartButton'));
+    await userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).not.toHaveBeenCalled();
   });
 });

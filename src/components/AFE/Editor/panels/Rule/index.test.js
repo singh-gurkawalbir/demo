@@ -19,7 +19,7 @@ describe('aFE RulePanel UI tests', () => {
   const mockDispatchFn = jest.fn();
 
   useDispatchSpy.mockReturnValue(mockDispatchFn);
-  test('should pass the initial render when rules are changed', () => {
+  test('should pass the initial render when rules are changed', async () => {
     mutateStore(initialStore, draft => {
       draft.session.editors.readme = {editorType: 'readme', rule: '_ruleGoverningEditor'};
     });
@@ -27,7 +27,7 @@ describe('aFE RulePanel UI tests', () => {
     const codeRuleChangeBtn = screen.getByRole('button', {name: '_ruleGoverningEditor'});
 
     expect(codeRuleChangeBtn).toBeInTheDocument();
-    userEvent.click(codeRuleChangeBtn);
+    await userEvent.click(codeRuleChangeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('readme', 'updatedRule'));
   });
 });

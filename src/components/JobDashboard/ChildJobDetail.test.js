@@ -1,8 +1,9 @@
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import ChildJobDetail from './ChildJobDetail';
+import { renderWithProviders } from '../../test/test-utils';
 
 function initChildJobDetail({
   job,
@@ -27,7 +28,7 @@ function initChildJobDetail({
     />
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 
 const mockOnSelectChange = jest.fn();
@@ -69,7 +70,7 @@ describe('testsuite for ChildJobDetail', () => {
     mockOnSelectChange.mockClear();
     mockOnViewErrorsClick.mockClear();
   });
-  test('should test the checkbox by selecting the child job', () => {
+  test('should test the checkbox by selecting the child job', async () => {
     initChildJobDetail({
       job: {_id: 123, type: 'export', numError: 1, numResolved: 0, retriable: true, endedAt: 'testing ended at', duration: 'Testing Duration', uiStatus: 'running', numIgnore: 0},
       parentJob: {_id: 234},
@@ -83,7 +84,7 @@ describe('testsuite for ChildJobDetail', () => {
     const checkBoxNode = screen.getByRole('checkbox');
 
     expect(checkBoxNode).toBeInTheDocument();
-    userEvent.click(checkBoxNode);
+    await userEvent.click(checkBoxNode);
     expect(mockOnSelectChange).toHaveBeenCalledWith(true, 123);
   });
   test('should test the selected child job checkbox', () => {
@@ -122,7 +123,7 @@ describe('testsuite for ChildJobDetail', () => {
     expect(screen.getByText(/integrationname = test integration/i)).toBeInTheDocument();
     expect(screen.getByText(/isflowbuilderview = testing is flow builder view/i)).toBeInTheDocument();
   });
-  test('should test the error jobs by clicking', () => {
+  test('should test the error jobs by clicking', async () => {
     initChildJobDetail({
       job: {_id: 123, type: 'import', numError: 1, numResolved: 1, endedAt: 'testing ended at', duration: 'Testing Duration', uiStatus: 'completed', numIgnore: 0},
       parentJob: {_id: 234},
@@ -136,10 +137,10 @@ describe('testsuite for ChildJobDetail', () => {
     const errorJobsNode = document.querySelector('td[data-test="view-job-error"]');
 
     expect(errorJobsNode).toBeInTheDocument();
-    userEvent.click(errorJobsNode);
+    await userEvent.click(errorJobsNode);
     expect(mockOnViewErrorsClick).toHaveBeenCalledWith({jobId: 123, numError: 1, numResolved: 1, parentJobId: 234, showResolved: false});
   });
-  test('should test the resolved jobs by clicking', () => {
+  test('should test the resolved jobs by clicking', async () => {
     initChildJobDetail({
       job: {_id: 123, type: 'import', numError: 0, numResolved: 1, endedAt: 'testing ended at', duration: 'Testing Duration', uiStatus: 'completed', numIgnore: 0},
       parentJob: {_id: 234},
@@ -153,7 +154,7 @@ describe('testsuite for ChildJobDetail', () => {
     const resolvedJobsNode = document.querySelector('td[data-test="view-job-resolved"]');
 
     expect(resolvedJobsNode).toBeInTheDocument();
-    userEvent.click(resolvedJobsNode);
+    await userEvent.click(resolvedJobsNode);
     expect(mockOnViewErrorsClick).toHaveBeenCalledWith({jobId: 123, numError: 0, numResolved: 1, parentJobId: 234, showResolved: true});
   });
 });

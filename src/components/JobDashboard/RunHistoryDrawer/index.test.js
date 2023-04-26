@@ -57,7 +57,7 @@ describe('testsuite for Run History Drawer', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    jest.useFakeTimers('modern').setSystemTime(new Date('2022-01-30'));
+    // jest.useFakeTimers('modern').setSystemTime(new Date('2022-01-30'));
     initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -71,13 +71,13 @@ describe('testsuite for Run History Drawer', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the Run History Drawer heading and click on close button node', () => {
+  test('should test the Run History Drawer heading and click on close button node', async () => {
     initRunHistoryDrawer({range: '', filterKey: 'completedFlows', flowId: '123'});
     expect(screen.getByRole('heading', {name: /run history: 123/i})).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {name: /close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/dashboard/completedFlows');
   });
   test('should test the patch filter action on mount and test the filter action when flow id is modified', () => {
@@ -101,7 +101,7 @@ describe('testsuite for Run History Drawer', () => {
     mutateStore(store, draft => {
       draft.session.filters.completedFlows = {range: ''};
     });
-    initRunHistoryDrawer({range: '', flowId: '234'}, utils.rerender, store);
+    initRunHistoryDrawer({range: '', flowId: '234'}, undefined, store);
     expect(screen.getByRole('heading', { name: /run history: 234/i })).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter('runHistory', {range: {
       preset: 'custom',

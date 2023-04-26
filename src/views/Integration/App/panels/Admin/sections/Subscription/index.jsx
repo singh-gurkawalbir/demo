@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, Divider, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Divider, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';

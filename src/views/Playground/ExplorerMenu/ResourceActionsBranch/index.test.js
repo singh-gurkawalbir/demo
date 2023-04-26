@@ -148,7 +148,7 @@ describe('testsuite for Resource Items Branch', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the resource action branch and click on view resource when resource type is export', () => {
+  test('should test the resource action branch and click on view resource when resource type is export', async () => {
     initResourceItemsBranch({onEditorChange: mockOnEditorChange, flowId: '67890', resourceId: 'xsjxks'});
     expect(screen.getByText(/mocking export icon/i)).toBeInTheDocument();
     expect(screen.getByText(/nodeid = xsjxks-view-resource/i)).toBeInTheDocument();
@@ -158,10 +158,10 @@ describe('testsuite for Resource Items Branch', () => {
     });
 
     expect(viewResourceButtonNode).toBeInTheDocument();
-    userEvent.click(viewResourceButtonNode);
+    await userEvent.click(viewResourceButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/exports/xsjxks');
   });
-  test('should test the resource action branch and click on view resource when resource type is import', () => {
+  test('should test the resource action branch and click on view resource when resource type is import', async () => {
     initResourceItemsBranch({onEditorChange: mockOnEditorChange, flowId: '67890', resourceId: 'nxksnn'});
     expect(screen.getByText('Mocking OverflowTreeItem')).toBeInTheDocument();
     expect(screen.getByText(/mocking import icon/i)).toBeInTheDocument();
@@ -172,10 +172,10 @@ describe('testsuite for Resource Items Branch', () => {
     });
 
     expect(viewResourceButtonNode).toBeInTheDocument();
-    userEvent.click(viewResourceButtonNode);
+    await userEvent.click(viewResourceButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/imports/nxksnn');
   });
-  test('should test the resource action branch and click on view connections', () => {
+  test('should test the resource action branch and click on view connections', async () => {
     initResourceItemsBranch({onEditorChange: mockOnEditorChange, flowId: '67890', resourceId: 'xsjxks'});
     expect(screen.getByText(/mocking overflowtreeitem connection/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking connections icon/i)).toBeInTheDocument();
@@ -186,7 +186,7 @@ describe('testsuite for Resource Items Branch', () => {
     });
 
     expect(viewConnectionButtonNode).toBeInTheDocument();
-    userEvent.click(viewConnectionButtonNode);
+    await userEvent.click(viewConnectionButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/connections/abcde');
   });
 });

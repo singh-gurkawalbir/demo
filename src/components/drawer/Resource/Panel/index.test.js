@@ -153,15 +153,15 @@ describe('Panel tests', () => {
     await initPanel(props);
     expect(screen.getByRole('img', { name: 'NetSuiteExport' })).toBeInTheDocument();
     expect(screen.getByText('Preview data')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Next'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Next'}));
     expect(mockClose).toHaveBeenCalled();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submitAborted('exports', '_resourceId'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.clearStaged('_resourceId'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceFormSampleData.updateType('_resourceId', 'preview'));
-    userEvent.click(screen.getByRole('button', {name: 'Submit'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/parentURL/edit/exports/_resourceId');
     expect(isNestedDrawer('/add/pageGenerator/_id')).toBe(false);
-    userEvent.click(screen.getByRole('button', {name: 'Close notification'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Close notification'}));
     expect(screen.queryByText('Snackbar')).not.toBeInTheDocument();
   });
 });

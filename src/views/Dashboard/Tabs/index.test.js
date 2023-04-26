@@ -103,9 +103,9 @@ describe('Dashboard Tabs UI tests', () => {
     expect(screen.getByText(/pages/i)).toBeInTheDocument();
     expect(screen.getByText(/actions/i)).toBeInTheDocument();
   });
-  test('should redirect to the completedFlows tab when clicked on the tab and should display the respective row headers for the table', () => {
+  test('should redirect to the completedFlows tab when clicked on the tab and should display the respective row headers for the table', async () => {
     initDashboardTabs('runningFlows');
-    userEvent.click(screen.getByText('Completed flows'));
+    await userEvent.click(screen.getByText('Completed flows'));
     expect(screen.getByText('Running flows')).toBeInTheDocument();
     expect(screen.getByText(/Open errors/i)).toBeInTheDocument();
     expect(screen.getByText(/Last open error/i)).toBeInTheDocument();
@@ -119,22 +119,22 @@ describe('Dashboard Tabs UI tests', () => {
     expect(screen.getByText(/pages/i)).toBeInTheDocument();
     expect(screen.getByText(/actions/i)).toBeInTheDocument();
   });
-  test('should display completed flows in the provided timerange', () => {
+  test('should display completed flows in the provided timerange', async () => {
     initDashboardTabs('runningFlows');
-    userEvent.click(screen.getByText('Completed flows'));
+    await userEvent.click(screen.getByText('Completed flows'));
 
     // checking the actual values for a sample completed flow //
     expect(screen.getAllByText('07/07/2022 2:46:36 pm', {exact: false})).toHaveLength(2); // timestamp appears twice in the table for Last open error and Last run time //
     expect(screen.getByText('00:00:08', {exact: false})).toBeInTheDocument();  // Average run time value in the table//
     expect(screen.getAllByText('2')).toHaveLength(2); // value for Number of runs and number of errors is 2 //
   });
-  test('should display the ellipsis menu icon in each row', () => {
+  test('should display the ellipsis menu icon in each row', async () => {
     initDashboardTabs('runningFlows');
-    userEvent.click(screen.getByText('Completed flows'));
+    await userEvent.click(screen.getByText('Completed flows'));
     const element = document.querySelector('[aria-label="more"]');
 
     expect(element).toBeInTheDocument();
-    userEvent.click(element);
+    await userEvent.click(element);
     expect(screen.getByText(/Run flow/i)).toBeInTheDocument();
     expect(screen.getByText(/Edit flow/i)).toBeInTheDocument();
   });

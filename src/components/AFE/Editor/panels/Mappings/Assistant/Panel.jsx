@@ -1,11 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../../actions';
 import {selectors} from '../../../../../../reducers';
 import SalesforceMappingAssistant from '../../../../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../../../../NetSuiteMappingAssistant';
-import Spinner from '../../../../../Spinner';
 import { message } from '../../../../../../utils/messageStore';
 
 function PreviewPanel({importId, subRecordMappingId, disabled}) {
@@ -121,7 +121,7 @@ export default function PreviewPanelWrapper({editorId}) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

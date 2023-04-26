@@ -9,16 +9,16 @@ import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
-jest.mock('@material-ui/lab/TreeView', () => ({
+jest.mock('@mui/lab/TreeView', () => ({
   __esModule: true,
-  ...jest.requireActual('@material-ui/lab/TreeView'),
+  ...jest.requireActual('@mui/lab/TreeView'),
   default: props => <div>{props.children}<button type="button" onClick={() => props.onNodeToggle('click', ['newReference,newone,"parent2,ref1"'])}>Node</button></div>,
 }));
 
-jest.mock('../../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../Spinner'),
-  default: () => <div>Spinner</div>,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => <div>Spinner</div>,
 }));
 
 function initRefreshableTreeComponent(props = {}) {
@@ -98,9 +98,9 @@ describe('RefreshableTreeComponent UI tests', () => {
     initRefreshableTreeComponent({...props, nodeId: 'newone', status: 'received'});
     const checkboxes = screen.getAllByRole('checkbox');
 
-    userEvent.click(checkboxes[0]);
+    await userEvent.click(checkboxes[0]);
     expect(screen.getByText('Node')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Node'));
+    await userEvent.click(screen.getByText('Node'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.refresh(
       '5efd8663a56953365bd28541',
       'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/newone', {refreshCache: true}

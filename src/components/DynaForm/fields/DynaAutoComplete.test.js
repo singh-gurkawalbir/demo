@@ -25,12 +25,12 @@ describe('dynaAutocomplete tests', () => {
     expect(screen.getByText('Empty label')).toBeInTheDocument();
     expect(screen.getByText('formLabel')).toBeInTheDocument();
     expect(screen.getByText('Some Description')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Empty label'));
+    await userEvent.click(screen.getByText('Empty label'));
     expect(screen.getByRole('presentation')).toBeInTheDocument(); // generally for pop-over list
     expect(screen.getByRole('option', {name: 'label1'})).toBeInTheDocument();
     expect(screen.getByRole('option', {name: 'label2'})).toBeInTheDocument();
     expect(screen.getByRole('option', {name: 'Empty label'})).toBeInTheDocument();
-    userEvent.click(screen.getByText('label1'));
+    await userEvent.click(screen.getByText('label1'));
     expect(onFieldChange).toHaveBeenNthCalledWith(1, 'text-1234', 'val1');
     expect(onFieldChange).toHaveBeenNthCalledWith(2, 'text-1234', 'val1');
   });
@@ -48,11 +48,11 @@ describe('dynaAutocomplete tests', () => {
     await renderWithProviders(<DynaAutocomplete {...props} />);
     expect(screen.getByRole('combobox')).toBeInTheDocument();
     expect(screen.getByText('val4')).toBeInTheDocument();
-    userEvent.click(screen.getByText('val4'));
+    await userEvent.click(screen.getByText('val4'));
     expect(screen.getByRole('option', {name: 'label1'})).toBeInTheDocument();
     expect(screen.getByRole('option', {name: 'val2'})).toBeInTheDocument();
     expect(screen.getByRole('option', {name: 'val7'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('option', {name: 'val6'}));
+    await userEvent.click(screen.getByRole('option', {name: 'val6'}));
     expect(onFieldChange).toHaveBeenNthCalledWith(1, 'text-1234', 'val6');
     expect(onFieldChange).toHaveBeenNthCalledWith(2, 'text-1234', 'val6');
   });

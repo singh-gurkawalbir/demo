@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
-import { makeStyles, TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import DynaSelect from '../../../DynaSelect';
 import DynaMultiSelect from '../../../DynaMultiSelect';
 import DeleteIcon from '../../../../../icons/TrashIcon';
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
   columnsWrapper: {
-    width: `calc(100% - ${theme.spacing(4)}px)`,
+    width: `calc(100% - ${theme.spacing(4)})`,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',

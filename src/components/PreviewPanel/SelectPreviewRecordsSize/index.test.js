@@ -70,8 +70,8 @@ describe('testsuite for SelectPreviewRecordsSize', () => {
     await initSelectPreviewRecordsSize();
     const recordSizeTextInputNode = document.querySelector('input[data-test="record-size"]');
 
-    userEvent.clear(recordSizeTextInputNode);
-    userEvent.type(recordSizeTextInputNode, '1000');
+    await userEvent.clear(recordSizeTextInputNode);
+    await userEvent.type(recordSizeTextInputNode, '1000');
     expect(screen.getByText(/Value can't exceed 100./i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'RESOURCE_FORM_SAMPLE_DATA_UPDATE_RECORD_SIZE',
@@ -83,23 +83,23 @@ describe('testsuite for SelectPreviewRecordsSize', () => {
     await initSelectPreviewRecordsSize();
     const recordSizeTextInputNode = document.querySelector('input[data-test="record-size"]');
 
-    userEvent.clear(recordSizeTextInputNode);
-    userEvent.type(recordSizeTextInputNode, '95');
+    await userEvent.clear(recordSizeTextInputNode);
+    await userEvent.type(recordSizeTextInputNode, '95');
     expect(recordSizeTextInputNode).toHaveValue('95');
   });
   test('should enter the value is zero and verify the value', async () => {
     await initSelectPreviewRecordsSize();
     const recordSizeTextInputNode = document.querySelector('input[data-test="record-size"]');
 
-    userEvent.clear(recordSizeTextInputNode);
+    await userEvent.clear(recordSizeTextInputNode);
     expect(mocksetIsValidRecordSize).toHaveBeenCalledTimes(9);
   });
   test('should enter the value which is of type text instead of number', async () => {
     await initSelectPreviewRecordsSize();
     const recordSizeTextInputNode = document.querySelector('input[data-test="record-size"]');
 
-    userEvent.clear(recordSizeTextInputNode);
-    userEvent.type(recordSizeTextInputNode, 'abc');
+    await userEvent.clear(recordSizeTextInputNode);
+    await userEvent.type(recordSizeTextInputNode, 'abc');
     expect(screen.getByText(/Invalid size./i)).toBeInTheDocument();
   });
 });

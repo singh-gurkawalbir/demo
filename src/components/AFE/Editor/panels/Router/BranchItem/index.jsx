@@ -1,16 +1,11 @@
 import clsx from 'clsx';
 import React from 'react';
-import {
-  makeStyles,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@material-ui/core';
+import { Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { sortableHandle } from 'react-sortable-hoc';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import {EditableText} from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
-import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
@@ -50,6 +45,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: '100%',
+    fontSize: 14,
   },
   description: {
     flexGrow: 1,
@@ -60,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     position: 'absolute',
-    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
+    left: 16,
   },
   listItem: {
     display: 'flex',
@@ -102,6 +98,12 @@ const useStyles = makeStyles(theme => ({
     },
     '& > svg': {
       marginRight: theme.spacing(1),
+    },
+  },
+  content: {
+    margin: '10px 0',
+    '&.Mui-expanded': {
+      margin: '10px 0',
     },
   },
 }));
@@ -202,11 +204,15 @@ export default function BranchItem({
         >
           <AccordionSummary
             classes={{
-              expandIcon: classes.expandIcon,
+              expandIconWrapper: classes.expandIcon,
               focused: classes.focused,
+              content: classes.content,
             }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
+            sx={{
+              ...(allowSorting ? {'& .MuiAccordionSummary-expandIconWrapper': {left: 40}} : {}),
+            }}
           >
             <div className={classes.summaryContainer}>
               {allowSorting && <DragHandle />}
@@ -219,9 +225,9 @@ export default function BranchItem({
                   allowOverflow
                   disabled={isViewMode}
                   text={branchName}
-                  defaultText="Unnamed branch: Click to add name"
+                  placeholder="Unnamed branch: Click to add name"
                   onChange={title => handleNameChange(title, position)}
-                  inputClassName={classes.editableTextInput}
+                  sx={{fontSize: 14}}
                 />
               </div>
 

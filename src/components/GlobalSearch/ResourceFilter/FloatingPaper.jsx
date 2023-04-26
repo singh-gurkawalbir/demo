@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles, Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   root: {

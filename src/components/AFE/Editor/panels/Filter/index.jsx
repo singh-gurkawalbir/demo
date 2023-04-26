@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import FilterPanel from './FilterPanel';
 import { selectors } from '../../../../../reducers';
-import Spinner from '../../../../Spinner';
 
 export default function FilterPanelWrapper({editorId}) {
   const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
@@ -12,7 +12,7 @@ export default function FilterPanelWrapper({editorId}) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <FilterPanel
           editorId={editorId}

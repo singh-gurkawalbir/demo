@@ -1,6 +1,7 @@
-import { Box, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Box } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import Tag from '../../tags/Tag';
 import InfoIconButton from '../../InfoIconButton';

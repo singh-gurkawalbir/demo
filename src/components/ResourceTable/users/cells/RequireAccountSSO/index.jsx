@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Tooltip } from '@material-ui/core';
-import CeligoSwitch from '../../../../CeligoSwitch';
+import { Tooltip } from '@mui/material';
+import { Switch } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
@@ -69,11 +69,10 @@ export default function RequireAccountSSO({ user }) {
     return (
       <Tooltip placement="bottom" title={tooltip}>
         <div>
-          <CeligoSwitch
+          <Switch
             data-test="ssoRequired"
             disabled
             checked={accountSSORequired}
-            noPadding
             onChange={handleSwitch} />
         </div>
       </Tooltip>
@@ -81,12 +80,11 @@ export default function RequireAccountSSO({ user }) {
   }
 
   return (
-    <CeligoSwitch
+    <Switch
       data-test="ssoRequired"
       checked={accountSSORequired}
       onChange={handleSwitch}
       disabled={switchInProgress}
-      noPadding
       />
   );
 }

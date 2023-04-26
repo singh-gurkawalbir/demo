@@ -67,26 +67,26 @@ async function initflowTable(actionProps = {}, res = resource, initialStore = nu
   );
 
   renderWithProviders(ui, {initialStore});
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('edit action for flow Ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should redirect to flow builder page for normal flow', () => {
-    initflowTable(actionProps, {...resource, _connectorId: null, _integrationId: null});
-    userEvent.click(screen.getByText('Edit flow'));
+  test('should redirect to flow builder page for normal flow', async () => {
+    await initflowTable(actionProps, {...resource, _connectorId: null, _integrationId: null});
+    await userEvent.click(screen.getByText('Edit flow'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/none/flowBuilder/5d95f7d1795b356dfcb5d6c4');
   });
-  test('should redirect to flow builder page for inetgration app flow', () => {
-    initflowTable(actionProps, {...resource, _id: '5d95f7d1795b356dfcb5d6c5', _connectorId: 'someConnetorID', _integrationId: 'someIntegrationID'}, initialStore);
-    userEvent.click(screen.getByText('Edit flow'));
+  test('should redirect to flow builder page for inetgration app flow', async () => {
+    await initflowTable(actionProps, {...resource, _id: '5d95f7d1795b356dfcb5d6c5', _connectorId: 'someConnetorID', _integrationId: 'someIntegrationID'}, initialStore);
+    await userEvent.click(screen.getByText('Edit flow'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/Production/someIntegrationID/child/someChildID/flowBuilder/5d95f7d1795b356dfcb5d6c5');
   });
-  test('should redirect to data loader page of data loader flow', () => {
-    initflowTable(actionProps, {...resource, _connectorId: 'someConnetorID', _integrationId: 'someIntegrationID'}, initialStore);
-    userEvent.click(screen.getByText('Edit flow'));
+  test('should redirect to data loader page of data loader flow', async () => {
+    await initflowTable(actionProps, {...resource, _connectorId: 'someConnetorID', _integrationId: 'someIntegrationID'}, initialStore);
+    await userEvent.click(screen.getByText('Edit flow'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/Production/someIntegrationID/child/someChildID/dataLoader/5d95f7d1795b356dfcb5d6c4');
   });
 });

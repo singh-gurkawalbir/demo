@@ -13,6 +13,24 @@ mutateStore(initialStore, draft => {
   }}}};
 });
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaNetsuiteExportType(props = {}) {
   const ui = (
     <DynaNetsuiteExportType
@@ -46,20 +64,20 @@ describe('dynaNetsuiteExportType Ui test cases', () => {
     initDynaNetsuiteExportType({...genralProps, value: 'anyvalue'});
     expect(mockOnFieldChange).not.toHaveBeenCalledWith();
   });
-  test('should show the other options', () => {
+  test('should show the other options', async () => {
     initDynaNetsuiteExportType({...genralProps, value: 'randomscript', selectOptions: [{name: 'name', value: 'someLabel'}]});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('someLabel')).toBeInTheDocument();
   });
-  test('should show once as option when once is not supported', () => {
+  test('should show once as option when once is not supported', async () => {
     const props = {selectOptions: [{name: 'name', value: 'someLabel'}, {name: 'name2', value: 'once'}], options: {commMetaPath: 'somePath', recordType: 'once'}};
 
     initDynaNetsuiteExportType({...genralProps, ...props});
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.queryByText('once')).not.toBeInTheDocument();
   });
-  test('should show all option when no record types is provided', () => {
+  test('should show all option when no record types is provided', async () => {
     const props = {...genralProps, selectOptions: [{name: 'name', value: 'someLabel'}, {name: 'name2', value: 'once'}], options: {commMetaPath: 'somePath', recordType: 'once'}};
 
     renderWithProviders(
@@ -67,12 +85,12 @@ describe('dynaNetsuiteExportType Ui test cases', () => {
         {...props}
     />
     );
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const menuItems = screen.getAllByRole('menuitem');
 
     expect(menuItems).toHaveLength(3);
-    expect(menuItems[1].textContent).toBe('once...');
-    expect(menuItems[2].textContent).toBe('someLabel...');
+    expect(menuItems[1].textContent).toBe('once');
+    expect(menuItems[2].textContent).toBe('someLabel');
 
     expect(mockOnFieldChange).not.toHaveBeenCalled();
   });

@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { CeligoTabWrapper } from '../../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../../CeligoTabLayout/CeligoPillTabs';
 import CeligoTabPanel from '../../../CeligoTabLayout/CeligoTabPanel';
 import DefaultPanel from '../../../CeligoTabLayout/CustomPanels/DefaultPanel';
-import Spinner from '../../../Spinner';
 import { getErrorReqResFields } from '../../../../utils/http';
 import CodePanel from '../../../AFE/Editor/panels/Code';
 
@@ -58,7 +58,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   }, [dispatch, flowId, resourceId, httpDocStatus, reqAndResKey]);
 
   if (httpDocStatus === 'requested') {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
 
   if (httpDocStatus === 'error' && errorHttpDocError) {

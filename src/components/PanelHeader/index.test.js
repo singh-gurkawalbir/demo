@@ -33,7 +33,7 @@ describe('testsuite for Panel Header', () => {
     const buttonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'openPageInfo');
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     expect(screen.getByText(/Testing InfoText/i)).toBeInTheDocument();
     expect(screen.getByText(/123/i)).toBeInTheDocument();
   });
@@ -43,7 +43,7 @@ describe('testsuite for Panel Header', () => {
     const buttonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'openPageInfo');
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     expect(screen.getByText(/Testing InfoText/i)).toBeInTheDocument();
     expect(screen.getByText(/Testing Children/i)).toBeInTheDocument();
   });

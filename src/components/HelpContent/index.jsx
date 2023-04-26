@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import clsx from 'clsx';
 import actions from '../../actions';
 import OutlinedButton from '../Buttons/OutlinedButton';

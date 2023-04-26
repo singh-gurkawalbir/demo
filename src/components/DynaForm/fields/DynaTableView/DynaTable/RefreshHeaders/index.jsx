@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { makeStyles, FormLabel } from '@material-ui/core';
-import Spinner from '../../../../../Spinner';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
 
@@ -13,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
   columnsWrapper: {
-    width: `calc(100% - ${theme.spacing(4)}px)`,
+    width: `calc(100% - ${theme.spacing(4)})`,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gridGap: '8px',

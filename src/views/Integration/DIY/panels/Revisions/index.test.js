@@ -90,10 +90,10 @@ jest.mock('../../../../../components/LoadResources', () => ({
 }));
 
 // Mocking Spinner as part of unit testing
-jest.mock('../../../../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../../components/Spinner'),
-  default: () => <div>Mocking Spinner</div>,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => <div>Mocking Spinner</div>,
 }));
 
 // Mocking Celigo Table as part of unit testing
@@ -316,7 +316,7 @@ describe('Testsuite for Revisions', () => {
     expect(createSnapShotButtonNode).toBeDisabled();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.cloneFamily.request('12345'));
   });
-  test('should test the create pull button when there is monitor level access and when the revisions are loaded', () => {
+  test('should test the create pull button when there is monitor level access and when the revisions are loaded', async () => {
     initRevisions(
       {
         integrationId: '12345',
@@ -346,11 +346,11 @@ describe('Testsuite for Revisions', () => {
     });
 
     expect(createPullButtonNode).toBeInTheDocument();
-    userEvent.click(createPullButtonNode);
+    await userEvent.click(createPullButtonNode);
     expect(mockUseOpenRevisionWhenValid).toHaveBeenCalledWith({drawerURL: '/test/pull/someGeneratedId/open', integrationId: '12345', isCreatePull: true});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.cloneFamily.request('12345'));
   });
-  test('should test the create snapshot button when there is monitor level access and when the revisions are loaded', () => {
+  test('should test the create snapshot button when there is monitor level access and when the revisions are loaded', async () => {
     initRevisions(
       {
         integrationId: '12345',
@@ -380,7 +380,7 @@ describe('Testsuite for Revisions', () => {
     });
 
     expect(createSnapshotButtonNode).toBeInTheDocument();
-    userEvent.click(createSnapshotButtonNode);
+    await userEvent.click(createSnapshotButtonNode);
     expect(mockUseOpenRevisionWhenValid).toHaveBeenCalledWith({drawerURL: '/test/snapshot/someGeneratedId/open', integrationId: '12345'});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.cloneFamily.request('12345'));
   });

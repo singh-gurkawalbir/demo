@@ -1,8 +1,10 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core';
+import { FormControlLabel, Checkbox, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
+import { Spinner} from '@celigo/fuse-ui';
 import CeligoSelect from '../../CeligoSelect';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -12,7 +14,6 @@ import RefreshIcon from '../../icons/RefreshIcon';
 import { addDataRetentionPeriods, getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
-import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
@@ -346,7 +347,9 @@ export default function RunHistory({ flowId, className, integrationId }) {
           </ActionGroup>
         </>
       </div>
-      {isLoadingHistory ? <Spinner loading size="large" />
+      {isLoadingHistory ? (
+        <Spinner center="horizontal" size="large" />
+      )
         : (
           <JobTable
             classes={classes.jobTable}

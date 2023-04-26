@@ -29,72 +29,72 @@ describe('uI test cases for select date', () => {
   const title = 'titletest';
   const filterBy = 'Today';
 
-  test('should test apply button is working fine when date filter is applied and filter key is set to resolved', () => {
+  test('should test apply button is working fine when date filter is applied and filter key is set to resolved', async () => {
     renderWithProviders(<SelectSource
       flowId={flowId} resourceId={resourceId} isResolved={isResolved} title={title}
       filterBy={filterBy} />);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const today = screen.getAllByRole('button');
 
-    userEvent.click(today[1]);
+    await userEvent.click(today[1]);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
       isResolved: 'true',
     }));
   });
-  test('should test cancel button is working fine when date filter is applied and filter key is set to resolved', () => {
+  test('should test cancel button is working fine when date filter is applied and filter key is set to resolved', async () => {
     renderWithProviders(<SelectSource
       flowId={flowId} resourceId={resourceId} isResolved={isResolved} title={title}
       filterBy={filterBy} />);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const today = screen.getAllByRole('button');
 
-    userEvent.click(today[1]);
+    await userEvent.click(today[1]);
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(cancel).not.toBeInTheDocument();
   });
-  test('should test apply button is working fine when date filter is applied and filter key is set to open', () => {
+  test('should test apply button is working fine when date filter is applied and filter key is set to open', async () => {
     renderWithProviders(<SelectSource
       flowId={flowId} resourceId={resourceId} isResolved={false} title={title}
       filterBy={filterBy} />);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const today = screen.getAllByRole('button');
 
-    userEvent.click(today[1]);
+    await userEvent.click(today[1]);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
       isResolved: false,
     }));
   });
-  test('should test cancel button is working fine when date filter is applied and filter key is set to resolved.', () => {
+  test('should test cancel button is working fine when date filter is applied and filter key is set to resolved.', async () => {
     renderWithProviders(<SelectSource
       flowId={flowId} resourceId={resourceId} isResolved={false} title={title}
       filterBy={filterBy} />);
     const resbutton = screen.getByRole('button');
 
-    userEvent.click(resbutton);
+    await userEvent.click(resbutton);
     const today = screen.getAllByRole('button');
 
-    userEvent.click(today[1]);
+    await userEvent.click(today[1]);
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(cancel).not.toBeInTheDocument();
   });
 });

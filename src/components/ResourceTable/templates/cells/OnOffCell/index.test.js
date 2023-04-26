@@ -11,6 +11,20 @@ import actions from '../../../../../actions';
 
 let initialStore;
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 function initOnOffCell(props, publishedStatusData) {
   mutateStore(initialStore, draft => {
     draft.session.templates = {

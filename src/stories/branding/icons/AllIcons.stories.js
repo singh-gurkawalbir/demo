@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';

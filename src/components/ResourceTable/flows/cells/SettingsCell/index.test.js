@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { screen, waitFor, render } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import RemoveMargin from '.';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 jest.mock('../../../../icons/SettingsIcon', () => ({
   __esModule: true,
@@ -15,12 +16,12 @@ jest.mock('../../../../icons/SettingsIcon', () => ({
 
 describe('setting cell test cases', () => {
   test('should show empty dom when flow doesnot supports settings', () => {
-    const {container} = render(<MemoryRouter><RemoveMargin actionProps={{flowAttributes: {}}} /></MemoryRouter>);
+    const {container} = renderWithProviders(<MemoryRouter><RemoveMargin actionProps={{flowAttributes: {}}} /></MemoryRouter>);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(container).toBeUndefined();
   });
   test('should show empty dom when flow supports settings', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/integrations/integration_id/flows']}>
         <Route path="/integrations/integration_id/flows">
           <RemoveMargin
@@ -30,7 +31,7 @@ describe('setting cell test cases', () => {
         </Route>
       </MemoryRouter>);
 
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link');
 
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/integrations/integration_id/flows/someFlowId/settings');

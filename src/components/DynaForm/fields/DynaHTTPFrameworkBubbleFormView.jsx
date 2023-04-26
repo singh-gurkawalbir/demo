@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -14,9 +14,6 @@ import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   connectorTextToggle: {
     flexGrow: 100,
     marginLeft: theme.spacing(-2),
@@ -168,7 +165,6 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       />
       <Help
         title="Formview"
-        className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
     </div>

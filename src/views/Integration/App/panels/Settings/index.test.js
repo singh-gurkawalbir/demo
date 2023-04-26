@@ -4,6 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { createMemoryHistory } from 'history';
+import { act } from 'react-dom/test-utils';
 import { renderWithProviders} from '../../../../../test/test-utils';
 import { runServer } from '../../../../../test/api/server';
 import actions from '../../../../../actions';
@@ -15,7 +16,7 @@ describe('SettingsPanel UI tests', () => {
   async function initStoreOnly() {
     const initialStore = getCreatedStore();
 
-    initialStore.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { initialStore.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(initialStore?.getState()?.data?.resources?.integrations).toBeDefined());
 
     return {initialStore};
@@ -50,7 +51,7 @@ describe('SettingsPanel UI tests', () => {
 
     expect(screen.getByText('Configure all Fulfillment flows')).toBeInTheDocument();
 
-    userEvent.click(screen.getByText('General'));
+    await userEvent.click(screen.getByText('General'));
     expect(screen.getByText('Your store')).toBeInTheDocument();
     expect(screen.getByText('Option1')).toBeInTheDocument();
   });

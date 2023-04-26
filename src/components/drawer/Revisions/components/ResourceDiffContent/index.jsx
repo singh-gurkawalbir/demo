@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
-import Spinner from '../../../../Spinner';
+import Typography from '@mui/material/Typography';
+import { Spinner } from '@celigo/fuse-ui';
 import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
 import ResourceDiffError from './ResourceDiffError';
 import { selectors } from '../../../../../reducers';
@@ -18,7 +18,7 @@ export default function ResourceDiffContent({ integrationId, type, parentUrl }) 
   const resourceDiffInfo = useMemo(() => getRevisionResourceLevelChanges(revisionResourceDiff, type), [revisionResourceDiff, type]);
 
   if (isResourceComparisonInProgress) {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
   if (hasResourceDiffError) {
     return (

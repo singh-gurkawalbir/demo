@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { useSelector } from 'react-redux';
 import {useHistory, useRouteMatch} from 'react-router-dom';
 import IntegrationDashboard from '../../../../Dashboard';

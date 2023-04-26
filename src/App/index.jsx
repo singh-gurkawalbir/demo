@@ -1,12 +1,19 @@
-import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
+import React, {
+  Fragment,
+  useEffect,
+  useCallback,
+  StrictMode,
+  useMemo,
+} from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
-import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { StyledEngineProvider } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import themeProvider from '../theme/themeProvider';
+import { AppShell, Spinner } from '@celigo/fuse-ui';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
@@ -40,7 +47,6 @@ import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
-import Spinner from '../components/Spinner';
 import Loader from '../components/Loader';
 
 // The makeStyles function below does not have access to the theme.
@@ -54,63 +60,20 @@ const useStyles = makeStyles({
   },
 });
 
-export const useSnackbarStyles = makeStyles({
-  variantInfo: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoAccent2,
-    },
-    '& div > span > svg': {
-      color: colors.celigoAccent2,
-    },
-  },
-  variantSuccess: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoSuccess,
-    },
-    '& div > span > svg': {
-      color: colors.celigoSuccess,
-    },
-  },
-  variantWarning: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoWarning,
-    },
-    '& div > span > svg': {
-      color: colors.celigoWarning,
-    },
-  },
-  variantError: {
-    backgroundColor: colors.celigoWhite,
-    '&:before': {
-      background: colors.celigoError,
-    },
-    '& div > span > svg': {
-      color: colors.celigoError,
-    },
-  },
-  message: {
-    marginLeft: 40,
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
-    wordBreak: 'break-word',
-    paddingTop: '6px',
-    '& > svg': {
-      position: 'fixed',
-      left: 16,
-      top: 16,
-    },
-  },
-
-});
-
 function NonSigninHeaderComponents() {
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
-  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+  const isUserAuthenticated = useSelector(
+    state => selectors.sessionInfo(state)?.authenticated
+  );
 
-  if (!isAuthInitialized && !isUserAuthenticated) return <Loader open>Loading...<Spinner /></Loader>;
+  if (!isAuthInitialized && !isUserAuthenticated) {
+    return (
+      <Loader open>
+        Loading...
+        <Spinner />
+      </Loader>
+    );
+  }
 
   return (
     <>
@@ -138,9 +101,21 @@ const PUBLIC_ROUTES = [
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
 export const PageContentComponents = () => (
   <Switch>
-    <Route exact path={getRoutePath('/reset-password/:token')} component={ResetPassword} />
-    <Route exact path={getRoutePath('/change-email/:token')} component={ChangeEmail} />
-    <Route exact path={getRoutePath('/set-initial-password/:token')} component={SetPassword} />
+    <Route
+      exact
+      path={getRoutePath('/reset-password/:token')}
+      component={ResetPassword}
+    />
+    <Route
+      exact
+      path={getRoutePath('/change-email/:token')}
+      component={ChangeEmail}
+    />
+    <Route
+      exact
+      path={getRoutePath('/set-initial-password/:token')}
+      component={SetPassword}
+    />
     <Route path={getRoutePath('/mfa/help')} component={MfaHelp} />
     <Route path={getRoutePath('/mfa/verify')} component={MfaVerify} />
     <Route path={getRoutePath('/signin')} component={Signin} />
@@ -149,11 +124,22 @@ export const PageContentComponents = () => (
       path={[
         getRoutePath('/request-reset?email'),
         getRoutePath('/request-reset'),
-      ]} component={ForgotPassword} />
+      ]}
+      component={ForgotPassword}
+    />
     <Route path={getRoutePath('/shopify/error')} component={ShopifyError} />
-    <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
-    <Route path={getRoutePath('/accept-invite/:token')} component={AcceptInvite} />
-    <Route path={getRoutePath('/concurconnect/:module')} component={ConcurConnect} />
+    <Route
+      path={getRoutePath('/request-reset-sent')}
+      component={ForgotPassword}
+    />
+    <Route
+      path={getRoutePath('/accept-invite/:token')}
+      component={AcceptInvite}
+    />
+    <Route
+      path={getRoutePath('/concurconnect/:module')}
+      component={ConcurConnect}
+    />
     <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
@@ -163,21 +149,35 @@ const Headers = () => {
 
   const isConcurLandingPage = location.pathname.startsWith('/concurconnect');
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
-  const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isPublicPage = PUBLIC_ROUTES.includes(
+    location.pathname?.split('/')?.[1]
+  );
   const isLandingPage = location.pathname.startsWith('/landing');
   const isAgreeTOSAndPPPage = location.pathname.startsWith('/agreeTOSAndPP');
 
-  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage || isAgreeTOSAndPPPage) return null;
+  if (
+    isConcurLandingPage ||
+    isPublicPage ||
+    isMFAVerifyPage ||
+    isLandingPage ||
+    isAgreeTOSAndPPPage
+  ) {
+    return null;
+  }
 
   return <NonSigninHeaderComponents />;
 };
 
 const PageContentWrapper = () => {
   const location = useLocation();
-  const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isPublicPage = PUBLIC_ROUTES.includes(
+    location.pathname?.split('/')?.[1]
+  );
   const isSignInPage = location.pathname.startsWith('/signin');
 
-  return isPublicPage && !isSignInPage ? <PageContentComponents /> : (
+  return isPublicPage && !isSignInPage ? (
+    <PageContentComponents />
+  ) : (
     <WithAuth>
       <PageContentComponents />
     </WithAuth>
@@ -185,19 +185,25 @@ const PageContentWrapper = () => {
 };
 
 export default function App() {
+  const env = process.env.NODE_ENV;
   const classes = useStyles();
-  const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
-  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const { colorTheme: currentTheme } = preferences;
-  const themeName = useSelector(state =>
-    selectors.userPreferences(state).environment === 'sandbox'
-      ? 'sandbox'
-      : currentTheme
+  const preferences = useSelector(
+    state => selectors.userProfilePreferencesProps(state),
+    shallowEqual
+  );
+  const {
+    colorTheme: currentTheme,
+    timezone,
+    timeFormat,
+    dateFormat,
+    showRelativeDateTime,
+  } = preferences;
+  const isSandbox = useSelector(
+    state => selectors.userPreferences(state).environment === 'sandbox'
   );
 
-  const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
     dispatch(actions.user.toggleDebug());
   }, [dispatch]);
@@ -217,44 +223,127 @@ export default function App() {
      */
     if (domain === 'localhost.io' && !process.env.DISABLE_TRACKING_IN_LOCAL) {
       gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
-      pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
+      pendo.init({ apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f' });
     }
   }, []);
 
+  const AppRenderer = () =>
+    env !== 'development' ? (
+      <div className={classes.root}>
+        <LoadingNotification />
+        <ErrorNotifications />
+        {/* Headers */}
+        <Headers />
+        {/* page content */}
+        <PageContentWrapper />
+      </div>
+    ) : (
+      <StrictMode>
+        <div className={classes.root}>
+          <LoadingNotification />
+          <ErrorNotifications />
+          {/* Headers */}
+          <Headers />
+          {/* page content */}
+          <PageContentWrapper />
+        </div>
+      </StrictMode>
+    );
+
+  // Note tht this appContext should be properly cached as any changes
+  // to it will cause a full re-render of the app. This is by design,
+  // as we DO want any of these prefs to force a re-render of the app.
+  const appContext = useMemo(
+    () => ({
+      // language?: string; // not used yet dummy field
+      theme: currentTheme, // "light" | "dark" | "orion";
+      isSandbox,
+      timezone,
+      timeFormat,
+      dateFormat,
+      showRelativeDateTime,
+    }),
+    [
+      isSandbox,
+      currentTheme,
+      timezone,
+      timeFormat,
+      dateFormat,
+      showRelativeDateTime,
+    ]
+  );
+
   return (
-    <MuiThemeProvider theme={theme}>
-      <CrashReporter>
-        <DndProvider backend={HTML5Backend}>
-          <Fragment key={reloadCount}>
-            <ConfirmDialogProvider>
-              <FormOnCancelProvider>
-                <SnackbarProvider
-                  classes={snackbarClasses} maxSnack={3} ContentProps={{
-                    classes: { root: classes.root },
-                  }}>
-                  <FontStager />
-                  <CssBaseline />
-                  {/* Define empty call back for getUserConfirmation to not let Prompt
-                * get triggered when history.block is defined in any specific component
-                * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
-                */}
-                  <BrowserRouter getUserConfirmation={() => {}}>
-                    <div className={classes.root}>
-                      <LoadingNotification />
-                      <ErrorNotifications />
-                      {/* Headers */}
-                      <Headers />
-                      {/* page content */}
-                      <PageContentWrapper />
-                    </div>
-                  </BrowserRouter>
-                  <ConflictAlertDialog />
-                </SnackbarProvider>
-              </FormOnCancelProvider>
-            </ConfirmDialogProvider>
-          </Fragment>
-        </DndProvider>
-      </CrashReporter>
-    </MuiThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <AppShell appContext={appContext}>
+        <CrashReporter>
+          <DndProvider backend={HTML5Backend}>
+            <Fragment key={reloadCount}>
+              <ConfirmDialogProvider>
+                <FormOnCancelProvider>
+                  <SnackbarProvider
+                    sx={{
+                      // '& .SnackbarItem-variantInfo': {
+                      //   bgcolor: colors.celigoWhite,
+                      //   '&:before': {
+                      //     bgcolor: colors.celigoAccent2,
+                      //   },
+                      //   '& div > span > svg': {
+                      //     color: colors.celigoAccent2,
+                      //   },
+                      // },
+                      // '& .SnackbarItem-variantSuccess': {
+                      //   bgcolor: colors.celigoWhite,
+                      //   '&:before': {
+                      //     bgcolor: colors.celigoSuccess,
+                      //   },
+                      //   '& div > span > svg': {
+                      //     color: colors.celigoSuccess,
+                      //   },
+                      // },
+                      // '& .SnackbarItem-variantWarning': {
+                      //   bgcolor: colors.celigoWhite,
+                      //   '&:before': {
+                      //     bgcolor: colors.celigoWarning,
+                      //   },
+                      //   '& div > span > svg': {
+                      //     color: colors.celigoWarning,
+                      //   },
+                      // },
+                      '& .SnackbarItem-variantError': {
+                        bgcolor: colors.celigoWhite,
+                        color: colors.celigoNeutral8,
+                        '&:before': {
+                          bgcolor: colors.celigoError,
+                        },
+                        '& div > svg': {
+                          color: colors.celigoError,
+                        },
+                      },
+                      '& .SnackbarItem-message': {
+                        display: 'grid',
+                        gridTemplateColumns: 'auto 1fr',
+                        wordBreak: 'break-word',
+                        paddingTop: '6px',
+                      },
+                    }}>
+                    <FontStager />
+                    <CssBaseline />
+                    {/* Define empty call back for getUserConfirmation to not let Prompt
+                  * get triggered when history.block is defined in any specific component
+                  * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
+                  */}
+                    <BrowserRouter getUserConfirmation={() => {}}>
+                      <AppRenderer />
+                    </BrowserRouter>
+                    <ConflictAlertDialog />
+                  </SnackbarProvider>
+                </FormOnCancelProvider>
+              </ConfirmDialogProvider>
+            </Fragment>
+          </DndProvider>
+        </CrashReporter>
+      </AppShell>
+    </StyledEngineProvider>
   );
 }

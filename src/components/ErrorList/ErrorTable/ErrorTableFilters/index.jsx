@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import CeligPagination from '../../../CeligoPagination';
 import KeywordSearch from '../../../KeywordSearch';
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(1),
     '&:after': {
-      content: "''",
+      content: '""',
       position: 'absolute',
       width: '1px',
       height: '75%',
@@ -73,10 +73,6 @@ const useStyles = makeStyles(theme => ({
   filtersErrorTable: {
     display: 'flex',
     justifyContent: 'space-between',
-  },
-  errorSearch: {
-    width: '100%',
-    height: theme.spacing(4),
   },
 }));
 
@@ -154,7 +150,7 @@ export default function ErrorTableFilters({
         hasErrors &&
           (
             <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} autoFocus className={classes.errorSearch} />
+              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} sx={{ width: '100%', height: 4}} />
             </div>
           )
         }

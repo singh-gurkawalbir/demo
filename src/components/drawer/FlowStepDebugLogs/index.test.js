@@ -54,13 +54,13 @@ describe('FlowStepDebugLogs tests', () => {
   test('Should able to test the drawer is there', async () => {
     await initFlowStepDebugLogs(props);
     expect(screen.queryByText(/Close/i)).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: /Close/i}));
+    await userEvent.click(screen.getByRole('button', {name: /Close/i}));
     expect(mockHistoryReplace).toBeCalledWith('/');
   });
   test('Should able to test the drawer closes when clicked on "Close" button', async () => {
     mockLengthFn.mockReturnValue(5);
     await initFlowStepDebugLogs(props);
-    userEvent.click(screen.getByRole('button', {name: /Close/i}));
+    await userEvent.click(screen.getByRole('button', {name: /Close/i}));
     expect(mockHistoryGoBack).toBeCalled();
   });
 });

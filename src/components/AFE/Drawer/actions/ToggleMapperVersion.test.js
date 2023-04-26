@@ -136,18 +136,18 @@ describe('ToggleMapperVersion UI tests', () => {
     const mapper2dotOButton = screen.getByRole('button', {name: 'Mapper 2.0'});
 
     expect(mapper2dotOButton).toBeInTheDocument();
-    userEvent.click(mapper2dotOButton);
+    await userEvent.click(mapper2dotOButton);
     expect(mockDispatch).toHaveBeenCalledWith(actions.mapping.toggleVersion(2));
     const mapper1dotOButton = screen.getByRole('button', {name: 'Mapper 1.0'});
 
     expect(mapper1dotOButton).toBeInTheDocument();
   });
-  test('Should display help text when clicked on Help text button', () => {
+  test('Should display help text when clicked on Help text button', async () => {
     initToggleMapperVersion({editorId: 'mappings-632950280dbc53086e899759'});
     const helpTextButton = screen.getAllByRole('button');
 
     expect(helpTextButton[2]).toBeInTheDocument();
-    userEvent.click(helpTextButton[2]);
+    await userEvent.click(helpTextButton[2]);
     const tooltip = screen.getByRole('tooltip');
 
     expect(tooltip).toBeInTheDocument();

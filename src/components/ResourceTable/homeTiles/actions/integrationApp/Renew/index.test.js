@@ -56,58 +56,59 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe("homeTile's Renew actions UI test", () => {
-  test('should verify the Row action setup is pending no connector Id', () => {
+  test('should verify the Row action setup is pending no connector Id', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 
     expect(screen.getByText('Renew subscription')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Renew subscription'));
+    await userEvent.click(screen.getByText('Renew subscription'));
 
     expect(mockDispatch).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: 'some_connectorId', licenseId: 'someLicenseId'}));
   });
-  test('should not show renew option because trial not expired', () => {
+  test('should not show renew option because trial not expired', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '4_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data, initialStore);
 
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
-  test('should verify the Row actieron setupjb is pending no connector Id', () => {
+  test('should verify the Row actieron setupjb is pending no connector Id', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
-  test('should not show access when tile is single and resumable', () => {
+  test('should not show access when tile is single and resumable', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '3_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
-  test('should not show access when trial is over', () => {
+  test('should not show access when trial is over', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '1_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
-  test('should not show access when unetgrations is v2 and resumable', () => {
+
+  test('should not show access when unetgrations is v2 and resumable', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, _integrationId: '5_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
-  test('should not show access when unetgrations is v1 and resumable and not expired', () => {
+  test('should not show access when unetgrations is v1 and resumable and not expired', async () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, _integrationId: '3_integrationId', supportsMultiStore: true, _id: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Renew subscription')).not.toBeInTheDocument();
   });
 });

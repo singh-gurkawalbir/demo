@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import TreeView from '@material-ui/lab/TreeView';
-import TreeItem from '@material-ui/lab/TreeItem';
+import TreeView from '@mui/lab/TreeView';
+import TreeItem from '@mui/lab/TreeItem';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import ArrowDownIcon from '../../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../icons/ArrowUpIcon';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
-import Spinner from '../../../Spinner';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 // TODO (Surya): This component doesnt support adding additional action button for refresh with each Node.
 // refreshCache=true should be appended with api call when refresh button clicked.

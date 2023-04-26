@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import TimeAgo from 'react-timeago';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import { selectors } from '../../reducers';
 import { convertUtcToTimezone } from '../../utils/date';
 

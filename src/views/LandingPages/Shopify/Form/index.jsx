@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import RadioGroup from '../../../../components/DynaForm/fields/radiogroup/DynaQueryRadioGroup';

@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies

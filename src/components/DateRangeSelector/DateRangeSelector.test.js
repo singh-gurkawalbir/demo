@@ -7,35 +7,35 @@ import DateRangeSelector from '.';
 import {AUDIT_LOGS_RANGE_FILTERS} from '../../utils/resource';
 
 describe('dateRangeSelector testing', () => {
-  test('should test when click on apply', () => {
+  test('should test when click on apply', async () => {
     const onSave = jest.fn();
 
     renderWithProviders(<DateRangeSelector onSave={onSave} />);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const selectedfromlist = screen.getByText('Last 4 hours');
 
-    userEvent.click(selectedfromlist);
+    await userEvent.click(selectedfromlist);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(onSave).toHaveBeenCalled();
     expect(screen.getByText('Last 4 hours')).toBeInTheDocument();
   });
-  test('should test cancel button', () => {
+  test('should test cancel button', async () => {
     const onSave = jest.fn();
 
     renderWithProviders(<DateRangeSelector onSave={onSave} />);
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const selectedfromlist = screen.getByText('Last 4 hours');
 
-    userEvent.click(selectedfromlist);
+    await userEvent.click(selectedfromlist);
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(cancel).not.toBeInTheDocument();
   });
 
@@ -48,20 +48,20 @@ describe('dateRangeSelector testing', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     await waitFor(() => expect(screen.queryByText('Last 7 days')).toBeInTheDocument());
 
     const selectedfromlist = screen.getByText('Last 7 days');
 
-    userEvent.click(selectedfromlist);
+    await userEvent.click(selectedfromlist);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(onSave).toHaveBeenCalled();
     await waitFor(() => expect(screen.queryByText('Last 7 days')).toBeInTheDocument());
   });
 
-  test('should test providing custom input and intial value.preset as custom and calender true', () => {
+  test('should test providing custom input and intial value.preset as custom and calender true', async () => {
     const onSave = jest.fn();
 
     renderWithProviders(<DateRangeSelector
@@ -75,18 +75,18 @@ describe('dateRangeSelector testing', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const date = screen.getAllByText('10');
 
-    userEvent.click(date[0]);
+    await userEvent.click(date[0]);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(onSave).toHaveBeenCalled();
   });
 
-  test('should test when providing custom input and intial value.preset as custom and calender false', () => {
+  test('should test when providing custom input and intial value.preset as custom and calender false', async () => {
     const onSave = jest.fn();
 
     renderWithProviders(<DateRangeSelector
@@ -99,17 +99,17 @@ describe('dateRangeSelector testing', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const date = screen.getAllByText('10');
 
-    userEvent.click(date[0]);
+    await userEvent.click(date[0]);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(onSave).toHaveBeenCalled();
   });
 
-  test('should test the last run option', () => {
+  test('should test the last run option', async () => {
     const onSave = jest.fn();
 
     renderWithProviders(<DateRangeSelector
@@ -129,18 +129,18 @@ describe('dateRangeSelector testing', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const lastrun = screen.getByText('Last run');
 
-    userEvent.click(lastrun);
+    await userEvent.click(lastrun);
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(onSave).toHaveBeenCalled();
   });
 
-  test('should clearable button', () => {
+  test('should clearable button', async () => {
     const onSave = jest.fn();
 
     renderWithProviders(<DateRangeSelector
@@ -153,11 +153,11 @@ describe('dateRangeSelector testing', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const clear = screen.getByText('Clear');
 
-    userEvent.click(clear);
+    await userEvent.click(clear);
     expect(onSave).toHaveBeenCalled();
     expect(clear).not.toBeInTheDocument();
   });

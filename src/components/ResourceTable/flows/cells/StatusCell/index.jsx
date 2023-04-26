@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoTimeAgo from '../../../../CeligoTimeAgo';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 

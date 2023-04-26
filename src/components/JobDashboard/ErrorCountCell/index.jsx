@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import React, {useState, useCallback} from 'react';
-import { makeStyles, TableCell } from '@material-ui/core';
+import { TableCell } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   link: {

@@ -142,9 +142,9 @@ describe('ConnectionsPanel UI tests', () => {
         <ConnectionsPanel integrationId="5ff579d745ceef7dcd797c15" />
       </MemoryRouter>, {initialStore});
   }
-  test('should click on create connection button', () => {
+  test('should click on create connection button', async () => {
     initStoreAndRender('some_connectorId', false);
-    userEvent.click(screen.getByText('Create connection'));
+    await userEvent.click(screen.getByText('Create connection'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -164,16 +164,16 @@ describe('ConnectionsPanel UI tests', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith('someinitalURL/add/connections/somegeneratedID');
   });
 
-  test('should click on register connection button', () => {
+  test('should click on register connection button', async () => {
     initStoreAndRender(null, false);
-    userEvent.click(screen.getByText('Register connections'));
-    userEvent.click(screen.getByText('Register'));
+    await userEvent.click(screen.getByText('Register connections'));
+    await userEvent.click(screen.getByText('Register'));
     expect(screen.queryByText('Register')).not.toBeInTheDocument();
   });
 
-  test('should test Create connection when connection is present in store', () => {
+  test('should test Create connection when connection is present in store', async () => {
     initStoreAndRender(null, true);
-    userEvent.click(screen.getByText('Create connection'));
+    await userEvent.click(screen.getByText('Create connection'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',

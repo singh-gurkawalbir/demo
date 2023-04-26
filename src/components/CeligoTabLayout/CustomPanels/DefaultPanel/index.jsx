@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import ClipboardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor2';
 import { isJsonString } from '../../../../utils/string';

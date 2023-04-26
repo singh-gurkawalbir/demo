@@ -98,13 +98,13 @@ describe('test cases for SaveAndCloseButtonGroupForm', () => {
     expect(onSave).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(onSave).toHaveBeenLastCalledWith(!CLOSE_AFTER_SAVE);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    userEvent.click(saveAndCloseButton);
+    await userEvent.click(saveAndCloseButton);
     expect(onSave).toHaveBeenCalledWith(CLOSE_AFTER_SAVE);
     expect(onClose).toHaveBeenCalledTimes(2);
   });

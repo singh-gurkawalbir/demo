@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import FormControl from '@material-ui/core/FormControl';
-import { makeStyles } from '@material-ui/core/styles';
+import FormControl from '@mui/material/FormControl';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import Spinner from '../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import DynaMultiSelect from '../DynaMultiSelect';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import ActionButton from '../../../ActionButton';
@@ -40,8 +40,7 @@ export default function DynaRefreshCollection(props) {
   }, [dispatch, resourceType]);
 
   return (
-    <FormControl
-      className={classes.refreshResourceWrapper}>
+    <FormControl variant="standard" className={classes.refreshResourceWrapper}>
       <div className={classes.refreshRoot}>
         <DynaMultiSelect {...props} />
       </div>

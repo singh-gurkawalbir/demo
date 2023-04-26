@@ -41,7 +41,7 @@ async function renderFuntion(actionProps, data, errorType) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error Management Purge error UI tests', () => {
@@ -54,14 +54,14 @@ describe('error Management Purge error UI tests', () => {
     const purgeError = screen.getByText('Purge error');
 
     expect(purgeError).toBeInTheDocument();
-    userEvent.click(purgeError);
+    await userEvent.click(purgeError);
     expect(screen.getByText(/Confirm purge error/i)).toBeInTheDocument();
     const confirmPurgeButton = screen.getByRole('button', {name: 'Purge error'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     expect(confirmPurgeButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(confirmPurgeButton);
+    await userEvent.click(confirmPurgeButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, errors: [errorId], isRowAction: true})
     );

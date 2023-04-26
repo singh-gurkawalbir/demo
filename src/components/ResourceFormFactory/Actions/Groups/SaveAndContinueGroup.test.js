@@ -82,7 +82,7 @@ describe('test suite for SaveAndContinueGroup', () => {
     await initSaveAndContinueGroup({onCancel});
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -108,7 +108,7 @@ describe('test suite for SaveAndContinueGroup', () => {
     const saveButton = screen.getByRole('button', {name: 'Save & continue'});
 
     expect(saveButton).toBeEnabled();
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.saveAndContinue(
       resourceType, resourceId, {}, 'MATCH', false, {}
     ));

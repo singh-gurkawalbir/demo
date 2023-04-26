@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { TextField, FormLabel, FormControl } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { TextField, FormLabel, FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Suggestions from './Suggestions';
 import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
@@ -107,7 +107,7 @@ export default function DynaTextWithFlowSuggestion(props) {
   });
 
   return (
-    <FormControl className={classes.dynaTextWithFlowFormControl}>
+    <FormControl variant="standard" className={classes.dynaTextWithFlowFormControl}>
       <div className={classes.dynaTextWithFlowLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}

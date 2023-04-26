@@ -7,7 +7,7 @@ import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 import { getCreatedStore } from '../../../store';
 
 describe('test suite for netsuite sub-record JSON path field', () => {
-  test('should provide only $ as an option if sampleData does not exists', () => {
+  test('should provide only $ as an option if sampleData does not exists', async () => {
     const props = {
       flowId: 'flow123',
       resourceId: 'new-import123',
@@ -17,13 +17,13 @@ describe('test suite for netsuite sub-record JSON path field', () => {
     renderWithProviders(<DynaNetSuiteSubRecordJsonPath {...props} />);
     expect(document.querySelector('label')).toHaveTextContent(props.label);
 
-    userEvent.click(screen.getByRole('textbox'));
+    await userEvent.click(screen.getByRole('textbox'));
     const options = screen.getAllByRole('option').map(ele => ele.textContent);
 
     expect(options).toEqual(['$']);
   });
 
-  test('should provide the options if sampleData exists', () => {
+  test('should provide the options if sampleData exists', async () => {
     const data = {
       id: '192',
       'recordType[*].key': ['salesorder'],
@@ -81,7 +81,7 @@ describe('test suite for netsuite sub-record JSON path field', () => {
     renderWithProviders(<DynaNetSuiteSubRecordJsonPath {...props} />, { initialStore });
     expect(document.querySelector('label')).toHaveTextContent(props.label);
 
-    userEvent.click(screen.getByRole('textbox'));
+    await userEvent.click(screen.getByRole('textbox'));
     const options = screen.getAllByRole('option').map(ele => ele.textContent);
 
     expect(options).toEqual([

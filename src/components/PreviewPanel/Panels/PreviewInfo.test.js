@@ -41,7 +41,7 @@ describe('preview Info Component', () => {
 
     expect(previewBtn).toBeEnabled();
     expect(screen.getByText('Number of records:')).toBeInTheDocument();
-    userEvent.click(previewBtn);
+    await userEvent.click(previewBtn);
     expect(fetchExportPreviewData).toHaveBeenCalledTimes(1);
   });
 
@@ -56,8 +56,8 @@ describe('preview Info Component', () => {
     const previewBtn = screen.getByRole('button', {name: 'Preview'});
     const changeRecordValidityBtn = screen.getByRole('button', {name: /changeRecordValidity/i});
 
-    userEvent.click(changeRecordValidityBtn);
-    userEvent.click(previewBtn);
+    await userEvent.click(changeRecordValidityBtn);
+    await userEvent.click(previewBtn);
     expect(screen.getByText('Enter a valid record size')).toBeInTheDocument();
   });
 
@@ -86,7 +86,7 @@ describe('preview Info Component', () => {
     await initPreviewInfo({fetchExportPreviewData, resourceSampleData, formKey});
     const previewBtn = screen.getByRole('button', {name: 'Preview'});
 
-    userEvent.click(previewBtn);
+    await userEvent.click(previewBtn);
     expect(fetchExportPreviewData).toBeCalled();
   });
 });

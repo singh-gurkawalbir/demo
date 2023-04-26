@@ -64,7 +64,7 @@ describe('formView tests', () => {
     expect(screen.getByRole('group')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Simple' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'HTTP' })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', { name: 'HTTP' }));
+    await userEvent.click(screen.getByRole('button', { name: 'HTTP' }));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
       'Toggle Mode': 'HTTP',
       UserID: 'userId',
@@ -79,7 +79,7 @@ describe('formView tests', () => {
       '',
       [{id: 'a', value: 'a'}, {id: undefined, value: 'true'}]
     ));
-    userEvent.click(screen.getByRole('button', { name: 'Simple' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Simple' }));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(5, actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
       'Toggle Mode': 'Simple',
       UserID: 'userId',

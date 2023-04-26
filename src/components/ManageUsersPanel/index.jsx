@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
@@ -37,7 +37,10 @@ export default function ManageUsersPanel({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Users" infoText={infoText.Users}>
         {isAccountOwner && (
-          <TextButton onClick={handleInvite} startIcon={<AddIcon />}>
+          <TextButton
+            onClick={handleInvite}
+            startIcon={<AddIcon />}
+            sx={{padding: '6px 8px'}}>
             Invite user
           </TextButton>
         )}

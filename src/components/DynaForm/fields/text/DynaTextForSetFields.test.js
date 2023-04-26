@@ -12,7 +12,7 @@ describe('dynaTextSetFieldValues tests', () => {
     const props = {setFieldIds: ['first'], onFieldChange: mockChange};
 
     await renderWithProviders(<DynaTextSetFieldValues {...props} />);
-    userEvent.type(screen.getByRole('textbox'), 't');
+    await userEvent.type(screen.getByRole('textbox'), 't');
     expect(mockChange).toHaveBeenNthCalledWith(1, undefined, 't');
     expect(mockChange).toHaveBeenNthCalledWith(2, 'first', '', true);
   });
@@ -21,7 +21,7 @@ describe('dynaTextSetFieldValues tests', () => {
     const props = {onFieldChange: mockChange};
 
     await renderWithProviders(<DynaTextSetFieldValues {...props} />);
-    userEvent.type(screen.getByRole('textbox'), 't');
+    await userEvent.type(screen.getByRole('textbox'), 't');
     expect(mockChange).toHaveBeenNthCalledWith(1, undefined, 't');
     expect(mockChange).not.toHaveBeenNthCalledWith(2, 'first', '', true);
   });

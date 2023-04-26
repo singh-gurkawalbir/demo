@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
-import Spinner from '../../../../../../../components/Spinner';
 import ImportMapping from './Mappings';
 import { message } from '../../../../../../../utils/messageStore';
 
@@ -35,7 +35,7 @@ export default function MappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

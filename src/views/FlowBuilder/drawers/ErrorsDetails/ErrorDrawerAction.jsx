@@ -1,18 +1,15 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, Divider, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
-import Spinner from '../../../../components/Spinner';
 import ErrorActionStatus from './ErrorActionStatus';
 import TextButton from '../../../../components/Buttons/TextButton';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
-  spinner: {
-    marginRight: theme.spacing(0.5),
-    display: 'flex',
-  },
   status: {
     color: theme.palette.secondary.main,
     fontSize: 15,
@@ -49,10 +46,10 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
 
   return (
     <>
-      { retryStatus === 'inProgress' && (
+      { true && (
       <div className={classes.retryContainer}>
         <Divider orientation="vertical" className={classes.divider} />
-        <Spinner size={16} className={classes.spinner} />
+        <Spinner size="small" sx={{ mr: 0.5, display: 'flex'}} />
         <Typography variant="body2" component="div" className={classes.status}>
           Retrying errors...
         </Typography>

@@ -1,7 +1,9 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DateRangeSelector from '../../components/DateRangeSelector';
@@ -15,7 +17,6 @@ import metadata from '../../components/ResourceTable/scriptLogs/metadata';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import SelectDependentResource from '../../components/SelectDependentResource';
 import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } from '../../utils/script';
-import Spinner from '../../components/Spinner';
 import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
 import NoResultTypography from '../../components/NoResultTypography';
@@ -78,9 +79,6 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     marginRight: theme.spacing(2),
     display: 'flex',
-  },
-  spinnerScriptLogs: {
-    marginTop: theme.spacing(1),
   },
   scriptsFetchLog: {
     backgroundColor: theme.palette.background.paper,
@@ -356,7 +354,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
           </NoResultTypography>
         )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (
-        <Spinner loading size="large" className={classes.spinnerScriptLogs} />
+          <Spinner center="horizontal" size="large" sx={{mt: 1}} />
         )}
       </div>
       <ViewLogDetailDrawer />

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import DynaToggle from './DynaToggle';
 
 describe('test suite for DynaToggle field', () => {
-  test('should respond to change in toogle options', () => {
+  test('should respond to change in toogle options', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'toggle',
@@ -37,13 +37,13 @@ describe('test suite for DynaToggle field', () => {
     const toggleUS = screen.getByRole('button', {name: 'United States'});
     const toggleCanada = screen.getByRole('button', {name: 'Canada'});
 
-    userEvent.click(toggleIndia);
+    await userEvent.click(toggleIndia);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'in');
 
-    userEvent.click(toggleUS);
+    await userEvent.click(toggleUS);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'us');
 
-    userEvent.click(toggleCanada);
+    await userEvent.click(toggleCanada);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'cdn');
   });
 });

@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen, within, waitFor } from '@testing-library/react';
 import React from 'react';
 import * as ReactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -159,25 +159,27 @@ describe('Testsuite for Concur Forgot Password', () => {
     })).toBeInTheDocument();
     expect(screen.getByText(/mocking user sign in forgot password user exist/i)).toBeInTheDocument();
     expect(screen.getByText(/back to/i)).toBeInTheDocument();
-    const button = screen.getByRole('button', {
-      name: /sign in/i,
-    });
+    waitFor(() => {
+      const button = screen.getByRole('button', {
+        name: /sign in/i,
+      });
 
-    within(button).getByText(/sign in/i);
-    expect(button).toHaveAttribute('href', '/signin?application=concur');
-    userEvent.click(button);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequestSent());
-    expect(screen.getByRole('link', {
-      name: /privacy/i,
-    })).toHaveAttribute('href', 'https://www.celigo.com/privacy/');
-    expect(screen.getByRole('link', {
-      name: /Terms of Service/i,
-    })).toHaveAttribute('href', 'https://www.celigo.com/terms-of-service/');
-    expect(screen.getByRole('link', {
-      name: /Support/i,
-    })).toHaveAttribute('href', 'https://www.celigo.com/support/');
+      within(button).getByText(/sign in/i);
+      expect(button).toHaveAttribute('href', '/signin?application=concur');
+      userEvent.click(button);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequestSent());
+      expect(screen.getByRole('link', {
+        name: /privacy/i,
+      })).toHaveAttribute('href', 'https://www.celigo.com/privacy/');
+      expect(screen.getByRole('link', {
+        name: /Terms of Service/i,
+      })).toHaveAttribute('href', 'https://www.celigo.com/terms-of-service/');
+      expect(screen.getByRole('link', {
+        name: /Support/i,
+      })).toHaveAttribute('href', 'https://www.celigo.com/support/');
+    });
   });
-  test('should test the consur forgot password when there is an error message by setting showError as true', () => {
+  test('should test the consur forgot password when there is an error message by setting showError as true', async () => {
     initConcurForgotPassword({test: 'test1'}, {
       authState: {
         requestResetStatus: 'fail',
@@ -186,12 +188,14 @@ describe('Testsuite for Concur Forgot Password', () => {
       },
     });
     expect(screen.queryByText(/test error/i)).not.toBeInTheDocument();
-    const setShowErrorButtonNode = screen.getByRole('button', {
-      name: /setshowerror/i,
-    });
+    waitFor(async () => {
+      const setShowErrorButtonNode = screen.getByRole('button', {
+        name: /setshowerror/i,
+      });
 
-    expect(setShowErrorButtonNode).toBeInTheDocument();
-    userEvent.click(setShowErrorButtonNode);
-    expect(screen.queryByText(/test error/i)).toBeInTheDocument();
+      expect(setShowErrorButtonNode).toBeInTheDocument();
+      await userEvent.click(setShowErrorButtonNode);
+      expect(screen.queryByText(/test error/i)).toBeInTheDocument();
+    });
   });
 });

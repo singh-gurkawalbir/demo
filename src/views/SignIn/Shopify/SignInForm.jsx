@@ -1,16 +1,16 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography, InputAdornment } from '@material-ui/core';
+import { Typography, InputAdornment } from '@mui/material';
 import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { getDomain, isGoogleSignInAllowed } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../../components/Buttons';
 import useQuery from '../../../hooks/useQuery';
 import ShowContentIcon from '../../../components/icons/ShowContentIcon';
@@ -262,12 +262,12 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
             </div>
             <form onSubmit={handleSignInWithGoogle}>
               <TextField
+                variant="standard"
                 data-private
                 type="hidden"
                 id="attemptedRoute"
                 name="attemptedRoute"
-                value={attemptedRoute || getRoutePath('/')}
-              />
+                value={attemptedRoute || getRoutePath('/')} />
               <OutlinedButton
                 type="submit"
                 color="secondary"

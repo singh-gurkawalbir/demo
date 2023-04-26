@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress, capitalize } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, LinearProgress, capitalize } from '@mui/material';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';

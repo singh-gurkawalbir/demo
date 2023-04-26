@@ -94,7 +94,7 @@ describe('test suite for oldValue', () => {
     initImports(data);
     expect(screen.getByText('2022-11-06T20:34:51.426Z')).toBeInTheDocument();
   });
-  test('should display dialog box after clicking on click to view button', () => {
+  test('should display dialog box after clicking on click to view button', async () => {
     const data = [{
       time: testDate,
       byUser: {
@@ -127,11 +127,11 @@ describe('test suite for oldValue', () => {
 
     expect(clickToViewButton).toBeInTheDocument();
 
-    userEvent.click(clickToViewButton);
+    await userEvent.click(clickToViewButton);
     const onCloseButtonNode = document.querySelector('svg[data-testid="closeModalDialog"]');
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
   });
 });

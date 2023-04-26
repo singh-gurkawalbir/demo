@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore, mutateStore} from '../../../../test/test-utils';
 import scheduleAction from './schedule';
@@ -25,6 +25,20 @@ jest.mock('../../../../components/FlowSchedule', () => ({
         <div>{props.flow.name}</div>
       </>
     );
+  },
+}));
+
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
   },
 }));
 
@@ -75,8 +89,14 @@ describe('scheduleAction UI tests', () => {
 
     jest.spyOn(cancelContext, 'default').mockReturnValue({disabled: false, setCancelTriggered: mockSetCancelTriggered});
     await initStoreAndRender();
-    userEvent.click(screen.getByRole('button'));
+    let button;
 
-    expect(mockSetCancelTriggered).toHaveBeenCalled();
+    waitFor(() => { button = screen.getByRole('button'); });
+
+    waitFor(async () => {
+      await userEvent.click(button);
+
+      expect(mockSetCancelTriggered).toHaveBeenCalled();
+    });
   });
 });

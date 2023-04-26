@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import sift from 'sift';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { isEqual } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -20,7 +21,6 @@ import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
-import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 import { getHttpConnector} from '../../../constants/applications';
@@ -488,7 +488,7 @@ export default function DynaSelectResource(props) {
     <div className={classes.root}>
       <LoadResources
         required
-        spinner={<Spinner size="medium" />}
+        spinner={<Spinner />}
         resources={resourceType !== 'connectorLicenses' ? resourceType : []}
       >
         <>

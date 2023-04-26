@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useRouteMatch} from 'react-router-dom';
-import {makeStyles, TablePagination, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
+import { TablePagination, IconButton, Tooltip, Divider, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -10,7 +12,6 @@ import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
 import ChevronRight from '../icons/ArrowRightIcon';
 import ExpandMore from '../icons/ArrowDownIcon';
-import Spinner from '../Spinner';
 import CeligoTable from '../CeligoTable';
 import DateTimeDisplay from '../DateTimeDisplay';
 import useConfirmDialog from '../ConfirmDialog';
@@ -424,7 +425,7 @@ export default function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-      <Spinner centerAll>
+      <Spinner center="screen" >
         Uploading...
       </Spinner>
       )}
@@ -453,7 +454,7 @@ export default function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
-        <Spinner centerAll>
+        <Spinner center="screen" >
           Loading job errors
         </Spinner>
 
@@ -503,7 +504,7 @@ export default function JobErrorTable({
               ref={uploadFileRef}
               className={classes.fileInput}
               onChange={handleFileChosen}
-            />
+          />
           </ActionGroup>
 
           {jobErrorsInCurrentPage.length === 0 ? (
@@ -529,15 +530,15 @@ export default function JobErrorTable({
                 nextIconButtonProps={{
                   'aria-label': 'Next Page',
                 }}
-                onChangePage={handleChangePage}
-              />
+                onPageChange={handleChangePage}
+            />
 
               <CeligoTable
                 className={classes.celigoTableWrapper}
                 data={customCloneDeep(jobErrorsData)}
                 selectableRows={
-                  !isJobInProgress && hasUnresolvedErrorsInCurrentPage
-                }
+                !isJobInProgress && hasUnresolvedErrorsInCurrentPage
+              }
                 isSelectableRow={r =>
                   r.metadata && r.metadata.isParent && !r.resolved}
                 onSelectChange={handleJobErrorSelectChange}
@@ -547,18 +548,19 @@ export default function JobErrorTable({
                     heading: '',
                     isLoggable: true,
                     Value: ({rowData: r}) =>
-                      r.similarErrors?.length > 0 && (
-                        <IconButton
-                          data-test="expandJobsErrors"
-                          onClick={() => {
-                            handleExpandCollapseClick(r._id);
-                          }}>
-                          {r.metadata?.expanded ? (
-                            <ExpandMore />
-                          ) : (
-                            <ChevronRight />
-                          )}
-                        </IconButton>
+                    r.similarErrors?.length > 0 && (
+                      <IconButton
+                        data-test="expandJobsErrors"
+                        onClick={() => {
+                          handleExpandCollapseClick(r._id);
+                        }}
+                        size="large">
+                        {r.metadata?.expanded ? (
+                          <ExpandMore />
+                        ) : (
+                          <ChevronRight />
+                        )}
+                      </IconButton>
                       ),
                   },
                   {
@@ -592,7 +594,7 @@ export default function JobErrorTable({
                         message={r.message}
                         exportDataURI={r.exportDataURI}
                         importDataURI={r.importDataURI}
-                      />
+                    />
                     ),
                   },
                   {
@@ -611,13 +613,13 @@ export default function JobErrorTable({
                       <EditRetryCell
                         retryId={r._retryId}
                         isEditable={r.metadata?.isParent &&
-                      r.retryObject?.isDataEditable}
+                    r.retryObject?.isDataEditable}
                         isDownloadable={r.retryObject?.isDownloadable}
                         dateTime={r.createdAt} />
                     ),
                   },
                 ]}
-              />
+            />
             </>
           )}
         </>

@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import { selectors } from '../../../reducers';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';

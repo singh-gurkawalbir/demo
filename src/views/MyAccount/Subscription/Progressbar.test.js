@@ -69,7 +69,7 @@ describe('progressBar test cases', () => {
     expect(screen.queryByText(/123/i)).toBeInTheDocument();
     expect(listButton).toBeInTheDocument();
 
-    userEvent.click(listButton);
+    await userEvent.click(listButton);
     expect(mockReplacePush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.ACCOUNT.SUBSCRIPTION,
       baseUrl: '/',

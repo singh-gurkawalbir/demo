@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import { TreeView} from '@material-ui/lab';
+import makeStyles from '@mui/styles/makeStyles';
+import { TreeView} from '@mui/lab';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';

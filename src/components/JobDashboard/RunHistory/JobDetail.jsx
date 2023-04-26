@@ -1,16 +1,16 @@
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ChildJobDetail from './ChildJobDetail';
 import JobStatusWithTag from '../../ResourceTable/runHistory/JobStatusWithTag';
 import JobActionsMenu from './JobActionsMenu';
-import Spinner from '../../Spinner';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import { getJobDuration } from '../../../utils/errorManagement';
@@ -67,7 +67,7 @@ export default function JobDetail({
 
   function RowIcon({expanded, childLoaded}) {
     if (expanded && !childLoaded) {
-      return <Spinner size={24} />;
+      return <Spinner />;
     }
 
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
@@ -82,7 +82,8 @@ export default function JobDetail({
               <IconButton
                 data-test="toggleJobDetail"
                 className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
-                onClick={handleExpandCollapseClick}>
+                onClick={handleExpandCollapseClick}
+                size="large">
                 <RowIcon expanded={expanded} childLoaded={job.children} />
               </IconButton>
               {job.name || flow?.name || job._flowId}
@@ -103,19 +104,19 @@ export default function JobDetail({
         <TableCell className={clsx(classes.actions, jobDetailsClasses.actions)}>
           <JobActionsMenu
             job={job}
-          />
+        />
         </TableCell>
       </TableRow>
 
       {expanded &&
-        job.children &&
-        job.children.map(cJob => (
-          <ChildJobDetail
-            key={cJob._id}
-            job={cJob}
-            parentJob={job}
-          />
-        ))}
+      job.children &&
+      job.children.map(cJob => (
+        <ChildJobDetail
+          key={cJob._id}
+          job={cJob}
+          parentJob={job}
+        />
+      ))}
     </>
   );
 }

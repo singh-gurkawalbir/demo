@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, Tooltip, MenuItem } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, Tooltip, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import clsx from 'clsx';
 import EllipsisIcon from '../../../../../icons/EllipsisHorizontalIcon';
 import AddIcon from '../../../../../icons/AddIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
-import ArrowPopper from '../../../../../ArrowPopper';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import RawHtml from '../../../../../RawHtml';
@@ -106,7 +106,7 @@ export default function MoreActions({importId, disabled}) {
       {open && (
         <ArrowPopper
           placement="bottom-end"
-          restrictToParent={false}
+          preventOverflow={false}
           open={open}
           anchorEl={anchorEl}
           id={actionsPopoverId}

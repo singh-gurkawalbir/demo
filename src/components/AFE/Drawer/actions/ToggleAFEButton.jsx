@@ -1,23 +1,16 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import TextToggle from '../../../TextToggle';
 import Help from '../../../Help';
 import { selectors } from '../../../../reducers';
 
-const useStyles = makeStyles({
-  helpTextButton: {
-    padding: 0,
-  },
-});
 const toggleEditorOptions = [
   { label: 'AFE 1.0', value: 1 },
   { label: 'AFE 2.0', value: 2 },
 ];
 
 export default function ToggleAFEButton({ editorId }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const editorSupportsV1V2data = useSelector(state => selectors.editor(state, editorId).editorSupportsV1V2data);
   const editorVersion = useSelector(state => selectors.editorDataVersion(state, editorId));
@@ -51,7 +44,6 @@ export default function ToggleAFEButton({ editorId }) {
       />
       <Help
         title="AFE"
-        className={classes.helpTextButton}
         helpKey="afe.sampleDataSwitch"
       />
     </>

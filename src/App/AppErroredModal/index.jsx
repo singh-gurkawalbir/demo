@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, useHistory } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import ModalDialog from '../../components/ModalDialog';
 import { selectors } from '../../reducers';
 import actions from '../../actions';

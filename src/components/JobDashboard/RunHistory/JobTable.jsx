@@ -1,5 +1,6 @@
 import React, { } from 'react';
-import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import JobDetail from './JobDetail';
 import HeaderWithHelpText from '../../ResourceTable/commonCells/HeaderWithHelpText';
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
   name: {
     wordBreak: 'break-word',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('lg')]: {
       wordBreak: 'normal',
     },
   },

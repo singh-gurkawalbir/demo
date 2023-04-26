@@ -57,7 +57,7 @@ describe('test suite for RouterGuide', () => {
     expect(screen.getByRole('button')).toHaveAttribute('data-test', 'closeRightDrawer');
     const closeButton = screen.getByRole('button');
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
   test('Should render EditorDrawerCloseIconButton button when hideSave is false', async () => {
@@ -66,7 +66,7 @@ describe('test suite for RouterGuide', () => {
     expect(screen.getByRole('button')).toHaveAttribute('data-test', 'closeRightDrawer');
     const closeButton = screen.getByRole('button');
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockSetCancelTriggered).toHaveBeenCalledTimes(1);
   });
   test('Should test EditorDrawerCloseIconButton button if it is diabled or not', async () => {

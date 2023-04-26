@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
-import Spinner from '../../../../Spinner';
 
 export default function FeaturePanel({ editorId, mode, featureName }) {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ export default function FeaturePanel({ editorId, mode, featureName }) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <CodePanel
           name="feature"

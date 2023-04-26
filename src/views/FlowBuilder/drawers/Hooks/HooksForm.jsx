@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';

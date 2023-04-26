@@ -1,9 +1,10 @@
 import React, {useCallback} from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
-import Spinner from '../Spinner';
 import TopPanel from './TopPanel';
 import ButtonPanel from './ButtonPanel';
 import PreviewPanel from './Preview/Panel';
@@ -117,7 +118,7 @@ export default function MappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

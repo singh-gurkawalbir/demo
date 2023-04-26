@@ -17,7 +17,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-function renderFunction() {
+async function renderFunction() {
   renderWithProviders(
     <MemoryRouter initialEntries={['/parent']}>
       <Route path="/parent">
@@ -30,16 +30,16 @@ function renderFunction() {
     </MemoryRouter>
   );
 
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('share stack metadata UI Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  test('should click on share stack link', () => {
-    renderFunction();
-    userEvent.click(screen.getByText('Share stack'));
+  test('should click on share stack link', async () => {
+    await renderFunction();
+    await userEvent.click(screen.getByText('Share stack'));
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/parent/share/stacks/someId');
   });

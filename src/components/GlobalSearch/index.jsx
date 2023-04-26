@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useLocation } from 'react-router-dom';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';

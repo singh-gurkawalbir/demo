@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { screen, render} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import ScheduleCell from './index';
+import { renderWithProviders } from '../../../../../test/test-utils';
 
 jest.mock('../../../../icons/CalendarIcon', () => ({
   __esModule: true,
@@ -14,20 +15,20 @@ jest.mock('../../../../icons/CalendarIcon', () => ({
 
 describe('suite script ScheduleCell ui test', () => {
   test('should show empty dom when no props are provided', () => {
-    const utils = render(<MemoryRouter><ScheduleCell /></MemoryRouter>);
+    const utils = renderWithProviders(<MemoryRouter><ScheduleCell /></MemoryRouter>);
 
-    expect(utils.container.textContent).toBe('');
+    expect(utils.container).toBeUndefined();
   });
 
   test('should show no option for schedule when flow type is not of schedule', () => {
-    render(<MemoryRouter><ScheduleCell flow={{type: 'REALTIME_EXPORT', hasConfiguration: true}} /></MemoryRouter>);
+    renderWithProviders(<MemoryRouter><ScheduleCell flow={{type: 'REALTIME_EXPORT', hasConfiguration: true}} /></MemoryRouter>);
     expect(screen.getByText('Realtime')).toBeInTheDocument();
     const link = screen.queryByRole('link');
 
     expect(link).not.toBeInTheDocument();
   });
   test('should disable the button when props for ecit is not sent', () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
           path="/initialURL"
@@ -35,7 +36,7 @@ describe('suite script ScheduleCell ui test', () => {
           ><ScheduleCell flow={{_id: 'someFlowID', type: 'EXPORT', hasConfiguration: true}} />
         </Route>
       </MemoryRouter>);
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link');
 
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/initialURL/someFlowID/schedule');
@@ -46,7 +47,7 @@ describe('suite script ScheduleCell ui test', () => {
     expect(disable).toBe('true');
   });
   test('should show the link button as enabled', () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
           path="/initialURL"
@@ -54,13 +55,13 @@ describe('suite script ScheduleCell ui test', () => {
           ><ScheduleCell flow={{_id: 'someFlowID', type: 'EXPORT', hasConfiguration: true, editable: true}} />
         </Route>
       </MemoryRouter>);
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link');
 
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/initialURL/someFlowID/schedule');
     expect(screen.getByText('Calendar')).toBeInTheDocument();
     const disable = link.getAttribute('aria-disabled');
 
-    expect(disable).toBe('false');
+    expect(disable).toBeNull();
   });
 });

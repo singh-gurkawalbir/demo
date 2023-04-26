@@ -228,7 +228,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     resourceContext: [],
   };
 
-  test('should test replace connection with touched set to true', () => {
+  test('should test replace connection with touched set to true', async () => {
     mutateStore(initialStore, draft => {
       draft.session.form['imports-6375d5edc1b1ee732dd2b1e3'] = {
         fields: {
@@ -243,12 +243,12 @@ describe('dynaReplaceConnection UI test cases', () => {
     initDynaReplaceConnection(genralProps);
     const button = screen.getByText('Replace Connection');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: undefined, value: '62f76fd2dd7931633948ee7a'}, {id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
 
-  test('should test replace connection with touched set to false', () => {
+  test('should test replace connection with touched set to false', async () => {
     mutateStore(initialStore, draft => {
       draft.session.form['imports-6375d5edc1b1ee732dd2b1e3'] = {
         fields: {
@@ -262,12 +262,12 @@ describe('dynaReplaceConnection UI test cases', () => {
     initDynaReplaceConnection(genralProps);
     const button = screen.getByText('Replace Connection');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
 
-  test('should test replace connection with touched set to false and no assistant', () => {
+  test('should test replace connection with touched set to false and no assistant', async () => {
     const genralProps = {
       connectionId: '62f2b141d0402833c6fec36f',
       connectorId: '6322bc4c0899513ede0ae545',
@@ -292,11 +292,11 @@ describe('dynaReplaceConnection UI test cases', () => {
     initDynaReplaceConnection(genralProps);
     const button = screen.getByText('Replace Connection');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
-  test('should test replace connection with touched set to true and no assistant', () => {
+  test('should test replace connection with touched set to true and no assistant', async () => {
     const genralProps = {
       connectionId: '62f2b141d0402833c6fec36f',
       connectorId: '6322bc4c0899513ede0ae545',
@@ -321,12 +321,12 @@ describe('dynaReplaceConnection UI test cases', () => {
     initDynaReplaceConnection(genralProps);
     const button = screen.getByText('Replace Connection');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: undefined, value: '123'}, {id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
 
-  test('should test replace connection with assistant metadata', () => {
+  test('should test replace connection with assistant metadata', async () => {
     const genralProps = {
       connectionId: '62f2b141d0402833c6fhxwef',
       connectorId: '6322bc4c0899513ede0ae545',
@@ -355,11 +355,11 @@ describe('dynaReplaceConnection UI test cases', () => {
     initDynaReplaceConnection(genralProps);
     const button = screen.getByText('Replace Connection');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: [{assistantMetadata: {operation: 'update', resource: 'someresource', version: 'v1'}}], value: undefined}, {id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
-  test('should test replace connection without store', () => {
+  test('should test replace connection without store', async () => {
     const genralProps = {
       connectionId: '62f2b141d0402833c6fhxwef',
       connectorId: '6322bc4c0899513ede0ae545',
@@ -378,7 +378,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     renderWithProviders(<MemoryRouter><DynaReplaceConnection {...genralProps} /></MemoryRouter>);
     const button = screen.getByText('Replace Connection');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], type: 'RESOURCE_STAGE_PATCH'});
   });
 });

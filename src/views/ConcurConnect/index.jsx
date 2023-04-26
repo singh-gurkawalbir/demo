@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import getImageUrl from '../../utils/image';
 import { FilledButton } from '../../components/Buttons';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import Loader from '../../components/Loader';
-import Spinner from '../../components/Spinner';
 import useQuery from '../../hooks/useQuery';
 import messageStore from '../../utils/messageStore';
 

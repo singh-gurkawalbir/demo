@@ -1,14 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import {
-  makeStyles,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  Typography,
-} from '@material-ui/core';
+import { MenuItem, Checkbox, FormControlLabel, IconButton, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';

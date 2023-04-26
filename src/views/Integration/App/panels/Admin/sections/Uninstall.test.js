@@ -68,7 +68,7 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15', childId: '5ff579d745ceef7dcd797b04'});
     let uninstallButtons = screen.getAllByText('Uninstall');
 
-    userEvent.click(uninstallButtons[1]);
+    await userEvent.click(uninstallButtons[1]);
     expect(screen.getByText('Confirm uninstall')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to uninstall?')).toBeInTheDocument();
@@ -79,18 +79,18 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15', childId: '5ff579d745ceef7dcd797b04'});
     let uninstallButtons = screen.getAllByText('Uninstall');
 
-    userEvent.click(uninstallButtons[1]);
+    await userEvent.click(uninstallButtons[1]);
     uninstallButtons = screen.getAllByText('Uninstall');
-    userEvent.click(uninstallButtons[2]);
+    await userEvent.click(uninstallButtons[2]);
     await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/integrationapps/AmazonNetSuite/5ff579d745ceef7dcd797c15/uninstall'));
   });
   test('should make the respective url redirection when the integration supportsMultiStore', async () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15', childId: '5ff579d745ceef7dcd797b04', supportsMultiStore: true});
     let uninstallButtons = screen.getAllByText('Uninstall');
 
-    userEvent.click(uninstallButtons[1]);
+    await userEvent.click(uninstallButtons[1]);
     uninstallButtons = screen.getAllByText('Uninstall');
-    userEvent.click(uninstallButtons[2]);
+    await userEvent.click(uninstallButtons[2]);
     await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/integrationapps/AmazonNetSuite/5ff579d745ceef7dcd797c15/uninstall/child/5ff579d745ceef7dcd797b04'));
   });
 });

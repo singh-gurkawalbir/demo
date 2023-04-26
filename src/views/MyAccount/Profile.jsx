@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { InputLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { InputLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import DynaForm from '../../components/DynaForm';

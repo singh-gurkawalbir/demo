@@ -261,10 +261,10 @@ const LAYOUT = {
   ],
 };
 
-jest.mock('../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../Spinner'),
-  default: () => (<div>Spinner</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<div>Spinner</div>),
 }));
 
 jest.mock('react-frame-component', () => ({
@@ -361,7 +361,7 @@ describe('test suite for SalesforceMappingAssistant', () => {
     const inputField = screen.getAllByRole('textbox')[0];
 
     expect(onFieldClick).not.toHaveBeenCalled();
-    userEvent.click(inputField);
+    await userEvent.click(inputField);
     expect(onFieldClick).toHaveBeenCalledTimes(1);
   });
 });

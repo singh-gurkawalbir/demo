@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
-import { useStoreState } from 'react-flow-renderer';
+import makeStyles from '@mui/styles/makeStyles';
+import { useStore } from 'reactflow';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Title from '../Title';
@@ -35,7 +35,7 @@ const DestinationTitle = () => {
 
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const [x, , scale] = useStoreState(s => s.transform);
+  const [x, , scale] = useStore(s => s.transform);
   const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   const xOffset = columnWidth;
   const classes = useStyles({ xOffset, columnWidth });

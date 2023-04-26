@@ -56,10 +56,10 @@ jest.mock('../../forms/formFactory/getResourceFromAssets', () => ({
   }),
 }));
 
-jest.mock('../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../Spinner'),
-  default: () => (<div>Spinner</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<div>Spinner</div>),
 }));
 
 async function initResourceFormFactory(props = {}, initialStore) {
@@ -142,13 +142,13 @@ describe('test suite for ResourceFormFactory', () => {
     const optionsButton = screen.getByRole('button', {name: 'Handle Options'});
     const validationsButton = screen.getByRole('button', {name: 'Handle Validations'});
 
-    userEvent.click(initButton);
+    await userEvent.click(initButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.init(
       resourceType, resourceId, isNew, true, undefined
     ));
-    userEvent.click(optionsButton);
+    await userEvent.click(optionsButton);
     expect(mockOptionsHandler).toHaveBeenCalledTimes(1);
-    userEvent.click(validationsButton);
+    await userEvent.click(validationsButton);
     expect(mockValidationHandler).toHaveBeenCalledTimes(1);
   });
 });

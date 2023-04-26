@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch } from 'react-redux';
-import { FormControl, FormLabel, TextField } from '@material-ui/core';
+import { FormControl, FormLabel, TextField } from '@mui/material';
 import clsx from 'clsx';
 import ChangePassword from '../../../views/MyAccount/ChangePassword';
 import actions from '../../../actions';
@@ -51,7 +51,7 @@ export default function DynaUserPassword(props) {
   }, []);
 
   return (
-    <FormControl className={classes.field}>
+    <FormControl variant="standard" className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
         <FieldHelp {...props} />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormLabel, FormControl } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormLabel, FormControl } from '@mui/material';
 import timeStamps from '../../../utils/timeStamps';
 import getJSONPaths from '../../../utils/jsonPaths';
 import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
@@ -180,7 +180,7 @@ export default function DynaTimestampFileName(props) {
   }
 
   return (
-    <FormControl className={classes.fieldWrapper}>
+    <FormControl variant="standard" className={classes.fieldWrapper}>
       <div className={classes.fieldWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}

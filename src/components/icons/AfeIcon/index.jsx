@@ -1,5 +1,5 @@
 import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
+import SvgIcon from '@mui/material/SvgIcon';
 
 // TODO: Azhar. This is a temporary icon i made so that i could actively see in the UI
 // the place we properly replaced this icon, and where it is missing.

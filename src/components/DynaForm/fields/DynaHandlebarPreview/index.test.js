@@ -33,7 +33,7 @@ describe('dynaHandlebarPreview UI tests', () => {
   });
   test('should call the onEditorClick function when clicked on the AFE icon', async () => {
     renderWithProviders(<DynaHandlebarPreview {...props} />);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     await waitFor(() => expect(mockEditorClick).toBeCalled());
   });
 });

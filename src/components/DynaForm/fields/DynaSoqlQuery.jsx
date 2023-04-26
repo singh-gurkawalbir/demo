@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch} from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FieldHelp from '../FieldHelp';
@@ -121,7 +121,7 @@ export default function DynaSoqlQuery(props) {
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (
-    <FormControl className={classes.dynasoqlFormControl}>
+    <FormControl variant="standard" className={classes.dynasoqlFormControl}>
       <div className={classes.dynasoqlLabelWrapper}>
         <FormLabel htmlFor={id} required={required}>
           {label}

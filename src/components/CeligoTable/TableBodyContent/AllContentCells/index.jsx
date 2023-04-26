@@ -1,4 +1,4 @@
-import { TableCell } from '@material-ui/core';
+import { TableCell } from '@mui/material';
 import React from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
@@ -8,6 +8,7 @@ export const BaseCellWrapper = ({isLoggable, children, ...rest}) => (
     <TableCell
       {...isLoggableAttr(isLoggable)}
       {...rest}
+      sx={{padding: '10px 16px'}}
       >
       {children}
     </TableCell>

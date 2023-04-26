@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import LogoStrip from '.';
 
 describe('logoStrip UI tests', () => {
-  test('should do the test when application length exceeds maxlength', () => {
+  test('should do the test when application length exceeds maxlength', async () => {
     renderWithProviders(<LogoStrip applications={['3dcart', 'docusign', 'salesforce', 'magento']} rows={2} columns={1} />);
     const images = screen.getAllByAltText(/.*/);
 
@@ -14,14 +14,12 @@ describe('logoStrip UI tests', () => {
 
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     const newimages = screen.getAllByAltText(/.*/);
 
     expect(newimages).toHaveLength(4);
-    userEvent.click(newimages[0]);
-    const lastimages = screen.getAllByAltText(/.*/);
-
-    expect(lastimages).toHaveLength(1);
+    await userEvent.click(newimages[0]);
+    await waitFor(() => expect(screen.getAllByAltText(/.*/)).toHaveLength(1));
   });
   test('should do the test when application length is less than maxlength', () => {
     renderWithProviders(<LogoStrip applications={['3dcart', 'docusign', 'salesforce', 'magento']} rows={2} columns={3} />);

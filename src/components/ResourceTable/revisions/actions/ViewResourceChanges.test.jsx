@@ -59,7 +59,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
       <Route path="/integrations/:integrationId">
@@ -70,18 +70,18 @@ function renderFuntion(data) {
       </Route>
     </MemoryRouter>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for view resource changes', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should push viewresourcechanges URL when status is set to completed', () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f'});
+  test('should push viewresourcechanges URL when status is set to completed', async () => {
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f'});
     const viewresourcechanged = screen.getByText('View resources changed');
 
-    userEvent.click(viewresourcechanged);
+    await userEvent.click(viewresourcechanged);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44efa28015c9464272256f/view/6368de0bec4c35664453023b/mode/changes');
   });
 });

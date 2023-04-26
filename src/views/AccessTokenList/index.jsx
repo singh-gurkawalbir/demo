@@ -50,10 +50,7 @@ export default function AccessTokenList(props) {
 
         <CeligoPageBar title="API tokens" infoText={infoText.accesstokens}>
           <ActionGroup>
-            <KeywordSearch
-              filterKey={filterKey}
-              autoFocus
-          />
+            <KeywordSearch filterKey={filterKey} />
             <TextButton
               data-test="newAccessToken"
               component={Link}

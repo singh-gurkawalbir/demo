@@ -97,6 +97,25 @@ jest.mock('../../../utils/jobdashboard', () => ({
   getStatus: jest.fn().mockReturnValue('Mocking get Status'),
   getPages: jest.fn().mockReturnValue('Mocking get Pages'),
 }));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('testsuite for Queued Jobs Drawer', () => {
   let mockDispatchFn;
   let useDispatchSpy;
@@ -163,9 +182,12 @@ describe('testsuite for Queued Jobs Drawer', () => {
     const columnHeaderNode = screen.getAllByRole('columnheader');
 
     expect(columnHeaderNode).toHaveLength(8);
+    const rowHeader = screen.getAllByRole('rowheader');
+
+    expect(rowHeader).toHaveLength(1);
     const cellNode = screen.getAllByRole('cell');
 
-    expect(cellNode).toHaveLength(8);
+    expect(cellNode).toHaveLength(7);
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'QUEUED_JOBS_REQUEST_POLL', connectionId: 'abcde' });
   });
   test('should test the queued jobs drawer by clicking on action button and canceling the queued job', async () => {

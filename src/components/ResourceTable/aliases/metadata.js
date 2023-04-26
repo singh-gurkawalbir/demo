@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import AliasResourceName from './cells/AliasResourceName';
 import { getResourceFromAlias, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import { useGetTableContext } from '../../CeligoTable/TableContext';

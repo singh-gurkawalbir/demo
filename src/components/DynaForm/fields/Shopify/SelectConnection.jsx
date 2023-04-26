@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { makeStyles, FormHelperText } from '@material-ui/core';
+import { FormHelperText } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import DynaSelectResource from '../DynaSelectResource';
 import { selectors } from '../../../../reducers';
 import messageStore, { message } from '../../../../utils/messageStore';

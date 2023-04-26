@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
@@ -27,9 +27,12 @@ export const resourceButtonStyles = makeStyles(theme => ({
     fontSize: 16,
     fontFamily: 'source sans pro',
     marginRight: theme.spacing(1),
+    flexDirection: 'column',
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     '& >* svg': {
       marginBottom: 5,
-      fontSize: `${theme.spacing(6)}px !important`,
+      fontSize: `${theme.spacing(6)} !important`,
     },
     '&:hover': {
       color: theme.palette.secondary.main,

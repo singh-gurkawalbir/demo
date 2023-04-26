@@ -52,7 +52,7 @@ describe('textFieldList test cases', () => {
     const input1Button = screen.getAllByRole('textbox').find(eachEle => eachEle.getAttribute('value') === 'value_1');
 
     expect(input1Button).toBeInTheDocument();
-    userEvent.type(input1Button, 'update');
+    await userEvent.type(input1Button, 'update');
 
     expect(onChange).toHaveBeenCalledTimes(6); // 6 letters so 6 times
     expect(onChange).toHaveBeenCalledWith(['value_1update']); // we can have 6 ways checking the last one
@@ -61,7 +61,7 @@ describe('textFieldList test cases', () => {
 
     expect(deleteButton).toBeInTheDocument();
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(onChange).toHaveBeenCalledTimes(7);
     expect(onChange).toHaveBeenCalledWith([]);
   });

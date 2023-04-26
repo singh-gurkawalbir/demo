@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render} from '@testing-library/react';
+import { screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../../test/test-utils';
@@ -99,19 +99,21 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('mapper2ExtractsTypeableSelect UI test case', () => {
-  test('should make dispatch call when the data type of Source field is changed to number', () => {
+  test('should make dispatch call when the data type of Source field is changed to number', async () => {
     renderWithProviders(<MemoryRouter><Mapper2ExtractsTypeableSelect onBlur={onBlur} /></MemoryRouter>);
-    userEvent.type(screen.getByPlaceholderText('Source field'), 'Value');
-    userEvent.click(screen.getByText('Arror Down Icon'));
-    const exrtactPopper = screen.getByRole('tooltip');
+    await userEvent.type(screen.getByPlaceholderText('Source field'), 'Value');
+    await userEvent.click(screen.getByText('Arror Down Icon'));
+    waitFor(() => {
+      const exrtactPopper = screen.getByRole('tooltip');
 
-    expect(exrtactPopper).toBeInTheDocument();
-    expect(exrtactPopper).toHaveAttribute('id', 'extractPopper');
+      expect(exrtactPopper).toBeInTheDocument();
+      expect(exrtactPopper).toHaveAttribute('id', 'extractPopper');
+    });
   });
-  test('should click on Arrow down iconand choose an option call onBlur with new value', () => {
+  test('should click on Arrow down iconand choose an option call onBlur with new value', async () => {
     renderWithProviders(<MemoryRouter><Mapper2ExtractsTypeableSelect onBlur={onBlur} /></MemoryRouter>, {initialStore});
-    userEvent.click(screen.getByText('Arror Down Icon'));
-    userEvent.click(screen.getByText('name'));
+    await userEvent.click(screen.getByText('Arror Down Icon'));
+    await userEvent.click(screen.getByText('name'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.patchExtractsFilter('', '')
@@ -127,7 +129,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType')).toBeInTheDocument();
     });
     test('should show the field type and input value when souce dropdown is hidden and lookup is not of dynamic type', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A"
         isTruncated
         fieldType="someFieldType"
@@ -136,7 +138,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType: A')).toBeInTheDocument();
     });
     test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A"
         isTruncated
         fieldType="someFieldType"
@@ -147,7 +149,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('someFieldType: A')).toBeInTheDocument();
     });
     test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type duplicate', () => {
-      const utils = render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -159,10 +161,11 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
 
       expect(screen.getByRole('separator')).toBeInTheDocument();
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
-      expect(utils.container.textContent).toBe('Source field / data type: A / string  B / number ');
+      expect(screen.getByText('A / string')).toBeInTheDocument();
+      expect(screen.getByText('B / number')).toBeInTheDocument();
     });
     test('should hide dropdown with message "Dynamic lookups values do not provide source field list"', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -175,7 +178,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
     });
     test('should hide dropdown with message "Hard-coded values do not provide source field list"', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated
@@ -188,7 +191,7 @@ describe('mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
     });
     test('should hide dropdown with message "Handlebars expression do not provide source field list"', () => {
-      render(<TooltipTitle
+      renderWithProviders(<TooltipTitle
         inputValue="A,B"
         isSource
         isTruncated

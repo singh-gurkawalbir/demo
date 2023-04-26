@@ -75,7 +75,7 @@ describe('useGetAllActionProps component Test cases', () => {
     const testButton = screen.getByRole('button', {name: 'Test Button'});
 
     expect(testButton).toBeInTheDocument();
-    userEvent.click(testButton);
+    await userEvent.click(testButton);
     await expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
@@ -98,7 +98,7 @@ describe('useGetAllActionProps component Test cases', () => {
     const testButton = screen.getByRole('button', {name: 'Test Button'});
 
     expect(testButton).toBeInTheDocument();
-    userEvent.click(testButton);
+    await userEvent.click(testButton);
     await expect(setSelectedComponent).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,19 +1,19 @@
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import ChildJobDetail, { JobDetailsStyles } from './ChildJobDetail';
 import { JOB_STATUS } from '../../constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobActionsMenu from './JobActionsMenu';
-import Spinner from '../Spinner';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import DateTimeDisplay from '../DateTimeDisplay';
@@ -172,7 +172,7 @@ export default function JobDetail({
   }
   function RowIcon({expanded, childLoaded}) {
     if (expanded && !childLoaded) {
-      return <Spinner size={24} />;
+      return <Spinner />;
     }
 
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
@@ -189,12 +189,13 @@ export default function JobDetail({
           <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
             <li>
               {job.uiStatus !== JOB_STATUS.QUEUED && (
-                <IconButton
-                  data-test="toggleJobDetail"
-                  className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
-                  onClick={handleExpandCollapseClick}>
-                  <RowIcon expanded={expanded} childLoaded={job.children} />
-                </IconButton>
+              <IconButton
+                data-test="toggleJobDetail"
+                className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
+                onClick={handleExpandCollapseClick}
+                size="large">
+                <RowIcon expanded={expanded} childLoaded={job.children} />
+              </IconButton>
               )}
             </li>
             <li>
@@ -204,7 +205,7 @@ export default function JobDetail({
                 className={clsx(classes.checkIcon, jobDetailsClasses.checkIcon)}
                 color="primary"
                 onChange={event => handleSelectChange(event)}
-              />
+            />
             </li>
           </ul>
         </TableCell>
@@ -224,7 +225,7 @@ export default function JobDetail({
           className={clsx(classes.error, jobDetailsClasses.error, {
             [classes.errorCount]: job.numError > 0,
           })}
-           />
+         />
         <ErrorCountCell
           count={job.numResolved}
           isJobInProgress={isJobInProgress}
@@ -232,7 +233,7 @@ export default function JobDetail({
           className={clsx(classes.resolved, {
             [classes.resolvedCount]: job.numResolved > 0,
           })}
-           />
+         />
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
         <TableCell className={classes.duration}>{job.duration}</TableCell>
         <TableCell className={classes.completed}>
@@ -244,25 +245,25 @@ export default function JobDetail({
             userPermissionsOnIntegration={userPermissionsOnIntegration}
             integrationName={integrationName}
             isFlowBuilderView={isFlowBuilderView}
-          />
+        />
         </TableCell>
       </TableRow>
 
       {expanded &&
-        job.children &&
-        job.children.map(cJob => (
-          <ChildJobDetail
-            key={cJob._id}
-            job={cJob}
-            parentJob={job}
-            onSelectChange={handleChildSelectChange}
-            selectedJobs={selectedJobs}
-            userPermissionsOnIntegration={userPermissionsOnIntegration}
-            onViewErrorsClick={onViewErrorsClick}
-            integrationName={integrationName}
-            isFlowBuilderView={isFlowBuilderView}
-          />
-        ))}
+      job.children &&
+      job.children.map(cJob => (
+        <ChildJobDetail
+          key={cJob._id}
+          job={cJob}
+          parentJob={job}
+          onSelectChange={handleChildSelectChange}
+          selectedJobs={selectedJobs}
+          userPermissionsOnIntegration={userPermissionsOnIntegration}
+          onViewErrorsClick={onViewErrorsClick}
+          integrationName={integrationName}
+          isFlowBuilderView={isFlowBuilderView}
+        />
+      ))}
     </>
   );
 }

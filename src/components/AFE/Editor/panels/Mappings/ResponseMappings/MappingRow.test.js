@@ -74,11 +74,11 @@ describe('response Mapping MappingRow test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should change the extract field', () => {
+  test('should change the extract field', async () => {
     renderWithProviders(
       <MappingRow mappingKey="54eajgANHf" flowId="62f0bdfaf8b63672312bbe36" resourceId="62e6897976ce554057c0f28f" />, {initialStore});
     fireEvent.focusIn(screen.getByText('i'));
-    userEvent.click(screen.getByText('id'));
+    await userEvent.click(screen.getByText('id'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.responseMapping.patchField('extract', '54eajgANHf', 'id')
     );
@@ -94,10 +94,10 @@ describe('response Mapping MappingRow test cases', () => {
       actions.responseMapping.patchField('generate', '54eajgANHf', 'ChangedValue')
     );
   });
-  test('should click on trash icon for deleting the mapping', () => {
+  test('should click on trash icon for deleting the mapping', async () => {
     renderWithProviders(
       <MappingRow mappingKey="54eajgANHf" flowId="62f0bdfaf8b63672312bbe36" resourceId="62e6897976ce554057c0f28f" />, {initialStore});
-    userEvent.click(screen.getByText('Trash Icon'));
+    await userEvent.click(screen.getByText('Trash Icon'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.responseMapping.delete('54eajgANHf')
     );

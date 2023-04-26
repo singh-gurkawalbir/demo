@@ -16,7 +16,7 @@ describe('dynaRadioGroupForResetFields tests', () => {
     };
 
     await renderWithProviders(<DynaRadioGroupForResetFields {...props} />);
-    userEvent.click(screen.getByText('item2'));
+    await userEvent.click(screen.getByText('item2'));
     expect(onFieldChange).toHaveBeenCalledWith('id1', 'item2');
   });
   test('should able to test DynaRadioGroupForResetFields with fieldsToReset', async () => {
@@ -29,7 +29,7 @@ describe('dynaRadioGroupForResetFields tests', () => {
 
     await onFieldChange.mockClear();
     await renderWithProviders(<DynaRadioGroupForResetFields {...props} />);
-    userEvent.click(screen.getByText('item1'));
+    await userEvent.click(screen.getByText('item1'));
     expect(onFieldChange).toHaveBeenCalledWith('id1', 'item1');
   });
 });

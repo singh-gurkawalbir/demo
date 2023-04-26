@@ -24,7 +24,7 @@ describe('dynaCheckbox UI tests', () => {
     renderWithProviders(<DynaCheckboxForResetFields {...props} />);
     expect(screen.getByText('Deprecated option.', {exact: false})).toBeInTheDocument();
   });
-  test('should execute the "onFieldChange" function passed in props when checkbox is checked', () => {
+  test('should execute the "onFieldChange" function passed in props when checkbox is checked', async () => {
     const mockOnFieldChange = jest.fn();
     const props = {
       onFieldChange: mockOnFieldChange,
@@ -36,7 +36,7 @@ describe('dynaCheckbox UI tests', () => {
     const checkBox = screen.getByRole('checkbox');
 
     expect(checkBox).toBeInTheDocument();
-    userEvent.click(checkBox);
+    await userEvent.click(checkBox);
     expect(mockOnFieldChange).toHaveBeenCalled();
   });
 });

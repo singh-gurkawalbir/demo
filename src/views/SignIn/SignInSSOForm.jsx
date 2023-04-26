@@ -1,15 +1,14 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import Spinner from '../../components/Spinner';
 import { FilledButton } from '../../components/Buttons';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
 const useStyles = makeStyles(theme => ({
-
   textField: {
     width: '100%',
     background: theme.palette.background.paper,

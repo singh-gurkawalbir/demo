@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -10,50 +10,41 @@ describe('status button component test', () => {
   // test('status test', () => {
   //   renderWithProviders(<Status />);
   // });
-  function handleErrorClick() {
-  }
-  // eslint-disable-next-line jest/expect-expect
-  test('pillbutton rendering', () => {
-    renderWithProviders(
-      <Status
-        variant="error" size="mini" onClick={handleErrorClick}>
-        handleErrorClick
-      </Status>);
-  });
+  function handleErrorClick() {}
 
   // eslint-disable-next-line jest/expect-expect
-  test('statusbutton click working', () => {
+  test('statusbutton click working', async () => {
     renderWithProviders(
-      <Status
-        variant="error" size="mini" onClick={handleErrorClick}>
+      <Status variant="error" size="mini" onClick={handleErrorClick}>
         handleErrorClick
-      </Status>);
+      </Status>
+    );
     const Message = screen.getByText('handleErrorClick');
 
-    userEvent.click(Message);
+    await userEvent.click(Message);
   });
 
   // eslint-disable-next-line jest/expect-expect
-  test('passing number', () => {
+  test('passing number', async () => {
     renderWithProviders(
-      <Status
-        variant="error" size="mini" onClick={handleErrorClick}>
+      <Status variant="error" size="mini" onClick={handleErrorClick}>
         {123}
-      </Status>);
+      </Status>
+    );
     const Message = screen.getByText('123');
 
-    userEvent.click(Message);
+    await userEvent.click(Message);
   });
 
   test('testing by className', () => {
-    const {container} = render(
+    renderWithProviders(
       <MemoryRouter>
-        <Status
-          variant="error" size="mini" onClick={handleErrorClick}>
+        <Status variant="error" size="mini" onClick={handleErrorClick}>
           handleErrorClick
         </Status>
-      </MemoryRouter>);
-    const m = container.querySelector("[type='button']");
+      </MemoryRouter>
+    );
+    const m = document.querySelector("[type='button']");
 
     expect(m).toBeInTheDocument();
   });

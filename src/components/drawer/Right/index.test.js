@@ -71,7 +71,7 @@ describe('RightDrawer tests', () => {
     const click = screen.getByRole('button', {name: 'Click'});
 
     expect(click).toBeInTheDocument();
-    userEvent.click(click);
+    await userEvent.click(click);
     expect(mockHistoryGoBack).toBeCalled();
   });
   test('Should able to test the RightDrawerRoute initial render with path and onClose', async () => {
@@ -79,7 +79,7 @@ describe('RightDrawer tests', () => {
     const click = screen.getByRole('button', {name: 'Click'});
 
     expect(click).toBeInTheDocument();
-    userEvent.click(click);
+    await userEvent.click(click);
     expect(mockHistoryGoBack).toBeCalled();
   });
 

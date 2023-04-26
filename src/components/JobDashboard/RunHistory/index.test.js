@@ -94,13 +94,10 @@ describe('testsuite for RunHistory', () => {
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
     initialStore = getCreatedStore();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('29 Oct 2022 00:00:00 GMT').getTime());
   });
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
-    jest.useRealTimers();
   });
   test('should test the spinner when the data is still loading', async () => {
     initRunHistory({
@@ -142,15 +139,15 @@ describe('testsuite for RunHistory', () => {
         },
       },
     });
-    const selectRangeButtonNode = screen.getByRole('button', { name: /select range/i });
+    const selectRangeButtonNode = screen.getByRole('button', {name: /select range/i});
 
     expect(selectRangeButtonNode).toBeInTheDocument();
-    userEvent.click(selectRangeButtonNode);
-    const todayMenuItemButtonNode = screen.getByRole('button', { name: /today/i });
+    await userEvent.click(selectRangeButtonNode);
+    const todayMenuItemButtonNode = screen.getByRole('button', {name: /today/i});
 
     expect(todayMenuItemButtonNode).toBeInTheDocument();
     await userEvent.click(todayMenuItemButtonNode);
-    const applyButtonNode = screen.getByRole('button', { name: /apply/i });
+    const applyButtonNode = screen.getByRole('button', {name: /apply/i});
 
     expect(applyButtonNode).toBeInTheDocument();
     await userEvent.click(applyButtonNode);
@@ -160,7 +157,7 @@ describe('testsuite for RunHistory', () => {
       filter: {
         range: {
           startDate: moment().startOf('day').toDate(),
-          endDate: moment().toDate(),
+          endDate: expect.any(Date),
           preset: 'today',
         },
       },
@@ -187,20 +184,20 @@ describe('testsuite for RunHistory', () => {
       dataRetentionPeriod: 180,
     });
 
-    const selectRangeButtonNode = screen.getByRole('button', { name: /select range/i });
+    const selectRangeButtonNode = screen.getByRole('button', {name: /select range/i});
 
     expect(selectRangeButtonNode).toBeInTheDocument();
-    userEvent.click(selectRangeButtonNode);
-    expect(screen.getByRole('button', { name: 'Last 60 days' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Last 90 days' })).toBeInTheDocument();
-    const last180daysMenuItemButtonNode = screen.getByRole('button', { name: 'Last 180 days' });
+    await userEvent.click(selectRangeButtonNode);
+    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
+    const last180daysMenuItemButtonNode = screen.getByRole('button', {name: 'Last 180 days'});
 
     expect(last180daysMenuItemButtonNode).toBeInTheDocument();
-    userEvent.click(last180daysMenuItemButtonNode);
-    const applyButtonNode = screen.getByRole('button', { name: /apply/i });
+    await userEvent.click(last180daysMenuItemButtonNode);
+    const applyButtonNode = screen.getByRole('button', {name: /apply/i});
 
     expect(applyButtonNode).toBeInTheDocument();
-    userEvent.click(applyButtonNode);
+    await userEvent.click(applyButtonNode);
 
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
@@ -208,7 +205,7 @@ describe('testsuite for RunHistory', () => {
       filter: {
         range: {
           startDate: moment().subtract(179, 'days').startOf('day').toDate(),
-          endDate: moment().toDate(),
+          endDate: expect.any(Date),
           preset: 'last180days',
         },
       },
@@ -235,13 +232,13 @@ describe('testsuite for RunHistory', () => {
       defaultAShareId: 'user1',
     });
 
-    const selectRangeButtonNode = screen.getByRole('button', { name: /select range/i });
+    const selectRangeButtonNode = screen.getByRole('button', {name: /select range/i});
 
     expect(selectRangeButtonNode).toBeInTheDocument();
-    userEvent.click(selectRangeButtonNode);
-    expect(screen.queryByRole('button', { name: 'Last 60 days' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Last 90 days' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Last 180 days' })).not.toBeInTheDocument();
+    await userEvent.click(selectRangeButtonNode);
+    expect(screen.queryByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Last 90 days'})).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Last 180 days'})).not.toBeInTheDocument();
   });
   test('should test the date range selector by clearing the preset and restoring it it to default', async () => {
     initRunHistory({
@@ -262,11 +259,11 @@ describe('testsuite for RunHistory', () => {
         },
       },
     });
-    const todayButtonNode = screen.getByRole('button', { name: /today/i });
+    const todayButtonNode = screen.getByRole('button', {name: /today/i});
 
     expect(todayButtonNode).toBeInTheDocument();
-    userEvent.click(todayButtonNode);
-    const clearButtonNode = screen.getByRole('button', { name: /clear/i });
+    await userEvent.click(todayButtonNode);
+    const clearButtonNode = screen.getByRole('button', {name: /clear/i});
 
     expect(clearButtonNode).toBeInTheDocument();
     await userEvent.click(clearButtonNode);
@@ -275,8 +272,8 @@ describe('testsuite for RunHistory', () => {
       name: 'runHistory',
       filter: {
         range: {
-          startDate: moment(new Date('2022-09-30')).startOf('day').toDate(),
-          endDate: moment(new Date('2022-10-29')).endOf('day').toDate(),
+          startDate: moment(new Date((new Date()).setDate((new Date()).getDate() - 29))).startOf('day').toDate(),
+          endDate: moment(new Date()).endOf('day').toDate(),
           preset: null,
         },
       },
@@ -301,11 +298,11 @@ describe('testsuite for RunHistory', () => {
         },
       },
     });
-    const selectStatusNode = screen.getByRole('button', { name: /select status/i });
+    const selectStatusNode = screen.getByRole('button', {name: /select status/i});
 
     expect(selectStatusNode).toBeInTheDocument();
     await userEvent.click(selectStatusNode);
-    const containsErrorOption = screen.getByRole('option', { name: /Contains error/i });
+    const containsErrorOption = screen.getByRole('option', {name: /Contains error/i});
 
     expect(containsErrorOption).toBeInTheDocument();
     await userEvent.click(containsErrorOption);
@@ -328,7 +325,7 @@ describe('testsuite for RunHistory', () => {
         ],
       },
     });
-    const hideEmptyRunsCheckboxNode = screen.getByRole('checkbox', { name: /hide empty runs/i });
+    const hideEmptyRunsCheckboxNode = screen.getByRole('checkbox', {name: /hide empty runs/i});
 
     expect(hideEmptyRunsCheckboxNode).toBeInTheDocument();
     expect(hideEmptyRunsCheckboxNode).not.toBeChecked();
@@ -352,10 +349,10 @@ describe('testsuite for RunHistory', () => {
         ],
       },
     });
-    const refreshButtonNode = screen.getByRole('button', { name: /refresh/i });
+    const refreshButtonNode = screen.getByRole('button', {name: /refresh/i});
 
     expect(refreshButtonNode).toBeInTheDocument();
-    userEvent.click(refreshButtonNode);
+    await userEvent.click(refreshButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'RUN_HISTORY_REQUEST', flowId: '12345' });
   });
 

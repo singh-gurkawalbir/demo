@@ -160,7 +160,7 @@ mutateStore(initialStore, draft => {
 });
 
 describe('ErrorDetailsPanel UI test cases', () => {
-  test('should make a dispatch call on changing retry data', () => {
+  test('should make a dispatch call on changing retry data', async () => {
     const props = {
       errorsInCurrPage: [
         { errorId: '5646501091' },
@@ -173,7 +173,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       resourceId: '63234d05514d5b0bf7b3c315',
     };
 
-    renderWithProviders(
+    await renderWithProviders(
       <MemoryRouter>
         <DrawerProvider {...drawerProviderProps}>
           <ErrorDetailsPanel {...props} />
@@ -209,19 +209,17 @@ describe('ErrorDetailsPanel UI test cases', () => {
         retryId: 2,
       })
     );
-    userEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
-      })
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.' })
     );
-    userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Retry & next' }));
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
-  test('should push http response and request tabs when reqAndResKey is provided and adatptor type for resource is not netsuite', () => {
+  test('should push http response and request tabs when reqAndResKey is provided and adatptor type for resource is not netsuite', async () => {
     const props = {
       errorsInCurrPage: [
         { errorId: '5646501091' },
@@ -234,7 +232,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       resourceId: '63234d05514d5b0bfxsfrgvddv',
     };
 
-    renderWithProviders(
+    await renderWithProviders(
       <MemoryRouter>
         <DrawerProvider {...drawerProviderProps}>
           <ErrorDetailsPanel {...props} />
@@ -251,14 +249,14 @@ describe('ErrorDetailsPanel UI test cases', () => {
     expect(getByRole('tab', { name: 'HTTP response' })).toBeInTheDocument();
     expect(getByRole('tab', { name: 'Error fields' })).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
-  test('should push view response and view request tabs when reqAndResKey is provided and adatptor type for resource is netsuite', () => {
+  test('should push view response and view request tabs when reqAndResKey is provided and adatptor type for resource is netsuite', async () => {
     mutateStore(initialStore, draft => {
       draft.data.resources.exports = [
         {
@@ -300,25 +298,25 @@ describe('ErrorDetailsPanel UI test cases', () => {
     expect(getByRole('tab', { name: 'View response' })).toBeInTheDocument();
     expect(getByRole('tab', { name: 'Error fields' })).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Retry data' }));
+
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
-    userEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
-      })
+    screen.debug(undefined, Infinity);
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.' })
     );
-    userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Resolve & next' }));
     expect(
       document.querySelector(
-        'span[class="MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
+        'span[class$="MuiTouchRipple-ripple MuiTouchRipple-ripple MuiTouchRipple-rippleVisible"]'
       )
     ).toBeInTheDocument();
   });
-  test('should return empty error details when active error id is not provided', () => {
+  test('should return empty error details when active error id is not provided', async () => {
     mutateStore(initialStore, draft => {
       draft.session.filters = {
         openErrors: {},
@@ -345,7 +343,7 @@ describe('ErrorDetailsPanel UI test cases', () => {
       resourceId: '63234d05514d5b0bfxsfrgvddv',
     };
 
-    renderWithProviders(
+    await renderWithProviders(
       <MemoryRouter>
         <DrawerProvider {...drawerProviderProps}>
           <ErrorDetailsPanel {...props} />

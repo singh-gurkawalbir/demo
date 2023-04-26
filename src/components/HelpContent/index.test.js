@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {renderWithProviders} from '../../test/test-utils';
 import HelpContent from '.';
 import ArrowPopper from '../ArrowPopper';
@@ -26,7 +26,7 @@ describe('helpContent UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should display the contents of the HelpContent arrowPopper', () => {
+  test('should display the contents of the HelpContent arrowPopper', async () => {
     const TestComponent = props => {
       const [anchorEl, setAnchorEl] = useState(null);
       const popperRef = React.useRef(null);
@@ -61,7 +61,7 @@ describe('helpContent UI tests', () => {
     );
     const clickButton = screen.getByRole('button', { name: 'click'});
 
-    userEvent.click(clickButton);
+    await userEvent.click(clickButton);
     expect(screen.getByText('This is the sample text')).toBeInTheDocument();
     expect(screen.getByText('Sample title')).toBeInTheDocument();
     expect(screen.getByText(/Was this helpful/i)).toBeInTheDocument();
@@ -73,40 +73,40 @@ describe('helpContent UI tests', () => {
 
     const closeButton = document.querySelector('[data-test="close"]');
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(screen.queryByText('This is the sample text')).not.toBeInTheDocument();
   });
-  test('should run the respective dipatch function when "yes" is clicked', () => {
+  test('should run the respective dipatch function when "yes" is clicked', async () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
     const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
 
-    userEvent.click(thumbsup);
+    await userEvent.click(thumbsup);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, true));
   });
-  test('should display the user entry field when clicked "No"', () => {
+  test('should display the user entry field when clicked "No"', async () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
     const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
 
-    userEvent.click(thumbsdown);
+    await userEvent.click(thumbsdown);
     expect(screen.getByText(/Submit/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText('How can we make this information more helpful?')).toBeInTheDocument();
   });
-  test('should make a dispatch call with the user input when clicked on "submit"', () => {
+  test('should make a dispatch call with the user input when clicked on "submit"', async () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
     const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
 
     expect(thumbsdown).toBeInTheDocument();
-    userEvent.click(thumbsdown);
+    await userEvent.click(thumbsdown);
     const input = screen.getByPlaceholderText('How can we make this information more helpful?');
 
-    userEvent.type(input, 'sample userInput');
-    userEvent.click(screen.getByText(/Submit/i));
+    await userEvent.type(input, 'sample userInput');
+    await userEvent.click(screen.getByText(/Submit/i));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, false, 'sample userInput'));
   });
   test('should render the help content with blank heading and content when props are not passed', () => {
@@ -119,7 +119,7 @@ describe('helpContent UI tests', () => {
     expect(thumbsdown).toBeInTheDocument();
   });
 
-  test('should display the contents of the HelpContent when supportFeedback is false and onClose', () => {
+  test('should display the contents of the HelpContent when supportFeedback is false and onClose', async () => {
     const onClose = jest.fn();
 
     renderWithProviders(
@@ -141,7 +141,7 @@ describe('helpContent UI tests', () => {
     expect(thumbsdown).not.toBeInTheDocument();
     const closeButton = document.querySelector('[data-test="close"]');
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(onClose).toBeCalled();
   });
 });

@@ -1,5 +1,6 @@
 import React, {useMemo, useCallback} from 'react';
-import { makeStyles, Tabs, Tab, Tooltip } from '@material-ui/core';
+import { Tabs, Tab, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import {findNodeInTree, getExtractFromUniqueId} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';

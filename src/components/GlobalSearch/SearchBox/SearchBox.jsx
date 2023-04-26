@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import SearchInput from './SearchInput';
 import ResultsPanel from '../ResultsPanel';
 import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';

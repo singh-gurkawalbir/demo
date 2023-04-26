@@ -186,13 +186,13 @@ describe('Celigo Home Pagebar UI tests', () => {
     expect(screen.getByRole('button', {name: 'Create'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Upload'})).toBeInTheDocument();
   });
-  test('should render the create options when clicked on create button', () => {
+  test('should render the create options when clicked on create button', async () => {
     const history = createMemoryHistory();
 
     initPagebar({history});
     const createButton = screen.getByRole('button', {name: 'Create'});
 
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
     const menuList = screen.getAllByRole('menuitem');
 
     expect(menuList).toHaveLength(3);
@@ -202,13 +202,13 @@ describe('Celigo Home Pagebar UI tests', () => {
     expect(screen.getByText(/Connection/i)).toBeInTheDocument();
     expect(screen.getByText('Integration')).toBeInTheDocument();
   });
-  test('should render the upload integration option when clicked on upload button', () => {
+  test('should render the upload integration option when clicked on upload button', async () => {
     const history = createMemoryHistory();
 
     initPagebar({history});
     const Upload = screen.getByRole('button', {name: 'Upload'});
 
-    userEvent.click(Upload);
+    await userEvent.click(Upload);
     const menuList = screen.getAllByRole('menuitem');
 
     expect(menuList).toHaveLength(1);
@@ -221,10 +221,10 @@ describe('Celigo Home Pagebar UI tests', () => {
     initPagebar({history});
     const createButton = screen.getByRole('button', {name: 'Create'});
 
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
     const FlowOption = screen.getAllByRole('menuitem')[0];
 
-    userEvent.click(FlowOption);
+    await userEvent.click(FlowOption);
 
     await waitFor(() => expect(history.location.pathname).toBe('/integrations/none/flowBuilder/new'));   // checking for redirection to new url //
   });
@@ -234,10 +234,10 @@ describe('Celigo Home Pagebar UI tests', () => {
     initPagebar({history});
     const createButton = screen.getByRole('button', {name: 'Create'});
 
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
     const integrationOption = screen.getAllByRole('menuitem')[2];
 
-    userEvent.click(integrationOption);
+    await userEvent.click(integrationOption);
 
     await waitFor(() => expect(history.location.pathname).toBe('//add/integrations/new-Z0NZtH92gIw'));   // checking for redirection to new url //
   });
@@ -247,10 +247,10 @@ describe('Celigo Home Pagebar UI tests', () => {
     initPagebar({history});
     const createButton = screen.getByRole('button', {name: 'Create'});
 
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
     const integrationOption = screen.getAllByRole('menuitem')[1];
 
-    userEvent.click(integrationOption);
+    await userEvent.click(integrationOption);
 
     await waitFor(() => expect(history.location.pathname).toBe('//add/connections/new-Z0NZtH92gIw'));   // checking for redirection to new url //
   });
@@ -258,9 +258,9 @@ describe('Celigo Home Pagebar UI tests', () => {
     const history = createMemoryHistory();
 
     initPagebar({history});
-    userEvent.click(screen.getByText('TileButton'));
+    await userEvent.click(screen.getByText('TileButton'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({ dashboard: {view: 'tile'}})));
-    userEvent.click(screen.getByText('ListButton'));
+    await userEvent.click(screen.getByText('ListButton'));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({ dashboard: {view: 'list'} })));
   });
 });

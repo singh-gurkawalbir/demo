@@ -103,10 +103,10 @@ describe('allTableHeaderCells component Test cases', () => {
 
       expect(nameButton).toBeInTheDocument();
 
-      userEvent.click(nameButton);
+      await userEvent.click(nameButton);
       await expect(store.getState()?.session?.filters?.[filterKey]?.sort?.order).toBe('asc');
 
-      userEvent.click(nameButton);
+      await userEvent.click(nameButton);
       await expect(store.getState()?.session?.filters?.[filterKey]?.sort?.order).toBe('desc');
     });
 

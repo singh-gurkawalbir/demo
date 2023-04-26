@@ -78,7 +78,7 @@ describe('aFE DataPanel UI tests', () => {
 
     expect(CodePanel).toBeInTheDocument();
 
-    userEvent.click(CodePanel);
+    await userEvent.click(CodePanel);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchFeatures('filecsv', {data: 'new feature value'})));
     expect(screen.getByText('new feature value')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('initial feature value')).toBeNull());

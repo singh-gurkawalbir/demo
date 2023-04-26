@@ -59,7 +59,7 @@ describe('test suite for netsuite saved search field', () => {
     expect(screen.getByTestId('savedSearchUrl')).toHaveTextContent(`${domain}/app/common/search/search.nl?id=${props.value}`);
   });
 
-  test('should be able to switch between public and private search types', () => {
+  test('should be able to switch between public and private search types', async () => {
     const onFieldChange = jest.fn();
     const props = {
       id: 'netsuite.dynanssavedsearch',
@@ -83,7 +83,7 @@ describe('test suite for netsuite saved search field', () => {
     renderWithProviders(<DynaNSSavedSearch {...props} />, {initialStore});
     const privateSearch = screen.getByRole('radio', {name: 'Private'});
 
-    userEvent.click(privateSearch);
+    await userEvent.click(privateSearch);
 
     //  should reset value on changing the search type
     expect(onFieldChange).toHaveBeenCalledWith(props.id, '');

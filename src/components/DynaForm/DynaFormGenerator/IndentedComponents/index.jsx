@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import FormGenerator from '..';
@@ -22,13 +23,6 @@ const useStyles = makeStyles(theme => ({
   indentTitle: {
     marginBottom: theme.spacing(2),
     fontSize: '15px',
-  },
-  helpButton: {
-    padding: 0,
-    margin: 2,
-    '&:hover': {
-      background: 'none',
-    },
   },
 }));
 
@@ -59,9 +53,9 @@ export default function IndentedComponents(props) {
             <Typography variant="body2" className={classes.indentTitle}>
               {heading}
               <Help
-                className={classes.helpButton}
                 title={heading}
                 helpKey={helpKey}
+                sx={{margin: 0.5}}
               />
             </Typography >
           )}

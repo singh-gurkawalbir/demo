@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import Status from '../../../../components/Buttons/Status';
 import StatusCircle from '../../../../components/StatusCircle';
@@ -10,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   gridContainer: {
     display: 'grid',
     gridColumnGap: theme.spacing(1),
-    gridTemplateColumns: `auto ${theme.spacing(7)}px`,
+    gridTemplateColumns: `auto ${theme.spacing(7)}`,
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',

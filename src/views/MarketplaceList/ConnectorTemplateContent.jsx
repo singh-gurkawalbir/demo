@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Chip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, Chip } from '@mui/material';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import CeligoTruncate from '../../components/CeligoTruncate';
 

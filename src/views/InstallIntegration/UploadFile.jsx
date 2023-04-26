@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import Loader from '../../components/Loader';
-import Spinner from '../../components/Spinner';
 import { OutlinedButton } from '../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({

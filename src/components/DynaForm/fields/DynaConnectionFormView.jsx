@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -14,19 +14,9 @@ import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   connectorTextToggle: {
     flexGrow: 100,
     marginLeft: theme.spacing(-1),
-  },
-  textToggle: {
-    '&>.MuiButtonBase-root': {
-      minWidth: 'auto',
-      paddingLeft: theme.spacing(2.5),
-      paddingRight: theme.spacing(2.5),
-    },
   },
 }));
 const emptyObj = {};
@@ -166,11 +156,16 @@ export default function FormView(props) {
         onChange={onFieldChangeFn}
         exclusive
         options={options}
-        className={classes.textToggle}
+        className={{
+          '&>.MuiButtonBase-root': {
+            minWidth: 'auto',
+            paddingLeft: theme => theme.spacing(2.5),
+            paddingRight: theme => theme.spacing(2.5),
+          },
+        }}
       />
       <Help
         title="Formview"
-        className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
     </div>

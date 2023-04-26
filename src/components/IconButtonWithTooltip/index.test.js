@@ -26,19 +26,19 @@ describe('iconButtonWithTooltip UI tests', () => {
     renderWithProviders(<IconButtonWithTooltip {...props} />);
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
-  test('should render the component on clicking the button', () => {
+  test('should render the component on clicking the button', async () => {
     const props = {children: <HelpContent />, tooltipProps: {title: 'title'} };
 
     renderWithProviders(<IconButtonWithTooltip {...props} />);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Help')).toBeInTheDocument();
   });
-  test('should display any string passed as children on clicking the button', () => {
+  test('should display any string passed as children on clicking the button', async () => {
     const props = {children: 'Hello there', tooltipProps: {title: 'title'}};
 
     renderWithProviders(<IconButtonWithTooltip {...props} />);
 
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText(/Hello there/i)).toBeInTheDocument();
   });
 });

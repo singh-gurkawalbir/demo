@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
-import { Chip } from '@material-ui/core';
+import { Chip } from '@mui/material';
 import CalendarIcon from '../../../../icons/CalendarIcon';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';

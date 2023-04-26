@@ -88,7 +88,7 @@ describe('actionMenu component Test cases', () => {
     const iconButton = await screen.getByRole('button', {name: iconLabel});
 
     expect(iconButton).toBeInTheDocument();
-    userEvent.click(iconButton);
+    await userEvent.click(iconButton);
     await waitFor(() => expect(setSelectedComponent).toHaveBeenCalledTimes(1));
   });
 
@@ -101,7 +101,7 @@ describe('actionMenu component Test cases', () => {
     const iconButton = await screen.getByRole('button');
 
     expect(iconButton).toBeInTheDocument();
-    userEvent.click(iconButton);
+    await userEvent.click(iconButton);
     await waitFor(() => expect(setSelectedComponent).toHaveBeenCalledTimes(1));
   });
 
@@ -111,16 +111,17 @@ describe('actionMenu component Test cases', () => {
 
     const iconButton = iconButtons.find(eachButton => eachButton.hasAttribute('aria-label', 'more'));
 
-    expect(iconButton).toBeInTheDocument();
-    userEvent.click(iconButton);
+    await waitFor(() => expect(iconButton).toBeInTheDocument());
+    await userEvent.click(iconButton);
 
-    const listButton = await screen.getByTestId('arrow_popper');
+    const listButton = await waitFor(() => screen.getByRole('tooltip'));
 
-    expect(listButton).toBeInTheDocument();
-    expect(screen.queryByText('Test Child')).toBeInTheDocument();
-    userEvent.click(listButton);
+    await userEvent.click(listButton);
+    await waitFor(() => expect(listButton).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByRole('menuitem')).toHaveLength(2));
 
-    expect(screen.queryByText('Test Child')).not.toBeInTheDocument();
+    await userEvent.click(listButton);
+    await waitFor(() => expect(screen.queryAllByRole('menuitem')).toHaveLength(0));
   });
 
   test('should pass initial render with tooltip action icon', async () => {

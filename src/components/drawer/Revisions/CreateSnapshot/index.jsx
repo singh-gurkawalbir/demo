@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import RightDrawer from '../../Right';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
@@ -13,20 +14,15 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../Buttons';
-import Spinner from '../../../Spinner';
 import RevisionHeader from '../components/RevisionHeader';
 import { drawerPaths } from '../../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   drawerHeader: {
     '& > h4': {
       whiteSpace: 'nowrap',
     },
-  },
-  inProgressSpinner: {
-    marginRight: theme.spacing(0.5),
-    height: theme.spacing(2),
   },
 }));
 
@@ -91,7 +87,14 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
           formKey={formKey}
           onClick={handleCreateSnapshot}
         >
-          { isSnapshotCreationInProgress ? <><Spinner size="small" className={classes.inProgressSpinner} /> Creating</> : 'Create' }
+          { isSnapshotCreationInProgress ? (
+            <><Spinner
+              size="small" sx={{
+                mr: 0.5,
+                height: 16,
+              }} /> Creating
+            </>
+          ) : 'Create' }
         </DynaSubmit>
         <TextButton
           data-test="cancelSnapshot"

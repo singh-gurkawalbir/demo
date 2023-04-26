@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import AuditLog from './index';
 import ModalDialog from '../ModalDialog';
 import { selectors } from '../../reducers';

@@ -38,7 +38,7 @@ describe('InstallIntegrationDrawer tests', () => {
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/home');
   });
 
@@ -52,9 +52,9 @@ describe('InstallIntegrationDrawer tests', () => {
 
     expect(closeButton).toBeInTheDocument();
     expect(backbutton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/home');
-    userEvent.click(backbutton);
+    await userEvent.click(backbutton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 });

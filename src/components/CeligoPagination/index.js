@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { Spinner } from '@celigo/fuse-ui';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
 import useHandleNextAndPreviousPage from '../../hooks/useHandleNextAndPreviousPage';
 
@@ -49,10 +49,6 @@ const useStyles = makeStyles(theme => ({
     width: 32,
     height: 27,
   },
-  spinner: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
 }));
 
 export default function Pagination({
@@ -86,6 +82,7 @@ export default function Pagination({
         <div className={classes.resultsLabel}>
           <Typography variant="body2">{resultPerPageLabel}</Typography>
           <Select
+            variant="standard"
             value={rowsPerPage}
             className={classes.selectRowsPage}
             IconComponent={ArrowDownIcon}
@@ -111,7 +108,10 @@ export default function Pagination({
         {loading ? (
           <div className={classes.spinnerWrapper}>
             <Spinner
-              className={classes.spinner}
+              sx={{
+                ml: 1,
+                mr: 1,
+              }}
               />
           </div>
 

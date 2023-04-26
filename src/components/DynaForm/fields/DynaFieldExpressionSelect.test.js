@@ -7,6 +7,24 @@ import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import actions from '../../../actions';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaFieldExpressionSelect tests', () => {
   const initialStore = reduxStore;
 
@@ -37,7 +55,7 @@ describe('dynaFieldExpressionSelect tests', () => {
   test('should able to test DynaFieldExpressionSelect', async () => {
     await renderWithProviders(<DynaFieldExpressionSelect />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.refreshHelperFunctions());
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('menuitem', {name: 'Please select'})).toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'abs'})).toBeInTheDocument();
     expect(screen.getByRole('menuitem', {name: 'timestamp'})).toBeInTheDocument();

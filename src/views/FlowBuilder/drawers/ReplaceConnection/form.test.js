@@ -132,14 +132,14 @@ describe('ReplaceConnection test cases', () => {
     expect(replaceButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(onClose).toBeCalled();
 
-    userEvent.click(replaceButton);
+    await userEvent.click(replaceButton);
     const replaceDialogButton = screen.getByRole('button', { name: 'Replace'});
 
     expect(replaceDialogButton).toBeInTheDocument();
-    userEvent.click(replaceDialogButton);
+    await userEvent.click(replaceDialogButton);
     expect(mockDispatchFn).toBeCalledWith(actions.resource.replaceConnection('flows', 'flow_id', 'connection_id', undefined));
   });
 

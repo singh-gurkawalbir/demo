@@ -78,7 +78,7 @@ describe('Testsuite for Revision Filters for pagination', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should test the revision pagination filter by clicking on page button', () => {
+  test('should test the revision pagination filter by clicking on page button', async () => {
     initRevisionFilterForPagination({
       revisionsData: {
         12345: {
@@ -133,13 +133,13 @@ describe('Testsuite for Revision Filters for pagination', () => {
     });
 
     expect(pageButtonNode).toBeInTheDocument();
-    userEvent.click(pageButtonNode);
+    await userEvent.click(pageButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter(
       '12345-revisions',
       { paging: { currPage: 1, rowsPerPage: 1 } }
     ));
   });
-  test('should test the input of row per page section in revision paginaton', () => {
+  test('should test the input of row per page section in revision paginaton', async () => {
     initRevisionFilterForPagination({
       revisionsData: {
         12345: {
@@ -187,7 +187,7 @@ describe('Testsuite for Revision Filters for pagination', () => {
     const inputTextNode = screen.getByRole('textbox');
 
     expect(inputTextNode).toBeInTheDocument();
-    userEvent.type(inputTextNode, '1');
+    await userEvent.type(inputTextNode, '1');
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter('12345-revisions', {
       paging: {currPage: 0, rowsPerPage: 1},
     }));

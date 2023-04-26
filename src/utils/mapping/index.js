@@ -110,7 +110,7 @@ const setMappingData = (
         );
 
       if (mappings[key].lookups?.length) {
-        const allLookups = [...mappings[key]?.lookups || []];
+        const allLookups = [...(mappings[key]?.lookups || [])];
 
         if (category.children?.length) {
           category.children.forEach(child => {
@@ -1701,7 +1701,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) =>
 
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);
-    let updatedChildren = [...parentNode.children || [], ...newChildren];
+    let updatedChildren = [...(parentNode.children || []), ...newChildren];
 
     if (parentNode.key === newNode.parentKey) {
       updatedChildren = updatedChildren.filter(childNode => {

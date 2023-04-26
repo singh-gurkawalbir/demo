@@ -1,8 +1,10 @@
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch, useParams } from 'react-router-dom';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import ResourceEmptyState from '../../../../../components/ResourceTableWrapper/ResourceEmptyState';
 import actions from '../../../../../actions';
 import ActionGroup from '../../../../../components/ActionGroup';
@@ -16,7 +18,6 @@ import KeywordSearch from '../../../../../components/KeywordSearch';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
-import Spinner from '../../../../../components/Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
 import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME, FLOW_GROUP_FORM_KEY, NO_RESULT_SEARCH_MESSAGE } from '../../../../../constants';
@@ -493,7 +494,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
-      <Spinner centerAll />
+      <Spinner center />
     );
   }
 
@@ -516,10 +517,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
         <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle} placement="right-end">
           <ActionGroup>
-            <KeywordSearch
-              filterKey={searchFilterKey}
-              autoFocus
-            />
+            <KeywordSearch filterKey={searchFilterKey} />
             {canCreate && !isIntegrationApp && (
             <TextButton
               component={Link}

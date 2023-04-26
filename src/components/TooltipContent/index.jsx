@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles({

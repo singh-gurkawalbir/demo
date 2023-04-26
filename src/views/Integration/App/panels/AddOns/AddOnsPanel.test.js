@@ -52,7 +52,7 @@ describe('AddOnsPanel UI tests', () => {
       <ConfirmDialogProvider><MemoryRouter><AddOnsPanel integrationId="5ff579d745ceef7dcd797c15" /></MemoryRouter></ConfirmDialogProvider>,
       {initialStore});
   }
-  test('should click on Submit request button', () => {
+  test('should click on Submit request button', async () => {
     initialStoreAndRender(
       {
         addOns: {addOnMetaData: [{id: 'someid', name: 'someName', description: 'someDescription'}]},
@@ -60,11 +60,11 @@ describe('AddOnsPanel UI tests', () => {
     );
     expect(screen.getByText('someName')).toBeInTheDocument();
     expect(screen.getByText('someDescription')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Request add-on'));
+    await userEvent.click(screen.getByText('Request add-on'));
     expect(screen.getByText('We will contact you to discuss your add-on request.')).toBeInTheDocument();
     const submitButton = screen.getByText('Submit request');
 
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'INTEGRATION_APPS_SETTINGS_REQUEST_UPGRADE',
@@ -74,27 +74,27 @@ describe('AddOnsPanel UI tests', () => {
     );
     expect(screen.getByText(/Check out our Marketplace/)).toBeInTheDocument();
   });
-  test('should click on cancel button', () => {
+  test('should click on cancel button', async () => {
     initialStoreAndRender(
       {
         addOns: {addOnMetaData: [{id: 'someid', name: 'someName', description: 'description'}]},
       }
     );
-    userEvent.click(screen.getByText('Request add-on'));
+    await userEvent.click(screen.getByText('Request add-on'));
     expect(screen.getByText('We will contact you to discuss your add-on request.')).toBeInTheDocument();
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(screen.queryByText('Cancel')).not.toBeInTheDocument();
   });
-  test('should test AddoninstallerButton', () => {
+  test('should test AddoninstallerButton', async () => {
     initialStoreAndRender(
       {
         addOns: {addOnMetaData: [{id: 'someid', name: 'someName', description: <div>Html description</div>, status: 'available'}],
           addOnLicenses: [{id: 'someid', name: 'someName', description: <div>description</div>, status: 'available'}]},
       }
     );
-    userEvent.click(screen.getByText('Install'));
+    await userEvent.click(screen.getByText('Install'));
     expect(screen.getByText('Installing someName add-on...')).toBeInTheDocument();
   });
   test('should test when no license is provided', () => {

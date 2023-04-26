@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import TextToggle from '../../TextToggle';
 
 export default function DynaToggle(props) {

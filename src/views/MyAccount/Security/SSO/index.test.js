@@ -52,7 +52,7 @@ describe('Testsuite for security', () => {
     const infoTextButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'openPageInfo');
 
     expect(infoTextButtonNode).toBeInTheDocument();
-    userEvent.click(infoTextButtonNode);
+    await userEvent.click(infoTextButtonNode);
     expect(screen.getByText(/testing sso accountsettings/i)).toBeInTheDocument();
     expect(screen.getByText(/enhanced security for integrator\.io account access is available through single sign-on \(sso\)\. to enable sso for your account, you must configure settings based on the details available in your sso provider\. these details are available after you have created an account with the sso provider\./i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /learn more/i })).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('Testsuite for security', () => {
     const infoTextButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'openPageInfo');
 
     expect(infoTextButtonNode).toBeInTheDocument();
-    userEvent.click(infoTextButtonNode);
+    await userEvent.click(infoTextButtonNode);
     expect(screen.getByText(/enhanced security for integrator\.io account access is available through single sign-on \(sso\)\. if you are a part of multiple sso-enabled accounts, then you must select one account to use for sso before you authenticate for the first time\. this account is also known as the primary sso account, and you will use it for sso sign in to integrator\.io\./i)).toBeInTheDocument();
     expect(screen.getByText(/Testing SSO UserSettings/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /learn more/i })).toBeInTheDocument();

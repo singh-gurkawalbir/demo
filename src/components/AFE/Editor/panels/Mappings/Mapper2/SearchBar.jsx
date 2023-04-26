@@ -1,13 +1,13 @@
 import React, {useEffect, useCallback} from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import {SearchInput} from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import ActionGroup from '../../../../../ActionGroup';
 import CloseIcon from '../../../../../icons/CloseIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import SearchInputPageBar from '../../../../../SearchInput/SearchInputPageBar';
 import useDebouncedValue from '../../../../../../hooks/useDebouncedInput';
 import { emptyList } from '../../../../../../constants';
 import NotificationToaster from '../../../../../NotificationToaster';
@@ -20,11 +20,6 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     width: '100%',
     zIndex: theme.zIndex.drawer,
-  },
-  searchField: {
-    backgroundColor: theme.palette.background.paper,
-    borderColor: theme.palette.primary.main,
-    height: 29,
   },
   searchCount: {
     marginRight: theme.spacing(1),
@@ -86,8 +81,8 @@ export default function SearchBar() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, searchKey]);
 
-  const handleKeywordChange = useCallback(e => {
-    setText(e.target.value);
+  const handleKeywordChange = useCallback(value => {
+    setText(value);
   }, [setText]);
 
   const onCloseHandler = useCallback(() => {
@@ -97,12 +92,17 @@ export default function SearchBar() {
   return (
     <div className={classes.searchWrapper}>
       <ActionGroup>
-        <SearchInputPageBar
+        <SearchInput
           value={text}
           onChange={handleKeywordChange}
           className={classes.searchField}
-          placeHolder="Search destination fields"
-          openWithFocus
+          sx={{
+            backgroundColor: 'background.paper',
+            borderColor: 'primary.main',
+            height: 29,
+          }}
+          placeholder="Search destination fields"
+          autoFocus
         />
 
         {searchKey && <SearchCount />}

@@ -101,7 +101,7 @@ describe('Testsuite for RevisionStatusFilter', () => {
     });
 
     expect(buttonNode).toBeInTheDocument();
-    userEvent.click(buttonNode);
+    await userEvent.click(buttonNode);
     const completedMenuOption = screen.getByRole('option', {
       name: /completed/i,
     });

@@ -149,10 +149,7 @@ export default function ResourceList(props) {
         title={resourceType === 'iClients' ? resourceType : `${resourceName}s`}
         infoText={infoText[resourceType]}>
         <ActionGroup>
-          <KeywordSearch
-            filterKey={resourceType}
-            autoFocus
-          />
+          <KeywordSearch filterKey={resourceType} />
           <TextButton
             data-test="addNewResource"
             component={Link}

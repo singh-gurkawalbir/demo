@@ -8,8 +8,8 @@ import React, {
 import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, IconButton } from '@mui/material';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';

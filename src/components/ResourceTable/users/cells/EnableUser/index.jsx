@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CeligoSwitch from '../../../../CeligoSwitch';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import { ACCOUNT_IDS } from '../../../../../constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
@@ -8,7 +8,6 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
-import Spinner from '../../../../Spinner';
 import { selectors } from '../../../../../reducers';
 
 export default function EnableUser({ user }) {
@@ -86,13 +85,12 @@ export default function EnableUser({ user }) {
   }
 
   return (
-    <CeligoSwitch
+    <Switch
       data-test="disableUser"
       disabled={!accepted || userId === ACCOUNT_IDS.OWN}
       checked={!disabled}
       onChange={handleSwitch}
       tooltip="Disable / Enable"
-      noPadding
       />
   );
 }

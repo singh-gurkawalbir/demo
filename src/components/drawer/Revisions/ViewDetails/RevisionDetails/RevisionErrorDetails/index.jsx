@@ -3,12 +3,12 @@ import {
   AccordionSummary,
   AccordionDetails,
   Accordion,
-} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import ExpandMoreIcon from '../../../../../icons/ArrowDownIcon';
-import Spinner from '../../../../../Spinner';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import ErrorTable from './ErrorTable';
@@ -30,9 +30,6 @@ const useStyles = makeStyles(theme => ({
   revisionInfoRow: {
     marginBottom: theme.spacing(2),
   },
-  spinnerWrapper: {
-    textAlign: 'center',
-  },
 }));
 
 export default function RevisionErrorDetails({ integrationId, revisionId }) {
@@ -52,7 +49,7 @@ export default function RevisionErrorDetails({ integrationId, revisionId }) {
   }, [dispatch, integrationId, isRevisionErrorsRequested, revisionId]);
 
   if (isErrorsFetchInProgress) {
-    return <Spinner className={classes.spinnerWrapper} />;
+    return <Spinner sx={{textAlign: 'center'}} />;
   }
 
   return (

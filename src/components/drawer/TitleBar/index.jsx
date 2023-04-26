@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Typography, IconButton } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '../../icons/CloseIcon';
 import Help from '../../Help';
 import BackArrowIcon from '../../icons/BackArrowIcon';
@@ -17,14 +17,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
-  },
-  helpTextButton: {
-    float: 'left',
-    padding: 0,
-    position: 'relative',
-    marginRight: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    top: 3,
   },
   titleWrapper: {
     display: 'flex',
@@ -69,7 +61,8 @@ export default function DrawerTitleBar({
           data-test="back"
           aria-label="back"
           onClick={handleClick}
-          className={classes.arrowLeft}>
+          className={classes.arrowLeft}
+          size="large">
           <BackArrowIcon />
         </IconButton>
       )}
@@ -80,7 +73,6 @@ export default function DrawerTitleBar({
         {helpKey && (
         <Help
           title={helpTitle || title}
-          className={classes.helpTextButton}
           helpKey={helpKey}
           fieldId={helpKey}
         />
@@ -91,7 +83,8 @@ export default function DrawerTitleBar({
         aria-label="Close"
         className={classes.closeButtonTitleBar}
         disabled={disableClose}
-        onClick={handleClick}>
+        onClick={handleClick}
+        size="large">
         <CloseIcon />
       </IconButton>
     </div>

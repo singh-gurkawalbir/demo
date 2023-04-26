@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { ListItem, makeStyles, Menu, MenuItem, Typography } from '@material-ui/core';
+import { ListItem, Menu, MenuItem, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
@@ -14,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiMenu-paper': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
       width: 256,
+    },
+    '& .MuiBackdrop-root': {
+      backgroundColor: 'transparent',
     },
   },
   icon: {
@@ -92,7 +96,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         onClose={handleMenuClose}
         className={classes.createMenu}
         transformOrigin={{
-          vertical: -34,
+          vertical: 'top',
           horizontal: 176,
         }}
       >

@@ -14,13 +14,13 @@ const enqueueSnackbar = jest.fn();
 
 jest.spyOn(window, 'prompt').mockImplementation();
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable {...metadata} data={[data]} />
     </MemoryRouter>
   );
-  userEvent.click(screen.getByRole('button', { name: /more/i }));
+  await userEvent.click(screen.getByRole('button', { name: /more/i }));
 }
 
 describe('uI test cases for copy alias', () => {
@@ -31,13 +31,13 @@ describe('uI test cases for copy alias', () => {
     enqueueSnackbar.mockClear();
   });
   test('should display a prompt after clicking on copy alias', async () => {
-    renderFuntion({_connectionId: '62f0d335e77a2e04750c3951',
+    await renderFuntion({_connectionId: '62f0d335e77a2e04750c3951',
       _id: '12',
       alias: '12',
       type: 'connections'});
     const request = screen.getByText('Copy alias');
 
-    userEvent.click(request);
+    await userEvent.click(request);
     await waitFor(() => {
       expect(window.prompt).toHaveBeenCalled();
     });

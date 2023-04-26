@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import Mappings from './Mappings';
-import Spinner from '../../../../../../../components/Spinner';
 import { message } from '../../../../../../../utils/messageStore';
 
 export default function VariationMappings(props) {
@@ -40,7 +40,7 @@ export default function VariationMappings(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

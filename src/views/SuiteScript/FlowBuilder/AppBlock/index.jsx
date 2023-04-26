@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { useHistory, useLocation } from 'react-router-dom';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';

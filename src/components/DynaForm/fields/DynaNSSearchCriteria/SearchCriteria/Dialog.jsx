@@ -4,10 +4,10 @@ import {
   DialogActions,
   DialogContent,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { isEmpty } from 'lodash';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import { makeStyles } from '@material-ui/core/styles';
+import ToggleButton from '@mui/material/ToggleButton';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import SearchCriteriaEditor from '.';
@@ -80,19 +80,19 @@ export default function SearchCriteriaDialog(props) {
 
     searchCriteria?.forEach((criteria, index) => {
       if (!criteria.field) {
-        result[index] = [...result[index] || [], 'field'];
+        result[index] = [...(result[index] || []), 'field'];
       }
       if (!criteria.operator) {
-        result[index] = [...result[index] || [], 'operator'];
+        result[index] = [...(result[index] || []), 'operator'];
       }
       if (criteria.operator !== 'isempty' && criteria.operator !== 'isnotempty' && !criteria.searchValue) {
-        result[index] = [...result[index] || [], 'searchValue'];
+        result[index] = [...(result[index] || []), 'searchValue'];
       }
       if (criteria.showFormulaField && !criteria.formula) {
-        result[index] = [...result[index] || [], 'formula'];
+        result[index] = [...(result[index] || []), 'formula'];
       }
       if (criteria.searchValue2Enabled && !criteria.searchValue2) {
-        result[index] = [...result[index] || [], 'searchValue2'];
+        result[index] = [...(result[index] || []), 'searchValue2'];
       }
     });
     if (isEmpty(result)) {

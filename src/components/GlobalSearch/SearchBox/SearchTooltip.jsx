@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, Tooltip, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '../../icons/SearchIcon';
 import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 

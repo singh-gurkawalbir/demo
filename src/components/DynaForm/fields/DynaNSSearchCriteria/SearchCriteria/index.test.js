@@ -132,14 +132,14 @@ describe('searchCriteriaEditor UI tests', () => {
 
     fireEvent.focusIn(fields[0]);
     expect(screen.getByText('Audience Description')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Audience Description'));
+    await userEvent.click(screen.getByText('Audience Description'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
   });
   test('should make a dispatch call whenever a row is deleted', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1'});
     const deleteButtons = screen.getAllByRole('button');
 
-    userEvent.click(deleteButtons[1]);
+    await userEvent.click(deleteButtons[1]);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.searchCriteria.delete('filecsv1', 0)));
   });
   test('should make a dipatch call on initial render', async () => {
@@ -148,14 +148,16 @@ describe('searchCriteriaEditor UI tests', () => {
   });
   test('hould diplay the operator options when clicked on operator dropdown', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1'});
-    userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('any')).toBeInTheDocument();
-    expect(screen.getByText('contains')).toBeInTheDocument();
-    expect(screen.getByText('does not contain')).toBeInTheDocument();
-    expect(screen.getByText('does not start with')).toBeInTheDocument();
-    expect(screen.getByText('equal to')).toBeInTheDocument();
-    expect(screen.getByText('has key words')).toBeInTheDocument();
-    expect(screen.getByText('is')).toBeInTheDocument();
-    expect(screen.getByText('is empty')).toBeInTheDocument();
+    await userEvent.click(screen.getByText('Please select'));
+    waitFor(() => {
+      expect(screen.getByText('any')).toBeInTheDocument();
+      expect(screen.getByText('contains')).toBeInTheDocument();
+      expect(screen.getByText('does not contain')).toBeInTheDocument();
+      expect(screen.getByText('does not start with')).toBeInTheDocument();
+      expect(screen.getByText('equal to')).toBeInTheDocument();
+      expect(screen.getByText('has key words')).toBeInTheDocument();
+      expect(screen.getByText('is')).toBeInTheDocument();
+      expect(screen.getByText('is empty')).toBeInTheDocument();
+    });
   });
 });

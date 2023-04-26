@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
@@ -11,10 +11,6 @@ const useStyles = makeStyles({
   wrapper: {
     display: 'flex',
     alignItems: 'center',
-  },
-  helpButton: {
-    padding: 0,
-    margin: 2,
   },
   refreshicon: {
     position: 'absolute',
@@ -79,8 +75,8 @@ export default function MappingAssistantTitle({editorId}) {
       {helpKey && (
         <Help
           title={title}
-          className={classes.helpButton}
           helpKey={helpKey}
+          sx={{margin: 0.5}}
         />
       )}
       {showRefreshIconForSalesforce && (

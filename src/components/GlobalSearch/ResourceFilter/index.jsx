@@ -1,10 +1,6 @@
 import React, { useMemo } from 'react';
-import { makeStyles,
-  IconButton,
-  Typography,
-  Button,
-  Divider,
-} from '@material-ui/core';
+import { IconButton, Typography, Button, Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';

@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, Tooltip } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import Icon from '../../../../../components/icons/AdjustInventoryIcon';
 import { useFlowContext } from '../../Context';

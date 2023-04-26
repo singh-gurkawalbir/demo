@@ -36,7 +36,7 @@ describe('actionsRibbon UI tests', () => {
   });
   test('should render the action group with components when editor data is present', () => {
     initActionsRibbon({editorId: 'filecsv'});
-    const handlebarsGuideComponent = document.querySelector('[title="Handlebars guide"]');
+    const handlebarsGuideComponent = document.querySelector('[aria-label="handlebars guide"]');
 
     expect(handlebarsGuideComponent).toBeInTheDocument();
 

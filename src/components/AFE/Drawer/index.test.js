@@ -96,7 +96,7 @@ describe('editorDrawer UI tests', () => {
   test('should make a dispatch call when editor is closed', async () => {
     initEditorDrawer({type: 'handlebars'});
     expect(screen.getByText('Close')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Close'));
+    await userEvent.click(screen.getByText('Close'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.clear('httprelativeURI')));
   });
   test('should make a url redirection when editorType is not passed in the editorData', async () => {

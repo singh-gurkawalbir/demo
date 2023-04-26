@@ -10,6 +10,24 @@ import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initDynaDate(props = {}) {
   mutateStore(initialStore, draft => {
     draft.session.form = {'imports-5bf18b09294767270c62fad9': {
@@ -135,17 +153,17 @@ describe('wrappedContextConsumer UI tests', () => {
     onFieldChange: mockOnFieldChangeFn,
   };
 
-  test('should pass the initial render and open the dropdown with options when clicked on it', () => {
+  test('should pass the initial render and open the dropdown with options when clicked on it', async () => {
     initDynaDate(props);
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('increment ticket')).toBeInTheDocument();
     expect(screen.getByText('increment user access')).toBeInTheDocument();
     expect(screen.getByText('increment ticket count')).toBeInTheDocument();
   });
-  test('should display options for imports in the dropdown when resourcetype is sent as "imports"', () => {
+  test('should display options for imports in the dropdown when resourcetype is sent as "imports"', async () => {
     initDynaDate({...props,
       resourceContext: {
         resourceId: '5bf18b09294767270c62fad9',
@@ -154,30 +172,30 @@ describe('wrappedContextConsumer UI tests', () => {
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('Create')).toBeInTheDocument();
     expect(screen.getByText('Update')).toBeInTheDocument();
     expect(screen.getByText('Delete')).toBeInTheDocument();
   });
-  test('should display options for versions in the dropdown when assistantFieldType is "version"', () => {
+  test('should display options for versions in the dropdown when assistantFieldType is "version"', async () => {
     initDynaDate({...props, assistantFieldType: 'version'});
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('v2')).toBeInTheDocument();
     expect(screen.getByText('v3')).toBeInTheDocument();
   });
-  test('should display options for resources in the dropdown when assistantFieldType is "resource"', () => {
+  test('should display options for resources in the dropdown when assistantFieldType is "resource"', async () => {
     initDynaDate({...props, assistantFieldType: 'resource'});
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('resource1')).toBeInTheDocument();
     expect(screen.getByText('resource2')).toBeInTheDocument();
   });
-  test('should display options passed as props in the dropdown when assistantFieldType is not passed', () => {
+  test('should display options passed as props in the dropdown when assistantFieldType is not passed', async () => {
     const props = {
       formKey: 'imports-5bf18b09294767270c62fad9',
       resourceContext: {
@@ -193,7 +211,7 @@ describe('wrappedContextConsumer UI tests', () => {
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('option1')).toBeInTheDocument();
     expect(screen.getByText('option2')).toBeInTheDocument();
     expect(screen.getByText('option3')).toBeInTheDocument();
@@ -224,11 +242,11 @@ describe('wrappedContextConsumer UI tests', () => {
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     const option = screen.getByText('Update');
 
     expect(option).toBeInTheDocument();
-    userEvent.click(option);
+    await userEvent.click(option);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       patch,
@@ -281,11 +299,11 @@ describe('wrappedContextConsumer UI tests', () => {
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     const option = screen.getByText('v2');
 
     expect(option).toBeInTheDocument();
-    userEvent.click(option);
+    await userEvent.click(option);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       patch,
@@ -305,7 +323,7 @@ describe('wrappedContextConsumer UI tests', () => {
       )
     ));
   });
-  test('should be able to click on any option from the dropdown', () => {
+  test('should be able to click on any option from the dropdown', async () => {
     initDynaDate({...props,
       id: 'assistantMetadata.exportType',
       resourceContext: {
@@ -315,13 +333,13 @@ describe('wrappedContextConsumer UI tests', () => {
     const dropdown = screen.getByText('Please select');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     const option = screen.getByText('option1');
 
-    userEvent.click(option);
+    await userEvent.click(option);
 
-    userEvent.click(option);
+    await userEvent.click(option);
 
-    userEvent.click(screen.getByText('option0'));
+    waitFor(async () => { await userEvent.click(screen.getByText('option0')); });
   });
 });

@@ -176,8 +176,8 @@ describe('dynaXmlParse_afe UI tests', () => {
     const launchButton = screen.getByText('Launch');
 
     expect(launchButton).toBeInTheDocument();
-    userEvent.click(launchButton);
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(launchButton);
+    await userEvent.click(screen.getByText('Save'));
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('//editor/testId'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('testId', 'xmlParser', {
       formKey: 'formKey',

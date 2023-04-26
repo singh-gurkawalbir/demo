@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography} from '@material-ui/core';
-import Spinner from '../Spinner';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography} from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import TextButton from '../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
@@ -13,11 +13,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 'unset',
     color: theme.palette.secondary.light,
     paddingBottom: 2,
-  },
-  spinner: {
-    marginRight: theme.spacing(0.5),
-    display: 'flex',
-    alignItems: 'center',
   },
 }));
 
@@ -53,7 +48,15 @@ export default function FetchProgressIndicator({
     <div className={clsx(classes.fetchLogTextWrapper, className)}>
       <Typography variant="body2" component="div" className={classes.fetchLogTextWrapper} >
         {fetchInProgress
-          ? (<> <Spinner size="small" className={classes.spinner} /> Fetching logs... {percentDone}% completed </>)
+          ? (
+            <> <Spinner
+              size="small"
+              sx={{
+                mr: 0.5,
+                display: 'flex',
+                alignItems: 'center'}} /> Fetching logs... {percentDone}% completed
+            </>
+          )
           : <>Fetching paused... {percentDone}% completed</>}
       </Typography>
       {fetchInProgress ? (

@@ -157,8 +157,7 @@ describe('dynaScriptContent UI test cases', () => {
     expect(mockOnFieldChange).toHaveBeenCalledWith('content', updatedScriptContent, true);
   });
   test('should be able to test the script drawer when the script content is undefined', () => {
-    const data =
-    {
+    const data = {
       id: 'content',
       onFieldChange: mockOnFieldChange,
       resourceId: '638538b6c7d76c583e7593da',
@@ -170,13 +169,11 @@ describe('dynaScriptContent UI test cases', () => {
       required: false,
       isValid: true,
       label: 'Edit content',
-
     };
 
     initDynaScriptContent(data);
-    const progressBar = document.querySelector('div[role="progressbar"]');
 
-    expect(progressBar).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(mockDispatch).toHaveBeenCalledWith(actions.resource.request('scripts', '638538b6c7d76c583e7593da'));
   });
 

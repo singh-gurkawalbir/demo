@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import SSOUserSettings from './SSOUserSettings';
@@ -43,6 +43,24 @@ async function initSSOUserSettings() {
   return renderWithProviders(ui, {initialStore});
 }
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('testsuite for SSOUserSettings', () => {
   runServer();
 
@@ -67,24 +85,33 @@ describe('testsuite for SSOUserSettings', () => {
     await initSSOUserSettings();
     expect(screen.getByText(/my user/i)).toBeInTheDocument();
     expect(screen.getByText(/use this account for sso/i)).toBeInTheDocument();
-    const useThisAccountForSSOHelpText = document.querySelector('div > div:nth-child(1) > button');
+    let useThisAccountForSSOHelpText;
 
-    expect(useThisAccountForSSOHelpText).toBeInTheDocument();
-    userEvent.click(useThisAccountForSSOHelpText);
-    expect(screen.getByRole('heading', {name: /use this account for sso/i})).toBeInTheDocument();
-    // checking help text for use this account for SSO
-    expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
-    expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
-    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
+    waitFor(async () => {
+      useThisAccountForSSOHelpText = document.querySelector('div > div:nth-child(1) > button');
 
-    expect(helpTextYesButtonNode).toBeInTheDocument();
-    userEvent.click(helpTextYesButtonNode);
-    expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
-    await userEvent.click(useThisAccountForSSOHelpText);
-    const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
+      expect(useThisAccountForSSOHelpText).toBeInTheDocument();
+      await userEvent.click(useThisAccountForSSOHelpText);
+      expect(screen.getByRole('heading', {name: /use this account for sso/i})).toBeInTheDocument();
+      // checking help text for use this account for SSO
+      expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
+      expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
-    expect(helpTextNoButtonNode).toBeInTheDocument();
-    await userEvent.click(helpTextNoButtonNode);
-  }, 30000);
+      expect(helpTextYesButtonNode).toBeInTheDocument();
+
+      await userEvent.click(helpTextYesButtonNode);
+      expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
+      await userEvent.click(useThisAccountForSSOHelpText);
+    });
+    waitFor(async () => {
+      const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
+
+      expect(helpTextNoButtonNode).toBeInTheDocument();
+      await userEvent.click(helpTextNoButtonNode);
+    });
+  });
 });
 

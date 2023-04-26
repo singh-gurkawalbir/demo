@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {screen, render} from '@testing-library/react';
+import {screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import OutlinedButton from './index';
 import {renderWithProviders} from '../../../test/test-utils';
@@ -10,7 +10,7 @@ describe('outlined Button component test', () => {
   }
 
   test('passing string', () => {
-    const {container} = render(
+    renderWithProviders(
       <MemoryRouter>
         <OutlinedButton
           data-test="saveAndClose"
@@ -19,7 +19,7 @@ describe('outlined Button component test', () => {
           Save & close
         </OutlinedButton>
       </MemoryRouter>);
-    const test1 = container.querySelector("[data-test='saveAndClose']");
+    const test1 = document.querySelector("[data-test='saveAndClose']");
 
     expect(test1).toBeInTheDocument();
   });
@@ -55,7 +55,7 @@ describe('outlined Button component test', () => {
   });
 
   test('testing by className', () => {
-    const {container} = render(
+    renderWithProviders(
       <MemoryRouter>
         <OutlinedButton
           data-test="saveAndClose"
@@ -64,7 +64,7 @@ describe('outlined Button component test', () => {
           {123}
         </OutlinedButton>
       </MemoryRouter>);
-    const m = container.querySelector("[data-test='saveAndClose']");
+    const m = document.querySelector("[data-test='saveAndClose']");
 
     expect(m).toBeInTheDocument();
   });

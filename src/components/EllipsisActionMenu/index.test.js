@@ -49,7 +49,7 @@ describe('ellipsis menu ui tests', () => {
     const actionButton = document.querySelector('[type="button"]');
 
     await waitFor(() => expect(actionButton).toBeInTheDocument());
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const numberOfActions = screen.getAllByRole('menuitem');
 
     expect(numberOfActions).toHaveLength(3);
@@ -67,10 +67,10 @@ describe('ellipsis menu ui tests', () => {
     const actionButton = screen.getByRole('button');
 
     expect(actionButton).toBeInTheDocument();
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const cloned = screen.getByText('Clone integration');
 
-    userEvent.click(cloned);
+    await userEvent.click(cloned);
     await waitFor(() =>
       expect(mockOnClick).toHaveBeenCalledWith('cloneIntegration')
     );

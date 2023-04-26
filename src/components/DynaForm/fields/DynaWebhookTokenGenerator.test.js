@@ -66,12 +66,12 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should click on copy icon and message "Token Copied" should be displayed', () => {
+  test('should click on copy icon and message "Token Copied" should be displayed', async () => {
     initDynaWebhookTokenGenerator({value: 'somevauele', buttonLabel: 'somebuttonLabel'});
-    userEvent.click(screen.getByText('CopyIcon'));
+    await userEvent.click(screen.getByText('CopyIcon'));
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Token copied to clipboard.'});
   });
-  test('should click on Add Icon and call on field function', () => {
+  test('should click on Add Icon and call on field function', async () => {
     initDynaWebhookTokenGenerator(
       {
         buttonLabel: 'someButonLabel',
@@ -80,12 +80,12 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
         setFieldIds: ['value1', 'value2'],
       }
     );
-    userEvent.click(screen.getByText('AddIcon'));
+    await userEvent.click(screen.getByText('AddIcon'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('someId', '123456789');
     expect(mockOnFieldChange).toHaveBeenCalledWith('value1', '', true);
     expect(mockOnFieldChange).toHaveBeenCalledWith('value2', '', true);
   });
-  test('should click on Add icon and onField function should be called with generated URL', () => {
+  test('should click on Add icon and onField function should be called with generated URL', async () => {
     initDynaWebhookTokenGenerator(
       {
         buttonLabel: 'someButonLabel',
@@ -96,11 +96,11 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
         provider: 'activecampaign',
       }
     );
-    userEvent.click(screen.getByText('AddIcon'));
+    await userEvent.click(screen.getByText('AddIcon'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('someId', '123456789');
     expect(mockOnFieldChange).toHaveBeenCalledWith('webhook.url', 'https://api.localhost/v1/exports/someresourceId/$/data', true);
   });
-  test('should call onField function with URl when the provided field has token and webhook path', () => {
+  test('should call onField function with URl when the provided field has token and webhook path', async () => {
     initDynaWebhookTokenGenerator(
       {
         formKey: 'firstformKey',
@@ -112,7 +112,7 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
         provider: 'activecampaign',
       }
     );
-    userEvent.click(screen.getByText('AddIcon'));
+    await userEvent.click(screen.getByText('AddIcon'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('someId', '123456789');
     expect(mockOnFieldChange).toHaveBeenCalledWith('webhook.url', 'https://api.localhost/v1/exports/someresourceId/$/data', true);
   });

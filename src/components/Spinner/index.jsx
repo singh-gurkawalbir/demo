@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, CircularProgress, fade } from '@material-ui/core';
+import { CircularProgress, alpha } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -55,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   overlayPanel: {
-    background: fade(theme.palette.background.paper, 0.7),
+    background: alpha(theme.palette.background.paper, 0.7),
     height: '100%',
     position: 'absolute',
     top: 0,

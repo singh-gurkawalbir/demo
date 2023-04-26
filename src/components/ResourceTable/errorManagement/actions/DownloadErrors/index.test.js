@@ -59,14 +59,14 @@ describe('actionMenu component Test cases', () => {
     expect(downloadErrorsWithOutRowData).toBeInTheDocument();
     expect(downloadErrorsWithRowData).toBeInTheDocument();
 
-    userEvent.click(downloadErrorsWithOutRowData);
+    await userEvent.click(downloadErrorsWithOutRowData);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
       baseUrl: '/',
       params: { type: 'open' },
     }));
 
-    userEvent.click(downloadErrorsWithRowData);
+    await userEvent.click(downloadErrorsWithRowData);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
       baseUrl: '/',

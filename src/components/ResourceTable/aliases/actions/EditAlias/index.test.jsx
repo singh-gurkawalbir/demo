@@ -18,7 +18,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-function renderFuntion(actionProps, data) {
+async function renderFuntion(actionProps, data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}/edit`}]}>
       <Route path="/integrations/:integrationId">
@@ -30,20 +30,20 @@ function renderFuntion(actionProps, data) {
       </Route>
     </MemoryRouter>
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for edit alias', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
-    renderFuntion({hasManageAccess: true}, {_id: 'someid',
+  test('should call onclick', async () => {
+    await renderFuntion({hasManageAccess: true}, {_id: 'someid',
       alias: 'editalias',
       integrationId: '6366bee72c1bd1023108c05b'});
     const editAliasButton = screen.getByText('Edit alias');
 
-    userEvent.click(editAliasButton);
+    await userEvent.click(editAliasButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6366bee72c1bd1023108c05b/edit/editalias');
   });
 });

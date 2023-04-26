@@ -46,7 +46,7 @@ describe('ErrorDetailsTabs test cases', () => {
     expect(openErrors).toBeInTheDocument();
     expect(resolvedErrors).toBeInTheDocument();
 
-    userEvent.click(resolvedErrors);
+    await userEvent.click(resolvedErrors);
     expect(onChange).toBeCalledWith('resolved');
   });
 

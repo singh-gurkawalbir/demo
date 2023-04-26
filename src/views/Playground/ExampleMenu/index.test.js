@@ -52,11 +52,11 @@ describe('exampleMenu test cases', () => {
 
     const clickEle = screen.queryByText(/CSV parser helper/i);
 
-    userEvent.click(clickEle);
+    await userEvent.click(clickEle);
     const childEle = await screen.queryByText(/Simple CSV/i);
 
     expect(childEle).toBeInTheDocument();
-    userEvent.click(childEle);
+    await userEvent.click(childEle);
 
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('csvParse1', 'csvParser', {

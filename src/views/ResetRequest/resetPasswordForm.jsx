@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link} from 'react-router-dom';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
-import Spinner from '../../components/Spinner';
 import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';

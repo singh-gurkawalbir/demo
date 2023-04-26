@@ -5,6 +5,19 @@ import { screen } from '@testing-library/react';
 import DiffDialog from '.';
 import { renderWithProviders } from '../../../../test/test-utils';
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
 describe('uI test cases for DiffDialog', () => {
   const data = {
     byUser: {

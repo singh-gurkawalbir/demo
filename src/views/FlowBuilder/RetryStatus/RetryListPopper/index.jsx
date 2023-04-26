@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { ClickAwayListener, MenuItem } from '@material-ui/core';
-import ArrowPopper from '../../../../components/ArrowPopper';
+import { MenuItem } from '@mui/material';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import { TextButton } from '../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
@@ -18,17 +18,15 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     maxWidth: 350,
-  },
-  menuItem: {
-    borderBottom: 0,
-  },
-  viewResultsPopper: {
     '& .MuiMenuItem-root': {
       padding: theme.spacing(1, 2),
     },
     '& .MuiMenuItem-root+.MuiMenuItem-root': {
       borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     },
+  },
+  menuItem: {
+    borderBottom: 0,
   },
 }));
 
@@ -78,24 +76,18 @@ export default function RetryListPopper({resources}) {
         open={open}
         anchorEl={anchorEl}
         placement="bottom"
-        onClose={handleClose}
-        classes={{
-          popper: classes.viewResultsPopper,
-        }}>
-
-        <ClickAwayListener onClickAway={handleClose}>
-          <div className={classes.content}>
-            {resources.map(({name, _id}) => (
-              <MenuItem
-                button
-                className={classes.menuItem}
-                onClick={() => handleCallback(_id)}
-                key={name}>
-                {name}
-              </MenuItem>
-            ))}
-          </div>
-        </ClickAwayListener>
+        onClose={handleClose}>
+        <div className={classes.content}>
+          {resources.map(({name, _id}) => (
+            <MenuItem
+              button
+              className={classes.menuItem}
+              onClick={() => handleCallback(_id)}
+              key={name}>
+              {name}
+            </MenuItem>
+          ))}
+        </div>
       </ArrowPopper>
     </>
   );

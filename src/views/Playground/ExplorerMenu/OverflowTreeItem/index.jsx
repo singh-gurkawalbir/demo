@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
-import { TreeItem } from '@material-ui/lab';
+import makeStyles from '@mui/styles/makeStyles';
+import { TreeItem } from '@mui/lab';
 
 const useStyles = makeStyles({
   label: {

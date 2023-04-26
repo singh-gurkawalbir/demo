@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import SwatchSet from '../SwatchSet';
 import colors from '../../../../theme/colors';
 

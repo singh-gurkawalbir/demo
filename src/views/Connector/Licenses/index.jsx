@@ -136,10 +136,7 @@ export default function Licenses(props) {
         title={`Licenses: ${connector.name}`}
         infoText={infoText.licenses}>
         <ActionGroup>
-          <KeywordSearch
-            filterKey={filterKey}
-            autoFocus
-          />
+          <KeywordSearch filterKey={filterKey} />
           <TextButton
             onClick={handleClick}
             startIcon={<AddIcon />}>

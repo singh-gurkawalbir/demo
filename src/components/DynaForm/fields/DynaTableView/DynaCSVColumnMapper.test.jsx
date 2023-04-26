@@ -26,7 +26,7 @@ function initDynaCSVColumnMapper(props = {}) {
 }
 
 describe('dynaCSVColumnMapper UI test cases', () => {
-  test('should verify content and create a new row', () => {
+  test('should verify content and create a new row', async () => {
     const genralProps = {
       maxNumberOfColumns: 3,
       value: [
@@ -48,16 +48,16 @@ describe('dynaCSVColumnMapper UI test cases', () => {
     };
 
     initDynaCSVColumnMapper(genralProps);
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItemsOptionNode = screen.getAllByRole('menuitem');
 
-    userEvent.click(menuItemsOptionNode[3]);
-    userEvent.click(screen.getByText('Please enter a value'));
-    const input = screen.getAllByRole('textbox');
+    await userEvent.click(menuItemsOptionNode[3]);
+    await userEvent.click(screen.getByText('Please enter a value'));
+    const input = screen.getAllByRole('combobox');
 
-    userEvent.type(input[6], 'Payment Amount');
-    userEvent.type(input[7], 'CHECK AMOUNT');
-    userEvent.type(input[8], '/checkamount/i');
+    await userEvent.type(input[6], 'Payment Amount');
+    await userEvent.type(input[7], 'CHECK AMOUNT');
+    await userEvent.type(input[8], '/checkamount/i');
     expect(screen.getByText('Payment Amount')).toBeInTheDocument();
     expect(screen.getByText('CHECK AMOUNT')).toBeInTheDocument();
     expect(screen.getByText('/checkamount/i')).toBeInTheDocument();

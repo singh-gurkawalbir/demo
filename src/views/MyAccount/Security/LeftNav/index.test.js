@@ -29,14 +29,14 @@ describe('Testsuite for Left Nav', () => {
     const singleSignOnLinkNode = screen.getByRole('link', { name: /single sign-on \(sso\)/i });
 
     expect(singleSignOnLinkNode).toBeInTheDocument();
-    userEvent.click(singleSignOnLinkNode);
+    await userEvent.click(singleSignOnLinkNode);
     expect(document.querySelector('div > ul > li > div').className).toEqual(expect.stringContaining('makeStyles-active-'));
     expect(document.querySelector('div > ul > li:nth-child(2) > div').className).not.toEqual(expect.stringContaining('makeStyles-active-'));
 
     const multifactorAuthenticationLinkNode = screen.getByRole('link', {name: /multifactor authentication \(mfa\)/i});
 
     expect(multifactorAuthenticationLinkNode).toBeInTheDocument();
-    userEvent.click(multifactorAuthenticationLinkNode);
+    await userEvent.click(multifactorAuthenticationLinkNode);
     expect(document.querySelector('div > ul > li:nth-child(2) > div').className).toEqual(expect.stringContaining('makeStyles-active-'));
     expect(document.querySelector('div > ul > li:nth-child(1) > div').className).not.toEqual(expect.stringContaining('makeStyles-active-'));
   });

@@ -1,16 +1,17 @@
+import { IconButton } from '@mui/material';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core';
+
 import ArrowPopper from '../ArrowPopper';
-import TooltipContent from '../TooltipContent';
-import InfoIcon from '../icons/InfoIcon';
 import HelpContent from '../HelpContent';
+import InfoIcon from '../icons/InfoIcon';
+import TooltipContent from '../TooltipContent';
 
 const useStyles = makeStyles(theme => ({
   small: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing('-2px', 1, 0),
   },
   infoText: {
     color: theme.palette.secondary.main,
@@ -19,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-0.5),
     width: theme.spacing(3),
     height: theme.spacing(3),
-    '& >* svg': {
+    '& > svg': {
       fontSize: theme.spacing(2),
     },
   },
@@ -51,7 +52,9 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
         tabIndex={tabIndex}
-        aria-haspopup="true">
+        aria-haspopup="true"
+        sx={{padding: '3px'}}
+      >
         <InfoIcon />
       </IconButton>
       <ArrowPopper

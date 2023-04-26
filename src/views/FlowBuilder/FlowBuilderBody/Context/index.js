@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import { ReactFlowProvider } from 'reactflow';
 
 const FlowContext = React.createContext();
 

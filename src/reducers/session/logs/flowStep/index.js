@@ -31,7 +31,7 @@ export default (state = {}, action) => {
 
         // adding existing logs first to maintain the sorting order
         draft[resourceId].logsSummary = loadMore
-          ? [...draft[resourceId]?.logsSummary || [], ...logs]
+          ? [...(draft[resourceId]?.logsSummary || []), ...logs]
           : logs;
         break;
 

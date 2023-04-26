@@ -1,7 +1,8 @@
 import React, { useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Divider, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';

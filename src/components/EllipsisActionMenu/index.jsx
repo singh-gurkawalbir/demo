@@ -1,6 +1,7 @@
 import React, { useCallback, useState} from 'react';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, MenuItem } from '@mui/material';
+import { ArrowPopper } from '@celigo/fuse-ui';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
 import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
@@ -66,12 +67,9 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             {alignment === 'vertical' ? <EllipsisIconVertical /> : <EllipsisIconHorizontal />}
           </IconButton>
         )}
-      <Menu
-        elevation={2}
-        variant="menu"
+      <ArrowPopper
         id={actionsPopoverId}
         anchorEl={anchorEl}
-        className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
         {actionsMenu?.map(({ action, label, Icon, disabled }) => (
@@ -84,7 +82,7 @@ export default function EllipsisActionMenu({ actionsMenu, label, onAction, align
             <ActionLabel classes={classes} label={label} Icon={Icon} />
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
     </>
   );
 }

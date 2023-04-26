@@ -48,15 +48,15 @@ describe('Testsuite for MobileCodeVerification', () => {
     const codeTextNode = screen.getAllByRole('textbox').find(eachOption => eachOption.getAttribute('name') === 'mobileCode');
 
     expect(codeTextNode).toBeInTheDocument();
-    userEvent.type(codeTextNode, 'abcde');
+    await userEvent.type(codeTextNode, 'abcde');
     expect(screen.getByText(/Numbers only/i)).toBeInTheDocument();
-    userEvent.clear(codeTextNode);
+    await userEvent.clear(codeTextNode);
     expect(screen.getByText(/A value must be provided. Numbers only/i)).toBeInTheDocument();
-    userEvent.type(codeTextNode, '123456');
+    await userEvent.type(codeTextNode, '123456');
     const verifyButtonNode = screen.getByRole('button', { name: 'Verify'});
 
     expect(verifyButtonNode).toBeInTheDocument();
-    userEvent.click(verifyButtonNode);
+    await userEvent.click(verifyButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_MOBILE_CODE_VERIFY', code: '123456' });
   });
 });

@@ -16,10 +16,12 @@ const useScript = (url = '', id = '', agreeTOSAndPPRequired, callBack) => {
 
     return () => {
       document.body.removeChild(script);
+      if (window.zE) {
       // the chat box should be minimized
-      window.zE('webWidget', 'close');
-      // Hiding the default launcher
-      window.zE('webWidget', 'hide');
+        window.zE('webWidget', 'close');
+        // Hiding the default launcher
+        window.zE('webWidget', 'hide');
+      }
 
       // removing zenDesk content
       // doing this will remove pendo icon
@@ -30,7 +32,7 @@ const useScript = (url = '', id = '', agreeTOSAndPPRequired, callBack) => {
       delete window.zEmbed;
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, id]);
+  }, [url, id, agreeTOSAndPPRequired]);
 };
 
 export default useScript;

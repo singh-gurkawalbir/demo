@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
-import { IconButton, InputBase, makeStyles, Paper } from '@material-ui/core';
+import { IconButton, InputBase, Paper } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '../../icons/CloseIcon';
 import useDebouncedValue from '../../../hooks/useDebouncedInput';
 import useKeyboardShortcut from '../../../hooks/useKeyboardShortcut';

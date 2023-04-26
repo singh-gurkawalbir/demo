@@ -52,10 +52,10 @@ jest.mock('../../../../../components/Loader', () => ({
 }));
 
 // Mocking child component Spinner as part of unit testing
-jest.mock('../../../../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../../components/Spinner'),
-  default: () => <div>Mocking Spinner</div>,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => <div>Mocking Spinner</div>,
 }));
 
 // Mocking LoadResources component Spinner as part of unit testing
@@ -242,7 +242,7 @@ describe('Testsuite for Uninstaller', () => {
       /complete the below steps to uninstall your integration app/i
     )).toBeInTheDocument();
   });
-  test('should test the installation steps by clicking on a step and when installURL set to true and istriggered set to false', () => {
+  test('should test the installation steps by clicking on a step and when installURL set to true and istriggered set to false', async () => {
     mockInstallerStep = true;
     mockIsTriggeredData = false;
     mockVerifyingData = false;
@@ -264,11 +264,11 @@ describe('Testsuite for Uninstaller', () => {
     const handleStepClick = screen.getByRole('button', {name: /Handle Step Click/i});
 
     expect(handleStepClick).toBeInTheDocument();
-    userEvent.click(handleStepClick);
+    await userEvent.click(handleStepClick);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller.updateStep('12345', mockUninstallerFunction, 'inProgress'));
     expect(mockOpenExternalURL).toHaveBeenCalledWith({url: true});
   });
-  test('should test the installation steps by clicking on a step and when installURL set to true and istriggered set to true', () => {
+  test('should test the installation steps by clicking on a step and when installURL set to true and istriggered set to true', async () => {
     mockInstallerStep = true;
     mockIsTriggeredData = true;
     mockVerifyingData = false;
@@ -290,11 +290,11 @@ describe('Testsuite for Uninstaller', () => {
     const handleStepClick = screen.getByRole('button', {name: /Handle Step Click/i});
 
     expect(handleStepClick).toBeInTheDocument();
-    userEvent.click(handleStepClick);
+    await userEvent.click(handleStepClick);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller.updateStep('12345', mockUninstallerFunction, 'verify'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller.stepUninstall('12345', mockUninstallerFunction));
   });
-  test('should test the installation steps by clicking on a step and when installURL set to false and istriggered set to false', () => {
+  test('should test the installation steps by clicking on a step and when installURL set to false and istriggered set to false', async () => {
     mockInstallerStep = false;
     mockIsTriggeredData = false;
     mockVerifyingData = false;
@@ -316,7 +316,7 @@ describe('Testsuite for Uninstaller', () => {
     const handleStepClick = screen.getByRole('button', {name: /Handle Step Click/i});
 
     expect(handleStepClick).toBeInTheDocument();
-    userEvent.click(handleStepClick);
+    await userEvent.click(handleStepClick);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller.updateStep('12345', mockUninstallerFunction, 'inProgress'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller.stepUninstall('67890', '12345', mockUninstallerFunction));
   });

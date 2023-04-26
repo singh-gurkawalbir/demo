@@ -101,16 +101,16 @@ describe('invite test cases', () => {
     expect(transferButton).toBeInTheDocument();
     expect(mockHandleButton).toBeInTheDocument();
 
-    userEvent.click(backToButton);
+    await userEvent.click(backToButton);
     expect(setShowInviteView).toHaveBeenCalledTimes(1);
     expect(setShowInviteView).toHaveBeenCalledWith(false);
 
-    userEvent.click(transferButton);
+    await userEvent.click(transferButton);
     expect(setShowInviteView).toHaveBeenCalledTimes(2);
     expect(setShowInviteView).toHaveBeenCalledWith(false);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.transfer.create({}));
 
-    userEvent.click(mockHandleButton);
+    await userEvent.click(mockHandleButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.transfer.preview('mock value'));
   });
 

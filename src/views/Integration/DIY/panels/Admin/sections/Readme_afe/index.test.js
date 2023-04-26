@@ -66,7 +66,7 @@ describe('ReadmeSection UI tests', () => {
     const props = {integrationId: '678901234567890'};
 
     await initReadme(props);
-    userEvent.click(screen.getByText('Edit readme'));
+    await userEvent.click(screen.getByText('Edit readme'));
     expect(mockDispatchFn).toBeCalledWith(actions.editor.init('readme', 'readme', {
       resourceId: '678901234567890',
       resourceType: 'integrations',

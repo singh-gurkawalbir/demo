@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import { selectors } from '../../../reducers';
@@ -80,7 +80,7 @@ export default function DynaNSSavedSearchInternalID(props) {
 
   return (
     <>
-      <FormControl className={classes.dynaNSSearchInternalIDFormControl}>
+      <FormControl variant="standard" className={classes.dynaNSSearchInternalIDFormControl}>
         <div className={classes.dynaNSSearchInternalIDLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
@@ -100,20 +100,20 @@ export default function DynaNSSavedSearchInternalID(props) {
               value={value}
               variant="filled"
               onChange={handleFieldChange}
-            />
+          />
             <FieldMessage
               isValid={isValid}
               description={description}
               errorMessages={errorMessages}
-            />
+          />
           </div>
           {value && (
-            <ActionButton
-              data-test={id}
-              onClick={handleOpenNetSuiteSavedSearch}
-              className={classes.actionBtnSearchInternalID}>
-              <ExitIcon />
-            </ActionButton>
+          <ActionButton
+            data-test={id}
+            onClick={handleOpenNetSuiteSavedSearch}
+            className={classes.actionBtnSearchInternalID}>
+            <ExitIcon />
+          </ActionButton>
           )}
         </div>
       </FormControl>

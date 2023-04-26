@@ -1,5 +1,5 @@
-import { FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';

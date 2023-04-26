@@ -1,13 +1,14 @@
-import { Divider, IconButton, makeStyles } from '@material-ui/core';
+import { Divider, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import {EditableText} from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import Status from '../../../../components/Buttons/Status';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
-import EditableText from '../../../../components/EditableText';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import FlowToggle from '../../../../components/FlowToggle';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
@@ -29,16 +30,7 @@ import RetryStatus from '../../RetryStatus';
 import FlowIconView from '../../../../components/icons/FlowIconView';
 import Help from '../../../../components/Help';
 
-const calcPageBarTitleStyles = makeStyles(theme => ({
-  editableTextInput: {
-    width: `calc(100vw - ${52 + 410}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
-  },
-}));
 const CalcPageBarTitle = ({integrationId, flowId}) => {
-  const classes = calcPageBarTitleStyles();
   const patchFlow = usePatchFlow(flowId);
   const handleTitleChange = useCallback(
     title => {
@@ -54,20 +46,14 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
   )?.merged || emptyObject;
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <EditableText
       disabled={isViewMode}
       text={flow.name}
+      placeholder={isNewFlowFn(flowId) ? 'New flow' : `Unnamed (id:${flowId})`}
             // multiline
-      defaultText={isNewFlowFn(flowId) ? 'New flow' : `Unnamed (id:${flowId})`}
       onChange={handleTitleChange}
-      inputClassName={
-              drawerOpened
-                ? classes.editableTextInputShift
-                : classes.editableTextInput
-            }
           />
   );
 };
@@ -128,11 +114,7 @@ const pageChildreUseStyles = makeStyles(theme => ({
     margin: [[-7, 0]],
   },
   flowToggle: {
-    marginRight: 12,
-    marginLeft: 12,
-    '& > div:first-child': {
-      padding: '8px 0px 4px 0px',
-    },
+    margin: theme.spacing(0, 1.5, '-6px'),
   },
   chartsIcon: { marginRight: theme.spacing(3) },
   circle: {
@@ -333,7 +315,10 @@ const PageBarChildren = ({integrationId, flowId, isIconView, children}) => {
         />
       )}
       <Divider orientation="vertical" className={classes.divider} />
-      <IconButton onClick={handleExitClick} size="small">
+      <IconButton
+        onClick={handleExitClick}
+        size="small"
+        sx={{padding: '3px'}}>
         <CloseIcon />
       </IconButton>
     </div>
@@ -369,6 +354,13 @@ export default function PageBar({flowId, integrationId}) {
 
     return flow?.description;
   });
+  const flowName = useSelector(state => {
+    const flow = selectors.resourceData(state, 'flows',
+      flowId
+    ).merged;
+
+    return flow?.name;
+  });
   const isIconView = useSelector(state =>
     selectors.fbIconview(state, flowId) === 'icon'
   );
@@ -376,6 +368,7 @@ export default function PageBar({flowId, integrationId}) {
   return (
     <CeligoPageBar
       title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
+      infoTitleName={flowName}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
       infoText={description}
       escapeUnsecuredDomains

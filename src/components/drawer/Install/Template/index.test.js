@@ -35,7 +35,7 @@ describe('InstallTemplateDrawer tests', () => {
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/home');
   });
 });

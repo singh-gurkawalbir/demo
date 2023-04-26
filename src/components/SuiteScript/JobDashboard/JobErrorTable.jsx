@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import TablePagination from '@material-ui/core/TablePagination';
+import makeStyles from '@mui/styles/makeStyles';
+import TablePagination from '@mui/material/TablePagination';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
-import Spinner from '../../Spinner';
 import CeligoTable from '../../CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import DateTimeDisplay from '../../DateTimeDisplay';
@@ -17,28 +17,6 @@ import ActionGroup from '../../ActionGroup';
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right'},
   fileInput: { display: 'none' },
-  spinner: {
-    left: '0px',
-    right: '0px',
-    top: '60px',
-    bottom: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
-    width: '100%',
-    position: 'absolute',
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'inherit',
-    zIndex: '3',
-    '& div': {
-      color: theme.palette.background.paper,
-    },
-    '& span': {
-      marginLeft: '10px',
-      color: theme.palette.background.paper,
-    },
-  },
   btnsWrappper: {
     marginTop: theme.spacing(1),
   },
@@ -222,7 +200,7 @@ export default function JobErrorTable({
         </li>
       </ul>
       {!jobErrors ? (
-        <Spinner centerAll size="medium">Loading</Spinner>
+        <Spinner center="screen" >Loading</Spinner>
       ) : (
         <>
           <ActionGroup className={classes.btnsWrappper}>
@@ -236,12 +214,12 @@ export default function JobErrorTable({
                 : 'Mark resolved'}
             </OutlinedButton>
             { job.errorFileId && (
-              <OutlinedButton
-                color="secondary"
-                data-test="downloadAllErrors"
-                onClick={handleDownloadAllErrorsClick}>
-                Download all errors
-              </OutlinedButton>
+            <OutlinedButton
+              color="secondary"
+              data-test="downloadAllErrors"
+              onClick={handleDownloadAllErrorsClick}>
+              Download all errors
+            </OutlinedButton>
             )}
           </ActionGroup>
 
@@ -259,9 +237,9 @@ export default function JobErrorTable({
               nextIconButtonProps={{
                 'aria-label': 'Next Page',
               }}
-              onChangePage={handleChangePage}
-              // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            />
+              onPageChange={handleChangePage}
+            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
 
             <CeligoTable
               data={jobErrorsInCurrentPage}
@@ -270,7 +248,7 @@ export default function JobErrorTable({
               onSelectChange={handleJobErrorSelectChange}
               useColumns={useColumns}
               className={classes.errorMessageTable}
-            />
+          />
           </>
         </>
       )}

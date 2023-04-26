@@ -62,7 +62,7 @@ describe('transformPanel tests', () => {
   test('should able to test editor panel with data as Object and Error', async () => {
     await initTransformPanel({editorId: '_editorId'}, 'Some editor error', {id: '123'});
     expect(screen.getByText('[{"id":"id"}]')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'FieldUpdate'}));
+    await userEvent.click(screen.getByRole('button', {name: 'FieldUpdate'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('_editorId', true));
   });
   test('should able to test editor panel without data', async () => {

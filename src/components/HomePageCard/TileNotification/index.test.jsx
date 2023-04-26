@@ -64,11 +64,11 @@ describe('testing Tile Notification Component', () => {
     const uninstall = screen.getByText('Uninstall');
 
     expect(uninstall).toBeInTheDocument();
-    userEvent.click(renew);
+    await userEvent.click(renew);
     const submit = screen.getByText('Submit request');
 
     expect(submit).toBeInTheDocument();
-    userEvent.click(submit);
+    await userEvent.click(submit);
     await expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId: props.licenseId}));
     expect(submit).not.toBeInTheDocument();
   });
@@ -99,7 +99,7 @@ describe('testing Tile Notification Component', () => {
 
     expect(reactivate).toBeInTheDocument();
 
-    userEvent.click(reactivate);
+    await userEvent.click(reactivate);
     const message = screen.getByText(messageStore.INTEGRATION.CONTACT_OWNER);
 
     expect(message).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('testing Tile Notification Component', () => {
     const message = screen.getByText('Request to buy');
 
     expect(message).toBeInTheDocument();
-    userEvent.click(message);
+    await userEvent.click(message);
 
     const dialogMessage = screen.getByText('We will contact you to buy your subscription.');
 
@@ -145,15 +145,15 @@ describe('testing Tile Notification Component', () => {
     const cancelMessage = screen.getByText('Cancel');
 
     expect(cancelMessage).toBeInTheDocument();
-    userEvent.click(cancelMessage);
+    await userEvent.click(cancelMessage);
 
     expect(cancelMessage).not.toBeInTheDocument();
-    userEvent.click(message);
+    await userEvent.click(message);
 
     const submitMessage = screen.getByText('Submit request');
 
     expect(submitMessage).toBeInTheDocument();
-    userEvent.click(submitMessage);
+    await userEvent.click(submitMessage);
 
     await expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
     expect(submitMessage).not.toBeInTheDocument();
@@ -193,7 +193,7 @@ describe('testing Tile Notification Component', () => {
     const errorMessage = screen.getByText('Uninstall');
 
     expect(errorMessage).toBeInTheDocument();
-    userEvent.click(message);
+    await userEvent.click(message);
     await expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.license.resume(integrationId));
   });
 
@@ -225,7 +225,7 @@ describe('testing Tile Notification Component', () => {
     const renewButton = screen.getByText('Request to renew');
 
     expect(renewButton).toBeInTheDocument();
-    userEvent.click(renewButton);
+    await userEvent.click(renewButton);
     const dialogMessage = screen.getByText('We will contact you to renew your subscription.');
 
     expect(dialogMessage).toBeInTheDocument();
@@ -235,7 +235,7 @@ describe('testing Tile Notification Component', () => {
     const cancelButton = screen.getByText('Cancel');
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
     await expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
     expect(submitButton).not.toBeInTheDocument();
   });
@@ -272,7 +272,7 @@ describe('testing Tile Notification Component', () => {
     const errorMessage = screen.getByText('Uninstall');
 
     expect(errorMessage).toBeInTheDocument();
-    userEvent.click(message);
+    await userEvent.click(message);
 
     const dialogMessage = screen.getByText('We will contact you to buy your subscription.');
 
@@ -283,10 +283,10 @@ describe('testing Tile Notification Component', () => {
     const cancelButton = screen.getByText('Cancel');
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId})));
     expect(submitButton).not.toBeInTheDocument();
-    userEvent.click(errorMessage);
+    await userEvent.click(errorMessage);
     const uninstallMessage = screen.getByText('Contact your account owner to uninstall this integration app.');
 
     expect(uninstallMessage).toBeInTheDocument();

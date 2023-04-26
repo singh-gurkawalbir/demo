@@ -6,6 +6,24 @@ import ConnectorTemplateContent from './ConnectorTemplateContent';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders } from '../../test/test-utils';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 async function initConnectorTemplateContent({
   props = {
     resource: {
@@ -33,8 +51,7 @@ describe('ConnectorTemplateContent test cases', () => {
 
   test('should pass the initial render with default value', async () => {
     await initConnectorTemplateContent();
-
-    expect(screen.queryByText(/.../i)).toBeInTheDocument();
+    expect(screen.getByAltText('Application image')).toBeInTheDocument();
   });
 
   test('should pass the initial render with magento resource', async () => {

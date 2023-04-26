@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { generateId } from '../../utils/string';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
@@ -12,7 +13,6 @@ import {
   EMPTY_RAW_DATA,
   MAX_DATA_LOADER_FILE_SIZE,
 } from '../../constants';
-import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
 import { message } from '../../utils/messageStore';
 

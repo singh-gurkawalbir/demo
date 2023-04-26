@@ -2,9 +2,9 @@ import {
   AccordionSummary,
   AccordionDetails,
   Accordion,
-} from '@material-ui/core';
+} from '@mui/material';
 import clsx from 'clsx';
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useEffect } from 'react';
 import ExpandMoreIcon from '../icons/ArrowDownIcon';
 

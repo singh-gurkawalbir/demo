@@ -27,24 +27,24 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <CeligoTable
       {...metadata}
       data={[data]} />, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for cancelreport', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should make a dispatch call after clicking on cancel report', () => {
-    renderFuntion({_id: 'flow_id_1', status: 'queued', _flowIds: ['flow_id_1']});
+  test('should make a dispatch call after clicking on cancel report', async () => {
+    await renderFuntion({_id: 'flow_id_1', status: 'queued', _flowIds: ['flow_id_1']});
     const cancelReportButton = screen.getByText('Cancel Report');
 
-    userEvent.click(cancelReportButton);
+    await userEvent.click(cancelReportButton);
     expect(mockDispatchFn).toHaveBeenCalledWith({reportId: 'flow_id_1', type: 'EVENT_REPORT_CANCEL'});
   });
 });

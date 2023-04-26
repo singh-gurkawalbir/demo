@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import DynaRadio from './radiogroup/DynaRadioGroup';
 import { getAS2Url } from '../../../utils/resource';
 import DynaLabelValueElement from './DynaLabelValueElement';

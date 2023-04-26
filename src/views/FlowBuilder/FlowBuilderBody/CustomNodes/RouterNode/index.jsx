@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Position } from 'react-flow-renderer';
-import { Badge, IconButton, Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Position } from 'reactflow';
+import { Badge, IconButton, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
@@ -70,6 +70,7 @@ export default function RouterNode({id: routerId, data = {}}) {
           className={classes.button}
           onClick={handleRouterClick}
           disabled={isFlowSaveInProgress}
+          sx={{padding: '3px', width: 32 }}
         >
           <Badge
             badgeContent={badgeContent}
@@ -80,7 +81,7 @@ export default function RouterNode({id: routerId, data = {}}) {
             }}
             classes={{
               colorSecondary: classes.badgeColor,
-              anchorOriginBottomLeftRectangle: classes.badgeTextOverride,
+              anchorOriginBottomLeftRectangular: classes.badgeTextOverride,
             }}>
             <Icon className={classes.icon} />
           </Badge>

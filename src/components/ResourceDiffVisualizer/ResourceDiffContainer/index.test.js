@@ -7,10 +7,10 @@ import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import ResourceDiffContainer from '.';
 import { getCreatedStore } from '../../../store';
 
-jest.mock('../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../Spinner'),
-  default: () => (<div data-testid="spinner" />),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<div data-testid="spinner" />),
 }));
 
 function initResourceDiffContainer(props = {}, initialStore) {
@@ -58,7 +58,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     ]));
   });
 
-  test('should provide a default title (if not passed manually); and should be able to expand and close fullScreen View', () => {
+  test('should provide a default title (if not passed manually); and should be able to expand and close fullScreen View', async () => {
     const props = {
       diff: [
         {
@@ -79,7 +79,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     const fullScreen = document.querySelector('[data-test="expandAll"]');
 
     expect(fullScreen).toBeEnabled();
-    userEvent.click(fullScreen);
+    await userEvent.click(fullScreen);
     const fullScreenDialog = screen.getByRole('dialog');
 
     expect(fullScreenDialog).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     ]));
     const closeFullScreen = screen.getByTestId('closeModalDialog');
 
-    userEvent.click(closeFullScreen);
+    await userEvent.click(closeFullScreen);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -166,7 +166,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     expect(screen.getByText('Remote')).toBeInTheDocument();
   });
 
-  test('should show References; and resourceId if name not set', () => {
+  test('should show References; and resourceId if name not set', async () => {
     const props = {
       titles: {
         before: 'Before pull',
@@ -235,7 +235,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     const openReferences = screen.getByText('References');
 
     expect(openReferences).toBeInTheDocument();
-    userEvent.click(openReferences);
+    await userEvent.click(openReferences);
 
     const referencesModal = screen.getByRole('dialog');
 
@@ -256,7 +256,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     expect(screen.getByRole('columnheader')).toHaveTextContent('Name');
     expect(screen.getByRole('link')).toHaveTextContent('Parent Flow');
 
-    userEvent.click(usedByInOtherIntegrationsTab);
+    await userEvent.click(usedByInOtherIntegrationsTab);
     const colHeaders = screen.getAllByRole('columnheader').map(ele => ele.textContent);
 
     expect(colHeaders).toEqual([
@@ -265,11 +265,11 @@ describe('Test suite for ResourceDiffContainer component', () => {
     ]);
     const closeDialog = screen.getByTestId('closeModalDialog');
 
-    userEvent.click(closeDialog);
+    await userEvent.click(closeDialog);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  test('should only show a spinner if resourceReferences not present', () => {
+  test('should only show a spinner if resourceReferences not present', async () => {
     const props = {
       titles: {
         before: 'Before pull',
@@ -293,12 +293,12 @@ describe('Test suite for ResourceDiffContainer component', () => {
     const openReferences = screen.getByText('References');
 
     expect(openReferences).toBeInTheDocument();
-    userEvent.click(openReferences);
+    await userEvent.click(openReferences);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
     expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });
 
-  test('should not render table if resourceReferences is an empty Array', () => {
+  test('should not render table if resourceReferences is an empty Array', async () => {
     const props = {
       titles: {
         before: 'Before pull',
@@ -330,7 +330,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     const openReferences = screen.getByText('References');
 
     expect(openReferences).toBeInTheDocument();
-    userEvent.click(openReferences);
+    await userEvent.click(openReferences);
     expect(screen.queryByRole('tab')).not.toBeInTheDocument();
     expect(screen.getByRole('dialog').textContent).toContain('This resource isn’t being used anywhere.');
   });

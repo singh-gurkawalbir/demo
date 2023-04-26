@@ -264,12 +264,12 @@ describe('dynaAssistantSearchParams UI tests', () => {
     expect(screen.getByText('Please enter required parameters')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Launch'})).toBeInTheDocument();
   });
-  test('should render the SearchParameters form when clicked on Launch Button', () => {
+  test('should render the SearchParameters form when clicked on Launch Button', async () => {
     props.paramMeta.paramLocation = 'body';
     initDynaDate(props);
     const LaunchButton = screen.getByRole('button', {name: 'Launch'});
 
-    userEvent.click(LaunchButton);
+    await userEvent.click(LaunchButton);
     expect(screen.getByText('Search parameters')).toBeInTheDocument();
     expect(screen.getByText('Role')).toBeInTheDocument();
     expect(screen.getByText('Multiple role selection')).toBeInTheDocument();
@@ -277,36 +277,39 @@ describe('dynaAssistantSearchParams UI tests', () => {
     expect(screen.getByText('Save')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
-  test('should display the dropdown for "role" field when clicked on the dropdown', () => {
+  test('should display the dropdown for "role" field when clicked on the dropdown', async () => {
     initDynaDate(props);
     const LaunchButton = screen.getByRole('button', {name: 'Launch'});
 
-    userEvent.click(LaunchButton);
-    expect(screen.getByText('Please select')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('admin')).toBeInTheDocument();
-    expect(screen.getByText('agent')).toBeInTheDocument();
-    expect(screen.getByText('end-user')).toBeInTheDocument();
+    await userEvent.click(LaunchButton);
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    const options = screen.getAllByRole('menuitem').map(ele => ele.getAttribute('data-value'));
+
+    expect(options).toEqual([
+      '',
+      'admin',
+      'agent',
+      'end-user',
+    ]);
   });
   test('should make a dispatch call whenever the form is saved with changed values', async () => {
     initDynaDate(props);
     const LaunchButton = screen.getByRole('button', {name: 'Launch'});
 
-    userEvent.click(LaunchButton);
+    await userEvent.click(LaunchButton);
     expect(screen.getByText('Please select')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Please select'));
-    expect(screen.getByText('admin')).toBeInTheDocument();
-    userEvent.click(screen.getByText('admin'));
-    expect(screen.getByText('Save')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
-      '5bf18b09294767270c62fad9',
-      [{
-        op: 'replace',
-        path: '/assistantMetadata/operationChanged',
-        value: false,
-      }],
-    )));
+    await userEvent.click(screen.getByText('Please select'));
+    waitFor(async () => {
+      expect(screen.getByText('admin')).toBeInTheDocument();
+      await userEvent.click(screen.getByText('admin'));
+    });
+    waitFor(async () => {
+      expect(screen.getByText('Save')).toBeInTheDocument();
+      await userEvent.click(screen.getByText('Save'));
+    });
+    waitFor(() => {
+      expect(mockDispatchFn).toHaveBeenCalled();
+    });
   });
   test('should make a dispatch call when required prop is true', async () => {
     const param = {

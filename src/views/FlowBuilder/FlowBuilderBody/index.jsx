@@ -1,7 +1,7 @@
-/* eslint-disable no-param-reassign */
-import { makeStyles, useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactFlow, { MiniMap, getOutgoers, isEdge, getIncomers } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, useNodesState, useEdgesState, getOutgoers, isEdge, getIncomers } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -28,6 +28,9 @@ import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 import { CanvasControls } from './CanvasControls';
 import AutoScroll from './AutoScroll';
 import CustomDragLayer from './DragPreview';
+import 'reactflow/dist/style.css';
+
+const defaultViewport = { x: 0, y: 0, zoom: 1 };
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -181,11 +184,19 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     selectors.fbSubFlowView(state, flowId)
   );
 
+  const iconViewElements = isSubFlowView ? subFlowElements : elements;
+  const {nodes: initialNodes, edges: initialEdges, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(iconViewElements, mergedFlow, isSubFlowView), [elements, iconView, iconViewElements, isSubFlowView, mergedFlow]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useEffect(() => {
+    setNodes(initialNodes);
+  }, [initialNodes, setNodes]);
+  useEffect(() => {
+    setEdges(initialEdges);
+  }, [initialEdges, setEdges]);
   // const graphNodes = elements.filter(ele => isNode(ele));
 
-  const iconViewElements = isSubFlowView ? subFlowElements : elements;
-
-  const {elements: updatedLayout, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(iconViewElements, mergedFlow, isSubFlowView), [elements, iconView, iconViewElements, isSubFlowView, mergedFlow]);
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {
@@ -195,20 +206,20 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     }
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow, iconView]);
 
-  const getAllOutgoingNodes = (node, elements) => getOutgoers(node, elements).reduce(
-    (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, elements)],
+  const getAllOutgoingNodes = (node, nodes, edges) => getOutgoers(node, nodes, edges).reduce(
+    (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, nodes, edges)],
     []
   );
 
-  const getAllIncomingNodes = (node, elements) => getIncomers(node, elements).reduce(
-    (memo, incomer) => [...memo, incomer, ...getAllIncomingNodes(incomer, elements)],
+  const getAllIncomingNodes = (node, nodes, edges) => getIncomers(node, nodes, edges).reduce(
+    (memo, incomer) => [...memo, incomer, ...getAllIncomingNodes(incomer, nodes, edges)],
     []
   );
 
   const downstreamHighlighter = id => {
     dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'left'}));
     const node = elements.find(ele => ele.id === id);
-    const subFlow = getAllOutgoingNodes(node, elements).map(node => node.id);
+    const subFlow = getAllOutgoingNodes(node, nodes, edges).map(node => node.id);
 
     const newElements = elements.map(ele => {
       if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
@@ -223,7 +234,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
   const upstreamHighlighter = id => {
     dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'right'}));
     const node = elements.find(ele => ele.id === id);
-    const subFlow = getAllIncomingNodes(node, elements).map(node => node.id);
+    const subFlow = getAllIncomingNodes(node, nodes, edges).map(node => node.id);
 
     const newElements = elements.map(ele => {
       if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
@@ -256,9 +267,6 @@ export function Canvas({ flowId, fullscreen, iconView}) {
 
   const onLoad = useCallback(reactFlowInstance => {
     setRFInstance(reactFlowInstance);
-    setTimeout(() => {
-      reactFlowInstance.setTransform({x: 0, y: 0, zoom: 1});
-    }, 10);
   }, []);
 
   const handleMoveEnd = useCallback(() => setIsPanning(false), []);
@@ -277,12 +285,12 @@ export function Canvas({ flowId, fullscreen, iconView}) {
 
     const targetNode = elements.find(e => e?.id === targetNodeId);
 
-    const getAllOutgoingNodes = (node, elements) => getOutgoers(node, elements).reduce(
-      (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, elements)],
+    const getAllOutgoingNodes = (node, nodes, edges) => getOutgoers(node, nodes, edges).reduce(
+      (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, nodes, edges)],
       []
     );
 
-    const subsequentNodes = targetNode ? getAllOutgoingNodes(targetNode, elements).map(node => node.id) : [];
+    const subsequentNodes = targetNode ? getAllOutgoingNodes(targetNode, nodes, edges).map(node => node.id) : [];
 
     const includedEdges = elements.filter(ele => {
       if (!isEdge(ele)) return false;
@@ -330,22 +338,27 @@ export function Canvas({ flowId, fullscreen, iconView}) {
             className={isPanning ? classes.isPanning : classes.canPan}
             onNodeDragStart={handleNodeDragStart}
             onNodeDragStop={handleNodeDragStop}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
             onEdgeMouseEnter={handleIconEdgeMouseHover}
             onEdgeMouseLeave={handleIconEdgeMouseLeave}
             onNodeDrag={handleNodeDrag}
             onMoveEnd={handleMoveEnd}
             onMove={handleMove}
-            nodesDraggable={false}
+            nodesConnectable={false}
             minZoom={0.4}
             maxZoom={1.25}
             panOnScroll
+            nodesDraggable={false}
             translateExtent={translateExtent}
-                // nodeExtent={translateExtent}
-            onLoad={onLoad}
-            elements={updatedLayout}
+            onInit={onLoad}
+            defaultViewport={defaultViewport}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             preventScrolling={false}
+            attributionPosition="top-right"
             onlyRenderVisibleElements
             >
             <SourceTitle onClick={handleAddNewSource} />

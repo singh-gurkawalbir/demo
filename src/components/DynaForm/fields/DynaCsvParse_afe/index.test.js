@@ -93,13 +93,13 @@ describe('dynaCsvGenerate_afe UI tests', () => {
     expect(screen.getByRole('button', {name: 'Launch'})).toBeInTheDocument();
     expect(screen.getByText('CSV parser helper')).toBeInTheDocument();
   });
-  test('should render the helper form when clicked on "Launch" button', () => {
+  test('should render the helper form when clicked on "Launch" button', async () => {
     initDynaCsvGenerate(props);
     const launchButton = screen.getByRole('button', {name: 'Launch'});
 
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     expect(screen.getByText('Trim spaces')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('checkbox', {name: 'Trim spaces'}));
+    await userEvent.click(screen.getByRole('checkbox', {name: 'Trim spaces'}));
     expect(screen.getByText('Number of rows to skip')).toBeInTheDocument();
     expect(screen.getByText('File has header')).toBeInTheDocument();
     expect(screen.getByText('Column delimiter')).toBeInTheDocument();
@@ -109,7 +109,7 @@ describe('dynaCsvGenerate_afe UI tests', () => {
     initDynaCsvGenerate(props);
     const launchButton = screen.getByText('Launch');
 
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/exports/edit/imports/63515cc28eab567612a83249/editor/filecsv/editor/filecsv'));
   });

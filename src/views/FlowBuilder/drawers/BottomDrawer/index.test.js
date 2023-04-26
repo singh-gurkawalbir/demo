@@ -101,7 +101,7 @@ describe('test suite for BottomDrawer', () => {
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Run Dashboard Panel');
     const connectionsTab = screen.getByRole('tab', {name: 'Connections'});
 
-    userEvent.click(connectionsTab);
+    await userEvent.click(connectionsTab);
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Connection Panel');
   });
 
@@ -131,7 +131,7 @@ describe('test suite for BottomDrawer', () => {
     await initBottomDrawer({}, initialStore);
     const increaseButton = document.querySelector('[data-test="increaseFlowBuilderBottomDrawer"]');
 
-    userEvent.click(increaseButton);
+    await userEvent.click(increaseButton);
     let increasedHeight;
 
     mutateStore(initialStore, draft => {
@@ -142,7 +142,7 @@ describe('test suite for BottomDrawer', () => {
 
     const decreaseButton = document.querySelector('[data-test="decreaseFlowBuilderBottomDrawer"]');
 
-    userEvent.click(decreaseButton);
+    await userEvent.click(decreaseButton);
 
     let decreasedHeight;
 
@@ -217,7 +217,7 @@ describe('test suite for BottomDrawer', () => {
     const scriptTab = screen.getByRole('tab', {name: 'Scripts'});
 
     expect(scriptTab).toBeInTheDocument();
-    userEvent.click(scriptTab);
+    await userEvent.click(scriptTab);
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Script Panel');
   });
 });

@@ -99,27 +99,27 @@ describe('keyValueRow UI tests', () => {
     renderWithProviders(<KeyValueRow {...props} />);
     const deleteButtons = screen.getAllByRole('button');
 
-    userEvent.click(deleteButtons[1]);
+    await userEvent.click(deleteButtons[1]);
     await waitFor(() => expect(mockhandleDelete).toHaveBeenCalled());
   });
   test('should call the handleEditorClick function when clicked on openHandlebars button', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
     const deleteButtons = screen.getAllByRole('button');
 
-    userEvent.click(deleteButtons[2]);
+    await userEvent.click(deleteButtons[2]);
     await waitFor(() => expect(mockhandleEditorClick).toHaveBeenCalled());
   });
-  test('should open the dropdown when clicked on the dropdown', () => {
+  test('should open the dropdown when clicked on the dropdown', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
     expect(screen.queryByText('Descending')).toBeNull();
-    userEvent.click(screen.getByText('Ascending'));
+    await userEvent.click(screen.getByText('Ascending'));
     expect(screen.getByText('Descending')).toBeInTheDocument();
   });
   test('should call the handleValueUpdate function when the dropdown value is changed', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
-    userEvent.click(screen.getByText('Ascending'));
+    await userEvent.click(screen.getByText('Ascending'));
     expect(screen.getByText('Descending')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Descending'));
+    await userEvent.click(screen.getByText('Descending'));
     await waitFor(() => expect(mockhandleValueUpdate).toHaveBeenCalled());
   });
   test('should call the handleValueUpdate when the textField is edited', async () => {
@@ -134,7 +134,7 @@ describe('keyValueRow UI tests', () => {
     const field = screen.getByRole('textbox');
 
     expect(field).toBeInTheDocument();
-    userEvent.type(field, 'a');
+    await userEvent.type(field, 'a');
     await waitFor(() => expect(mockhandleValueUpdate).toHaveBeenCalled());
   });
   test('should call the handleKeyUpdate function passed in props when the field that appears when suggestKeyConfig prop is undefined is updated', async () => {
@@ -144,14 +144,13 @@ describe('keyValueRow UI tests', () => {
       },
       showSortOrder: false};
 
-    renderWithProviders(<KeyValueRow {...newprops} />);
+    await renderWithProviders(<KeyValueRow {...newprops} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    const field = screen.getByRole('textbox');
 
-    userEvent.type(field);
+    fireEvent.change(screen.getByRole('textbox'), null);
     await waitFor(() => expect(mockhandleKeyUpdate).toHaveBeenCalled());
   });
-  test('should display the sortable handle only when enableSorting and showGripper are true', () => {
+  test('should display the sortable handle only when enableSorting and showGripper are true', async () => {
     const newprops = {
       ...props,
       suggestionConfig: undefined,
@@ -164,11 +163,11 @@ describe('keyValueRow UI tests', () => {
     expect(screen.getByRole('textbox').getAttribute('placeholder')).toBe('key1');
     const sortableHandle = document.querySelector('[id="dragHandle"]');
 
-    fireEvent.mouseDown(sortableHandle);
-    fireEvent.mouseLeave(sortableHandle);
+    await fireEvent.mouseDown(sortableHandle);
+    await fireEvent.mouseLeave(sortableHandle);
     expect(sortableHandle).toBeInTheDocument();
   });
-  test('should render the inLineClose button additionally when r.disableRowKey is true', () => {
+  test('should render the inLineClose button additionally when r.disableRowKey is true', async () => {
     const newprops = {
       ...props,
       keyName: 'key',
@@ -186,13 +185,13 @@ describe('keyValueRow UI tests', () => {
     const buttons = screen.getAllByRole('button');
 
     expect(buttons).toHaveLength(4);
-    userEvent.click(screen.getByText('AutoSuggest Component value1-0'));
+    await userEvent.click(screen.getByText('AutoSuggest Component value1-0'));
     expect(mockhandleUpdate).toHaveBeenCalled();
   });
   test('should validate handleUpdate function when key is changed', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
     expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
-    userEvent.click(screen.getByText('AutoSuggest Component key1-0'));
+    await userEvent.click(screen.getByText('AutoSuggest Component key1-0'));
     await waitFor(() => expect(mockhandleUpdate).toHaveBeenCalled());
   });
 });

@@ -1,9 +1,9 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { Typography } from '@material-ui/core';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { Typography } from '@mui/material';
 import Stepper from '../Stepper';
 import HeaderWithHelpText from '../HeaderWithHelpText';
 import useForm from '../../../../../components/Form';

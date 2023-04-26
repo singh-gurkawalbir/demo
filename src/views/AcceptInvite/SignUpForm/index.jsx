@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState} from 'react';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';

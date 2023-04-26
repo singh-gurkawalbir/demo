@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { makeStyles, Chip } from '@material-ui/core';
+import { Chip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
@@ -19,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   connectionIcon: {
     padding: 0,
     color: theme.palette.secondary.main,
+    width: theme.spacing(3),
     '&:hover': {
       backgroundColor: theme.palette.background.paper2,
     },

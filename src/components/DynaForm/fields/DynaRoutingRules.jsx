@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import FieldHelp from '../FieldHelp';
 import DynaHook from './DynaHook_afe';

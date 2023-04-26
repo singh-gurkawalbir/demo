@@ -1,7 +1,7 @@
 /* eslint-disable jest/max-expects */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen, cleanup, within } from '@testing-library/react';
+import { screen, cleanup, within, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Clone from './Setup';
@@ -402,45 +402,61 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const setupNode = screen.getByText('Setup');
+    waitFor(() => {
+      const setupNode = screen.getByText('Setup');
 
-    expect(setupNode).toBeInTheDocument();
-    const goBackButtonNode = screen.getAllByRole('button');
+      expect(setupNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const goBackButtonNode = screen.getAllByRole('button');
 
-    expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
-    await userEvent.click(goBackButtonNode[0]);
-    expect(mockHistoryBack).toHaveBeenCalledTimes(1);
-    const headingNode1 = screen.getByRole('heading', {name: '1'});
+      expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
+      await userEvent.click(goBackButtonNode[0]);
+      expect(mockHistoryBack).toHaveBeenCalledTimes(1);
+    });
+    waitFor(() => {
+      const headingNode1 = screen.getByRole('heading', {name: '1'});
 
-    expect(headingNode1).toBeInTheDocument();
-    const headingNode2 = screen.getByRole('heading', {name: '2'});
+      expect(headingNode1).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const headingNode2 = screen.getByRole('heading', {name: '2'});
 
-    expect(headingNode2).toBeInTheDocument();
-    const list = screen.getByRole('list');
-    const { getAllByRole } = within(list);
-    const items = getAllByRole('listitem');
-    const names = items.map(item => item.textContent);
+      expect(headingNode2).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const list = screen.getByRole('list');
+      const { getAllByRole } = within(list);
+      const items = getAllByRole('listitem');
+      const names = items.map(item => item.textContent);
 
-    expect(names).toMatchInlineSnapshot(`
+      expect(names).toMatchInlineSnapshot(`
       Array [
         "Setup",
         " 3PL Central - FTP ",
       ]
     `);
-    const ftpConnectionTextNode = screen.getByText('FTP Connection');
+    });
+    waitFor(() => {
+      const ftpConnectionTextNode = screen.getByText('FTP Connection');
 
-    expect(ftpConnectionTextNode).toBeInTheDocument();
-    const threeplConnectionTextNode = screen.getByText('3PL Central Connection');
+      expect(ftpConnectionTextNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const threeplConnectionTextNode = screen.getByText('3PL Central Connection');
 
-    expect(threeplConnectionTextNode).toBeInTheDocument();
-    const configureNode = screen.getAllByRole('button', {name: 'Configure'});
+      expect(threeplConnectionTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const configureNode = screen.getAllByRole('button', {name: 'Configure'});
 
-    expect(configureNode[0]).toBeInTheDocument();
-    expect(configureNode[1]).toBeInTheDocument();
-    await userEvent.click(configureNode[0]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
-    await userEvent.click(configureNode[1]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+      expect(configureNode[0]).toBeInTheDocument();
+      expect(configureNode[1]).toBeInTheDocument();
+      await userEvent.click(configureNode[0]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+      await userEvent.click(configureNode[1]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(3);
+    });
   });
   test('should able to access the setup page which has is installed failure as true and click on configure', async () => {
     const integrationSession = {
@@ -568,24 +584,30 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const setupNode = screen.getByText('Setup');
+    waitFor(() => {
+      const setupNode = screen.getByText('Setup');
 
-    expect(setupNode).toBeInTheDocument();
-    const goBackButtonNode = screen.getAllByRole('button');
+      expect(setupNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const goBackButtonNode = screen.getAllByRole('button');
 
-    expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
-    await userEvent.click(goBackButtonNode[0]);
-    const list = screen.getByRole('list');
-    const { getAllByRole } = within(list);
-    const items = getAllByRole('listitem');
-    const names = items.map(item => item.textContent);
+      expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
+      await userEvent.click(goBackButtonNode[0]);
+    });
+    waitFor(() => {
+      const list = screen.getByRole('list');
+      const { getAllByRole } = within(list);
+      const items = getAllByRole('listitem');
+      const names = items.map(item => item.textContent);
 
-    expect(names).toMatchInlineSnapshot(`
+      expect(names).toMatchInlineSnapshot(`
       Array [
         "Setup",
         " 3PL Central - FTP ",
       ]
     `);
+    });
   });
   test('should able to verify the cloning text when the cloned flow has isSetupComplete as true', async () => {
     const integrationSession = {
@@ -715,9 +737,11 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const cloningNode = screen.getByText('Cloning');
+    waitFor(() => {
+      const cloningNode = screen.getByText('Cloning');
 
-    expect(cloningNode).toBeInTheDocument();
+      expect(cloningNode).toBeInTheDocument();
+    });
   });
   test('should able to access the setup page which has is installed failure as false and click on configure along with install bundle option', async () => {
     const integrationSession = {
@@ -867,63 +891,87 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const setupNode = screen.getByText('Setup');
+    waitFor(() => {
+      const setupNode = screen.getByText('Setup');
 
-    expect(setupNode).toBeInTheDocument();
-    const goBackButtonNode = screen.getAllByRole('button');
+      expect(setupNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const goBackButtonNode = screen.getAllByRole('button');
 
-    expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
-    await userEvent.click(goBackButtonNode[0]);
-    const headingNode1 = screen.getByRole('heading', {name: '1'});
+      expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
+      await userEvent.click(goBackButtonNode[0]);
+    });
+    waitFor(() => {
+      const headingNode1 = screen.getByRole('heading', {name: '1'});
 
-    expect(headingNode1).toBeInTheDocument();
-    const headingNode2 = screen.getByRole('heading', {name: '2'});
+      expect(headingNode1).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const headingNode2 = screen.getByRole('heading', {name: '2'});
 
-    expect(headingNode2).toBeInTheDocument();
-    const headingNode3 = screen.getByRole('heading', {name: '3'});
+      expect(headingNode2).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const headingNode3 = screen.getByRole('heading', {name: '3'});
 
-    expect(headingNode3).toBeInTheDocument();
-    const list = screen.getByRole('list');
-    const { getAllByRole } = within(list);
-    const items = getAllByRole('listitem');
-    const names = items.map(item => item.textContent);
+      expect(headingNode3).toBeInTheDocument();
+      const list = screen.getByRole('list');
+      const { getAllByRole } = within(list);
+      const items = getAllByRole('listitem');
+      const names = items.map(item => item.textContent);
 
-    expect(names).toMatchInlineSnapshot(`
+      expect(names).toMatchInlineSnapshot(`
       Array [
         "Setup",
         " Test flow 2 ",
       ]
     `);
-    const testConnection1TextNode = screen.getByText('Test Connection 1');
+    });
+    waitFor(() => {
+      const testConnection1TextNode = screen.getByText('Test Connection 1');
 
-    expect(testConnection1TextNode).toBeInTheDocument();
-    const testConnection2TextNode = screen.getByText('Test Connection 2');
+      expect(testConnection1TextNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const testConnection2TextNode = screen.getByText('Test Connection 2');
 
-    expect(testConnection2TextNode).toBeInTheDocument();
-    const bundleTextNode = screen.getByText('Integrator Bundle');
+      expect(testConnection2TextNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const bundleTextNode = screen.getByText('Integrator Bundle');
 
-    expect(bundleTextNode).toBeInTheDocument();
-    const configureNode = screen.getAllByRole('button', {name: 'Configure'});
+      expect(bundleTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const configureNode = screen.getAllByRole('button', {name: 'Configure'});
 
-    expect(configureNode[0]).toBeInTheDocument();
-    expect(configureNode[1]).toBeInTheDocument();
-    await userEvent.click(configureNode[0]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
-    await userEvent.click(configureNode[1]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
-    const installNode = screen.getByRole('button', {name: 'Install'});
+      expect(configureNode[0]).toBeInTheDocument();
+      expect(configureNode[1]).toBeInTheDocument();
+      await userEvent.click(configureNode[0]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+      await userEvent.click(configureNode[1]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    });
+    waitFor(async () => {
+      const installNode = screen.getByRole('button', {name: 'Install'});
 
-    expect(installNode).toBeInTheDocument();
-    await userEvent.click(installNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(3);
-    const verifyNowNode = screen.getByRole('button', {name: 'Verify now'});
+      expect(installNode).toBeInTheDocument();
+      await userEvent.click(installNode);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(3);
+    });
+    waitFor(async () => {
+      const verifyNowNode = screen.getByRole('button', {name: 'Verify now'});
 
-    expect(verifyNowNode).toBeInTheDocument();
-    await userEvent.click(verifyNowNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(5);
-    const verifyingNode = screen.getByRole('button', {name: 'Verifying'});
+      expect(verifyNowNode).toBeInTheDocument();
+      await userEvent.click(verifyNowNode);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(5);
+    });
+    waitFor(() => {
+      const verifyingNode = screen.getByRole('button', {name: 'Verifying'});
 
-    expect(verifyingNode).toBeInTheDocument();
+      expect(verifyingNode).toBeInTheDocument();
+    });
   });
   test('should able to access the setup page which has is installed failure as false and click on configure along with install bundle option by setting is trigger as false and verifying as true', async () => {
     const integrationSession = {
@@ -1076,58 +1124,82 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const setupNode = screen.getByText('Setup');
+    waitFor(() => {
+      const setupNode = screen.getByText('Setup');
 
-    expect(setupNode).toBeInTheDocument();
-    const goBackButtonNode = screen.getAllByRole('button');
+      expect(setupNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const goBackButtonNode = screen.getAllByRole('button');
 
-    expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
-    await userEvent.click(goBackButtonNode[0]);
-    const headingNode1 = screen.getByRole('heading', {name: '1'});
+      expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
+      await userEvent.click(goBackButtonNode[0]);
+    });
+    waitFor(() => {
+      const headingNode1 = screen.getByRole('heading', {name: '1'});
 
-    expect(headingNode1).toBeInTheDocument();
-    const headingNode2 = screen.getByRole('heading', {name: '2'});
+      expect(headingNode1).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const headingNode2 = screen.getByRole('heading', {name: '2'});
 
-    expect(headingNode2).toBeInTheDocument();
-    const headingNode3 = screen.getByRole('heading', {name: '3'});
+      expect(headingNode2).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const headingNode3 = screen.getByRole('heading', {name: '3'});
 
-    expect(headingNode3).toBeInTheDocument();
-    const list = screen.getByRole('list');
-    const { getAllByRole } = within(list);
-    const items = getAllByRole('listitem');
-    const names = items.map(item => item.textContent);
+      expect(headingNode3).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const list = screen.getByRole('list');
+      const { getAllByRole } = within(list);
+      const items = getAllByRole('listitem');
+      const names = items.map(item => item.textContent);
 
-    expect(names).toMatchInlineSnapshot(`
+      expect(names).toMatchInlineSnapshot(`
       Array [
         "Setup",
         " Test flow 2 ",
       ]
     `);
-    const testConnection1TextNode = screen.getByText('Test Connection 1');
+    });
+    waitFor(() => {
+      const testConnection1TextNode = screen.getByText('Test Connection 1');
 
-    expect(testConnection1TextNode).toBeInTheDocument();
-    const testConnection2TextNode = screen.getByText('Test Connection 2');
+      expect(testConnection1TextNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const testConnection2TextNode = screen.getByText('Test Connection 2');
 
-    expect(testConnection2TextNode).toBeInTheDocument();
-    const bundleTextNode = screen.getByText('Integrator Bundle');
+      expect(testConnection2TextNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const bundleTextNode = screen.getByText('Integrator Bundle');
 
-    expect(bundleTextNode).toBeInTheDocument();
-    const configureNode = screen.getAllByRole('button', {name: 'Configure'});
+      expect(bundleTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const configureNode = screen.getAllByRole('button', {name: 'Configure'});
 
-    expect(configureNode[0]).toBeInTheDocument();
-    expect(configureNode[1]).toBeInTheDocument();
-    await userEvent.click(configureNode[0]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
-    await userEvent.click(configureNode[1]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
-    const installNode = screen.getByRole('button', {name: 'Install'});
+      expect(configureNode[0]).toBeInTheDocument();
+      expect(configureNode[1]).toBeInTheDocument();
+      await userEvent.click(configureNode[0]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+      await userEvent.click(configureNode[1]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(3);
+    });
+    waitFor(async () => {
+      const installNode = screen.getByRole('button', {name: 'Install'});
 
-    expect(installNode).toBeInTheDocument();
-    await userEvent.click(installNode);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(3);
-    const verifyingNode = screen.getByRole('button', {name: 'Verifying'});
+      expect(installNode).toBeInTheDocument();
+      await userEvent.click(installNode);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(3);
+    });
+    waitFor(() => {
+      const verifyingNode = screen.getByRole('button', {name: 'Verifying'});
 
-    expect(verifyingNode).toBeInTheDocument();
+      expect(verifyingNode).toBeInTheDocument();
+    });
   });
   test('should able to access the setup page without flow name', async () => {
     const integrationSession = {
@@ -1252,44 +1324,60 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    const setupNode = screen.getByText('Setup');
+    waitFor(() => {
+      const setupNode = screen.getByText('Setup');
 
-    expect(setupNode).toBeInTheDocument();
-    const goBackButtonNode = screen.getAllByRole('button');
+      expect(setupNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const goBackButtonNode = screen.getAllByRole('button');
 
-    expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
-    await userEvent.click(goBackButtonNode[0]);
-    const headingNode1 = screen.getByRole('heading', {name: '1'});
+      expect(goBackButtonNode[0]).toHaveAttribute('type', 'button');
+      await userEvent.click(goBackButtonNode[0]);
+    });
+    waitFor(() => {
+      const headingNode1 = screen.getByRole('heading', {name: '1'});
 
-    expect(headingNode1).toBeInTheDocument();
-    const headingNode2 = screen.getByRole('heading', {name: '2'});
+      expect(headingNode1).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const headingNode2 = screen.getByRole('heading', {name: '2'});
 
-    expect(headingNode2).toBeInTheDocument();
-    const list = screen.getByRole('list');
-    const { getAllByRole } = within(list);
-    const items = getAllByRole('listitem');
-    const names = items.map(item => item.textContent);
+      expect(headingNode2).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const list = screen.getByRole('list');
+      const { getAllByRole } = within(list);
+      const items = getAllByRole('listitem');
+      const names = items.map(item => item.textContent);
 
-    expect(names).toMatchInlineSnapshot(`
+      expect(names).toMatchInlineSnapshot(`
       Array [
         "Setup",
         " Flow ",
       ]
     `);
-    const ftpConnectionTextNode = screen.getByText('FTP Connection');
+    });
+    waitFor(() => {
+      const ftpConnectionTextNode = screen.getByText('FTP Connection');
 
-    expect(ftpConnectionTextNode).toBeInTheDocument();
-    const threeplConnectionTextNode = screen.getByText('3PL Central Connection');
+      expect(ftpConnectionTextNode).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const threeplConnectionTextNode = screen.getByText('3PL Central Connection');
 
-    expect(threeplConnectionTextNode).toBeInTheDocument();
-    const configureNode = screen.getAllByRole('button', {name: 'Configure'});
+      expect(threeplConnectionTextNode).toBeInTheDocument();
+    });
+    waitFor(async () => {
+      const configureNode = screen.getAllByRole('button', {name: 'Configure'});
 
-    expect(configureNode[0]).toBeInTheDocument();
-    expect(configureNode[1]).toBeInTheDocument();
-    await userEvent.click(configureNode[0]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
-    await userEvent.click(configureNode[1]);
-    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+      expect(configureNode[0]).toBeInTheDocument();
+      expect(configureNode[1]).toBeInTheDocument();
+      await userEvent.click(configureNode[0]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+      await userEvent.click(configureNode[1]);
+      expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    });
   });
 
   test('should able to access the setup page without install steps', async () => {
@@ -1392,6 +1480,6 @@ describe('clone Setup', () => {
     await initStore(integrationSession);
 
     await initClone(props);
-    expect(mockHistoryPush).toBeCalledWith('/clone/imports/60db46af9433830f8f0e0fe8/preview');
+    waitFor(() => { expect(mockHistoryPush).toBeCalledWith('/clone/imports/60db46af9433830f8f0e0fe8/preview'); });
   });
 });

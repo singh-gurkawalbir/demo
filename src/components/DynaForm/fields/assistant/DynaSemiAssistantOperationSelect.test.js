@@ -91,6 +91,24 @@ function initDynaSemiAssistantOperationSelect(props = {}) {
   return renderWithProviders(<ConfirmDialogProvider><DynaSemiAssistantOperationSelect {...props} /></ConfirmDialogProvider>, {initialStore});
 }
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaAssistantSearchParams UI tests', () => {
   const mockOnFieldChangeFn = jest.fn();
 
@@ -111,7 +129,7 @@ describe('dynaAssistantSearchParams UI tests', () => {
     expect(screen.getByRole('button', {name: 'Please select'})).toBeInTheDocument();
   });
 
-  test('should display the dropdown options when clicked on dropdown', () => {
+  test('should display the dropdown options when clicked on dropdown', async () => {
     const props = {
       assistantFieldType: 'operation',
       formKey: 'imports-5bf18b09294767270c62fad9',
@@ -126,12 +144,12 @@ describe('dynaAssistantSearchParams UI tests', () => {
     initDynaSemiAssistantOperationSelect(props);
     const dropdown = screen.getByRole('button', {name: 'Please select'});
 
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('child1')).toBeInTheDocument();
     expect(screen.getByText('child2')).toBeInTheDocument();
     expect(screen.getByText('child3')).toBeInTheDocument();
   });
-  test('should display the confirmDialog clicked on an option from the dropdown', () => {
+  test('should display the confirmDialog clicked on an option from the dropdown', async () => {
     const props = {
       assistantFieldType: 'operation',
       formKey: 'imports-5bf18b09294767270c62fad9',
@@ -146,16 +164,16 @@ describe('dynaAssistantSearchParams UI tests', () => {
     initDynaSemiAssistantOperationSelect(props);
     const dropdown = screen.getByRole('button', {name: 'Please select'});
 
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     const option = screen.getByText('child1');
 
-    userEvent.click(option);
+    await userEvent.click(option);
     expect(screen.getByText('Confirm')).toBeInTheDocument();
     expect(screen.getByText('This will clear some of the http field values and populate them with the default values for the selected operation. Are you sure want to proceed?')).toBeInTheDocument();
     expect(screen.getByText('Yes')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
-  test('should call the onFieldChange function when "Yes" is clicked in the confirm dialog', () => {
+  test('should call the onFieldChange function when "Yes" is clicked in the confirm dialog', async () => {
     const props = {
       assistantFieldType: 'operation',
       formKey: 'imports-5bf18b09294767270c62fad9',
@@ -169,11 +187,11 @@ describe('dynaAssistantSearchParams UI tests', () => {
     initDynaSemiAssistantOperationSelect(props);
     const dropdown = screen.getByRole('button', {name: 'Please select'});
 
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     const option = screen.getByText('child1');
 
-    userEvent.click(option);
-    userEvent.click(screen.getByText('Yes'));
+    await userEvent.click(option);
+    await userEvent.click(screen.getByText('Yes'));
     expect(mockOnFieldChangeFn).toHaveBeenCalled();
   });
   test('should render the dropdown only when assistant is "openair', () => {

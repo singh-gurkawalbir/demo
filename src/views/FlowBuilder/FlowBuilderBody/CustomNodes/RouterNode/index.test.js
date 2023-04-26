@@ -35,7 +35,7 @@ describe('Testsuite for RouterNode', () => {
     mockUseHandleRouterClick.mockClear();
     mockNoRouterUseHandleRouterClick.mockClear();
   });
-  test('should test the All edit branching button when the routeRecordsTo has set to all matching branches', () => {
+  test('should test the All edit branching button when the routeRecordsTo has set to all matching branches', async () => {
     renderWithProviders(
       <RouterNode id="123" data={{routeRecordsTo: 'all_matching_branches'}} />
     );
@@ -47,10 +47,10 @@ describe('Testsuite for RouterNode', () => {
     });
 
     expect(allEditBranchingButtonNode).toBeInTheDocument();
-    userEvent.click(allEditBranchingButtonNode);
+    await userEvent.click(allEditBranchingButtonNode);
     expect(mockUseHandleRouterClick).toHaveBeenCalledTimes(1);
   });
-  test('should test the 1st branching button when the routeRecordsTo has not set to all matching branches', () => {
+  test('should test the 1st branching button when the routeRecordsTo has not set to all matching branches', async () => {
     renderWithProviders(
       <RouterNode id="123" data={{routeRecordsTo: 'test'}} />
     );
@@ -63,10 +63,10 @@ describe('Testsuite for RouterNode', () => {
 
     expect(allEditBranchingButtonNode).toBeInTheDocument();
     expect(allEditBranchingButtonNode).toBeEnabled();
-    userEvent.click(allEditBranchingButtonNode);
+    await userEvent.click(allEditBranchingButtonNode);
     expect(mockUseHandleRouterClick).toHaveBeenCalledTimes(1);
   });
-  test('should test the router node when there is no id and data passed in props', () => {
+  test('should test the router node when there is no id and data passed in props', async () => {
     renderWithProviders(
       <RouterNode id="" />
     );
@@ -78,7 +78,7 @@ describe('Testsuite for RouterNode', () => {
     });
 
     expect(allEditBranchingButtonNode).toBeInTheDocument();
-    userEvent.click(allEditBranchingButtonNode);
+    await userEvent.click(allEditBranchingButtonNode);
     expect(mockNoRouterUseHandleRouterClick).toHaveBeenCalledTimes(1);
   });
   test('should not be able to open branching settings while flow saving is in progress', () => {

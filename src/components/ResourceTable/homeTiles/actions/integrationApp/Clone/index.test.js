@@ -42,19 +42,19 @@ describe("homeTile's Clone integration Action UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should verify theds Row actionads setup is pending no connector Id', () => {
+  test('should verify theds Row actionads setup is pending no connector Id', async () => {
     const data = {_id: 'someID', name: 'Salesforce - NetSuite', pinned: true, _connectorId: '5b61ae4aeb538642c26bdbe6', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'sfnsio'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Clone integration'));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Clone integration'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/clone/integrations/2_integrationId/preview');
   });
-  test('should not show option for clone integration because of invalid id', () => {
+  test('should not show option for clone integration because of invalid id', async () => {
     const data = {_id: 'someID', name: 'Salesforce - NetSuite', pinned: true, _connectorId: '5b61ae4aeb538642c26bdbe6', _integrationId: '3_integrationId', supportsMultiStore: true, mode: 'sfnsio'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Clone integration')).not.toBeInTheDocument();
   });
 });

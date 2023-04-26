@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { FixedSizeList } from 'react-window';
-import { InputAdornment, TextField } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
-import ListIcon from '@material-ui/icons/List';
+import { InputAdornment, TextField, Autocomplete } from '@mui/material';
+import ListIcon from '@mui/icons-material/List';
+import { Spinner } from '@celigo/fuse-ui';
 import { generateId } from '../../../../../../../utils/string';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
@@ -19,7 +19,6 @@ import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import Help from '../../../../../../../components/Help';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../../../../../../components/Spinner';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -104,20 +103,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     display: 'flex',
   },
-  helpTextButtonCategroryMapping: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& svg': {
-      fontSize: theme.spacing(3),
-      marginTop: theme.spacing(-0.5),
-    },
-    '&:hover': {
-      background: 'none',
-      '& svg': {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
   fieldFilterIcon: {
     marginRight: 0,
   },
@@ -127,18 +112,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FieldHelp = ({id, name, description = 'No Description available.' }) => {
-  const classes = useStyles();
-
-  return (
-    <Help
-      title={name}
-      className={classes.helpTextButtonCategroryMapping}
-      helpKey={`categoryMappings-${id}`}
-      helpText={description}
+const FieldHelp = ({id, name, description = 'No Description available.' }) => (
+  <Help
+    title={name}
+    helpKey={`categoryMappings-${id}`}
+    helpText={description}
+    size="medium"
+    sx={{
+      ml: 0.5,
+      '& svg': {
+        mt: -0.5,
+      },
+    }}
     />
-  );
-};
+);
 
 const MappingRow = ({
   mapping,
@@ -218,11 +205,11 @@ const MappingRow = ({
     dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
   }, [dispatch, editorId, flowId, integrationId, mappingKey]);
 
-  const Option = ({filterType, name = ''}) => (
-    <>
+  const Option = (props, {filterType, name = ''}) => (
+    <li {...props}>
       <Icon filterType={filterType} />
       {name}
-    </>
+    </li>
   );
 
   const Icon = ({ filterType }) => {

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Typography, makeStyles, Radio } from '@material-ui/core';
+import { Typography, Radio } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import RadioBtnUnselectedIcon from '../icons/RadioBtnUnselectedIcon';
 import RadioBtnSelectedIcon from '../icons/RadioBtnSelectedIcon';
 import CeligoTruncate from '../CeligoTruncate';

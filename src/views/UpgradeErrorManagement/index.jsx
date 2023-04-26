@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Paper, Typography } from '@mui/material';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { selectors } from '../../reducers';
 import actions from '../../actions';

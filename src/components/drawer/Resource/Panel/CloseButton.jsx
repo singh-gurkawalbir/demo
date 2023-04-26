@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Close from '../../../icons/CloseIcon';
 import { useFormOnCancel } from '../../../FormOnCancelContext';
 
@@ -25,7 +26,8 @@ export default function CloseButton({formKey}) {
       data-test="closeDrawer"
       className={classes.closeButton}
       disabled={disabled}
-      onClick={setCancelTriggered}>
+      onClick={setCancelTriggered}
+      size="large">
       <Close />
     </IconButton>
   );

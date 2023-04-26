@@ -44,7 +44,7 @@ describe('ShowMore tests', () => {
     const loadMoreButton = screen.getByRole('button', {name: 'Load more'});
 
     expect(loadMoreButton).toBeInTheDocument();
-    userEvent.click(loadMoreButton);
+    await userEvent.click(loadMoreButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter(props.filterKey, {take: 200}));
   });
 

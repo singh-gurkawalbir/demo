@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
-import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { difference } from 'lodash';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { JOB_STATUS } from '../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
-import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import { JobDetailsStyles } from './ChildJobDetail';
 
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   name: {
     wordBreak: 'break-word',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('lg')]: {
       wordBreak: 'normal',
     },
   },
@@ -156,9 +157,7 @@ export default function JobTable({
   return (
     <>
       {isFlowJobsCollectionLoading ? (
-
-        <Spinner loading size="large" />
-
+        <Spinner center="horizontal" size="large" />
       ) : (
         <div className={classes.tableContainer}>
           <Table className={clsx(classes.table, jobDetailsClasses.table)}>

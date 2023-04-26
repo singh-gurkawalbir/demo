@@ -40,7 +40,7 @@ describe('resourceLink UI test', () => {
     expect(linkButton).toBeInTheDocument();
     expect(linkButton).toHaveAttribute('href', '/edit/undefined/someID');
   });
-  test('should show the button which will navigate to the required link', () => {
+  test('should show the button which will navigate to the required link', async () => {
     jest.spyOn(reactRedux, 'useSelector').mockReturnValue('/someLink');
     const mockFn = jest.fn();
 
@@ -49,10 +49,10 @@ describe('resourceLink UI test', () => {
 
     expect(linkButton).toBeInTheDocument();
     expect(linkButton).toHaveAttribute('href', '/someLink');
-    userEvent.click(linkButton);
+    await userEvent.click(linkButton);
     expect(mockFn).toHaveBeenCalled();
   });
-  test('should not navigate to required link in case of asynchelpers', () => {
+  test('should not navigate to required link in case of asynchelpers', async () => {
     jest.spyOn(reactRedux, 'useSelector').mockReturnValue('/someLink');
     const mockFn = jest.fn();
 
@@ -65,7 +65,7 @@ describe('resourceLink UI test', () => {
 
     expect(linkButton).toBeInTheDocument();
     expect(linkButton).not.toHaveAttribute('href', '/someLink');
-    userEvent.click(linkButton);
+    await userEvent.click(linkButton);
     expect(mockFn).not.toHaveBeenCalled();
   });
   test('should show Id as name when name is not provided', () => {

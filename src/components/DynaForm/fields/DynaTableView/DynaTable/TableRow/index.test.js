@@ -4,6 +4,24 @@ import userEvent from '@testing-library/user-event';
 import TableRow from './index';
 import { renderWithProviders } from '../../../../../../test/test-utils';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initTableRow(props = {}) {
   const ui = (
     <TableRow
@@ -40,9 +58,9 @@ describe('Table Row UI test cases', () => {
     initTableRow(props);
     expect(screen.getByDisplayValue('id')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
-    const inputs = screen.getAllByRole('textbox');
+    const inputs = screen.getAllByRole('combobox');
 
-    fireEvent.change(inputs[0], { target: { value: '' } });
+    await fireEvent.change(inputs[0], { target: { value: '' } });
     await userEvent.type(inputs[0], 'Name');
     expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
@@ -111,7 +129,7 @@ describe('Table Row UI test cases', () => {
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 
-  test('should test rows data by providing type as number data and test updating the text', () => {
+  test('should test rows data by providing type as number data and test updating the text', async () => {
     const props = {
       rowValue: {
         export: 35,
@@ -193,10 +211,10 @@ describe('Table Row UI test cases', () => {
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleterow).toBeInTheDocument();
-    userEvent.click(deleterow);
+    await userEvent.click(deleterow);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
-  test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', () => {
+  test('should test rows data by providing type as input data at export fields and and select at import fields test updating the text', async () => {
     const props = {
       rowValue: {
         export: 'text',
@@ -212,19 +230,19 @@ describe('Table Row UI test cases', () => {
     };
 
     initTableRow(props);
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'N...',
-        'X...',
-        'Y...',
+        'Please select',
+        'N',
+        'X',
+        'Y',
       ]
     );
-    userEvent.click(menuItems[2]);
+    await userEvent.click(menuItems[2]);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'import',
@@ -256,11 +274,11 @@ describe('Table Row UI test cases', () => {
     const moreJobActionMenuButtonNode = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(moreJobActionMenuButtonNode).toBeInTheDocument();
-    userEvent.click(moreJobActionMenuButtonNode);
+    await userEvent.click(moreJobActionMenuButtonNode);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 
-  test('should test rows data by providing type as select options at export fields and and multiselect at import fields', () => {
+  test('should test rows data by providing type as select options at export fields and and multiselect at import fields', async () => {
     const props = {
       rowValue: {
       },
@@ -275,19 +293,19 @@ describe('Table Row UI test cases', () => {
     };
 
     initTableRow(props);
-    userEvent.click(screen.getAllByText('Please select')[0]);
+    await userEvent.click(screen.getAllByText('Please select')[0]);
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'exportop1...',
-        'exportop2...',
-        'exportop3...',
+        'Please select',
+        'exportop1',
+        'exportop2',
+        'exportop3',
       ]
     );
-    userEvent.click(menuItems[2]);
+    await userEvent.click(menuItems[2]);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
       field: 'export',
@@ -316,14 +334,14 @@ describe('Table Row UI test cases', () => {
         },
       ],
       onRowChange: {onRowChange} });
-    userEvent.click(screen.getAllByText('Please select')[1]);
+    await userEvent.click(screen.getAllByText('Please select')[1]);
     const options = screen.getAllByRole('option');
 
     expect(options).toHaveLength(3);
     const Message = screen.getAllByRole('checkbox');
 
     fireEvent.click(Message[0]);
-    userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Done'));
 
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
@@ -356,10 +374,10 @@ describe('Table Row UI test cases', () => {
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleterow).toBeInTheDocument();
-    userEvent.click(deleterow);
+    await userEvent.click(deleterow);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
-  test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', () => {
+  test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', async () => {
     const props = {
       rowValue: {
       },
@@ -374,18 +392,18 @@ describe('Table Row UI test cases', () => {
     };
 
     initTableRow(props);
-    const input = screen.getAllByRole('textbox');
+    const input = screen.getAllByRole('combobox');
 
     fireEvent.change(input[0], {target: {value: 'exportop1'}});
     expect(screen.getByText('exportop1')).toBeInTheDocument();
-    userEvent.click(screen.getAllByText('Please select')[0]);
+    await userEvent.click(screen.getAllByText('Please select')[0]);
     const options = screen.getAllByRole('option');
 
     expect(options).toHaveLength(3);
     const Message = screen.getAllByRole('checkbox');
 
     fireEvent.click(Message[0]);
-    userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Done'));
 
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_UPDATE',
       rowIndex: 0,
@@ -416,7 +434,7 @@ describe('Table Row UI test cases', () => {
     const deleterow = document.querySelector('button[data-test="deleteTableRow-0"]');
 
     expect(deleterow).toBeInTheDocument();
-    userEvent.click(deleterow);
+    await userEvent.click(deleterow);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0, invalidateParentFieldOnError: undefined, optionsMap: props.optionsMap});
   });
 });

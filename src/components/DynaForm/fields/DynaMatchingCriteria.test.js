@@ -4,8 +4,26 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('test suite for DynaMatchingCriteriaWithModal field', () => {
-  test('should be able to modify account type', () => {
+  test('should be able to modify account type', async () => {
     const onFieldChange = jest.fn();
     const props = {
       label: 'Matching Criteria',
@@ -102,18 +120,18 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     expect(accountTypeField).toHaveValue('type1');
     expect(selectedAccountType).toHaveTextContent('Account type 1');
 
-    userEvent.click(selectedAccountType);
+    await userEvent.click(selectedAccountType);
     const availableAccountTypes = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(availableAccountTypes).toEqual([
-      'Please select...',
-      'Account type 1...',
-      'Account type 2...',
-      'Account type 3...',
+      'Please select',
+      'Account type 1',
+      'Account type 2',
+      'Account type 3',
     ]);
 
     //  should be able to change account type
-    userEvent.click(screen.getByRole('menuitem', {name: 'Account type 3'}));
+    await userEvent.click(screen.getByRole('menuitem', {name: 'Account type 3'}));
     expect(onFieldChange).toBeCalledWith(props.id, props.value);
     expect(onFieldChange).toBeCalledTimes(2);
     expect(accountTypeField).toHaveValue('type3');
@@ -130,7 +148,7 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     ]);
   });
 
-  test('should be able to change the multiselect values', () => {
+  test('should be able to change the multiselect values', async () => {
     const onFieldChange = jest.fn();
     const props = {
       label: 'Matching Criteria',
@@ -221,7 +239,7 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     const matchedSelected = screen.getByRole('button', {name: 'content lines'});
 
     expect(matchedInputField).toHaveValue('content,lines');
-    userEvent.click(matchedSelected);
+    await userEvent.click(matchedSelected);
     const availableOptions = screen.getAllByRole('option').map(ele => ele.textContent);
 
     expect(availableOptions).toEqual([
@@ -229,8 +247,8 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
       'percentage',
       'lines',
     ]);
-    userEvent.click(screen.getByRole('option', {name: 'percentage'}));
-    userEvent.click(screen.getByRole('button', {name: 'Done'}));
+    await userEvent.click(screen.getByRole('option', {name: 'percentage'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Done'}));
 
     expect(matchedInputField).toHaveValue('content,percentage,lines');
     expect(matchedSelected).toHaveTextContent('contentpercentagelines');

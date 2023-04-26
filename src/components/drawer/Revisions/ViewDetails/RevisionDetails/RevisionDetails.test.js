@@ -104,7 +104,7 @@ describe('RevisionDetails tests', () => {
     const expandicon = document.querySelector('svg');
 
     expect(collapseContainer.getAttribute('aria-expanded')).toBe('true');
-    userEvent.click(expandicon);
+    await userEvent.click(expandicon);
   });
 
   test('Should able to test the initial render with Failed Revision', async () => {

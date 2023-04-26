@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Chip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Chip } from '@mui/material';
+import {EditableText} from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
@@ -10,7 +11,6 @@ import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
-import EditableText from '../../../../components/EditableText';
 import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -23,12 +23,6 @@ import TabContent from '../../../../components/TabContent';
 
 const useStyles = makeStyles(theme => ({
   // Todo (Azhar) Styles are repeating in suitescript
-  editableTextInput: {
-    width: `calc(60vw - ${52 + 24}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
-  },
   tag: {
     marginLeft: theme.spacing(1),
   },
@@ -60,7 +54,6 @@ export default function Integration({ match }) {
   const dispatch = useDispatch();
   const { ssLinkedConnectionId, integrationId } = match.params;
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const integration = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'integrations',
@@ -112,11 +105,6 @@ export default function Integration({ match }) {
                 disabled={!canEdit}
                 text={integration.displayName}
                 onChange={handleTitleChange}
-                inputClassName={
-                  drawerOpened
-                    ? classes.editableTextInputShift
-                    : classes.editableTextInput
-                }
               />
             )
           }

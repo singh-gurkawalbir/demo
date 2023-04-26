@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import React, {useCallback} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Position } from 'react-flow-renderer';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Position } from 'reactflow';
+import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import DefaultHandle from './Handles/DefaultHandle';

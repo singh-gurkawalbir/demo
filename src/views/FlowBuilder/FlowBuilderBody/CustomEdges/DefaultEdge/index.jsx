@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { getSmoothStepPath } from 'react-flow-renderer';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDragDropManager } from 'react-dnd';
 import {
@@ -8,6 +7,7 @@ import {
   nodeSize,
   areMultipleEdgesConnectedToSameEdgeTarget,
   snapPointsToHandles,
+  getEdgeStepPath,
 } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
@@ -178,7 +178,7 @@ function DefaultEdge({
   */
   const edgePath = useMemo(() => {
     if (isTargetTerminal && !isSourceRouter) {
-      const sp = getSmoothStepPath({
+      return getEdgeStepPath({
         sourceX,
         sourceY,
         sourcePosition,
@@ -186,8 +186,6 @@ function DefaultEdge({
         targetY,
         targetPosition,
       });
-
-      return sp;
     }
 
     const targetHandle = { x: targetX, y: targetY };

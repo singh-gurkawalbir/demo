@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
+import { Spinner } from '@celigo/fuse-ui';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import Spinner from '../../Spinner';
 import PreviewLogDetails from './PreviewLogDetails';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { FILTER_KEY } from '../../../utils/flowStepLogs';
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'grid',
     gridTemplateColumns: '1fr 2fr',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('lg')]: {
       gridTemplateColumns: '1fr 1fr',
     },
   },
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
     overflowY: 'auto',
     minWidth: '560px',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('lg')]: {
       minWidth: 'unset',
     },
   },
@@ -102,7 +102,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
 
   if (!logsStatus || logsStatus === 'requested') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 
@@ -124,7 +124,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
           )}
           {!hasDebugLogs && hasNextPage && fetchStatus === 'inProgress' && (
             <div className={classes.tableHeaderWithSpinner}>
-              <Spinner centerAll />
+              <Spinner center="screen" />
             </div>
           )}
         </div>

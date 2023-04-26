@@ -67,7 +67,7 @@ describe('csvGeneratePanel UI tests', () => {
   });
   test('should make the respective dispatch call when Test Form button is clicked', async () => {
     initFormPreview({editorId: 'filecsv', status: 'success'});
-    userEvent.click(screen.getByText(/Test Form/i));
+    await userEvent.click(screen.getByText(/Test Form/i));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchFeatures('filecsv', {formOutput: 'data'})));
   });
   test('should display the error message when there is an error', () => {

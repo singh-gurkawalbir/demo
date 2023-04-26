@@ -1,13 +1,13 @@
 import clsx from 'clsx';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   dragBar: {
     padding: 8,
-    gridArea: props => props.area,
-    cursor: props => props.orientation === 'vertical' ? 'ew-resize' : 'ns-resize',
+    // gridArea: props => props.area,
+    // cursor: props => props.orientation === 'vertical' ? 'ew-resize' : 'ns-resize',
     '&:hover > div': {
       borderColor: theme.palette.primary.light,
     },
@@ -32,7 +32,7 @@ export default function DragHandleGridItem(props) {
   const classes = useStyles(props);
 
   return (
-    <div className={classes.dragBar} onMouseDown={onMouseDown}>
+    <div className={classes.dragBar} style={{gridArea: props.area, cursor: props.orientation === 'vertical' ? 'ew-resize' : 'ns-resize'}} onMouseDown={onMouseDown}>
       <div className={clsx(classes.line, classes[`${orientation}Line`])} />
     </div>
   );

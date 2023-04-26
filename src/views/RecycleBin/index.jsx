@@ -1,7 +1,8 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ResourceTable from '../../components/ResourceTable';
@@ -15,7 +16,6 @@ import { selectors } from '../../reducers';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
 import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
-import Spinner from '../../components/Spinner';
 import NoResultTypography from '../../components/NoResultTypography';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
@@ -82,10 +82,7 @@ export default function RecycleBin(props) {
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
           <ActionGroup>
-            <KeywordSearch
-              filterKey={filterKey}
-              autoFocus
-            />
+            <KeywordSearch filterKey={filterKey} />
           </ActionGroup>
         </CeligoPageBar>
         <PageContent>

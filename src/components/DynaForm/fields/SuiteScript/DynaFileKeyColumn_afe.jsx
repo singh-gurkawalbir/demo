@@ -1,23 +1,19 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FormControl, makeStyles } from '@material-ui/core';
+import { FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import DynaMultiSelect from '../DynaMultiSelect';
 import actions from '../../../../actions';
-import Spinner from '../../../Spinner';
 import { getFileColumns } from '../../../../utils/file';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   keyColumnFormWrapper: {
     display: 'flex',
     flexDirection: 'row !important',
 
-  },
-  spinnerWrapper: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(4),
-    alignSelf: 'flex-start',
   },
 }));
 
@@ -102,6 +98,7 @@ export default function DynaFileKeyColumn_afe(props) {
 
   return (
     <FormControl
+      variant="standard"
       key={id}
       disabled={disabled}
       className={classes.keyColumnFormWrapper}>
@@ -118,7 +115,13 @@ export default function DynaFileKeyColumn_afe(props) {
         options={multiSelectOptions}
         required={required}
         onFieldChange={onFieldChange} />
-      {previewStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} />)}
+      {previewStatus === 'requested' && (
+      <Spinner
+        sx={{
+          ml: 1,
+          mt: 4,
+          alignSelf: 'flex-start'}} />
+      )}
     </FormControl>
   );
 }

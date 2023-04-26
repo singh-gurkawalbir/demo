@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { FormControl, InputAdornment, FormLabel, makeStyles } from '@material-ui/core';
+import { FormControl, InputAdornment, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { isNaN } from 'lodash';
 import { useSelector } from 'react-redux';
@@ -20,7 +21,6 @@ import { emptyObject } from '../../../constants';
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
-    marginBottom: theme.spacing(2),
   },
   dynaTextFormControl: {
     width: '100%',
@@ -54,8 +54,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: '0px !important',
   },
   textAreaField: {
-    '& > .MuiFilledInput-multiline': {
-      paddingRight: theme.spacing(4),
+    '& > .MuiInputBase-multiline': {
+      padding: 0,
     },
   },
 }));
@@ -196,7 +196,7 @@ function DynaText(props) {
   ]);
 
   return (
-    <FormControl className={classes.dynaTextFormControl}>
+    <FormControl variant="standard" className={classes.dynaTextFormControl}>
       <div className={classes.dynaTextLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {(merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) && isLabelUpdate ? updatedLabel : label}
@@ -216,7 +216,7 @@ function DynaText(props) {
         placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder}
         disabled={resource.type === 'van' ? isVanLicenseAbsent : disabled || disableText}
         multiline={multiline}
-        rowsMax={rowsMax}
+        maxRows={rowsMax}
         required={required}
         value={inpValue}
         variant="filled"

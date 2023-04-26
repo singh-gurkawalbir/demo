@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { makeStyles } from '@material-ui/core';
-import { useStoreState } from 'react-flow-renderer';
+import makeStyles from '@mui/styles/makeStyles';
+import { useStore } from 'reactflow';
 import { useSelector } from 'react-redux';
 import { FB_ICON_VIEW_SOURCE_COLUMN_WIDTH, FB_SOURCE_COLUMN_WIDTH } from '../../../../constants';
 import { useFlowContext } from '../Context';
@@ -21,7 +21,7 @@ export function Background() {
   const classes = useStyles();
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const [x, , scale] = useStoreState(s => s.transform);
+  const [x, , scale] = useStore(s => s.transform);
   const {flowId} = useFlowContext();
   const isIconView = useSelector(state =>
     selectors.fbIconview(state, flowId) === 'icon'

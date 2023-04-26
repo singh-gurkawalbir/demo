@@ -2,7 +2,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
 import { renderWithProviders } from '../../../test/test-utils';
 import LogoStrip from '../../LogoStrip';
 import OnOffCell from './cells/OnOffCell';

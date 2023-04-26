@@ -3,8 +3,8 @@ import {
   Typography,
   AccordionDetails,
   Accordion,
-} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
@@ -18,6 +18,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: theme.spacing(2),
+    '& .MuiAccordionSummary-content': {
+      margin: '10px 0',
+    },
   },
   noDataMessage: {
     padding: theme.spacing(1),
@@ -38,7 +41,8 @@ export default function DynaCeligoTable(props) {
       <AccordionSummary
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
-        expandIcon={<ExpandMoreIcon />}>
+        expandIcon={<ExpandMoreIcon />}
+        >
         <Typography variant={isTitleBold ? 'h6' : undefined}>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>

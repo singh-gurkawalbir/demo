@@ -177,7 +177,7 @@ describe('testsuite for ErrorDrawer', () => {
     const closeButtonNode = screen.getByRole('button', {name: /close/i});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockOnClose).toHaveBeenCalled();
   });
   test('should test the spinner and inprogress message of loading child jobs', async () => {

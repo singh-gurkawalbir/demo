@@ -166,7 +166,7 @@ describe('formStepDrawer UI tests', () => {
     expect(screen.getByText(/Please select/i)).toBeInTheDocument();
     expect(screen.getByText(/Submit/i)).toBeInTheDocument();
   });
-  test('should display the dropdown on Clicking Please select', () => {
+  test('should display the dropdown on Clicking Please select', async () => {
     const props = {
       integrationId: '62beb29aa0f5f2144816f80c',
       formSubmitHandler: mockSubmitHandler,
@@ -174,10 +174,10 @@ describe('formStepDrawer UI tests', () => {
     };
 
     initFormDrawer(props);
-    userEvent.click(screen.getByText(/Please select/i));
+    await userEvent.click(screen.getByText(/Please select/i));
     expect(screen.getAllByRole('option')).toHaveLength(8);  // 8 options were passed in the formMeta of the integration,hence the value 8//
   });
-  test('should run the mockSubmitHandler on clicking submit', () => {
+  test('should run the mockSubmitHandler on clicking submit', async () => {
     const props = {
       integrationId: '62beb29aa0f5f2144816f80c',
       formSubmitHandler: mockSubmitHandler,
@@ -185,10 +185,10 @@ describe('formStepDrawer UI tests', () => {
     };
 
     initFormDrawer(props);
-    userEvent.click(screen.getByText(/Submit/i));
+    await userEvent.click(screen.getByText(/Submit/i));
     expect(mockSubmitHandler).toHaveBeenCalled();
   });
-  test('should run the mockCloseHandler on clicking', () => {
+  test('should run the mockCloseHandler on clicking', async () => {
     const props = {
       integrationId: '62beb29aa0f5f2144816f80c',
       formSubmitHandler: mockSubmitHandler,
@@ -198,10 +198,10 @@ describe('formStepDrawer UI tests', () => {
     initFormDrawer(props);
     const element = document.querySelector('[aria-label="Close"]');
 
-    userEvent.click(element);
+    await userEvent.click(element);
     expect(mockCloseHandler).toHaveBeenCalled();
   });
-  test('should run the predefined handleclose function when formCloseHandler is not passed', () => {
+  test('should run the predefined handleclose function when formCloseHandler is not passed', async () => {
     const props = {
       integrationId: '62beb29aa0f5f2144816f80c',
       formSubmitHandler: jest.fn(),
@@ -211,9 +211,9 @@ describe('formStepDrawer UI tests', () => {
     initFormDrawer(props);
     const element = document.querySelector('[aria-label="Close"]');
 
-    userEvent.click(element);
+    await userEvent.click(element);
   });
-  test('should run the predefined handleSubmit function when formSubmitHandler is not passed,on clicking submit', () => {
+  test('should run the predefined handleSubmit function when formSubmitHandler is not passed,on clicking submit', async () => {
     const props = {
       integrationId: '62beb29aa0f5f2144816f80c',
       formCloseHandler: jest.fn(),
@@ -222,7 +222,7 @@ describe('formStepDrawer UI tests', () => {
     initFormDrawer(props);
 
     waitFor(() => expect(screen.getByText(/Submit/i)).toBeInTheDocument());
-    userEvent.click(screen.getByText(/Submit/i));
+    await userEvent.click(screen.getByText(/Submit/i));
   });
   test('should render empty DOM when no integrationId is passed', () => {
     const props = {

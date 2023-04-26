@@ -49,6 +49,13 @@ jest.mock('../../../../DynaForm/DynaSubmit', () => ({
 
 }));
 
+// Mocking Help as per unit testing
+jest.mock('@celigo/fuse-ui', () => ({
+  __esModule: true,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Help: jest.fn().mockReturnValue(<div>Mock Help</div>),
+}));
+
 describe('OpenPullDrawer tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
@@ -78,9 +85,9 @@ describe('OpenPullDrawer tests', () => {
     const next = screen.getByRole('button', {name: 'Next'});
 
     expect(close).toBeInTheDocument();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(1, '/');
-    userEvent.click(next);
+    await userEvent.click(next);
     expect(mockHistoryReplace).toHaveBeenNthCalledWith(2, '//pull/_revisionId/review');
   });
 
@@ -91,11 +98,9 @@ describe('OpenPullDrawer tests', () => {
     expect(screen.getByText('Integration')).toBeInTheDocument();
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(screen.getAllByText('*')).toHaveLength(2);
-    const helpKeys = screen.getAllByRole('button', {name: ''}).filter(b => b.getAttribute('class').includes('iconButton'));
+    const helpKeys = screen.getAllByRole('button', {name: ''}).filter(b => b.getAttribute('class').includes('MuiIconButton-sizeSmall'));
 
-    userEvent.click(helpKeys[0]);
-    expect(screen.getByText('Enter text describing the changes you are pulling into your integration.')).toBeInTheDocument();
-    userEvent.click(helpKeys[1]);
-    expect(screen.getByText('Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.')).toBeInTheDocument();
+    await userEvent.click(helpKeys[0]);
+    expect(screen.queryAllByText('Mock Help')).toHaveLength(2);
   });
 });

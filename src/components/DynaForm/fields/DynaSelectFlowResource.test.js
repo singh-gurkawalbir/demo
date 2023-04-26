@@ -14,6 +14,24 @@ jest.mock('../../LoadResources', () => ({
   ),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 const initialStore = reduxStore;
 
 mutateStore(initialStore, draft => {
@@ -131,45 +149,45 @@ describe('dynaSelectFlowResource UI test cases', () => {
 
       expect(utils.container).toBeEmptyDOMElement();
     });
-    test('should show the filtered export have required connectionID', () => {
+    test('should show the filtered export have required connectionID', async () => {
       initDynaSelectFlowResource(props);
 
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test exports...']);
+      expect(items).toEqual(['Please select', 'Test exports']);
     });
-    test('should show the filtered import have required connectionID', () => {
+    test('should show the filtered import have required connectionID', async () => {
       initDynaSelectFlowResource({...props, resourceType: 'imports'});
 
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test import...']);
+      expect(items).toEqual(['Please select', 'Test import']);
     });
 
-    test('should show the filtered export based on the _exportId property', () => {
+    test('should show the filtered export based on the _exportId property', async () => {
       initDynaSelectFlowResource({...props, flowResourceType: 'pp', resourceType: 'exports', flowId: '6377005b05853c7b611fceb7' });
 
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test exports...']);
+      expect(items).toEqual(['Please select', 'Test exports']);
     });
 
-    test('should show the exports in menuitems when page processor has export id and flow resource type is pageprocessor', () => {
+    test('should show the exports in menuitems when page processor has export id and flow resource type is pageprocessor', async () => {
       initDynaSelectFlowResource({...props, flowResourceType: 'pp', resourceType: 'exports', flowId: '6377005b05853c7b611fceb3' });
 
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test exports...']);
+      expect(items).toEqual(['Please select', 'Test exports']);
     });
-    test('should show the label from props and options should be visible by default', () => {
+    test('should show the label from props and options should be visible by default', async () => {
       const newOption = {
         filter: {
           $and: [
@@ -183,31 +201,31 @@ describe('dynaSelectFlowResource UI test cases', () => {
       initDynaSelectFlowResource({...props, label: 'PropsLabel', options: newOption, flowResourceType: 'pp', resourceType: 'exports', flowId: '6377005b05853c7b611fceb3' });
 
       expect(screen.getByText('PropsLabel')).toBeInTheDocument();
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test exports...']);
+      expect(items).toEqual(['Please select', 'Test exports']);
     });
   });
   describe('flow With Flow Branching', () => {
-    test('should pg the filtered export from route property have required connectionID', () => {
+    test('should pg the filtered export from route property have required connectionID', async () => {
       initDynaSelectFlowResource({...props, resourceType: 'exports', flowId: '6377005b05853c7b611fceb4' });
 
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test exports...']);
+      expect(items).toEqual(['Please select', 'Test exports']);
     });
-    test('should show the filtered export from route property have required connectionID', () => {
+    test('should show the filtered export from route property have required connectionID', async () => {
       initDynaSelectFlowResource({...props, resourceType: 'imports', flowId: '6377005b05853c7b611fceb6' });
 
-      userEvent.click(screen.getByText('Please select'));
+      await userEvent.click(screen.getByText('Please select'));
       const menuItems = screen.getAllByRole('menuitem');
       const items = menuItems.map(each => each.textContent);
 
-      expect(items).toEqual(['Please select...', 'Test import...']);
+      expect(items).toEqual(['Please select', 'Test import']);
     });
   });
 });

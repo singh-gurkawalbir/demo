@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import React, {useEffect, useState, useRef} from 'react';
 
 export default function ChatInput({

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles, Divider } from '@material-ui/core';
+import { Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -39,6 +40,7 @@ export default function CeligoDivider({ orientation = 'vertical', height = 'larg
       orientation={orientation}
       className={clsx(classes.divider, classes[position], classes[height], className)}
       height={height}
+      sx={{backgroundColor: theme => theme.palette.secondary.lightest}}
   />
   );
 }

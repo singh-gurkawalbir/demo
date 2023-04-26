@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Divider, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../../components/Buttons/Status';
-import Spinner from '../../../components/Spinner';
 import actions from '../../../actions';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import TextButton from '../../../components/Buttons/TextButton';
@@ -20,10 +20,6 @@ const useStyles = makeStyles(theme => ({
     '& > button': {
       fontSize: 14,
     },
-  },
-  spinner: {
-    marginRight: theme.spacing(0.5),
-    display: 'flex',
   },
   divider: {
     height: theme.spacing(3),
@@ -100,7 +96,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
       { retryStatus === 'inProgress' && (
       <div className={classes.retryContainer}>
         <Divider orientation="vertical" className={classes.divider} />
-        <Spinner size={16} className={classes.spinner} />
+        <Spinner size="small" sx={{ mr: 0.5, display: 'flex'}} />
         <Typography variant="caption" component="div" >
           Retrying
         </Typography>

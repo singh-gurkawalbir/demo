@@ -1,9 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles,
-  Checkbox,
-  FormControlLabel,
-} from '@material-ui/core';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({

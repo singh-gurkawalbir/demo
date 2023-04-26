@@ -1,9 +1,9 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import { ArrowPopper } from '@celigo/fuse-ui';
+import MenuItem from '@mui/material/MenuItem';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import EllipsisIconVertical from '../../../icons/EllipsisVerticalIcon';
 import NotificationsIcon from '../../../icons/NotificationsIcon';
 
@@ -12,15 +12,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  menu: {
-    width: 180,
-    '& MuiMenu-paper': {
-      maxHeight: '250px',
-    },
-    '& ul': {
-      padding: 0,
-    },
   },
   menuitem: {
     minWidth: 145,
@@ -83,15 +74,13 @@ export default function HeaderAction(props) {
         aria-controls="long-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        className={classes.action}>
+        className={classes.action}
+        size="large">
         <EllipsisIconVertical />
       </IconButton>
-      <Menu
-        className={classes.menu}
-        elevation={2}
+      <ArrowPopper
         id="long-menu"
         anchorEl={anchorEl}
-        keepMounted
         open={open}
         onClose={handleClose}>
         {options.map(option => (
@@ -103,7 +92,7 @@ export default function HeaderAction(props) {
             {option}
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
     </div>
   );
 }

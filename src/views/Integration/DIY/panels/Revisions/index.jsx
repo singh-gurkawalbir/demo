@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import { generateId } from '../../../../../utils/string';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
@@ -14,7 +16,6 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import RevisionFilters from './RevisionFilters';
 import CeligoTable from '../../../../../components/CeligoTable';
 import revisionsMetadata from '../../../../../components/ResourceTable/revisions/metadata';
-import Spinner from '../../../../../components/Spinner';
 import ViewDetailsDrawer from '../../../../../components/drawer/Revisions/ViewDetails';
 import OpenPullDrawer from '../../../../../components/drawer/Revisions/Pull/Open';
 import ReviewPullChangesDrawer from '../../../../../components/drawer/Revisions/Pull/ReviewChanges';
@@ -74,7 +75,9 @@ const RevisionsList = ({ integrationId }) => {
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
   if (isLoadingRevisions) {
-    return <Spinner loading size="large" />;
+    return (
+      <Spinner center="horizontal" size="large" />
+    );
   }
 
   const NoRevisionsInfo = () => {

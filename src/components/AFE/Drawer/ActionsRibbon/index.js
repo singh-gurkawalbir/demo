@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import editorMetadata from '../../metadata';
 import PreviewButtonGroup from '../actions/PreviewButtonGroup';

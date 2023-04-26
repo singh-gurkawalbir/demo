@@ -2,6 +2,7 @@ import React from 'react';
 import {screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { act } from 'react-dom/test-utils';
 import actions from '../../actions';
 import AttachFlows from './index';
 import { runServer } from '../../test/api/server';
@@ -13,6 +14,26 @@ const mockDispatch = jest.fn(actions => {
     default: initialStore.dispatch(actions);
   }
 });
+
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
+jest.mock('../LoadResources', () => ({
+  __esModule: true,
+  ...jest.requireActual('../LoadResources'),
+  default: ({children}) => <>{children}</>,
+}));
 
 jest.mock('react-redux', () => ({
   __esModule: true,
@@ -27,13 +48,13 @@ describe('attach Flows', () => {
   test('should able to test the Attach flows modal dialog box attach button', async done => {
     const {store} = renderWithProviders(<MemoryRouter><AttachFlows integrationId="6248835cd68e2457e3b105ff" flowGroupingId="62a5b17bd92aff47b2eba399" /></MemoryRouter>, {initialStore});
 
-    store.dispatch(actions.resource.requestCollection('connections'));
+    act(() => { store.dispatch(actions.resource.requestCollection('connections')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.connections).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('flows'));
+    act(() => { store.dispatch(actions.resource.requestCollection('flows')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.flows).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('exports'));
+    act(() => { store.dispatch(actions.resource.requestCollection('exports')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.exports).toBeDefined());
     const Message = screen.getAllByRole('checkbox');
 
@@ -71,13 +92,13 @@ describe('attach Flows', () => {
   test('should able to test the Attach flows modal dialog box cancel button', async () => {
     const {store} = renderWithProviders(<MemoryRouter><AttachFlows integrationId="6248835cd68e2457e3b105ff" flowGroupingId="62a5b17bd92aff47b2eba399" /></MemoryRouter>, {initialStore});
 
-    store.dispatch(actions.resource.requestCollection('connections'));
+    act(() => { store.dispatch(actions.resource.requestCollection('connections')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.connections).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('integrations'));
+    act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('flows'));
+    act(() => { store.dispatch(actions.resource.requestCollection('flows')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.flows).toBeDefined());
-    store.dispatch(actions.resource.requestCollection('exports'));
+    act(() => { store.dispatch(actions.resource.requestCollection('exports')); });
     await waitFor(() => expect(store?.getState()?.data?.resources?.exports).toBeDefined());
     const Message4 = screen.getByText('Cancel');
 

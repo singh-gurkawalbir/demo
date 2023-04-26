@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Tabs, Tab } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Tabs, Tab } from '@mui/material';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import DrawerContent from '../../Right/DrawerContent';
@@ -24,7 +24,7 @@ const allTabs = {
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: `calc(100% - ${theme.spacing(2)}px)`,
+    height: `calc(100% - ${theme.spacing(2)})`,
     backgroundColor: 'white',
     border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,

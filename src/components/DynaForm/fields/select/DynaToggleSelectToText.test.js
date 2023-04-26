@@ -11,7 +11,7 @@ describe('dynaToggleSelectToText tests', () => {
 
     await renderWithProviders(<DynaToggleSelectToText {...props} />);
     expect(screen.getByRole('button', {name: 'TextLabel'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'TextLabel'}));
+    await userEvent.click(screen.getByRole('button', {name: 'TextLabel'}));
     expect(screen.getByRole('button', {name: 'Please select'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'SelectLabel'})).toBeInTheDocument();
   });

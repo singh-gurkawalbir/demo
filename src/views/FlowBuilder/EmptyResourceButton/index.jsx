@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { IconButton } from '@mui/material';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -29,6 +29,9 @@ export const resourceButtonStyles = makeStyles(theme => ({
     fontSize: 16,
     fontFamily: 'source sans pro',
     marginRight: theme.spacing(1),
+    flexDirection: 'column',
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     '& >* svg': {
       marginBottom: 5,
       fontSize: `${theme.spacing(6)}px !important`,

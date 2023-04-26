@@ -90,7 +90,7 @@ describe('lookup component Test cases', () => {
     const { createLookup } = await initLookup();
 
     expect(screen.queryByText(/Lookup type/i)).not.toBeInTheDocument();
-    userEvent.click(createLookup);
+    await userEvent.click(createLookup);
 
     await expect(screen.findByText(/Test Button 1/i)).resolves.toBeInTheDocument();
     expect(screen.queryByText(/Test Button 2/i)).toBeInTheDocument();
@@ -112,7 +112,7 @@ describe('lookup component Test cases', () => {
 
     expect(closeButton).toBeInTheDocument();
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
 
     await expect(onCancel).toHaveBeenCalledTimes(1);
   });
@@ -141,7 +141,7 @@ describe('lookup component Test cases', () => {
 
       expect(ActionButton).toBeInTheDocument();
 
-      userEvent.click(ActionButton);
+      await userEvent.click(ActionButton);
 
       await expect(screen.findByText(/Edit lookup/i)).resolves.toBeInTheDocument();
       expect(screen.queryByText(/Delete lookup/i)).toBeInTheDocument();
@@ -157,7 +157,7 @@ describe('lookup component Test cases', () => {
 
       expect(deleteLookup).toBeInTheDocument();
 
-      userEvent.click(deleteLookup);
+      await userEvent.click(deleteLookup);
 
       expect(onSave).toHaveBeenCalledTimes(1);
     });
@@ -169,7 +169,7 @@ describe('lookup component Test cases', () => {
         const editLookup = screen.queryByText(/Edit lookup/i);
 
         expect(editLookup).toBeInTheDocument();
-        userEvent.click(editLookup);
+        await userEvent.click(editLookup);
 
         await expect(screen.findByText(/Test Button 1/i)).resolves.toBeInTheDocument();
 
@@ -180,7 +180,7 @@ describe('lookup component Test cases', () => {
 
       test('should pass the intial render with create Lookups and handleSubmit sucess!', async () => {
         expect(testButton1).toBeInTheDocument();
-        userEvent.click(testButton1);
+        await userEvent.click(testButton1);
         expect(onSave).toHaveBeenCalledTimes(1);
         expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
         expect(onSave).toHaveBeenCalledWith([{
@@ -197,7 +197,7 @@ describe('lookup component Test cases', () => {
           },
         });
 
-        userEvent.click(testButton1);
+        await userEvent.click(testButton1);
         expect(onSave).toHaveBeenCalledTimes(0);
         expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
         expect(screen.queryByText(/Lookup with same name is already present!/i)).toBeInTheDocument();
@@ -210,7 +210,7 @@ describe('lookup component Test cases', () => {
           },
         });
 
-        userEvent.click(testButton1);
+        await userEvent.click(testButton1);
         expect(onSave).toHaveBeenCalledTimes(1);
         expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
         expect(onSave).toHaveBeenCalledWith([{

@@ -1,56 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import JobErrorTable from './JobErrorTable';
 import ModalDialog from '../../ModalDialog';
 import Help from '../../Help';
 import customCloneDeep from '../../../utils/customCloneDeep';
-
-const useStyles = makeStyles(theme => ({
-  iconButton: {
-    position: 'absolute',
-    top: 18,
-    right: 70,
-    padding: 0,
-    color: theme.palette.text.hint,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
-    },
-    '&:after': {
-      content: '""',
-      height: 18,
-      width: 1,
-      position: 'absolute',
-      right: -10,
-      background: theme.palette.secondary.lightest,
-    },
-  },
-  spinner: {
-    left: '0px',
-    right: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
-    width: '100%',
-    position: 'absolute',
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'inherit',
-    '& div': {
-      width: '20px !important',
-      height: '20px !important',
-    },
-    '& span': {
-      marginLeft: '10px',
-      color: theme.palette.background.paper,
-    },
-  },
-}));
 
 export default function JobErrorDialog({
   jobId,
@@ -97,18 +52,34 @@ export default function JobErrorDialog({
     onCloseClick();
   }
 
-  const classes = useStyles();
-
   return (
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
       <>
         <div>{`${job && job.name}`}</div>
 
         <Help
-          key="help-helpSummary"
           data-test="help-helpSummary"
           title="Job Errors"
-          className={classes.iconButton}
+          sx={{
+            position: 'absolute',
+            top: 18,
+            right: 70,
+            color: 'text.hint',
+            '&:hover': {
+              bgcolor: 'background.paper',
+              '& > span': {
+                color: 'primary.main',
+              },
+            },
+            '&:after': {
+              content: '""',
+              height: 18,
+              width: 1,
+              position: 'absolute',
+              right: -10,
+              bgcolor: 'secondary.lightest',
+            },
+          }}
           helpKey="jobErrors.helpSummary"
           fieldId="helpSummary"
           resourceType="jobErrors"

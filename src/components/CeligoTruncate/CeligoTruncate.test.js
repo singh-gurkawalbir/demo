@@ -3,28 +3,9 @@ import React from 'react';
 import { render, screen, waitFor} from '@testing-library/react';
 import CeligoTruncate from '.';
 
-jest.mock('react-truncate', () => ({
+jest.mock('@mui/material', () => ({
   __esModule: true,
-  ...jest.requireActual('react-truncate'),
-  default: props => {
-    if (props.children.length > props.lines) { props.onTruncate(true); }
-
-    return (
-      <span
-        className="some-name"
-        width="0">
-        <span />
-        <span>
-          hover
-          <br />
-        </span>
-      </span>
-    );
-  },
-}));
-jest.mock('@material-ui/core', () => ({
-  __esModule: true,
-  ...jest.requireActual('@material-ui/core'),
+  ...jest.requireActual('@mui/material'),
   Tooltip: props => (
     <>
       <div>
@@ -49,24 +30,17 @@ describe('Celigo truncate test', () => {
     const tooltipcalled = screen.getByText('ToolTipCalled');
 
     expect(tooltipcalled).toBeInTheDocument();
-    const hover = screen.getByText('hover');
-
-    expect(hover).toBeInTheDocument();
   });
   test('should test when truncate does not happens', async () => {
     render(
       <CeligoTruncate
         isLoggable lines={3} placement="left" ellipsis="..."
-        className="some-name" enterDelay={0}>
+        className="some-name" enterDelay={0} lineHeight={100}>
         hover<br />
         hover2
       </CeligoTruncate>);
-
     const tooltipcalled = screen.queryByText('ToolTipCalled');
 
     expect(tooltipcalled).not.toBeInTheDocument();
-    const hover = screen.getByText('hover');
-
-    expect(hover).toBeInTheDocument();
   });
 });

@@ -1,15 +1,13 @@
-import MomentDateFnsUtils from '@date-io/moment';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-  KeyboardTimePicker,
-} from '@material-ui/pickers';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import {FormLabel} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import {FormLabel} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FieldMessage from '../FieldMessage';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
@@ -73,29 +71,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const useDatePickerProps = removePickerDialog => {
-  const classes = useStyles();
-
-  return removePickerDialog ? {
-    InputAdornmentProps: {disablePointerEvents: true},
-    keyboardIcon: null,
-  } : {
-    keyboardIcon: <CalendarIcon className={classes.iconWrapper} />,
-  };
-};
-const useTimePickerProps = removePickerDialog => {
-  const classes = useStyles();
-
-  return removePickerDialog ? {
-    InputAdornmentProps: {disablePointerEvents: true},
-    keyboardIcon: null,
-  } : {
-    keyboardIcon: <AccessTimeIcon className={classes.iconWrapper} />,
-  };
-};
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, doNotAllowFutureDates} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, doNotAllowFutureDates} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -110,6 +88,8 @@ export default function DateTimePicker(props) {
     }
     setTimeValue(dateTimeValue);
   };
+  const preferences = useSelector(state => selectors.userOwnPreferences(state));
+  const timeZone = useSelector(state => selectors.userTimezone(state));
 
   const setFormatDateValue = dateTimeValue => {
     if (dateTimeValue) {
@@ -186,9 +166,6 @@ export default function DateTimePicker(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
-  const datePickerProps = useDatePickerProps(removePickerDialog);
-  const timePickerProps = useTimePickerProps(removePickerDialog);
-
   return (
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
@@ -199,17 +176,17 @@ export default function DateTimePicker(props) {
         </>
         )}
       </div>
-      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
+      <LocalizationProvider dateAdapter={AdapterMoment} variant="filled">
         <div className={classes.dateTimeWrapper}>
           <div className={classes.fieldWrapper}>
-            <KeyboardDatePicker
+            <DatePicker
+              maxDate={doNotAllowFutureDates && moment()}
               {...isLoggableAttr(isLoggable)}
               disabled={disabled}
-              variant="inline"
               data-test="date"
               format={dateFormat}
-              placeholder={dateFormat}
-              value={dateValue}
+              value={convertUtcToTimezone(dateValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true})}
+              onChange={setFormatDateValue}
               label={dateLabel || 'Date'}
               onKeyDown={e => {
                 // this is specifically for qa to inject their date time string
@@ -223,25 +200,17 @@ export default function DateTimePicker(props) {
 
                 e.preventDefault();
               }}
-              onChange={setFormatDateValue}
-              disableToolbar
-              className={classes.keyBoardDateTimeWrapper}
-              fullWidth
-              InputProps={{ className: classes.inputDateTime, readOnly: true}}
-              {...datePickerProps}
-              maxDate={doNotAllowFutureDates && moment()}
-      />
+              slots={{openPickerIcon: CalendarIcon }}
+            />
           </div>
           <div className={classes.fieldWrapper}>
-            <KeyboardTimePicker
+            <MobileTimePicker
               {...isLoggableAttr(isLoggable)}
               disabled={disabled}
-              variant="inline"
               data-test="time"
               label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
               format={timeFormat}
-              placeholder={timeFormat}
               onKeyDown={e => {
                 // this is specifically for qa to inject their date time string
                 // they should alter the input dom to add a qa attribute prior to injection for date time
@@ -254,17 +223,14 @@ export default function DateTimePicker(props) {
 
                 e.preventDefault();
               }}
-              value={timeValue}
+              value={convertUtcToTimezone(timeValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true})}
               onChange={setFormatTimeValue}
-              fullWidth
-              className={classes.keyBoardDateTimeWrapper}
-              InputProps={{ className: classes.inputDateTime, readOnly: true}}
-              {...timePickerProps}
-      />
+              slots={{openPickerIcon: AccessTimeIcon}}
+            />
           </div>
         </div>
         <FieldMessage {...props} />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
     </>
   );
 }

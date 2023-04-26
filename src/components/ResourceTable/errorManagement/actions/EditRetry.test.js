@@ -44,7 +44,7 @@ async function renderFuntion(actionProps, data, errorType) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error management edit retry data action tests', () => {
@@ -56,7 +56,7 @@ describe('error management edit retry data action tests', () => {
     const editRetry = screen.getByText('Edit retry data');
 
     expect(editRetry).toBeInTheDocument();
-    userEvent.click(editRetry);
+    await userEvent.click(editRetry);
     expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/editRetry');
   });
   test('should redirect to edit Retry page and make dispatch call when error type is open', async () => {
@@ -64,7 +64,7 @@ describe('error management edit retry data action tests', () => {
     const editRetry = screen.getByText('Edit retry data');
 
     expect(editRetry).toBeInTheDocument();
-    userEvent.click(editRetry);
+    await userEvent.click(editRetry);
     expect(mockHistoryPush).toHaveBeenCalledWith('/open/details/someerrorId/editRetry');
     expect(mockDispatch).toHaveBeenCalledWith(
       {filter: {activeErrorId: 'someerrorId'}, name: 'openErrors', type: 'PATCH_FILTER'}
@@ -72,7 +72,7 @@ describe('error management edit retry data action tests', () => {
   });
   test('should have enable title when flow is disabled', async () => {
     await renderFuntion({resourceId: 'resourceId', isFlowDisabled: true}, {retryDataKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
-    const editRetry = screen.getByTitle('Enable the flow to edit retry data');
+    const editRetry = screen.getByLabelText('Enable the flow to edit retry data');
 
     expect(editRetry).toBeInTheDocument();
     expect(editRetry.textContent).toBe('Edit retry data');

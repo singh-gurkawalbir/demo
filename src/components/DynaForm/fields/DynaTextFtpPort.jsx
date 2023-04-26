@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
+import TextField from '@mui/material/TextField';
+import { FormLabel, FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import useFormContext from '../../Form/FormContext';
@@ -68,7 +69,7 @@ export default function DynaTextFtpPort(props) {
   );
 
   return (
-    <FormControl className={classes.dynaTextFtpFiedWrapper}>
+    <FormControl variant="standard" className={classes.dynaTextFtpFiedWrapper}>
       <div>
         <FormLabel htmlFor={id} error={!isValid}>
           {label}

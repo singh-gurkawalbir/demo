@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../../actions';

@@ -6,11 +6,11 @@ import {
   TextField,
   FormControl,
   InputAdornment,
-} from '@material-ui/core';
+} from '@mui/material';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
@@ -199,7 +199,7 @@ export default function DynaAutoSuggest(props) {
   };
 
   return (
-    <FormControl disabled={disabled} className={classes.root}>
+    <FormControl variant="standard" disabled={disabled} className={classes.root}>
       <div className={classes.dynaAutoSuggestLabelWrapper}>
         <FormLabel required={required} error={!isValid}>
           {label}

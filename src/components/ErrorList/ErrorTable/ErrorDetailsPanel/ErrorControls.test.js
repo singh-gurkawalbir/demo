@@ -75,7 +75,7 @@ mutateStore(initialStore, draft => {
 });
 
 describe('ErrorControls UI test cases', () => {
-  test('should make a dispatch call when clicked on previous error button', () => {
+  test('should make a dispatch call when clicked on previous error button', async () => {
     const props = {
       errorsInPage: [{errorId: '5646501091'}, {errorId: '5556857034'}, {errorId: '5556824990'}, {errorId: '5666371243'}],
       activeErrorId: '5556857034',
@@ -87,13 +87,13 @@ describe('ErrorControls UI test cases', () => {
     };
 
     renderWithProviders(<ErrorControls {...props} />, {initialStore});
-    userEvent.click(screen.getByRole('button', {name: 'Previous'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Previous'}));
     expect(mockDispatch).toHaveBeenCalledWith(actions.patchFilter('openErrors', {
       activeErrorId: '5646501091',
     }));
   });
 
-  test('should make a dispatch call when clicked on next error button', () => {
+  test('should make a dispatch call when clicked on next error button', async () => {
     const props = {
       errorsInPage: [{errorId: '5646501091'}, {errorId: '5556857034'}, {errorId: '5556824990'}, {errorId: '5666371243'}],
       activeErrorId: '5556857034',
@@ -105,7 +105,7 @@ describe('ErrorControls UI test cases', () => {
     };
 
     renderWithProviders(<ErrorControls {...props} />, {initialStore});
-    userEvent.click(screen.getByRole('button', {name: 'Next'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Next'}));
     expect(mockDispatch).toHaveBeenCalledWith(actions.patchFilter('openErrors', {
       activeErrorId: '5556824990',
     }));

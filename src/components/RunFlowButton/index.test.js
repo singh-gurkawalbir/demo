@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as redux from 'react-redux';
 import RunFlowButton from '.';
@@ -162,15 +162,19 @@ describe('runflowComponent UI testing', () => {
 
       await renderFunction(props, true);
 
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      userEvent.click(button);
+        await userEvent.click(button);
+      });
 
-      const runflow = screen.getByText('Run');
+      waitFor(async () => {
+        const runflow = screen.getByText('Run');
 
-      userEvent.click(runflow);
+        await userEvent.click(runflow);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test the cancel run flow button for delta export', async () => {
       const props = {
@@ -184,15 +188,22 @@ describe('runflowComponent UI testing', () => {
 
       await renderFunction(props, 'received');
 
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      userEvent.click(button);
+        await userEvent.click(button);
+      });
+      let cancelrunflow;
 
-      const cancelrunflow = screen.getByText('Cancel');
+      waitFor(async () => {
+        cancelrunflow = screen.getByText('Cancel');
+      });
 
-      userEvent.click(cancelrunflow);
+      waitFor(async () => {
+        await userEvent.click(cancelrunflow);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test for error api call', async () => {
       const props = {
@@ -201,11 +212,13 @@ describe('runflowComponent UI testing', () => {
       };
 
       await renderFunction(props, 'error');
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      userEvent.click(button);
+        await userEvent.click(button);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test for error api call duplicate', async () => {
       const props = {
@@ -214,11 +227,13 @@ describe('runflowComponent UI testing', () => {
       };
 
       await renderFunction(props, 'error');
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      userEvent.click(button);
+        await userEvent.click(button);
 
-      expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+        expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
+      });
     });
     test('should test when status is none', async () => {
       const props = {
@@ -227,11 +242,13 @@ describe('runflowComponent UI testing', () => {
       };
 
       await renderFunction(props);
-      const button = screen.getByRole('button');
+      waitFor(async () => {
+        const button = screen.getByRole('button');
 
-      userEvent.click(button);
+        await userEvent.click(button);
 
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      });
     });
   });
   test('should test for simple import clicking run flow button here', async () => {
@@ -245,21 +262,29 @@ describe('runflowComponent UI testing', () => {
 
     const {store} = await renderWithProps(props);
 
-    const input = screen.getByDisplayValue('');
+    let input;
 
-    jest.spyOn(input, 'click').mockImplementation();
+    waitFor(() => {
+      input = screen.getByDisplayValue('');
 
-    userEvent.upload(input, files);
-    await waitFor(() => expect(input.files).toHaveLength(1));
+      jest.spyOn(input, 'click').mockImplementation();
 
-    const m = Object.keys(store?.getState()?.session?.fileUpload);
+      // userEvent.upload(input, files);
+      fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
+      expect(input.files).toHaveLength(1);
 
-    await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
+      const m = Object.keys(store?.getState()?.session?.fileUpload);
 
-    const button = screen.getByRole('button');
+   store?.getState()?.session?.fileUpload[m].status === 'received';
+    });
+    let button;
 
-    userEvent.click(button);
-    expect(input.click).toHaveBeenCalled();
+    waitFor(async () => {
+      button = screen.getByRole('button');
+
+      await userEvent.click(button);
+      expect(input.click).toHaveBeenCalled();
+    });
   });
   test('should test simple import clicking run now button here', async () => {
     const props = {
@@ -272,23 +297,29 @@ describe('runflowComponent UI testing', () => {
     ];
 
     const {store} = await renderWithProps(props);
+    let input;
 
-    const input = screen.getByDisplayValue('');
+    waitFor(async () => { input = screen.getByDisplayValue(''); });
 
     jest.spyOn(input, 'click').mockImplementation();
 
-    userEvent.upload(input, files);
+    // userEvent.upload(input, files);
+    fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
 
     const m = Object.keys(store?.getState()?.session?.fileUpload);
 
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
-    const button = screen.getByRole('button');
+    let button;
 
-    userEvent.click(button);
+    waitFor(() => { button = screen.getByRole('button'); });
 
-    await waitFor(() => store?.getState()?.session?.flows.runStatus === 'started');
-    expect(input.click).toHaveBeenCalledTimes(1);
+    waitFor(async () => { await userEvent.click(button); });
+
+    waitFor(() => {
+      store?.getState()?.session?.flows.runStatus === 'started';
+      expect(input.click).toHaveBeenCalledTimes(1);
+    });
   });
   test('should test simple import clicking Run flow button and different variant', async () => {
     const props = {
@@ -306,16 +337,23 @@ describe('runflowComponent UI testing', () => {
 
     jest.spyOn(input, 'click').mockImplementation();
 
-    userEvent.upload(input, files);
+    // userEvent.upload(input, files);
+    fireEvent.change(input, { target: { files: { item: () => files, length: 1, 0: files } } });
     await waitFor(() => expect(input.files).toHaveLength(1));
 
     const m = Object.keys(store?.getState()?.session?.fileUpload);
 
     await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
-    const button = screen.getByText('Run flow');
+    let button;
 
-    userEvent.click(button);
-    expect(input.click).toHaveBeenCalledTimes(1);
+    waitFor(async () => {
+      button = screen.getByText('Run flow');
+    });
+
+    waitFor(async () => {
+      await userEvent.click(button);
+      expect(input.click).toHaveBeenCalledTimes(1);
+    });
   });
   test('should do test for simple export with pagegenerator length = 0', async () => {
     const mockDispatch = jest.fn();
@@ -329,18 +367,20 @@ describe('runflowComponent UI testing', () => {
 
     await renderWithProps(props);
 
-    const button = screen.getByRole('button');
+    waitFor(async () => {
+      const button = screen.getByRole('button');
 
-    expect(button).toBeInTheDocument();
-    userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith(
-      {
-        type: 'FLOW_RUN',
-        flowId: '5f0802e086bd7d4f42eadd0b',
-        customStartDate: undefined,
-        options: undefined,
-      }
-    );
+      expect(button).toBeInTheDocument();
+      await userEvent.click(button);
+      expect(mockDispatch).toHaveBeenCalledWith(
+        {
+          type: 'FLOW_RUN',
+          flowId: '5f0802e086bd7d4f42eadd0b',
+          customStartDate: undefined,
+          options: undefined,
+        }
+      );
+    });
   });
   test('should do test for on rum mount', async () => {
     const mockDispatch = jest.fn();

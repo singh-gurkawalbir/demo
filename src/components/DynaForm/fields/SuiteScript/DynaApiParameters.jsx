@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { Button, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Button, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';

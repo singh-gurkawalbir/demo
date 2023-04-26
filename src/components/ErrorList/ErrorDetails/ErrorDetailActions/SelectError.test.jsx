@@ -45,7 +45,7 @@ describe('uI test cases for select error', () => {
   const resourceId = '621ce7db7988314f51662c09';
   const errorId = ['5ea16c789ab71928a617489'];
 
-  test('should test error checkbox is checked', () => {
+  test('should test error checkbox is checked', async () => {
     const error = {errorId, selected: false};
 
     renderWithProviders(<SelectError
@@ -53,7 +53,7 @@ describe('uI test cases for select error', () => {
       actionInProgress={false} label="Apply" tooltip="TooltipText" />);
     const allerrors = screen.getByRole('checkbox');
 
-    userEvent.click(allerrors);
+    await userEvent.click(allerrors);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.selectErrors({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
@@ -62,7 +62,7 @@ describe('uI test cases for select error', () => {
       checked: true,
     }));
   });
-  test('should test error checkbox is unselected', () => {
+  test('should test error checkbox is unselected', async () => {
     const error = {errorId, selected: true};
 
     renderWithProviders(<SelectError
@@ -70,7 +70,7 @@ describe('uI test cases for select error', () => {
       actionInProgress={false} label="Cancel" tooltip="TooltipText" />);
     const allerrors = screen.getByRole('checkbox');
 
-    userEvent.click(allerrors);
+    await userEvent.click(allerrors);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.selectErrors({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',

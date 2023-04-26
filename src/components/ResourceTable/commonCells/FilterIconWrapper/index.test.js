@@ -1,11 +1,11 @@
 
-import { render } from '@testing-library/react';
 import React from 'react';
 import FilterIconWrapper from '.';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 describe('testsuite for FilterIconWrapper', () => {
   test('should test the Filter Icon Wrapper when the selected prop is set to false', () => {
-    render(
+    renderWithProviders(
       <FilterIconWrapper selected={false} />
     );
     const svgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
@@ -14,7 +14,7 @@ describe('testsuite for FilterIconWrapper', () => {
     expect(svgNode.getAttribute('class')).toEqual(expect.stringContaining('makeStyles-filter-'));
   });
   test('should test the Filter Icon Wrapper when the selected prop is set to true', () => {
-    render(
+    renderWithProviders(
       <FilterIconWrapper selected />
     );
     const svgNode = document.querySelector('svg[viewBox="0 0 24 24"]');

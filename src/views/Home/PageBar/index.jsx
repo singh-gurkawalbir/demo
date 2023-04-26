@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import { generateNewId } from '../../../utils/resource';
@@ -31,12 +31,12 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
     },
     '&:last-child': {
-      marginLeft: -theme.spacing(0.5),
+      marginLeft: -parseInt(theme.spacing(0.5), 10),
     },
   },
   viewsWrapper: {
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    paddingLeft: theme.spacing(3),
+    paddingLeft: parseInt(theme.spacing(3), 10),
   },
   activeView: {
     color: theme.palette.primary.main,
@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: '100%',
       borderBottom: `2px solid ${theme.palette.primary.main}`,
-      bottom: -theme.spacing(0.5),
+      bottom: -parseInt(theme.spacing(0.5), 10),
       left: 0,
     },
   },
@@ -131,7 +131,7 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      <KeywordSearch filterKey={FILTER_KEY} autoFocus placeHolder="Search integrations & flows" />
+      <KeywordSearch filterKey={FILTER_KEY} placeholder="Search integrations & flows" />
 
       <ActionGroup>
         <div className={classes.buttonWrapper}>

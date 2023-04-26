@@ -1,15 +1,9 @@
-import {
-  ClickAwayListener,
-  IconButton,
-  makeStyles,
-  MenuItem,
-  MenuList,
-  Tooltip,
-} from '@material-ui/core';
+import { ClickAwayListener, IconButton, MenuItem, MenuList, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import ArrowPopper from '../../../../../components/ArrowPopper';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import AddEmptyStepIcon from '../../../../../components/icons/AddEmptyStepIcon';
 import BranchIcon from '../../../../../components/icons/BranchIcon';
 import AddIcon from '../../../../../components/icons/AddIcon';

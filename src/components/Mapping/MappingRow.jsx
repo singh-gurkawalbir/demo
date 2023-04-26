@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Tooltip, Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import {selectors} from '../../reducers';

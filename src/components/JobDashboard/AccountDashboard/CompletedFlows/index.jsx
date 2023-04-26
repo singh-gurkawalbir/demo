@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
-import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
 import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
@@ -54,7 +54,9 @@ export default function CompletedFlows() {
   return (
     <div className={!showEmptyMessage && classes.completeFlowTable}>
       <div className={classes.root}>
-        {isCompletedJobsCollectionLoading ? (<Spinner loading size="large" />) : (
+        {isCompletedJobsCollectionLoading ? (
+          <Spinner center="horizontal" size="large" />
+        ) : (
           <>
             <Filters
               filterKey={filterKey}

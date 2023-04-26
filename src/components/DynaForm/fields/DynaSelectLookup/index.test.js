@@ -159,7 +159,7 @@ describe('Testsuite for Dyna Select Lookup', () => {
     expect(screen.getByRole('button', { name: /lookup drawer save/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /lookup drawer save/i })).toBeDisabled();
   });
-  test('should test the Dyna Select Lookup add lookup button', () => {
+  test('should test the Dyna Select Lookup add lookup button', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -189,10 +189,10 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(addLookupButtonNode).toBeInTheDocument();
-    userEvent.click(addLookupButtonNode);
+    await userEvent.click(addLookupButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/lookups/add');
   });
-  test('should test the Dyna Select Lookup edit lookup button', () => {
+  test('should test the Dyna Select Lookup edit lookup button', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -223,10 +223,10 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(editLookupButtonNode).toBeInTheDocument();
-    userEvent.click(editLookupButtonNode);
+    await userEvent.click(editLookupButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/lookups/edit/value_123');
   });
-  test('should test the Dyna Select Lookup manage lookup button', () => {
+  test('should test the Dyna Select Lookup manage lookup button', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -255,10 +255,10 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(actionButtonNode).toBeInTheDocument();
-    userEvent.click(actionButtonNode);
+    await userEvent.click(actionButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/lookup');
   });
-  test('should test the Dyna Select Lookup manage lookup save button', () => {
+  test('should test the Dyna Select Lookup manage lookup save button', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -287,10 +287,10 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(manageLookupSaveButtonNode).toBeInTheDocument();
-    userEvent.click(manageLookupSaveButtonNode);
+    await userEvent.click(manageLookupSaveButtonNode);
     expect(mockOnFieldChange).toHaveBeenCalledWith('lookupField_id', 'lookups');
   });
-  test('should test the Dyna Select lookup drawer and click on save option', () => {
+  test('should test the Dyna Select lookup drawer and click on save option', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -320,11 +320,11 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(lookupDrawerSaveButtonNode).toBeInTheDocument();
-    userEvent.click(lookupDrawerSaveButtonNode);
+    await userEvent.click(lookupDrawerSaveButtonNode);
     expect(mockOnFieldChange).toBeCalled();
     expect(mockHistoryReplace).toHaveBeenCalledWith('/test/lookups/edit/new_value');
   });
-  test('should test the Dyna Select lookup drawer and click on save option when the isEdit is false', () => {
+  test('should test the Dyna Select lookup drawer and click on save option when the isEdit is false', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -354,11 +354,11 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(lookupDrawerSaveButtonNode).toBeInTheDocument();
-    userEvent.click(lookupDrawerSaveButtonNode);
+    await userEvent.click(lookupDrawerSaveButtonNode);
     expect(mockOnFieldChange).toBeCalled();
     expect(mockHistoryReplace).toHaveBeenCalledWith('/test/lookups/edit/new_value');
   });
-  test('should test the Dyna Select lookup drawer and click on save option when the isEdit is true and when no value is passed', () => {
+  test('should test the Dyna Select lookup drawer and click on save option when the isEdit is true and when no value is passed', async () => {
     jest.spyOn(FormContext, 'default').mockReturnValue('mock formcontext');
     jest.spyOn(LookupDrawer, 'default').mockImplementationOnce(props => (
       <div>
@@ -388,7 +388,7 @@ describe('Testsuite for Dyna Select Lookup', () => {
     });
 
     expect(lookupDrawerSaveButtonNode).toBeInTheDocument();
-    userEvent.click(lookupDrawerSaveButtonNode);
+    await userEvent.click(lookupDrawerSaveButtonNode);
     expect(mockOnFieldChange).not.toBeCalled();
     expect(mockHistoryReplace).not.toBeCalled();
   });

@@ -92,23 +92,22 @@ describe('MFAVerify', () => {
       },
       status: 'received'};
     });
-
-    expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument());
 
     expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '123456');
+    await userEvent.type(oneTimePassword, '123456');
     const trustedDeviceNode = screen.getByRole('checkbox', {name: 'Trust this device'});
 
     expect(trustedDeviceNode).not.toBeChecked();
-    userEvent.click(trustedDeviceNode);
+    await userEvent.click(trustedDeviceNode);
     await waitFor(() => expect(trustedDeviceNode).toBeChecked());
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.mfaVerify.request({ code: '123456', trustDevice: true }));
   });
@@ -140,17 +139,17 @@ describe('MFAVerify', () => {
       status: 'received'};
     });
 
-    expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument());
 
     expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '');
+    await userEvent.type(oneTimePassword, ' ');
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
     const warningMessageNode = screen.getByText(/One time passcode is required/i);
 
     expect(warningMessageNode).toBeInTheDocument();
@@ -182,7 +181,7 @@ describe('MFAVerify', () => {
       },
       status: 'received'};
     });
-    const headingNode = screen.getByRole('heading', {name: 'Authenticate with one-time passcode'});
+    const headingNode = await waitFor(() => screen.getByRole('heading', {name: 'Authenticate with one-time passcode'}));
 
     expect(headingNode).toBeInTheDocument();
     const mfaSigninText = screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i);
@@ -191,11 +190,11 @@ describe('MFAVerify', () => {
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
-    userEvent.type(oneTimePassword, '123');
+    await userEvent.type(oneTimePassword, '123');
     const submitButtonNode = screen.getByRole('button', {name: 'Submit'});
 
     expect(submitButtonNode).toBeInTheDocument();
-    userEvent.click(submitButtonNode);
+    await userEvent.click(submitButtonNode);
     const warningMessageNode = screen.getByText(/Invalid one time passcode/i);
 
     expect(warningMessageNode).toBeInTheDocument();

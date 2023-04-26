@@ -119,7 +119,7 @@ describe('recycleBin test cases', () => {
     const inputRef = screen.getByRole('textbox');
 
     expect(inputRef).toBeInTheDocument();
-    userEvent.type(inputRef, 'xyz');
+    await userEvent.type(inputRef, 'xyz');
     await waitFor(() => expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i)).toBeInTheDocument());
   });
 

@@ -28,7 +28,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter>
       <CeligoTable
@@ -36,18 +36,18 @@ function renderFuntion(data) {
         data={[data]} />
     </MemoryRouter>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for download results', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should make a dispatch call after clicking on download result', () => {
-    renderFuntion({_id: 'flow_id_1', status: 'completed', _flowIds: ['flow_id_1']});
+  test('should make a dispatch call after clicking on download result', async () => {
+    await renderFuntion({_id: 'flow_id_1', status: 'completed', _flowIds: ['flow_id_1']});
     const downloadResultsButton = screen.getByText('Download results');
 
-    userEvent.click(downloadResultsButton);
+    await userEvent.click(downloadResultsButton);
     expect(mockDispatchFn).toHaveBeenCalledWith({reportId: 'flow_id_1', type: 'EVENT_REPORT_DOWNLOAD'});
   });
 });

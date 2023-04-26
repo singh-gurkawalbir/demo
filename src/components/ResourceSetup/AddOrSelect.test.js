@@ -2,7 +2,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddOrSelect from './AddOrSelect';
 import { runServer } from '../../test/api/server';
@@ -190,55 +190,59 @@ describe('addOrSelect test cases', () => {
       initialStore,
     });
 
-    const newConn = screen.getByRole('radio', {name: 'Set up new connection'});
-    const existingConn = screen.getByRole('radio', {name: 'Use existing connection'});
-    const submitButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    waitFor(async () => {
+      const newConn = screen.getByRole('radio', {name: 'Set up new connection'});
+      const existingConn = screen.getByRole('radio', {name: 'Use existing connection'});
+      const submitButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
 
-    expect(newConn).toBeInTheDocument();
-    expect(existingConn).toBeInTheDocument();
-    expect(screen.queryByText(/General/i)).toBeInTheDocument();
-    expect(submitButton).toBeInTheDocument();
+      expect(newConn).toBeInTheDocument();
+      expect(existingConn).toBeInTheDocument();
+      expect(screen.queryByText(/General/i)).toBeInTheDocument();
+      expect(submitButton).toBeInTheDocument();
 
-    userEvent.click(submitButton);
-    expect(onSubmitComplete).toHaveBeenCalledTimes(1);
+      await userEvent.click(submitButton);
+      expect(onSubmitComplete).toHaveBeenCalledTimes(1);
 
-    // existing connection
-    userEvent.click(existingConn);
-    const doneButton = screen.getByRole('button', {name: 'Mock handleSave'});
-    const cancelButton = screen.getByRole('button', {name: 'Mock handleCancel'});
-
-    expect(doneButton).toBeInTheDocument();
-    expect(cancelButton).toBeInTheDocument();
-
-    userEvent.click(doneButton);
-    userEvent.click(cancelButton);
-    expect(onClose).toHaveBeenCalled();
-
-    const dispatch = reactRedux.useDispatch();
-
-    dispatch({
-      type: 'MOCK_DUMMY_STATE_UPDATE',
+      // existing connection
+      await userEvent.click(existingConn);
     });
+    waitFor(async () => {
+      const doneButton = screen.getByRole('button', {name: 'Mock handleSave'});
+      const cancelButton = screen.getByRole('button', {name: 'Mock handleCancel'});
 
-    // rerendering the component to get latest state
-    await initAddOrSelect({
-      props: {
-        onClose,
-        onSubmitComplete,
-        resource: {
-          name: 'NetSuite Connection',
-          type: 'netsuite',
+      expect(doneButton).toBeInTheDocument();
+      expect(cancelButton).toBeInTheDocument();
+
+      await userEvent.click(doneButton);
+      await userEvent.click(cancelButton);
+      expect(onClose).toHaveBeenCalled();
+
+      const dispatch = reactRedux.useDispatch();
+
+      dispatch({
+        type: 'MOCK_DUMMY_STATE_UPDATE',
+      });
+
+      // rerendering the component to get latest state
+      await initAddOrSelect({
+        props: {
+          onClose,
+          onSubmitComplete,
+          resource: {
+            name: 'NetSuite Connection',
+            type: 'netsuite',
+          },
+          connectionType: 'netsuite',
+          formKey: 'connections-new-O202icadl',
+          resourceId: 'new-O202icadl',
         },
-        connectionType: 'netsuite',
-        formKey: 'connections-new-O202icadl',
-        resourceId: 'new-O202icadl',
-      },
-      initialStore,
-      renderFun: utils.rerender,
-    });
+        initialStore,
+        renderFun: utils.rerender,
+      });
 
-    userEvent.click(doneButton);
-    expect(onSubmitComplete).toHaveBeenCalledTimes(2);
+      await userEvent.click(doneButton);
+      expect(onSubmitComplete).toHaveBeenCalledTimes(2);
+    });
   });
 });
 

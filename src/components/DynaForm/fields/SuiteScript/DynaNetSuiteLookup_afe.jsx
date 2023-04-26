@@ -2,8 +2,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
@@ -101,7 +101,7 @@ export default function DynaNetSuiteLookup_afe(props) {
 
   return (
     <>
-      <FormControl className={classes.dynaNetsuiteLookupFormControl}>
+      <FormControl variant="standard" className={classes.dynaNetsuiteLookupFormControl}>
         <div className={classes.dynaNetsuiteLookupLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
@@ -119,12 +119,12 @@ export default function DynaNetSuiteLookup_afe(props) {
               disabled
               value={value}
               variant="filled"
-            />
+          />
             <FieldMessage
               isValid={isValid}
               description=""
               errorMessages={errorMessages}
-            />
+          />
           </div>
           <ActionButton
             data-test={id}

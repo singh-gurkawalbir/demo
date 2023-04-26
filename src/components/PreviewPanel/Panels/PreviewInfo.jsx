@@ -1,8 +1,8 @@
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import {Box} from '@celigo/fuse-ui';
 import React, { useMemo, useCallback, useEffect, useReducer } from 'react';
-import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import isEmpty from 'lodash/isEmpty';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo, getPreviewDataPageSizeLength } from '../../../utils/exportPanel';
@@ -21,52 +21,6 @@ import reducer from './stateReducer';
 import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
-  previewContainer: {
-    minHeight: theme.spacing(10),
-    position: 'relative',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    padding: theme.spacing(1),
-    marginBottom: theme.spacing(4),
-    borderRadius: theme.spacing(0.5),
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    '&:before': {
-      content: '""',
-      width: 5,
-      height: '100%',
-      backgroundColor: props =>
-        (props.showPreviewData && props.resourceSampleData.status === 'error')
-          ? theme.palette.error.main
-          : theme.palette.success.main,
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      borderRadius: theme.spacing(0.5, 0, 0, 0.5),
-    },
-  },
-  previewData: {
-    display: 'flex',
-    height: '100%',
-  },
-
-  previewDataLeft: {
-    display: 'flex',
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-    alignItems: 'center',
-    padding: theme.spacing(2),
-  },
-  previewDataRight: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingLeft: theme.spacing(1),
-    flexDirection: 'column',
-    position: 'relative',
-    width: '100%',
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-  previewMessage: {
-    justifyContent: 'center',
-  },
   previewBtn: {
     minHeight: theme.spacing(5),
   },
@@ -74,14 +28,6 @@ const useStyles = makeStyles(theme => ({
     color: 'red',
     marginRight: theme.spacing(0.5),
     marginTop: theme.spacing(-0.5),
-  },
-  msgSuccess: {
-    marginLeft: 4,
-  },
-  recordSize: {
-    padding: theme.spacing(0, 1, 0, 1),
-    width: theme.spacing(22),
-    minWidth: theme.spacing(22),
   },
 }));
 
@@ -276,9 +222,42 @@ export default function PreviewInfo(props) {
   const disablePreview = isPreviewDisabled || (showPreviewData && resourceSampleData.status === 'requested');
 
   return (
-    <div className={classes.previewContainer}>
-      <div className={classes.previewData}>
-        {
+    <Box
+      sx={{
+        position: 'relative',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        p: 1,
+        mb: 4,
+        borderRadius: 1,
+        border: theme => `1px solid ${theme.palette.secondary.lightest}`,
+        minHeight: 80,
+        '&:before': {
+          content: '""',
+          width: 5,
+          height: '100%',
+          backgroundColor: theme => (showPreviewData && resourceSampleData.status === 'error')
+            ? theme.palette.error.main
+            : theme.palette.success.main,
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          borderRadius: theme => theme.spacing(0.5, 0, 0, 0.5),
+        },
+      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          height: '100%',
+        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            borderRight: theme => `1px solid ${theme.palette.secondary.lightest}`,
+            alignItems: 'center',
+            p: 2,
+          }}>
+          {
           showDeltaStartDateDialog && (
             <FlowStartDateDialog
               flowId={flowId}
@@ -289,7 +268,6 @@ export default function PreviewInfo(props) {
             />
           )
         }
-        <div className={classes.previewDataLeft}>
           <OutlinedButton
             color="secondary"
             className={classes.previewBtn}
@@ -299,33 +277,46 @@ export default function PreviewInfo(props) {
             {capitalizeFirstLetter(toggleValue)}
             <ArrowRightIcon />
           </OutlinedButton>
-        </div>
+        </Box>
         { canSelectRecords &&
           (
-            <div className={classes.recordSize}>
+            <Box
+              sx={{
+                p: theme => theme.spacing(0, 1, 0, 1),
+                width: theme => theme.spacing(22),
+                minWidth: theme => theme.spacing(22),
+              }}>
               <SelectPreviewRecordsSize
                 isValidRecordSize={isValidRecordSize}
                 setIsValidRecordSize={setIsValidRecordSize}
                 resourceId={resourceId}
               />
-            </div>
+            </Box>
           )}
         {
           showPreviewData &&
           (
-            <div
-              className={clsx(classes.previewDataRight, {
-                [classes.previewMessage]: resourceSampleData?.message,
-              })}>
-
+            <Box
+              sx={[{
+                display: 'flex',
+                justifyContent: 'space-between',
+                pl: 1,
+                flexDirection: 'column',
+                position: 'relative',
+                width: '100%',
+                borderLeft: theme => `1px solid ${theme.palette.secondary.lightest}`,
+              }, resourceSampleData?.message ? {
+                justifyContent: 'center',
+              } : '']}
+              >
               {sampleDataStatus && <div> {sampleDataStatus}</div>}
               {sampleDataOverview && (
-              <div className={classes.msgSuccess}>{sampleDataOverview} </div>
+              <Box sx={{ml: 4}}>{sampleDataOverview} </Box>
               )}
-            </div>
+            </Box>
           )
         }
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

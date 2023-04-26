@@ -1,10 +1,10 @@
 import React, {useState, useCallback} from 'react';
 import PropTypes from 'prop-types';
-import IconButton from '@material-ui/core/IconButton';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@mui/material/IconButton';
+import SnackbarContent from '@mui/material/SnackbarContent';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
@@ -133,7 +133,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-start',
       },
     },
-    '& >*.MuiTypography-root': {
+    '& >.MuiTypography-root': {
       fontSize: 13,
     },
     '& > * svg': {
@@ -228,7 +228,8 @@ export default function NotificationToaster(props) {
               aria-label="close"
               color="inherit"
               onClick={onCloseHandler}
-              className={classes.actionButton}>
+              className={classes.actionButton}
+              size="large">
               <CloseIcon className={classes.icon} />
             </IconButton>,
           ]

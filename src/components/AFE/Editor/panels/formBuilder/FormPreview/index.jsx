@@ -1,7 +1,8 @@
 
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';

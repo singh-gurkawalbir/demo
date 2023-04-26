@@ -34,68 +34,68 @@ describe('uI test cases for select classification', () => {
   const resourceId = '621ce7db7988314f51662c09';
   const isResolved = 'true';
 
-  test('should display classification dropdown and connection option should be checked when filter key is set to resolved and apply button should work fine', () => {
+  test('should display classification dropdown and connection option should be checked when filter key is set to resolved and apply button should work fine', async () => {
     renderWithProviders(<SelectClassification
       flowId={flowId} resourceId={resourceId} isResolved={isResolved} />, {initialStore});
     const checkbox = screen.getAllByRole('button');
 
-    userEvent.click(checkbox[0]);
+    await userEvent.click(checkbox[0]);
     const connection = screen.getAllByRole('checkbox');
 
-    userEvent.click(connection[1]);
+    await userEvent.click(connection[1]);
 
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({flowId: '5ea16c600e2fab71928a6152', isResolved: 'true', resourceId: '621ce7db7988314f51662c09'}));
   });
-  test('should display classification dropdown and connection option should be checked and cancel button should work fine', () => {
+  test('should display classification dropdown and connection option should be checked and cancel button should work fine', async () => {
     renderWithProviders(<SelectClassification
       flowId={flowId} resourceId={resourceId} isResolved={isResolved} />, {initialStore});
     const button = screen.getAllByRole('button');
 
-    userEvent.click(button[0]);
+    await userEvent.click(button[0]);
     const connection = screen.getAllByRole('checkbox');
 
-    userEvent.click(connection[1]);
+    await userEvent.click(connection[1]);
 
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(cancel).not.toBeInTheDocument();
   });
-  test('should display classification dropdown and connection option should be checked when filter key is set to open and apply button should work fine', () => {
+  test('should display classification dropdown and connection option should be checked when filter key is set to open and apply button should work fine', async () => {
     renderWithProviders(<SelectClassification
       flowId={flowId} resourceId={resourceId} isResolved={false} />, {initialStore});
     const button = screen.getAllByRole('button');
 
-    userEvent.click(button[0]);
+    await userEvent.click(button[0]);
     const connection = screen.getAllByRole('checkbox');
 
-    userEvent.click(connection[1]);
+    await userEvent.click(connection[1]);
 
     const apply = screen.getByText('Apply');
 
-    userEvent.click(apply);
+    await userEvent.click(apply);
     expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
       isResolved: false,
     }));
   });
-  test('should display classification dropdown and connection option should be checked when filter key is set to open  and cancel button should work fine', () => {
+  test('should display classification dropdown and connection option should be checked when filter key is set to open  and cancel button should work fine', async () => {
     renderWithProviders(<SelectClassification
       flowId={flowId} resourceId={resourceId} isResolved={false} />, {initialStore});
     const button = screen.getAllByRole('button');
 
-    userEvent.click(button[0]);
+    await userEvent.click(button[0]);
     const connection = screen.getAllByRole('checkbox');
 
-    userEvent.click(connection[1]);
+    await userEvent.click(connection[1]);
 
     const cancel = screen.getByText('Cancel');
 
-    userEvent.click(cancel);
+    await userEvent.click(cancel);
     expect(cancel).not.toBeInTheDocument();
   });
 });

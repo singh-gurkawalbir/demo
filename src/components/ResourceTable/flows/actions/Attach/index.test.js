@@ -13,7 +13,7 @@ const metadata = {
 };
 
 describe('attach flow action test case', () => {
-  test('should show modal dialog for attach flow', () => {
+  test('should show modal dialog for attach flow', async () => {
     renderWithProviders(
       <MemoryRouter>
         <CeligoTable
@@ -21,8 +21,8 @@ describe('attach flow action test case', () => {
           data={[{_id: 'someId'}]} />
       </MemoryRouter>
     );
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Attach flows'));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Attach flows'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 });
