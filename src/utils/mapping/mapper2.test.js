@@ -36,6 +36,10 @@ import util, {
   findNodeInTreeWithParents,
   findNodeWithGivenParentsList,
   findLastNodeWithMatchingParent,
+  constructDestinationTreeFromParentsList,
+  getRequiredMappingsJsonPaths,
+  markPresentDestinations,
+  makeBaseDestinationTree,
 } from '.';
 import {generateId} from '../string';
 
@@ -6208,7 +6212,7 @@ describe('v2 mapping utils', () => {
       ];
 
       let parentsList = [{
-        id: 'p1',
+        key: 'p1',
         title: '',
         generate: 'lname',
         dataType: MAPPING_DATA_TYPES.STRING,
@@ -6226,13 +6230,13 @@ describe('v2 mapping utils', () => {
       });
 
       parentsList = [{
-        id: 'p1',
+        key: 'p1',
         title: '',
         generate: 'mothers_side',
         dataType: MAPPING_DATA_TYPES.OBJECT,
       },
       {
-        id: 'p2',
+        key: 'p2',
         title: '',
         generate: 'child2',
         dataType: MAPPING_DATA_TYPES.STRING,
@@ -6250,7 +6254,7 @@ describe('v2 mapping utils', () => {
       });
 
       parentsList = [{
-        id: 'p1',
+        key: 'p1',
         title: '',
         generate: 'mothers_side',
         dataType: MAPPING_DATA_TYPES.OBJECT,
@@ -6295,13 +6299,13 @@ describe('v2 mapping utils', () => {
       });
 
       parentsList = [{
-        id: 'p1',
+        key: 'p1',
         title: '',
         generate: 'mothers_side',
         dataType: MAPPING_DATA_TYPES.OBJECT,
       },
       {
-        id: 'p2',
+        key: 'p2',
         title: '',
         generate: 'child4',
         dataType: MAPPING_DATA_TYPES.STRING,
@@ -6390,21 +6394,21 @@ describe('v2 mapping utils', () => {
       ];
 
       let parentsList = [{
-        id: 'p1',
+        key: 'p1',
         title: '',
         generate: 'mothers_side',
         dataType: MAPPING_DATA_TYPES.OBJECT,
         jsonPath: 'mothers_side',
       },
       {
-        id: 'p2',
+        key: 'p2',
         title: '',
         generate: 'child2',
         dataType: MAPPING_DATA_TYPES.OBJECT,
         jsonPath: 'mothers_side.child2',
       },
       {
-        id: 'p3',
+        key: 'p3',
         title: '',
         generate: 'grandchild2',
         dataType: MAPPING_DATA_TYPES.STRING,
@@ -6433,7 +6437,7 @@ describe('v2 mapping utils', () => {
           ],
         },
         leftParentsList: [{
-          id: 'p3',
+          key: 'p3',
           title: '',
           generate: 'grandchild2',
           dataType: MAPPING_DATA_TYPES.STRING,
@@ -6442,7 +6446,7 @@ describe('v2 mapping utils', () => {
       });
 
       parentsList = [{
-        id: 'p1',
+        key: 'p1',
         title: '',
         generate: 'fathers_side',
         dataType: MAPPING_DATA_TYPES.OBJECT,
@@ -6453,6 +6457,460 @@ describe('v2 mapping utils', () => {
         leftParentsList: [],
       }
       );
+    });
+  });
+  describe('constructDestinationTreeFromParentsList util', () => {
+    generateId.mockReturnValue('new_key');
+    test('should not throw exception for invalid args', () => {
+      expect(constructDestinationTreeFromParentsList()).toEqual({
+        node: undefined,
+      });
+      expect(constructDestinationTreeFromParentsList(null)).toEqual({
+        node: undefined,
+      });
+    });
+    test('should correctly return the node from parentsList', () => {
+      let parentsList = [{
+        key: 'p1',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side',
+      },
+      {
+        key: 'p2',
+        title: '',
+        generate: 'child2',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side.child2',
+      },
+      {
+        key: 'p3',
+        title: '',
+        generate: 'grandchild1',
+        dataType: MAPPING_DATA_TYPES.STRING,
+        jsonPath: 'mothers_side.child2.grandchild1',
+      }];
+
+      expect(constructDestinationTreeFromParentsList(parentsList)).toEqual({
+        key: 'new_key',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side',
+        children: [
+          {
+            key: 'new_key',
+            title: '',
+            generate: 'child2',
+            parentKey: 'new_key',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            jsonPath: 'mothers_side.child2',
+            children: [
+              {
+                key: 'new_key',
+                title: '',
+                generate: 'grandchild1',
+                parentKey: 'new_key',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                jsonPath: 'mothers_side.child2.grandchild1',
+              },
+            ],
+          },
+        ],
+      });
+
+      parentsList = [{
+        key: 'p1',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side',
+      }];
+      expect(constructDestinationTreeFromParentsList(parentsList)).toEqual({
+        key: 'new_key',
+        title: '',
+        generate: 'mothers_side',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        jsonPath: 'mothers_side',
+        children: [
+          {
+            key: 'new_key',
+            title: '',
+            parentKey: 'new_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            isEmptyRow: true,
+          },
+        ],
+      });
+    });
+  });
+  describe('getRequiredMappingsJsonPaths util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(getRequiredMappingsJsonPaths()).toEqual([]);
+      expect(getRequiredMappingsJsonPaths(null, [])).toEqual([]);
+    });
+    test('should correctly return the list of jsonPaths of required fields only', () => {
+      const treeData = [
+        {
+          key: 'key1',
+          title: '',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'fname',
+        },
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+              isRequired: true,
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              jsonPath: 'mothers_side.child2',
+              isRequired: true,
+              children: [
+                {
+                  key: 'g1',
+                  title: '',
+                  extract: '$.grandchild1',
+                  generate: 'grandchild1',
+                  parentKey: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  jsonPath: 'mothers_side.child2.grandchild1',
+                  isRequired: true,
+                },
+              ],
+            },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+            },
+          ],
+        },
+        {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'lname',
+          isRequired: true,
+        },
+      ];
+
+      const expectedList = [];
+
+      getRequiredMappingsJsonPaths(treeData, expectedList);
+
+      expect(expectedList).toEqual([
+        'mothers_side+object',
+        'mothers_side.child1+string',
+        'mothers_side.child2+object',
+        'mothers_side.child2.grandchild1+string',
+        'lname+string',
+      ]);
+    });
+  });
+  describe('markPresentDestinations util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(markPresentDestinations([], null)).toBeNull();
+      expect(markPresentDestinations([], [])).toEqual([]);
+    });
+    test('should correctly mark the destination tree with disabled true', () => {
+      const treeData = [
+        {
+          key: 'key1',
+          title: '',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'fname',
+        },
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              extract: '$.child1',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+            },
+            {
+              key: 'c2',
+              title: '',
+              extract: '$.child2',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              jsonPath: 'mothers_side.child2',
+              children: [
+                {
+                  key: 'g1',
+                  title: '',
+                  extract: '$.grandchild1',
+                  generate: 'grandchild1',
+                  parentKey: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  jsonPath: 'mothers_side.child2.grandchild1',
+                },
+              ],
+            },
+            {
+              key: 'c3',
+              title: '',
+              extract: '$.child3',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+            },
+          ],
+        },
+        {
+          key: 'key3',
+          title: '',
+          extract: '$.lname',
+          generate: 'lname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          jsonPath: 'lname',
+        },
+      ];
+      const destinationTree = [
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+            },
+            {
+              key: 'c2',
+              title: '',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              jsonPath: 'mothers_side.child2',
+              children: [
+                {
+                  key: 'g1',
+                  title: '',
+                  generate: 'grandchild2',
+                  parentKey: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  jsonPath: 'mothers_side.child2.grandchild2',
+                },
+              ],
+            },
+            {
+              key: 'c3',
+              title: '',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+            },
+          ],
+        },
+      ];
+
+      expect(markPresentDestinations(treeData, destinationTree)).toEqual([
+        {
+          key: 'key2',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              generate: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child1',
+              disabled: true,
+            },
+            {
+              key: 'c2',
+              title: '',
+              generate: 'child2',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              jsonPath: 'mothers_side.child2',
+              disabled: true,
+              children: [
+                {
+                  key: 'g1',
+                  title: '',
+                  generate: 'grandchild2',
+                  parentKey: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  jsonPath: 'mothers_side.child2.grandchild2',
+                },
+              ],
+            },
+            {
+              key: 'c3',
+              title: '',
+              generate: 'child3',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              jsonPath: 'mothers_side.child3',
+              disabled: true,
+            },
+          ],
+        },
+      ]);
+    });
+  });
+  describe('makeBaseDestinationTree util', () => {
+    test('should correctly return tree data with required mappings', () => {
+      generateId.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        files: [],
+        custom: {},
+        customerId: {value: 'abcd'},
+        details: [{description: 'desc', orderType: {value: 'SO'}}],
+      };
+      const requiredMappings = ['id', 'details[*].orderType.value', 'customerId.value'];
+
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(makeBaseDestinationTree(importSampleData, requiredMappings)).toEqual(treeData);
     });
   });
 });

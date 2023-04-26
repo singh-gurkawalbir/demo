@@ -297,7 +297,7 @@ export function* mappingInit({
       importSampleData = yield call(getImportSampleData, {importId});
 
       // generate tree structure based on import sample data for destination field
-      destinationTree = makeBaseDestinationTree(importSampleData, options.assistant?.requiredMappings || [], false);
+      destinationTree = makeBaseDestinationTree(importSampleData, options.assistant?.requiredMappings || []);
       getRequiredMappingsJsonPaths(destinationTree, requiredMappingsJsonPaths);
 
       // this needs to be updated when v2 mappings are supported for other adaptors like NS

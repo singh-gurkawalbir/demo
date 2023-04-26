@@ -1691,8 +1691,10 @@ export const findLastNodeWithMatchingParent = (data, parentsList) => {
 
 // if parentsList is [a, b, c] then this will return a tree like a->b->c
 // will add a empty row in the end of c if the dataType is object or objectarray
-export const constructDestinationTreeFromParentsList = parentsList => {
+export const constructDestinationTreeFromParentsList = (parentsList = []) => {
   let node = {};
+
+  if (isEmpty(parentsList)) return node;
 
   if (parentsList.length === 1) {
     node = customCloneDeep(parentsList[0]);
@@ -1724,6 +1726,7 @@ export const constructDestinationTreeFromParentsList = parentsList => {
 };
 
 // to create the set of jsonPath+dataType from the given tree
+// add these values to the set passed as jsonPathSet
 const getJsonPathSet = (data, jsonPathSet) => {
   if (isEmpty(data)) return new Set();
 
@@ -2059,7 +2062,7 @@ export const autoCreateDestinationStructure = (importSampleData, requiredMapping
   return treeData;
 };
 
-function recursivelyCreateBaseDestinationTree({dataObj, treeData, parentJsonPath = '', parentKey, parentExtract, requiredMappings}) {
+function recursivelyCreateBaseDestinationTree({dataObj, treeData, parentJsonPath = '', parentKey, requiredMappings}) {
   // iterate over all keys and construct the tree
   Object.keys(dataObj).forEach(propName => {
     const v = dataObj[propName];
@@ -2076,7 +2079,6 @@ function recursivelyCreateBaseDestinationTree({dataObj, treeData, parentJsonPath
       generate: propName,
       jsonPath,
       parentKey,
-      parentExtract,
       title: '',
       dataType: TYPEOF_TO_DATA_TYPE[type],
       isRequired,
