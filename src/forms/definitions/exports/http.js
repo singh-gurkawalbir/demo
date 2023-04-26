@@ -1,7 +1,9 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 import { safeParse } from '../../../utils/string';
+import { initializeHttpForm } from '../../metaDataUtils/httpConnectorUtils';
 
 export default {
+  init: initializeHttpForm,
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
@@ -501,11 +503,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView', 'semiassistantoperationselect'] },
-      // {
-      //   collapsed: true,
-      //   label: 'Assistant Helper',
-      //   fields: ['semiassistantoperationselect'],
-      // },
       {
         collapsed: true,
         label: r => {
