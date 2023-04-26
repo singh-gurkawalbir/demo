@@ -339,6 +339,7 @@ export default {
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
+    'http.response.fileURLPaths': { fieldId: 'http.response.fileURLPaths' },
     'http.response.successValues': {
       fieldId: 'http.response.successValues',
     },
@@ -595,6 +596,7 @@ export default {
           {
             fields: [
               'http.errorMediaType',
+              'http.response.fileURLPaths',
             ],
           },
         ],
