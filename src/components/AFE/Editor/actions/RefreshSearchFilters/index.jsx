@@ -2,9 +2,9 @@ import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FormLabel from '@mui/material/FormLabel';
 import { IconButton } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import Spinner from '../../../../Spinner';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 

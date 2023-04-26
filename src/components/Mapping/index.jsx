@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch, Redirect } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
 import MappingWrapper from './MappingWrapper';
-import Spinner from '../Spinner';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { getMappingsEditorId } from '../../utils/editor';
 
@@ -51,7 +51,7 @@ export default function Mapping(props) {
 
   // let the mapping init and sample data load happen so that the state is updated
   if (!mappingStatus || mappingStatus === 'requested') {
-    return <Spinner centerAll />;
+    return <Spinner center />;
   }
 
   return (

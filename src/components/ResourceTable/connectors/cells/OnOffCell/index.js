@@ -1,11 +1,10 @@
 
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Switch } from '@celigo/fuse-ui';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import Spinner from '../../../../Spinner';
 
 export default function OnOffCell({
   connectorId: resourceId,

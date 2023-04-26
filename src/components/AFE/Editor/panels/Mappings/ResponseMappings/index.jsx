@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
-import Spinner from '../../../../../Spinner';
 import actions from '../../../../../../actions';
 import FieldMappingForm from './FieldMappingForm';
 import { dataAsString } from '../../../../../../utils/editor';
@@ -131,7 +131,7 @@ export default function ResponseMappingWrapper({ editorId }) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

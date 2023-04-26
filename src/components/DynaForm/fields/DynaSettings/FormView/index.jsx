@@ -2,11 +2,11 @@ import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../..';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import Spinner from '../../../../Spinner';
 import IsLoggableContextProvider from '../../../../IsLoggableContextProvider';
 import { useSelectorMemo } from '../../../../../hooks';
 
@@ -82,7 +82,7 @@ export default function FormView({
   }
 
   if (!settingsFormState || settingsFormState.status === 'request') {
-    return (<Spinner centerAll />);
+    return (<Spinner center="screen" />);
   }
 
   return (

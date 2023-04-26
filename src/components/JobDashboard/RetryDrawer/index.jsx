@@ -5,6 +5,7 @@ import { useRouteMatch, useHistory } from 'react-router-dom';
 import { Button, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import isEqual from 'lodash/isEqual';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { drawerPaths } from '../../../utils/rightDrawer';
@@ -12,7 +13,6 @@ import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
-import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { useFormOnCancel } from '../../FormOnCancelContext';
@@ -111,7 +111,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   }, [retryData]);
 
   if (!retryData) {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
 
   return (

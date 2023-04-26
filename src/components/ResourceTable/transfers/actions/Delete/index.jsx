@@ -8,6 +8,7 @@ export default {
   key: 'deleteTransfer',
   useLabel: () => 'Delete transfer',
   icon: TrashIcon,
+  mode: 'delete',
   useOnClick: rowData => {
     const { _id: transferId} = rowData;
     const dispatch = useDispatch();

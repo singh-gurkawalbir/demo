@@ -32,11 +32,17 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     minWidth: 70,
-    maxWidth: '50%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     color: theme.palette.secondary.main,
+  },
+  headerWrapper: {
+    justifyContent: 'space-between',
+  },
+  titleWrapper: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -74,27 +80,30 @@ export default function CeligoPageBar(props) {
           [classes.pageHeaderShift]: drawerOpened,
         })}
         elevation={0}
-        square
-      >
-        <Grid item container wrap="nowrap" alignItems="center">
-          {parentUrl && (
+        square>
+
+        <Grid
+          item container wrap="nowrap" alignItems="center"
+          className={classes.headerWrapper}>
+          <div className={classes.titleWrapper}>
+            {parentUrl && (
             // eslint-disable-next-line react/jsx-handler-names
             <IconButton size="small" onClick={handleOnClick}>
               <BackArrowIcon />
             </IconButton>
-          )}
-          <Typography className={classes.title} variant="h3">
-            {title}
-          </Typography>
-          {titleTag && <span>{titleTag}</span>}
-          {infoText && (
-            <InfoIconButton
-              title={infoTitleName || title}
-              info={infoText}
-              escapeUnsecuredDomains={escapeUnsecuredDomains}
-            />
-          )}
-          <div className={classes.emptySpace} />
+            )}
+            <Typography className={classes.title} variant="h3">
+              {title}
+            </Typography>
+            {titleTag && <span>{titleTag}</span>}
+            {infoText && (
+              <InfoIconButton
+                title={infoTitleName || title}
+                info={infoText}
+                escapeUnsecuredDomains={escapeUnsecuredDomains}
+              />
+            )}
+          </div>
           {children}
         </Grid>
         <Typography variant="caption" className={classes.history}>

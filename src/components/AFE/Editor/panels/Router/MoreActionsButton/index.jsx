@@ -7,6 +7,7 @@ import {
   MenuItem,
   Tooltip,
 } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowPopper } from '@celigo/fuse-ui';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
@@ -19,7 +20,14 @@ import RawHtml from '../../../../../RawHtml';
 import actions from '../../../../../../actions';
 import messageStore, { message } from '../../../../../../utils/messageStore';
 
+const useStyles = makeStyles(theme => ({
+  deleteWrapper: {
+    color: theme.palette.error.dark,
+  },
+}));
+
 export default function MoreActionsButton({editorId, position, pageProcessors = [], allowDeleting}) {
+  const classes = useStyles();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
@@ -98,7 +106,7 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
 
         <Tooltip title={allowDeleting ? '' : message.AFE_EDITOR_PANELS_INFO.DELETE_LAST_BRANCH_MESSAGE} placement="bottom" aria-label="no notifications">
           <span>
-            <MenuItem disabled={!allowDeleting} data-test={`deleteBranch-${position}`} onClick={handleDeleteBranch}>
+            <MenuItem disabled={!allowDeleting} className={classes.deleteWrapper} data-test={`deleteBranch-${position}`} onClick={handleDeleteBranch}>
               <TrashIcon /> Delete branch
             </MenuItem>
           </span>

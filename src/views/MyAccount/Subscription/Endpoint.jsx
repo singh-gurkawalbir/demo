@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { capitalize, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import NotificationToaster from '../../../components/NotificationToaster';
@@ -14,7 +15,6 @@ import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
-import Spinner from '../../../components/Spinner';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
@@ -246,7 +246,7 @@ export default function Endpoint() {
 
   if (!licenseEntitlementUsage) {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 
@@ -352,7 +352,7 @@ export default function Endpoint() {
                 onClick={onStartFreeTrialClick}
                 className={classes.subscriptionUpgradeBtn}
                 id="myaccout-unlimited-flows-button">
-                Get unlimited flows
+                Start free trial
               </FilledButton>
               )}
               {(licenseActionDetails.subscriptionActions.actions.indexOf(

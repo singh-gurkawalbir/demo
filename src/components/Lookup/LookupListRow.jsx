@@ -1,11 +1,19 @@
 import React, { useCallback, useState } from 'react';
 import { IconButton, TableCell, TableRow, MenuItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { ArrowPopper } from '@celigo/fuse-ui';
 import EditIcon from '../icons/EditIcon';
 import DeleteOutlinedIcon from '../icons/TrashIcon';
 import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
 
+const useStyles = makeStyles(theme => ({
+  deleteWrapper: {
+    color: theme.palette.error.dark,
+  },
+}));
+
 export default function LookupListRow(props) {
+  const componentClasses = useStyles();
   const { value, onEdit, onDelete, classes } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -47,7 +55,7 @@ export default function LookupListRow(props) {
           open={open}
           onClose={handleMenuClose}>
           <MenuItem key="Edit" onClick={handleEdit}><EditIcon />Edit lookup</MenuItem>
-          <MenuItem key="Delete" onClick={handleDelete}><DeleteOutlinedIcon />Delete lookup</MenuItem>
+          <MenuItem key="Delete" className={componentClasses.deleteWrapper} onClick={handleDelete}><DeleteOutlinedIcon />Delete lookup</MenuItem>
         </ArrowPopper>
       </TableCell>
     </TableRow>

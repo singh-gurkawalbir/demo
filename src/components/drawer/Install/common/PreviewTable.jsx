@@ -3,9 +3,9 @@ import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
-import Spinner from '../../../Spinner';
 import { emptyObject } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -102,7 +102,7 @@ export default function PreviewTable({ templateId }) {
   if (status === 'requested') {
     return (
       <div className={classes.spinnerPreview}>
-        <Spinner centerAll />
+        <Spinner center="screen" />
       </div>
     );
   }

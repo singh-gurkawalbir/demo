@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     minHeight: '100%',
     flexDirection: 'column',
+    width: '100%',
   },
   small: {
     width: 475,

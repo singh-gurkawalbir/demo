@@ -61,6 +61,7 @@ export default {
     'rest.scopeSandbox': {
       id: 'rest.scopeSandbox',
       type: 'selectscopes',
+      isLoggable: true,
       label: 'Configure scopes',
       visibleWhen: [
         {
@@ -98,6 +99,7 @@ export default {
     'rest.scopeProduction': {
       id: 'rest.scopeProduction',
       type: 'selectscopes',
+      isLoggable: true,
       label: 'Configure scopes',
       scopes: [
         'https://api.ebay.com/oauth/api_scope',

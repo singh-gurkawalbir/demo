@@ -284,30 +284,32 @@ export default function DateRangeSelector({
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
-            <Box display="flex" flexDirection="column">
-              <List className={classes.leftItemsList}>
-                {presets.map((m, i) => (
-                  <div key={m.id}>
-                    {!!i}
-                    <ListItem
-                      button
-                      className={classes.listBtn}
-                      selected={selectedRange.preset === m.id}
-                      onClick={event => handleListItemClick(event, m.id)}
+            <Box display="flex" flexDirection="row" columnGap="16px" alignItems="flex-start">
+              <Box>
+                <List className={classes.leftItemsList}>
+                  {presets.map((m, i) => (
+                    <div key={m.id}>
+                      {!!i}
+                      <ListItem
+                        button
+                        className={classes.listBtn}
+                        selected={selectedRange.preset === m.id}
+                        onClick={event => handleListItemClick(event, m.id)}
                       >
-                      <ListItemText secondary={m.label} />
-                    </ListItem>
-                  </div>
-                ))}
+                        <ListItemText secondary={m.label} />
+                      </ListItem>
+                    </div>
+                  ))}
 
-              </List>
-              {selectedRange.preset === 'custom' &&
+                </List>
+                {selectedRange.preset === 'custom' &&
                 CustomTextFields && (
                 <CustomTextFields
                   reset={reset}
                   setReset={setReset} selectedRange={selectedRange}
                   setSelectedRange={setSelectedRange} />
-              )}
+                )}
+              </Box>
               {selectedRange.preset === 'custom' && (
                 <DateRange
                   isCalendar={isCalendar}

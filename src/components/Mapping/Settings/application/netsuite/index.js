@@ -217,7 +217,7 @@ export default {
         'lookup.recordType': {
           id: 'lookup.recordType',
           name: 'recordType',
-          filterKey: 'suitescript-recordTypes',
+          filterKey: 'restlet-recordTypes',
           commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
           defaultValue: lookup.recordType,
           type: 'refreshableselect',

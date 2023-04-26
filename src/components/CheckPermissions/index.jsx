@@ -2,8 +2,8 @@ import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import Typography from '@mui/material/Typography';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
-import Spinner from '../Spinner';
 import Loader from '../Loader';
 
 const useStyles = makeStyles(theme => ({

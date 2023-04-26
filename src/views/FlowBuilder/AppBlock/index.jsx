@@ -34,7 +34,7 @@ import { message } from '../../../utils/messageStore';
 
 const blockHeight = 170;
 const blockWidth = 275;
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme, isHover) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -43,9 +43,12 @@ const useStyles = makeStyles(theme => ({
   },
   draggable: {
     '&:hover': {
-      cursor: ({ noDragInfo }) => noDragInfo ? '' : 'move',
+      cursor: isHover ? '' : 'move',
+      '& $deleteButton,$grabButton': {
+        opacity: 1,
+      },
       '& > div:last-child': {
-        boxShadow: ({ noDragInfo }) => noDragInfo ? '' : '0 5px 10px rgba(0,0,0,0.19)',
+        boxShadow: isHover ? '' : '0 5px 10px rgba(0,0,0,0.19)',
       },
     },
   },
@@ -144,19 +147,19 @@ const useStyles = makeStyles(theme => ({
   },
   deleteButton: {
     position: 'absolute',
-    right: -theme.spacing(0.5),
-    top: -theme.spacing(0.5),
+    right: theme.spacing(-0.5),
+    top: theme.spacing(-0.5),
     zIndex: 1,
-    transition: theme.transitions.create('color'),
-    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
+    transition: theme.transitions.create('opacity'),
+    opacity: 0,
   },
   grabButton: {
-    left: -theme.spacing(0.5),
+    left: theme.spacing(-0.5),
     position: 'absolute',
-    top: -theme.spacing(0.5),
+    top: theme.spacing(-0.5),
     zIndex: 1,
-    transition: theme.transitions.create('color'),
-    color: ({ isHover, noDragInfo }) => (isHover && !noDragInfo) ? 'unset' : 'rgb(0,0,0,0)',
+    transition: theme.transitions.create('opacity'),
+    opacity: 0,
     cursor: 'move',
     '&:hover': {
       background: 'none',
@@ -233,7 +236,8 @@ export default function AppBlock({
     noDragInfo = <RawHtml html={message.FLOWS.NO_DRAG_FLOW_BRANCHING_INFO} />;
   }
 
-  const classes = useStyles({ isHover, noDragInfo });
+  const classes = useStyles({isHover});
+
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;

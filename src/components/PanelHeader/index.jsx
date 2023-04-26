@@ -12,10 +12,10 @@ const useStyles = makeStyles(theme => ({
   },
   infoIcon: {
     color: theme.palette.text.hint,
-    marginTop: -2,
   },
   panelHeaderTitle: {
     display: 'flex',
+    alignItems: 'center',
   },
 }));
 

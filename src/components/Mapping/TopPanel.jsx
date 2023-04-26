@@ -3,10 +3,10 @@ import { Typography, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import RefreshIcon from '../icons/RefreshIcon';
-import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   header: {
