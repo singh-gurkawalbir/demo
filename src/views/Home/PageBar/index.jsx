@@ -131,7 +131,7 @@ export default function IntegrationCeligoPageBar() {
 
   return (
     <CeligoPageBar title="My integrations">
-      <KeywordSearch filterKey={FILTER_KEY} autoFocus placeHolder="Search integrations & flows" />
+      <KeywordSearch isHomeSearch filterKey={FILTER_KEY} />
 
       <ActionGroup>
         <div className={classes.buttonWrapper}>
