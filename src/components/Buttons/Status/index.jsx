@@ -44,7 +44,7 @@ export default function Status({ children, className, size, variant, onClick, da
   return (
     <div className={clsx(classes.statusTextContainer, className)}>
       <StatusCircle variant={variant} size={size} />
-      <Typography variant="body2">{children}</Typography>
+      <Typography variant="body2" component="div">{children}</Typography>
     </div>
   );
 }
