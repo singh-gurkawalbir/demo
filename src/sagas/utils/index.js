@@ -515,7 +515,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           },
         ];
 
-        if (versionOptions?.length > 1) {
+        if (connector.versions?.length > 1) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options: versionOptions, type: 'select', defaultValue: resetToDefaultValue ? connector.versions?.[0]?._id : resource?.http?._httpConnectorVersionId };
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false, defaultValue: connector.versions?.[0]?._id};
