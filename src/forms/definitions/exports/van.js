@@ -50,6 +50,12 @@ export default {
       label: 'EDI x12 format',
       required: true,
       format: 'edi',
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['filedefinition'],
+        },
+      ],
     },
     'edifact.format': {
       fieldId: 'edifact.format',
@@ -58,6 +64,12 @@ export default {
       label: 'EDIFACT format',
       required: true,
       format: 'ediFact',
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['delimited/edifact'],
+        },
+      ],
     },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
@@ -77,6 +89,12 @@ export default {
         r.file.fileDefinition &&
         r.file.fileDefinition._fileDefinitionId,
       sampleData: r => r && r.sampleData,
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          isNot: [''],
+        },
+      ],
     },
     'file.sortByFields': {
       fieldId: 'file.sortByFields',
