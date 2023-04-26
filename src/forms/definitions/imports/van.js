@@ -90,27 +90,9 @@ export default {
         r.file.fileDefinition &&
         r.file.fileDefinition._fileDefinitionId,
     },
-    'edifact.format': { fieldId: 'edifact.format',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['filedefinition'],
-        },
-      ] },
-    'fixed.format': { fieldId: 'fixed.format',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['fixed'],
-        },
-      ] },
-    'edix12.format': { fieldId: 'edix12.format',
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['delimited/edifact'],
-        },
-      ] },
+    'edifact.format': { fieldId: 'edifact.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edix12.format': { fieldId: 'edix12.format' },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
       refreshOptionsOnChangesTo: [
