@@ -9,10 +9,10 @@ import { renderWithProviders } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: ({date}) => (<span>{date}</span>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: ({date}) => (<span>{date}</span>),
 }));
 
 jest.mock('../../CeligoTable/TableContext', () => ({

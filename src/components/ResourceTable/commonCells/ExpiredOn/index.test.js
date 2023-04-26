@@ -19,10 +19,10 @@ function initExpiredOn(date, dateFormatData) {
   return renderWithProviders(ui, {initialStore});
 }
 
-jest.mock('../../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../CeligoTimeAgo'),
-  default: () => 'Mock Celigo Time Ago',
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: () => 'Mock Celigo Time Ago',
 }));
 
 describe('testsuite for Expired On', () => {

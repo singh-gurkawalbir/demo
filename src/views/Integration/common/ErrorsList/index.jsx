@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
+import { TimeAgo, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -17,7 +17,6 @@ import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../constants';
-import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
@@ -126,7 +125,7 @@ const metadata = {
       key: 'lastErrorAt',
       heading: 'Last open error',
       isLoggable: true,
-      Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
+      Value: ({ rowData }) => <TimeAgo date={rowData.lastErrorAt} />,
       orderBy: 'lastErrorAt',
     },
   ],

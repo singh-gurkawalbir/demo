@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { TimeAgo } from '@celigo/fuse-ui';
 import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import NameCell from '../../commonCells/Name';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
@@ -103,13 +103,13 @@ export default {
         orderBy: 'lastErrorAt',
         heading: 'Last open error',
         isLoggable: true,
-        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
+        Value: ({rowData: r}) => <TimeAgo date={r.lastErrorAt} />,
       },
       {
         key: 'lastExecutedAt',
         isLoggable: true,
         heading: 'Last run',
-        Value: ({rowData: r}) => <CeligoTimeAgo date={new Date(r.lastExecutedAt)} />,
+        Value: ({rowData: r}) => <TimeAgo date={new Date(r.lastExecutedAt)} />,
         orderBy: 'lastExecutedAt',
       },
       {
