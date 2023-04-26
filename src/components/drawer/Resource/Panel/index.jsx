@@ -33,11 +33,10 @@ export const isNestedDrawer = url => !!matchPath(url, {
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100vh',
-    width: props => props.occupyFullWidth ? '100%' : 822,
     overflowX: 'hidden',
   },
-  match: {
-    width: '822px',
+  occupyFullWidth: {
+    width: '100%',
   },
   baseFormWithPreview: {
     display: 'flex',
@@ -174,7 +173,7 @@ export default function Panel(props) {
   return (
     <>
       <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
-      <DrawerContent className={clsx(classes.root, {[classes.match]: match.isExact})}>
+      <DrawerContent className={clsx(classes.root, {[classes.occupyFullWidth]: occupyFullWidth})}>
         <LoadResources required integrationId={integrationId} resources={requiredResources}>
           <LoadUIFields resourceId={id} resourceType={resourceType} flowId={flowId}>
             <div
