@@ -29,7 +29,7 @@ describe('Sign up form test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should verify the varios field needed in sign up form', () => {
+  test('should verify the various field needed in sign up form', () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
     expect(screen.getByPlaceholderText('Name*')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Business email*')).toBeInTheDocument();
@@ -37,6 +37,14 @@ describe('Sign up form test cases', () => {
     expect(screen.getByPlaceholderText('Company')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Role')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Phone')).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Sign up with Google'})).toBeInTheDocument();
+  });
+  test('should click the Sign up with Google button', () => {
+    renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
+    userEvent.click(screen.getByRole('button', {name: 'Sign up with Google'}));
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.auth.signUpWithGoogle('/', {})
+    );
   });
   test('should fill the sign up form and click on sign up button', () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
@@ -48,7 +56,7 @@ describe('Sign up form test cases', () => {
 
     userEvent.click(screen.getByRole('checkbox'));
 
-    const signupButton = screen.getByRole('button');
+    const signupButton = screen.getByRole('button', {name: 'Sign up'});
 
     userEvent.click(signupButton);
 
@@ -81,7 +89,7 @@ describe('Sign up form test cases', () => {
 
     userEvent.click(screen.getByRole('checkbox'));
 
-    const signupButton = screen.getByRole('button');
+    const signupButton = screen.getByRole('button', {name: 'Sign up'});
 
     userEvent.click(signupButton);
 
@@ -96,6 +104,8 @@ describe('Sign up form test cases', () => {
         utm_source: 'google',
       })
     );
+
+    expect(signupButton).toBeDisabled();
   });
   test('should click the sign up button when unknown search param is present in URL', () => {
     renderWithProviders(
@@ -113,7 +123,7 @@ describe('Sign up form test cases', () => {
 
     userEvent.click(screen.getByRole('checkbox'));
 
-    const signupButton = screen.getByRole('button');
+    const signupButton = screen.getByRole('button', {name: 'Sign up'});
 
     userEvent.click(signupButton);
 
@@ -137,5 +147,15 @@ describe('Sign up form test cases', () => {
     renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
 
     expect(screen.getByText('error message')).toBeInTheDocument();
+  });
+  test('should not show form fields when sign up is done', () => {
+    const initialStore = getCreatedStore();
+
+    mutateStore(initialStore, draft => {
+      draft.auth.signup = {status: 'done', message: 'success message' };
+    });
+    const {utils} = renderWithProviders(<MemoryRouter><Signup /></MemoryRouter>, {initialStore});
+
+    expect(utils.container.textContent).toBe('');
   });
 });

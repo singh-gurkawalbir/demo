@@ -84,8 +84,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const PLACEHOLDER = 'Search integrations & flows';
-export default function HomeSearchInput({value, onChange, placeHolder, openWithFocus, className}) {
+export default function SearchInputPageBar({value, onChange, placeHolder, openWithFocus, className, autoFocus}) {
   const inputRef = useRef();
   const classes = useStyles();
   const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
@@ -98,11 +97,10 @@ export default function HomeSearchInput({value, onChange, placeHolder, openWithF
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = placeHolder || PLACEHOLDER;
     }
     dispatchLocalAction({type: 'onInputChange', value: e.target.value});
     onChange(e);
-  }, [onChange, placeHolder]);
+  }, [onChange]);
 
   const blurHandler = useCallback(e => {
     dispatchLocalAction({type: 'onBlur', value: e.target.value});
@@ -122,10 +120,9 @@ export default function HomeSearchInput({value, onChange, placeHolder, openWithF
   useEffect(() => {
     if (openWithFocus) {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = placeHolder || PLACEHOLDER;
       dispatchLocalAction({type: 'onInputChange', value: ''});
     }
-  }, [openWithFocus, placeHolder]);
+  }, [openWithFocus]);
 
   return (
     <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused}, className)}>
@@ -140,13 +137,14 @@ export default function HomeSearchInput({value, onChange, placeHolder, openWithF
         onBlur={blurHandler}
         onFocus={focusHandler}
         onChange={onChangeHandler}
-        placeholder={placeHolder || PLACEHOLDER}
+        placeholder={placeHolder || 'Search…'}
         data-test="homeSearchInput"
         classes={{
           root: classes.inputRoot,
           input: clsx(classes.inputInput, {[classes.inputSearch]: isSearchIconHidden}),
         }}
-        inputProps={{ 'aria-label': 'search integrations & flows' }}
+        inputProps={{ 'aria-label': placeHolder || 'search'}}
+        autoFocus={autoFocus}
         />
       <IconButton size="small" onClick={onClearInput} className={clsx(classes.closeIcon, {[classes.hideCloseBtn]: isCloseIconHidden})}>
         <CloseIcon className={classes.closeIconSvg} />

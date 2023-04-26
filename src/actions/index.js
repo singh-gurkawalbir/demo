@@ -121,6 +121,8 @@ const auth = {
     action(actionTypes.AUTH.SIGNUP, { payloadBody }),
   signupStatus: (status, message) =>
     action(actionTypes.AUTH.SIGNUP_STATUS, {status, message}),
+  signUpWithGoogle: (returnTo, utmParams, acceptInviteParams) =>
+    action(actionTypes.AUTH.SIGNUP_WITH_GOOGLE, { returnTo, utmParams, acceptInviteParams }),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>

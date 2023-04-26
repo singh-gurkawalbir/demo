@@ -20,6 +20,8 @@ const useStyles = makeStyles(theme => ({
   dynaLabelWrapper: {
     flexDirection: 'row !important',
     display: 'flex',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingTop: '6px',
   },
   dynaCheckControlLabel: {
     margin: 0,
@@ -48,7 +50,6 @@ export default function DynaCheckboxExistingResource(props) {
     name,
     onFieldChange,
     value = '',
-    label,
     inverse,
     required,
     isValid,
@@ -63,7 +64,7 @@ export default function DynaCheckboxExistingResource(props) {
     checkPermissions = false,
   } = props;
 
-  const { filter, visible = true, ...otherOptions } = options;
+  const { filter, visible = true, label, ...otherOptions} = options;
   const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
   const resourceIdsToFilter = useSelector(state => {
     const flow = selectors.resource(state, 'flows', flowId);
@@ -211,12 +212,12 @@ export default function DynaCheckboxExistingResource(props) {
             />
           )}
           className={classes.dynaCheckControlLabel}
-          label={label}
+          label={label || props.label}
 
         />
         {labelSubText && (<Typography variant="caption" className={classes.infoText}>{labelSubText}</Typography>)}
 
-        <FieldHelp {...props} />
+        <FieldHelp {...props} label={label || props.label} />
         <FieldMessage {...props} />
       </FormControl>
     </LoadResources>

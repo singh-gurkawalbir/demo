@@ -212,7 +212,7 @@ export function* requestPreview({ id }) {
             errorMessage.push(`Stack: ${errJSON.stack}`);
           }
 
-          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine}));
+          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine, errSourceProcessor: editor.activeProcessor}));
         }
       }
     }
@@ -225,7 +225,7 @@ export function* requestPreview({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message}));
+    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message, errSourceProcessor: editor.activeProcessor}));
   }
 
   return yield put(actions.editor.previewResponse(id, finalResult));
@@ -729,7 +729,7 @@ export function* requestEditorSampleData({
   const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
-    if (flowId) {
+    if (flowId && !isNewId(flowId)) {
       const { status } = yield select(selectors.getLastExportDateTime, flowId) || emptyObject;
 
       if (!status) {

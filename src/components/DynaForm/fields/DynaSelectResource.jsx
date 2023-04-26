@@ -176,6 +176,13 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(0.5),
     },
   },
+  dynaSelectMultiSelectActionsFlow: {
+    display: 'flex',
+    marginLeft: theme.spacing(0.5),
+    '& >* button': {
+      padding: theme.spacing(0.5),
+    },
+  },
   menuItem: {
     maxWidth: '95%',
     textOverflow: 'ellipsis',
@@ -244,6 +251,7 @@ export default function DynaSelectResource(props) {
     editTitle,
     disabledTitle,
     isValueValid = false,
+    isSelectFlowResource,
   } = props;
   let {filter} = props;
   const { options = {}, getItemInfo } = props;
@@ -497,6 +505,7 @@ export default function DynaSelectResource(props) {
                 disabled={disableSelect}
                 removeHelperText={isAddingANewResource}
                 options={[{ items: truncatedItems(resourceItems || []) }]}
+                isSelectFlowResource={isSelectFlowResource}
           />
               {resourceType === 'connections' && !!value && !skipPingConnection && (
               <ConnectionLoadingChip
@@ -509,7 +518,7 @@ export default function DynaSelectResource(props) {
             </div>
 
           )}
-          <div className={classes.dynaSelectMultiSelectActions}>
+          <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
             {allowNew && (
             <IconButtonWithTooltip
               tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
