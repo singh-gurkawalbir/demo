@@ -3,6 +3,7 @@ import React from 'react';
 import Signin from '.';
 import { getCreatedStore } from '../../../store';
 import { renderWithProviders, mutateStore } from '../../../test/test-utils';
+import { SIGN_UP_SUCCESS } from '../../../constants';
 
 let initialStore;
 
@@ -67,7 +68,7 @@ describe('Testsuite for Concur SignIn', () => {
     expect(screen.getByRole('heading', {
       name: /link your celigo account with sap concur/i,
     })).toBeInTheDocument();
-    expect(screen.getByText(/please check your email!/i)).toBeInTheDocument();
+    expect(screen.getByText(SIGN_UP_SUCCESS)).toBeInTheDocument();
     expect(screen.getByText(
       /USER_SIGN_IN.NEW_USER_IO/i)).toBeInTheDocument();
     expect(screen.getByText(/dialogopen =/i)).toBeInTheDocument();
