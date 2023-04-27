@@ -72,9 +72,9 @@ export default {
     deltaFieldsToValidate: ['http.relativeURI', 'http.body'],
     pagingFieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'],
     pagingMethodsToValidate: {
-      page: /.*{{.*export\.http\.paging\.page.*}}/,
-      skip: /.*{{.*export\.http\.paging\.skip.*}}/,
-      token: /.*{{.*export\.http\.paging\.token.*}}/,
+      page: HTTP_PAGING_PAGE_REGEX_STRING,
+      skip: HTTP_PAGING_SKIP_REGEX_STRING,
+      token: HTTP_PAGING_TOKEN_REGEX_STRING,
     },
     requiredWhen: [
       {
