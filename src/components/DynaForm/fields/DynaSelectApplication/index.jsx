@@ -181,19 +181,19 @@ export default function SelectApplication(props) {
     const imagePath = getImageUrl('images/react/empty-states/connections.png');
 
     return (
-      <>
-        <components.NoOptionsMessage {...props} />
+      <div className={classes.emptyOptionMessage}>
+        <components.NoOptionsMessage className={classes.emptyMessage} {...props} />
         <img
           className={classes.appLogo}
           src={imagePath}
           type="connections"
           alt="" />
 
-        <Typography>
+        <Typography variant="body2">
           {`We weren't able to find "${inputValue}"`}
         </Typography>
-        <div>
-          <Typography>Try using</Typography>
+        <Typography variant="body2">
+          Try using
           <TextButton
             onClick={() => {
               const universalConnectorOptions = options[1]?.options;
@@ -203,11 +203,12 @@ export default function SelectApplication(props) {
 
               refState.value = httpOptionProps;
               handleChange({value: 'http', label: 'HTTP'});
-            }}>HTTP
+            }}
+            color="primary">HTTP
           </TextButton>
-          <Typography>connector</Typography>
-        </div>
-      </>
+          connector
+        </Typography>
+      </div>
     );
   };
 
