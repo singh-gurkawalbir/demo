@@ -1,6 +1,7 @@
 import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import { TextButton } from '../../../../components/Buttons';

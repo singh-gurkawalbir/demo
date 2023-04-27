@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import LoginForm from './LoginForm';
 import MarketingContentWithImages from './MarketingContentWithImages';
 import MarketingContentWithIframe from './MarketingContentWithIframe';
@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '30% 70%',
     height: '100vh',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '100%',
     },
   },

@@ -1,42 +1,22 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { TextButton, FilledButton} from '../../components/Buttons';
-import getImageUrl from '../../utils/image';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
-import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
-
-const path = getImageUrl('images/googlelogo.png');
+import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
+import messageStore, { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     marginTop: theme.spacing(4),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
-  },
-  relatedContent: {
-    textDecoration: 'none',
   },
   textField: {
     width: '100%',
@@ -53,47 +33,8 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.error.dark,
     },
   },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
-  },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
-  },
-  or: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    margin: theme.spacing(2, 0),
-    '&:before': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-    '&:after': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-  },
-  hidden: {
-    display: 'none',
-  },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
+  cancelBtn: {
+    fontSize: theme.spacing(2),
   },
 }));
 export default function ForgotPassword({setShowError, email}) {
@@ -124,14 +65,14 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
-      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErrorMsg(messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Email'}));
       setShowErr(true);
     } else {
       if (validateEmail(email)) {
         setShowInvalidEmailError(false);
         handleAuthentication(email);
       } else {
-        setShowErrorMsg('INVALID_EMAIL');
+        setShowErrorMsg(message.USER_SIGN_IN.INVALID_EMAIL);
         setShowInvalidEmailError(true);
       }
       setShowErr(false);
@@ -143,7 +84,7 @@ export default function ForgotPassword({setShowError, email}) {
   }, []);
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -151,18 +92,20 @@ export default function ForgotPassword({setShowError, email}) {
           id="email"
           variant="filled"
           placeholder="Email*"
+          fullWidth
           value={userEmail}
           onChange={handleOnChangeEmail}
           className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
         />
         <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 
-        { isAuthenticating ? <Spinner />
+        { isAuthenticating ? <Spinner sx={{mt: 1}} />
           : (
             <FilledButton
               data-test="submit"
               type="submit"
               className={classes.submit}
+              submit
               value="Submit">
               Submit
             </FilledButton>
@@ -174,12 +117,13 @@ export default function ForgotPassword({setShowError, email}) {
           component={Link}
           role="link"
           type="cancel"
-          className={classes.submit}
+          submit
+          className={clsx(classes.submit, classes.cancelBtn)}
         >
           Cancel
         </TextButton>
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }
 

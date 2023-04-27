@@ -220,7 +220,7 @@ describe('InstallSteps tests', () => {
     expect(screen.getByText('Complete the steps below to revert your changes.')).toBeInTheDocument();
     expect(screen.getByText('Revert')).toBeInTheDocument();
     expect(screen.getByText('You\'ve successfully reverted your changes.')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'DrawerSetup'}));
+    await userEvent.click(screen.getByRole('button', {name: 'DrawerSetup'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.integrationLCM.installSteps.setOauthConnectionMode({
       connectionId: 'oAuthConnectionId',
       revisionId: '_revId',
@@ -233,40 +233,40 @@ describe('InstallSteps tests', () => {
 
   test('Should able to test InstallSteps with installation pending and step type revert', async () => {
     await initInstallSteps({...props, revisionId: '_revId4', integrationId: '_integrationId2'});
-    userEvent.click(screen.getByRole('button', {name: 'Revert'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Revert'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.integrationLCM.installSteps.updateStep('_revId4', 'inProgress'));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.integrationLCM.installSteps.installStep('_integrationId2', '_revId4'));
   });
   test('Should able to test InstallSteps with installation pending and step type connection', async () => {
     await initInstallSteps({...props, revisionId: '_revId2', integrationId: '_integrationId2'});
     expect(screen.getByRole('heading', {name: '1'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Configure'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Configure'}));
     expect(mockHistoryPush).toHaveBeenCalled();
     expect(mockDispatchFn).toHaveBeenCalled();
   });
   test('Should able to test InstallSteps with installation step type connection already triggered', async () => {
     await initInstallSteps({...props, revisionId: '_revId7', integrationId: '_integrationId2'});
-    userEvent.click(screen.getByRole('button', {name: 'Configuring'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Configuring'}));
     expect(mockHistoryPush).not.toHaveBeenCalled();
   });
   test('Should able to test InstallSteps with installation pending and step type url', async () => {
     await initInstallSteps({...props, revisionId: '_revId3', integrationId: '_integrationId2'});
     expect(screen.getByRole('heading', {name: '1'})).toBeInTheDocument();
     expect(screen.getByText('Install your url')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Install'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Install'}));
     expect(mockHistoryPush).not.toHaveBeenCalled();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.updateStep('_revId3', 'inProgress'));
   });
   test('Should able to test InstallSteps with installation pending and step type url already triggered', async () => {
     await initInstallSteps({...props, revisionId: '_revId5', integrationId: '_integrationId2'});
     expect(screen.getByText('demo triggered')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Installing'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Installing'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.updateStep('_revId5', 'verify'));
   });
   test('Should able to test InstallSteps with installation step type url status verifying', async () => {
     await initInstallSteps({...props, revisionId: '_revId6', integrationId: '_integrationId2'});
     expect(screen.getByText('demo verifying')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: 'Installing'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Installing'}));
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.integrationLCM.installSteps.updateStep('_revId6', 'inProgress'));
   });
@@ -277,30 +277,30 @@ describe('InstallSteps tests', () => {
     expect(screen.getByText('Install your changes')).toBeInTheDocument();
     const infoButton = screen.getAllByRole('button').find(b => b.getAttribute('data-test') === 'openPageInfo');
 
-    userEvent.click(infoButton);
+    await userEvent.click(infoButton);
     expect(screen.getByText('Installing')).toBeInTheDocument();
     expect(screen.getByText('Configured')).toBeInTheDocument();
     expect(screen.getByText('You\'ve successfully merged your pull.')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Configured'));
+    await userEvent.click(screen.getByText('Configured'));
     expect(mockClose).toHaveBeenCalled();
   });
   test('Should able to test the error message when the installation steps is completed but when the revision status is failed and type is pull', async () => {
     await initInstallSteps({...props, revisionId: '_revId8', integrationId: '_integrationId2'}, 'pull');
     expect(screen.getByText('Complete the steps below to merge your changes.')).toBeInTheDocument();
-    expect(screen.getByText('The merging of your pull request was unsuccessful.')).toBeInTheDocument();
+    expect(screen.getByText('The merge of your pull was unsuccessful. Try your pull again.')).toBeInTheDocument();
     userEvent.click(screen.getByText('Configured'));
     expect(mockClose).toHaveBeenCalled();
   });
   test('Should able to test the error message when the installation steps is completed but when the revision status is failed and type is revert', async () => {
     await initInstallSteps({...props, revisionId: '_revId9', integrationId: '_integrationId2'});
     expect(screen.getByText('Complete the steps below to revert your changes.')).toBeInTheDocument();
-    expect(screen.getByText('You were unable to revert your changes successfully.')).toBeInTheDocument();
+    expect(screen.getByText('Your revert was unsuccessful. Try reverting again.')).toBeInTheDocument();
     userEvent.click(screen.getByText('Configured'));
     expect(mockClose).toHaveBeenCalled();
   });
   test('Should able to test InstallSteps with invalid revisionId', async () => {
     await initInstallSteps({...props, revisionId: undefined});
-    userEvent.click(screen.getByRole('button', {name: 'DrawerSetup'}));
+    await userEvent.click(screen.getByRole('button', {name: 'DrawerSetup'}));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.integrationLCM.installSteps.installStep('_integrationId', undefined, {_connectionId: undefined}));
   });
 });

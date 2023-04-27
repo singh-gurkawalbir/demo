@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import PanelHeader from '../../../components/PanelHeader';
 import NotificationToaster from '../../../components/NotificationToaster';
 import messageStore, {message} from '../../../utils/messageStore';
@@ -12,7 +13,6 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DataRetentionPeriod from './DataRetentionPeriod';
-import Spinner from '../../../components/Spinner';
 import { MAX_DATA_RETENTION_PERIOD } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -87,7 +87,7 @@ export default function DataRetention() {
     return (
       <div className={classes.root}>
         <PanelHeader title="Data retention" />
-        <Spinner loading size="large" />
+        <Spinner center="horizontal" size="large" />
       </div>
     );
   }

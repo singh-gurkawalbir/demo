@@ -1,6 +1,6 @@
 import React, { useMemo} from 'react';
 import {useSelector} from 'react-redux';
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import resourceConstants from '../../../../forms/constants/connection';
 import { getResourceSubType, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import consolidatedActions from '../../../ResourceFormFactory/Actions';

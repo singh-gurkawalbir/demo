@@ -40,9 +40,9 @@ describe('test cases for SaveAndCloseMiniButtonGroup', () => {
     const saveButton = screen.getByRole('button', {name: 'SUBMIT'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(handleSave).toHaveBeenCalledTimes(1);
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHandleCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -51,7 +51,7 @@ describe('test cases for SaveAndCloseMiniButtonGroup', () => {
 
     await initSaveAndCloseMiniButtonGroup({isDirty: true, disabled: true, handleClose});
     expect(screen.getByRole('button', {name: 'Save & close'})).toBeDisabled();
-    userEvent.click(screen.getByRole('button', {name: 'Close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Close'}));
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 });

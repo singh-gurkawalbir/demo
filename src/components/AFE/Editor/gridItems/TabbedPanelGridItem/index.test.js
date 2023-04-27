@@ -24,7 +24,7 @@ describe('tabbedPanelGridItem UI tests', () => {
 
     expect(selectedTab).toHaveAttribute('id', 'tabpanel-key1');
   });
-  test('should display the clicked tab when selected tab is changed', () => {
+  test('should display the clicked tab when selected tab is changed', async () => {
     const props = {
       editorId: 'filecsv',
       panelGroup,
@@ -36,7 +36,7 @@ describe('tabbedPanelGridItem UI tests', () => {
     expect(selectedTab).toBeInTheDocument();
     expect(selectedTab).toHaveAttribute('id', 'tabpanel-key1');
     expect(screen.getByText('tab2')).toBeInTheDocument();
-    userEvent.click(screen.getByText('tab2'));
+    await userEvent.click(screen.getByText('tab2'));
     expect(selectedTab).toHaveAttribute('id', 'tabpanel-key2');      // change in id indicates the render of different tab //
   });
 });

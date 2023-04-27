@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { generateUUID } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -115,12 +115,12 @@ export default function DynaWebhookTokenGenerator(props) {
             required
             value={value}
             setFieldIds={setFieldIds}
-        />
+      />
           {value?.match(/^[A-Za-z0-9]/) && (
           <FieldMessage
             className={classes.warningText}
             warningMessages={warningTextMessage} />
-        )}
+      )}
         </div>
         <div className={classes.dynaWebhookTokenbtn}>
           {value?.match(/^[A-Za-z0-9]/) ? (
@@ -134,14 +134,14 @@ export default function DynaWebhookTokenGenerator(props) {
                 <CopyIcon />
               </IconButtonWithTooltip>
             </CopyToClipboard>
-          ) : (
-            <IconButtonWithTooltip
-              tooltipProps={{title: buttonLabel, placement: 'bottom'}}
-              buttonSize={{size: 'small'}}
-              onClick={handleGenerateClick}>
-              <AddIcon />
-            </IconButtonWithTooltip>
-          )}
+        ) : (
+          <IconButtonWithTooltip
+            tooltipProps={{title: buttonLabel, placement: 'bottom'}}
+            buttonSize={{size: 'small'}}
+            onClick={handleGenerateClick}>
+            <AddIcon />
+          </IconButtonWithTooltip>
+        )}
         </div>
       </div>
     </>

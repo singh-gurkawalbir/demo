@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { makeStyles, Tab, Tabs } from '@material-ui/core';
+import { Tab, Tabs } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PanelGridItem from '../PanelGridItem';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import IsLoggableContextProvider from '../../../../IsLoggableContextProvider';

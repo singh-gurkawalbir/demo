@@ -55,10 +55,7 @@ export default function ReplaceConnection(props) {
     },
   };
 
-  const formKey = useFormInitWithPermissions({
-    fieldMeta,
-    optionsHandler: fieldMeta.optionsHandler,
-  });
+  const formKey = useFormInitWithPermissions({ fieldMeta });
 
   const replace = useCallback(formVal => {
     confirmDialog({

@@ -144,7 +144,7 @@ describe('mock input drawer test cases', () => {
     const doneButtonNode = screen.getByText(/Done/i);
 
     expect(doneButtonNode).toBeInTheDocument();
-    userEvent.click(doneButtonNode);
+    await userEvent.click(doneButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT,
       resourceId: '98765',
@@ -157,21 +157,21 @@ describe('mock input drawer test cases', () => {
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
     expect(fetchLatestInputButton).toBeInTheDocument();
-    userEvent.clear(inputNode);
-    userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
+    await userEvent.clear(inputNode);
+    await userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
     expect(screen.getByText(/Mock input must be in integrator.io canonical format./)).toBeInTheDocument();
     const onCloseButtonNode = screen.getByRole('button', {name: 'On Close'});
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/654321/flowBuilder/12345/edit/imports/98765');
   });
   test('should show error for invalid JSON input', async () => {
     initMockInput({ status: 'received', data: defaultData });
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
-    userEvent.clear(inputNode);
-    userEvent.type(inputNode, 'userinput');
+    await userEvent.clear(inputNode);
+    await userEvent.type(inputNode, 'userinput');
     expect(screen.getByText(/userinput/i)).toBeInTheDocument();
     expect(screen.getByText(message.MOCK_INPUT_REFRESH.INVALID_JSON)).toBeInTheDocument();
   });
@@ -217,7 +217,9 @@ describe('mock input drawer test cases', () => {
   });
   test('should show a spinner and "Fetch latest input data" button should be disabled when mock input is requested', async () => {
     initMockInput({ status: MOCK_INPUT_STATUS.REQUESTED });
-    expect(document.querySelector(['svg[class="MuiCircularProgress-svg"]'])).toBeInTheDocument();
+    const spinnerNode = screen.getByRole('progressbar');
+
+    expect(spinnerNode.className).toEqual(expect.stringContaining('MuiCircularProgress-'));
 
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
@@ -230,7 +232,7 @@ describe('mock input drawer test cases', () => {
 
     expect(fetchLatestInputButton).toBeInTheDocument();
 
-    userEvent.click(fetchLatestInputButton);
+    await userEvent.click(fetchLatestInputButton);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: actionTypes.MOCK_INPUT.REQUEST,
       resourceId,
@@ -257,7 +259,7 @@ describe('mock input drawer test cases', () => {
 
     expect(fetchLatestInputButton).toBeInTheDocument();
 
-    userEvent.click(fetchLatestInputButton);
+    await userEvent.click(fetchLatestInputButton);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: actionTypes.MOCK_INPUT.REQUEST,
       resourceId,

@@ -30,9 +30,12 @@ import {
   linkWithGoogle,
   reSignInWithGoogle,
   signInWithGoogle,
+  signUpWithGoogle,
   initializeLogrocket,
   fetchUIVersion,
   validateSession,
+  checkAndUpdateDefaultSetId,
+  submitAcceptInvite,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../constants';
@@ -203,6 +206,118 @@ describe('pollApiRequests', () => {
   });
 });
 
+describe('checkAndUpdateDefaultSetId test suite', () => {
+  test('should not update preference when defaultAShareId is owner', () => {
+    const saga = checkAndUpdateDefaultSetId();
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(
+      retrievingUserDetailsEffect,
+    );
+    expect(saga.next().value).toEqual(
+      call(getResourceCollection,
+        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+      )
+    );
+
+    const checkForUserPreferencesEffect = select(selectors.userPreferences);
+
+    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
+
+    const selectHasAcceptedAccountsEffect = select(
+      selectors.hasAcceptedAccounts
+    );
+
+    expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
+      selectHasAcceptedAccountsEffect
+    );
+  });
+
+  test('should update the default set id when we have invalid defaultAShareId', () => {
+    const saga = checkAndUpdateDefaultSetId();
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(
+      retrievingUserDetailsEffect,
+    );
+    expect(saga.next().value).toEqual(
+      call(getResourceCollection,
+        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+      )
+    );
+
+    const checkForUserPreferencesEffect = select(selectors.userPreferences);
+
+    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
+
+    const selectHasAcceptedAccountsEffect = select(
+      selectors.hasAcceptedAccounts
+    );
+
+    expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual(
+      selectHasAcceptedAccountsEffect
+    );
+
+    expect(saga.next(true).value).toEqual(
+      call(
+        validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
+        'ashare1'
+      )
+    );
+
+    expect(saga.next('ashare2').value).toEqual(
+      put(
+        actions.user.preferences.update({
+          defaultAShareId: 'ashare2',
+          environment: 'production',
+        }, true)
+      )
+    );
+  });
+
+  test('should update the defaultAShareId to own when we have invalid defaultAShareId and no accepted account', () => {
+    const saga = checkAndUpdateDefaultSetId();
+    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+
+    expect(saga.next().value).toEqual(
+      retrievingUserDetailsEffect,
+    );
+    expect(saga.next().value).toEqual(
+      call(getResourceCollection,
+        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+      )
+    );
+
+    const checkForUserPreferencesEffect = select(selectors.userPreferences);
+
+    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
+
+    const selectHasAcceptedAccountsEffect = select(
+      selectors.hasAcceptedAccounts
+    );
+
+    expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual(
+      selectHasAcceptedAccountsEffect
+    );
+
+    expect(saga.next(true).value).toEqual(
+      call(
+        validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
+        'ashare1'
+      )
+    );
+
+    expect(saga.next('own').value).toEqual(
+      put(
+        actions.user.preferences.update({
+          defaultAShareId: 'own',
+          environment: 'production',
+        }, true)
+      )
+    );
+  });
+});
+
 describe('initialize all app relevant resources sagas', () => {
   describe('retrievingOrgDetails sagas', () => {
     test('should retrieve licenses, org users and accounts', () => {
@@ -298,22 +413,17 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is an org owner', () => {
     const saga = retrieveAppInitializationResources();
-    // const requestMFASessionInfoEffect = call(requestMFASessionInfo);
     const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
-    const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
-    // expect(saga.next().value).toEqual(
-    //   requestMFASessionInfoEffect,
-    // );
     expect(saga.next().value).toEqual(
       isMFASetupIncompleteEffect,
     );
-    expect(saga.next().value).toEqual(
-      retrievingUserDetailsEffect,
-    );
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
+    expect(saga.next().value).toEqual(call(checkAndUpdateDefaultSetId));
+
     expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
@@ -321,72 +431,30 @@ describe('initialize all app relevant resources sagas', () => {
         retrievingHttpConnectorDetailsEffect,
       ])
     );
-    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
-
-    const checkForUserPreferencesEffect = select(selectors.userPreferences);
-
-    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
-
-    const selectHasAcceptedAccountsEffect = select(
-      selectors.hasAcceptedAccounts
-    );
-
-    expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
-      selectHasAcceptedAccountsEffect
-    );
-
     expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next(false).done).toBe(true);
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
-    // const requestMFASessionInfoEffect = call(requestMFASessionInfo);
     const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
-    const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
-    // expect(saga.next().value).toEqual(
-    //   requestMFASessionInfoEffect,
-    // );
     expect(saga.next().value).toEqual(
       isMFASetupIncompleteEffect,
     );
-    expect(saga.next().value).toEqual(
-      retrievingUserDetailsEffect,
-    );
-    expect(saga.next().value).toEqual(
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
+    expect(saga.next().value).toEqual(call(checkAndUpdateDefaultSetId));
+    expect(saga.next('ashare1').value).toEqual(
       all([
         retrievingOrgDetailsEffect,
         retrievingAssistantDetailsEffect,
         retrievingHttpConnectorDetailsEffect,
       ])
     );
-    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
-
-    const checkForUserPreferencesEffect = select(selectors.userPreferences);
-
-    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
-
-    const selectHasAcceptedAccountsEffect = select(
-      selectors.hasAcceptedAccounts
-    );
-
-    expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual(
-      selectHasAcceptedAccountsEffect
-    );
-
-    const callValidateAndGetDefaultAShareIdEffect = call(
-      validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
-      'ashare1'
-    );
-
-    expect(saga.next(true).value).toEqual(
-      callValidateAndGetDefaultAShareIdEffect
-    );
-    expect(saga.next('ashare1').value).toEqual(
+    expect(saga.next().value).toEqual(
       put(actions.auth.defaultAccountSet())
     );
     expect(saga.next().done).toBe(true);
@@ -396,7 +464,7 @@ describe('initialize all app relevant resources sagas', () => {
     // const requestMFASessionInfoEffect = call(requestMFASessionInfo);
     const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
-    const retrievingUserDetailsEffect = call(retrievingUserDetails);
+    // const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
@@ -406,9 +474,8 @@ describe('initialize all app relevant resources sagas', () => {
     expect(saga.next().value).toEqual(
       isMFASetupIncompleteEffect,
     );
-    expect(saga.next().value).toEqual(
-      retrievingUserDetailsEffect,
-    );
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
+    expect(saga.next().value).toEqual(call(checkAndUpdateDefaultSetId));
     expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
@@ -416,44 +483,12 @@ describe('initialize all app relevant resources sagas', () => {
         retrievingHttpConnectorDetailsEffect,
       ])
     );
-    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
-    const checkForUserPreferencesEffect = select(selectors.userPreferences);
-
-    expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
-
-    const selectHasAcceptedAccountsEffect = select(
-      selectors.hasAcceptedAccounts
-    );
-
-    expect(saga.next({ defaultAShareId: 'ashare1' }).value).toEqual(
-      selectHasAcceptedAccountsEffect
-    );
-
-    const callValidateAndGetDefaultAShareIdEffect = call(
-      validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
-      'ashare1'
-    );
-
-    expect(saga.next(true).value).toEqual(
-      callValidateAndGetDefaultAShareIdEffect
-    );
-
-    expect(saga.next('ashare2').value).toEqual(
-      put(
-        actions.user.preferences.update({
-          defaultAShareId: 'ashare2',
-          environment: 'production',
-        })
-      )
-    );
-    expect(saga.next().value).toEqual(
-      call(retrievingHttpConnectorDetails)
-    );
     expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next().done).toBe(true);
   });
 });
+
 describe('auth saga flow', () => {
   const authMessage = 'Authenticating User';
 
@@ -481,16 +516,13 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-
-    expect(
-      saga.next({
-        _csrf: _csrfAfterSignIn,
-      }).value
-    ).toEqual(select(selectors.isSessionExpired));
-    const validateSessionEffect = saga.next(false).value;
+    const validateSessionEffect = saga.next({
+      _csrf: _csrfAfterSignIn,
+    }).value;
 
     expect(validateSessionEffect).toEqual(call(validateSession));
-    const setCSRFEffect = saga.next().value;
+    expect(saga.next().value).toEqual(select(selectors.isSessionExpired));
+    const setCSRFEffect = saga.next(false).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
@@ -619,15 +651,15 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-
-    expect(
-      saga.next({
-        _csrf: _csrfAfterSignIn,
-      }).value
-    ).toEqual(select(selectors.isSessionExpired));
-    const validateSessionEffect = saga.next(true).value;
+    const validateSessionEffect = saga.next({
+      _csrf: _csrfAfterSignIn,
+    }).value;
 
     expect(validateSessionEffect).toEqual(call(validateSession));
+
+    expect(
+      saga.next().value
+    ).toEqual(select(selectors.isSessionExpired));
     // pass in session expired returned value
     const setCSRFEffect = saga.next(true).value;
 
@@ -664,16 +696,16 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-
-    expect(
-      saga.next({
-        _csrf: _csrfAfterSignIn,
-      }).value
-    ).toEqual(select(selectors.isSessionExpired));
-    // pass in session expired returned value
-    const validateSessionEffect = saga.next(false).value;
+    const validateSessionEffect = saga.next({
+      _csrf: _csrfAfterSignIn,
+    }).value;
 
     expect(validateSessionEffect).toEqual(call(validateSession));
+
+    expect(
+      saga.next().value
+    ).toEqual(select(selectors.isSessionExpired));
+    // pass in session expired returned value
     const setCSRFEffect = saga.next(false).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
@@ -685,6 +717,58 @@ describe('auth saga flow', () => {
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(initializeApp, { reload: false }));
     expect(saga.next().done).toBe(true);
+  });
+});
+
+describe('submitAcceptInvite saga', () => {
+  test('should put the errror message in redux store when api call for accepr invite fails', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const payload = { email, password };
+    const saga = submitAcceptInvite({payload});
+    const {value} = saga.next();
+
+    expect(value).toEqual(
+      call(apiCallWithRetry, {
+        path: '/accept-invite?no_redirect=true',
+        opts: {
+          body: payload,
+          method: 'POST',
+        },
+        message: 'Accept invite',
+        hidden: true,
+      })
+    );
+    expect(saga.throw({errors: [{message: 'somemeesage'}]}).value).toEqual(
+      put(actions.auth.acceptInvite.failure({message: ['somemeesage'], type: 'error'}))
+    );
+  });
+  test('should put the response message in redux store when api call for accepr invite gets success', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const payload = { email, password };
+    const response = {message: 'someMessage', success: true};
+    const saga = submitAcceptInvite({payload});
+    const {value} = saga.next();
+
+    expect(value).toEqual(
+      call(apiCallWithRetry, {
+        path: '/accept-invite?no_redirect=true',
+        opts: {
+          body: payload,
+          method: 'POST',
+        },
+        message: 'Accept invite',
+        hidden: true,
+      })
+    );
+
+    expect((saga.next(response)).value).toEqual(
+      put(actions.auth.acceptInvite.success(response))
+    );
+    expect((saga.next()).value).toEqual(
+      put(actions.auth.signupStatus('done', response.message))
+    );
   });
 });
 
@@ -946,6 +1030,50 @@ describe('testcases with window dom setup', () => {
         method: 'POST',
         target: '_blank',
         submit,
+      });
+      expect(submit).toHaveBeenCalled();
+      expect(appendChildFn).toHaveBeenCalled();
+      expect(removeChildFn).toHaveBeenCalled();
+    }
+    );
+  });
+  describe('signUpWithGoogle', () => {
+    test('should fabricate the signUpWithGoogle body correctly and call all of its mocks as well', () => {
+      expectSaga(signUpWithGoogle, {returnTo: 'something'})
+        .provide([
+          [call(getCSRFTokenBackend), 'someCsrf',
+          ]])
+
+        .run();
+
+      expect(form).toEqual({
+        action: '/auth/google?returnTo=something',
+        id: 'signinWithGoogle',
+        innerHTML: '<input name="_csrf" value="someCsrf">',
+        method: 'POST',
+        submit,
+        target: '_blank',
+      });
+      expect(submit).toHaveBeenCalled();
+      expect(appendChildFn).toHaveBeenCalled();
+      expect(removeChildFn).toHaveBeenCalled();
+    }
+    );
+    test('should fabricate the signUpWithGoogle body correctly and call all of its mocks as well and with UTM params', () => {
+      expectSaga(signUpWithGoogle, {returnTo: 'something', utmParams: {key: 'value'}})
+        .provide([
+          [call(getCSRFTokenBackend), 'someCsrf',
+          ]])
+
+        .run();
+
+      expect(form).toEqual({
+        action: '/auth/google?returnTo=something',
+        id: 'signinWithGoogle',
+        innerHTML: '<input name="_csrf" value="someCsrf"><input name="key" value="value">',
+        method: 'POST',
+        submit,
+        target: '_blank',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();

@@ -1,5 +1,5 @@
 import React from 'react';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { getJobDuration } from '../../../utils/errorManagement';
 import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
@@ -24,13 +24,13 @@ export default {
       key: 'started',
       heading: 'Started',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.startedAt} />,
     },
     {
       key: 'completed',
       heading: 'Completed',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.endedAt} />,
     },
     {
       key: 'success',

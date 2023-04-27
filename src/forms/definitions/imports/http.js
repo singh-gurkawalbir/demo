@@ -1,3 +1,4 @@
+import { HTTP_IMPORT_CREATE_FEED_RELATIVE_URI } from '../../../constants';
 import { safeParse } from '../../../utils/string';
 
 /* eslint-disable no-param-reassign */
@@ -16,6 +17,19 @@ export default {
         retValues['/http/response/failValues'],
       ];
     }
+
+    // delete feed related fields if method and relative uri are not for feed document
+    if (retValues['/http/method'] !== 'POST' || retValues['/http/relativeURI'] !== HTTP_IMPORT_CREATE_FEED_RELATIVE_URI) {
+      retValues['/unencrypted/feedType'] = undefined;
+      retValues['/unencrypted/feedOptions'] = undefined;
+    } else {
+      retValues['/unencrypted/feedOptions'] = safeParse(
+        retValues['/unencrypted/feedOptions']
+      );
+    }
+    // if field value is empty string, make it undefined
+    if (!retValues['/unencrypted/feedType']) { retValues['/unencrypted/feedType'] = undefined; }
+    if (!retValues['/unencrypted/feedOptions']) { retValues['/unencrypted/feedOptions'] = undefined; }
 
     if (retValues['/inputMode'] === 'blob') {
       retValues['/http/method'] = retValues['/http/blobMethod'];
@@ -1304,6 +1318,7 @@ export default {
     },
     'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
     'unencrypted.feedType': {fieldId: 'unencrypted.feedType'},
+    'unencrypted.feedOptions': {fieldId: 'unencrypted.feedOptions'},
     mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
@@ -1334,6 +1349,7 @@ export default {
           'http.lookups',
           'http.batchSize',
           'unencrypted.feedType',
+          'unencrypted.feedOptions',
           'http.body',
           'uploadFile',
         ],

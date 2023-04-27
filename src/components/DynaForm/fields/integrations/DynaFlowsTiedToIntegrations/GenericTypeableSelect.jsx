@@ -1,4 +1,5 @@
-import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
+import { FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
@@ -142,7 +143,6 @@ export const GenericTypeableSelect = props => {
   );
 
   return (
-
     <>
       <div className={classes.fullWidth}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
@@ -151,6 +151,7 @@ export const GenericTypeableSelect = props => {
         <FieldHelp {...props} />
       </div>
       <FormControl
+        variant="standard"
         className={classes.fullWidth}
         error={!isValid}
         disabled={disabled}
@@ -169,7 +170,7 @@ export const GenericTypeableSelect = props => {
             styles={customStyles}
             isSearchable={!unSearchable}
             defaultMenuIsOpen={defaultMenuIsOpen}
-     />
+   />
         </span>
 
         <FieldMessage {...props} />

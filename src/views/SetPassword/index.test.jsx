@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, cleanup } from '@testing-library/react';
+import { screen, cleanup, fireEvent } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../test/test-utils';
@@ -10,9 +10,25 @@ import { getCreatedStore } from '../../store';
 
 let initialStore;
 
+const mockHistoryReplace = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    replace: mockHistoryReplace,
+  }),
+}));
+
 function store(session) {
   mutateStore(initialStore, draft => {
     draft.session = session;
+  });
+}
+
+function authStore(auth) {
+  mutateStore(initialStore, draft => {
+    draft.auth = auth;
   });
 }
 
@@ -153,12 +169,28 @@ describe('setPassword', () => {
 
     expect(password).toBeInTheDocument();
 
-    await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
+    fireEvent.change(password, { target: { value: 'xbsbxsxazl223xbsbixi' } });
 
     expect(password.value).toBe('xbsbxsxazl223xbsbixi');
     const setpasswordButtonNode = screen.getByRole('button', {name: 'Save and sign in'});
 
     expect(setpasswordButtonNode).toBeInTheDocument();
-    userEvent.click(setpasswordButtonNode);
+    await userEvent.click(setpasswordButtonNode);
+  });
+  test('should redirect to home page when password is successfully set', async () => {
+    authStore({
+      requestSetPasswordStatus: 'success',
+    });
+    const props = {
+      match: {
+        params: {
+          token: '5fc5e0e66cfe5b44bb95de70',
+        },
+      },
+      pathname: '/set-initial-password/5fc5e0e66cfe5b44bb95de70',
+    };
+
+    await initSetPassword(props);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/home');
   });
 });

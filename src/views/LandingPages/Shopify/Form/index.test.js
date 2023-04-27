@@ -158,6 +158,7 @@ function initAddOrSelectForm({
               id: 'http.auth.oauth.scope',
               name: '/http/auth/oauth/scope',
               type: 'selectscopes',
+              isLoggable: true,
               label: 'Configure scopes',
               scopes: [
                 {
@@ -670,7 +671,7 @@ describe('Testsuite for AddOrSelectForm', () => {
     mockPatchSet.mockClear();
     mockUseHandleSubmit.mockClear();
   });
-  test('should test the form header', () => {
+  test('should test the form header', async () => {
     initAddOrSelectForm({
       resourceId: '12345',
       selectedAccountHasSandbox: true,
@@ -680,7 +681,7 @@ describe('Testsuite for AddOrSelectForm', () => {
     expect(screen.getByText(/mock form header/i)).toBeInTheDocument();
     expect(screen.getByText(/selectedaccounthassandbox =/i)).toBeInTheDocument();
     expect(screen.getByText(/helpurl = \/test/i)).toBeInTheDocument();
-    userEvent.click(
+    await userEvent.click(
       screen.getByRole('button', {
         name: /handletoggle/i,
       })
@@ -711,7 +712,7 @@ describe('Testsuite for AddOrSelectForm', () => {
     )).toBeInTheDocument();
     expect(screen.getByText(/mock dynaform/i)).toBeInTheDocument();
   });
-  test('should test the radio button by changing it to existing connection', () => {
+  test('should test the radio button by changing it to existing connection', async () => {
     initAddOrSelectForm({
       resourceId: '12345',
       selectedAccountHasSandbox: true,
@@ -725,7 +726,7 @@ describe('Testsuite for AddOrSelectForm', () => {
     });
 
     expect(radioButtonNode).toBeInTheDocument();
-    userEvent.click(radioButtonNode);
+    await userEvent.click(radioButtonNode);
     expect(screen.getByText('value = existing')).toBeInTheDocument();
   });
   test('should test the connection guide when the selectedAccountHasSandbox set to false', () => {
@@ -740,7 +741,7 @@ describe('Testsuite for AddOrSelectForm', () => {
       name: /shopify connection guide/i,
     })).not.toBeInTheDocument();
   });
-  test('should test the save and close mini resource form by clicking on save button', () => {
+  test('should test the save and close mini resource form by clicking on save button', async () => {
     initAddOrSelectForm({
       resourceId: '12345',
       selectedAccountHasSandbox: false,
@@ -755,7 +756,7 @@ describe('Testsuite for AddOrSelectForm', () => {
     });
 
     expect(saveAndAuthorizeButtonNode).toBeInTheDocument();
-    userEvent.click(saveAndAuthorizeButtonNode);
+    await userEvent.click(saveAndAuthorizeButtonNode);
     expect(mockUseHandleSubmit).toHaveBeenCalledWith({formKey: 'connections-12345', parentContext: {queryParams: ['code=null']}, resourceId: '12345', resourceType: 'connections'});
   });
   test('should test the redirect url when the form save is set to complete and type is not equal to IA', () => {

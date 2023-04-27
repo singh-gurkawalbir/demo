@@ -8,7 +8,7 @@ export const defaultState = {
 };
 // #region Reducers
 export default function (state = defaultState, action) {
-  const {version, type } = action;
+  const {version, type, isSwitchAccount = true } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -42,7 +42,12 @@ export default function (state = defaultState, action) {
         draft.userAcceptedAccountTransfer = true;
         break;
       case actionTypes.USER.ACCOUNT.SWITCH:
-        draft.switchAccount = 'inProgress';
+      case actionTypes.USER.ACCOUNT.LEAVE_REQUEST:
+      case actionTypes.USER.DELETE:
+      case actionTypes.USER.DISABLE:
+        if (isSwitchAccount) {
+          draft.switchAccount = 'inProgress';
+        }
 
         break;
       case actionTypes.USER.ACCOUNT.SWITCH_COMPLETE:

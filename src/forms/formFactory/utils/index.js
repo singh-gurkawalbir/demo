@@ -1,6 +1,7 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get, sortBy } from 'lodash';
 import { C_LOCKED_FIELDS } from '../../../constants';
+import { isDeleted, isRemoved } from '../../../utils/form';
 
 const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
@@ -19,7 +20,40 @@ const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
 
   return null;
 };
+export const fieldsWithRemoveDelete = fields => {
+  const fieldsNew = {};
 
+  Object.keys(fields).forEach(key => {
+    const field = fields[key];
+
+    fieldsNew[key] = {...field, isRemove: isRemoved(field, fields), deleteWhen: isDeleted(field, fields)};
+  });
+
+  return fieldsNew;
+};
+
+export const valuesToDelete = (values, fields) => {
+  const newValues = {...values};
+
+  Object.keys(fields).forEach(key => {
+    (fields[key].delete || fields[key].deleteWhen) ? delete newValues[`/${(key.replaceAll('.', '/'))}`] : '';
+  });
+
+  return newValues;
+};
+export const valuesToRemove = (values, fields) => {
+  const newValues = {...values};
+
+  Object.keys(values).forEach(key => {
+    const valkey = key.slice(1);
+    const valueKeys = valkey.replaceAll('/', '.');
+
+    // eslint-disable-next-line no-self-assign
+    (valueKeys in fields && (fields[valueKeys].remove || fields[valueKeys].isRemove)) ? newValues[key] = undefined : newValues[key] = newValues[key];
+  });
+
+  return newValues;
+};
 export const defaultPatchSetConverter = values =>
   Object.keys(values).map(key => ({
     op: 'replace',
@@ -256,19 +290,23 @@ export const sanitizePatchSet = ({
       if (patch.op === 'replace') {
         const field = getFieldByName({ name: patch.path, fieldMeta });
 
+        const modifiedPath = patch.path
+          .substring(1, patch.path.length)
+          .replace(/\//g, '.');
+        const fieldValueOnResource = get(resource, modifiedPath);
+
         // default values of all fields are '' so when undefined value is being sent it indicates that we would like delete those properties
         if (patch.value === undefined && !skipRemovePatches) {
-          const modifiedPath = patch.path
-            .substring(1, patch.path.length)
-            .replace(/\//g, '.');
-
           // consider it as a remove patch
-          if (get(resource, modifiedPath)) removePatches.push({ path: patch.path, op: 'remove' });
+          if (fieldValueOnResource) removePatches.push({ path: patch.path, op: 'remove' });
         } else if (
           !field ||
           field.defaultValue !== patch.value ||
           (field.defaultValue === patch.value && field.defaultValue !== '')
         ) {
+          valuePatches.push(patch);
+        } else if (fieldValueOnResource && patch.value === '') {
+          // if the field on resource has value but patch.value is an empty string, the value on the resource should be patched
           valuePatches.push(patch);
         }
       }
@@ -1040,66 +1078,6 @@ export const destinationOptions = {
       value: 'lookupRecords',
     },
   ],
-};
-// TODO:consider forceFieldState instead of using optionsHandler to affect fileDefinitionRulesField and fileDefinitionFormatField
-export const alterFileDefinitionRulesVisibility = fields => {
-  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
-  const fileDefinitionRulesField = fields.find(
-    field => field.id === 'file.filedefinition.rules'
-  );
-  const fileType = fields.find(field => field.id === 'file.type');
-  const fileDefinitionFieldsMap = {
-    filedefinition: 'edix12.format',
-    fixed: 'fixed.format',
-    'delimited/edifact': 'edifact.format',
-  };
-
-  // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
-  // Whether resource is in new or edit stage -- inferred by userDefinitionId
-
-  if (
-    fileType &&
-    fileType.value &&
-    !fileDefinitionRulesField.userDefinitionId
-  ) {
-    // Delete existing visibility rules
-    delete fileDefinitionRulesField.visibleWhenAll;
-    delete fileDefinitionRulesField.visibleWhen;
-
-    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
-      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === formatFieldType
-      );
-
-      fileDefinitionRulesField.defaultVisible = !!fileDefinitionFormatField.value;
-    } else {
-      fileDefinitionRulesField.defaultVisible = false;
-    }
-    // defaultVisible forces a field to be invisible but it gets only registerd in the
-    // next getNextStateFromFields so we have to update that result over here as well
-    fileDefinitionRulesField.visible = fileDefinitionRulesField.defaultVisible;
-  }
-  // fileDefinitionRulesField should be hidden when there is no file type.
-
-  if (fileType && !fileType.value) {
-    fileDefinitionRulesField.defaultVisible = false;
-    fileDefinitionRulesField.visible = false;
-  }
-  // userDefinitionId exists only in edit mode.
-
-  if (fileDefinitionRulesField.userDefinitionId) {
-    // make visibility of format fields false incase of edit mode of file adaptors
-    Object.values(fileDefinitionFieldsMap).forEach(field => {
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === field
-      );
-
-      delete fileDefinitionFormatField.visibleWhenAll;
-      fileDefinitionFormatField.defaultVisible = false;
-      fileDefinitionFormatField.visible = false;
-    });
-  }
 };
 
 // #END_REGION Integration App from utils

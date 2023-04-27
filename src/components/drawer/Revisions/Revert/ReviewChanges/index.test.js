@@ -83,9 +83,9 @@ describe('ReviewRevertChangesDrawer tests', () => {
 
     expect(close).toBeInTheDocument();
     expect(next).toBeEnabled();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/');
-    userEvent.click(next);
+    await userEvent.click(next);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.revision.create('_integrationId', '_revisionId'));
   });
   test('Should able to test the ReviewRevertChangesDrawer with isCreatedRevId true', async () => {

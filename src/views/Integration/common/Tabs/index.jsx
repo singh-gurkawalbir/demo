@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
@@ -75,6 +76,13 @@ export default function IntegrationTabs({ tabs, className }) {
             {...{ 'aria-controls': `tabpanel-${i}` }}
             icon={<Icon />}
             label={label}
+            sx={{
+              padding: '9px 12px 4px',
+              lineHeight: 1.75,
+              '&>.MuiTab-iconWrapper': {
+                marginRight: theme => theme.spacing(0.5),
+              },
+            }}
           />
         ))}
       </Tabs>

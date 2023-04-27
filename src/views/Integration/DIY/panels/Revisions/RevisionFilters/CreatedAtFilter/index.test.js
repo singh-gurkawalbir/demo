@@ -80,7 +80,7 @@ describe('Testsuite for Revision Filters', () => {
     useDispatchFn.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the Revision filter by clicking on the save button', () => {
+  test('should test the Revision filter by clicking on the save button', async () => {
     initRevisionFilters({
       revisionsFilterData: {
         '12345-revisions': {
@@ -111,7 +111,7 @@ describe('Testsuite for Revision Filters', () => {
       name: /save/i,
     });
 
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter('12345-revisions', {createdAt: 'mockDateFilter',
       paging: { currPage: 0, rowsPerPage: 1 }}));
   });

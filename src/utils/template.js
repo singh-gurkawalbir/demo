@@ -40,6 +40,10 @@ export const getApplication = conn => {
       return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);
     }
 
+    if (conn.type === 'jdbc' && conn.jdbc) {
+      return a.id === conn.jdbc.type;
+    }
+
     if (conn.type === 'http' && conn.http?.formType) {
       return a.id === conn.http.formType;
     }
@@ -193,6 +197,7 @@ export default {
       } account`,
       name: 'Integrator Adaptor Package',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      sourceConnId: conn._id,
       options: {},
     }));
 

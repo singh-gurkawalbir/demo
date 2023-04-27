@@ -40,14 +40,14 @@ describe('loginForm component', () => {
   test('should pass the render with sign in with google onclick', async () => {
     const signInGoole = screen.getByRole('button', {name: 'Sign in with Google'});
 
-    userEvent.click(signInGoole);
+    await userEvent.click(signInGoole);
     // await waitFor();
   });
 
   test('should pass the render with sign in onclick', async () => {
     const signIn = screen.getByRole('button', {name: 'Sign in'});
 
-    userEvent.click(signIn);
+    await userEvent.click(signIn);
     // await waitFor();
   });
 });

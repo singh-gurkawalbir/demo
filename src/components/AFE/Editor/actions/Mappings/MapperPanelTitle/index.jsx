@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
-import { IconButton, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
+import { Spinner } from '@celigo/fuse-ui';
 import Help from '../../../../../Help';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
@@ -12,7 +13,6 @@ import CeligoDivider from '../../../../../CeligoDivider';
 import ExpandRowsIcon from '../../../../../icons/ExpandRowsIcon';
 import CollapseRowsIcon from '../../../../../icons/CollapseRowsIcon';
 import ActionGroup from '../../../../../ActionGroup';
-import Spinner from '../../../../../Spinner';
 import OutputFormatsList from './OutputFormatsList';
 import MoreActions from './MoreActions';
 import SearchIcon from '../../../../../icons/SearchIcon';
@@ -23,10 +23,6 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
     alignItems: 'center',
-  },
-  helpButton: {
-    padding: 0,
-    margin: 2,
   },
   actions: {
     '& > .MuiButtonBase-root': {
@@ -107,8 +103,9 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
       <OutputFormatsList disabled={disabled} />
       {helpKey && (
         <Help
-          className={classes.helpButton}
+          title={title}
           helpKey={helpKey}
+          sx={{margin: 0.5}}
         />
       )}
       <ActionGroup position="right" className={classes.actions}>

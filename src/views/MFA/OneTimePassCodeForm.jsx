@@ -2,43 +2,27 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
-import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@mui/material/TextField';
+import FormHelperText from '@mui/material/FormHelperText';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { FilledButton, TextButton } from '../../components/Buttons';
-import Spinner from '../../components/Spinner';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import { NUMBER_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
+import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
-/** ***TODO (Azhar): forms CSS Optimization needed*** */
 const useStyles = makeStyles(theme => ({
-  submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
-  },
   message: {
     position: 'relative',
     top: theme.spacing(-1),
     display: 'flex',
     alignItems: 'center',
-    lineHeight: `${theme.spacing(2)}px`,
+    lineHeight: theme.spacing(2),
     color: theme.palette.secondary.light,
     marginBottom: theme.spacing(1),
   },
@@ -113,7 +97,7 @@ export default function OneTimePassCodeForm() {
   }, [history, isMFAVerified]);
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -162,12 +146,12 @@ export default function OneTimePassCodeForm() {
             <FilledButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
+              submit
               value="Submit">
               Submit
             </FilledButton>
           )}
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }

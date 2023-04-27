@@ -207,7 +207,7 @@ describe('retryTableFilters UI tests', () => {
 
     expect(screen.queryByText(/Refresh/i)).toBeInTheDocument();
   });
-  test('should pass the initial render when there are default users', () => {
+  test('should pass the initial render when there are default users', async () => {
     initRetryTableFilters({
       props: {
         flowId: 'flow1',
@@ -222,7 +222,7 @@ describe('retryTableFilters UI tests', () => {
     });
 
     expect(screen.getByText(/Shared user 3/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText('Shared user 3'));
+    await userEvent.click(screen.getByText('Shared user 3'));
     const checkboxes = screen.getAllByRole('checkbox');
 
     expect(checkboxes[0]).not.toBeChecked();
@@ -241,7 +241,7 @@ describe('retryTableFilters UI tests', () => {
     });
     const buttonRef = screen.getByText('Refresh');
 
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
 
     await expect(mockDispatchFn).toHaveBeenCalledWith(actions.errorManager.retries.request({flowId: 'flow1', resourceId: 'res1'}));
   });

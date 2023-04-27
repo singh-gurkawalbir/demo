@@ -27,7 +27,7 @@ async function initPurgeMultipleErrors(rowData) {
   );
   const { utils, store } = await renderWithProviders(ui);
 
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 
   return { utils, store };
 }
@@ -69,6 +69,7 @@ describe('purgeMultipleErrors action Test cases', () => {
     expect(purgeLogs).toBeInTheDocument();
     expect(purgeLogs.getAttribute('aria-disabled')).toBeTruthy();
   });
+
   test('should pass the intial render with disabled action duplicate', async () => {
     const scriptId = '6439276e7uybwe78292878';
     const flowId = '6938764rh739d3378';
@@ -83,16 +84,16 @@ describe('purgeMultipleErrors action Test cases', () => {
     const purgeLogs = screen.getByText(/Purge all logs of this script/i);
 
     expect(purgeLogs).toBeInTheDocument();
-    expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
+    expect(purgeLogs.getAttribute('aria-disabled')).toBeNull();
 
-    userEvent.click(purgeLogs);
+    await userEvent.click(purgeLogs);
     expect(screen.getByText('Are you sure you want to purge all logs of this script? This cannot be undone.')).toBeInTheDocument();
     const confirmPurgeButton = screen.getByRole('button', {name: 'Purge all logs of this script'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     expect(confirmPurgeButton).toBeInTheDocument();
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(confirmPurgeButton);
+    await userEvent.click(confirmPurgeButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.scripts.purge.request({scriptId, flowId})
     );

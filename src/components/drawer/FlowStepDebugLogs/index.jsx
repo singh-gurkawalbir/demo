@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';
@@ -19,16 +19,13 @@ import { drawerPaths } from '../../../utils/rightDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   appLogo: {
     paddingRight: theme.spacing(2),
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
   },
   titleHeader: {
     '& > h4': {
-      marginRight: `${theme.spacing(-0.5)}px !important`,
+      marginRight: `${theme.spacing(-0.5)} !important`,
     },
   },
 }));
@@ -46,7 +43,6 @@ function RouterWrappedContent({ flowId, resourceType, resourceId, handleClose })
         <ActionGroup>
           <Help
             title="Debug logs"
-            className={classes.helpTextButton}
             helpKey="resource.debugLogs" />
         </ActionGroup>
         <ActionGroup position="right">

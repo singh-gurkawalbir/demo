@@ -247,7 +247,7 @@ describe('subRecordDrawer UI tests', () => {
 
     initSubRecordDrawer(props);
     expect(screen.getByText('Save')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '633dc83108cc753ca5688d34',
       [
@@ -262,13 +262,13 @@ describe('subRecordDrawer UI tests', () => {
   test('should make a url redirection when clicked on save button', async () => {
     initSubRecordDrawer(props);
     expect(screen.getByText('Save')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     await waitFor(() => expect(mockHistoryGoback).toHaveBeenCalled());
   });
   test('should make a url redirection when clicked on cancel button', async () => {
     initSubRecordDrawer(props);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Cancel'));
+    await userEvent.click(screen.getByText('Cancel'));
     await waitFor(() => expect(mockHistoryGoback).toHaveBeenCalled());
   });
 });

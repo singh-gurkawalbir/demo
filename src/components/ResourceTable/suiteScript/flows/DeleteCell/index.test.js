@@ -52,17 +52,17 @@ describe('suite script DeleteCell ui test', () => {
 
     expect(classText.indexOf('disable')).toBeGreaterThan(-1);
   });
-  test('should make the dispatch call for deleting the flow', () => {
+  test('should make the dispatch call for deleting the flow', async () => {
     renderFunction(false, initialStore);
     const deleteButton = screen.getByRole('button');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
-    const del = screen.getByText('Delete');
+    const del = screen.getByRole('button', { name: 'Delete' });
 
     expect(del).toBeInTheDocument();
 
-    userEvent.click(del);
+    await userEvent.click(del);
     expect(mockDispatch).toHaveBeenCalledWith(actions.suiteScript.flow.delete({
       ssLinkedConnectionId: 'ssLinkedConnectionId',
       integrationId: '_integrationId',
@@ -70,17 +70,17 @@ describe('suite script DeleteCell ui test', () => {
     }
     ));
   });
-  test('should redirect to integration page after deleting flow', () => {
+  test('should redirect to integration page after deleting flow', async () => {
     renderFunction(true, initialStore);
     const deleteButton = screen.getByRole('button');
 
-    userEvent.click(deleteButton);
+    await userEvent.click(deleteButton);
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
-    const del = screen.getByText('Delete');
+    const del = screen.getByRole('button', { name: 'Delete' });
 
     expect(del).toBeInTheDocument();
 
-    userEvent.click(del);
+    await userEvent.click(del);
     expect(mockDispatch).toHaveBeenCalledWith(actions.suiteScript.flow.delete({
       ssLinkedConnectionId: 'ssLinkedConnectionId',
       integrationId: '_integrationId',

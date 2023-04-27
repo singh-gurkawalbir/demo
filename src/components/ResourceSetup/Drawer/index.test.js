@@ -252,12 +252,12 @@ describe('resourceSetupDrawer test cases', () => {
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
 
-    userEvent.click(onSubmitCompleteButton);
+    await userEvent.click(onSubmitCompleteButton);
     expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
 
-    userEvent.click(onCloseButton);
+    await userEvent.click(onCloseButton);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledTimes(2);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
@@ -284,12 +284,12 @@ describe('resourceSetupDrawer test cases', () => {
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
 
-    userEvent.click(onSubmitCompleteButton);
+    await userEvent.click(onSubmitCompleteButton);
     expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
     expect(onSubmitComplete).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledTimes(0);
 
-    userEvent.click(onCloseButton);
+    await userEvent.click(onCloseButton);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -314,11 +314,11 @@ describe('resourceSetupDrawer test cases', () => {
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
 
-    userEvent.click(onSubmitCompleteButton);
+    await userEvent.click(onSubmitCompleteButton);
     expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
     expect(handleStackSetupDone).toHaveBeenCalledTimes(1);
 
-    userEvent.click(onCloseButton);
+    await userEvent.click(onCloseButton);
     expect(handleStackClose).toHaveBeenCalledTimes(1);
   });
 
@@ -391,7 +391,7 @@ describe('resourceSetupDrawer test cases', () => {
 
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
-    userEvent.click(onSubmitCompleteButton);
+    await userEvent.click(onSubmitCompleteButton);
     expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup/configure/connections/connection_id_3');
@@ -413,12 +413,12 @@ describe('resourceSetupDrawer test cases', () => {
 
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
-    userEvent.click(onSubmitCompleteButton);
+    await userEvent.click(onSubmitCompleteButton);
     expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
     expect(mockHistoryReplace).toHaveBeenCalledTimes(2);
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
 
-    userEvent.click(onCloseButton);
+    await userEvent.click(onCloseButton);
   });
   test('should redirect to parentUrl if resource form init fails', async () => {
     mutateStore(initialStore, draft => {

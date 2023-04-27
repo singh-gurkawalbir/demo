@@ -3,8 +3,8 @@ import React from 'react';
 import { withDesign } from 'storybook-addon-designs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Tooltip, IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, Tooltip, IconButton } from '@mui/material';
 import HomePageCardsContainer from '../../../components/HomePageCard/HomePageCardContainer/index';
 import Header from '../../../components/HomePageCard/Header/index';
 import HeaderAction from '../../../components/HomePageCard/Header/HeaderAction/index';

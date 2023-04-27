@@ -1,41 +1,27 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography, InputAdornment } from '@material-ui/core';
+import { Typography, InputAdornment } from '@mui/material';
 import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import ErrorIcon from '../../../components/icons/ErrorIcon';
 import { getDomain, isGoogleSignInAllowed } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../../components/Buttons';
-import getImageUrl from '../../../utils/image';
 import useQuery from '../../../hooks/useQuery';
 import ShowContentIcon from '../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../components/icons/HideContentIcon';
-
-const path = getImageUrl('images/googlelogo.png');
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     margin: theme.spacing(1, 0, 2, 0),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   switchDomain: {
     margin: theme.spacing(5, 0, 3),
@@ -71,15 +57,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
-  },
   ssoBtn: {
     borderRadius: 4,
     width: '100%',
@@ -92,22 +69,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-around',
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(16),
-  },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
   },
   or: {
     display: 'flex',
@@ -167,7 +128,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
     const errorMessage = selectors.authenticationErrored(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
     if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
@@ -212,7 +173,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
-    <div className={clsx(classes.editableFields, className)}>
+    <LoginFormWrapper className={className}>
       {!isAuthenticating && !showError && query.get('msg') && (
       <Typography
         data-private
@@ -276,14 +237,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
           </TextButton>
         </div>
         {!isAuthenticating && showError && error && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            <ErrorIcon /> {error}
-          </Typography>
+          <ShowErrorMessage error={error} />
         )}
         { isAuthenticating ? <Spinner />
           : (
@@ -292,6 +246,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
               type="submit"
               role="button"
               className={classes.submit}
+              submit
               value="Submit">
               Sign in
             </FilledButton>
@@ -307,16 +262,16 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
             </div>
             <form onSubmit={handleSignInWithGoogle}>
               <TextField
+                variant="standard"
                 data-private
                 type="hidden"
                 id="attemptedRoute"
                 name="attemptedRoute"
-                value={attemptedRoute || getRoutePath('/')}
-              />
+                value={attemptedRoute || getRoutePath('/')} />
               <OutlinedButton
                 type="submit"
                 color="secondary"
-                className={classes.googleBtn}>
+                googleBtn>
                 Sign in with Google
               </OutlinedButton>
             </form>
@@ -325,6 +280,6 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
         {getDomain() !== 'eu.integrator.io' && <a data-test="euSignIn" className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
       )}
-    </div>
+    </LoginFormWrapper>
   );
 }

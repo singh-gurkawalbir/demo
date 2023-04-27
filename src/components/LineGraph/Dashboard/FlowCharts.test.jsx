@@ -2,6 +2,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
@@ -87,7 +88,7 @@ const response =
   ];
 
 async function flowRequest(store) {
-  store.dispatch(actions.resource.requestCollection('flows'));
+  act(() => { store.dispatch(actions.resource.requestCollection('flows')); });
   await waitFor(() => expect(store?.getState()?.data?.resources?.flows).toBeDefined());
 }
 
@@ -104,7 +105,7 @@ describe('flowChart(dashborad) UI tests', () => {
   async function renderFunction(props) {
     const {store} = renderWithProviders(<FlowCharts {...props} />);
 
-    store.dispatch(actions.user.profile.request());
+    act(() => { store.dispatch(actions.user.profile.request()); });
     await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
 
     return {store};
@@ -112,7 +113,7 @@ describe('flowChart(dashborad) UI tests', () => {
   test('should test opacity', async () => {
     const {store} = await renderFunction(props);
 
-    store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', response));
+    act(() => { store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', response)); });
     const value = screen.getAllByText('123');
     const lastindex = value.length - 1;
 
@@ -132,7 +133,7 @@ describe('flowChart(dashborad) UI tests', () => {
   test('should run with an error', async () => {
     const {store} = await renderFunction({integrationId: '629f0dcfccb94d35de6f436b'});
 
-    store.dispatch(actions.flowMetrics.failed('629f0dcfccb94d35de6f436b'));
+    act(() => { store.dispatch(actions.flowMetrics.failed('629f0dcfccb94d35de6f436b')); });
 
     expect(screen.getByText('Error occured')).toBeInTheDocument();
   });
@@ -168,7 +169,7 @@ describe('flowChart(dashborad) UI tests', () => {
     const {store} = await renderFunction({ integrationId: '5cc9bd00581ace2bec7754eb' });
 
     await flowRequest(store);
-    store.dispatch(actions.flowMetrics.request('integrations', '5cc9bd00581ace2bec7754eb', {}));
+    act(() => { store.dispatch(actions.flowMetrics.request('integrations', '5cc9bd00581ace2bec7754eb', {})); });
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

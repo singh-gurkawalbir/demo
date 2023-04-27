@@ -1,12 +1,9 @@
-
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaSalesforceLookupsafe from './DynaSalesforceLookup_afe';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockonFieldChange = jest.fn();
@@ -35,7 +32,16 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatchFn,
 }));
 
+const initialStore = reduxStore;
+
 function initDynaSalesforceLookupsafe(props = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      fields: {
+        'salesforce.sObjectType': { value: 'Account', connectionId: 'connection-123' },
+      },
+    };
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949'}]}>
@@ -49,7 +55,7 @@ function initDynaSalesforceLookupsafe(props = {}) {
     </MemoryRouter>
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 const props = {
   errorMessages: '',
@@ -66,9 +72,6 @@ const props = {
   label: 'How can we find existing records?',
   multiline: true,
   formKey: 'imports-6368996d667fdb7984b49949',
-  options: {commMetaPath: 'salesforce/metadata/connections/6322ff72b5c15b058122871e/sObjectTypes/Account',
-    disableFetch: false,
-    resetValue: [] },
 };
 
 describe('dynaSalesforceLookup_afe UI test cases', () => {
@@ -79,9 +82,9 @@ describe('dynaSalesforceLookup_afe UI test cases', () => {
     expect(label).toHaveTextContent(props.label);
     expect(screen.getByRole('textbox')).toHaveValue(props.value);
   });
-  test('should open the AFE editor on clicking filter Icon', () => {
+  test('should open the AFE editor on clicking filter Icon', async () => {
     initDynaSalesforceLookupsafe(props);
-    userEvent.click(document.querySelector('[data-test="salesforce.idLookup.whereClause"]'));
+    await userEvent.click(document.querySelector('[data-test="salesforce.idLookup.whereClause"]'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('salesforceidLookupwhereClause', 'salesforceLookupFilter', {
       formKey: 'imports-6368996d667fdb7984b49949',
       flowId: '63947b4ffc58924d43aec619',
@@ -90,20 +93,41 @@ describe('dynaSalesforceLookup_afe UI test cases', () => {
       fieldId: 'salesforce.idLookup.whereClause',
       stage: 'importMappingExtract',
       onSave: expect.anything(),
-      customOptions: {commMetaPath: 'salesforce/metadata/connections/6322ff72b5c15b058122871e/sObjectTypes/Account',
+      customOptions: {commMetaPath: 'salesforce/metadata/connections/connection-123/sObjectTypes/Account',
         disableFetch: false,
         resetValue: [] },
     }));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949/editor/salesforceidLookupwhereClause');
   });
+  test('should work as expected when the options are passed to the component instead of fetching from form state', async () => {
+    const options = {
+      disableFetch: false,
+      commMetaPath: 'custom_path',
+      resetValue: [],
+    };
 
-  test('should be able to save the modified code in AFE', () => {
+    initDynaSalesforceLookupsafe({ ...props, options });
+    await userEvent.click(document.querySelector('[data-test="salesforce.idLookup.whereClause"]'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('salesforceidLookupwhereClause', 'salesforceLookupFilter', {
+      formKey: 'imports-6368996d667fdb7984b49949',
+      flowId: '63947b4ffc58924d43aec619',
+      resourceId: '6368996d667fdb7984b49949',
+      resourceType: 'imports',
+      fieldId: 'salesforce.idLookup.whereClause',
+      stage: 'importMappingExtract',
+      onSave: expect.anything(),
+      customOptions: options,
+    }));
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949/editor/salesforceidLookupwhereClause');
+  });
+
+  test('should be able to save the modified code in AFE', async () => {
     initDynaSalesforceLookupsafe(props);
-    userEvent.click(document.querySelector('[data-test="salesforce.idLookup.whereClause"]'));
+    await userEvent.click(document.querySelector('[data-test="salesforce.idLookup.whereClause"]'));
 
     const saveBtn = screen.getByRole('button', {name: /save/i});
 
-    userEvent.click(saveBtn);
+    await userEvent.click(saveBtn);
     expect(mockonFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import makeStyles from '@mui/styles/makeStyles';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import React, { useEffect, useMemo, useReducer } from 'react';
 import components from './Components';
 import cronBuilderReducer, { isActiveSubTabId, cronExpr} from './stateReducer';

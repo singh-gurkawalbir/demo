@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import moment from 'moment';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';

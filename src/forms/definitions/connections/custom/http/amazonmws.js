@@ -16,7 +16,6 @@ export default {
 
     if (newValues['/http/type'] === 'Amazon-MWS') {
       newValues['/http/baseURI'] = amazonSellerCentralBaseUriForMWSConnection[newValues['/http/unencrypted/marketplaceRegion']];
-      newValues['/http/type'] = undefined;
       newValues['/http/_iClientId'] = iClientId;
       newValues['/http/ping/relativeURI'] = '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01';
       newValues['/http/ping/errorPath'] = '/ErrorResponse/Error/Message/text()';
@@ -35,8 +34,6 @@ export default {
       newValues['/http/auth/oauth/accessTokenPath'] = 'access_token';
       newValues['/http/auth/oauth/grantType'] = 'authorizecode';
       newValues['/http/unencrypted/marketplaceId'] = newValues['/http/unencrypted/marketplace'];
-      delete newValues['/http/sellingPartnerId'];
-      delete newValues['/http/unencrypted/marketplace'];
       authType = 'oauth';
       mediaType = 'json';
     }
@@ -61,6 +58,7 @@ export default {
     },
     'http.type': {
       fieldId: 'http.type',
+      removeWhen: [{ field: 'http.type', is: ['Amazon-MWS'] }],
     },
     'http.unencrypted.sellingRegion': {
       id: 'http.unencrypted.sellingRegion',
@@ -97,6 +95,7 @@ export default {
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
       defaultValue: r => r?.http?.unencrypted?.marketplaceId,
+      deleteWhen: [{ field: 'http.type', isNot: ['Amazon-MWS'] }],
     },
     'http.sellingPartnerId': {
       id: 'http.sellingPartnerId',
@@ -107,6 +106,7 @@ export default {
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
       visible: r => !isNewId(r?._id),
       defaultValue: r => r?.http?.unencrypted?.sellerId,
+      deleteWhen: [{ field: 'http.type', isNot: ['Amazon-MWS'] }],
     },
     'http.unencrypted.mwsAuthToken': {
       id: 'http.unencrypted.mwsAuthToken',
@@ -255,7 +255,7 @@ export default {
       id: 'http._iClientId',
       resourceType: 'iClients',
       filter: { provider: 'amazonmws' },
-      label: 'IClient',
+      label: 'iClient',
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,

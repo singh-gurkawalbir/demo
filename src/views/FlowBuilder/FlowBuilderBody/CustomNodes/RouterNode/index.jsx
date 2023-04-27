@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Position } from 'react-flow-renderer';
-import { Badge, IconButton, Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Position } from 'reactflow';
+import { Badge, IconButton, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import Icon from '../../../../../components/icons/BranchIcon';
@@ -32,20 +32,20 @@ const useStyles = makeStyles(theme => ({
   },
   nameContainer: {
     top: -25,
-    width: '187px',
+    width: theme.spacing(20),
     height: '38px',
     position: 'absolute',
-  },
-  nameGap: {
-    top: -45,
-  },
-  name: {
     textTransform: 'none',
-    fontSize: '15px',
     fontWeight: 600,
     color: theme.palette.text.secondary,
     wordBreak: 'break-all',
     background: theme.palette.background.paper,
+    ' & > * br': {
+      display: 'none',
+    },
+  },
+  nameGap: {
+    top: -45,
   },
 }));
 
@@ -63,7 +63,7 @@ export default function RouterNode({id: routerId, data = {}}) {
   return (
     <div className={classes.container}>
       <div className={clsx(classes.nameContainer, nameGap && classes.nameGap)}>
-        <CeligoTruncate isLoggable className={classes.name} lines={2}>{name}</CeligoTruncate>
+        <CeligoTruncate isLoggable lines={2}>{name}</CeligoTruncate>
       </div>
       <DefaultHandle type="target" position={Position.Left} />
       <Tooltip title="Edit branching" placement="bottom" aria-label="Edit branching">
@@ -73,6 +73,7 @@ export default function RouterNode({id: routerId, data = {}}) {
           className={classes.button}
           onClick={handleRouterClick}
           disabled={isFlowSaveInProgress}
+          sx={{width: 32 }}
         >
           <Badge
             badgeContent={badgeContent}
@@ -83,7 +84,7 @@ export default function RouterNode({id: routerId, data = {}}) {
             }}
             classes={{
               colorSecondary: classes.badgeColor,
-              anchorOriginBottomLeftRectangle: classes.badgeTextOverride,
+              anchorOriginBottomLeftRectangular: classes.badgeTextOverride,
             }}>
             <Icon className={classes.icon} />
           </Badge>

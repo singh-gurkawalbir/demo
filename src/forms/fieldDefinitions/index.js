@@ -12,6 +12,7 @@ import asyncHelpers from './resources/asyncHelpers';
 import iClients from './resources/iClient';
 import eventreports from './resources/eventreport';
 import suiteScript from './suiteScript';
+import iClientHttpFramework from './resources/iClientHttpFramework';
 
 export default {
   connections,
@@ -27,5 +28,6 @@ export default {
   connectorLicenses,
   integrations,
   eventreports,
+  iClientHttpFramework,
   ...suiteScript,
 };

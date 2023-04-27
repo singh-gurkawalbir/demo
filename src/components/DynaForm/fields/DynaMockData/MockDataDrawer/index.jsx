@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormLabel, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel, Typography } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CodeEditor from '../../../../CodeEditor';
@@ -84,7 +84,6 @@ function MockDataDrawerContent() {
     isLoggable,
     flowId,
     required,
-    isValid,
     label,
     helpKey,
     errorMessages,
@@ -102,7 +101,7 @@ function MockDataDrawerContent() {
 
   const handleUpdate = useCallback(newVal => {
     setEditorContent(newVal);
-    setErrorMessage(validateMockDataField(resourceType)(newVal));
+    setErrorMessage(validateMockDataField(resourceType, newVal));
   }, [resourceType]);
 
   const handleDone = () => {
@@ -136,7 +135,7 @@ function MockDataDrawerContent() {
           </div>
           <div className={classes.container}>
             <div className={classes.dynaEditorTextLabelWrapper}>
-              <FormLabel required={required} error={!isValid} >{label}</FormLabel>
+              <FormLabel required={required} error={!!errorMessage} >{label}</FormLabel>
               <FieldHelp
                 id={fieldId}
                 helpKey={helpKey}

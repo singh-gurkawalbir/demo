@@ -1,14 +1,8 @@
 /* eslint-disable react/jsx-handler-names */
 import React, { useState, useCallback, useEffect } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
-import {
-  makeStyles,
-  TableCell,
-  TableRow,
-  Table,
-  TableBody,
-  TableHead,
-} from '@material-ui/core';
+import { TableCell, TableRow, Table, TableBody, TableHead } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';

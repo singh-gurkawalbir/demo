@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
@@ -40,67 +40,72 @@ function renderFuntion(data, actionProps) {
 }
 
 describe('flowStepLogs meta data UI tests', () => {
-  test('should verify the time column', () => {
-    renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
-    expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Time'));
-    userEvent.click(screen.getAllByRole('button')[0]);
-    userEvent.click(screen.getByText('Last 4 hours'));
-    userEvent.click(screen.getByText('Apply'));
+  test('should verify the time column', async () => {
+    await renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+    expect(screen.getByText('05/18/2022 6:16:31 pm')).toBeInTheDocument();
+    await userEvent.click(screen.getByText('Time'));
+    await userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getByText('Last 4 hours'));
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should verify the method coulmn', () => {
-    renderFuntion({key: 'someKey', method: 'someMethod'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+  test('should verify the method coulmn', async () => {
+    await renderFuntion({key: 'someKey', method: 'someMethod'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Method')).toBeInTheDocument();
     expect(screen.getByText('someMethod')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[1]);
-    userEvent.click(screen.getByText('POST'));
+    await userEvent.click(screen.getAllByRole('button')[1]);
+    await userEvent.click(screen.getByText('POST'));
 
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should verify the Stage column', () => {
-    renderFuntion({key: 'someKey', stage: 'somestage'}, {resourceId: 'someresourceId', flowId: 'someflowId', isImport: true});
+  test('should verify the Stage column', async () => {
+    await renderFuntion({key: 'someKey', stage: 'somestage'}, {resourceId: 'someresourceId', flowId: 'someflowId', isImport: true});
 
-    userEvent.click(screen.getByText('Stage'));
+    await userEvent.click(screen.getByText('Stage'));
     expect(screen.getByText('somestage')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[2]);
-    userEvent.click(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getAllByRole('button')[2]);
+    const check = await waitFor(() => screen.getAllByRole('checkbox'));
+
+    await userEvent.click(check[0]);
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should verify the Response code column', () => {
-    renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+
+  test('should verify the Response code column', async () => {
+    await renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Response code')).toBeInTheDocument();
     expect(screen.getByText('somestatusCode')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[2]);
-    userEvent.click(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getAllByRole('button')[2]);
+    const check = await waitFor(() => screen.getAllByRole('checkbox'));
+
+    await userEvent.click(check[0]);
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.request(
         {resourceId: 'someresourceId', flowId: 'someflowId'}
       )
     );
   });
-  test('should click the actions button', () => {
-    renderFuntion({key: 'someKey'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Delete log'));
+  test('should click the actions button', async () => {
+    await renderFuntion({key: 'someKey'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Delete log'));
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.removeLog(

@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import { FormControl, FormLabel, TextField, InputAdornment, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import ShowContentIcon from '../../icons/ShowContentIcon';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import CheckmarkIcon from '../../icons/CheckmarkIcon';
 import CloseIcon from '../../icons/CloseIcon';
 import HideContentIcon from '../../icons/HideContentIcon';
 import TooltipContent from '../../TooltipContent';
-import ArrowPopper from '../../ArrowPopper';
 import FieldMessage from './FieldMessage';
 // import { validateMockResponseField } from '../../../utils/flowDebugger';
 import actions from '../../../actions';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   formWrapper: {
@@ -23,12 +26,15 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     background: theme.palette.background.paper,
     border: `1px solid ${theme.palette.secondary.lightest}`,
+
     paddingRight: theme.spacing(1),
     '& > div': {
       '& >.MuiFilledInput-input': {
         border: 'none',
+        letterSpacing: '0.5px',
       },
     },
+
   },
   fieldWrapper: {
     display: 'flex',
@@ -56,14 +62,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.error.dark,
     borderColor: theme.palette.error.dark,
   },
-  arrowPopperPassword: {
-    position: 'absolute',
-    left: '50px !important',
-    top: '0px !important',
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-  },
   passwordStrongSteps: {
     marginTop: theme.spacing(1),
     [theme.breakpoints.up('md')]: {
@@ -83,47 +81,39 @@ const useStyles = makeStyles(theme => ({
   iconPassword: {
     cursor: 'pointer',
   },
-  forgotPass: {
-    color: theme.palette.warning.main,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
-
 }));
 
 export default function DynaPassword(props) {
-  const { id, label, isLoggable, placeholder, value, errorMessage, formKey, onFieldChange } = props;
+  const { id, label, isLoggable, placeholder, value, formKey, onFieldChange, hidePasswordIcon } = props;
   const classes = useStyles();
   const inputFieldRef = useRef();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const open = !!anchorEl;
-  const [showErr, setShowErr] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [containDigits, setContainDigits] = useState(false);
   const [containCapitalLetter, setContainCapitalLetter] = useState(false);
   const [validLength, setValidLength] = useState(false);
+  const isMobile = useMediaQuery(useTheme().breakpoints.down('md'));
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
   const handleOnChangePassword = useCallback(e => {
     const password = e.target.value;
-    const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
     onFieldChange(id, password);
     setContainCapitalLetter(/[A-Z]/.test(password));
     setContainDigits(/\d/.test(password));
     setValidLength(password.length > 9 && password.length < 256);
-    setShowErr(!isValid);
   }, [id, onFieldChange]);
 
   useEffect(() => {
     if (!value) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: errorMessage}));
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Password'})}));
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }
-  }, [dispatch, errorMessage, formKey, id, value]);
+  }, [dispatch, formKey, id, value]);
   // const handleResetPassword = useCallback(password => {
   //   dispatch(actions.auth.resetPasswordRequest(password, token));
   // }, [dispatch, token]);
@@ -136,7 +126,7 @@ export default function DynaPassword(props) {
   };
 
   return (
-    <FormControl className={classes.field}>
+    <FormControl variant="standard" className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
       </div>
@@ -145,9 +135,8 @@ export default function DynaPassword(props) {
           {...isLoggableAttr(isLoggable)}
           id={id}
           data-test="password"
-          required
           type={showPassword ? 'text' : 'password'}
-          placeholder={placeholder}
+          placeholder={placeholder || 'Enter new password*'}
           className={classes.textField}
           onChange={handleOnChangePassword}
           variant="filled"
@@ -177,15 +166,38 @@ export default function DynaPassword(props) {
         <FieldMessage {...props} />
 
       </div>
-      <ArrowPopper
-        id="pageInfo"
-        open={open}
-        anchorEl={anchorEl}
-        placement="right"
-        classes={{ popper: classes.arrowPopperPassword }}
-        preventOverflow>
-        <TooltipContent className={classes.infoText}>
-          <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+
+      {!hidePasswordIcon && !isMobile && (
+      <>
+        <ArrowPopper
+          id="pageInfo"
+          open={open}
+          anchorEl={anchorEl}
+          placement="right"
+          preventOverflow>
+          <TooltipContent className={classes.infoText}>
+            <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>
+            <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
+            <div className={classes.passwordListItem}>
+              {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              {containDigits ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              {validLength ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
+            </div>
+          </TooltipContent>
+        </ArrowPopper>
+
+        <div className={classes.passwordStrongSteps}>
+          <Typography className={classes.passwordListItem}>To help protect your account, choose a password that you haven’t used before.</Typography>
           <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
           <div className={classes.passwordListItem}>
             {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
@@ -202,28 +214,9 @@ export default function DynaPassword(props) {
               : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
             <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
           </div>
-        </TooltipContent>
-      </ArrowPopper>
-
-      <div className={classes.passwordStrongSteps}>
-        <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
-        <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
-        <div className={classes.passwordListItem}>
-          {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-            : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-          <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
         </div>
-        <div className={classes.passwordListItem}>
-          {containDigits ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-            : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-          <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
-        </div>
-        <div className={classes.passwordListItem}>
-          {validLength ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-            : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-          <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
-        </div>
-      </div>
+      </>
+      )}
     </FormControl>
   );
 }

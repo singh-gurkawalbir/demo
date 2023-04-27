@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles, Tooltip } from '@material-ui/core/';
+import { Tooltip } from '@mui/material/';
+import makeStyles from '@mui/styles/makeStyles';
 import DiamondIcon from '../../../../components/icons/DiamondIcon';
 
 const useStyles = makeStyles(theme => ({

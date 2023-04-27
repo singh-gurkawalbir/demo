@@ -1,13 +1,13 @@
 import React from 'react';
-import TableCell from '@material-ui/core/TableCell';
-import { makeStyles } from '@material-ui/core/styles';
-import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@mui/material/TableCell';
+import makeStyles from '@mui/styles/makeStyles';
+import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import JobStatusWithTag from '../../ResourceTable/runHistory/JobStatusWithTag';
 import { getJobDuration } from '../../../utils/errorManagement';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import {
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../../constants/resource';
@@ -47,8 +47,8 @@ export default function ChildJobDetail({
         <JobStatusWithTag job={job} />
       </TableCell>
       <TableCell className={classes.duration}>{getJobDuration(job)}</TableCell>
-      <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><CeligoTimeAgo date={job.startedAt} /></TableCell>
-      <TableCell className={clsx(classes.completed, jobDetailsClasses.completed)}><CeligoTimeAgo date={job.endedAt} /></TableCell>
+      <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><TimeAgo date={job.startedAt} /></TableCell>
+      <TableCell className={clsx(classes.completed, jobDetailsClasses.completed)}><TimeAgo date={job.endedAt} /></TableCell>
       <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
       <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>

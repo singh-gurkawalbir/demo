@@ -141,10 +141,10 @@ describe('dynaFlowGroupName UI tests', () => {
       errorMessages: 'A value must be provided',
     })));
   });
-  test('should display the confirm dialog when clicked on delete flow group button', () => {
+  test('should display the confirm dialog when clicked on delete flow group button', async () => {
     initDynaFlowGroupName(props);
     expect(screen.getByText('Delete flow group')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete flow group'));
+    await userEvent.click(screen.getByText('Delete flow group'));
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to delete this flow group? Only the group will be deleted. Its flows will be moved into “Unassigned”.')).toBeInTheDocument();
     expect(screen.getByText('Delete')).toBeInTheDocument();
@@ -152,9 +152,9 @@ describe('dynaFlowGroupName UI tests', () => {
   test('should make a dispatch call when clicked on delete button from confirm Dialog', async () => {
     initDynaFlowGroupName(props);
     expect(screen.getByText('Delete flow group')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete flow group'));
+    await userEvent.click(screen.getByText('Delete flow group'));
     expect(screen.getByText('Delete')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.integrations.flowGroups.delete('5b3c75dd5d3c125c88b5dd20', 'id1', [])));
     await waitFor(() => expect(mockHistoryGoBack).toHaveBeenCalled());
   });

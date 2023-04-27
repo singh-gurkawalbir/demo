@@ -57,11 +57,11 @@ describe('TextToggle test cases', () => {
     expect(label1).toBeInTheDocument();
     expect(label2).toBeInTheDocument();
 
-    userEvent.click(label2);
+    await userEvent.click(label2);
     expect(onChange).toBeCalledTimes(0); // since it's already selected will not run
 
     // we need to rerender the component with props value as value_1 to show proper UI
-    userEvent.click(label1);
+    await userEvent.click(label1);
     expect(onChange).toBeCalledTimes(1);
   });
 
@@ -87,8 +87,8 @@ describe('TextToggle test cases', () => {
     expect(label1).toBeInTheDocument();
     expect(label2).toBeInTheDocument();
 
-    userEvent.click(label2);
+    await userEvent.click(label2);
 
-    userEvent.click(label1);
+    await userEvent.click(label1);
   });
 });

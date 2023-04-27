@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles, MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ViewRowIcon from '../../../icons/VerticalLayoutIcon';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -49,11 +50,12 @@ export default function ToggleLayout({ editorId }) {
       <CeligoDivider position="left" />
       <>
         <Select
+          variant="standard"
           labelId="toggle-layout-label"
           id="toggle-layout"
           value={layout}
           className={classes.toggleLayoutSelect}
-          onChange={handleToggle} >
+          onChange={handleToggle}>
           {!isMappingsEditor && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
           {!isMappingsEditor && <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem> }
           {!isMappingsEditor && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }

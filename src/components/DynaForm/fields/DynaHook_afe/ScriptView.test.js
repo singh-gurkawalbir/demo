@@ -22,6 +22,24 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initScriptView(props = {}) {
   mutateStore(initialStore, draft => {
     draft.data.resources = {scripts: [{
@@ -96,17 +114,17 @@ describe('scriptView UI tests', () => {
     isValid: true,
   };
 
-  test('should pass the initial render', () => {
+  test('should pass the initial render', async () => {
     initScriptView(props);
     expect(document.querySelector('[id="scriptId"]')).toBeInTheDocument();
-    expect(document.querySelector('[title="Create script"]')).toBeInTheDocument();
-    expect(document.querySelector('[title="Edit script"]')).toBeInTheDocument();
+    expect(screen.getByLabelText('Create script')).toBeInTheDocument();
+    expect(screen.getByLabelText('Edit script')).toBeInTheDocument();
   });
-  test('should call the "handleCreateScriptClick" function passed in props when clicked on create script button', () => {
+  test('should call the "handleCreateScriptClick" function passed in props when clicked on create script button', async () => {
     initScriptView(props);
     const buttons = screen.getAllByRole('button');
 
-    userEvent.click(buttons[2]);
+    await userEvent.click(buttons[2]);
     expect(mockhandleCreateScriptClick).toHaveBeenCalled();
   });
   test('should render disabled button for editscript when value prop does not contain scriptId', () => {
@@ -121,15 +139,15 @@ describe('scriptView UI tests', () => {
     initScriptView(newprops);
     const buttons = screen.getAllByRole('button');
 
-    userEvent.click(buttons[3]);
+    await userEvent.click(buttons[3]);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('//editor/id'));
   });
-  test('should render the scripts options when clicked on scripts dropdown', () => {
+  test('should render the scripts options when clicked on scripts dropdown', async () => {
     initScriptView(props);
     const dropdown = screen.getByText('None');
 
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('AmazonS3PreSavePageDND')).toBeInTheDocument();
     expect(screen.getByText('Branching Script')).toBeInTheDocument();
     expect(screen.getByText('DND_47506')).toBeInTheDocument();

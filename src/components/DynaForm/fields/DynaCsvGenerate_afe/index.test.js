@@ -94,11 +94,11 @@ describe('dynaCsvGenerate_afe UI tests', () => {
     expect(screen.getByText('CSV generator helper')).toBeInTheDocument();
     expect(screen.getByRole('checkbox', {name: 'Include header'})).toBeInTheDocument();
   });
-  test('should render the helper form when clicked on "Launch" button', () => {
+  test('should render the helper form when clicked on "Launch" button', async () => {
     initDynaCsvGenerate(props);
     const launchButton = screen.getByRole('button', {name: 'Launch'});
 
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     expect(screen.getByText('Truncate last row delimiter')).toBeInTheDocument();
     expect(screen.getByText('Wrap with quotes')).toBeInTheDocument();
     expect(screen.getByText('Replace tab with space')).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe('dynaCsvGenerate_afe UI tests', () => {
     initDynaCsvGenerate(props);
     const launchButton = screen.getByRole('button', {name: 'Launch'});
 
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/imports/edit/imports/63515cc28eab567612a83249/editor/filecsv/editor/filecsv'));
   });

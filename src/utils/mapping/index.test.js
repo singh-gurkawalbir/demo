@@ -5,6 +5,7 @@ import util, {
   checkExtractPathFoundInSampledata,
   unwrapTextForSpecialChars,
   wrapTextForSpecialChars,
+  formattedMultiFieldExpression,
   isMappingEqual,
   extractMappingFieldsFromCsv,
   MAPPING_DATA_TYPES,
@@ -3232,6 +3233,33 @@ describe('mapping utils', () => {
       expect(wrapTextForSpecialChars(extract, flowSampleData)).toEqual(result);
     });
   });
+  test('formattedMultiFieldExpression util', () => {
+    const testCases = [
+      {
+        exp: 'abc',
+        result: 'abc',
+      },
+      {
+        exp: 'test',
+        extract: '*.abc',
+        result: 'test{{*.abc}}',
+      },
+      {
+        exp: 'abc',
+        extract: 'ext',
+        result: 'abc{{ext}}',
+      },
+      {
+        exp: 'abc',
+        fun: '{{#if}}{{else}}',
+        result: 'abc{{#if}}{{else}}',
+      },
+    ];
+
+    testCases.forEach(({exp, fun, extract, result}) => {
+      expect(formattedMultiFieldExpression(exp, fun, extract)).toEqual(result);
+    });
+  });
   // TODO (Sravan)
   test.todo('setCategoryMappingData util');
   test('getFieldMappingType util', () => {
@@ -3297,7 +3325,7 @@ describe('mapping utils', () => {
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
       {resource: {adaptorType: 'HTTPImport'}, connection: {http: {_httpConnecorId: '123'}}, appName: 'HTTP'},
-
+      {resource: {adaptorType: 'JDBCExport'}, connection: {jdbc: {type: 'netsuitejdbc'}}, appName: 'NetSuite JDBC'},
     ];
 
     testCases.forEach(({resource, connection, appName}) => {

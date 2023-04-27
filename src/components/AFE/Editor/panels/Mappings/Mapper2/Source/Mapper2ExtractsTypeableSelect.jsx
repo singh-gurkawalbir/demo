@@ -1,18 +1,18 @@
 import React, { useRef, useCallback, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@mui/material';
 import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
 import { DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
-import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
 import SourceDataType from './SourceDataType';
 import reducer from './stateReducer';
 import messageStore from '../../../../../../../utils/messageStore';
+import ExtractMenu from './ExtractMenu';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -20,9 +20,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginBottom: 0,
     width: '100%',
-    '& > .MuiFilledInput-multiline': {
+    '& .MuiInputBase-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
-      paddingRight: 0,
+      minHeight: theme.spacing(5),
+      padding: 0,
     },
     '& > div': {
       width: '100%',
@@ -32,6 +33,12 @@ const useStyles = makeStyles(theme => ({
       textOverflow: 'ellipsis',
       height: theme.spacing(5),
       paddingRight: theme.spacing(14),
+    },
+    '& .MuiInputBase-inputMultiline': {
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      lineHeight: 1.3,
+      overflow: 'visible !important',
     },
   },
   sourceCustomTextField: {
@@ -47,37 +54,11 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     cursor: 'pointer',
   },
-  textFieldWithDataType: {
-    '&> * .MuiFilledInput-input': {
-      paddingRight: theme.spacing(10),
-    },
-  },
   divider: {
     margin: theme.spacing(1, 0),
   },
-  extractListPopper: {
-    width: theme.spacing(50),
-    borderRadius: 0,
-    top: '2px !important',
-    border: 'none',
-  },
-  extractListPopperCompact: {
-    width: theme.spacing(38),
-    marginLeft: 0,
-  },
-  extractPopperArrow: {
-    display: 'none',
-  },
-  extractPopperPaper: {
-    boxShadow: 'none',
-    borderRadius: 0,
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    '&:empty': {
-      display: 'none',
-    },
-  },
   sourceDataTypeButton: {
-    marginLeft: -theme.spacing(10),
+    marginLeft: '-80px', // theme.spacing with negative value results in "NaN"
     '&>.MuiDivider-root': {
       display: 'none',
     },
@@ -165,9 +146,7 @@ export default function Mapper2ExtractsTypeableSelect({
   isDynamicLookup,
   isHardCodedValue,
   isHandlebarExp,
-  editorLayout,
   className,
-  popperClassName,
   sourceDataType,
   displaySourceDataType,
 }) {
@@ -181,7 +160,7 @@ export default function Mapper2ExtractsTypeableSelect({
     dataTypeSelector: false,
   });
 
-  const {cursorPosition, isTruncated, isFocused, dataTypeSelector, anchorEl} = mapper2ExtractsState;
+  const {cursorPosition, isTruncated, isFocused, dataTypeSelector} = mapper2ExtractsState;
 
   const setIsFocused = value => dispatchLocalAction({type: 'onFocused', value});
 
@@ -194,6 +173,7 @@ export default function Mapper2ExtractsTypeableSelect({
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const inputFieldRef = useRef();
+  const textFieldRef = useRef();
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
   }, [setInputValue]);
@@ -237,35 +217,59 @@ export default function Mapper2ExtractsTypeableSelect({
   const handleOnClick = useCallback(event => {
     dispatchLocalAction({type: 'onCursorChange', value: event.target.selectionStart});
   }, []);
+  const handleKeyDown = useCallback(evt => {
+    if (evt.key === 'Home') {
+      evt.preventDefault();
+      // eslint-disable-next-line no-param-reassign
+      if (evt.shiftKey) evt.target.selectionStart = 0;
+      else evt.target.setSelectionRange(0, 0);
+    }
+    if (evt.key === 'End') {
+      evt.preventDefault();
+      const len = evt.target.value.length;
 
+      // eslint-disable-next-line no-param-reassign
+      if (evt.shiftKey) evt.target.selectionEnd = len;
+      else evt.target.setSelectionRange(len, len);
+    }
+  }, [],
+  );
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
+  const menuOpen = isFocused && !disabled && !hideSourceDropdown;
 
   return (
-    <FormControl
-      data-test={id}
-      key={id}
-      >
+    <FormControl variant="standard" data-test={id} key={id}>
       <Tooltip
         disableFocusListener
         placement="bottom"
-        title={(isFocused || (!inputValue && !isDynamicLookup)) ? '' : (
-          <TooltipTitle
-            isTruncated={isTruncated}
-            inputValue={inputValue}
-            hideSourceDropdown={hideSourceDropdown}
-            isDynamicLookup={isDynamicLookup}
-            isHardCodedValue={isHardCodedValue}
-            isHandlebarExp={isHandlebarExp}
-            isSource
-            fieldType="Source field"
-            sourceDataTypes={sourceDataType}
-        />
-        )} >
+        title={
+            isFocused || (!inputValue && !isDynamicLookup) ? (
+              ''
+            ) : (
+              <TooltipTitle
+                isTruncated={isTruncated}
+                inputValue={inputValue}
+                hideSourceDropdown={hideSourceDropdown}
+                isDynamicLookup={isDynamicLookup}
+                isHardCodedValue={isHardCodedValue}
+                isHandlebarExp={isHandlebarExp}
+                isSource
+                fieldType="Source field"
+                sourceDataTypes={sourceDataType}
+              />
+            )
+          }
+        >
         <TextField
+          ref={textFieldRef}
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={clsx(classes.customTextField, {[classes.sourceCustomTextField]: hideSourceDropdown}, className)}
+          className={clsx(
+            classes.customTextField,
+            { [classes.sourceCustomTextField]: hideSourceDropdown },
+            className
+          )}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -275,19 +279,25 @@ export default function Mapper2ExtractsTypeableSelect({
           multiline={isFocused}
           placeholder={disabled ? '' : 'Source field'}
           onClick={handleOnClick}
+          onKeyDown={handleKeyDown}
           InputProps={{
-            endAdornment: !hideSourceDropdown &&
-              (
-                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={() => { setIsFocused(true); }}>
-                  <ArrowDownIcon />
-                </InputAdornment>
-              ),
+            endAdornment: !hideSourceDropdown && (
+            <InputAdornment
+              className={classes.autoSuggestDropdown}
+              position="start"
+              onClick={() => {
+                setIsFocused(true);
+              }}
+                >
+              <ArrowDownIcon />
+            </InputAdornment>
+            ),
             inputProps: {
               ref: inputFieldRef,
             },
           }}
-           />
-      </Tooltip >
+          />
+      </Tooltip>
 
       {displaySourceDataType && (
       <SourceDataType
@@ -299,46 +309,26 @@ export default function Mapper2ExtractsTypeableSelect({
         isDynamicLookup={isDynamicLookup}
         nodeKey={nodeKey}
         sourceDataTypes={sourceDataType}
-        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}
-        isFocused={isFocused} />
+        className={clsx({
+          [classes.sourceDataTypeButton]: hideSourceDropdown,
+        })}
+        isFocused={isFocused}
+          />
       )}
 
-      {/* only render tree component if field is focussed and not disabled.
-      Here we are wrapping tree component with ArrowPopper to correctly handle the
-      dropdown placement logic
-      */}
-
-      <ArrowPopper
-        placement="bottom"
-        id="extractPopper"
-        open={isFocused}
-        anchorEl={anchorEl}
-        onClose={handleBlur}
-        preventOverflow={false}
-        offsetPopper="0,6"
-        classes={{
-          popper: clsx(classes.extractListPopper, {
-            [classes.extractListPopperCompact]: editorLayout === 'compact2',
-          }, popperClassName),
-          arrow: classes.extractPopperArrow,
-          paper: classes.extractPopperPaper,
-        }}
-        >
-        {isFocused && !disabled && !hideSourceDropdown && (
-          <ExtractsTree
-            key={id}
-            nodeKey={nodeKey}
-            destDataType={destDataType}
-            propValue={propValue}
-            inputValue={inputValue}
-            patchField={patchField}
-            setInputValue={setInputValue}
-            setIsFocused={setIsFocused}
-            cursorPosition={cursorPosition}
-          />
-        )}
-      </ArrowPopper>
-
+      <ExtractMenu open={menuOpen} onClickAway={handleBlur} anchorRef={textFieldRef}>
+        <ExtractsTree
+          key={id}
+          nodeKey={nodeKey}
+          destDataType={destDataType}
+          propValue={propValue}
+          inputValue={inputValue}
+          patchField={patchField}
+          setInputValue={setInputValue}
+          setIsFocused={setIsFocused}
+          cursorPosition={cursorPosition}
+        />
+      </ExtractMenu>
     </FormControl>
   );
 }

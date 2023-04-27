@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { isEqual } from 'lodash';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import InstallationStep from '../../../../../components/InstallStep';
@@ -16,7 +17,6 @@ import jsonUtil from '../../../../../utils/json';
 import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFactory';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
-import Spinner from '../../../../../components/Spinner';
 import getRoutePath from '../../../../../utils/routePaths';
 import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
@@ -327,7 +327,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   }
   if (isInstallComplete && !setupDone) {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

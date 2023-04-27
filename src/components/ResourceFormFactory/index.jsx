@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import {makeStyles} from '@material-ui/core';
 import { useRouteMatch } from 'react-router-dom';
+import {Spinner} from '@celigo/fuse-ui';
 import actions from '../../actions';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -9,7 +9,6 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../constants';
 import DynaForm from '../DynaForm';
-import Spinner from '../Spinner';
 import { getHttpConnector} from '../../constants/applications';
 import {getParentResourceContext} from '../../utils/connections';
 
@@ -47,17 +46,9 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
     remountForm();
   }, [fieldMeta, remountForm]);
 
-  const useStyles = makeStyles({
-    formNotLoadedSpinner: {
-      marginTop: 60,
-    },
-  });
-
-  const classes = useStyles();
-
   if (!formState.initComplete) {
     return (
-      <Spinner centerAll className={classes.formNotLoadedSpinner} />
+      <Spinner size="large" center="screen" sx={{mt: '60px'}} />
     );
   }
 

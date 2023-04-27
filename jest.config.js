@@ -3,19 +3,20 @@ module.exports = {
   bail: false,
   testRegex: undefined,
   testTimeout: 50000,
-  roots: [
-    '<rootDir>/src',
-  ],
+  roots: ['<rootDir>/src'],
+  moduleNameMapper: {
+    '\\.(css)$': '<rootDir>/jest/styleMock.js',
+  },
   transform: {
     '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.css$': '<rootDir>/jest/cssTransform.js',
-    '^(?!.*\\.(js|jsx|ts|tsx|mjs|cjs|css|json)$)': '<rootDir>/jest/fileTransform.js',
+    '^(?!.*\\.(js|jsx|ts|tsx|mjs|cjs|css|json)$)':
+      '<rootDir>/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
     '^.+\\.module\\.(css|sass|scss)$',
-    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder|d3|d3-array|internmap|delaunator|robust-predicates)',
+    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder|d3|d3-array|internmap|delaunator|robust-predicates|reactflow)',
     // '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx|mjs|cjs)$',
-
   ],
   collectCoverageFrom: [
     // If we consistently follow the current abstractions,
@@ -31,7 +32,12 @@ module.exports = {
     'src/views/**/*.{js,jsx}',
     '!src/views/SuiteScript/**/*.{js,jsx}',
   ],
-  setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js', 'jest-canvas-mock'],
+  setupFilesAfterEnv: [
+    '<rootDir>/jest/setup.js',
+    'jest-date-mock',
+    'core-js',
+    'jest-canvas-mock',
+  ],
   coverageThreshold: {
     global: {
       statements: 84,

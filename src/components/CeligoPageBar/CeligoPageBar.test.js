@@ -28,29 +28,29 @@ describe('celigopagebar UI tests', () => {
     expect(subtitle).toBeInTheDocument();
   });
 
-  test('should test working of info icon buttton', () => {
+  test('should test working of info icon buttton', async () => {
     renderFunction();
 
     const infobutton = screen.getByRole('button');
 
-    userEvent.click(infobutton);
+    await userEvent.click(infobutton);
     const infotext = screen.queryByText('infotext');
 
     expect(infotext).toBeInTheDocument();
   });
 
-  test('should test the go back to parent button', () => {
+  test('should test the go back to parent button', async () => {
     const history = createMemoryHistory();
 
     jest.spyOn(history, 'replace').mockImplementation();
     renderFunction(history);
     const parentbutton = screen.getByRole('button');
 
-    userEvent.click(parentbutton);
+    await userEvent.click(parentbutton);
     expect(history.replace).toHaveBeenCalledWith('/');
   });
 
-  test('should test the back button when history.length > 2', () => {
+  test('should test the back button when history.length > 2', async () => {
     const history = createMemoryHistory();
 
     jest.spyOn(history, 'goBack').mockImplementation();
@@ -58,7 +58,7 @@ describe('celigopagebar UI tests', () => {
     renderFunction(history);
     const parentbutton = screen.getByRole('button');
 
-    userEvent.click(parentbutton);
+    await userEvent.click(parentbutton);
     expect(history.goBack).toHaveBeenCalledWith();
   });
 });

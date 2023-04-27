@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TransferList from '.';
 import { runServer } from '../../test/api/server';
@@ -62,43 +62,56 @@ describe('transferList test cases', () => {
         ],
       },
     });
-    const allRightButton = screen.getByRole('button', {name: 'move all right'});
-    const rightButton = screen.getByRole('button', {name: 'move selected right'});
-    const leftButton = screen.getByRole('button', {name: 'move selected left'});
-    const allLeftButton = screen.getByRole('button', {name: 'move all left'});
 
-    expect(allRightButton).toBeInTheDocument();
-    expect(allLeftButton).toBeInTheDocument();
-    expect(rightButton).toBeInTheDocument();
-    expect(leftButton).toBeInTheDocument();
+    let rightButton;
+    let leftButton;
+    let allLeftButton;
+    let allRightButton;
+
+    waitFor(() => {
+      allRightButton = screen.getByRole('button', {name: 'move all right'});
+      rightButton = screen.getByRole('button', {name: 'move selected right'});
+      leftButton = screen.getByRole('button', {name: 'move selected left'});
+      allLeftButton = screen.getByRole('button', {name: 'move all left'});
+      expect(allRightButton).toBeInTheDocument();
+      expect(allLeftButton).toBeInTheDocument();
+      expect(rightButton).toBeInTheDocument();
+      expect(leftButton).toBeInTheDocument();
+    });
 
     // right
-    const value3Input = screen.getByRole('checkbox', {name: 'value_3'});
-    const value2Input = screen.queryByText('value_2');
+    waitFor(async () => {
+      const value3Input = screen.getByRole('checkbox', {name: 'value_3'});
+      const value2Input = screen.queryByText('value_2');
 
-    userEvent.click(value3Input);
-    userEvent.click(value2Input); // checking
-    userEvent.click(value2Input); // unchecking
-    userEvent.click(rightButton);
-    expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2']);
-    expect(setRight).toHaveBeenCalledWith(['value_3', 'value_4', 'value_5']);
+      await userEvent.click(value3Input);
+      await userEvent.click(value2Input); // checking
+      await userEvent.click(value2Input); // unchecking
+      await userEvent.click(rightButton);
+      expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2']);
+      expect(setRight).toHaveBeenCalledWith(['value_3', 'value_4', 'value_5']);
+    });
 
     // all right
-    userEvent.click(allRightButton);
-    expect(setLeft).toHaveBeenCalledWith([]);
-    expect(setRight).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4', 'value_5']);
+    waitFor(async () => {
+      await userEvent.click(allRightButton);
+      expect(setLeft).toHaveBeenCalledWith([]);
+      expect(setRight).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4', 'value_5']);
+    });
 
     // left
-    const value4Input = screen.queryByText('value_4');
+    waitFor(async () => {
+      const value4Input = screen.queryByText('value_4');
 
-    userEvent.click(value4Input);
-    userEvent.click(leftButton);
-    expect(setRight).toHaveBeenCalledWith(['value_5']);
-    expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4']);
+      await userEvent.click(value4Input);
+      await userEvent.click(leftButton);
+      expect(setRight).toHaveBeenCalledWith(['value_5']);
+      expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4']);
 
-    // all left
-    userEvent.click(allLeftButton);
-    expect(setRight).toHaveBeenCalledWith([]);
-    expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4', 'value_5']);
+      // all left
+      await userEvent.click(allLeftButton);
+      expect(setRight).toHaveBeenCalledWith([]);
+      expect(setLeft).toHaveBeenCalledWith(['value_1', 'value_2', 'value_3', 'value_4', 'value_5']);
+    });
   });
 });

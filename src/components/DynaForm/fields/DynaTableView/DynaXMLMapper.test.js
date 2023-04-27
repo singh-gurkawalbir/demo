@@ -4,9 +4,10 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaXMLMapper from './DynaXMLMapper';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 describe('dynaXMLMapper UI tests', () => {
+  const initialStore = reduxStore;
   const mockonFieldChange = jest.fn();
   const props = {
     onFieldChange: mockonFieldChange,
@@ -15,24 +16,30 @@ describe('dynaXMLMapper UI tests', () => {
     isLoggable: true,
   };
 
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
+
   test('should pass the initial render', () => {
-    renderWithProviders(<DynaXMLMapper {...props} />);
+    renderWithProviders(<DynaXMLMapper {...props} />, {initialStore});
     expect(screen.getByText('Path:')).toBeInTheDocument();
     expect(screen.getByText('Field Description')).toBeInTheDocument();
     expect(screen.getByText('Path')).toBeInTheDocument();
     expect(screen.getByText('Regex')).toBeInTheDocument();
-    const textFields = screen.getAllByRole('textbox');
 
-    expect(textFields).toHaveLength(4);
+    expect(screen.getByRole('textbox')).toHaveAttribute('placeholder', 'Path');
+    expect(screen.getAllByRole('combobox')).toHaveLength(3);
   });
   test('should call the onFieldChange function passed in props on initial render', async () => {
-    renderWithProviders(<DynaXMLMapper {...props} />);
+    renderWithProviders(<DynaXMLMapper {...props} />, {initialStore});
     await waitFor(() => expect(mockonFieldChange).toHaveBeenCalled());
   });
   test('should not throw any error while attempting to edit the fields', () => {
-    renderWithProviders(<DynaXMLMapper {...props} />);
+    renderWithProviders(<DynaXMLMapper {...props} />, {initialStore});
     let found = false;
-    const textFields = screen.getAllByRole('textbox');
+    const textFields = screen.getAllByRole('combobox');
 
     try {
       userEvent.type(textFields[0], 'a');

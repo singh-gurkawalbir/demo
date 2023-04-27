@@ -71,6 +71,7 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
+      defaultOpen: true,
       visibleWhenAll: [{ field: 'application', isNot: [''] }],
       placeholder: 'Please select',
     },
@@ -91,16 +92,38 @@ export default {
       required: true,
     },
 
+    checkExistingImport: {
+      id: 'checkExistingImport',
+      name: 'checkExistingImport',
+      label: 'Use existing import',
+      type: 'existingCheckresource',
+      flowResourceType: 'pp',
+      resourceType: 'imports',
+      required: false,
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+      ],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'connection', isNot: [''] },
+        { field: 'resourceType', is: ['importRecords', 'transferFiles'] },
+      ],
+    },
+
     existingImport: {
       id: 'importId',
       name: 'importId',
       type: 'selectflowresource',
       flowResourceType: 'pp',
       resourceType: 'imports',
-      label: 'Would you like to use an existing import?',
+      label: '',
       defaultValue: '',
-      required: false,
+      required: true,
       allowEdit: true,
+      defaultOpen: true,
+      omitWhenHidden: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -111,6 +134,27 @@ export default {
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
         { field: 'resourceType', is: ['importRecords', 'transferFiles'] },
+        { field: 'checkExistingImport', is: [true] },
+      ],
+    },
+
+    checkExistingExport: {
+      id: 'checkExistingExport',
+      name: 'checkExistingExport',
+      label: 'Use existing lookup',
+      flowResourceType: 'pp',
+      resourceType: 'exports',
+      type: 'existingCheckresource',
+      required: false,
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+      ],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'connection', isNot: [''] },
+        { field: 'resourceType', is: ['lookupRecords', 'lookupFiles'] },
       ],
     },
 
@@ -120,10 +164,12 @@ export default {
       type: 'selectflowresource',
       flowResourceType: 'pp',
       resourceType: 'exports',
-      label: 'Would you like to use an existing lookup?',
+      label: '',
       defaultValue: '',
-      required: false,
+      required: true,
       allowEdit: true,
+      defaultOpen: true,
+      omitWhenHidden: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -134,6 +180,7 @@ export default {
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
         { field: 'resourceType', is: ['lookupRecords', 'lookupFiles'] },
+        { field: 'checkExistingExport', is: [true] },
       ],
     },
 
@@ -163,7 +210,9 @@ export default {
           'application',
           'resourceType',
           'connection',
+          'checkExistingImport',
           'existingImport',
+          'checkExistingExport',
           'existingExport',
         ],
       },
@@ -172,7 +221,7 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const connectionField = fields.find(field => field.id === 'connection');
-    const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    const adaptorTypeSuffix = fieldId === 'importId' || fieldId === 'checkExistingImport' ? 'Import' : 'Export';
     const applications = applicationsList();
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
@@ -189,7 +238,8 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(appType)) {
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
+        appType.indexOf('jdbc') > -1 ? expression.push({ 'jdbc.type': appType })
+          : expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
       } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (appType === 'graph_ql') {
@@ -234,7 +284,7 @@ export default {
       return { filter: andingExpressions, appType };
     }
 
-    if (['importId', 'exportId'].includes(fieldId)) {
+    if (['importId', 'exportId', 'checkExistingExport', 'checkExistingImport'].includes(fieldId)) {
       const adaptorTypePrefix = appTypeToAdaptorType[appType];
 
       if (!adaptorTypePrefix) return;
@@ -295,15 +345,21 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
-      let importLabel = `Would you like to use an existing ${
-        resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
-      }?`;
+      let importLabel = '';
 
-      if (fieldId === 'exportId') {
-        importLabel = 'Would you like to use an existing lookup?';
+      if (fieldId === 'checkExistingImport') {
+        importLabel = `Use existing ${
+          resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
+        }`;
       }
 
-      return { filter, appType, label: importLabel };
+      if (fieldId === 'checkExistingExport') {
+        importLabel = 'Use existing lookup';
+      }
+
+      const visible = !!connectionField.value;
+
+      return { filter, appType, label: importLabel, visible };
     }
 
     return null;

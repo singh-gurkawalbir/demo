@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
-import { FormControl, FormLabel, TextField } from '@material-ui/core';
+import { FormControl, FormLabel, TextField } from '@mui/material';
 import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 import ActionButton from '../../../ActionButton';
@@ -104,7 +104,7 @@ export default function DynaMFASecretKey(props) {
   const [showSecretKey, setShowSecretKey] = useState(false);
 
   return (
-    <FormControl className={classes.field}>
+    <FormControl variant="standard" className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
         <FieldHelp {...props} />

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
+import { TimeAgo } from '@celigo/fuse-ui';
 import NameCell from './cells/NameCell';
 import StatusCell from './cells/StatusCell';
 import TypeCell from './cells/TypeCell';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {FILTER_KEY, getAllApplications} from '../../../utils/home';
 import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../constants';
@@ -89,7 +89,7 @@ export default {
         orderBy: 'lastErrorAt',
         heading: 'Last open error',
         isLoggable: true,
-        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastErrorAt} />,
+        Value: ({rowData: r}) => <TimeAgo date={r.lastErrorAt} />,
       });
     }
 

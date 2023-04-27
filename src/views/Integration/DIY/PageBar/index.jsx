@@ -1,13 +1,14 @@
-import { makeStyles, MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import {EditableText} from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import ActionGroup from '../../../../components/ActionGroup';
 import { TextButton } from '../../../../components/Buttons';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
-import EditableText from '../../../../components/EditableText';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
@@ -26,12 +27,6 @@ const integrationsFilterConfig = { type: 'integrations' };
 const useStyles = makeStyles(theme => ({
   tag: {
     marginLeft: theme.spacing(1),
-  },
-  editableTextInput: {
-    width: `calc(60vw - ${52 + 24}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
   },
 }));
 
@@ -106,7 +101,6 @@ export default function PageBar() {
       canDelete: permission.delete,
     };
   }, shallowEqual);
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   const patchIntegration = useCallback(
     (path, value) => {
@@ -189,35 +183,31 @@ export default function PageBar() {
               (hasIntegration && !isIntegrationApp) ? (
                 <EditableText
                   text={name}
+                  placeholder="Unnamed integration: Click to add name"
                   disabled={!canEdit}
-                  defaultText="Unnamed integration: Click to add name"
                   onChange={handleTitleChange}
-                  inputClassName={
-                    drawerOpened
-                      ? classes.editableTextInputShift
-                      : classes.editableTextInput
-                  }
                 />
               ) : (
                 pageTitle
               )
             }
       titleTag={isIntegrationApp && (
-      <ChipInput
-        disabled={!canEdit}
-        value={tag || 'tag'}
-        className={classes.tag}
-        variant="outlined"
-        onChange={handleTagChangeHandler}
-            />
+        <ChipInput
+          disabled={!canEdit}
+          value={tag || 'tag'}
+          className={classes.tag}
+          variant="outlined"
+          onChange={handleTagChangeHandler}
+        />
       )}
+      infoTitleName={pageTitle}
       infoText={
               hasIntegration ? (
                 <EditableText
                   multiline
                   allowOverflow
                   text={description}
-                  defaultText="Click to add a description"
+                  placeholder="Click to add a description"
                   onChange={handleDescriptionChange}
                 />
               ) : (
@@ -246,6 +236,7 @@ export default function PageBar() {
           </TextButton>
           <LoadResources integrationId={integrationId} required resources={resourcesToLoad}>
             <Select
+              variant="standard"
               displayEmpty
               data-test="select Child"
               className={classes.storeSelect}

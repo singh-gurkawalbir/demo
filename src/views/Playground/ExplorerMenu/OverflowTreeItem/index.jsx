@@ -1,13 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
-import { TreeItem } from '@material-ui/lab';
+import makeStyles from '@mui/styles/makeStyles';
+import { TreeItem } from '@mui/lab';
 
 const useStyles = makeStyles({
-  label:
-  {
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+  label: {
+    width: '100%',
+    whiteSpace: 'normal',
   },
 });
 

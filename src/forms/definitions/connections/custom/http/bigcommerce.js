@@ -6,12 +6,9 @@ export default {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
       retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
-      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/ping/relativeURI'] = '/v2/store';
       retValues['/http/ping/method'] = 'GET';
       retValues['/http/ping/successPath'] = 'id';
@@ -38,8 +35,6 @@ export default {
       retValues['/http/auth/token/scheme'] = ' ';
       retValues['/http/ping/relativeURI'] = '/v3/catalog/products';
       retValues['/http/ping/method'] = 'GET';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
@@ -53,11 +48,9 @@ export default {
         },
       ];
     } else {
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
-      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Token',
@@ -105,11 +98,17 @@ export default {
       fieldId: 'http.auth.basic.username',
       helpKey: 'bigcommerce.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      removeWhen: [{
+        field: 'http.auth.type', is: ['token', 'oauth'] },
+      ],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'bigcommerce.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      removeWhen: [{
+        field: 'http.auth.type', is: ['token', 'oauth'] },
+      ],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -118,6 +117,7 @@ export default {
       required: true,
       helpKey: 'bigcommerce.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['token', 'oauth'] }],
     },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
@@ -181,6 +181,7 @@ export default {
         'store_storefront_api_customer_impersonation',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     application: {
       fieldId: 'application',

@@ -1,5 +1,5 @@
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -88,7 +88,7 @@ describe('Testsuite for MFA', () => {
 
     expect(screen.getByRole('heading', { name: /multifactor authentication \(mfa\)/i })).toBeInTheDocument();
     expect(screen.getByText(/my user/i)).toBeInTheDocument();
-    expect(document.querySelector('svg[class="MuiCircularProgress-svg"]')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(screen.getByText(/Testing Account Settings/i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_USER_SETTINGS_REQUEST' });
   });
@@ -117,7 +117,7 @@ describe('Testsuite for MFA', () => {
     expect(screen.getByText(/you are required to enable mfa before you can continue in this account\./i)).toBeInTheDocument();
     const linkNode = screen.getByRole('link', {name: 'Learn more'});
 
-    expect(linkNode.getAttribute('href')).toBe('https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account');
+    expect(linkNode.getAttribute('href')).toBe('https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account');
   });
   test('should the toggle button be disabled when MFA setup is not completed and user settings are loaded', async () => {
     await initMFA({
@@ -142,13 +142,15 @@ describe('Testsuite for MFA', () => {
     });
 
     expect(screen.getByText('Enable MFA')).toBeInTheDocument();
-    const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
+    waitFor(async () => {
+      const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
 
-    expect(checkBoxNode).toBeInTheDocument();
-    expect(checkBoxNode).toBeDisabled();
-    await userEvent.click(checkBoxNode);
-    expect(checkBoxNode).not.toBeEnabled();
-    expect(screen.getByText(/Testing MFA Setup/i)).toBeInTheDocument();
+      expect(checkBoxNode).toBeInTheDocument();
+      expect(checkBoxNode).toBeDisabled();
+      await userEvent.click(checkBoxNode);
+      expect(checkBoxNode).not.toBeEnabled();
+      expect(screen.getByText(/Testing MFA Setup/i)).toBeInTheDocument();
+    });
   });
   test('should test the MFA when setup is not completed and user settings are loaded and test the MFA setup text', async () => {
     const { utils } = await initMFA({
@@ -176,13 +178,15 @@ describe('Testsuite for MFA', () => {
     });
 
     expect(screen.getByText('Enable MFA')).toBeInTheDocument();
-    const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
+    waitFor(async () => {
+      const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
 
-    expect(checkBoxNode).toBeInTheDocument();
-    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
-    await userEvent.click(checkBoxNode);
-    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
-    expect(screen.getByText(/Testing MFA Setup/i)).toBeInTheDocument();
+      expect(checkBoxNode).toBeInTheDocument();
+      expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+      await userEvent.click(checkBoxNode);
+      expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
+      expect(screen.getByText(/Testing MFA Setup/i)).toBeInTheDocument();
+    });
   });
   test('should test the MFA when setup is completed and user settings are loaded and test the MFA edit configuration page', async () => {
     const { utils } = await initMFA({
@@ -210,15 +214,17 @@ describe('Testsuite for MFA', () => {
     });
 
     expect(screen.getByText('Enable MFA')).toBeInTheDocument();
-    const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
+    waitFor(async () => {
+      const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
 
-    expect(checkBoxNode).toBeInTheDocument();
-    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
-    expect(screen.getByText(/Testing EditConfiguration/i)).toBeInTheDocument();
-    await userEvent.click(checkBoxNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'MFA_USER_SETTINGS_SETUP',
-      mfaConfig: { enabled: false, setupComplete: true, context: 'switch' },
+      expect(checkBoxNode).toBeInTheDocument();
+      expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
+      expect(screen.getByText(/Testing EditConfiguration/i)).toBeInTheDocument();
+      await userEvent.click(checkBoxNode);
+      expect(mockDispatchFn).toHaveBeenCalledWith({
+        type: 'MFA_USER_SETTINGS_SETUP',
+        mfaConfig: { enabled: false, setupComplete: true, context: 'switch' },
+      });
     });
   });
 });

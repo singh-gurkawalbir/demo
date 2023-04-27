@@ -1,11 +1,36 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ResourceReferences from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
+
+const mockLoadResources = jest.fn();
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
+jest.mock('../LoadResources', () => ({
+  __esModule: true,
+  ...jest.requireActual('../LoadResources'),
+  default: props => {
+    mockLoadResources(props.resources);
+
+    return <div>{props.children}</div>;
+  },
+}));
 
 async function initResourceReferences({
   props = {
@@ -38,6 +63,9 @@ describe('resourceReferences test cases', () => {
 
   beforeEach(() => {
     mockGetRequestOnce('/api/exports/resource_id/dependencies', {});
+  });
+  afterEach(() => {
+    mockLoadResources.mockClear();
   });
 
   test('should pass the initial render with default value', async () => {
@@ -98,10 +126,12 @@ describe('resourceReferences test cases', () => {
 
     expect(screen.queryByText(/Unable to delete export as/i)).toBeInTheDocument();
     expect(screen.queryByText(/This export is referenced by the resources below. Only resources that have no references can be deleted./i)).toBeInTheDocument();
-    const closeButton = screen.getByRole('button');
+    await waitFor(async () => {
+      const closeButton = screen.getByRole('button');
 
-    expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+      expect(closeButton).toBeInTheDocument();
+      await userEvent.click(closeButton);
+    });
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -116,5 +146,48 @@ describe('resourceReferences test cases', () => {
 
     expect(screen.queryByText(/Retrieving references/i)).toBeInTheDocument();
   });
-});
 
+  test('loadResources should get correct resourceType', async () => {
+    await initResourceReferences({
+      resource: {
+        references: {
+          exports: [{
+            id: 'id_1',
+            name: 'Name 1',
+          }],
+          connections: [{
+            id: 'id_2',
+            name: 'Name conn 1',
+          }],
+        },
+      },
+    });
+
+    expect(mockLoadResources).toHaveBeenCalledWith(
+      expect.objectContaining(['exports', 'connections'])
+    );
+  });
+
+  test('loadResources should get unique resourceType', async () => {
+    await initResourceReferences({
+      resource: {
+        references: {
+          exports: [
+            {
+              id: 'id_1',
+              name: 'Name 1',
+            },
+            {
+              id: 'id_2',
+              name: 'Name 2',
+            },
+          ],
+        },
+      },
+    });
+
+    expect(mockLoadResources).toHaveBeenCalledWith(
+      expect.objectContaining(['exports'])
+    );
+  });
+});

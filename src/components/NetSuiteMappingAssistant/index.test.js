@@ -9,10 +9,10 @@ import { message } from '../../utils/messageStore';
 import NetSuiteMappingAssistant from '.';
 import actions from '../../actions';
 
-jest.mock('../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../Spinner'),
-  default: () => (<div>Spinner</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<div>Spinner</div>),
 }));
 
 jest.mock('../../utils/mapping/application/netsuite', () => ({
@@ -159,7 +159,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const launchButton = screen.getByRole('button', {name: 'Launch NetSuite assistant'});
 
     expect(launchButton).toBeEnabled();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const snackBar = screen.getByRole('alert');
 
     expect(snackBar.textContent).toEqual(message.NETSUITE_ASSISTANT_LAUNCH_ERROR);
@@ -196,7 +196,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const launchButton = screen.getByRole('button', {name: 'Launch NetSuite assistant'});
 
     expect(launchButton).toBeEnabled();
-    userEvent.click(launchButton);
+    await userEvent.click(launchButton);
     const nsMapAsst = screen.getByTitle('NetSuite Mapping Assistant');
 
     expect(nsMapAsst).toBeInTheDocument();

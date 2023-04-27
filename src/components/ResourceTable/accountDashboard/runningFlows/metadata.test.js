@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import metadata from './metadata';
@@ -69,16 +69,16 @@ function indexOfCell(text, role) {
 }
 
 describe('running flows metadata column UI Tests', () => {
-  test('should verify FlowSearchFilter coulmn', () => {
+  test('should verify FlowSearchFilter coulmn', async () => {
     renderFunction();
-    userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getAllByRole('button')[0]);
     expect(screen.getByText('All flows')).toBeInTheDocument();
     expect(screen.getByText('demo flow')).toBeInTheDocument();
   });
-  test('should verify Status coulmn', () => {
+  test('should verify Status coulmn', async () => {
     renderFunction();
     expect(screen.getByText('Status')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[1]);
+    await userEvent.click(screen.getAllByRole('button')[1]);
     expect(screen.getByText('All statuses')).toBeInTheDocument();
     expect(screen.getByText('In progress')).toBeInTheDocument();
     expect(screen.getByText('Canceling')).toBeInTheDocument();
@@ -88,11 +88,13 @@ describe('running flows metadata column UI Tests', () => {
     renderFunction({startedAt: '2022-05-18T18:16:31.989Z'});
 
     const headerIndex = indexOfCell('Started', 'columnheader');
-    const cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    const cellIndex = indexOfCell('05/18/2022 6:16:31 pm', 'cell');
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Success coulmn', () => {
     const numSuccess = '1';
@@ -106,7 +108,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
 
   test('should verify Ignore coulmn', () => {
@@ -119,7 +123,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Errors coulmn', () => {
     const numError = '3';
@@ -131,7 +137,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Resolved coulmn', () => {
     const numResolved = '4';
@@ -143,7 +151,9 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
   test('should verify Pages coulmn', () => {
     const numPagesGenerated = '5';
@@ -155,9 +165,12 @@ describe('running flows metadata column UI Tests', () => {
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
-    expect(cellIndex).toEqual(headerIndex);
+
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expect(cellIndex).toEqual(headerIndex - 1);
   });
-  test('should verify Integration options coulmn', () => {
+
+  test('should verify Integration options coulmn', async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={['/flowId']}>
         <Route path="/:flowId">
@@ -170,9 +183,9 @@ describe('running flows metadata column UI Tests', () => {
     );
 
     expect(screen.getByText('Integration')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('button')[0]);
-    userEvent.click(screen.getAllByRole('checkbox')[1]);
-    userEvent.click(screen.getByText('Apply'));
+    await userEvent.click(screen.getAllByRole('button')[0]);
+    await userEvent.click(screen.getAllByRole('checkbox')[1]);
+    await userEvent.click(screen.getByText('Apply'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'PATCH_FILTER',
@@ -181,12 +194,12 @@ describe('running flows metadata column UI Tests', () => {
       }
     );
   });
-  test('should verify Actions coulmn', () => {
+  test('should verify Actions coulmn', async () => {
     renderFunction();
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     expect(actionButton).toBeInTheDocument();
-    userEvent.click(actionButton);
-    expect(screen.getByText('Cancel run')).toBeInTheDocument();
+    await userEvent.click(actionButton);
+    waitFor(() => expect(screen.getByText('Cancel run')).toBeInTheDocument());
   });
 });

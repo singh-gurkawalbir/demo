@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
-import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
@@ -207,7 +208,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const Title = () => (
     <>
       {`Errors: ${resourceName}`}
-      {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
+      {endedAt && <DrawerHeaderSubTitle>Run completed: <TimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
 

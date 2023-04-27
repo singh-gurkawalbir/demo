@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { LinearProgress, Typography} from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { LinearProgress, Typography} from '@mui/material';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import { TextButton } from '../../../components/Buttons';

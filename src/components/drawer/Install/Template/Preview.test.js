@@ -8,7 +8,6 @@ import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/t
 import TemplatePreview from './Preview';
 import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
-import { message } from '../../../../utils/messageStore';
 
 const mockHistoryPush = jest.fn();
 
@@ -104,7 +103,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
   test('Should able to test the TemplatePreview With template with user and, not from Celigo', async () => {
@@ -125,15 +124,7 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
-    expect(screen.getByText('Disclaimer')).toBeInTheDocument();
-    expect(screen.getByText(message.DISCLAIMER.THIRD_PARTY_TEMPLATE_DISCLAIMER)).toBeInTheDocument();
-    const proceed = screen.getByRole('button', {name: 'Proceed'});
-    const cancel = screen.getByRole('button', {name: 'Cancel'});
-
-    expect(proceed).toBeInTheDocument();
-    expect(cancel).toBeInTheDocument();
-    userEvent.click(proceed);
+    await userEvent.click(installButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
   test('Should able to test the TemplatePreview With template with user from Celigo', async () => {
@@ -151,10 +142,8 @@ describe('TemplatePreview tests', () => {
     const installButton = screen.getByRole('button', {name: 'Install now'});
 
     expect(installButton).toBeInTheDocument();
-    userEvent.click(installButton);
-    expect(screen.getByText(message.DISCLAIMER.CELIGO_AUTHORED_TEMPLATE_DISCLAIMER)).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Proceed'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Cancel'})).toBeInTheDocument();
+    await userEvent.click(installButton);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.createComponents('_templateId', '_templateId'));
   });
 
   test('Should able to test the TemplatePreview With template with Readme', async () => {
@@ -165,7 +154,7 @@ describe('TemplatePreview tests', () => {
     const readme = screen.getByRole('button', {name: 'View Readme'});
 
     expect(readme).toBeInTheDocument();
-    userEvent.click(readme);
+    await userEvent.click(readme);
     expect(screen.getByText('Readme')).toBeInTheDocument();
     expect(screen.getByText('Readme message')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Ok'})).toBeInTheDocument();

@@ -10,8 +10,6 @@ export default {
   'https://auth.anaplan.com/token/refresh';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/auth/token/refreshTokenPath'] = 'tokenInfo.tokenValue';
       retValues['/http/auth/token/refreshHeaders'] = [
         {
@@ -28,10 +26,6 @@ export default {
       retValues['/http/auth/token/refreshMediaType'] = undefined;
       retValues['/http/auth/token/refreshTokenPath'] = undefined;
       retValues['/http/auth/token/refreshHeaders'] = undefined;
-      retValues['/http/unencrypted/username'] = undefined;
-      retValues['/http/encrypted/password'] = undefined;
-      retValues['/http/auth/token/token'] = undefined;
-      delete ['/http/auth/token/token'];
     }
 
     return {
@@ -69,11 +63,13 @@ export default {
       fieldId: 'http.auth.basic.username',
       helpKey: 'anaplan.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'anaplan.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
+      removeWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.unencrypted.username': {
       fieldId: 'http.unencrypted.username',
@@ -82,6 +78,7 @@ export default {
       required: true,
       helpKey: 'anaplan.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
     },
     'http.encrypted.password': {
       fieldId: 'http.encrypted.password',
@@ -94,6 +91,7 @@ export default {
       required: true,
       helpKey: 'anaplan.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -105,6 +103,8 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
+      deleteWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
       label: 'Generate token',
       inputboxLabel: 'Token',
       defaultValue: '',

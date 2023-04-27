@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       width: 2,
       position: 'absolute',
       top: 0,
-      left: -theme.spacing(1.5),
+      left: theme.spacing(-1.5),
     },
   },
   childrenContainer: {

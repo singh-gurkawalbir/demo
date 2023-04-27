@@ -93,6 +93,7 @@ export default {
       required: true,
       defaultValue: '',
       placeholder: 'Please select',
+      defaultOpen: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {
@@ -125,16 +126,39 @@ export default {
       allowEdit: true,
     },
 
+    checkExistingExport: {
+      id: 'checkExistingExport',
+      name: 'checkExistingExport',
+      type: 'existingCheckresource',
+      required: false,
+      flowResourceType: 'pg',
+      resourceType: 'exports',
+      label: 'Use existing export',
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'type',
+      ],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [''],
+        },
+      ],
+    },
+
     existingExport: {
       id: 'exportId',
       name: 'exportId',
       type: 'selectflowresource',
       flowResourceType: 'pg',
       resourceType: 'exports',
-      label: 'Would you like to use an existing export?',
+      label: '',
       defaultValue: '',
-      required: false,
+      required: true,
       allowEdit: true,
+      defaultOpen: true,
+      omitWhenHidden: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -146,14 +170,16 @@ export default {
           field: 'application',
           isNot: [''],
         },
+        { field: 'checkExistingExport', is: [true] },
       ],
     },
   },
+
   layout: {
     type: 'box',
     containers: [
       {
-        fields: ['application', 'type', 'connection', 'existingExport'],
+        fields: ['application', 'type', 'connection', 'checkExistingExport', 'existingExport'],
       },
     ],
   },
@@ -173,7 +199,8 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(appType)) {
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
+        appType.indexOf('jdbc') > -1 ? expression.push({ 'jdbc.type': appType })
+          : expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
       } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (appType === 'graph_ql') {
@@ -218,7 +245,7 @@ export default {
       return { filter: andingExpressions, appType };
     }
 
-    if (fieldId === 'exportId') {
+    if (fieldId === 'exportId' || fieldId === 'checkExistingExport') {
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =
@@ -297,13 +324,17 @@ export default {
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
-      let label =
+      let label = '';
+
+      if (fieldId === 'checkExistingExport') {
+        label =
         isWebhook || type === 'realtime'
-          ? 'Would you like to use an existing listener?'
+          ? 'Use existing listener'
           : exportField.label;
 
-      if (type === 'transferFiles') {
-        label = 'Would you like to use an existing transfer?';
+        if (type === 'transferFiles') {
+          label = 'Use existing transfer';
+        }
       }
 
       return {

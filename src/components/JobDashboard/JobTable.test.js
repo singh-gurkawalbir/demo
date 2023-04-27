@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import { Route, Router } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Checkbox, TableCell, TableRow } from '@material-ui/core';
+import { Checkbox, TableCell, TableRow } from '@mui/material';
 import { createMemoryHistory } from 'history';
 import JobTable from './JobTable';
 import { mutateStore, renderWithProviders } from '../../test/test-utils';
@@ -176,7 +176,7 @@ describe('testsuite for JobTable', () => {
     expect(checkboxButtonNode).toBeDisabled();
     expect(screen.getAllByRole('columnheader')).toHaveLength(11);
   });
-  test('should test job table select all jobs checkbox when there are jobs', () => {
+  test('should test job table select all jobs checkbox when there are jobs', async () => {
     const history = createMemoryHistory({ initialEntries: ['/integrations/123/flowBuilder/456']});
 
     initJobTable({
@@ -232,10 +232,10 @@ describe('testsuite for JobTable', () => {
     });
 
     expect(selectAllJobsCheckbox).toBeInTheDocument();
-    userEvent.click(selectAllJobsCheckbox);
+    await userEvent.click(selectAllJobsCheckbox);
     expect(mockOnSelectChange).toHaveBeenCalledWith({321: {flowDisabled: false, selected: true}});
   });
-  test('should test job table by clicking on view errors and verify the path', () => {
+  test('should test job table by clicking on view errors and verify the path', async () => {
     const history = createMemoryHistory({ initialEntries: ['/integrations/123/flowBuilder/456']});
 
     history.push = mockHistoryPush;
@@ -292,10 +292,10 @@ describe('testsuite for JobTable', () => {
     const viewErrorButtonNode = document.querySelector('td[data-test="viewError"]');
 
     expect(viewErrorButtonNode).toBeInTheDocument();
-    userEvent.click(viewErrorButtonNode);
+    await userEvent.click(viewErrorButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/123/flowBuilder/456/viewErrors');
   });
-  test('should test job table onclose drawer button', () => {
+  test('should test job table onclose drawer button', async () => {
     const history = createMemoryHistory({ initialEntries: ['/integrations/123/flowBuilder/456']});
 
     history.goBack = mockHistoryGoBack;
@@ -351,11 +351,11 @@ describe('testsuite for JobTable', () => {
     const viewErrorButtonNode = document.querySelector('td[data-test="viewError"]');
 
     expect(viewErrorButtonNode).toBeInTheDocument();
-    userEvent.click(viewErrorButtonNode);
+    await userEvent.click(viewErrorButtonNode);
     const onCloseButtonNode = document.querySelector('button[data-test="onclose"]');
 
     expect(onCloseButtonNode).toBeInTheDocument();
-    userEvent.click(onCloseButtonNode);
+    await userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
     expect(mockHistoryGoBack).toHaveBeenCalledTimes(1);
   });
@@ -415,7 +415,7 @@ describe('testsuite for JobTable', () => {
     expect(mockHistoryReplace).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.requestFamily({ jobId: '321' }));
   });
-  test('should test job table individual select jobs checkbox when there are jobs', () => {
+  test('should test job table individual select jobs checkbox when there are jobs', async () => {
     const history = createMemoryHistory({ initialEntries: ['/integrations/123/flowBuilder/456']});
 
     initJobTable({
@@ -469,7 +469,7 @@ describe('testsuite for JobTable', () => {
     const individualCheckBoxNode = document.querySelector('span[data-test="checkbox"]');
 
     expect(individualCheckBoxNode).toBeInTheDocument();
-    userEvent.click(individualCheckBoxNode);
+    await userEvent.click(individualCheckBoxNode);
     expect(mockOnSelectChange).toHaveBeenCalledTimes(1);
   });
 });

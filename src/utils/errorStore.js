@@ -19,8 +19,6 @@ const messages = {
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
   MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
   SIGN_UP_CONSENT: 'You must agree to the Terms of Service / Service Subscription Agreement and Privacy Policy to continue.',
-  SIGN_UP_NAME: 'Name is required.',
-  SIGN_UP_EMAIL: 'Business email is required.',
   // #endregion
 
   // #region Mock output error messages
@@ -35,6 +33,20 @@ const messages = {
   MOCK_RESPONSE_INVALID_FORMAT: `Mock response must be in integrator.io canonical format. <a href=${MOCK_RESPONSE_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,
   MOCK_RESPONSE_SIZE_EXCEED: 'Mock response cannot be larger than 1 MB. Decrease your data size and try again.',
   // #endregion
+
+  // #region Filter error
+  FILTER_RULES_VALIDATE_NONEMPTY: 'Filters Tree must be a non-empty Array.',
+  FILTERSTREE_VALIDATE_OPERATIONNAME: 'Invalid operation: {{{operationName}}}.',
+  FILTERSTREE_VALIDATE_FIELDOP_STRINGARG: 'Field operation {{{operationName}}} expects a String argument but received {{{argType}}}.',
+  FILTERSTREE_VALIDATE_ARGSIZE: 'Operation {{{operationName}}} expects {{{expectedArgCount}}} argument(s) but received {{{actualArgCount}}}.',
+  FILTERSTREE_VALIDATE_ARGSTYPESMATCH: 'Argument #{{{argNumber}}} for operation {{{operationName}}} is a different data type: {{{dataType}}}.',
+  FILTERSTREE_VALIDATE_EXPECTEDARGTYPES: 'Argument #{{{argNumber}}} for operation {{{operationName}}} is an incorrect data type. Expected: {{{expectedArgType}}}, received: {{{actualArgType}}}.',
+  FILTERSTREE_VALIDATE_FIELDOP_TYPECONV: 'Field operation {{{operationName}}} must be called by a Type Conversion Operation but was called by {{{callingOperation}}}.',
+  FILTERSTREE_VALIDATE_FIELDOP_ARGSIZE: 'Field operation {{{operationName}}} expects exactly 1 argument but received {{{argCount}}}.',
+  // #endregion
+
+  // #region jsonEditor error messages
+  INVALID_JSON_VALUE: '{{{label}}} must be a valid JSON',
 };
 
 export default function errorMessageStore(key, argsObj) {

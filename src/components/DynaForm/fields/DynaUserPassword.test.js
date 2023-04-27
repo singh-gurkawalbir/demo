@@ -26,19 +26,19 @@ describe('dynaUserEmail UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show the modal dialog when clicked on action button', () => {
+  test('should show the modal dialog when clicked on action button', async () => {
     renderWithProviders(
       <DynaUserPassword
         label="PropsLabel"
         value="PropsValue"
         />);
     expect(screen.getByText('PropsLabel')).toBeInTheDocument();
-    userEvent.click(screen.getByText('EditIcon'));
+    await userEvent.click(screen.getByText('EditIcon'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.api.clearComms()
     );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('closeModalDialog'));
+    await userEvent.click(screen.getByTestId('closeModalDialog'));
     expect(screen.queryByRole('dialog')).toBeInTheDocument();
   });
 });

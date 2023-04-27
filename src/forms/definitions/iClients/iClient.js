@@ -1,13 +1,25 @@
 import { applicationsList } from '../../../constants/applications';
 import { CONNECTORS_TO_IGNORE } from '../../../constants';
 import customCloneDeep from '../../../utils/customCloneDeep';
+import { updateIclientMetadataWithHttpFramework } from '../../../sagas/utils';
+import { isNewId } from '../../../utils/resource';
 
 export default {
-  init: (fieldMeta, resource, flow, httpConnectorData, application) => {
+  init: (fieldMeta, resource, flow, httpConnectorData) => {
     const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
-    const app = applications.find(a => a.name === application) || {};
+    let app;
 
-    if (app.assistant && !app._httpConnectorId) {
+    if (resource?.assistant) {
+      // create new iclient for connection where resourceId is missing also for http1.0
+      app = applications.find(a => a.id === resource.assistant) || {};
+    } else if (httpConnectorData?._id && resource?._id && !isNewId(resource?._id) && resource?._httpConnectorId) {
+      // edit iclient for connection
+      app = applications.find(a => a._httpConnectorId === resource?._httpConnectorId) || {};
+    } else if ((isNewId(resource?._id) && !resource?.assistant) || (resource?._id && resource?.application) || (resource?._id && !resource?.assistant && !resource?._httpConnectorId)) {
+      // recource-> iclient create and edit case
+      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData, true);
+    }
+    if (app?.assistant && !app?._httpConnectorId) {
       // pure assistant without http2.0
       // should use old iClient form
       const finalFieldMeta = {
@@ -41,31 +53,62 @@ export default {
 
       return finalFieldMeta;
     }
+    if (app?._httpConnectorId || resource?._httpConnectorId) {
+      return updateIclientMetadataWithHttpFramework(fieldMeta, resource, flow, httpConnectorData, true);
+    }
 
     return fieldMeta;
   },
-  preSave: formValues => {
-    const newValues = { ...formValues };
+  preSave: (formValues, resource, options) => {
+    let newValues = { ...formValues };
+    const applications = applicationsList();
+    const app = applications.find(a => a.id === resource?.application) || {};
 
-    newValues['/provider'] = newValues['/oauth2/clientId']
-      ? 'custom_oauth2'
-      : 'amazonmws';
     if (newValues['/oauth2/scheme'] === 'Custom') {
       newValues['/oauth2/scheme'] = newValues['/oauth2/customAuthScheme'];
-    }
-    if (!newValues['/oauth2/failPath']) {
-      newValues['/oauth2/failValues'] = undefined;
     }
 
     delete newValues['/oauth2/customAuthScheme'];
     delete newValues['/oauth2/callbackURL'];
+    if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
+      newValues = updateIclientMetadataWithHttpFramework(newValues, resource, options?.httpConnector);
+    }
+    if (app?._httpConnectorId) {
+      newValues['/_httpConnectorId'] = app._httpConnectorId;
+    } else if (resource?._httpConnectorId) {
+      newValues['/_httpConnectorId'] = resource._httpConnectorId;
+    }
 
     return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    provider: { fieldId: 'provider' },
-    'oauth2.grantType': { fieldId: 'oauth2.grantType' },
+    provider: { fieldId: 'provider', visible: false },
+    application: {
+      fieldId: 'application',
+      isLoggable: true,
+      type: 'iclientSelect',
+      label: 'Application',
+      options: [],
+    },
+    iclientFormView: {
+      isLoggable: true,
+      id: 'iclientFormView',
+      type: 'iclientFormView',
+      label: 'Form view',
+      required: true,
+      visible: true,
+      resourceType: 'iclients',
+      defaultValue: r => {
+        if (!r) return 'false';
+        if (!r.assistant) return 'false';
+        if (!r.formType) return 'false';
+
+        return r?.formType === 'assistant' ? 'false' : 'true';
+      },
+      helpKey: 'formView',
+    },
+    'oauth2.grantType': { fieldId: 'oauth2.grantType'},
     'oauth2.clientCredentialsLocation': { fieldId: 'oauth2.clientCredentialsLocation' },
     'oauth2.auth.uri': { fieldId: 'oauth2.auth.uri' },
     'oauth2.callbackURL': { fieldId: 'oauth2.callbackURL' },
@@ -84,7 +127,10 @@ export default {
     },
     'oauth2.failStatusCode': { fieldId: 'oauth2.failStatusCode' },
     'oauth2.failPath': { fieldId: 'oauth2.failPath' },
-    'oauth2.failValues': { fieldId: 'oauth2.failValues' },
+    'oauth2.failValues': {
+      fieldId: 'oauth2.failValues',
+      removeWhen: [{ field: 'oauth2.failPath', is: [''] }],
+    },
   },
   layout: {
     type: 'collapse',
@@ -95,6 +141,7 @@ export default {
         fields: [
           'name',
           'provider',
+          'application',
         ],
       },
       {

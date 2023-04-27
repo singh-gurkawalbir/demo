@@ -1,9 +1,10 @@
 /* eslint-disable camelcase */
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
+import { isEmpty } from 'lodash';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
 import FieldMessage from './FieldMessage';
@@ -11,6 +12,7 @@ import FieldHelp from '../FieldHelp';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   salesforceFormControl: {
@@ -49,15 +51,28 @@ export default function DynaSalesforceQualifier_afe(props) {
     resourceId,
     flowId,
     label,
-    options,
+    options: propsOptions,
     formKey,
     resourceType,
     connectionId,
+    sObjectTypeFieldId = 'salesforce.sObjectType',
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
+  const sObjectTypeField = useSelector(state => selectors.formState(state, formKey)?.fields?.[sObjectTypeFieldId]);
+  const options = !isEmpty(propsOptions) ? propsOptions : {
+    sObjectType: sObjectTypeField?.value,
+    hasSObjectType: !!sObjectTypeField?.value,
+    commMetaPath: sObjectTypeField
+      ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
+      : '',
+    resetValue:
+      sObjectTypeField &&
+      sObjectTypeField.value !== sObjectTypeField.defaultValue,
+  };
+
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
@@ -94,11 +109,11 @@ export default function DynaSalesforceQualifier_afe(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <FormControl className={classes.salesforceFormControl}>
+        <FormControl variant="standard" className={classes.salesforceFormControl}>
           <TextField
             key={id}
             name={name}
-            className={classes.textField}
+            fullWidth
             placeholder={placeholder}
             disabled
             required={required}

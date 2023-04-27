@@ -61,7 +61,7 @@ describe('buttonWrapper tests', () => {
     await initButtonWrapper();
     expect(screen.getByRole('button', {name: 'Save'})).toBeEnabled();
     expect(screen.getByRole('button', {name: 'Close'})).toBeEnabled();
-    userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.responseMapping.save({match: {isExact: true, params: {}, path: '/', url: '/'}}));
   });
 
@@ -72,13 +72,13 @@ describe('buttonWrapper tests', () => {
   test('should able to test ButtonWrapper when editorType is mappings without validationError', async () => {
     await initButtonWrapper({editorId: 'mappings'});
     expect(screen.getByRole('button', {name: 'Save'})).toBeEnabled();
-    userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.save({match: {isExact: true, params: {}, path: '/', url: '/'}}));
   });
   test('should able to test ButtonWrapper when editorType is mappings with validationError', async () => {
     await initButtonWrapper({editorId: 'mappings', onClose: mockClose}, 'completed', 'Some genuine mapping error');
     expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(screen.getByText('Some genuine mapping error')).toBeInTheDocument();
   });
 });

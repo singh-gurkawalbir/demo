@@ -17,6 +17,8 @@ import {
   getCSRFToken,
   removeCSRFToken,
 } from '../../utils/session';
+import { safeParse } from '../../utils/string';
+import { generateInnerHTMLForSignUp } from '../utils/index';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -24,6 +26,7 @@ import { message } from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { updatePreferences } from '../users';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -170,27 +173,13 @@ export function* fetchUIVersion() {
   }
 }
 
-export function* retrieveAppInitializationResources() {
-  // yield call(requestMFASessionInfo);
-  const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
-
+export function* checkAndUpdateDefaultSetId() {
   yield call(retrievingUserDetails);
 
-  if (isMFASetupIncomplete) {
-    // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
-    // all other APIs are evaded
-    return yield call(
-      getResourceCollection,
-      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
-    );
-  }
-  yield all([
-    call(retrievingOrgDetails),
-    call(retrievingAssistantDetails),
-    call(retrievingHttpConnectorDetails),
-  ]);
-
-  yield put(actions.app.fetchUiVersion());
+  yield call(
+    getResourceCollection,
+    actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+  );
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -209,11 +198,32 @@ export function* retrieveAppInitializationResources() {
       actions.user.preferences.update({
         defaultAShareId: calculatedDefaultAShareId,
         environment: 'production',
-      })
+      }, true)
     );
-    // we need to get httpConnectors details once the defaultAShareId has been updated
-    yield call(retrievingHttpConnectorDetails);
+    yield call(updatePreferences); // we have wait till preference get updated in the BE to proceed further.
   }
+}
+
+export function* retrieveAppInitializationResources() {
+  // yield call(requestMFASessionInfo);
+  const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
+
+  if (isMFASetupIncomplete) {
+    // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
+    // all other APIs are evaded
+    return yield call(
+      getResourceCollection,
+      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+    );
+  }
+
+  yield put(actions.app.fetchUiVersion());
+  yield call(checkAndUpdateDefaultSetId);
+  yield all([
+    call(retrievingOrgDetails),
+    call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
+  ]);
 
   yield put(actions.auth.defaultAccountSet());
 }
@@ -240,6 +250,8 @@ export function* initializeLogrocket() {
     // RELEASE_VERSION is defined by webpack
     // eslint-disable-next-line no-undef
     release: RELEASE_VERSION,
+    mergeIframes: true,
+    childDomains: ['*'],
     console: {
       isEnabled: {
         debug: false,
@@ -354,7 +366,11 @@ export function* submitAcceptInvite({payload}) {
       yield put(actions.auth.signupStatus('done', response.message));
     }
   } catch (e) {
-    yield put(actions.auth.acceptInvite.failure(e));
+    const errJSON = safeParse(e);
+
+    const errorMsg = errJSON?.errors?.[0]?.message;
+
+    yield put(actions.auth.acceptInvite.failure({message: [errorMsg], type: 'error'}));
   }
 }
 export function* resetRequest({ email }) {
@@ -495,9 +511,9 @@ export function* auth({ email, password }) {
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
+    yield call(validateSession);
     const isExpired = yield select(selectors.isSessionExpired);
 
-    yield call(validateSession);
     yield call(setCSRFToken, apiAuthentications._csrf);
 
     yield call(setLastLoggedInLocalStorage);
@@ -629,6 +645,20 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
+export function* signUpWithGoogle({ returnTo, utmParams = {}}) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const htmlForUtmParams = generateInnerHTMLForSignUp(utmParams);
+  const form = document.createElement('form');
+
+  form.id = 'signinWithGoogle';
+  form.method = 'POST';
+  form.action = `/auth/google?returnTo=${returnTo || getRoutePath('/')}`;
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">${htmlForUtmParams}`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 export function* signInWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
   const form = document.createElement('form');
@@ -725,6 +755,7 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH.SIGNUP_WITH_GOOGLE, signUpWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),

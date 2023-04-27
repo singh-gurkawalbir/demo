@@ -50,13 +50,13 @@ describe("homeTile's NameCell UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show Success when no props are provided', () => {
+  test('should show Success when no props are provided', async () => {
     initNameCell({name: 'tileName', _connectorId: 'some_connectorId', _integrationId: '2_integrationId'});
     const name = screen.getByText('tileName');
 
     expect(name).toBeInTheDocument();
     expect(name).toHaveAttribute('href', '/integrationapps/tileName/2_integrationId');
-    userEvent.click(name);
+    await userEvent.click(name);
     expect(mockDispatch).not.toHaveBeenCalled();
   });
   test('should show monitor only as access level', () => {
@@ -68,23 +68,23 @@ describe("homeTile's NameCell UI tests", () => {
 
     expect(screen.getByText('Monitor only')).toBeInTheDocument();
   });
-  test('should show link for the suite script integration name', () => {
+  test('should show link for the suite script integration name', async () => {
     initNameCell({name: 'tileName', ssLinkedConnectionId: 'ssLinkedConnectionId', _integrationId: '2_integrationId'}, initialStore);
 
     const name = screen.getByText('tileName');
 
     expect(name).toBeInTheDocument();
     expect(name).toHaveAttribute('href', '/suitescript/ssLinkedConnectionId/integrations/2_integrationId');
-    userEvent.click(name);
+    await userEvent.click(name);
     expect(mockDispatch).not.toHaveBeenCalled();
   });
-  test('should show the integration tag', () => {
+  test('should show the integration tag', async () => {
     initNameCell({name: 'tileName', ssLinkedConnectionId: 'ssLinkedConnectionId2', _integrationId: '2_integrationId'}, initialStore);
     const name = screen.getByText('tileName');
 
     expect(name).toBeInTheDocument();
     expect(name).toHaveAttribute('href', '/suitescript/ssLinkedConnectionId2/integrations/2_integrationId');
-    userEvent.click(name);
+    await userEvent.click(name);
     expect(screen.getByText('NS Account #accountName')).toBeInTheDocument();
     expect(mockDispatch).not.toHaveBeenCalled();
   });
@@ -98,13 +98,13 @@ describe("homeTile's NameCell UI tests", () => {
     expect(screen.getByText('Monitor only')).toBeInTheDocument();
     expect(screen.getByText('someTag')).toBeInTheDocument();
   });
-  test('should show monitor Level tag and integration tag from tile datafe', () => {
+  test('should show monitor Level tag and integration tag from tile datafe', async () => {
     initNameCell({tag: 'someTag', name: 'tileName', _integrationId: '2_integrationId', _connectorId: 'some_connectorId', supportsChild: true}, initialStore);
     const name = screen.getByText('tileName');
 
     expect(name).toBeInTheDocument();
     expect(name).toHaveAttribute('href', '/integrationapps/tileName/2_integrationId');
-    userEvent.click(name);
+    await userEvent.click(name);
     expect(mockDispatch).toHaveBeenCalledWith(actions.resource.integrations.isTileClick('2_integrationId', true));
   });
 });

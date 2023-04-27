@@ -1,8 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import Button from '@material-ui/core/Button';
-import {makeStyles} from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -22,16 +22,23 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.error.main,
     },
   },
+  submitBtn: {
+    width: '100%',
+    borderRadius: 4,
+    height: 38,
+    fontSize: theme.spacing(2),
+    marginTop: theme.spacing(1),
+  },
 }));
 
 export default function FilledButton(props) {
   const classes = useStyles(props);
-  const { error, bold, className, ...rest} = props;
+  const { error, bold, className, submit, ...rest} = props;
 
   return (
     <Button
       variant="contained"
-      className={clsx(classes.root, {[classes.error]: error}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.submitBtn]: submit}, className)}
       {...rest} />
   );
 }

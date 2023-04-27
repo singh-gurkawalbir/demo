@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
@@ -10,10 +10,6 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
     alignItems: 'center',
-  },
-  helpButton: {
-    padding: 0,
-    margin: 2,
   },
   message: {
     backgroundColor: theme.palette.secondary.lightest,
@@ -45,8 +41,8 @@ export default function InputOutputTitle({title, helpKey}) {
         {helpKey && (
         <Help
           title={title}
-          className={classes.helpButton}
           helpKey={helpKey}
+          sx={{margin: 0.5}}
         />
         )}
       </>
@@ -58,8 +54,8 @@ export default function InputOutputTitle({title, helpKey}) {
       <Typography variant="body1" component="div">{title}</Typography>
       <Help
         title={title}
-        className={classes.helpButton}
         helpKey={title === 'Input' ? 'afe.mappings.v2.input' : 'afe.mappings.v2.output'}
+        sx={{margin: 0.5}}
         />
 
       <ActionGroup position="right">

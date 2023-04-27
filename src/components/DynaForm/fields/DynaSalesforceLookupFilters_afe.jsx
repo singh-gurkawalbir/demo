@@ -1,12 +1,12 @@
-/* eslint-disable camelcase */
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormLabel, IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel, IconButton } from '@mui/material';
+import { isBoolean } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FilterPanel from '../../AFE/Editor/panels/SalesforceLookupFilter';
-import Spinner from '../../Spinner';
 import RefreshIcon from '../../icons/RefreshIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// eslint-disable-next-line camelcase
 export default function DynaSalesforceLookupFilters_afe(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -27,9 +28,14 @@ export default function DynaSalesforceLookupFilters_afe(props) {
     data,
     options = {},
     onFieldChange,
+    formKey,
+    sObjectTypeFieldId,
   } = props;
   const editorId = 'sf-mappingLookupFilter';
-  const { disableFetch, commMetaPath } = options;
+  const { disableFetch: optionDisableFetch, commMetaPath: optionCommMetaData } = options;
+  const sObjectTypeFieldValue = useSelector(state => selectors.formState(state, formKey)?.fields?.[sObjectTypeFieldId]?.value);
+  const disableFetch = isBoolean(optionDisableFetch) ? optionDisableFetch : !sObjectTypeFieldValue;
+  const commMetaPath = optionCommMetaData || (sObjectTypeFieldValue ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeFieldValue}` : '');
   const isEditorInitialized = useSelector(state => selectors.editor(state, editorId).fieldId);
 
   useEffect(() => {

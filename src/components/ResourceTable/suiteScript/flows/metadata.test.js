@@ -48,12 +48,12 @@ describe('suite script flows metadata ui test', () => {
   test('should test the Mapping field', () => {
     renderFunction({_id: 'FlowId', _integrationId: 'integrationId', type: 'EXPORT', editable: true}, {ssLinkedConnectionId: 'ssLinkedConnectionId'});
     expect(screen.getByText('Mapping')).toBeInTheDocument();
-    expect(screen.getByTitle('Edit mappings')).toBeInTheDocument();
+    expect(screen.getByLabelText('Edit mappings')).toBeInTheDocument();
   });
   test('should test the Schedule field', () => {
     renderFunction({_id: 'FlowId', _integrationId: 'integrationId', type: 'EXPORT', editable: true}, {ssLinkedConnectionId: 'ssLinkedConnectionId'});
     expect(screen.getByText('Schedule')).toBeInTheDocument();
-    expect(screen.getByTitle('Change schedule')).toBeInTheDocument();
+    expect(screen.getByLabelText('Change schedule')).toBeInTheDocument();
   });
   test('should test the Run field', () => {
     renderFunction({_id: 'FlowId', _integrationId: 'integrationId', type: 'EXPORT', editable: true}, {ssLinkedConnectionId: 'ssLinkedConnectionId'});
@@ -77,11 +77,11 @@ describe('suite script flows metadata ui test', () => {
   test('should test the Delete field with delete heading', () => {
     renderFunction({_id: 'FlowId', _integrationId: 'integrationId', type: 'EXPORT', editable: true}, {ssLinkedConnectionId: 'ssLinkedConnectionId'});
     expect(screen.getByText('Delete')).toBeInTheDocument();
-    expect(screen.getByTitle('Delete')).toBeInTheDocument();
+    expect(screen.getByLabelText('Delete')).toBeInTheDocument();
   });
   test('should test the Delete field without delete heading', () => {
     renderFunction({_id: 'FlowId', _integrationId: 'integrationId', type: 'EXPORT', editable: true}, {ssLinkedConnectionId: 'ssLinkedConnectionId', isConnector: true});
     expect(screen.queryByText('Delete')).not.toBeInTheDocument();
-    expect(screen.queryByTitle('Delete')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Delete')).not.toBeInTheDocument();
   });
 });

@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaURI from './DynaURI_afe';
@@ -72,7 +71,7 @@ describe('test suite for DynaURI_afe field', () => {
     expect(screen.getByText(props.description)).toBeInTheDocument();
   });
 
-  test('should open handlebars editor on clicking AFE Icon', () => {
+  test('should open handlebars editor on clicking AFE Icon', async () => {
     const props = {
       formKey: `exports-${resourceId}`,
       id: 'ftp.fileNameStartsWith',
@@ -84,11 +83,12 @@ describe('test suite for DynaURI_afe field', () => {
     };
 
     renderWithProviders(<DynaURI {...props} />);
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button');
 
-    expect(openAfeBtn).toHaveAttribute('title', 'Open handlebars editor');
+    await userEvent.hover(openAfeBtn);
+    await waitFor(() => expect(screen.getByRole('tooltip')).toHaveTextContent('Open handlebars editor'));
 
-    userEvent.click(openAfeBtn);
+    await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -104,7 +104,7 @@ describe('test suite for DynaURI_afe field', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith(`/exports/edit/exports/${resourceId}/editor/ftpfileNameStartsWith`);
   });
 
-  test('should be able to save the changes in AFE', () => {
+  test('should be able to save the changes in AFE', async () => {
     const onFieldChange = jest.fn();
 
     mockRouteMatch = {
@@ -131,12 +131,12 @@ describe('test suite for DynaURI_afe field', () => {
     renderWithProviders(
       <>
         <DynaURI {...props} />
-        <button type="button" onClick={() => mockSave({rule: 'SampleRule'})}>Save</button>
+        <button type="button" onClick={() => mockSave({ rule: 'SampleRule' })}>Save</button>
       </>
     );
-    const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
+    const openAfeBtn = screen.getByRole('button', { name: 'Open handlebars editor' });
 
-    userEvent.click(openAfeBtn);
+    await userEvent.click(openAfeBtn);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
@@ -151,7 +151,7 @@ describe('test suite for DynaURI_afe field', () => {
     }));
     expect(mockHistoryPush).toHaveBeenCalledWith(`/imports/edit/imports/${resourceId}/editor/ftpfileNameStartsWith`);
 
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

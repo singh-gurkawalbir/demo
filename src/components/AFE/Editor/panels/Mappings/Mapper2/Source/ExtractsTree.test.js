@@ -93,7 +93,7 @@ const setIsFocused = jest.fn();
 const patchField = jest.fn();
 
 describe('extract tress Ui test cases', () => {
-  test('should call patch field with new value and the jason path', () => {
+  test('should call patch field with new value and the jason path', async () => {
     renderWithProviders(<ExtractsTree
       destDataType="string" propValue="propValue" propName="somepropName" setInputValue={setInputValue}
       setIsFocused={setIsFocused}
@@ -101,7 +101,7 @@ describe('extract tress Ui test cases', () => {
     const treeTitle = screen.getByTitle('someTitle');
 
     expect(treeTitle.textContent).toBe('namestring');
-    userEvent.click(screen.getByText('name'));
+    await userEvent.click(screen.getByText('name'));
     expect(setInputValue).toHaveBeenCalledWith('$.name');
     expect(setIsFocused).toHaveBeenCalledWith(false);
     expect(patchField).toHaveBeenCalledWith('propValue', '$.name', 'name');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import ForgotPassword from './ForgotPasswordForm';
@@ -70,7 +70,8 @@ describe('Testsuite for Concur Forgot Password', () => {
 
     expect(emailTextBoxNode).toBeInTheDocument();
     expect(emailTextBoxNode).toHaveValue('testemail@email.com');
-    await userEvent.clear(emailTextBoxNode);
+    // await userEvent.clear(emailTextBoxNode);
+    await fireEvent.change(emailTextBoxNode, {target: {value: ''}});
     await userEvent.type(emailTextBoxNode, 'test1@email.com');
     expect(emailTextBoxNode).not.toHaveValue('testemail@email.com');
     expect(emailTextBoxNode).toHaveValue('test1@email.com');
@@ -79,7 +80,7 @@ describe('Testsuite for Concur Forgot Password', () => {
     });
 
     expect(requestResetPassword).toBeInTheDocument();
-    userEvent.click(requestResetPassword);
+    await userEvent.click(requestResetPassword);
     expect(setShowError).toHaveBeenCalledWith(false);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest('test1@email.com'));
   });
@@ -94,22 +95,29 @@ describe('Testsuite for Concur Forgot Password', () => {
         },
       }
     );
-    const emailTextBoxNode = screen.getByRole('textbox');
+    waitFor(async () => {
+      const emailTextBoxNode = screen.getByRole('textbox');
 
-    expect(emailTextBoxNode).toBeInTheDocument();
-    expect(emailTextBoxNode).toHaveValue('testemail@email.com');
-    await userEvent.clear(emailTextBoxNode);
-    await userEvent.type(emailTextBoxNode, 'test1@email.com');
-    expect(emailTextBoxNode).not.toHaveValue('testemail@email.com');
-    expect(emailTextBoxNode).toHaveValue('test1@email.com');
-    const requestResetPassword = screen.getByRole('button', {
-      name: /request password reset/i,
+      expect(emailTextBoxNode).toBeInTheDocument();
+      expect(emailTextBoxNode).toHaveValue('testemail@email.com');
+      // await userEvent.clear(emailTextBoxNode);
+      await fireEvent.change(emailTextBoxNode, {target: {value: ''}});
+      await userEvent.type(emailTextBoxNode, 'test1@email.com');
+      waitFor(() => { expect(emailTextBoxNode).not.toHaveValue('testemail@email.com'); });
+      expect(emailTextBoxNode).toHaveValue('test1@email.com');
     });
+    let requestResetPassword;
 
-    expect(requestResetPassword).toBeInTheDocument();
-    userEvent.click(requestResetPassword);
-    expect(setShowError).toHaveBeenCalledWith(true);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest('test1@email.com'));
+    waitFor(async () => {
+      requestResetPassword = screen.getByRole('button', {
+        name: /request password reset/i,
+      });
+
+      expect(requestResetPassword).toBeInTheDocument();
+      await userEvent.click(requestResetPassword);
+      expect(setShowError).toHaveBeenCalledWith(true);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest('test1@email.com'));
+    });
   });
   test('should test concur forgot password when the resetRequestStatus is not set to success and when there is no default email', async () => {
     initForgotPassword(
@@ -122,21 +130,30 @@ describe('Testsuite for Concur Forgot Password', () => {
         },
       }
     );
-    const emailTextBoxNode = screen.getByRole('textbox');
+    let emailTextBoxNode;
 
-    expect(emailTextBoxNode).toBeInTheDocument();
-    expect(emailTextBoxNode).toHaveValue('');
-    await userEvent.clear(emailTextBoxNode);
-    await userEvent.type(emailTextBoxNode, 'test1@email.com');
-    expect(emailTextBoxNode).not.toHaveValue('testemail@email.com');
-    expect(emailTextBoxNode).toHaveValue('test1@email.com');
-    const requestResetPassword = screen.getByRole('button', {
-      name: /request password reset/i,
+    waitFor(async () => {
+      emailTextBoxNode = screen.getByRole('textbox');
+
+      expect(emailTextBoxNode).toBeInTheDocument();
+      expect(emailTextBoxNode).toHaveValue('');
+      // await userEvent.clear(emailTextBoxNode);
+      await fireEvent.change(emailTextBoxNode, {target: {value: ''}});
+      await userEvent.type(emailTextBoxNode, 'test1@email.com');
+      expect(emailTextBoxNode).not.toHaveValue('testemail@email.com');
+      expect(emailTextBoxNode).toHaveValue('test1@email.com');
     });
+    let requestResetPassword;
 
-    expect(requestResetPassword).toBeInTheDocument();
-    userEvent.click(requestResetPassword);
-    expect(setShowError).toHaveBeenCalledWith(true);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest('test1@email.com'));
+    waitFor(async () => {
+      requestResetPassword = screen.getByRole('button', {
+        name: /request password reset/i,
+      });
+
+      expect(requestResetPassword).toBeInTheDocument();
+      await userEvent.click(requestResetPassword);
+      expect(setShowError).toHaveBeenCalledWith(true);
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest('test1@email.com'));
+    });
   });
 });

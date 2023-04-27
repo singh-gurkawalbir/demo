@@ -1,18 +1,19 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { alpha } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   statusContainer: {
-    background: fade(theme.palette.secondary.lightest, 0.7),
+    background: alpha(theme.palette.secondary.lightest, 0.7),
     color: theme.palette.secondary.main,
     fontSize: 12,
     display: 'flex',
     lineHeight: '16px',
     padding: theme.spacing(0.5, 1),
     borderRadius: 2,
-    marginRight: `${theme.spacing(4)}px !important`,
+    marginRight: `${theme.spacing(4)} !important`,
     whiteSpace: 'nowrap',
   },
 }));

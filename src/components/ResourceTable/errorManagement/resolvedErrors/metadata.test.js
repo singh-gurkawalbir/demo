@@ -79,68 +79,74 @@ describe("resolvedErros table's metadata UI tests", () => {
     initFunction(props);
     headerIndex = indexOfCell('MockedSelectAll', 'columnheader');
     expect(headerIndex).toBeGreaterThan(-1);
-    expect(screen.getByTitle(message.ERROR_MANAGEMENT_2.SELECT_ERROR_HOVER_MESSAGE)).toBeInTheDocument();
+    expect(screen.getByLabelText(message.ERROR_MANAGEMENT_2.SELECT_ERROR_HOVER_MESSAGE)).toBeInTheDocument();
   });
   test('should verify Message cloumn', () => {
     initFunction(props);
     headerIndex = indexOfCell('Message', 'columnheader');
     cellIndex = indexOfCell('someMessage', 'cell');
-    expectFunction(headerIndex, cellIndex);
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should verify the code coulmn', () => {
     initFunction(props);
     headerIndex = indexOfCell('Code', 'columnheader');
     cellIndex = indexOfCell('someCode', 'cell');
-    expect(cellIndex).toEqual(headerIndex);
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should verify the Select Source coulmn', () => {
     initFunction(props);
     headerIndex = indexOfCell('MockedSelectSource', 'columnheader');
     cellIndex = indexOfCell('somesource', 'cell');
-    expect(cellIndex).toEqual(headerIndex);
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should verify the Classification coulmn', () => {
     initFunction(props);
     headerIndex = indexOfCell(' Classification', 'columnheader');
     cellIndex = indexOfCell('someclassification', 'cell');
-    expect(cellIndex).toEqual(headerIndex);
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should verify SelectDate coulmn', () => {
     initFunction(props, {}, initialStore);
     headerIndex = indexOfCell(' Timestamp', 'columnheader');
-    cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
-    expect(cellIndex).toEqual(headerIndex);
+    cellIndex = indexOfCell('05/18/2022 6:16:31 pm', 'cell');
+    expect(screen.getByRole('rowheader')).toBeInTheDocument();
+    expectFunction(headerIndex - 1, cellIndex);
   });
   test('should not show action button when action is in progress', () => {
     initFunction(props, {actionInProgress: true});
 
     expect(screen.queryByRole('button', {name: /more/i})).not.toBeInTheDocument();
   });
-  test('should show actions options for the non retryable errors', () => {
+  test('should show actions options for the non retryable errors', async () => {
     initFunction(props, {actionInProgress: false});
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('View error details')).toBeInTheDocument();
   });
-  test('should show actions options for the retryable errors', () => {
+  test('should show actions options for the retryable errors', async () => {
     initFunction({...props, retryDataKey: 'someRetryDataKEy'}, {actionInProgress: false});
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit retry data')).toBeInTheDocument();
     expect(screen.getByText('Retry')).toBeInTheDocument();
     expect(screen.getByText('View error details')).toBeInTheDocument();
   });
-  test('should show option for View respone and request for Netsuite resource', () => {
+
+  test('should show option for View respone and request for Netsuite resource', async () => {
     initFunction({...props, reqAndResKey: 'reqAndResKey'}, {actionInProgress: false, resourceId}, initialStore);
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('View error details')).toBeInTheDocument();
     expect(screen.getByText('View request')).toBeInTheDocument();
   });
-  test('should show option for View respone and request for HTTP', () => {
+  test('should show option for View respone and request for HTTP', async () => {
     initFunction({...props, reqAndResKey: 'reqAndResKey'}, {actionInProgress: false, resourceId});
 
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('View error details')).toBeInTheDocument();
     expect(screen.getByText('View HTTP request')).toBeInTheDocument();
   });

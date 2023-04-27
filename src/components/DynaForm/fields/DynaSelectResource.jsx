@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import sift from 'sift';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { isEqual } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -20,7 +21,6 @@ import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
-import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 import { getHttpConnector} from '../../../constants/applications';
@@ -96,7 +96,8 @@ const handleAddNewResource = args => {
         values = { ...values, '/http/_asyncHelperId': generateNewId() };
       }
       if (resourceType === 'connections' && integrationId && integrationId !== 'none') {
-        values = { ...values, '/integrationId': integrationId};
+        values = { ...values, '/integrationId': integrationId, '/_connectorId': connectorId,
+        };
       }
 
       if (statusExport) {
@@ -175,6 +176,13 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(0.5),
     },
   },
+  dynaSelectMultiSelectActionsFlow: {
+    display: 'flex',
+    marginLeft: theme.spacing(0.5),
+    '& >* button': {
+      padding: theme.spacing(0.5),
+    },
+  },
   menuItem: {
     maxWidth: '95%',
     textOverflow: 'ellipsis',
@@ -187,10 +195,13 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     '& > div:last-child': {
       position: 'absolute',
-      right: '50px',
+      right: theme.spacing(5),
       top: theme.spacing(4),
+      '& .MuiTypography-root': {
+        font: 'inherit',
+      },
     },
-    '& >* .MuiSelect-selectMenu': {
+    '& .MuiSelect-selectMenu': {
       paddingRight: 140,
     },
   },
@@ -230,7 +241,6 @@ export default function DynaSelectResource(props) {
     allowNew,
     allowEdit,
     checkPermissions = false,
-    filter,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
     statusExport,
@@ -244,7 +254,9 @@ export default function DynaSelectResource(props) {
     editTitle,
     disabledTitle,
     isValueValid = false,
+    isSelectFlowResource,
   } = props;
+  let {filter} = props;
   const { options = {}, getItemInfo } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -301,7 +313,12 @@ export default function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceContext.resourceType,
+      resourceContext.resourceId
+    ) || {};
   // When adding a new resource and subsequently editing it disable selecting a new connection
   // TODO @Raghu: Using URLs for condition! Do we need it?
   const isAddingANewResource =
@@ -320,20 +337,33 @@ export default function DynaSelectResource(props) {
     if (resourceType === 'connections' && checkPermissions) {
       filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
     }
+    if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+      filter = {...filter, _httpConnectorId: (merged._httpConnectorId || merged.http._httpConnectorId)};
+      filteredResources = filteredResources.filter(sift(filter));
+    }
 
-    return filteredResources.map(conn => ({
-      label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
-      value: conn._id,
-      itemInfo: getItemInfo?.(conn),
-    }));
+    return filteredResources.map(conn => {
+      const result = {
+        label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
+        value: conn._id,
+        itemInfo: getItemInfo?.(conn),
+      };
+
+      if (resourceType === 'connections') {
+        return ({
+          ...result,
+          connInfo: {
+            httpConnectorId: conn?.http?._httpConnectorId,
+            httpConnectorApiId: conn?.http?._httpConnectorApiId,
+            httpConnectorVersionId: conn?.http?._httpConnectorVersionId,
+          },
+        });
+      }
+
+      return result;
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
-  const { merged } =
-    useSelectorMemo(
-      selectors.makeResourceDataSelector,
-      resourceContext.resourceType,
-      resourceContext.resourceId
-    ) || {};
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
@@ -429,6 +459,7 @@ export default function DynaSelectResource(props) {
       optionSearch: i.label,
       value: i.value,
       itemInfo: i.itemInfo,
+      connInfo: i.connInfo,
     }));
 
   useEffect(() => {
@@ -460,7 +491,7 @@ export default function DynaSelectResource(props) {
     <div className={classes.root}>
       <LoadResources
         required
-        spinner={<Spinner size="medium" />}
+        spinner={<Spinner />}
         resources={resourceType !== 'connectorLicenses' ? resourceType : []}
       >
         <>
@@ -477,6 +508,7 @@ export default function DynaSelectResource(props) {
                 disabled={disableSelect}
                 removeHelperText={isAddingANewResource}
                 options={[{ items: truncatedItems(resourceItems || []) }]}
+                isSelectFlowResource={isSelectFlowResource}
           />
               {resourceType === 'connections' && !!value && !skipPingConnection && (
               <ConnectionLoadingChip
@@ -489,7 +521,7 @@ export default function DynaSelectResource(props) {
             </div>
 
           )}
-          <div className={classes.dynaSelectMultiSelectActions}>
+          <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
             {allowNew && (
             <IconButtonWithTooltip
               tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}

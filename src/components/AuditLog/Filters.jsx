@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import moment from 'moment';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import makeStyles from '@mui/styles/makeStyles';
 import { AUDIT_LOG_SOURCE_LABELS, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE, getAuditLogFilterKey } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
@@ -62,10 +62,6 @@ const useStyles = makeStyles(theme => ({
     '& > :not(:last-child)': {
       marginRight: 0,
     },
-  },
-
-  helpTextButton: {
-    padding: 0,
   },
   tablePaginationRoot: {
     display: 'flex',
@@ -232,7 +228,7 @@ export default function Filters(props) {
             filters={filters}
             onChange={handleChange}
         />
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <CeligoSelect
               isLoggable
               inputProps={userInput}
@@ -248,7 +244,7 @@ export default function Filters(props) {
               ))}
             </CeligoSelect>
           </FormControl>
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <CeligoSelect
               isLoggable
               inputProps={sourceInput}
@@ -302,7 +298,6 @@ export default function Filters(props) {
          />
           <Help
             title="Download"
-            className={classes.helpTextButton}
             helpKey="auditlogs.download"
       />
         </ActionGroup>

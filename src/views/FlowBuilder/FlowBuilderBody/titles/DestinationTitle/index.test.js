@@ -55,11 +55,11 @@ jest.mock('../../Context', () => ({
   ...jest.requireActual('../../Context'),
   useFlowContext: jest.fn().mockReturnValue({flow: {_integrationId: 'integration_id'}, flowId: 'flow_id'}),
 }));
-jest.mock('react-flow-renderer', () => ({
+jest.mock('reactflow', () => ({
   __esModule: true,
-  ...jest.requireActual('react-flow-renderer'),
+  ...jest.requireActual('reactflow'),
   // eslint-disable-next-line no-sparse-arrays
-  useStoreState: jest.fn().mockReturnValue([100, , 100]),
+  useStore: jest.fn().mockReturnValue([100, , 100]),
 }));
 jest.mock('react-router-dom', () => ({
   __esModule: true,
@@ -116,7 +116,7 @@ describe('Testsuite for Destination Tile', () => {
     mockDispatchFn.mockClear();
     mockHistoryPush.mockClear();
   });
-  test('should test the destination title when the flow is not of type data loader and click on destination title button and verify the url generated when there are no branches attached to the flow', () => {
+  test('should test the destination title when the flow is not of type data loader and click on destination title button and verify the url generated when there are no branches attached to the flow', async () => {
     jest.spyOn(mockGetAllFlowBranches, 'getAllFlowBranches').mockReturnValue([]);
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     initDestinationTile([
@@ -128,10 +128,10 @@ describe('Testsuite for Destination Tile', () => {
     const destinationAndLookupButtonNode = screen.getByRole('button', {name: 'DESTINATIONS & LOOKUPS'});
 
     expect(destinationAndLookupButtonNode).toBeInTheDocument();
-    userEvent.click(destinationAndLookupButtonNode);
+    await userEvent.click(destinationAndLookupButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/add/pageProcessor/somegeneratedID');
   });
-  test('should test the destination title when the flow is not of type data loader and click on destination title button and verify the action call made when there are branches attached to the flow', () => {
+  test('should test the destination title when the flow is not of type data loader and click on destination title button and verify the action call made when there are branches attached to the flow', async () => {
     jest.spyOn(mockGetAllFlowBranches, 'getAllFlowBranches').mockReturnValue([{
       path: '/testingPath',
     }]);
@@ -148,10 +148,10 @@ describe('Testsuite for Destination Tile', () => {
     const destinationAndLookupButtonNode = screen.getByRole('button', {name: 'DESTINATIONS & LOOKUPS'});
 
     expect(destinationAndLookupButtonNode).toBeInTheDocument();
-    userEvent.click(destinationAndLookupButtonNode);
+    await userEvent.click(destinationAndLookupButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.addNewPPStepInfo('flow_id', { branchPath: '/testingPath' }));
   });
-  test('should test the destination title when the flow is of type data loader and click on destination title button and verify the menu items when there are routers and no branches attached to the flow and click menuitems close button', () => {
+  test('should test the destination title when the flow is of type data loader and click on destination title button and verify the menu items when there are routers and no branches attached to the flow and click menuitems close button', async () => {
     jest.spyOn(mockGetAllFlowBranches, 'getAllFlowBranches').mockReturnValue([]);
     jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
     initDestinationTile([
@@ -169,12 +169,12 @@ describe('Testsuite for Destination Tile', () => {
     const destinationApplicationButtonNode = screen.getByRole('button', {name: 'DESTINATION APPLICATION'});
 
     expect(destinationApplicationButtonNode).toBeInTheDocument();
-    userEvent.click(destinationApplicationButtonNode);
+    await userEvent.click(destinationApplicationButtonNode);
     expect(screen.getByText('Menu item 1')).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {name: 'OnClose'});
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(screen.queryByText('Menu item 1')).not.toBeInTheDocument();
   });
 });

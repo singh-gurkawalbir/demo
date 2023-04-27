@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import ActionGroup from '../../../../ActionGroup';
 import useHandleSubmit from '../hooks/useHandleSubmit';
 import { selectors } from '../../../../../reducers';
@@ -10,7 +11,6 @@ import useClearAsyncStateOnUnmount from '../../../../SaveAndCloseButtonGroup/hoo
 import useConfirmDialog from '../../../../ConfirmDialog';
 import useTriggerCancelFromContext from '../../../../SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 import { FilledButton, OutlinedButton, TextButton } from '../../../../Buttons';
-import Spinner from '../../../../Spinner';
 import getRoutePath from '../../../../../utils/routePaths';
 import { generateNewId } from '../../../../../utils/resource';
 

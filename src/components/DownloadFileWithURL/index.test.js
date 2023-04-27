@@ -60,6 +60,6 @@ describe('DownloadFileWithURL component test cases', () => {
     );
 
     expect(downloadLink).toBeInTheDocument();
-    expect(downloadLink).toHaveAttribute('href', '/download/link&integrator-ashareid=123456');
+    expect(downloadLink).toHaveAttribute('href', '/download/link?integrator-ashareid=123456');
   });
 });

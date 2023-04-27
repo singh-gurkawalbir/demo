@@ -1,7 +1,7 @@
-import { FormLabel, TextField } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import { makeStyles } from '@material-ui/core/styles';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import { FormLabel, TextField } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import makeStyles from '@mui/styles/makeStyles';
+import Autocomplete from '@mui/material/Autocomplete';
 import clsx from 'clsx';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
@@ -28,6 +28,12 @@ const useStyles = makeStyles(theme => ({
   inputTextField: {
     '& div': {
       padding: '0px !important',
+    },
+  },
+  textareaInput: {
+    '& .MuiInputBase-input': {
+      height: `${theme.spacing(4.5)}px !important`,
+      lineHeight: 1,
     },
   },
 }));
@@ -138,6 +144,7 @@ export default function DynaAutocomplete(props) {
         <FieldHelp {...props} />
       </div>
       <FormControl
+        variant="standard"
         key={id}
         disabled={disabled}
         required={required}
@@ -173,6 +180,7 @@ export default function DynaAutocomplete(props) {
                 name={name}
                 id={id}
                 variant="filled"
+                className={classes.textareaInput}
               />
             )}
         />

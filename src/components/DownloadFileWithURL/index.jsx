@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../reducers';
 
@@ -21,7 +21,7 @@ export default function DownloadFileWithURL({ downloadUrl, children }) {
   );
 
   if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-    url += `&integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
+    url += `?integrator-ashareid=${additionalHeaders['integrator-ashareid']}`;
   }
 
   return (

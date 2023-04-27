@@ -30,6 +30,20 @@ async function initMFAResetAuthorization({onClose = '', asyncStatus} = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 describe('Testsuite for MFA Reset Authorization', () => {
   runServer();
   let mockDispatchFn;
@@ -60,16 +74,16 @@ describe('Testsuite for MFA Reset Authorization', () => {
     const passwordTextBoxNode = document.querySelector('input[name="password"]');
 
     expect(passwordTextBoxNode).toBeInTheDocument();
-    userEvent.type(passwordTextBoxNode, 'testpassword');
+    await userEvent.type(passwordTextBoxNode, 'testpassword');
     const cancelButtonNode = screen.getByRole('button', { name: 'Cancel' });
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(mockCloseButtonFunction).toHaveBeenCalledTimes(1);
     const resetMFAButtonNode = screen.getByRole('button', {name: 'Reset MFA'});
 
     expect(resetMFAButtonNode).toBeInTheDocument();
-    userEvent.click(resetMFAButtonNode);
+    await userEvent.click(resetMFAButtonNode);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_RESET', aShareId: undefined, password: 'testpassword' }));
   });
   test('should test the MFA Reset authorization by entering password and by clicking on Reset MFA button duplicate', async () => {

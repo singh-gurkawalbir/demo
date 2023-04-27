@@ -9,14 +9,14 @@ import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
 describe('uI test cases for metadata', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     renderWithProviders(
       <CeligoTable
         {...metadata}
         data={[{_id: '6287678bdh893338hdn3', browser: 'Chrome', os: 'windows'}]} />
     );
     expect(screen.getByText('Chrome windows')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     const deleteDeviceButton = screen.getByText('Delete device');
 
     expect(deleteDeviceButton).toBeInTheDocument();

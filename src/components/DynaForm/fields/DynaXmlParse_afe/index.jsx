@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { makeStyles, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';

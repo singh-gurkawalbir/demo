@@ -1,20 +1,10 @@
-import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Spinner from '../../../../Spinner';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import CeligoSwitch from '../../../../CeligoSwitch';
-import RemoveMargin from '../RemoveMargin';
-
-const useStyles = makeStyles(theme => ({
-
-  spinnerOnOff: {
-    marginLeft: theme.spacing(0.5),
-  },
-}));
 
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer
@@ -30,7 +20,6 @@ export default function OnOffCell({
   childId,
   actionProps,
 }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -133,20 +122,18 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner className={classes.spinnerOnOff} />;
+    return <Spinner sx={{ml: 0.5}} />;
   }
 
   if (!isFlowEnableLocked) {
     return (
-      <RemoveMargin>
-        <CeligoSwitch
-          tooltip="Off / On"
-          data-test={`toggleOnAndOffFlow${flowName}`}
-          disabled={accessLevel === 'monitor'}
-          checked={!disabled}
-          onChange={handleDisableClick}
+      <Switch
+        tooltip="Off / On"
+        data-test={`toggleOnAndOffFlow${flowName}`}
+        disabled={accessLevel === 'monitor'}
+        checked={!disabled}
+        onChange={handleDisableClick}
       />
-      </RemoveMargin>
     );
   }
 

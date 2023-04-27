@@ -1,16 +1,11 @@
 import clsx from 'clsx';
 import React from 'react';
-import {
-  makeStyles,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@material-ui/core';
+import { Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { sortableHandle } from 'react-sortable-hoc';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import {EditableText} from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
-import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
@@ -60,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     position: 'absolute',
-    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
+    left: 16,
   },
   listItem: {
     display: 'flex',
@@ -172,9 +167,9 @@ export default function BranchItem({
   }
 
   const handleNameChange = (title, position) => {
-    let newTitle = title;
+    let newTitle = title?.trim();
 
-    if (!title) {
+    if (!newTitle) {
       enquesnackbar({message: 'A branch name is required.', variant: 'error'});
       newTitle = getBranchName(position, branches, branchNamingIndex);
     }
@@ -202,11 +197,14 @@ export default function BranchItem({
         >
           <AccordionSummary
             classes={{
-              expandIcon: classes.expandIcon,
+              expandIconWrapper: classes.expandIcon,
               focused: classes.focused,
             }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
+            sx={{
+              ...(allowSorting ? {'& .MuiAccordionSummary-expandIconWrapper': {left: 40}} : {}),
+            }}
           >
             <div className={classes.summaryContainer}>
               {allowSorting && <DragHandle />}
@@ -219,9 +217,8 @@ export default function BranchItem({
                   allowOverflow
                   disabled={isViewMode}
                   text={branchName}
-                  defaultText="Unnamed branch: Click to add name"
+                  placeholder="Unnamed branch: Click to add name"
                   onChange={title => handleNameChange(title, position)}
-                  inputClassName={classes.editableTextInput}
                 />
               </div>
 

@@ -36,11 +36,11 @@ describe("homeTile's Download Action UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should make dispatch call wgen download button is clicked', () => {
+  test('should make dispatch call wgen download button is clicked', async () => {
     initHomeTiles({key: 'somekey', name: 'tileName', pinned: false, _integrationId: '2_integrationId', supportsMultiStore: true}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 
-    userEvent.click(screen.getByText('Download integration'));
+    await userEvent.click(screen.getByText('Download integration'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.template.generateZip('2_integrationId'));
   });
 });

@@ -6,12 +6,6 @@ export default {
       '/rdbms/type': 'mssql',
     };
 
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-
-    delete newValues['/mode'];
-
     return newValues;
   },
   fieldMap: {
@@ -44,10 +38,12 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     'rdbms.version': {
       fieldId: 'rdbms.version',

@@ -1,6 +1,6 @@
 import React from 'react';
 import Iframe from 'react-iframe';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({

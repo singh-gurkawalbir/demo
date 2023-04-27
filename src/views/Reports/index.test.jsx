@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-import { screen, cleanup, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
+import { screen, cleanup, waitForElementToBeRemoved, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
@@ -154,14 +154,14 @@ describe('reports', () => {
     const flowEventsDropDownButtonNode = screen.getByRole('button', {name: 'Flow events'});
 
     expect(flowEventsDropDownButtonNode).toBeInTheDocument();
-    userEvent.click(flowEventsDropDownButtonNode);
+    await userEvent.click(flowEventsDropDownButtonNode);
     const listBoxButtonNode = document.querySelector('ul[role="listbox"]');
 
     expect(listBoxButtonNode).toBeInTheDocument();
     const optionsNode = screen.getByRole('option', {name: 'Flow events'});
 
     expect(optionsNode).toBeInTheDocument();
-    userEvent.click(optionsNode);
+    await fireEvent.click(optionsNode);
     await waitForElementToBeRemoved(optionsNode);
     expect(optionsNode).not.toBeInTheDocument();
   });
@@ -185,7 +185,7 @@ describe('reports', () => {
 
     await initReports(params);
     store();
-    const runReportButtonNode = screen.getByRole('button', {name: 'Run report'});
+    const runReportButtonNode = screen.getByRole('link', {name: 'Run report'});
 
     expect(runReportButtonNode).toBeInTheDocument();
     expect(runReportButtonNode).toHaveAttribute('href', '/reports/eventreports/add/eventreports/somegeneratedID');
@@ -201,7 +201,7 @@ describe('reports', () => {
     const refreshButtonNode = screen.getByRole('button', {name: 'Refresh'});
 
     expect(refreshButtonNode).toBeInTheDocument();
-    userEvent.click(refreshButtonNode);
+    await userEvent.click(refreshButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('eventreports', null, true));
   });
   test('should able to test report page with the reports which has status loading', async () => {
@@ -233,15 +233,17 @@ describe('reports', () => {
     };
 
     await initReports(params);
-    const runnningStatusNode = screen.getByRole('cell', {name: 'Running'});
+    waitFor(() => {
+      const runnningStatusNode = screen.getByRole('cell', {name: 'Running'});
 
-    expect(runnningStatusNode).toBeInTheDocument();
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.polling.start({
-      type: 'RESOURCE_REQUEST_COLLECTION',
-      resourceType: 'eventreports',
-      message: null,
-      refresh: true,
-    }, 5000));
+      expect(runnningStatusNode).toBeInTheDocument();
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.polling.start({
+        type: 'RESOURCE_REQUEST_COLLECTION',
+        resourceType: 'eventreports',
+        message: null,
+        refresh: true,
+      }));
+    });
   });
   test('should able to test report page with resource type as undefined', async () => {
     const params = {

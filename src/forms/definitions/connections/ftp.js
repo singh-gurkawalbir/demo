@@ -8,9 +8,6 @@ export default {
   preSave: formValues => {
     const newValues = updatePGPFormValues(formValues);
 
-    if (newValues['/ftp/entryParser'] === '') {
-      newValues['/ftp/entryParser'] = undefined;
-    }
     if (!newValues['/ftp/usePgp']) {
       newValues['/ftp/pgpEncryptKey'] = undefined;
       newValues['/ftp/pgpDecryptKey'] = undefined;
@@ -21,29 +18,6 @@ export default {
     }
 
     return newValues;
-  },
-  optionsHandler(fieldId, fields) {
-    if (fieldId === 'ftp.port') {
-      const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
-
-      if (ftpTypeField.value === 'sftp') {
-        return 22;
-      }
-
-      if (ftpTypeField.value === 'ftps') {
-        const useImplicitFTPS = fields.find(
-          field => field.fieldId === 'ftp.useImplicitFtps'
-        );
-
-        if (useImplicitFTPS.value === true) {
-          return 990;
-        }
-      }
-
-      return 21;
-    }
-
-    return null;
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -61,7 +35,6 @@ export default {
     },
     'ftp.port': {
       fieldId: 'ftp.port',
-      refreshOptionsOnChangesTo: ['ftp.type', 'ftp.useImplicitFtps'],
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Must be a number.' },
       },
@@ -72,7 +45,10 @@ export default {
     },
     'ftp.userDirectoryIsRoot': { fieldId: 'ftp.userDirectoryIsRoot' },
     'ftp.concurrencyLevel': { fieldId: 'ftp.concurrencyLevel' },
-    'ftp.entryParser': { fieldId: 'ftp.entryParser', required: false },
+    'ftp.entryParser': { fieldId: 'ftp.entryParser',
+      required: false,
+      removeWhen: [{field: 'ftp.entryParser', is: [''] }],
+    },
     'ftp.requireSocketReUse': {
       fieldId: 'ftp.requireSocketReUse',
       visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],

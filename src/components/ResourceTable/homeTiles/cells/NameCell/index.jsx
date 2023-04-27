@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import InfoIconButton from '../../../../InfoIconButton';
 import { selectors } from '../../../../../reducers';
 import IntegrationTag from '../../../../tags/IntegrationTag';

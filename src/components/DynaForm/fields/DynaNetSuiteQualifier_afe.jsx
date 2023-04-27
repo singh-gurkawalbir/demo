@@ -2,8 +2,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { TextField, FormControl, FormLabel } from '@mui/material';
 import OpenInNewIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
@@ -110,7 +110,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
 
   return (
     <div className={classes.dynaNetsuiteQWrapper}>
-      <FormControl className={classes.textField}>
+      <FormControl variant="standard" className={classes.textField}>
         <div className={classes.dynaNetsuiteLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
@@ -121,7 +121,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
           key={id}
           name={name}
           {...isLoggableAttr(isLoggable)}
-          className={classes.textField}
+          fullWidth
           placeholder={placeholder}
           disabled
           required={required}

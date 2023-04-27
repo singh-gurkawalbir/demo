@@ -5,6 +5,7 @@ import postgresql from './postgresql';
 import snowflake from './snowflake';
 import bigquerydatawarehouse from './bigquerydatawarehouse';
 import redshiftdatawarehouse from './redshiftdatawarehouse';
+import netsuitejdbc from './netsuitejdbc';
 
 export default {
   mysql,
@@ -14,4 +15,5 @@ export default {
   snowflake,
   bigquerydatawarehouse,
   redshiftdatawarehouse,
+  netsuitejdbc,
 };

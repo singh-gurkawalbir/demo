@@ -7,8 +7,8 @@ import {
   Redirect,
 } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { List, ListItem } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { List, ListItem } from '@mui/material';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import ReadmeSection from './sections/Readme_afe';
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   activeListItem: {
     color: theme.palette.primary.main,
     '&:before': {
-      content: "''",
+      content: '""',
       position: 'absolute',
       left: 0,
       height: '100%',
@@ -118,7 +118,7 @@ export default function AdminPanel({ integrationId, childId }) {
 
     return emptyObj;
   }, shallowEqual);
-  const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const children = useSelectorMemo(selectors.mkIntegrationTreeChildren, integrationId);
 
   const availableSections = useMemo(() => {
     const sectionsToShow = getAdminLevelTabs({

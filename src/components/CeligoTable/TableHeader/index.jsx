@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
-import {
-  makeStyles,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@material-ui/core';
+import { TableCell, TableHead, TableRow } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -71,7 +67,10 @@ export default function TableHeader({
           useColumns={useColumns}
         />
         {useRowActions && (
-        <TableCell align="center" className={classes.actionColHead}>
+        <TableCell
+          align="center"
+          className={classes.actionColHead}
+        >
           Actions
         </TableCell>
         )}

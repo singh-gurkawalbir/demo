@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
+import { AppShell } from '@celigo/fuse-ui';
 import HandlebarGuide from './HandlebarGuide';
 import { renderWithProviders } from '../../../../test/test-utils';
 
@@ -23,7 +24,7 @@ describe('HandlebarGuide tests', () => {
     const {utils} = await renderWithProviders(<><SetWidth width={1280} /><HandlebarGuide /></>);
 
     expect(screen.getByRole('link', {name: 'Handlebars guide'})).toBeInTheDocument();
-    utils.rerender(<><SetWidth width={680} /><HandlebarGuide /></>);
+    utils.rerender(<AppShell><SetWidth width={680} /><HandlebarGuide /></AppShell>);
     expect(screen.getByRole('link', {name: 'handlebars guide'})).toBeInTheDocument();
   });
 });

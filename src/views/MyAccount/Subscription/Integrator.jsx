@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress, capitalize } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography, LinearProgress, capitalize } from '@mui/material';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
@@ -193,7 +193,7 @@ export default function Subscription() {
           </Typography>
           <div className={classes.wrapper}>
             <FilledButton onClick={onStartFreeTrialClick}>
-              Get unlimited flows
+              Start free trial
             </FilledButton>
             <Typography variant="body2" className={classes.description}>
               {message.SUBSCRIPTION.FREE_ONE_ACTIVE_FLOW_FOREEVER}
@@ -319,7 +319,7 @@ export default function Subscription() {
                         'start-free-trial'
                       ) > -1 && (
                         <FilledButton onClick={onStartFreeTrialClick} id="unlimited-flows-button">
-                          Get unlimited flows
+                          Start free trial
                         </FilledButton>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(

@@ -1,6 +1,7 @@
 /* eslint-disable jest/require-top-level-describe */
 import {setupServer} from 'msw/node';
 import path from 'path';
+import {rest} from 'msw';
 import { cleanup } from '@testing-library/react';
 import { getAllDefaultExports } from './utils';
 
@@ -10,7 +11,16 @@ const routesPath = path.join(__dirname, 'routes');
 const handlers = Object.values(getAllDefaultExports(routesPath));
 
 const server = setupServer(
-  ...handlers
+  ...handlers,
+  rest.get('*', {}),
+  rest.post('*', (req, res, ctx) => res(
+    // Respond with a 200 status code
+    ctx.status(200),
+  )),
+  rest.put('*', (req, res, ctx) => res(
+    // Respond with a 200 status code
+    ctx.status(200),
+  )),
 );
 
 export function runServer() {

@@ -1240,6 +1240,15 @@ describe('resources selectors', () => {
       expect(selectors.rdbmsConnectionType(state, '2')).toBe('http');
       expect(selectors.rdbmsConnectionType(state, '3')).toBeUndefined();
     });
+    test('should return jdbc type of a connection', () => {
+      const connections = [{_id: '1'}, {_id: '2', jdbc: {type: 'netsuitejdbc'}}, {_id: '3', rdbms: {some: 'http'}}];
+      const state = reducer(undefined, actions.resource.receivedCollection('connections', connections));
+
+      expect(selectors.jdbcConnectionType(state, '0')).toBeUndefined();
+      expect(selectors.jdbcConnectionType(state, '1')).toBeUndefined();
+      expect(selectors.jdbcConnectionType(state, '2')).toBe('netsuitejdbc');
+      expect(selectors.jdbcConnectionType(state, '3')).toBeUndefined();
+    });
   });
   describe('mappingExtractGenerateLabel', () => {
     test('should not throw exception for invalid arguments', () => {

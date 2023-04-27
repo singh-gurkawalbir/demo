@@ -10,6 +10,7 @@ import { isJsonString } from '../../utils/string';
 import { refreshConnectionMetadata } from '../resources/meta';
 import { INSTALL_STEP_TYPES } from '../../constants';
 import openExternalUrl from '../../utils/window';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* changeEdition({ integrationId }) {
   yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'inProgress' }));
@@ -180,7 +181,7 @@ export function* upgradeInstallScriptStep({
 
   if (stepCompleteResponse?.done) {
     const status = yield select(selectors.getStatus, id);
-    const steps = status?.steps;
+    const steps = customCloneDeep(status?.steps);
 
     if (steps.length) {
       let lastStep = steps.length ? steps[steps.length - 1] : {};

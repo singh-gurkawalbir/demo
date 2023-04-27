@@ -18,9 +18,9 @@ describe('dynaCsvHasHeaderRow tests', () => {
 
     await renderWithProviders(<DynaCsvHasHeaderRow {...props} />);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByRole('checkbox'));
     expect(onFieldChange).toHaveBeenCalledWith('_id', true);
-    await waitFor(() => expect(onFieldChange).toHaveBeenCalledWith('field1', 'value1'), 1000);
+    await waitFor(() => expect(onFieldChange).toHaveBeenCalledWith('field1', 'value1'));
   });
   test('should able to test DynaCsvHasHeaderRow without fieldToReset', async () => {
     const props = {
@@ -29,7 +29,7 @@ describe('dynaCsvHasHeaderRow tests', () => {
 
     await onFieldChange.mockClear();
     await renderWithProviders(<DynaCsvHasHeaderRow {...props} />);
-    userEvent.click(screen.getByRole('checkbox'));
-    await waitFor(() => expect(onFieldChange).not.toHaveBeenCalledWith('field1', 'value1'), 1000);
+    await userEvent.click(screen.getByRole('checkbox'));
+    await waitFor(() => expect(onFieldChange).not.toHaveBeenCalledWith('field1', 'value1'));
   });
 });

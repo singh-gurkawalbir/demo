@@ -1,8 +1,8 @@
-import { Typography, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, FormLabel } from '@mui/material';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {Box} from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
@@ -21,40 +21,6 @@ import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { FORM_SAVE_STATUS } from '../../constants';
 import useResourceFormSampleData from '../../hooks/useResourceFormSampleData';
 
-const useStyles = makeStyles(theme => ({
-  previewPanelWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    marginBottom: 6,
-    fontSize: 18,
-  },
-  labelWrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  container: {
-    background: theme.palette.background.paper,
-    padding: theme.spacing(2),
-    height: `calc((100vh - ${250}px) - ${theme.spacing(2)}px)`,
-    overflowY: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  actionGroupWrapper: {
-    display: 'flex',
-    marginBottom: theme.spacing(2),
-  },
-  previewDataHeading: {
-    fontSize: 18,
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    background: theme.palette.background.paper,
-  },
-}));
-
 function PreviewInfo({
   resourceId,
   formKey,
@@ -68,15 +34,15 @@ function PreviewInfo({
 }) {
   const dispatch = useDispatch();
 
-  const fetchExportPreviewData = useCallback(() => {
-    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
+  const fetchExportPreviewData = useCallback(customStartDate => {
+    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, customStartDate }));
   }, [
     dispatch,
     formKey,
   ]);
 
-  const handlePreview = useCallback(() => {
-    fetchExportPreviewData();
+  const handlePreview = useCallback(customStartDate => {
+    fetchExportPreviewData(customStartDate);
     setShowPreviewData(showPreviewData => ({...showPreviewData, [toggleValue]: true}));
   }, [fetchExportPreviewData, setShowPreviewData, toggleValue]);
 
@@ -104,7 +70,6 @@ function PreviewInfo({
 }
 
 export default function PreviewPanel({resourceId, formKey, resourceType, flowId }) {
-  const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
   const resource = useSelector(state => selectors.resourceData(state, resourceType, resourceId)?.merged);
@@ -145,23 +110,29 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         resourceType={resourceType}
         flowId={flowId}
       />
-      <div
-        className={classes.previewPanelWrapper}>
-        <Typography className={classes.previewDataHeading}>
+      <Box sx={{border: '1px solid', borderColor: theme => theme.palette.secondary.lightest, mb: 2 }}>
+        <Typography sx={{fontSize: 18, p: 2, borderBottom: theme => `1px solid ${theme.palette.secondary.lightest}`, background: theme => theme.palette.background.paper}} >
           {isSendVisible ? (
-            <div className={classes.labelWrapper}>
-              <FormLabel className={classes.label}>Preview &amp; send</FormLabel>
+            <Box sx={{display: 'flex', alignItems: 'flex-start'}}>
+              <FormLabel sx={{mb: '6px', fontSize: 18 }}>Preview &amp; send</FormLabel>
               <FieldHelp
                 id="previewandsend"
                 helpKey="import.previewAndSend"
                 label="Preview &amp; send" />
-            </div>
+            </Box>
           ) : 'Preview data'}
         </Typography>
 
-        <div className={classes.container}>
+        <Box
+          sx={{background: theme => theme.palette.background.paper,
+            p: 2,
+            height: theme => `calc((100vh - ${250}px) - ${theme.spacing(2)})`,
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+          }} >
           {isEditMockInputAvailable ? (
-            <div className={classes.actionGroupWrapper}>
+            <Box sx={{display: 'flex', mb: 2}}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
                   Edit mock input
@@ -173,13 +144,13 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
                       value={toggleValue}
                       onChange={onChange}
                       exclusive
-                      className={classes.errorDrawerActionToggle}
+                      // className={classes.errorDrawerActionToggle}
                       options={IMPORT_PREVIEW_ERROR_TYPES}
                 />
                   </>
                 ) : ''}
               </ActionGroup>
-            </div>
+            </Box>
           ) : ''}
           <PreviewInfo
             resourceSampleData={resourceSampleData}
@@ -201,8 +172,8 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
             showDefaultPreviewBody={!showPreviewData[toggleValue]}
             resourceType={resourceType}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </div>
   );
 }

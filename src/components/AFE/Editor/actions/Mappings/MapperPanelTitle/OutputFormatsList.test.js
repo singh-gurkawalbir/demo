@@ -47,36 +47,36 @@ describe('outputFormatsList UI tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should pass the initial render for grouped sample data', () => {
+  test('should pass the initial render for grouped sample data', async () => {
     initOutputFormatsList({sample: true, output: false});
     const visibleOption = screen.getByText('Create destination record { } from source rows [ ]');
 
     expect(visibleOption).toBeInTheDocument();
-    userEvent.click(visibleOption);
+    await userEvent.click(visibleOption);
     expect(screen.getByText('Create destination rows [ ] from source rows [ ]')).toBeInTheDocument();
   });
-  test('should pass the initial render when sample data is not grouped', () => {
+  test('should pass the initial render when sample data is not grouped', async () => {
     initOutputFormatsList({sample: false, output: false});
     const visibleOption = screen.getByText('Create destination record { } from source record { }');
 
     expect(visibleOption).toBeInTheDocument();
-    userEvent.click(visibleOption);
+    await userEvent.click(visibleOption);
     expect(screen.getByText('Create destination rows [ ] from source record { }')).toBeInTheDocument();
   });
-  test('should pass the initial render when output data is not grouped', () => {
+  test('should pass the initial render when output data is not grouped', async () => {
     initOutputFormatsList({sample: false, output: true});
     const visibleOption = screen.getByText('Create destination rows [ ] from source record { }');
 
     expect(visibleOption).toBeInTheDocument();
-    userEvent.click(visibleOption);
+    await userEvent.click(visibleOption);
     expect(screen.getByText('Create destination record { } from source record { }')).toBeInTheDocument();
   });
-  test('should pass the initial render when both input and output data are grouped', () => {
+  test('should pass the initial render when both input and output data are grouped', async () => {
     initOutputFormatsList({sample: true, output: true});
     const visibleOption = screen.getByText('Create destination rows [ ] from source rows [ ]');
 
     expect(visibleOption).toBeInTheDocument();
-    userEvent.click(visibleOption);
+    await userEvent.click(visibleOption);
     expect(screen.getByText('Create destination record { } from source rows [ ]')).toBeInTheDocument();
   });
   test('should make a dispatch call when the other option is chosen from the menu', async () => {
@@ -84,10 +84,10 @@ describe('outputFormatsList UI tests', () => {
     const visibleOption = screen.getByText('Create destination rows [ ] from source rows [ ]');
 
     expect(visibleOption).toBeInTheDocument();
-    userEvent.click(visibleOption);
+    await userEvent.click(visibleOption);
     const menuoption = screen.getByText('Create destination record { } from source rows [ ]');
 
-    userEvent.click(menuoption);
+    await userEvent.click(menuoption);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.toggleOutput('record')));
   });
 });

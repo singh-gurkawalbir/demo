@@ -64,12 +64,12 @@ describe('moreActionsButton tests', () => {
   test('should able to test MoreActionsButton with action options provided', async () => {
     await initMoreActionsButton(props);
     // for delete banching
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     const deleteOption = screen.getByRole('menuitem', {name: 'Delete branch'});
 
     expect(deleteOption).toBeInTheDocument();
-    userEvent.click(deleteOption);
+    await userEvent.click(deleteOption);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Confirm delete')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to delete this branch?')).toBeInTheDocument();
@@ -79,25 +79,23 @@ describe('moreActionsButton tests', () => {
 
     expect(Delete).toBeEnabled();
     expect(Cancel).toBeEnabled();
-    userEvent.click(Delete);
+    await userEvent.click(Delete);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('router-abcd', [{name: 'R1B2'}], {rulePath: 'branches'}));
 
     // for edit banching
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     const editBranchOption = screen.getByRole('menuitem', {name: 'Edit branch name/description'});
 
     expect(editBranchOption).toBeInTheDocument();
-    userEvent.click(editBranchOption);
+    await userEvent.click(editBranchOption);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/intId/branch/');
   });
   test('should able to test MoreActionsButton deleteBranch option with last branch', async () => {
     await initMoreActionsButton({...props, allowDeleting: false});
-    userEvent.click(screen.getByRole('button'));
-    const spans = document.querySelectorAll('span');
-    const tooltip = spans[spans.length - 1];
+    await userEvent.click(screen.getByRole('button'));
 
-    expect(tooltip.getAttribute('title')).toBe('Branch cannot be deleted. Branching must have at least one branch.');
-    userEvent.click(screen.getByRole('button'));
+    expect(screen.getByLabelText('no notifications')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menuitem', {name: 'Delete branch'})).toHaveAttribute('aria-disabled', 'true');
   });
 });

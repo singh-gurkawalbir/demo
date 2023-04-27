@@ -34,7 +34,7 @@ mutateStore(initialStore, draft => {
   }];
 });
 
-function renderFuntion(actionProps, data, errorType) {
+async function renderFuntion(actionProps, data, errorType) {
   renderWithProviders(
     <MemoryRouter initialEntries={[`/${errorType}`]}>
       <Route path="/:errorType">
@@ -47,7 +47,7 @@ function renderFuntion(actionProps, data, errorType) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error Management Netsuite Response UI tests', () => {
@@ -58,18 +58,18 @@ describe('error Management Netsuite Response UI tests', () => {
   const reqAndResKey = 'somereqAndResKey';
   const errorId = 'someerrorId';
 
-  test('should redirect to response page', () => {
-    renderFuntion({resourceId}, {reqAndResKey, errorId}, 'resolved');
+  test('should redirect to response page', async () => {
+    await renderFuntion({resourceId}, {reqAndResKey, errorId}, 'resolved');
     const viewResponseButton = screen.getByText('View response');
 
-    userEvent.click(viewResponseButton);
+    await userEvent.click(viewResponseButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/response');
   });
-  test('should make dispatch call and redirect to response page', () => {
-    renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
+  test('should make dispatch call and redirect to response page', async () => {
+    await renderFuntion({resourceId}, {reqAndResKey, errorId}, 'open');
     const viewResponseButton = screen.getByText('View response');
 
-    userEvent.click(viewResponseButton);
+    await userEvent.click(viewResponseButton);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.patchFilter('openErrors', {
         activeErrorId: 'someerrorId',

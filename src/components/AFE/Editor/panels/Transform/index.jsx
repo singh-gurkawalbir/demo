@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { alpha } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { KeyValueComponent } from '../../../../DynaForm/fields/DynaKeyValue';
@@ -13,7 +14,7 @@ import { isJsonString } from '../../../../../utils/string';
 const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
-    backgroundColor: props => props.hasError ? `${fade(theme.palette.error.light, 0.06)} !important` : theme.palette.background.default,
+    backgroundColor: props => props.hasError ? `${alpha(theme.palette.error.light, 0.06)} !important` : theme.palette.background.default,
     border: props => props.hasError && '1px solid',
     borderColor: props => props.hasError && theme.palette.error.dark,
     height: '100%',
@@ -39,7 +40,7 @@ export default function TransformPanel({ editorId }) {
   const data = useSelector(state => selectors.editorData(state, editorId));
   const rule = useSelector(state => selectors.editorRule(state, editorId));
   const hasError =
-    useSelector(state => !!selectors.editorPreviewError(state, editorId).error);
+  useSelector(state => selectors.editorPreviewError(state, editorId).errSourceProcessor) === 'transform';
   const classes = useStyles({hasError});
 
   const patchEditor = useCallback(value => {

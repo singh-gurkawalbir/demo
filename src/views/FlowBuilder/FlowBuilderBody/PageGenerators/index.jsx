@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHandleAddGenerator, useHandleDelete, useHandleMovePG } from '../../hooks';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
+import IconBlock from '../../IconBlock';
 import itemTypes from '../../itemTypes';
 import PageGenerator from '../../PageGenerator';
 import { emptyObject } from '../../../../constants';
@@ -75,6 +76,12 @@ export default function PageGenerators({integrationId, flowId}) {
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+
+  const Component = isIconView ? IconBlock : AppBlock;
+
   const handleAddGenerator = useHandleAddGenerator();
   const {handleSortEnd} = useSortableList(useHandleMovePG(flowId));
 
@@ -115,7 +122,7 @@ export default function PageGenerators({integrationId, flowId}) {
         ))}
       </SortableList>
       {!pageGenerators.length && (
-        <AppBlock
+        <Component
           integrationId={integrationId}
           className={classes.newPG}
           isViewMode={isViewMode || isFreeFlow}

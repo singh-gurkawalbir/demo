@@ -24,7 +24,7 @@ export default function InstallIntegrationDrawer() {
       onClose={handleClose}
       path={drawerPaths.INSTALL.INTEGRATION}
       height="tall">
-      <DrawerHeader title="Install integration" showBackButton={location.pathname.includes('/preview')} />
+      <DrawerHeader title="Upload integration" showBackButton={location.pathname.includes('/preview')} />
       <DrawerContent>
         <Switch>
           <Route

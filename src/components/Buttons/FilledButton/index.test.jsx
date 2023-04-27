@@ -1,6 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {screen, render} from '@testing-library/react';
+import {screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import FilledButton from './index';
 import {renderWithProviders} from '../../../test/test-utils';
@@ -44,7 +44,7 @@ describe('filled Button component test', () => {
   });
 
   test('testing by className', () => {
-    const {container} = render(
+    renderWithProviders(
       <MemoryRouter>
         <FilledButton
           error
@@ -54,7 +54,7 @@ describe('filled Button component test', () => {
        > Close
         </FilledButton>
       </MemoryRouter>);
-    const m = container.querySelector("[data-test='cancel']");
+    const m = document.querySelector("[data-test='cancel']");
 
     expect(m).toBeInTheDocument();
   });

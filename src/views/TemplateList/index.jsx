@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -64,9 +64,7 @@ export default function TemplateList(props) {
 
         <CeligoPageBar title="Templates" infoText={InfoText.templates}>
           <ActionGroup>
-            <KeywordSearch
-              filterKey={filterKey}
-            />
+            <KeywordSearch filterKey={filterKey} />
 
             <TextButton
               data-test="addNewListing"

@@ -79,7 +79,7 @@ export default function UserForm({
         validWhen: {
           matchesRegEx: {
             pattern: EMAIL_REGEX,
-            message: 'Please enter a valid email address',
+            message: message.USER_SIGN_IN.INVALID_EMAIL,
           },
         },
       },

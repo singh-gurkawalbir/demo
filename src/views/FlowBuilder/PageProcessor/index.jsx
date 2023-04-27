@@ -1,10 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
+import IconBlock from '../IconBlock';
+import SubFlowBlock from '../SubFlowBlock';
 import { getResourceSubType, resourceCategory} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe';
@@ -42,6 +44,7 @@ const PageProcessor = ({
   isMonitorLevelAccess,
   onDelete,
   onMove,
+  isSubFlow,
   openErrorCount,
   ...pp
 }) => {
@@ -50,6 +53,9 @@ const PageProcessor = ({
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
   const classes = useStyles();
   const dispatch = useDispatch();
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
   const resource =
     useSelector(state =>
       selectors.resource(
@@ -61,6 +67,9 @@ const PageProcessor = ({
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
+  );
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
   );
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const pendingBlockType = isDataLoaderFlow ? 'newImport' : 'newPP';
@@ -105,6 +114,7 @@ const PageProcessor = ({
         },
         // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
         // used to populate the same when user opens resource form
+        //
         {
           op: 'add',
           path: '/rdbmsAppType',
@@ -133,7 +143,7 @@ const PageProcessor = ({
     } else {
       history.replace(to);
     }
-  }, [pending, match.url, match.isExact, resourceType, resourceId, resource, pp._connectionId, pp.id, rdbmsAppType, dispatch, history]);
+  }, [pending, match.url, match.isExact, pp.id, pp._connectionId, pp.routerIndex, pp.branchIndex, resourceType, resourceId, resource, rdbmsAppType, dispatch, flowId, index, history]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
   const processorActions = useMemo(() => {
@@ -215,13 +225,17 @@ const PageProcessor = ({
 
   const name = pending ? '' : resource.name || resource.id;
 
+  // eslint-disable-next-line no-nested-ternary
+  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (isIconView ? IconBlock : AppBlock);
+
   return (
     <>
       <div className={classes.ppContainer} >
-        <AppBlock
+        <Component
           {...pp}
           integrationId={integrationId}
           name={name}
+          isSubFlow={isSubFlow}
           onDelete={onDelete}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}

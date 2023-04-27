@@ -2,13 +2,9 @@ import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { VariableSizeList } from 'react-window';
-import Spinner from '../../../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import TableRow, { isCellValid } from '../TableRow';
 
-const ITEM_SIZE = 46;
-const INVALID_ITEM_SIZE = 55;
-const NO_OF_ROWS = 10;
-const TABLE_VIEW_PORT_HEIGHT = 480;
 const VirtualizedListRow = ({index, style, data}) => {
   const {
     items,
@@ -18,6 +14,8 @@ const VirtualizedListRow = ({index, style, data}) => {
     setTableState,
     onRowChange,
     disableDeleteRows,
+    invalidateParentFieldOnError,
+    setIsValid,
   } = data;
 
   const { value, key } = items[index];
@@ -28,6 +26,7 @@ const VirtualizedListRow = ({index, style, data}) => {
     >
       <TableRow
         isVirtualizedTable
+        invalidateParentFieldOnError={invalidateParentFieldOnError}
         rowValue={value}
         rowIndex={index}
         tableSize={items.length}
@@ -37,6 +36,7 @@ const VirtualizedListRow = ({index, style, data}) => {
         setTableState={setTableState}
         onRowChange={onRowChange}
         disableDeleteRows={disableDeleteRows}
+        setIsValid={setIsValid}
       />
     </div>
   );
@@ -87,11 +87,22 @@ const VirtualizedTable = ({
   isAnyColumnFetching,
   setTableState,
   onRowChange,
-  disableDeleteRows }) => {
+  disableDeleteRows,
+  invalidateParentFieldOnError,
+  setIsValid,
+  rowHeight = 46,
+  invalidRowHeight = 55,
+  maxRowCount = 10,
+  maxTableHeight = 480 }) => {
   const listRef = React.createRef();
 
   const [, setItemCount] = useState(items.length);
   const [scrollIndex, setScrollIndex] = useState(0);
+
+  const ITEM_SIZE = rowHeight;
+  const INVALID_ITEM_SIZE = invalidRowHeight;
+  const NO_OF_ROWS = maxRowCount;
+  const TABLE_VIEW_PORT_HEIGHT = maxTableHeight;
 
   const maxHeightOfSelect = items.length > NO_OF_ROWS
     ? TABLE_VIEW_PORT_HEIGHT
@@ -116,7 +127,9 @@ const VirtualizedTable = ({
     setTableState,
     onRowChange,
     disableDeleteRows,
-  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows]);
+    setIsValid,
+    invalidateParentFieldOnError,  // Add the invalidateParentFieldOnError property in the rowProps so that VariableSizeList component could pass the property to it's children
+  }), [items, optionsMapFinal, touched, ignoreEmptyRow, setTableState, onRowChange, disableDeleteRows, invalidateParentFieldOnError, setIsValid]);
 
   // We need to update the latest scrollIndex so that during a table refresh when we loose the scroll index we use this scroll index state
   // we do not want to trigger a setState for every scroll event and cause unnecessary rerenders
@@ -144,7 +157,7 @@ const VirtualizedTable = ({
   if (isAnyColumnFetching) {
     return (
       <div style={{height: `${maxHeightOfSelect}px`}}>
-        <Spinner centerAll />
+        <Spinner center="screen" />
       </div>
     );
   }
@@ -159,7 +172,6 @@ const VirtualizedTable = ({
       itemCount={items.length}
       itemData={rowProps}
       onScroll={onScroll}
-
      >
       {/* when options are loading we have to return the spinner, this is to block the user
          from accessing the table till the DynaAutocomplete initial value state settles */}

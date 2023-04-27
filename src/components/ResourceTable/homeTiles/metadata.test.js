@@ -103,65 +103,66 @@ describe('homeTiles metadata UI tests', () => {
     initHomeTiles({name: 'tileName', _integrationId: 'none', _id: 'someId'}, initialStore);
     expect(screen.queryByRole('button', {name: /more/i})).not.toBeInTheDocument();
   });
-  test('should verify the Row action only for UnpinAction', () => {
+  test('should verify the Row action only for UnpinAction', async () => {
     initHomeTiles({name: 'tileName', ssLinkedConnectionId: 'ssLinkedConnectionId', pinned: true, _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
   });
-  test('should verify the Row action only for PinAction', () => {
+  test('should verify the Row action only for PinAction', async () => {
     initHomeTiles({name: 'tileName', ssLinkedConnectionId: 'ssLinkedConnectionId', pinned: false, _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Pin integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is pending reactivate option', () => {
+  test('should verify the Row action setup is pending reactivate option', async () => {
     initHomeTiles({name: 'tileName', pinned: true, _connectorId: 'some_connectorId', status: 'is_pending_setup', _integrationId: '1_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Reactivate integration')).toBeInTheDocument();
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
     expect(screen.getByText('Uninstall integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is pending renew option', () => {
+  test('should verify the Row action setup is pending renew option', async () => {
     initHomeTiles({name: 'tileName', pinned: true, _connectorId: 'some_connectorId', status: 'is_pending_setup', _integrationId: '2_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Renew subscription')).toBeInTheDocument();
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
     expect(screen.getByText('Uninstall integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is uninstall reactivate option', () => {
+
+  test('should verify the Row action setup is uninstall reactivate option', async () => {
     initHomeTiles({name: 'tileName', pinned: true, _connectorId: 'some_connectorId', status: 'uninstall', _integrationId: '1_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Reactivate integration')).toBeInTheDocument();
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
     expect(screen.getByText('Uninstall integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is uninstall renew option', () => {
+  test('should verify the Row action setup is uninstall renew option', async () => {
     initHomeTiles({name: 'tileName', pinned: true, _connectorId: 'some_connectorId', status: 'uninstall', _integrationId: '2_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Renew subscription')).toBeInTheDocument();
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
     expect(screen.getByText('Uninstall integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is uninstall no connector Id', () => {
+  test('should verify the Row action setup is uninstall no connector Id', async () => {
     initHomeTiles({name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Delete integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is pending no connector Id', () => {
+  test('should verify the Row action setup is pending no connector Id', async () => {
     initHomeTiles({name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Delete integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is status is not provided and tile is pinned', () => {
+  test('should verify the Row action setup is status is not provided and tile is pinned', async () => {
     initHomeTiles({name: 'tileName', pinned: true, _integrationId: '2_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
     expect(screen.getByText('Clone integration')).toBeInTheDocument();
     expect(screen.getByText('Download integration')).toBeInTheDocument();
     expect(screen.getByText('Delete integration')).toBeInTheDocument();
   });
-  test('should verify the Row action setup is status is not provided and tile is not pinned', () => {
+  test('should verify the Row action setup is status is not provided and tile is not pinned', async () => {
     initHomeTiles({name: 'tileName', pinned: false, _integrationId: '2_integrationId', _id: 'someId'}, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Pin integration')).toBeInTheDocument();
     expect(screen.getByText('Clone integration')).toBeInTheDocument();
     expect(screen.getByText('Download integration')).toBeInTheDocument();

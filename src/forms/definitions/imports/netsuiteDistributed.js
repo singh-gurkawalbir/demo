@@ -11,7 +11,6 @@ export default {
       newValues['/adaptorType'] = 'NetSuiteImport';
       newValues['/blob'] = true;
     } else {
-      delete newValues['/blobKeyPath'];
       delete newValues['/blob'];
     }
 
@@ -69,18 +68,12 @@ export default {
     'netsuite_da.batchSize': {
       fieldId: 'netsuite_da.batchSize',
     },
-    blobKeyPath: { fieldId: 'blobKeyPath' },
+    blobKeyPath: { fieldId: 'blobKeyPath', deleteWhen: [{field: 'inputMode', isNot: ['blob']}] },
     distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
     'netsuite_da.mapping': { fieldId: 'netsuite_da.mapping' },
-    'netsuite_da.subrecords': {
-      fieldId: 'netsuite_da.subrecords',
-      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
-    },
-    'netsuite_da.operation': {
-      fieldId: 'netsuite_da.operation',
-      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
-    },
+    'netsuite_da.subrecords': { fieldId: 'netsuite_da.subrecords' },
+    'netsuite_da.operation': { fieldId: 'netsuite_da.operation' },
     'netsuite.file.internalId': { fieldId: 'netsuite.file.internalId' },
     'netsuite.file.name': { fieldId: 'netsuite.file.name' },
     'netsuite.file.fileType': { fieldId: 'netsuite.file.fileType' },
@@ -106,10 +99,7 @@ export default {
         },
       ],
     },
-    'netsuite_da.internalIdLookup.expression': {
-      fieldId: 'netsuite_da.internalIdLookup.expression',
-      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
-    },
+    'netsuite_da.internalIdLookup.expression': { fieldId: 'netsuite_da.internalIdLookup.expression' },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',
       visibleWhen: [
@@ -199,35 +189,5 @@ export default {
           'netsuite_da.restletVersion', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
-  },
-  optionsHandler: (fieldId, fields) => {
-    const recordTypeField = fields.find(
-      field => field.id === 'netsuite_da.recordType'
-    );
-
-    if (fieldId === 'netsuite_da.internalIdLookup.expression') {
-      return {
-        disableFetch: !(recordTypeField?.value),
-        commMetaPath: recordTypeField
-          ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
-          : '',
-        resetValue: [],
-      };
-    }
-
-    if (fieldId === 'netsuite_da.subrecords') {
-      return {
-        recordType: recordTypeField?.value,
-      };
-    }
-
-    if (fieldId === 'netsuite_da.operation') {
-      return {
-        recordType: recordTypeField?.value,
-        commMetaPath: recordTypeField ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes` : '',
-      };
-    }
-
-    return null;
   },
 };

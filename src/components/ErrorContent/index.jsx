@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import JsonContent from '../JsonContent';
 import RawHtml from '../RawHtml';
 import { isJsonString, isHTML} from '../../utils/string';
@@ -10,7 +10,6 @@ const useStyles = makeStyles({
     maxWidth: 500,
     overflowY: 'auto',
     maxHeight: 'calc(100vh - 118px)',
-    paddingLeft: 12,
     wordBreak: 'break-word',
     '& > * ': {
       whiteSpace: 'pre-wrap',

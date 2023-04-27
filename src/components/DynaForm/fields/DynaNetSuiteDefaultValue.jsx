@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
+import { FormLabel, FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import Spinner from '../../Spinner';
 import FieldHelp from '../FieldHelp';
 import RefreshIcon from '../../icons/RefreshIcon';
 import ActionButton from '../../ActionButton';
@@ -98,6 +99,7 @@ export default function DynaNetSuiteDefaultValue(props) {
           {helpKey && <FieldHelp {...props} helpKey={helpKey} />}
         </div>
         <FormControl
+          variant="standard"
           disabled={disabled}
           className={classes.formControl}
           key={value}>

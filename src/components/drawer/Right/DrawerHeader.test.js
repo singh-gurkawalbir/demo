@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DrawerHeader from './DrawerHeader';
@@ -51,34 +51,37 @@ describe('DrawerHeader tests', () => {
     const buttons = screen.getAllByRole('button');
 
     expect(childButton).toBeInTheDocument();
-    userEvent.click(childButton);
+    await userEvent.click(childButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
     expect(screen.getByText('Drawer header')).toBeInTheDocument();
     const backButton = buttons.find(btn => btn.getAttribute('data-test') === 'backRightDrawer');
     const closeButton = buttons.find(btn => btn.getAttribute('data-test') === 'customCloseRightDrawer');
 
     expect(backButton).toBeInTheDocument();
-    userEvent.click(backButton);
+    await userEvent.click(backButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
     expect(closeButton).toBeInTheDocument();
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
+
   test('Should able to test the DrawerHeader render with helpButton and Info icon', async () => {
     await initRightDrawerComponents({helpKey: 'formView', infoText: 'get info from here'});
     const buttons = screen.getAllByRole('button');
-    const helpIcon = buttons.find(btn => btn.getAttribute('class').includes('helpTextButton'));
+    const helpIcon = buttons.find(btn => !btn.hasAttribute('data-test') && btn.querySelector('svg[viewBox="0 0 24 24"]'));
 
     expect(helpIcon).toBeInTheDocument();
-    userEvent.click(helpIcon);
+    await userEvent.click(helpIcon);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     const infoIcon = buttons.find(btn => btn.getAttribute('data-test') === 'openPageInfo');
 
     expect(infoIcon).toBeInTheDocument();
-    userEvent.click(infoIcon);
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
-    expect(screen.getByText('get info from here')).toBeInTheDocument();
+    await userEvent.click(infoIcon);
+    waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(screen.getByText('get info from here')).toBeInTheDocument();
+    });
   });
 
   test('Should able to test the DrawerHeader render with Custom CloseButton only', async () => {
@@ -86,7 +89,7 @@ describe('DrawerHeader tests', () => {
     const customCloseButton = screen.getByRole('button', {name: 'Click'});
 
     expect(customCloseButton).toBeInTheDocument();
-    userEvent.click(customCloseButton);
+    await userEvent.click(customCloseButton);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 });

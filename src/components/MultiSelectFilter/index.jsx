@@ -1,9 +1,9 @@
-import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
-import ArrowPopper from '../ArrowPopper';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   moreIcon: {
-    marginTop: -theme.spacing(1),
+    marginTop: theme.spacing(-1),
   },
   heading: {
     fontWeight: 'bold',
@@ -48,8 +48,6 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '100%',
   },
   dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
     padding: theme.spacing(2),
     maxWidth: 600,
     '&>div': {
@@ -83,9 +81,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-0.5),
     marginRight: theme.spacing(0.5),
   },
-  multiSelectFilterPopper: {
-    top: '5px !important',
-  },
   checkAction: {
     listStyle: 'none',
     padding: 0,
@@ -104,7 +99,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel, disabled}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -207,6 +202,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
     <>
       {ButtonLabel ? (
         <OutlinedButton
+          disabled={disabled}
           onClick={toggleClick}
           endIcon={<ArrowDownIcon />}
           color="secondary"
@@ -214,7 +210,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
           {ButtonLabel}
         </OutlinedButton>
       ) : (
-        <ActionButton onClick={toggleClick}>
+        <ActionButton disabled={disabled} onClick={toggleClick}>
           <Icon />
         </ActionButton>
       )}
@@ -222,69 +218,65 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom"
-        restrictToParent={false}
-        classes={{
-          popper: classes.multiSelectFilterPopper,
-          arrow: classes.multiSelectFilterPopperArrow,
-        }}
+        preventOverflow={false}
         onClose={toggleClick}>
         {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <FormControl component="fieldset" className={classes.formControl}>
-                  <FormGroup className={classes.formGroup}>
-                    {items.map(m => (
-                      <ul key={m._id} className={classes.checkAction}>
-                        {isChildExists && (
-                          <li>
-                            { m?.children?.length > 0 && (
-                            <IconButton
-                              data-test="toggleJobDetail"
-                              className={classes.moreIcon}
-                              size="small"
-                              onClick={() => { handleExpandCollapseClick(m._id); }}>
-                              <RowIcon expanded={expanded} node={m._id} />
-                            </IconButton>
-                          )}
-                          </li>
+        <Box display="flex" flexDirection="column" className={classes.dateRangePickerWrapper}>
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <FormControl variant="standard" component="fieldset" className={classes.formControl}>
+                <FormGroup className={classes.formGroup}>
+                  {items.map(m => (
+                    <ul key={m._id} className={classes.checkAction}>
+                      {isChildExists && (
+                      <li>
+                        { m?.children?.length > 0 && (
+                        <IconButton
+                          data-test="toggleJobDetail"
+                          className={classes.moreIcon}
+                          size="small"
+                          onClick={() => { handleExpandCollapseClick(m._id); }}>
+                          <RowIcon expanded={expanded} node={m._id} />
+                        </IconButton>
                         )}
-                        <li>
-                          <FormControlLabel
-                            className={classes.selectResourceItem}
-                            control={(
-                              <Checkbox
-                                color="primary"
-                                checked={checked.includes(m._id)}
-                                onChange={handleSelect(m._id)}
-                                value="required"
-                                className={classes.selectResourceCheck} />
-                                  )}
-                            label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
-                            key={m._id} />
-                          {expanded[m._id] && m.children && m.children.map(c => (
-                            <ChildDetails
-                              key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
-                              checked={checked} />
-                          ))}
-                        </li>
-                      </ul>
-                    ))}
-                  </FormGroup>
-                </FormControl>
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <FilledButton onClick={handleSave} disabled={isEqual(checked, initialValue)}>
-                    Apply
-                  </FilledButton>
-                  <TextButton onClick={handleClose}>
-                    Cancel
-                  </TextButton>
-                </ActionGroup>
-              </div>
+                      </li>
+                      )}
+                      <li>
+                        <FormControlLabel
+                          className={classes.selectResourceItem}
+                          control={(
+                            <Checkbox
+                              color="primary"
+                              checked={checked.includes(m._id)}
+                              onChange={handleSelect(m._id)}
+                              value="required"
+                              className={classes.selectResourceCheck} />
+                                )}
+                          label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
+                          key={m._id} />
+                        {expanded[m._id] && m.children && m.children.map(c => (
+                          <ChildDetails
+                            key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                            checked={checked} />
+                        ))}
+                      </li>
+                    </ul>
+                  ))}
+                </FormGroup>
+              </FormControl>
+            </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <FilledButton onClick={handleSave} disabled={isEqual(checked, initialValue)}>
+                  Apply
+                </FilledButton>
+                <TextButton onClick={handleClose}>
+                  Cancel
+                </TextButton>
+              </ActionGroup>
             </div>
           </div>
+        </Box>
         )}
       </ArrowPopper>
     </>

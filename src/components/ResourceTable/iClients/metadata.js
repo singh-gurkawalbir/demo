@@ -1,10 +1,11 @@
 import React from 'react';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 import AuditLogs from '../commonActions/AuditLogs';
 import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
 import Edit from '../commonActions/Edit';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
+import { getHttpConnector } from '../../../constants/applications';
 
 export default {
   useColumns: () => {
@@ -17,16 +18,17 @@ export default {
         orderBy: 'name',
       },
       {
-        key: 'provider',
+        key: 'application',
         isLoggable: true,
-        heading: 'Provider',
-        Value: ({rowData: r}) => r.provider,
+        heading: 'Application',
+        Value: ({rowData: r}) => r?._httpConnectorId ? getHttpConnector(r?._httpConnectorId)?.name : 'Custom OAuth2.0',
+        visible: false,
       },
       {
         key: 'lastUpdated',
         heading: 'Last updated',
         isLoggable: true,
-        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+        Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
     ];

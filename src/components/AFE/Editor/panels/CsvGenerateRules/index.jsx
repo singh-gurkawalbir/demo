@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import { makeStyles } from '@material-ui/core/styles';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
@@ -81,7 +81,7 @@ export default function CsvGeneratePanel({ editorId }) {
   return (
     <div className={classes.container}>
       <FormGroup column="true">
-        <FormControl disabled={disabled} className={classes.formControl}>
+        <FormControl variant="standard" disabled={disabled} className={classes.formControl}>
           <DynaSelectWithInput
             label="Column delimiter"
             value={columnDelimiter}
@@ -92,7 +92,7 @@ export default function CsvGeneratePanel({ editorId }) {
             options={options.ColumnDelimiterOptions}
           />
         </FormControl>
-        <FormControl disabled={disabled} className={classes.formControl}>
+        <FormControl variant="standard" disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">
             Row delimiter
           </InputLabel>
@@ -185,7 +185,7 @@ export default function CsvGeneratePanel({ editorId }) {
           label="Replace new line with space"
         />
         {customHeaderRowsSupported && (
-          <FormControl disabled={disabled} className={classes.formControl}>
+          <FormControl variant="standard" disabled={disabled} className={classes.formControl}>
             <DynaText
               color="primary"
               value={customHeaderRows}

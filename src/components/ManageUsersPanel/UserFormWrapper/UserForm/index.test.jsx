@@ -117,7 +117,7 @@ jest.mock('../../../LoadResources', () => ({
 ));
 
 describe('userform UI test cases', () => {
-  test('should display userform with cancel button when disabled is set to true', () => {
+  test('should display userform with cancel button when disabled is set to true', async () => {
     const onsaveclick = jest.fn();
     const onCancelClick = jest.fn();
 
@@ -126,10 +126,10 @@ describe('userform UI test cases', () => {
 
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
   });
 
-  test('should display userform with cancel button when disabled is set to false', () => {
+  test('should display userform with cancel button when disabled is set to false', async () => {
     const onSaveClick = jest.fn();
     const onCancelClick = jest.fn();
 
@@ -138,7 +138,7 @@ describe('userform UI test cases', () => {
 
     expect(cancelButton).toBeInTheDocument();
 
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
   });
 
   test('should display userform with save button when disabled is set to false', () => {

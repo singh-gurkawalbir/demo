@@ -1,8 +1,11 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, Tooltip } from '@mui/material';
+import { useSelector } from 'react-redux';
 import { getHelpTextMap } from '../../../components/Help';
+import { selectors } from '../../../reducers';
+import { useFlowContext } from '../FlowBuilderBody/Context';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -23,10 +26,35 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  newiconButtonRoot: {
+    padding: theme.spacing(0.1),
+    backgroundColor: theme.palette.background.paper,
+    '&:hover': {
+      backgroundColor: theme.palette.background.paper,
+      '& svg': {
+        color: theme.palette.primary.main,
+      },
+      placement: 'top',
+    },
+  },
   iconButtonLabel: {
     '& svg': {
       width: 26,
       height: 26,
+    },
+  },
+  newiconButtonLabel: {
+    '& svg': {
+      width: 20,
+      height: 20,
+    },
+  },
+  subFlowButtonLabel: {
+    width: 18,
+    height: 18,
+    '& svg': {
+      width: 16,
+      height: 16,
     },
   },
   contained: {
@@ -44,15 +72,23 @@ export default function ActionIconButton({
   ...props
 }) {
   const classes = useStyles();
+  const { flowId } = useFlowContext();
+
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
 
   return (
     <Tooltip title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
       <IconButton
         size="small"
-        className={clsx(classes.button, className, classes[variant])}
+        className={clsx(classes.button, classes[variant], className)}
         classes={{
-          root: classes.iconButtonRoot,
-          label: classes.iconButtonLabel,
+          root: clsx({[classes.newiconButtonRoot]: isIconView}, {[classes.iconButtonRoot]: !isIconView}),
+          label: clsx({[classes.newiconButtonLabel]: (isIconView && !isSubFlowView)}, {[classes.iconButtonLabel]: !isIconView}, {[classes.subFlowButtonLabel]: isSubFlowView}),
         }}
         {...props}>
         {children}

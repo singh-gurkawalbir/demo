@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import GraphIcon from '../../../components/icons/GraphIcon';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
@@ -19,8 +19,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   iconGraph: {
-
-    width: 28,
+    width: theme.spacing(3),
   },
 }));
 

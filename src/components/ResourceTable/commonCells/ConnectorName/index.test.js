@@ -23,7 +23,15 @@ function initConnectorName({resource}) {
       rdbms: {
         type: 'bigquery',
       },
-    }];
+    },
+    {
+      _id: 1234,
+      name: 'NS jdbc connection',
+      jdbc: {
+        type: 'netsuitejdbc',
+      },
+    },
+    ];
   });
   const ui = (
     <ConnectorName resource={resource} />
@@ -152,5 +160,14 @@ describe('testsuite for ConnectorName', () => {
     initConnectorName({resource});
     expect(screen.getByText(/rdbms/i)).toBeInTheDocument();
   });
-});
+  test('should test the NesuiteJdbc name when the resource type is jdbc', () => {
+    const resource = {
+      _connectionId: 1234,
+      type: 'jdbc',
+      adaptorType: 'JDBCExport',
+    };
 
+    initConnectorName({resource});
+    expect(screen.getByText('NetSuite JDBC')).toBeInTheDocument();
+  });
+});

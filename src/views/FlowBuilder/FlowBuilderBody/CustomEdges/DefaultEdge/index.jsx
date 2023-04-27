@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { getSmoothStepPath } from 'react-flow-renderer';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDragDropManager } from 'react-dnd';
 import {
@@ -8,6 +7,7 @@ import {
   nodeSize,
   areMultipleEdgesConnectedToSameEdgeTarget,
   snapPointsToHandles,
+  getEdgeStepPath,
 } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
@@ -171,16 +171,14 @@ function DefaultEdge({
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
-
   Example path with hard corners
   M1250,494 L1350,555 L1588,555 L1825,555 L1928,422
-
   Example path with rounded corners.
   M529,306 L982,306 Q987,306 987,301 L987,92 Q987,87 992,87 L1446,87
   */
   const edgePath = useMemo(() => {
     if (isTargetTerminal && !isSourceRouter) {
-      const sp = getSmoothStepPath({
+      return getEdgeStepPath({
         sourceX,
         sourceY,
         sourcePosition,
@@ -188,8 +186,6 @@ function DefaultEdge({
         targetY,
         targetPosition,
       });
-
-      return sp;
     }
 
     const targetHandle = { x: targetX, y: targetY };

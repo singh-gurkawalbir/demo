@@ -1,29 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Box, Spinner } from '@celigo/fuse-ui';
 import DashboardTag from '../../tags/DashboardTag';
-import Spinner from '../../Spinner';
 import { getJobStatusDetails } from './util';
 
-const useStyles = makeStyles(theme => ({
-  state: {
-    display: 'flex',
-    alignItems: 'center',
-    whiteSpace: 'nowrap',
-  },
-  spinnerWrapper: {
-    marginRight: 10,
-  },
-  link: {
-    fontFamily: 'Roboto400',
-    color: theme.palette.primary.main,
-    '&:hover': {
-      color: theme.palette.primary.light,
-    },
-  },
-}));
-
 export default function JobStatus({ job }) {
-  const classes = useStyles();
   const jobStatusDetails = getJobStatusDetails(job);
 
   if (jobStatusDetails.showStatusTag) {
@@ -38,12 +18,10 @@ export default function JobStatus({ job }) {
 
   if (jobStatusDetails.showSpinner) {
     return (
-      <div className={classes.state}>
-        <div className={classes.spinnerWrapper}>
-          <Spinner />
-        </div>
+      <Box display="flex" alignItems="center" whiteSpace="nowrap">
+        <Spinner sx={{mr: '10px'}} />
         {jobStatusDetails.status}
-      </div>
+      </Box>
     );
   }
 

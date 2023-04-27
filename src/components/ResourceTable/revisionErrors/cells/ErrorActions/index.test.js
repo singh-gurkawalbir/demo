@@ -36,12 +36,12 @@ describe('testsuite for ErrorActions', () => {
   afterEach(() => {
     mockHistoryPush.mockClear();
   });
-  test('should test the Error Actions drawer', () => {
+  test('should test the Error Actions drawer', async () => {
     initErrorActions('12345');
     const errorActionsButtonNode = document.querySelector('button[data-test="error-actions"]');
 
     expect(errorActionsButtonNode).toBeInTheDocument();
-    userEvent.click(errorActionsButtonNode);
+    await userEvent.click(errorActionsButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/test/error/12345');
   });
 });

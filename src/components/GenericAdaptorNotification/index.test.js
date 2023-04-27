@@ -24,7 +24,7 @@ describe('genericAdaptorNotification ui tests', () => {
     expect(secondMessage).toBeInTheDocument();
   });
 
-  test('should invoke the onClose function on closing the notification', () => {
+  test('should invoke the onClose function on closing the notification', async () => {
     const mockFunc = jest.fn();
 
     renderWithProviders(
@@ -32,7 +32,7 @@ describe('genericAdaptorNotification ui tests', () => {
     );
     const button = screen.getByRole('button');
 
-    userEvent.click(button);
+    await userEvent.click(button);
     waitFor(() => expect(mockFunc).toHaveBeenCalledTimes(1));
   });
   test('should not render the close icon when onClose function is not passed', () => {

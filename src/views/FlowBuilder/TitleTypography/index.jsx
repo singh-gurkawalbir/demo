@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
@@ -13,14 +14,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TitleTypography({className, children}) {
+export default function TitleTypography({className, children, sx}) {
   const classes = useStyles();
 
   return (
     <Typography
       component="div"
       className={clsx(classes.title, className)}
-      variant="overline">
+      variant="overline"
+      sx={sx}>
       {children}
     </Typography>
   );

@@ -91,7 +91,7 @@ describe('viewReportDetails', () => {
   afterEach(() => {
     cleanup();
   });
-  test('should able to test the view report details pane by clicking on close button', () => {
+  test('should able to test the view report details pane by clicking on close button', async () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',
@@ -160,7 +160,7 @@ describe('viewReportDetails', () => {
     const closeButtonNode = screen.getByRole('button', { name: 'Close' });
 
     expect(closeButtonNode).toBeInTheDocument();
-    userEvent.click(closeButtonNode);
+    await userEvent.click(closeButtonNode);
     expect(mockGoBackFn).toHaveBeenCalledTimes(1);
   });
   test('should able to test the view report details pane by giving wrong report type', () => {

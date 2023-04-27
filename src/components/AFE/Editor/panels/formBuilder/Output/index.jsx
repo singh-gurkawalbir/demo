@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import CodePanel from '../../Code';
-import Spinner from '../../../../../Spinner';
 
 const overrides = { showGutter: false };
 
@@ -45,7 +46,7 @@ export default function OutputPanel({ editorId }) {
         )
       )}
       {previewStatus === 'requested' && previewStatus !== 'error' && (
-        <Spinner size="small" centerAll isOverlay>Loading... </Spinner>
+        <Spinner size="small" center="screen" overlay>Loading... </Spinner>
       )}
     </>
   );

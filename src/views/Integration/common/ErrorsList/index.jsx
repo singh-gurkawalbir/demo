@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import { TimeAgo, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -11,13 +12,11 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';
 import { flowbuilderUrl } from '../../../../utils/flows';
-import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../constants';
-import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
@@ -61,12 +60,11 @@ const metadata = {
         const { type, id, isLookup } = rowData;
         const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
         const category = resourceCategory(doc, isLookup, type === 'imports');
-        const handleClick = useCallback(() => {}, []);
 
         return (
           <ResourceButton
-            onClick={handleClick}
             variant={category}
+            type="icon"
       />
         );
       },
@@ -127,7 +125,7 @@ const metadata = {
       key: 'lastErrorAt',
       heading: 'Last open error',
       isLoggable: true,
-      Value: ({ rowData }) => <CeligoTimeAgo date={rowData.lastErrorAt} />,
+      Value: ({ rowData }) => <TimeAgo date={rowData.lastErrorAt} />,
       orderBy: 'lastErrorAt',
     },
   ],
@@ -168,7 +166,7 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <Spinner centerAll withDrawerHeader />;
+    return <Spinner size="large" center="screen" />;
   }
 
   return (

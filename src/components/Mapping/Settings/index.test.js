@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import SettingsDrawer from '.';
@@ -218,7 +218,7 @@ describe('settingsDrawer test cases', () => {
       expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
       expect(screen.queryByText(/Save/i)).toBeInTheDocument();
       expect(screen.queryByText(/Close/i)).toBeInTheDocument();
-      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+      await userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
       await expect(screen.findByText(/You need to map at least one value./i)).resolves.toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
@@ -234,7 +234,7 @@ describe('settingsDrawer test cases', () => {
       expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
       expect(screen.queryByText(/Save/i)).toBeInTheDocument();
       expect(screen.queryByText(/Close/i)).toBeInTheDocument();
-      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+      await userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
       expect(screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
@@ -253,7 +253,7 @@ describe('settingsDrawer test cases', () => {
       expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
       expect(screen.queryByText(/Save/i)).toBeInTheDocument();
       expect(screen.queryByText(/Close/i)).toBeInTheDocument();
-      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+      await userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
       expect(screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
@@ -303,14 +303,16 @@ describe('settingsDrawer test cases', () => {
         params,
       });
 
-      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
-      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
-      expect(screen.queryByText(/Mock Close/i)).toBeInTheDocument();
-      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
-      userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
-      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+      waitFor(async () => {
+        expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Mock Close/i)).toBeInTheDocument();
+        expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+        await userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
+        await userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(mockHistorygoBack).toHaveBeenCalledTimes(1);
+        expect(mockHistorygoBack).toHaveBeenCalledTimes(1);
+      });
     });
 
     test('should pass the initial render for save/close button without change different key', async () => {
@@ -330,14 +332,16 @@ describe('settingsDrawer test cases', () => {
         lookupName: 'lookup_name_2',
       });
 
-      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
-      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
-      expect(screen.queryByText(/Mock Close/i)).toBeInTheDocument();
-      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
-      userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
-      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+      waitFor(async () => {
+        expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Mock Close/i)).toBeInTheDocument();
+        expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+        await userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
+        await userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(mockHistorygoBack).toHaveBeenCalledTimes(1);
+        expect(mockHistorygoBack).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

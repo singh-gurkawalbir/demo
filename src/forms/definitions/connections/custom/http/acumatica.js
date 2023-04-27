@@ -26,9 +26,6 @@ export default {
       delete retValues['/http/auth/oauth/authURI'];
       delete retValues['/http/auth/oauth/tokenURI'];
       delete retValues['/http/auth/oauth/scopeDelimiter'];
-      delete retValues['/http/auth/oauth/scope'];
-      delete retValues['/http/auth/oauth/callbackURL'];
-      delete retValues['/http/_iClientId'];
       retValues['/http/auth/oauth'] = undefined;
     } else {
       retValues['/http/baseURI'] = `${
@@ -48,15 +45,10 @@ export default {
       delete retValues['/http/auth/cookie/uri'];
       delete retValues['/http/auth/cookie/body'];
       delete retValues['/http/encrypted/cookieString'];
-      delete retValues['/instanceURI'];
-      delete retValues['/http/unencrypted/username'];
       delete retValues['/http/unencrypted/password'];
       delete retValues['/http/encrypted/cookieString'];
       delete retValues['/http/unencrypted/company'];
       retValues['/http/auth/cookie'] = undefined;
-    }
-    if (retValues['/mode'] === 'cloud') {
-      retValues['/_agentId'] = undefined;
     }
 
     return {
@@ -102,6 +94,7 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     instanceURI: {
       id: 'instanceURI',
@@ -119,6 +112,7 @@ export default {
 
         return baseUri && baseUri.substring(0, baseUri.indexOf(r?.http?.unencrypted?.endpointName));
       },
+      deleteWhen: [{ field: 'http.auth.type', isNot: ['cookie'] }],
     },
     'oauth.instanceURI': {
       id: 'oauth.instanceURI',
@@ -165,6 +159,7 @@ export default {
       label: 'Username',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
+      deleteWhen: [{ field: 'http.auth.type', isNot: ['cookie'] }],
       helpKey: 'acumatica.connection.http.unencrypted.username',
     },
     'http.encrypted.password': {
@@ -190,6 +185,7 @@ export default {
       fieldId: 'http.auth.oauth.scope',
       scopes: ['api', 'offline_access', 'api:concurrent_access'],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',
@@ -201,11 +197,13 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'connection.http._iClientId',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
       copyToClipboard: true,
       visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {

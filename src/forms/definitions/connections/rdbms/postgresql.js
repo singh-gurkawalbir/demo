@@ -6,29 +6,10 @@ export default {
       '/rdbms/type': 'postgresql',
     };
 
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-    delete newValues['/mode'];
-
     return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    // type: {
-    //   fieldId: 'type',
-    //   defaultValue: r => {
-    //     let rdbmsSubType;
-
-    //     if (r && r.type === 'rdbms') {
-    //       rdbmsSubType = r.rdbms.type;
-    //     } else {
-    //       rdbmsSubType = r.type;
-    //     }
-
-    //     return rdbmsSubType;
-    //   },
-    // },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -43,10 +24,12 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     rdbmsFields: { formId: 'rdbmsFields' },
     'rdbms.port': { fieldId: 'rdbms.port' },

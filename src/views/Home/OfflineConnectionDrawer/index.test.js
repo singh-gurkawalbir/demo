@@ -100,7 +100,7 @@ describe('OfflineConnectionDrawer UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call history replace when the current connection is the last connection', () => {
+  test('should call history replace when the current connection is the last connection', async () => {
     initOfflineConnectionDrawer('5d53a5cdfb8d224f46042990');
 
     const links = screen.getAllByRole('link');
@@ -108,12 +108,12 @@ describe('OfflineConnectionDrawer UI test cases', () => {
     expect(links[0].textContent).toBe('First Connection');
     expect(links[1].textContent).toBe('Second Connection');
 
-    userEvent.click(screen.getByText('Submit'));
+    await userEvent.click(screen.getByText('Submit'));
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
-  test('should call history replace when the current connection is not the last connection', () => {
+  test('should call history replace when the current connection is not the last connection', async () => {
     initOfflineConnectionDrawer('5d53a5cdfb8d224f46042989');
-    userEvent.click(screen.getByText('Submit'));
+    await userEvent.click(screen.getByText('Submit'));
     expect(mockHistoryReplace).toHaveBeenCalledWith('5d53a5cdfb8d224f46042990');
   });
   test('should not show any offline connection when no offline connection are present in tile', () => {

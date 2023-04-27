@@ -118,10 +118,10 @@ describe('ErrorDetailsDrawer test cases', () => {
     expect(ResolvedError).toBeInTheDocument();
     expect(closeRightDrawer).toBeInTheDocument();
 
-    userEvent.click(closeRightDrawer);
+    await userEvent.click(closeRightDrawer);
     expect(mockReplaceFn).toBeCalledWith('/flow_id');
 
-    userEvent.click(ResolvedError);
+    await userEvent.click(ResolvedError);
     expect(mockReplaceFn).toBeCalledWith('/flow_id/errors/export_id/resolved');
   });
 
@@ -141,10 +141,10 @@ describe('ErrorDetailsDrawer test cases', () => {
     expect(ResolvedError).toBeInTheDocument();
     expect(screen.queryByText(/1 error in this run/)).toBeInTheDocument();
 
-    userEvent.click(closeRightDrawer);
+    await userEvent.click(closeRightDrawer);
     expect(mockGoBackFn).toBeCalled();
 
-    userEvent.click(ResolvedError);
+    await userEvent.click(ResolvedError);
     expect(mockReplaceFn).toBeCalledWith('/flow_id/errors/export_id_1/filter/flow_job_id/resolved');
   });
 

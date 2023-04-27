@@ -187,7 +187,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'connections' && !isNew) {
     // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
     // number of active tokens on netsuite, revoking token when user updates token-auto connection.
-    if (merged.type === 'netsuite') {
+    if (merged.type === 'netsuite' || merged?.jdbc?.type === 'netsuitejdbc') {
       const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
       if (isTokenToBeRevoked) {
@@ -240,7 +240,7 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
     if (resourceType === 'imports' && merged.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
       merged.http._httpConnectorEndpointIds = [merged.http._httpConnectorEndpointIds[0].split('+')?.[0]];
     }
-    // merged.assistantMetadata = undefined;
+    merged.assistantMetadata = undefined;
   }
   if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
@@ -751,13 +751,12 @@ export function* deleteIntegration({ integrationId }) {
   if (resourceReferences && Object.keys(resourceReferences).length > 0) {
     return;
   }
-
+  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
   yield call(deleteResource, { resourceType: 'integrations', id: integrationId });
 
-  yield put(actions.resource.requestCollection('integrations', null, true));
-  yield put(actions.resource.requestCollection('tiles', null, true));
-  yield put(actions.resource.requestCollection('scripts', null, true));
-  yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
+  yield put(actions.resource.clearCollection('integrations'));
+  yield put(actions.resource.requestCollection('tiles', null, true)); // redirect to home so we can keep this.
+  yield put(actions.resource.clearCollection('scripts'));
 }
 
 export function* getResourceCollection({ resourceType, refresh, integrationId }) {
@@ -1058,8 +1057,11 @@ export function* authorizedConnection({ connectionId }) {
 
   if (
     connectionResource &&
-    (connectionResource.type === 'netsuite' ||
-      connectionResource.type === 'salesforce' || isOauthOfflineResource)
+    (
+      connectionResource.type === 'netsuite' ||
+      connectionResource.type === 'salesforce' ||
+      connectionResource?.jdbc?.type === 'netsuitejdbc' ||
+      isOauthOfflineResource)
   ) {
     yield put(actions.resource.request('connections', connectionId));
   }

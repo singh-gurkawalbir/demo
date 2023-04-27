@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -45,7 +45,7 @@ export default function EditRetryData({
     <div className={classes.container} data-private>
       {
         retryStatus === 'requested'
-          ? (<Spinner centerAll size="large" />)
+          ? (<Spinner center="screen" size="large" />)
           : (
             <CodeEditor
               name={`${retryId}-edit`}

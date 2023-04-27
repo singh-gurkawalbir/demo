@@ -38,7 +38,7 @@ function getBranchNameIndex(branches, routerNameIndex) {
 }
 
 export default {
-  init: ({ options, scriptContext }) => {
+  init: ({ options, scriptContext, flow }) => {
     const activeProcessor = 'filter';
     const { router = {}, prePatches, branchNamingIndex } = options;
     const isEdit = !prePatches;
@@ -82,13 +82,14 @@ export default {
       editorTitle,
       isEdit,
       context: scriptContext,
+      flow,
     };
   },
 
   processor: 'branchFilter',
 
   requestBody: editor => {
-    const {context} = editor;
+    const {context, flow} = editor;
     const { activeProcessor } = editor.rule;
     const editorData = editor.data[activeProcessor];
     const { rules, data, options } = filter.requestBody({
@@ -97,6 +98,7 @@ export default {
     });
     const javascriptData = safeParse(editorData) || {};
     const router = { ...customCloneDeep(rules.rules) };
+    const isIntegrationApp = flow?._connectorId;
 
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
     if (!router.script) {
@@ -112,7 +114,7 @@ export default {
         record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
-      options: context,
+      ...(isIntegrationApp && {options: context}),
     };
   },
   // No point performing parsing or validation when it is an object
@@ -215,7 +217,7 @@ export default {
     return patches;
   },
   updateRule: (draft, action, shouldReplace) => {
-    const { actionType, oldIndex, newIndex, rulePatch } = action;
+    const { actionType, oldIndex, newIndex, rulePatch, position } = action;
 
     if (actionType === 'reorder') {
       draft.rule.branches = moveArrayItem(draft.rule.branches, oldIndex, newIndex);
@@ -227,6 +229,10 @@ export default {
         name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
         pageProcessors: [{setupInProgress: true}],
       }];
+    } else if (actionType === 'setSkipEmptyRuleCleanup') {
+      if (draft.rule.branches?.[position]?.id) {
+        draft.rule.branches[position].skipEmptyRuleCleanup = rulePatch;
+      }
     } else if (!shouldReplace) {
       Object.assign(draft.rule, customCloneDeep(rulePatch));
     } else {

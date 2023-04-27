@@ -55,7 +55,7 @@ describe('upgradeDrawer test cases', () => {
 
     expect(screen.queryByText(/Upgrade your subscription/i)).toBeInTheDocument();
     expect(yesButton).toBeInTheDocument();
-    userEvent.click(yesButton);
+    await userEvent.click(yesButton);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestTrialLicense());

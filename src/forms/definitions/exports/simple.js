@@ -11,17 +11,12 @@ export default {
     }
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
-      delete newValues['/file/json/resourcePath'];
     }
     newValues['/file/output'] = 'records';
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
-      delete newValues['/file/xlsx/hasHeaderRow'];
-      delete newValues['/file/xlsx/rowsPerRecord'];
-      delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/parsers'];
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
@@ -181,9 +176,9 @@ export default {
         },
       ],
     },
-    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
-    'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
+    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow', deleteWhen: [{field: 'file.type', is: ['json']}]},
+    'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord', deleteWhen: [{field: 'file.type', is: ['json']}]},
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns', deleteWhen: [{field: 'file.type', is: ['json']}]},
     // 'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
     parsers: {
       fieldId: 'parsers',
@@ -194,9 +189,11 @@ export default {
           is: ['xml'],
         },
       ],
+      deleteWhen: [{field: 'file.type', is: ['json']}],
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
+      deleteWhen: [{field: 'file.json.resourcePath', is: ['']}],
     },
     'fixed.format': { fieldId: 'fixed.format' },
     'file.encoding': { fieldId: 'file.encoding' },

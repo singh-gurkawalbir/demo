@@ -16,22 +16,6 @@ export default {
 
       return value;
     }
-    if (fieldId === 'salesforce.distributed.qualifier') {
-      const sObjectTypeField = fields.find(
-        field => field.fieldId === 'salesforce.sObjectType'
-      );
-
-      return {
-        sObjectType: sObjectTypeField?.value,
-        hasSObjectType: !!sObjectTypeField?.value,
-        commMetaPath: sObjectTypeField
-          ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
-          : '',
-        resetValue:
-          sObjectTypeField &&
-          sObjectTypeField.value !== sObjectTypeField.defaultValue,
-      };
-    }
     if (fieldId === 'salesforce.distributed.skipExportFieldId') {
       const sObjectTypeField = fields.find(
         field => field.fieldId === 'salesforce.sObjectType'
@@ -64,32 +48,19 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
       retValues['/test'] = undefined;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateField'];
-      delete retValues['/delta/lagOffset'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      delete retValues['/delta/dateField'];
-      delete retValues['/delta/lagOffset'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
       retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/once/booleanField'];
       retValues['/delta/dateField'] = retValues['/delta/dateField'] && Array.isArray(retValues['/delta/dateField']) ? retValues['/delta/dateField'].join(',') : retValues['/delta/dateField'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateField'];
-      delete retValues['/delta/lagOffset'];
     }
 
     if (retValues['/salesforce/executionType'] === 'scheduled') {
@@ -191,8 +162,9 @@ export default {
         { field: 'salesforce.executionType', is: ['scheduled'] },
         { field: 'outputMode', is: ['records'] },
       ],
+      removeWhen: [{field: 'type', is: ['all']}],
     },
-    'test.limit': {fieldId: 'test.limit'},
+    'test.limit': {fieldId: 'test.limit', deleteWhen: [{field: 'type', is: ['all', 'delta', 'once']}]},
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
@@ -206,9 +178,11 @@ export default {
       required: true,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
       defaultValue: r => r && r.delta && r.delta.dateField && r.delta.dateField.split(','),
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'once']}],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'once']}],
     },
     'once.booleanField': {
       id: 'once.booleanField',
@@ -222,6 +196,7 @@ export default {
       connectionId: r => r && r._connectionId,
       required: true,
       visibleWhen: [{ field: 'type', is: ['once'] }],
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'delta']}],
     },
     'salesforce.sObjectType': {
       connectionId: r => r._connectionId,
@@ -286,7 +261,6 @@ export default {
     },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
-      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: {
       formId: 'advancedSettings',

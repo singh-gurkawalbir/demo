@@ -13,10 +13,10 @@ jest.mock('../commonCells/ConnectorName', () => ({
   default: ({resource}) => (<span>{resource.connectorName}</span>),
 }));
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: ({date}) => (<span>{date}</span>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: ({date}) => (<span>{date}</span>),
 }));
 
 jest.mock('../../CeligoTable/TableContext', () => ({
@@ -38,7 +38,7 @@ function initImports(data = {}) {
 }
 
 describe('test suite for Imports', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: 'imp123',
       name: 'The Import',
@@ -59,10 +59,10 @@ describe('test suite for Imports', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name})).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'The Import',
       'Netsuite',
       '1 week ago',
       '',
@@ -71,7 +71,7 @@ describe('test suite for Imports', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

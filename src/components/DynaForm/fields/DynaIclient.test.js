@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
@@ -8,6 +8,24 @@ import actions from '../../../actions';
 import DynaIclient from './DynaIclient';
 
 const mockDispatchFn = jest.fn();
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
 
 jest.mock('./DynaSelectResource', () => ({
   __esModule: true,
@@ -43,12 +61,12 @@ describe('test suite for DynaIclient field', () => {
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
-  test('should be able to select from available iClients if associated with a connector', () => {
+  test('should be able to select from available iClients if associated with a connector', async () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'iClients',
       connectorId: 'connector123',
-      label: 'IClient',
+      label: 'iClient',
       connectionId: 'connection123',
       id: 'http._iClientId',
       name: '/http/_iClientId',
@@ -67,21 +85,23 @@ describe('test suite for DynaIclient field', () => {
 
     renderWithProviders(<DynaIclient {...props} />, {initialStore});
     expect(mockDispatchFn).not.toHaveBeenCalled();
-    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
-    const availableIclients = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+    await userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    await waitFor(() => {
+      const availableIclients = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
-    expect(availableIclients).toEqual([
-      'Please select...',
-      'Client 1...',
-      'client2...',
-    ]);
+      expect(availableIclients).toEqual([
+        'Please select',
+        'Client 1',
+        'client2',
+      ]);
+    });
   });
 
   test('should be allowed to create or modify iClient', () => {
     const props = {
       resourceId: 'connection123',
       resourceType: 'iClients',
-      label: 'IClient',
+      label: 'iClient',
       allowNew: true,
       allowEdit: true,
       connectionId: 'connection123',
@@ -103,7 +123,7 @@ describe('test suite for DynaIclient field', () => {
       resourceId: 'connection123',
       resourceType: 'iClients',
       connectorId: 'connector123',
-      label: 'IClient',
+      label: 'iClient',
       allowNew: true,
       allowEdit: true,
       connectionId: 'connection123',

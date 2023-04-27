@@ -9,11 +9,16 @@ export default function ConnectorName({ resource }) {
   const _connectionId = resource?._connectionId;
   const useRestForm = resource?.http?.formType === 'rest';
   const rdbmsType = rdbmsSubTypeToAppType(resource?.rdbms?.type);
+  const jdbcType = resource?.jdbc?.type;
   const _httpConnectorId = useSelector(state =>
     selectors.resource(state, 'connections', resourceType === 'connections' ? resource._id : _connectionId)?.http?._httpConnectorId);
 
   const rdbmsConnType = useSelector(state =>
     rdbmsSubTypeToAppType(selectors.resource(state, 'connections', _connectionId)?.rdbms?.type)
+  );
+
+  const jdbcConnType = useSelector(state =>
+    selectors.resource(state, 'connections', _connectionId)?.jdbc?.type
   );
 
   const out = useMemo(() => {
@@ -26,7 +31,7 @@ export default function ConnectorName({ resource }) {
       }
     }
 
-    if (type !== 'rdbms') {
+    if (type !== 'rdbms' && type !== 'jdbc') {
       const appType = getApp(type, assistant).name || null;
 
       if (appType?.toLowerCase() === 'http' && useRestForm) {
@@ -37,12 +42,20 @@ export default function ConnectorName({ resource }) {
     }
 
     if (resourceType === 'exports' || resourceType === 'imports') {
+      if (type === 'jdbc') {
+        return getApp(jdbcConnType).name;
+      }
+
       return getApp(rdbmsConnType).name;
     }
 
     // must be a connection
     if (rdbmsType) {
       return getApp(rdbmsType).name;
+    }
+
+    if (jdbcType) {
+      return getApp(jdbcType).name;
     }
 
     return 'RDBMS';

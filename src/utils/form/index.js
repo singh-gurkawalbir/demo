@@ -843,6 +843,29 @@ export const isRequired = (field, fieldsById) => {
     defaultResult: false,
   });
 };
+export const isRemoved = (field, fieldsById) => {
+  const { defaultRemoved, removeWhen = [], removeWhenAll = [] } = field;
+
+  return evaluateAnyAndAllRules({
+    anyRules: removeWhen,
+    allRules: removeWhenAll,
+    fieldsById,
+    defaultState: defaultRemoved,
+    defaultResult: false,
+  });
+};
+
+export const isDeleted = (field, fieldsById) => {
+  const { defaultdeleted, deleteWhen = [], deleteWhenAll = [] } = field;
+
+  return evaluateAnyAndAllRules({
+    anyRules: deleteWhen,
+    allRules: deleteWhenAll,
+    fieldsById,
+    defaultState: defaultdeleted,
+    defaultResult: false,
+  });
+};
 
 export const setValue = (field, fieldsById) => {
   const { _conditionIdValuesMap = [], conditions = [] } = field;

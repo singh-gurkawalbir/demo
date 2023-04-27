@@ -266,7 +266,7 @@ describe('router processor logic', () => {
         ],
       });
     });
-    test('should return correct request body for filter with scriptContext', () => {
+    test('should return correct request body for filter with scriptContext for IA', () => {
       const editor = {
         rule: {
           activeProcessor: 'javascript',
@@ -275,10 +275,14 @@ describe('router processor logic', () => {
           javascript: {a: 'b'},
           input_filters: {c: 'd'},
         },
+        flow: {
+          _id: 1234,
+          _connectorId: 4321,
+        },
         context: {
-          _integrationId: 'inetgartionID',
+          _integrationId: 'integartionID',
           _flowId: 'flowId',
-          container: 'inetgration',
+          container: 'integration',
           type: 'hook',
         },
       };
@@ -304,9 +308,9 @@ describe('router processor logic', () => {
           },
         ],
         options: {
-          _integrationId: 'inetgartionID',
+          _integrationId: 'integartionID',
           _flowId: 'flowId',
-          container: 'inetgration',
+          container: 'integration',
           type: 'hook',
         },
       });
@@ -483,6 +487,78 @@ describe('router processor logic', () => {
           ],
           id: 'r1',
         },
+      });
+    });
+
+    describe('should update the draft correctly for setSkipEmptyRuleCleanup type', () => {
+      test('should update the draft only if branch exists', () => {
+        const options = {
+          actionType: 'setSkipEmptyRuleCleanup',
+          position: 1,
+          rulePatch: true,
+        };
+        const draft = {
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [{id: 1}, {id: 2}, {id: 3}],
+          },
+        };
+
+        updateRule(draft, options, true);
+
+        expect(draft).toEqual({
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [
+              {
+                id: 1,
+              },
+              {
+                id: 2,
+                skipEmptyRuleCleanup: true,
+              },
+              {
+                id: 3,
+              },
+            ],
+          },
+        });
+      });
+      test('should not update the draft if branch does not exist', () => {
+        const options = {
+          actionType: 'setSkipEmptyRuleCleanup',
+          position: 3,
+          rulePatch: true,
+        };
+        const draft = {
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [{id: 1}, {id: 2}, {id: 3}],
+          },
+        };
+
+        updateRule(draft, options, true);
+
+        expect(draft).toEqual({
+          branchNamingIndex: 1,
+          rule: {
+            id: 'r1',
+            branches: [
+              {
+                id: 1,
+              },
+              {
+                id: 2,
+              },
+              {
+                id: 3,
+              },
+            ],
+          },
+        });
       });
     });
     test('should update the draft correctly for when shouldReplace is true', () => {

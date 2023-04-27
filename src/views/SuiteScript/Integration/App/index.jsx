@@ -1,10 +1,10 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { Chip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Chip } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {EditableText} from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
-import EditableText from '../../../../components/EditableText';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
@@ -22,12 +22,6 @@ import SettingsPanel from './panels/Settings';
 import TabContent from '../../../../components/TabContent';
 
 const useStyles = makeStyles(theme => ({
-  editableTextInput: {
-    width: `calc(60vw - ${52 + 24}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
-  },
   tag: {
     marginLeft: theme.spacing(1),
   },
@@ -55,7 +49,6 @@ export default function Integration({ match }) {
   const dispatch = useDispatch();
   const { ssLinkedConnectionId, integrationId } = match.params;
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const integration = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'integrations',
@@ -108,11 +101,6 @@ export default function Integration({ match }) {
                 disabled={!canEdit}
                 text={integration.displayName}
                 onChange={handleTitleChange}
-                inputClassName={
-                  drawerOpened
-                    ? classes.editableTextInputShift
-                    : classes.editableTextInput
-                }
               />
             )
           }

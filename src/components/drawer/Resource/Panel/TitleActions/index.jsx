@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Divider } from '@material-ui/core';
+import { Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
@@ -77,8 +78,9 @@ export default function TitleActions({ flowId }) {
       resourceType,
       id
     ) || {};
+  const mergedFormType = (resourceType === 'connections' && (merged?._httpConnectorId || merged.http?._httpConnectorId)) ? merged.http?.sessionFormType : merged.http?.formType;
 
-  applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
+  applicationType = mergedFormType === 'http' ? 'http' : applicationType;
 
   const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
 

@@ -1212,23 +1212,22 @@ describe('resource util tests', () => {
       }));
 
       expect(getHelpUrlForConnector('5656f5e3bebf89c03f5dd77e')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+        'https://docs.celigo.com/hc/en-us/categories/203963787'
       );
-
       expect(getHelpUrlForConnector('5666865f67c1650309224904')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958808'
+        'https://docs.celigo.com/hc/en-us/categories/203958808'
       );
 
       expect(getHelpUrlForConnector('58ee6029319bd30cc2fee160')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/sections/115000327151'
+        'https://docs.celigo.com/hc/en-us/sections/115000327151'
       );
 
       expect(getHelpUrlForConnector('suitescript-salesforce-netsuite')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203964847'
+        'https://docs.celigo.com/hc/en-us/categories/203964847'
       );
 
       expect(getHelpUrlForConnector('suitescript-svb-netsuite')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958788'
+        'https://docs.celigo.com/hc/en-us/categories/203958788'
       );
     });
 
@@ -1242,23 +1241,23 @@ describe('resource util tests', () => {
       }));
 
       expect(getHelpUrlForConnector('54fa0b38a7044f9252000036')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+        'https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
       expect(getHelpUrlForConnector('5728756afee45a8d11e79cb7')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958668'
+        'https://docs.celigo.com/hc/en-us/categories/203958668'
       );
 
       expect(getHelpUrlForConnector('592e8679c95560380ff1325c')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/sections/115000327151'
+        'https://docs.celigo.com/hc/en-us/sections/115000327151'
       );
 
       expect(getHelpUrlForConnector('suitescript-salesforce-netsuite')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203964847'
+        'https://docs.celigo.com/hc/en-us/categories/203964847'
       );
 
       expect(getHelpUrlForConnector('suitescript-svb-netsuite')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958788'
+        'https://docs.celigo.com/hc/en-us/categories/203958788'
       );
     });
 
@@ -1272,15 +1271,15 @@ describe('resource util tests', () => {
       }));
 
       expect(getHelpUrlForConnector('5e8d6f912387e356b6769bc5')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/115000816227'
+        'https://docs.celigo.com/hc/en-us/categories/115000816227'
       );
 
       expect(getHelpUrlForConnector('5e8d6ca02387e356b6769bb8')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+        'https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
       expect(getHelpUrlForConnector('5e7d921e2387e356b67669ce')).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/360001649831'
+        'https://docs.celigo.com/hc/en-us/categories/360001649831'
       );
     });
 
@@ -1299,7 +1298,7 @@ describe('resource util tests', () => {
           name: 'Shopify - NetSuite Connector',
         },
       ])).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+        'https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
       expect(getHelpUrlForConnector('1234', [
@@ -1308,7 +1307,7 @@ describe('resource util tests', () => {
           name: 'Salesforce - NetSuite Connector (IO)',
         },
       ])).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/360001649831'
+        'https://docs.celigo.com/hc/en-us/categories/360001649831'
       );
 
       expect(getHelpUrlForConnector('1234', [
@@ -1317,7 +1316,7 @@ describe('resource util tests', () => {
           name: 'Cash Application Manager for NetSuite',
         },
       ])).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958648'
+        'https://docs.celigo.com/hc/en-us/categories/203958648'
       );
     });
   });
@@ -1350,7 +1349,7 @@ describe('resource util tests', () => {
         _connectorId: '54fa0b38a7044f9252000036',
       },
       ])).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+        'https://docs.celigo.com/hc/en-us/categories/203963787'
       );
     });
 
@@ -1371,7 +1370,7 @@ describe('resource util tests', () => {
         _connectorId: '5656f5e3bebf89c03f5dd77e',
       },
       ])).toBe(
-        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+        'https://docs.celigo.com/hc/en-us/categories/203963787'
       );
     });
   });

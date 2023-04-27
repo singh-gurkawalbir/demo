@@ -1,16 +1,16 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { Divider } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Divider } from '@mui/material';
 import clsx from 'clsx';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { matchPath, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import NoResultTypography from '../../NoResultTypography';
 import ResourceTable from '../../ResourceTable';
-import Spinner from '../../Spinner';
 import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
     '& .MuiFormControlLabel-root': {
       marginRight: 0,
     },
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('xl')]: {
       width: '150%',
     },
   },
@@ -416,7 +416,7 @@ export default function ErrorTable({
         filterKey={filterKey}
       />
       {isFreshDataLoad ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <>
           <ErrorTableWithPanel

@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useMemo, useCallback, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormLabel } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';

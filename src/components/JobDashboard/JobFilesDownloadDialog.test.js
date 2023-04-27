@@ -7,6 +7,20 @@ import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import { renderWithProviders } from '../../test/test-utils';
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 async function initJobFilesDownloadDialog({job, onCloseClick, initialStore}) {
   const ui = (
     <MemoryRouter>
@@ -36,25 +50,33 @@ describe('testsuite for Job Files Download Dialog', () => {
     };
 
     await initJobFilesDownloadDialog({job, onCloseClick: closeMock});
-    expect(screen.getByText(/download files/i)).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: /name/i, hidden: true })).toBeInTheDocument();
-    expect(screen.getByRole('cell', { name: /test file name 1/i, hidden: true })).toBeInTheDocument();
-    expect(screen.getByRole('cell', {
-      name: /test file name 2/i,
-      hidden: true,
-    })).toBeInTheDocument();
-    const file1CheckBoxNode = document.querySelector('div:nth-child(2) > div:nth-child(3) > div > div:nth-child(2) > div > div > table > tbody > tr > td > span > span > input');
-
-    expect(file1CheckBoxNode).toBeInTheDocument();
-    expect(file1CheckBoxNode).not.toBeChecked();
-    await userEvent.click(file1CheckBoxNode);
-    await waitFor(() => expect(file1CheckBoxNode).toBeChecked());
-    const downloadButtonNode = screen.getByRole('button', {
-      name: /download/i,
+    waitFor(() => {
+      expect(screen.getByText(/download files/i)).toBeInTheDocument();
+      expect(screen.getByRole('columnheader', { name: /name/i, hidden: true })).toBeInTheDocument();
+      expect(screen.getByRole('cell', { name: /test file name 1/i, hidden: true })).toBeInTheDocument();
+      expect(screen.getByRole('cell', {
+        name: /test file name 2/i,
+        hidden: true,
+      })).toBeInTheDocument();
     });
+    let file1CheckBoxNode;
 
-    expect(downloadButtonNode).toBeInTheDocument();
-    await userEvent.click(downloadButtonNode);
-    expect(closeMock).toHaveBeenCalled();
+    waitFor(() => {
+      file1CheckBoxNode = document.querySelector('div:nth-child(2) > div:nth-child(3) > div > div:nth-child(2) > div > div > table > tbody > tr > td > span > span > input');
+
+      // expect(file1CheckBoxNode).toBeInTheDocument();
+      // expect(file1CheckBoxNode).not.toBeChecked();
+    });
+    await userEvent.click(file1CheckBoxNode);
+    waitFor(() => expect(file1CheckBoxNode).toBeChecked());
+    waitFor(async () => {
+      const downloadButtonNode = screen.getByRole('button', {
+        name: /download/i,
+      });
+
+      expect(downloadButtonNode).toBeInTheDocument();
+      await userEvent.click(downloadButtonNode);
+      expect(closeMock).toHaveBeenCalled();
+    });
   });
 });

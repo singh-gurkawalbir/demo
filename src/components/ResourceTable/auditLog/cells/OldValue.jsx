@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { hasLongLength } from '../utils';
 import DiffDialog from '../DiffDialog';
 import { TextButton } from '../../../Buttons';

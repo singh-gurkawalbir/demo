@@ -5,22 +5,28 @@ import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaCSVColumnMapper from './DynaCSVColumnMapper';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
+const initialStore = reduxStore;
 const mockOnFieldChange = jest.fn();
 
 function initDynaCSVColumnMapper(props = {}) {
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
   const ui = (
     <DynaCSVColumnMapper
       {...props}
     />
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 
 describe('dynaCSVColumnMapper UI test cases', () => {
-  test('should verify content and create a new row', () => {
+  test('should verify content and create a new row', async () => {
     const genralProps = {
       maxNumberOfColumns: 3,
       value: [
@@ -38,19 +44,20 @@ describe('dynaCSVColumnMapper UI test cases', () => {
         },
       ],
       onFieldChange: mockOnFieldChange,
+      formKey: 'form_key',
     };
 
     initDynaCSVColumnMapper(genralProps);
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItemsOptionNode = screen.getAllByRole('menuitem');
 
-    userEvent.click(menuItemsOptionNode[3]);
-    userEvent.click(screen.getByText('Please enter a value'));
-    const input = screen.getAllByRole('textbox');
+    await userEvent.click(menuItemsOptionNode[3]);
+    await userEvent.click(screen.getByText('Please enter a value'));
+    const input = screen.getAllByRole('combobox');
 
-    userEvent.type(input[6], 'Payment Amount');
-    userEvent.type(input[7], 'CHECK AMOUNT');
-    userEvent.type(input[8], '/checkamount/i');
+    await userEvent.type(input[6], 'Payment Amount');
+    await userEvent.type(input[7], 'CHECK AMOUNT');
+    await userEvent.type(input[8], '/checkamount/i');
     expect(screen.getByText('Payment Amount')).toBeInTheDocument();
     expect(screen.getByText('CHECK AMOUNT')).toBeInTheDocument();
     expect(screen.getByText('/checkamount/i')).toBeInTheDocument();
@@ -74,6 +81,7 @@ describe('dynaCSVColumnMapper UI test cases', () => {
           fieldName: 'Check Amount',
         },
       ],
+      formKey: 'form_key',
     };
 
     initDynaCSVColumnMapper(genralProps);

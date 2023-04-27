@@ -18,7 +18,7 @@ describe('dynaRadio tests', () => {
     expect(screen.getByText('item1')).toBeInTheDocument();
     expect(screen.getByRole('radiogroup')).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'item2'})).toBeInTheDocument();
-    userEvent.click(screen.getByText('item1'));
+    await userEvent.click(screen.getByText('item1'));
     expect(onFieldChange).toHaveBeenCalledWith(undefined, 'item1');
   });
   test('should able to test DynaRadio without options', async () => {

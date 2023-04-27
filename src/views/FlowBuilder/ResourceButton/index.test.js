@@ -20,12 +20,12 @@ describe('ResourceButton UI tests', () => {
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
   });
-  test('should pass the onClick function passed in props when clicked on the button', () => {
+  test('should pass the onClick function passed in props when clicked on the button', async () => {
     const mockOnClick = jest.fn();
     const props = { variant: 'import', onClick: mockOnClick};
 
     renderWithProviders(<ResourceButton {...props} />);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(mockOnClick).toBeCalled();
   });
 });

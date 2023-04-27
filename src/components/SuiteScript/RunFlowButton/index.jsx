@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import RunIcon from '../../icons/RunIcon';
 import actions from '../../../actions';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
@@ -10,9 +10,7 @@ function RunFlowLabel({ disabled, onRunClick, variant }) {
   if (variant === 'icon') {
     if (disabled) {
       return (
-        <IconButton
-          data-test="runFlow"
-          disabled>
+        <IconButton data-test="runFlow" disabled size="large">
           <RunIcon />
         </IconButton>
       );

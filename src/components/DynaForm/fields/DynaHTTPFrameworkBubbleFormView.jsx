@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -14,9 +14,6 @@ import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   connectorTextToggle: {
     flexGrow: 100,
     marginLeft: theme.spacing(-2),
@@ -38,9 +35,9 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return 'false';
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return 'false';
 
-    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
   }, [stagedResource]);
   const resourceFormState = useSelector(
     state =>
@@ -91,7 +88,7 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
 
     // selecting the other option
     const {id} = props;
-    const staggedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+    const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = stagedResource[curr];
 
       return acc;
@@ -105,26 +102,26 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       connection,
       assistantData: connectorMetaData,
     });
-    const finalValues = preSave(formContext.value, staggedRes, { connection });
+    const finalValues = preSave(formContext.value, stagedRes, { connection });
     const newFinalValues = {...finalValues};
 
-    staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
+    stagedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
     if (_httpConnectorId) {
-      staggedRes['/isHttpConnector'] = true;
+      stagedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/formType'] = 'assistant';
-        newFinalValues['/http/formType'] = 'assistant';
+        stagedRes['/http/sessionFormType'] = 'assistant';
+        newFinalValues['/http/sessionFormType'] = 'assistant';
       } else {
         // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/formType'] = 'http';
-        newFinalValues['/http/formType'] = 'http';
+        stagedRes['/http/sessionFormType'] = 'http';
+        newFinalValues['/http/sessionFormType'] = 'http';
       }
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
+      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
@@ -165,7 +162,6 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       />
       <Help
         title="Formview"
-        className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
     </div>

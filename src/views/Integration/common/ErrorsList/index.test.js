@@ -253,7 +253,7 @@ describe('ErrorsListDrawer UI tests', () => {
     const header = rows.find(({textContent}) => textContent === 'ApplicationTypeFlow step nameErrorsLast open error');
 
     expect(header).toBeInTheDocument();
-    const rowContent = rows.find(({textContent}) => textContent === 'ImportPost customer to HubSpot companies4 errors08/04/2022 4:39:35 pm');
+    const rowContent = rows.find(({textContent}) => textContent === 'ImportPost customer to HubSpot companies4 errors08/04/2022 11:09:35 am');
 
     expect(rowContent).toBeInTheDocument();
   });
@@ -264,44 +264,44 @@ describe('ErrorsListDrawer UI tests', () => {
     const rows = screen.getAllByRole('row');
 
     expect(rows[0].textContent).toBe('ApplicationTypeFlow step nameErrorsLast open error');
-    expect(rows[1].textContent).toBe('ImportPost customer to HubSpot companies4 errors08/04/2022 4:39:35 pm');
+    expect(rows[1].textContent).toBe('ImportPost customer to HubSpot companies4 errors08/04/2022 11:09:35 am');
   });
-  test('should click the close button', () => {
+  test('should click the close button', async () => {
     iniStoreAndRender(0);
 
     const closeButton = screen.getByRole('button', {name: /close/i});
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/initialURL');
   });
-  test('should click on the error when error count < 9999', () => {
+  test('should click on the error when error count < 9999', async () => {
     iniStoreAndRender(4);
 
     const errors = screen.getByText('4 errors');
 
     expect(errors).toBeInTheDocument();
 
-    userEvent.click(errors);
+    await userEvent.click(errors);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/60c9b4a7a4004f2e4cfe72b6/flowBuilder/60c9b551a4004f2e4cfe730e/errors/60c9b550a4004f2e4cfe72fc/open'
     );
   });
-  test('should click on the error  when error count > 9999', () => {
+  test('should click on the error  when error count > 9999', async () => {
     iniStoreAndRender(10000);
 
     const errors = screen.getByText('9999+ errors');
 
     expect(errors).toBeInTheDocument();
 
-    userEvent.click(errors);
+    await userEvent.click(errors);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/60c9b4a7a4004f2e4cfe72b6/flowBuilder/60c9b551a4004f2e4cfe730e/errors/60c9b550a4004f2e4cfe72fc/open'
     );
   });
-  test('should click on the success  when error count is 0', () => {
+  test('should click on the success  when error count is 0', async () => {
     iniStoreAndRender(0);
 
-    userEvent.click(screen.getByText('Success'));
+    await userEvent.click(screen.getByText('Success'));
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/60c9b4a7a4004f2e4cfe72b6/flowBuilder/60c9b551a4004f2e4cfe730e/errors/60c9b550a4004f2e4cfe72fc/open'
     );
@@ -335,7 +335,7 @@ describe('ErrorsListDrawer UI tests', () => {
   // test('should click the import buttton', () => {
   //   iniStoreAndRender(4);
 
-  //   userEvent.click(screen.getByText('Import'));
+  //   await userEvent.click(screen.getByText('Import'));
   // });
   test('should test when flow is dataloader', () => {
     const initialStore = getCreatedStore();

@@ -1,4 +1,5 @@
-import jsonUtil from './json';
+import errorMessageStore from './errorStore';
+import jsonUtil, { isJsonValue } from './json';
 
 describe('json util function test', () => {
   describe('containsAllKeys function test', () => {
@@ -100,6 +101,24 @@ describe('json util function test', () => {
       expect(jsonUtil.getObjectKeysFromValue({a: '1', e: 1}, 1)).toEqual(['e']);
       expect(jsonUtil.getObjectKeysFromValue({a: true, e: 1}, true)).toEqual(['a']);
       expect(jsonUtil.getObjectKeysFromValue({a: undefined, e: 1}, undefined)).toEqual(['a']);
+    });
+  });
+
+  describe('isJsonValue function test', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(isJsonValue()).toBeUndefined();
+    });
+
+    test('should return undefined if value is valid json string', () => {
+      expect(isJsonValue(JSON.stringify({id: '123'}))).toBeUndefined();
+    });
+
+    test('should return undefined if value is valid json object', () => {
+      expect(isJsonValue({id: '123'})).toBeUndefined();
+    });
+
+    test('should return error if value is not valid json', () => {
+      expect(isJsonValue('invalid json', 'Field')).toEqual(errorMessageStore('INVALID_JSON_VALUE', {label: 'Field'}));
     });
   });
 });

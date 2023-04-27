@@ -1,4 +1,5 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import Delete from '../commonActions/Delete';
 import GenerateToken from '../commonActions/GenerateToken';
 import References from '../commonActions/References';
@@ -6,7 +7,6 @@ import Edit from '../commonActions/Edit';
 import AgentDownloadInstaller from '../../AgentDownloadInstaller';
 import AgentToken from '../../AgentToken';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnlineStatus from '../../OnlineStatus';
 import AuditLogs from '../commonActions/AuditLogs';
 
@@ -34,14 +34,14 @@ export default {
       key: 'lastHeartBeat',
       heading: 'Last heartbeat',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastHeartbeatAt} />,
       orderBy: 'lastHeartbeatAt',
     },
     {
       key: 'lastUpdated',
       heading: 'Last updated',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
 

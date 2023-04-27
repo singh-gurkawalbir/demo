@@ -91,12 +91,6 @@ export default {
     label: 'EDI x12 format',
     format: 'edi',
     required: true,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['filedefinition'],
-      },
-    ],
   },
   'fixed.format': {
     isLoggable: true,
@@ -104,12 +98,6 @@ export default {
     label: 'Format',
     format: 'fixed',
     required: true,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['fixed'],
-      },
-    ],
   },
   'edifact.format': {
     isLoggable: true,
@@ -117,28 +105,12 @@ export default {
     label: 'EDIFACT format',
     format: 'ediFact',
     required: true,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['delimited/edifact'],
-      },
-    ],
   },
   'file.filedefinition.rules': {
     isLoggable: true,
     type: 'filedefinitioneditor',
     label: 'File generator helper',
     helpKey: 'import.file.filedefinition.rules',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['filedefinition', 'fixed', 'delimited/edifact'],
-      },
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
     refreshOptionsOnChangesTo: [
       'edix12.format',
       'fixed.format',
@@ -309,7 +281,13 @@ export default {
     type: 'checkbox',
     label: 'Skip aggregation',
     defaultValue: r => !!(r && r.file && r.file.skipAggregation),
-    refreshOptionsOnChangesTo: 'file.type',
+    disabledWhen: [
+      {
+        field: 'file.batchSize',
+        isNot: ['', 0, 1],
+      },
+    ],
+    refreshOptionsOnChangesTo: ['file.type', 'file.batchSize'],
     visibleWhenAll: [
       {
         field: 'file.type',

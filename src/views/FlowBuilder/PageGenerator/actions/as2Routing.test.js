@@ -10,6 +10,20 @@ import as2Routing from './as2Routing';
 
 const initialStore = reduxStore;
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
 jest.mock('../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm', () => ({
   __esModule: true,
   ...jest.requireActual('../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm'),
@@ -91,7 +105,7 @@ describe('ExportHooks UI tests', () => {
     expect(position).toBe('left');
     expect(helpKey).toBe('fb.pg.exports.as2routing');
   });
-  test('should test as2Routing component Close button', () => {
+  test('should test as2Routing component Close button', async () => {
     const {Component} = as2Routing;
     const onClose = jest.fn();
 
@@ -104,10 +118,10 @@ describe('ExportHooks UI tests', () => {
     />);
 
     expect(screen.getByText('AS2 connection routing rules')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Close'));
+    await userEvent.click(screen.getByText('Close'));
     expect(onClose).toHaveBeenCalled();
   });
-  test('should click on submit button', () => {
+  test('should click on submit button', async () => {
     mockingCompleteDispatch();
     const {Component} = as2Routing;
     const onClose = jest.fn();
@@ -125,7 +139,7 @@ describe('ExportHooks UI tests', () => {
     />, {initialStore});
 
     expect(screen.getByText('AS2 connection routing rules')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_PATCH',
@@ -165,7 +179,7 @@ describe('ExportHooks UI tests', () => {
 
     expect(store?.getState()?.session.form.as2Routing.remountKey).toBe(0);
 
-    userEvent.click(screen.getByText('RemountAfterSaveButton'));
+    await userEvent.click(screen.getByText('RemountAfterSaveButton'));
     expect(store?.getState()?.session.form.as2Routing.remountKey).toBe(1);
   });
 });

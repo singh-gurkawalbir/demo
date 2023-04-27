@@ -1,31 +1,31 @@
+import { IconButton } from '@mui/material';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core';
+
 import ArrowPopper from '../ArrowPopper';
-import TooltipContent from '../TooltipContent';
-import InfoIcon from '../icons/InfoIcon';
 import HelpContent from '../HelpContent';
+import InfoIcon from '../icons/InfoIcon';
+import TooltipContent from '../TooltipContent';
 
 const useStyles = makeStyles(theme => ({
   small: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing('-2px', 1, 0),
   },
   infoText: {
     color: theme.palette.secondary.main,
   },
   xs: {
-    marginTop: theme.spacing(-0.5),
     width: theme.spacing(3),
     height: theme.spacing(3),
-    '& >* svg': {
+    '& > svg': {
       fontSize: theme.spacing(2),
     },
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title }) {
+export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title, basicInfo = false }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -51,7 +51,8 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
         tabIndex={tabIndex}
-        aria-haspopup="true">
+        aria-haspopup="true"
+      >
         <InfoIcon />
       </IconButton>
       <ArrowPopper
@@ -60,10 +61,11 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         anchorEl={anchorEl}
         placement={placement}
         onClose={handleInfoClose}
+        onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
-        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose}>
-          <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains}>{info}</TooltipContent>
+        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}>
+          <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} basicInfo={basicInfo}>{info}</TooltipContent>
         </HelpContent>
       </ArrowPopper>
     </>

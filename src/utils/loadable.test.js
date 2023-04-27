@@ -1,13 +1,14 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import { Loading } from './loadable';
+import { renderWithProviders } from '../test/test-utils';
 
 function initLoadbleLoading({ error, timedOut, pastDelay }) {
   const ui = (
     <Loading error={error} timedOut={timedOut} pastDelay={pastDelay} />
   );
 
-  return render(ui);
+  return renderWithProviders(ui);
 }
 
 jest.mock('../components/Loader', () => ({
@@ -64,6 +65,6 @@ describe('Testsuite for Loadable', () => {
       pastDelay: false,
     });
 
-    expect(container.firstChild).toBeEmptyDOMElement();
+    expect(container).toBeUndefined();
   });
 });

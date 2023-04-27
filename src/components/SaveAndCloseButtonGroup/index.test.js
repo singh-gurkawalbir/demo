@@ -85,7 +85,7 @@ describe('saveAndCloseButtonGroup test cases', () => {
 
       const closeButtonRef = screen.getByRole('button', { name: 'Close' });
 
-      userEvent.click(closeButtonRef);
+      await userEvent.click(closeButtonRef);
 
       expect(onClose).toHaveBeenCalledTimes(1);
       expect(handleSave).not.toHaveBeenCalled();
@@ -101,7 +101,7 @@ describe('saveAndCloseButtonGroup test cases', () => {
 
       const saveButtonRef = screen.getByRole('button', { name: 'Save' });
 
-      userEvent.click(saveButtonRef);
+      await userEvent.click(saveButtonRef);
 
       expect(onClose).not.toHaveBeenCalled();
       expect(handleSave).toHaveBeenCalledTimes(1);
@@ -117,7 +117,7 @@ describe('saveAndCloseButtonGroup test cases', () => {
 
       const saveAndCloseButtonRef = screen.getByRole('button', { name: 'Save & close' });
 
-      userEvent.click(saveAndCloseButtonRef);
+      await userEvent.click(saveAndCloseButtonRef);
 
       expect(onClose).not.toHaveBeenCalled();
       expect(handleSave).not.toHaveBeenCalled();

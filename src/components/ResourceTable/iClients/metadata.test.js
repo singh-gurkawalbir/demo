@@ -7,10 +7,10 @@ import { renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: ({date}) => (<span>{date}</span>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: ({date}) => (<span>{date}</span>),
 }));
 
 jest.mock('../../CeligoTable/TableContext', () => ({
@@ -32,12 +32,12 @@ function initDefault(data = {}) {
 }
 
 describe('test suite for default', () => {
-  test('should render the table accordingly', () => {
+  test('should render the table accordingly', async () => {
     const data = [{
       _id: '123',
       name: 'iClient test',
       lastModified: '2020-08-24T13:18:06.179Z',
-      provider: 'custom_oauth2',
+      provider: 'Custom OAuth2.0',
       oauth2: {
         clientId: 'nhhhh',
         clientSecret: '******',
@@ -50,7 +50,7 @@ describe('test suite for default', () => {
 
     expect(columnNames).toEqual([
       'Name',
-      'Provider',
+      'Application',
       'Last updated',
       'Actions',
     ]);
@@ -58,11 +58,11 @@ describe('test suite for default', () => {
     //  first for table headings and the second as data row
     expect(screen.getAllByRole('row')).toHaveLength(2);
 
+    expect(screen.getByRole('rowheader', { name: data[0].name})).toBeInTheDocument();
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
-      'iClient test',
-      'custom_oauth2',
+      'Custom OAuth2.0',
       '2020-08-24T13:18:06.179Z',
       '',
     ]);
@@ -70,7 +70,7 @@ describe('test suite for default', () => {
 
     const actionButton = screen.getByRole('button', {name: /more/i});
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
     expect(actionItems).toEqual([

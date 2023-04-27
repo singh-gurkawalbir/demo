@@ -1,9 +1,9 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { fade } from '@material-ui/core/styles/colorManipulator';
-import Modal from '@material-ui/core/Modal';
-import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@mui/styles';
+import { alpha } from '@mui/material/styles';
+import Modal from '@mui/material/Modal';
+import Paper from '@mui/material/Paper';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
@@ -12,7 +12,9 @@ const useStyles = makeStyles(theme => ({
     justifyItems: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: fade(theme.palette.secondary.light, 0.5),
+    '&>.MuiBackdrop-root': {
+      backgroundColor: alpha(theme.palette.secondary.light, 0.7),
+    },
   },
   paper: {
     padding: theme.spacing(2, 4),

@@ -65,7 +65,7 @@ jest.mock('../../../../utils/string', () => ({
     'randomvalue'
   ),
 }));
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
       <Route path="/integrations/:integrationId">
@@ -76,18 +76,18 @@ function renderFuntion(data) {
       </Route>
     </MemoryRouter>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for create pull', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should push createpull URL when status is set to failed', () => {
-    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed', integrationId: '5e44efa28015c9464272256f'});
+  test('should push createpull URL when status is set to failed', async () => {
+    await renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed', integrationId: '5e44efa28015c9464272256f'});
     const createpullButton = screen.getByText('Create pull');
 
-    userEvent.click(createpullButton);
+    await userEvent.click(createpullButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44efa28015c9464272256f/pull/randomvalue/open');
   });
 });

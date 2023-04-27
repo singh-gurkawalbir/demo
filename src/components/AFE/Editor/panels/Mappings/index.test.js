@@ -227,7 +227,7 @@ describe('mappingWrapper test cases', () => {
       ['source3', 'destination1', 'source2', 'destination2', '', '']
     );
   });
-  test('should show Virtualized container when mapping more than 99', () => {
+  test('should show Virtualized container when mapping more than 99', async () => {
     const mappings = returnHundreMapping();
 
     mutateStore(initialStore, draft => {
@@ -239,7 +239,7 @@ describe('mappingWrapper test cases', () => {
     });
     renderWithProviders(<MemoryRouter><MappingWrapper /></MemoryRouter>, {initialStore});
     expect(screen.getByText('VirtualizedDragContainer')).toBeInTheDocument();
-    userEvent.click(screen.getByText('onSortEnd'));
+    await userEvent.click(screen.getByText('onSortEnd'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.shiftOrder('0', 1)
     );

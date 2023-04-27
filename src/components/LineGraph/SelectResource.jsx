@@ -1,9 +1,9 @@
-import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useState, useMemo } from 'react';
+import { ArrowPopper, Box } from '@celigo/fuse-ui';
 import { emptyList } from '../../constants';
 import ActionGroup from '../ActionGroup';
-import ArrowPopper from '../ArrowPopper';
 import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -36,11 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   child: {
     flexBasis: '100%',
-  },
-  dateRangePickerWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -143,51 +138,49 @@ export default function SelectResource(props) {
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={toggleClick}>
-        {anchorEl && (
-          <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.filter}>
-              <div className={classes.wrapper}>
-                <FormControl component="fieldset" className={classes.formControl}>
-                  {!isFlow && (
-                  <FormLabel component="legend" className={classes.heading}>
-                    Select up to 8 flows
-                  </FormLabel>
-                  )}
-                  <FormGroup className={classes.formGroup}>
-                    {flowResources.map(m => (
-                      <Tooltip key={m._id} title={getTooltip(m._id)} placement="left-start">
-                        <FormControlLabel
-                          className={classes.selectResourceItem}
-                          control={(
-                            <Checkbox
-                              color="primary"
-                              checked={checked.includes(m._id)}
-                              onChange={handleFlowSelect(m._id)}
-                              value="required"
-                              className={classes.selectResourceCheck}
-                            />
-                          )}
-                          label={m.name}
-                        />
-                      </Tooltip>
-                    ))}
+        <Box display="flex" sx={{padding: 2}}>
+          <div className={classes.filter}>
+            <div className={classes.wrapper}>
+              <FormControl variant="standard" component="fieldset" className={classes.formControl}>
+                {!isFlow && (
+                <FormLabel component="legend" className={classes.heading}>
+                  Select up to 8 flows
+                </FormLabel>
+                )}
+                <FormGroup className={classes.formGroup}>
+                  {flowResources.map(m => (
+                    <Tooltip key={m._id} title={getTooltip(m._id)} placement="left-start">
+                      <FormControlLabel
+                        className={classes.selectResourceItem}
+                        control={(
+                          <Checkbox
+                            color="primary"
+                            checked={checked.includes(m._id)}
+                            onChange={handleFlowSelect(m._id)}
+                            value="required"
+                            className={classes.selectResourceCheck}
+                          />
+                        )}
+                        label={m.name}
+                      />
+                    </Tooltip>
+                  ))}
 
-                  </FormGroup>
-                </FormControl>
-              </div>
-              <div className={classes.actions}>
-                <ActionGroup>
-                  <FilledButton onClick={handleSave}>
-                    Apply
-                  </FilledButton>
-                  <TextButton onClick={handleClose}>
-                    Cancel
-                  </TextButton>
-                </ActionGroup>
-              </div>
+                </FormGroup>
+              </FormControl>
+            </div>
+            <div className={classes.actions}>
+              <ActionGroup>
+                <FilledButton onClick={handleSave}>
+                  Apply
+                </FilledButton>
+                <TextButton onClick={handleClose}>
+                  Cancel
+                </TextButton>
+              </ActionGroup>
             </div>
           </div>
-        )}
+        </Box>
       </ArrowPopper>
     </>
   );

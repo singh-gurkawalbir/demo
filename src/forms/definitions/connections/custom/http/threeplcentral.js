@@ -16,7 +16,11 @@ export default {
       '/assistant': '3plcentral',
       '/http/auth/type': 'oauth',
       '/http/mediaType': 'json',
-      '/http/baseURI': 'https://secure-wms.com/',
+      '/http/baseURI': `${
+        formValues['/http/unencrypted/environment'] === 'sandbox'
+          ? 'https://box.secure-wms.com/'
+          : 'https://secure-wms.com/'
+      }`,
       '/http/ping/relativeURI': 'orders',
       '/http/ping/method': 'GET',
       '/http/auth/token/refreshMethod': 'POST',
@@ -24,7 +28,11 @@ export default {
       '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/grantType': 'clientcredentials',
       '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
-      '/http/auth/oauth/tokenURI': 'https://secure-wms.com/AuthServer/api/Token',
+      '/http/auth/oauth/tokenURI': `${
+        formValues['/http/unencrypted/environment'] === 'sandbox'
+          ? 'https://box.secure-wms.com/AuthServer/api/Token'
+          : 'https://secure-wms.com/AuthServer/api/Token'
+      }`,
       '/http/auth/oauth/accessTokenBody': accessTokenBody,
       '/http/auth/token/location': 'header',
       '/http/auth/token/headerName': 'Authorization',
@@ -33,6 +41,22 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.unencrypted.environment': {
+      id: 'http.unencrypted.environment',
+      type: 'select',
+      label: 'Environment',
+      required: true,
+      helpKey: '3plcentral.connection.http.unencrypted.environment',
+      options: [
+        {
+          items: [
+            { label: 'Production', value: 'production' },
+            { label: 'Sandbox', value: 'sandbox' },
+          ],
+        },
+      ],
+      defaultValue: r => r?.http?.unencrypted?.environment || 'production',
+    },
     'http.unencrypted.tpl': {
       id: 'http.unencrypted.tpl',
       type: 'text',
@@ -67,7 +91,8 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.tpl',
+        fields: ['http.unencrypted.environment',
+          'http.unencrypted.tpl',
           'http.unencrypted.userLoginId',
           'http._iClientId'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },

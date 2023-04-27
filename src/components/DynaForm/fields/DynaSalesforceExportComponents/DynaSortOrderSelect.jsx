@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { makeStyles, FormLabel} from '@material-ui/core';
+import { FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import DynaSelectOptionsGenerator from '../DynaRefreshableSelect';
 import DynaSelect from '../DynaSelect';
 import FieldHelp from '../../FieldHelp';

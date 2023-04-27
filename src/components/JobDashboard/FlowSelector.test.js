@@ -106,7 +106,7 @@ describe('testsuite for FlowSelector', () => {
     initialStore = getCreatedStore();
   });
 
-  test('should test the flow selector by selecting a flow from integration', () => {
+  test('should test the flow selector by selecting a flow from integration', async () => {
     initFlowSelector({
       integrationId: '12345',
       onChange: mockOnChange,
@@ -116,17 +116,17 @@ describe('testsuite for FlowSelector', () => {
     });
 
     expect(selectFlowButtonNode).toBeInTheDocument();
-    userEvent.click(selectFlowButtonNode);
+    await userEvent.click(selectFlowButtonNode);
     const selectFlowButton = screen.getByRole('option', {name: /select flow/i});
 
     expect(selectFlowButton).toBeInTheDocument();
     const testFlowName1Button = screen.getByRole('option', {name: /test flow name 1/i});
 
     expect(testFlowName1Button).toBeInTheDocument();
-    userEvent.click(testFlowName1Button);
+    await userEvent.click(testFlowName1Button);
     expect(mockOnChange).toHaveBeenCalledWith('67890');
   });
-  test('should test the flow selector by selecting a integration app flow', () => {
+  test('should test the flow selector by selecting a integration app flow', async () => {
     initFlowSelector({
       integrationId: '67839',
       onChange: mockOnChange,
@@ -136,11 +136,11 @@ describe('testsuite for FlowSelector', () => {
     });
 
     expect(selectFlowButtonNode).toBeInTheDocument();
-    userEvent.click(selectFlowButtonNode);
+    await userEvent.click(selectFlowButtonNode);
     const testFlowName2Button = screen.getByRole('option', {name: /test flow name 2/i});
 
     expect(testFlowName2Button).toBeInTheDocument();
-    userEvent.click(testFlowName2Button);
+    await userEvent.click(testFlowName2Button);
     expect(mockOnChange).toHaveBeenCalledWith('4d282');
   });
 });

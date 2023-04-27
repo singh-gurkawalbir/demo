@@ -50,7 +50,7 @@ describe('transfers test cases', () => {
     expect(screen.queryByText(/Back to transfers/i)).not.toBeInTheDocument();
     expect(transferButton).toBeInTheDocument();
 
-    userEvent.click(transferButton);
+    await userEvent.click(transferButton);
 
     expect(screen.queryByText(/Back to transfers/i)).toBeInTheDocument();
   });

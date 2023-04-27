@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-  ClickAwayListener,
-  makeStyles,
   Checkbox,
   FormGroup,
   FormLabel,
@@ -10,10 +8,11 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
-import ArrowPopper from '../../../../../../components/ArrowPopper';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
@@ -89,102 +88,101 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
   const open = !!anchorEl;
 
   return (
-    <ClickAwayListener onClickAway={handleClose}>
-      <>
-        <TextButton onClick={handleMenu} className={classes.filter}>
-          Filters
-          {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
-        </TextButton>
-        <ArrowPopper
-          placement="bottom"
-          id="categoryMappingFilters"
-          open={open}
-          anchorEl={anchorEl}>
-          <div className={classes.filter}>
-            <div className={classes.wrapper}>
-              <FormControl component="fieldset" className={classes.formControl}>
-                <FormLabel component="legend" className={classes.heading}>
-                  {`${uiAssistant} attributes`}
-                </FormLabel>
-                <FormGroup className={classes.formGroup}>
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        color="primary"
-                        checked={!!attributes.required}
-                        onChange={handleAttributeChange('required')}
-                        value="required"
+    <>
+      <TextButton onClick={handleMenu} className={classes.filter}>
+        Filters
+        {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
+      </TextButton>
+      <ArrowPopper
+        placement="bottom"
+        id="categoryMappingFilters"
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}>
+        <div className={classes.filter}>
+          <div className={classes.wrapper}>
+            <FormControl variant="standard" component="fieldset" className={classes.formControl}>
+              <FormLabel component="legend" className={classes.heading}>
+                {`${uiAssistant} attributes`}
+              </FormLabel>
+              <FormGroup className={classes.formGroup}>
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      color="primary"
+                      checked={!!attributes.required}
+                      onChange={handleAttributeChange('required')}
+                      value="required"
                       />
                     )}
-                    label="Required"
+                  label="Required"
                   />
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        color="primary"
-                        checked={!!attributes.preferred}
-                        onChange={handleAttributeChange('preferred')}
-                        value="preferred"
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      color="primary"
+                      checked={!!attributes.preferred}
+                      onChange={handleAttributeChange('preferred')}
+                      value="preferred"
                       />
                     )}
-                    label="Preferred"
+                  label="Preferred"
                   />
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        color="primary"
-                        checked={!!attributes.conditional}
-                        onChange={handleAttributeChange('conditional')}
-                        value="conditional"
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      color="primary"
+                      checked={!!attributes.conditional}
+                      onChange={handleAttributeChange('conditional')}
+                      value="conditional"
                       />
                     )}
-                    label="Conditional"
+                  label="Conditional"
                   />
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        color="primary"
-                        checked={!!attributes.optional}
-                        onChange={handleAttributeChange('optional')}
-                        value="optional"
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      color="primary"
+                      checked={!!attributes.optional}
+                      onChange={handleAttributeChange('optional')}
+                      value="optional"
                       />
                     )}
-                    label="Optional"
+                  label="Optional"
                   />
-                </FormGroup>
-              </FormControl>
+              </FormGroup>
+            </FormControl>
 
-              <FormControl component="fieldset" className={classes.formControl}>
-                <FormLabel component="legend" className={classes.heading}>
-                  Field mappings
-                </FormLabel>
-                <RadioGroup
-                  aria-label="mappings"
-                  name="mappings"
-                  value={mappingFilter}
-                  onChange={handleChange}
-                  className={classes.formGroup}>
-                  <FormControlLabel
-                    value="all"
-                    control={<Radio color="primary" />}
-                    label="All"
+            <FormControl variant="standard" component="fieldset" className={classes.formControl}>
+              <FormLabel component="legend" className={classes.heading}>
+                Field mappings
+              </FormLabel>
+              <RadioGroup
+                aria-label="mappings"
+                name="mappings"
+                value={mappingFilter}
+                onChange={handleChange}
+                className={classes.formGroup}>
+                <FormControlLabel
+                  value="all"
+                  control={<Radio color="primary" />}
+                  label="All"
                   />
-                  <FormControlLabel
-                    value="mapped"
-                    control={<Radio color="primary" />}
-                    label="Mapped"
+                <FormControlLabel
+                  value="mapped"
+                  control={<Radio color="primary" />}
+                  label="Mapped"
                   />
-                  <FormControlLabel
-                    value="unmapped"
-                    control={<Radio color="primary" />}
-                    label="Unmapped"
+                <FormControlLabel
+                  value="unmapped"
+                  control={<Radio color="primary" />}
+                  label="Unmapped"
                   />
-                </RadioGroup>
-              </FormControl>
-            </div>
+              </RadioGroup>
+            </FormControl>
           </div>
-        </ArrowPopper>
-      </>
-    </ClickAwayListener>
+        </div>
+      </ArrowPopper>
+    </>
   );
 }

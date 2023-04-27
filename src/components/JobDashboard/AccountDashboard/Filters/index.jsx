@@ -1,8 +1,7 @@
 import React, { useMemo, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  makeStyles, Typography,
-} from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay } from 'date-fns';
 import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';

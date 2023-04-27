@@ -55,10 +55,11 @@ describe('template util function test', () => {
       expect(getApplication({type: 'http'})).toEqual({id: 'http', name: 'HTTP'});
     });
 
-    test('should return correct application details when rbdms connection is passed', () => {
+    test('should return correct application details when rbdms and jdbc connection is passed', () => {
       expect(getApplication({type: 'rdbms', rdbms: {type: 'mssql'}})).toEqual({id: 'mssql', name: 'Microsoft SQL'});
       expect(getApplication({type: 'rdbms', rdbms: {type: 'mysql'}})).toEqual({id: 'mysql', name: 'MySQL'});
       expect(getApplication({type: 'rdbms', rdbms: {type: 'oracle'}})).toEqual({id: 'oracle', name: 'Oracle DB (SQL)'});
+      expect(getApplication({type: 'jdbc', jdbc: {type: 'netsuitejdbc'}})).toEqual({id: 'netsuitejdbc', name: 'NetSuite JDBC'});
     });
 
     test('should return correct application details when rest connection is passed', () => {
@@ -546,6 +547,7 @@ describe('template util function test', () => {
             installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
             name: 'Integrator Adaptor Package',
             options: {},
+            sourceConnId: '569f5e778a34de4718a56176',
             type: 'installPackage',
           },
         ],
@@ -853,6 +855,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce Connection 1 account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '5f90501a6eb5c646194a1d09',
             options: {},
           },
           {
@@ -864,6 +867,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce Connection 2 account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '6108d67a5891380354d1dce0',
             options: {},
           },
         ],
@@ -1151,6 +1155,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce Connection 1 account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '5f90501a6eb5c646194a1d09',
             options: {},
           },
           {
@@ -1162,6 +1167,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce Connection 2 account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '6108d67a5891380354d1dce0',
             options: {},
           },
         ],
@@ -1405,6 +1411,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '5f90501a6eb5c646194a1d09',
             options: {},
           },
         ],
@@ -1647,6 +1654,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '5f90501a6eb5c646194a1d09',
             options: {},
           },
         ],
@@ -1878,6 +1886,7 @@ describe('template util function test', () => {
             description: 'Please install Integrator bundle in Salesforce account',
             name: 'Integrator Adaptor Package',
             type: 'installPackage',
+            sourceConnId: '5f90501a6eb5c646194a1d09',
             options: {},
           },
         ],

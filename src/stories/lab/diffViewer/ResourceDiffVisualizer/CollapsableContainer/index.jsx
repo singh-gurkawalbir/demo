@@ -3,8 +3,8 @@ import {
   Typography,
   AccordionDetails,
   Accordion,
-} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useEffect } from 'react';
 import ExpandMoreIcon from '../../../../../components/icons/ArrowDownIcon';
 

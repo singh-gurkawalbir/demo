@@ -2,6 +2,7 @@ import util from '../../../../../utils/json';
 import { isOldRestAdaptor, inferResourceType } from '../../../../../utils/resource';
 import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
 import { GRAPHQL_JSON_FIELDS } from '../../../../../utils/graphql';
+import handlebarHelpersList from '../handlebarHelpersList';
 
 /* this util is used to read field label and generate editor title from it
 * eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
@@ -115,21 +116,46 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
-    const {fieldId, paramIndex} = options;
-    const {type, value, arrayIndex} = fieldState || {};
+    const {
+      options,
+      resource,
+      fieldState,
+      connection,
+      isPageGenerator,
+      isStandaloneResource,
+      formValues,
+      ...rest
+    } = props;
+    const { fieldId, paramIndex } = options;
+    const { type, value, arrayIndex } = fieldState || {};
     let rule = value;
 
-    if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {
-    // below formatting applies for only relative URI, body and sql fields
-      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value || '';
+    if (
+      type === 'relativeuri' ||
+      type === 'httprequestbody' ||
+      type === 'sqlquerybuilder'
+    ) {
+      // below formatting applies for only relative URI, body and sql fields
+      const formattedRule =
+        typeof arrayIndex === 'number' && Array.isArray(value)
+          ? value[arrayIndex]
+          : value || '';
 
-      rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
+      rule =
+        typeof formattedRule === 'string'
+          ? formattedRule
+          : JSON.stringify(formattedRule, null, 2);
     } else if (type === 'soqlquery') {
       rule = value?.query;
     }
 
-    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator, isStandaloneResource});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({
+      resource,
+      fieldId,
+      connection,
+      isPageGenerator,
+      isStandaloneResource,
+    });
     let v1Rule;
     let v2Rule;
 
@@ -138,11 +164,20 @@ export default {
       v2Rule = rule;
     }
 
-    const connectionMediaType = connection?.type === 'http' ? connection?.http?.mediaType : connection?.rest?.mediaType;
-    const contentType = fieldState?.options?.contentType || fieldState?.contentType || connectionMediaType;
+    const connectionMediaType =
+      connection?.type === 'http'
+        ? connection?.http?.mediaType
+        : connection?.rest?.mediaType;
+    const contentType =
+      fieldState?.options?.contentType ||
+      fieldState?.contentType ||
+      connectionMediaType;
     let resultMode;
 
-    if (fieldState?.type !== 'httprequestbody' && fieldState?.id !== 'webhook.successBody') {
+    if (
+      fieldState?.type !== 'httprequestbody' &&
+      fieldState?.id !== 'webhook.successBody'
+    ) {
       resultMode = 'text';
     } else if (fieldId === 'file.xml.body') {
       resultMode = 'xml';
@@ -155,9 +190,11 @@ export default {
 
     if (fieldId === 'assistantMetadata.queryParams') {
       rule = fieldState.value[Object.keys(fieldState.value)[paramIndex]];
-    } else if (fieldId === 'oauth2.token.headers' ||
-    fieldId === 'oauth2.revoke.headers' ||
-    fieldId === 'oauth2.refresh.headers') {
+    } else if (
+      fieldId === 'oauth2.token.headers' ||
+      fieldId === 'oauth2.revoke.headers' ||
+      fieldId === 'oauth2.refresh.headers'
+    ) {
       rule = fieldState.value[paramIndex]?.value;
     }
 
@@ -176,20 +213,24 @@ export default {
     rules: { strict: !!editor.strict, template: editor.rule },
     data: JSON.parse(editor.data),
   }),
-  validate: ({data}) => ({
+  validate: ({ data }) => ({
     dataError: !data
       ? 'Must provide some sample data.'
       : typeof data === 'string' && util.validateJsonString(data),
   }),
-  processResult: ({resultMode}, result) => {
-    const {data, ...rest} = result;
+  processResult: ({ resultMode }, result) => {
+    const { data, ...rest } = result;
 
     if (data) {
       if (resultMode === 'json') {
         try {
           JSON.parse(data);
         } catch (e) {
-          return {data, warning: `Evaluated result is not valid JSON. ${e.message || ''}`, ...rest};
+          return {
+            data,
+            warning: `Evaluated result is not valid JSON. ${e.message || ''}`,
+            ...rest,
+          };
         }
       } else if (resultMode === 'xml') {
         const xmldoc = new DOMParser().parseFromString(data, 'text/xml');
@@ -198,11 +239,75 @@ export default {
         if (parseError?.length) {
           const errorText = parseError[0].childNodes?.[1]?.textContent || '';
 
-          return {data, warning: `Evaluated result is not valid XML. ${errorText}`, ...rest};
+          return {
+            data,
+            warning: `Evaluated result is not valid XML. ${errorText}`,
+            ...rest,
+          };
         }
       }
     }
 
     return result;
+  },
+  getChatOptions: () => ({
+    enabled: true,
+    placeholder:
+      'Describe in detail what you would like me to do. I can also make changes to your template for you',
+    request: {
+      model: 'gpt-3.5-turbo',
+      temperature: 0,
+      top_p: 1,
+      max_tokens: 512,
+      messages: [
+        {
+          role: 'system',
+          content: `You are an assistant tasked to build valid, handlebar templates that typically generate a valid json object. 
+ These templates include handlebar placeholders that reference fields from the sample record data provided below.`,
+        },
+        {
+          role: 'user',
+          content: `Only give valid handlebar templates. 
+ Do not output any explanations.
+ use whitespace to format your output in a readable way.
+ Assume any handlebar placeholders reference fields from the sample record data provided below.
+ Always add to the existing template, unless told to replace it.`,
+        },
+        {
+          role: 'user',
+          content: `Restrict all handlebar helpers to the following list:
+${handlebarHelpersList}`,
+        },
+        {
+          role: 'user',
+          content: `generate a json object template with the following fields: age, id, name. 
+ The values of these fields are placeholders.`,
+        },
+        {
+          role: 'assistant',
+          content: `{
+  "age": {{age}}, 
+  "id": {{id}},
+  "name": {{name}} 
+}`,
+        },
+      ],
+    },
+  }),
+
+  validateChatResponse: (editor, response) => {
+    const isValid = typeof response === 'string' && response.length;
+
+    if (isValid) {
+      return { isValid, parsedResponse: response };
+    }
+
+    return {
+      isValid,
+      validationErrors: [
+        'Celigo chat returned the following invalid template:',
+        response,
+      ],
+    };
   },
 };

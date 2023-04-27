@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Position } from 'react-flow-renderer';
+import makeStyles from '@mui/styles/makeStyles';
+import { Position } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import DefaultHandle from './Handles/DefaultHandle';
 import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
@@ -14,15 +15,25 @@ const useStyles = makeStyles(theme => ({
   pgContainer: {
     paddingTop: 60,
   },
+  iconLayoutPgContainer: {
+    paddingTop: 0,
+    paddingRight: 0,
+  },
   root: {
     width: 250,
+    margin: theme.spacing(0, -0.5),
+    cursor: 'default',
+  },
+  iconLayoutRoot: {
+    width: 106,
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },
 }));
 
 export default function PageGeneratorNode(props) {
-  const { data = {} } = props;
+  const { data = {}} = props;
+  const { isSubFlow} = data;
   const classes = useStyles();
   const { flow, flowId } = useFlowContext();
   const dispatch = useDispatch();
@@ -38,19 +49,25 @@ export default function PageGeneratorNode(props) {
   }, [dispatch, flowId]);
   const handleMove = useHandleMovePG(flowId);
 
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+
   return (
-    <div className={classes.root}>
-      <div className={classes.pgContainer}>
+    <div className={clsx({[classes.iconLayoutRoot]: isIconView}, {[classes.root]: !isIconView})}>
+      <div className={clsx({[classes.iconLayoutPgContainer]: isIconView}, {[classes.pgContainer]: !isIconView})}>
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
           index={+pgIndex}
+          isSubFlow={isSubFlow}
           onDelete={showDelete && handleDelete}
           flowId={flowId}
           onMove={handleMove}
           integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}
           isViewMode={isViewMode || isFreeFlow}
+          isIconView={isIconView}
         />
       </div>
 

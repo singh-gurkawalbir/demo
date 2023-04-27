@@ -1,6 +1,6 @@
 /* global */
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
@@ -189,6 +189,7 @@ describe('Mock output editor field UI tests', () => {
 
     expect(screen.getByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeInTheDocument();
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockOutputFieldProps.id, {isValid: false, errorMessages: errorMessageStore('MOCK_OUTPUT_INVALID_JSON')})
     );
@@ -196,6 +197,7 @@ describe('Mock output editor field UI tests', () => {
   test('should dispatch correct action for valid mock output', () => {
     initMockDataEditorField();
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockOutputFieldProps.id, {isValid: true})
     );
@@ -203,21 +205,23 @@ describe('Mock output editor field UI tests', () => {
   test('should push correct drawer url when clicked on expand button if preview panel is available for the resource', () => {
     initMockDataEditorField();
 
-    const expandButton = screen.getByRole('button');
+    waitFor(async () => {
+      const expandButton = screen.getByRole('button');
 
-    expect(expandButton).toBeInTheDocument();
+      expect(expandButton).toBeInTheDocument();
 
-    expect(expandButton).toBeEnabled();
+      expect(expandButton).toBeEnabled();
 
-    userEvent.click(expandButton);
+      await userEvent.click(expandButton);
 
-    expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+      expect(mockHistoryPush).toHaveBeenCalledTimes(1);
 
-    expect(mockHistoryPush).toHaveBeenCalledWith(`${buildDrawerUrl({
-      path: drawerPaths.RESOURCE_MOCK_DATA,
-      baseUrl: mockRouteMatch.url,
-      params: { formKey, fieldId: mockOutputFieldProps.id },
-    })}`);
+      expect(mockHistoryPush).toHaveBeenCalledWith(`${buildDrawerUrl({
+        path: drawerPaths.RESOURCE_MOCK_DATA,
+        baseUrl: mockRouteMatch.url,
+        params: { formKey, fieldId: mockOutputFieldProps.id },
+      })}`);
+    });
   });
 });
 
@@ -259,6 +263,7 @@ describe('Mock response editor field UI tests', () => {
 
     expect(screen.getByText(errorMessageStore('MOCK_RESPONSE_INVALID_JSON'))).toBeInTheDocument();
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockResponseFieldProps.id, {isValid: false, errorMessages: errorMessageStore('MOCK_RESPONSE_INVALID_JSON')})
     );
@@ -266,6 +271,7 @@ describe('Mock response editor field UI tests', () => {
   test('should dispatch correct action for valid mock response', () => {
     initMockDataEditorField({resourceType: 'imports'});
 
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.form.forceFieldState(formKey)(mockResponseFieldProps.id, {isValid: true})
     );

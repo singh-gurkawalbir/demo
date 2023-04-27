@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import ReactResizeDetector from 'react-resize-detector';
 import { selectors } from '../../reducers';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
@@ -13,23 +13,13 @@ import { useSelectorMemo } from '../../hooks';
 import { emptyObject } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
-  form: {
-    height: props =>
-      `calc(100vh - ${props.heightOffset || (155 + theme.appBarHeight)}px - ${
-        props.notificationPanelHeight
-      }px)`,
-    width: props => {
-      if (props.occupyFullWidth) return '100%';
-
-      return props.variant === 'edit' ? '100%' : 660;
-    },
-    maxHeight: 'unset',
-    padding: '0px !important',
-  },
   notification: {
     paddingBottom: theme.spacing(2),
     '&:empty': {
       display: 'none',
+    },
+    '& .MuiSvgIcon-root': {
+      fontSize: theme.spacing(4),
     },
   },
 }));
@@ -96,7 +86,16 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
       </div>
       {/* if field is not loggable this context ensures that isLoggable is false */}
       <IsLoggableContextProvider isLoggable={false}>
-        <ResourceForm className={classes.form} {...props} />
+        <ResourceForm
+          sxCss={{
+            height: theme => `calc(100vh - ${props.heightOffset || (155 + theme.appBarHeight)}px - ${
+              notificationPanelHeight
+            }px)`,
+            // eslint-disable-next-line no-nested-ternary
+            width: props.occupyFullWidth ? '100%' : props.variant === 'edit' ? '100%' : 660,
+            maxHeight: 'unset',
+            padding: '0px !important',
+          }} {...props} />
       </IsLoggableContextProvider>
     </div>
   );

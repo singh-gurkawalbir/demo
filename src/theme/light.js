@@ -1,4 +1,4 @@
-import { fade } from '@material-ui/core/styles/';
+import { alpha } from '@mui/material/styles/';
 import colors from './colors';
 
 const appBarHeight = 36;
@@ -12,7 +12,7 @@ export default {
   showMoreHeight: 96,
 
   palette: {
-    type: 'light',
+    mode: 'light',
     background: {
       paper: colors.celigoWhite,
       paper2: colors.celigoNeutral2,
@@ -90,6 +90,9 @@ export default {
         '&: disabled': {
           cursor: 'not-allowed',
         },
+      },
+      sizeSmall: {
+        padding: 20,
       },
       contained: {
         border: '1px solid',
@@ -171,7 +174,7 @@ export default {
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',
-          content: " '' ",
+          content: '""',
           display: 'block',
           height: '1px',
           left: '50%',
@@ -439,7 +442,7 @@ export default {
     MuiTableCell: {
       root: {
         position: 'relative',
-        padding: [[10, 16]],
+        padding: 20,
         borderBottomColor: colors.celigoNeutral3,
         verticalAlign: 'top',
       },
@@ -514,7 +517,7 @@ export default {
         },
         '&.Mui-disabled': {
           backgroundColor: colors.celigoNeutral2,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
 
         },
       },
@@ -532,7 +535,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
           '&:hover': {
             borderColor: colors.celigoNeutral3,
           },
@@ -560,7 +563,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
         },
       },
       inputMultiline: {
@@ -579,6 +582,23 @@ export default {
       },
       inputAdornedEnd: {
         paddingRight: 30,
+      },
+    },
+    MuiTextField: {
+      root: {
+        background: colors.celigoWhite,
+        '&:hover': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&$focused': {
+          backgroundColor: colors.celigoWhite,
+          borderColor: colors.celigoAccent2,
+        },
+        '&.Mui-disabled': {
+          backgroundColor: colors.celigoNeutral2,
+          color: alpha(colors.celigoNeutral6, 0.8),
+        },
       },
     },
     MuiInputAdornment: {
@@ -614,7 +634,7 @@ export default {
         '&$disabled': {
           backgroundColor: colors.celigoNeutral2,
           borderColor: `${colors.celigoNeutral3} !important`,
-          color: fade(colors.celigoNeutral6, 0.8),
+          color: alpha(colors.celigoNeutral6, 0.8),
           '& >.MuiSelect-icon': {
             display: 'none',
           },
@@ -659,7 +679,7 @@ export default {
     },
     MuiBackdrop: {
       root: {
-        backgroundColor: fade(colors.celigoNeutral6, 0.7),
+        backgroundColor: alpha(colors.celigoNeutral6, 0.7),
       },
     },
     MuiFormGroup: {

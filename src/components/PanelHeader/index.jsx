@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import InfoIconButton from '../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
@@ -11,10 +12,10 @@ const useStyles = makeStyles(theme => ({
   },
   infoIcon: {
     color: theme.palette.text.hint,
-    marginTop: -2,
   },
   panelHeaderTitle: {
     display: 'flex',
+    alignItems: 'center',
   },
 }));
 

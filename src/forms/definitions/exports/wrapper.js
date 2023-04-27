@@ -5,33 +5,19 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    if (retValues['/wrapper/configuration'] === '') {
-      retValues['/wrapper/configuration'] = undefined;
-    }
-
     if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
       retValues['/test'] = undefined;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateField'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      delete retValues['/delta/dateField'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
       retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateField'];
     }
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
@@ -42,7 +28,7 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     'wrapper.function': { fieldId: 'wrapper.function' },
-    'wrapper.configuration': { fieldId: 'wrapper.configuration' },
+    'wrapper.configuration': { fieldId: 'wrapper.configuration', removeWhen: [{field: 'wrapper.configuration', is: ['']}] },
     type: {
       id: 'type',
       type: 'select',
@@ -69,13 +55,16 @@ export default {
           ],
         },
       ],
+      removeWhen: [{field: 'type', is: ['all']}],
     },
-    'test.limit': {fieldId: 'test.limit'},
+    'test.limit': {fieldId: 'test.limit', deleteWhen: [{field: 'type', is: ['all', 'delta', 'once']}]},
     'delta.dateField': {
       fieldId: 'delta.dateField',
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'once']}],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'delta']}],
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },

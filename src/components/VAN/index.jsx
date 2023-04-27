@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
@@ -41,7 +41,7 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
 
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
-      title: 'Request upgrade',
+      title: 'Request access to VAN connector',
       message: 'We will contact you to discuss your business needs and get you access to VAN.',
       buttons: [
         { label: 'Submit request',
@@ -80,7 +80,7 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
                 disabled={upgradeRequested}
                 id="request-van-upgrade-buttton"
                 className={classes.upgradeButton}>
-                {!upgradeRequested ? 'Request upgrade' : 'Access Requested'}
+                {!upgradeRequested ? 'Request access' : 'Access Requested'}
               </FilledButton>
             </ButtonWithTooltip>
           </Typography>

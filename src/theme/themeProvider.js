@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme, adaptV4Theme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import produce from 'immer';
 import light from './light';
@@ -23,7 +23,7 @@ export default (name = DEFAULT_THEME) => {
       draft = merge(draft, themes[name]);
     }
   });
-  const muiTheme = createMuiTheme(theme);
+  const muiTheme = createTheme(adaptV4Theme(theme));
   // eslint-disable-next-line
   // console.log(`*** THEME ${name} ***`, theme);
 

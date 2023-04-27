@@ -91,6 +91,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
+  {
+    id: 'van',
+    name: 'VAN (Value-added network)',
+    type: 'van',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
   // Database connectors
   {
     id: 'mongodb',
@@ -156,6 +163,15 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042875872-Set-up-a-connection-to-Amazon-Redshift',
+  },
+  {
+    id: 'netsuitejdbc',
+    name: 'NetSuite JDBC',
+    type: 'netsuitejdbc',
+    keywords: 'database,db',
+    group: 'db',
+    exportOnly: true,
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/13668167418779',
   },
   {
     id: 'graph_ql',
@@ -331,7 +347,6 @@ const newConnections = [
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038589232-Set-up-a-connection-to-Constant-Contact',
   },
   {id: 'amazonsellingpartner', name: 'Amazon Seller Central', type: 'http', assistant: 'amazonsellingpartner'},
-  {id: 'amazonvendorcentral', name: 'Amazon Vendor Central', type: 'http', assistant: 'amazonvendorcentral'},
   {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
   {id: 'loopreturnsv2', name: 'Loop Returns', type: 'http', assistant: 'loopreturnsv2'},
   {id: 'acumaticaecommerce', name: 'Acumatica', type: 'rest', assistant: 'acumaticaecommerce'},
@@ -441,6 +456,12 @@ export const groupApplications = (
       // Do not show FTP/S3 import for DataLoader flows
       if (resourceType === 'pageProcessor' && isSimpleImport) {
         return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
+      }
+
+      // connector having exportOnly true as property should not be shown in the list of standalone imports
+      // It is different from webhookOnly because it has option to create connections also.
+      if (resourceType === 'imports' && connector.exportOnly) {
+        return false;
       }
 
       // Webhooks are shown only for exports and for page generators in flow context

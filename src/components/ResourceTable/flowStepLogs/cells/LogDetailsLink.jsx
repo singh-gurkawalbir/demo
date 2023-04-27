@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
+import makeStyles from '@mui/styles/makeStyles';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { TextButton } from '../../../Buttons';
@@ -40,7 +40,7 @@ export default function LogDetailsLink({ logKey, resourceId, time }) {
         [classes.rowClicked]: activeLogKey === logKey,
       })}
       onClick={handleActionClick}>
-      <CeligoTimeAgo date={time} />
+      <TimeAgo date={time} />
     </TextButton>
   );
 }

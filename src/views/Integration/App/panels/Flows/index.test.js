@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { createMemoryHistory } from 'history';
+import { act } from 'react-dom/test-utils';
 import {renderWithProviders, mockGetRequestOnce} from '../../../../../test/test-utils';
 import actions from '../../../../../actions';
 import { runServer } from '../../../../../test/api/server';
@@ -19,6 +20,24 @@ jest.mock('../../../../../components/ResourceFormFactory', () => ({
       </button>
     </>
   ),
+}));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
 }));
 
 const profile = {
@@ -230,7 +249,7 @@ describe('Flows index file UI tests', () => {
       );
       const tabs = screen.getAllByRole('tab');
 
-      userEvent.click(tabs[0]);
+      await userEvent.click(tabs[0]);
 
       expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
       expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
@@ -281,7 +300,7 @@ describe('Flows index file UI tests', () => {
       );
       const handleInitbutton = screen.getByText('Form state manager button');
 
-      userEvent.click(handleInitbutton);
+      await userEvent.click(handleInitbutton);
       expect(mockDispatch).toHaveBeenCalledWith(
         {flowId: '5ea16c600e2fab71928a6152',
           integrationId: '5ff579d745ceef7dcd797c15',
@@ -297,11 +316,11 @@ describe('Flows index file UI tests', () => {
     });
 
     async function prepareStore(store) {
-      store.dispatch(actions.resource.requestCollection('integrations'));
-      store.dispatch(actions.resource.requestCollection('flows'));
-      store.dispatch(actions.resource.requestCollection('connections'));
-      store.dispatch(actions.resource.requestCollection('exports'));
-      store.dispatch(actions.user.profile.request());
+      act(() => { store.dispatch(actions.resource.requestCollection('integrations')); });
+      act(() => { store.dispatch(actions.resource.requestCollection('flows')); });
+      act(() => { store.dispatch(actions.resource.requestCollection('connections')); });
+      act(() => { store.dispatch(actions.resource.requestCollection('exports')); });
+      act(() => { store.dispatch(actions.user.profile.request()); });
 
       await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
       await waitFor(() => expect(store?.getState()?.data?.resources?.connections).toBeDefined());
@@ -384,7 +403,7 @@ describe('Flows index file UI tests', () => {
       const row = screen.getAllByRole('row');
 
       expect(row[0].textContent).toBe('NameErrorsLast updatedLast runMappingScheduleSettingsRunOff/OnActions');
-      expect(row[1].textContent).toBe(' Bulk insert with harcode and mulfield mapping settingsSuccess08/13/2021 1:32:49 pm04/23/2020 4:38:41 pm');
+      expect(row[1].textContent).toBe(' Bulk insert with harcode and mulfield mapping settingsSuccess08/13/2021 8:02:49 am04/23/2020 11:08:41 am');
     });
     test('should test all the use-efftects function', async () => {
       const mockDispatch = jest.fn();

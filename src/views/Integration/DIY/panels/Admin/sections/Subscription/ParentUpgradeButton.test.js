@@ -70,7 +70,7 @@ describe('ParentUpgradeButton Unit tests', () => {
     });
 
     expect(upgrade).toBeInTheDocument();
-    userEvent.click(upgrade);
+    await userEvent.click(upgrade);
     expect(onClick).toBeCalled();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('122', { showWizard: false }));
   });

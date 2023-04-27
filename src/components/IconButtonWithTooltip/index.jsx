@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, Tooltip, makeStyles } from '@material-ui/core';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
@@ -35,7 +36,8 @@ export default function IconButtonWithTooltip({
         <IconButton
           className={clsx(classes.actionButtonWithTooltip, {[classes.noPadding]: noPadding}, className)}
           {...buttonProps}
-          size={buttonSize?.size || 'medium'}>
+          size={buttonSize?.size || 'medium'}
+          sx={{padding: buttonSize?.size === 'small' ? '3px' : 1.5}}>
           {children}
         </IconButton>
       </span>

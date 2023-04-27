@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
@@ -53,8 +52,9 @@ describe('test suite for DynaLicenseExpires field', () => {
         trialEnabled: false,
       }];
     });
-    renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
-    expect(document.querySelector('body > div')).toBeEmptyDOMElement();
+    const { utils: { container } } = renderWithProviders(<DynaLicenseExpires {...props} />, { initialStore });
+
+    expect(container).toBeEmptyDOMElement();
   });
 
   test('should not show the option to add trial expiry date when creating license for new connector', () => {
@@ -78,8 +78,9 @@ describe('test suite for DynaLicenseExpires field', () => {
       }];
     });
 
-    renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
-    expect(document.querySelector('body > div')).toBeEmptyDOMElement();
+    const { utils: { container } } = renderWithProviders(<DynaLicenseExpires {...props} />, { initialStore });
+
+    expect(container).toBeEmptyDOMElement();
   });
 
   test('should be required to set the expiry date when trial is disabled', () => {
@@ -101,7 +102,7 @@ describe('test suite for DynaLicenseExpires field', () => {
       draft.user.preferences.dateFormat = 'MM/DD/YYYY';
     });
 
-    renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
+    renderWithProviders(<DynaLicenseExpires {...props} />, { initialStore });
     expect(document.querySelector('label')).toHaveTextContent(`${props.label} *`);
   });
 
@@ -128,7 +129,7 @@ describe('test suite for DynaLicenseExpires field', () => {
       }];
     });
 
-    renderWithProviders(<DynaLicenseExpires {...props} />, {initialStore});
+    renderWithProviders(<DynaLicenseExpires {...props} />, { initialStore });
     expect(document.querySelector('label')).toHaveTextContent(`${props.label} *`);
   });
 });

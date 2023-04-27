@@ -2,10 +2,6 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues};
 
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-
     return {
       ...newValues,
       '/type': 'http',
@@ -20,6 +16,7 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       required: true,
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',

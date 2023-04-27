@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -14,19 +14,9 @@ import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
-  },
   connectorTextToggle: {
     flexGrow: 100,
     marginLeft: theme.spacing(-1),
-  },
-  textToggle: {
-    '&>.MuiButtonBase-root': {
-      minWidth: 'auto',
-      paddingLeft: theme.spacing(2.5),
-      paddingRight: theme.spacing(2.5),
-    },
   },
 }));
 const emptyObj = {};
@@ -44,9 +34,9 @@ export default function FormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return defaultValue;
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return defaultValue;
 
-    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
   }, [stagedResource, defaultValue]);
 
   const resourceFormState = useSelector(
@@ -99,8 +89,8 @@ export default function FormView(props) {
     // if assistant is selected back again assign it to the export to the export obj as well
 
     if (selectedApplication !== 'true') {
-      stagedRes['/http/formType'] = 'assistant';
-      newFinalValues['/http/formType'] = 'assistant';
+      stagedRes['/http/sessionFormType'] = 'assistant';
+      newFinalValues['/http/sessionFormType'] = 'assistant';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
           'Toggle Mode': 'Simple',
@@ -109,9 +99,9 @@ export default function FormView(props) {
         })
       );
     } else {
-      // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-      stagedRes['/http/formType'] = 'http';
-      newFinalValues['/http/formType'] = 'http';
+      // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
+      stagedRes['/http/sessionFormType'] = 'http';
+      newFinalValues['/http/sessionFormType'] = 'http';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
           'Toggle Mode': 'HTTP',
@@ -152,7 +142,7 @@ export default function FormView(props) {
     );
   }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  if (!_httpConnectorId || !sourceForm) {
+  if (!_httpConnectorId || !sourceForm || stagedResource?._connectorId) {
     return null;
   }
 
@@ -163,11 +153,16 @@ export default function FormView(props) {
         onChange={onFieldChangeFn}
         exclusive
         options={options}
-        className={classes.textToggle}
+        className={{
+          '&>.MuiButtonBase-root': {
+            minWidth: 'auto',
+            paddingLeft: theme => theme.spacing(2.5),
+            paddingRight: theme => theme.spacing(2.5),
+          },
+        }}
       />
       <Help
         title="Formview"
-        className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
     </div>

@@ -48,16 +48,16 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show option provided from props', () => {
+  test('should show option provided from props', async () => {
     initDynaSelectWithInput(genProps);
     expect(screen.getByText('Props Label')).toBeInTheDocument();
     expect(screen.getByText('some')).toBeInTheDocument();
 
     fireEvent.focusIn(screen.getByPlaceholderText('PlaceHolderText'));
-    userEvent.click(screen.getByText('someLabel'));
+    await userEvent.click(screen.getByText('someLabel'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', 'someValue');
   });
-  test('should show options based provided label key and value key', () => {
+  test('should show options based provided label key and value key', async () => {
     const props = {labelName: 'someLabel', valueName: 'someValue', options: [{someLabel: 'someLabel', someValue: 'someValue'}]};
 
     initDynaSelectWithInput({...genProps, ...props});
@@ -66,7 +66,7 @@ describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
     expect(screen.getByText('some')).toBeInTheDocument();
 
     fireEvent.focusIn(screen.getByPlaceholderText('PlaceHolderText'));
-    userEvent.click(screen.getByText('someLabel'));
+    await userEvent.click(screen.getByText('someLabel'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', 'someValue');
   });
   test('should show the error message when in valid props is provided as true', () => {

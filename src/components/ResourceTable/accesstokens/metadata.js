@@ -1,4 +1,5 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import Delete from '../commonActions/Delete';
 import AuditLogs from '../commonActions/AuditLogs';
@@ -8,7 +9,6 @@ import Regenerate from './actions/Regenerate';
 import Display from './actions/Display';
 import AutoPurgeAt from './actions/AutoPurgeAt';
 import Edit from '../commonActions/Edit';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 const getAutoPurgeAt = accessToken => <AutoPurgeAt accessToken={accessToken} />;
@@ -52,7 +52,7 @@ export default {
       key: 'lastUpdates',
       heading: 'Last updated',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {

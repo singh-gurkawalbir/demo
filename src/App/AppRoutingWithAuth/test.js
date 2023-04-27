@@ -6,10 +6,11 @@ import { withRouter } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-import { MuiThemeProvider } from '@material-ui/core';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material';
 import { createMemoryHistory } from 'history';
-import { render, cleanup } from '@testing-library/react';
+import { render, cleanup, waitFor } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
+import { act } from 'react-dom/test-utils';
 import { AppRoutingWithAuth } from './index';
 import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
@@ -37,14 +38,18 @@ function reduxRouterWrappedComponent({
 }) {
   return (
     <Provider store={store}>
-      <MuiThemeProvider theme={theme}>
-        <Router history={history}>
-          <Component {...componentProps} />
-        </Router>
-      </MuiThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Router history={history}>
+            <Component {...componentProps} />
+          </Router>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>
   );
 }
+
+window.zE = jest.fn();
 
 describe('AppRoutingWith authentication redirection behavior', () => {
   const initSession = jest.fn();
@@ -157,7 +162,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       );
 
       expect(store.getState().auth).toEqual({ initialized: false, commStatus: 'loading', authenticated: false });
-      store.dispatch(actions.auth.failure('Session expired due to extended inactivity'));
+      act(() => { store.dispatch(actions.auth.failure('Session expired due to extended inactivity')); });
       // if the session is invalid and the authentication
       // has failed redirect to signin page preserving the
       // state of attempted url
@@ -195,7 +200,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
       expect(history.location.pathname).toBe(getRoutePath(someRoute));
-      expect(history.location.state).toBeUndefined();
+      waitFor(() => { expect(history.location.state).toBeUndefined(); });
     });
     test('should preserve attempted route state when the user authentication attempts fails', () => {
       const history = createMemoryHistory({

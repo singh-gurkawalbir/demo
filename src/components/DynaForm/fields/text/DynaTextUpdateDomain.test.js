@@ -29,7 +29,7 @@ describe('dynaTextUpdateDomain tests', () => {
   });
   test('should able to test DynaTextUpdateDomain in Sandbox', async () => {
     await initDynaTextUpdateDomain(props);
-    userEvent.type(screen.getByRole('textbox'), 'top');
+    await userEvent.type(screen.getByRole('textbox'), 'top');
     expect(mockChange).toHaveBeenNthCalledWith(1, '_id', 'api.demo');
     expect(mockChange).toHaveBeenNthCalledWith(2, '_id', 't');
     expect(mockChange).toHaveBeenNthCalledWith(3, '_id', 'o');
@@ -37,12 +37,12 @@ describe('dynaTextUpdateDomain tests', () => {
   });
   test('should able to test DynaTextUpdateDomain in production', async () => {
     await initDynaTextUpdateDomain(props, 'production');
-    userEvent.type(screen.getByRole('textbox'), 'top');
+    await userEvent.type(screen.getByRole('textbox'), 'top');
     expect(mockChange).toHaveBeenNthCalledWith(1, '_id', 'api');
   });
   test('should able to test DynaTextUpdateDomain with touched false', async () => {
     await initDynaTextUpdateDomain(props, '', false);
-    userEvent.type(screen.getByRole('textbox'), 'top');
+    await userEvent.type(screen.getByRole('textbox'), 'top');
     expect(mockChange).not.toHaveBeenNthCalledWith(1, '_id', 'api');
   });
 });

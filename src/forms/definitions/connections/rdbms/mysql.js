@@ -6,12 +6,6 @@ export default {
       '/rdbms/type': 'mysql',
     };
 
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-
-    delete newValues['/mode'];
-
     return newValues;
   },
 
@@ -45,10 +39,12 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
     },
     rdbmsFields: { formId: 'rdbmsFields' },
     'rdbms.port': { fieldId: 'rdbms.port' },

@@ -147,18 +147,18 @@ describe('javaScriptPanel UI tests', () => {
     expect(defaultFunction).toBeInTheDocument();
     expect(screen.getByText('Insert pre save page stub')).toBeInTheDocument();
   });
-  test('should display the scripts dropdown when clicked on selected script', () => {
+  test('should display the scripts dropdown when clicked on selected script', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
-    userEvent.click(screen.getByText('script 1'));
+    await userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('None')).toBeInTheDocument();
     expect(screen.getByText('script 2')).toBeInTheDocument();
     expect(screen.getByText('script 3')).toBeInTheDocument();
   });
   test('should make the respective dispatch call and change the selected script when clicked on a menu item', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
-    userEvent.click(screen.getByText('script 1'));
+    await userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('script 2')).toBeInTheDocument();
-    userEvent.click(screen.getByText('script 2'));
+    await userEvent.click(screen.getByText('script 2'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', { scriptId: '5b3c75dd5d3c125c88b5cc01', fetchScriptContent: true }));
   });
   test('should make the respective dispatch call when function is changed', async () => {
@@ -172,17 +172,16 @@ describe('javaScriptPanel UI tests', () => {
   });
   test('should close the script dropdpwn when the selected script is changed to a new script from the dropdown', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
-    userEvent.click(screen.getByText('script 1'));
+    await userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('script 2')).toBeInTheDocument();
-    userEvent.click(screen.getByText('script 2'));
+    await userEvent.click(screen.getByText('script 2'));
     await waitFor(() => expect(screen.queryByText('script 1')).toBeNull());
     await waitFor(() => expect(screen.queryByText('script 3')).toBeNull());
-    // userEvent.click(screen.getByText('Insert pre save page stub'));
   });
   test('should make the repective dispatch call when changes are made in code panel', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     expect(screen.getByText('custom code')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Code Panel'));
+    await userEvent.click(screen.getByText('Code Panel'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {code: 'new code value'})));
   });
   test('should not make call for script content when resource belongs to integration App', async () => {

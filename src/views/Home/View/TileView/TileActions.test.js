@@ -192,24 +192,24 @@ describe('TileActions UI tests', () => {
     expect(screen.getByText('CloneApp')).toBeInTheDocument();
     expect(screen.getByText('Delete')).toBeInTheDocument();
   });
-  test('should run the respective function on clicking Download menuItem', () => {
+  test('should run the respective function on clicking Download menuItem', async () => {
     initTileActions(props);
-    userEvent.click(screen.getByText('Download'));
+    await userEvent.click(screen.getByText('Download'));
     expect(mockDispatchFn).toBeCalled();
   });
-  test('should run the respective function on clicking Delete menuItem', () => {
+  test('should run the respective function on clicking Delete menuItem', async () => {
     history.push = jest.fn();
     initTileActions(props);
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
     expect(screen.getByText('Delete')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
     expect(mockDispatchFn).toBeCalled();
   });
-  test('should display buttons for DIY templates and IA', () => {
+  test('should display buttons for DIY templates and IA', async () => {
     initTileActions(props);
-    userEvent.click(screen.getByText('DeleteDIY'));
+    await userEvent.click(screen.getByText('DeleteDIY'));
     expect(screen.getByText('Delete')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Delete'));
+    await userEvent.click(screen.getByText('Delete'));
     expect(mockDispatchFn).toBeCalled();
   });
   test('should render empty DOM when rendered without any values in the store', () => {

@@ -1,14 +1,17 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import ActionIconButton from '.';
+import ActionIconButton from './index';
 import { renderWithProviders } from '../../../test/test-utils';
+import { FlowProvider } from '../FlowBuilderBody/Context';
 
 async function initActionIconButton({actionIconProps} = {}) {
   const ui = (
     <MemoryRouter>
-      <ActionIconButton {...actionIconProps} />
+      <FlowProvider>
+        <ActionIconButton {...actionIconProps} />
+      </FlowProvider>
     </MemoryRouter>
   );
   const { store, utils } = await renderWithProviders(ui);
@@ -26,14 +29,18 @@ describe('Action Icon Button', () => {
     };
 
     await initActionIconButton({actionIconProps});
-    const helpTextButton = screen.getByRole('button', {name: 'Test help text'});
+    waitFor(async () => {
+      const helpTextButton = screen.getByRole('button', {name: 'Test help text'});
 
-    expect(helpTextButton).toBeInTheDocument();
-    userEvent.hover(helpTextButton);
-    expect(helpTextButton).not.toHaveAccessibleName('Test help text');
-    const childrenNode = screen.getByText(/Test children/i);
+      expect(helpTextButton).toBeInTheDocument();
+      await userEvent.hover(helpTextButton);
+      expect(helpTextButton).not.toHaveAccessibleName('Test help text');
+    });
+    waitFor(() => {
+      const childrenNode = screen.getByText(/Test children/i);
 
-    expect(childrenNode).toBeInTheDocument();
+      expect(childrenNode).toBeInTheDocument();
+    });
   });
   test('Should able to test the Flow Builder action button with help key', async () => {
     const actionIconProps = {
@@ -42,11 +49,15 @@ describe('Action Icon Button', () => {
     };
 
     await initActionIconButton({actionIconProps});
-    const button = screen.getByRole('button', {name: "Define a 'schedule override' here to run this export/transfer on its own schedule."});
+    waitFor(() => {
+      const button = screen.getByRole('button', {name: "Define a 'schedule override' here to run this export/transfer on its own schedule."});
 
-    expect(button).toBeInTheDocument();
-    const childrenNode = screen.getByText(/Test children/i);
+      expect(button).toBeInTheDocument();
+    });
+    waitFor(() => {
+      const childrenNode = screen.getByText(/Test children/i);
 
-    expect(childrenNode).toBeInTheDocument();
+      expect(childrenNode).toBeInTheDocument();
+    });
   });
 });

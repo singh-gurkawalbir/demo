@@ -1,16 +1,24 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, IconButton, Tooltip } from '@material-ui/core';
+import { IconButton, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   editorButton: {
     marginLeft: theme.spacing(1),
-    display: 'inline-block',
+    display: 'flex',
     padding: 0,
     borderRadius: 2,
     color: theme.palette.secondary.light,
     cursor: 'pointer',
+    '& > span': {
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     '&:hover': {
       background: 'transparent',
       '& > span': {
@@ -34,7 +42,12 @@ export default function ActionButton({ className, children, placement, tooltip =
     <Tooltip
       open={tooltip ? undefined : false} placement={placement} title={tooltip}
       aria-label={tooltip}>
-      <IconButton className={clsx(classes.editorButton, className)} {...props} aria-label="tooltip">
+      <IconButton
+        role="button"
+        className={clsx(classes.editorButton, className)}
+        {...props}
+        aria-label={tooltip}
+        size="large">
         <span>{children}</span>
       </IconButton>
     </Tooltip>

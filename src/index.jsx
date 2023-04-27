@@ -1,8 +1,11 @@
 import 'url-search-params-polyfill';
 import * as smoothscroll from 'smoothscroll-polyfill';
-import React, { StrictMode } from 'react';
-import { render } from 'react-dom';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { CacheProvider } from '@emotion/react';
+import { TssCacheProvider } from 'tss-react';
+import createCache from '@emotion/cache';
 import GA4React from 'ga-4-react';
 import App from './App';
 import { getDomain } from './utils/resource';
@@ -10,12 +13,22 @@ import reduxStore from './store';
 
 smoothscroll.polyfill();
 
+const muiCache = createCache({
+  key: 'mui',
+  prepend: true,
+});
+
+const tssCache = createCache({
+  key: 'tss',
+});
 const env = process.env.NODE_ENV;
 
 // eslint-disable-next-line no-undef
 const GAKey1 = (getDomain() === 'eu.integrator.io' ? GA_KEY_1_EU : GA_KEY_1);
 // eslint-disable-next-line no-undef
 const GAKey2 = (getDomain() === 'eu.integrator.io' ? GA_KEY_2_EU : GA_KEY_2);
+const container = document.getElementById('root');
+const root = createRoot(container);
 
 if (env !== 'development' && GAKey1?.length > 1) {
   const ga4react = new GA4React(GAKey1);
@@ -38,19 +51,21 @@ if (env !== 'development' && GAKey1?.length > 1) {
       console.warn('GA initialization failed');
     }
 
-    render(
+    root.render(
       <Provider store={reduxStore}>
         <App />
-      </Provider>,
-      document.getElementById('root')
+      </Provider>
     );
   })();
 } else { // DEV ENV
   // We don't need to register Google Analytics here.
-  render(
-    <Provider store={reduxStore}>
-      <StrictMode> <App /> </StrictMode>
-    </Provider>,
-    document.getElementById('root')
+  root.render(
+    <CacheProvider value={muiCache}>
+      <TssCacheProvider value={tssCache}>
+        <Provider store={reduxStore}>
+          <App />
+        </Provider>
+      </TssCacheProvider>
+    </CacheProvider>
   );
 }

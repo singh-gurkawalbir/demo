@@ -6,7 +6,6 @@ import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 import { useSelectorMemo } from '../../../../../hooks';
-import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 export default function useHandleSubmit({
   resourceType,
@@ -35,7 +34,7 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = customCloneDeep({...values});
+      const newValues = {...values};
 
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {

@@ -9,6 +9,7 @@ export default {
   key: 'purge',
   useLabel: () => 'Purge',
   icon: PurgeIcon,
+  mode: 'delete',
   useOnClick: rowData => {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();

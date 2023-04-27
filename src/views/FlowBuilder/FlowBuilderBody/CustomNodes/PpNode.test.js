@@ -13,6 +13,38 @@ import { ConfirmDialogProvider } from '../../../../components/ConfirmDialog';
 
 let initialStore;
 
+const mockReact = React;
+
+jest.mock('@mui/material/IconButton', () => ({
+  __esModule: true,
+  ...jest.requireActual('@mui/material/IconButton'),
+  default: props => {
+    const mockProps = {...props};
+
+    delete mockProps.autoFocus;
+
+    return mockReact.createElement('IconButton', mockProps, mockProps.children);
+  },
+}));
+
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initPageProcessorNode({data}) {
   const ui = (
     <ConfirmDialogProvider>
@@ -63,7 +95,7 @@ describe('Testsuite for Page processor node', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the branch name when is virtual is set to false and verify the delete option when the setup is in progress', () => {
+  test('should test the branch name when is virtual is set to false and verify the delete option when the setup is in progress', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
       flow: {_integrationId: '345'}, flowId: '234',
     });
@@ -88,7 +120,7 @@ describe('Testsuite for Page processor node', () => {
     });
 
     expect(deleteButtonNode).toBeInTheDocument();
-    userEvent.click(deleteButtonNode);
+    await userEvent.click(deleteButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteStep('234', 'Deleting..'));
   });
   test('should test the branch name when is virtual is set to false and verify the delete option when the setup is not in progress and click on remove button on confirm dialog', async () => {
@@ -129,7 +161,7 @@ describe('Testsuite for Page processor node', () => {
     });
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(removeButtonNode);
+    await userEvent.click(removeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.flow.deleteStep('234', 'Deleting..'));
   });
   test('should test the page processor when no branch name passed and click on cancel button on confirm dialog', async () => {
@@ -166,7 +198,7 @@ describe('Testsuite for Page processor node', () => {
     });
 
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(screen.queryByText(/confirm remove/i)).not.toBeInTheDocument();
   });
 });

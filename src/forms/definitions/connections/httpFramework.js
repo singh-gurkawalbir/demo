@@ -5,34 +5,9 @@ import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 import {PASSWORD_MASK} from '../../../constants';
 
 export default {
-  init: (fieldMeta, resource, flow, httpConnector) => updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
+  init: (fieldMeta, resource, flow, httpConnector, formState, apiChange) => updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource, false, apiChange),
   preSave: (formValues, resource, options) => {
     let newValues = { ...formValues};
-
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-    delete newValues['/mode'];
-
-    if (!newValues['/http/ping/successPath']) {
-      newValues['/http/ping/successValues'] = undefined;
-    }
-
-    if (!newValues['/http/rateLimit/failPath']) {
-      newValues['/http/rateLimit/failValues'] = undefined;
-    }
-
-    if (!newValues['/http/ping/failPath']) {
-      newValues['/http/ping/failValues'] = undefined;
-    }
-
-    if (newValues['/http/ping/method'] === 'GET') {
-      newValues['/http/ping/body'] = undefined;
-    }
-
-    if (!newValues['/http/ping/method']) {
-      newValues['/http/ping/method'] = undefined;
-    }
 
     if (newValues['/http/encrypted']) {
       try {
@@ -202,10 +177,15 @@ export default {
           ],
         },
       ],
+      delete: true,
     },
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      removeWhen: [{ field: 'mode', is: ['cloud'] }],
+    },
+    'http._httpConnectorApiId': {
+      fieldId: 'http._httpConnectorApiId',
     },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
@@ -314,19 +294,29 @@ export default {
       fieldId: 'http.rateLimit.failStatusCode',
     },
     'http.rateLimit.failPath': { fieldId: 'http.rateLimit.failPath' },
-    'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues' },
+    'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues',
+      removeWhen: [{field: 'http.rateLimit.failPath', is: ['']}],
+    },
     'http.retryHeader': { fieldId: 'http.retryHeader' },
     'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI' },
-    'http.ping.method': { fieldId: 'http.ping.method' },
+    'http.ping.method': { fieldId: 'http.ping.method',
+      removeWhen: [{field: 'http.ping.method', is: ['']}],
+    },
     'http.ping.body': {
       fieldId: 'http.ping.body',
       visibleWhenAll: [{ field: 'http.ping.method', is: ['POST', 'PUT'] }],
+      removeWhen: [{field: 'http.ping.method', is: ['GET']}],
     },
     'http.ping.successPath': { fieldId: 'http.ping.successPath' },
-    'http.ping.successValues': { fieldId: 'http.ping.successValues' },
+    'http.ping.successValues': { fieldId: 'http.ping.successValues',
+      removeWhen: [{field: 'http.ping.successPath', is: ['']}],
+    },
     'http.ping.errorPath': { fieldId: 'http.ping.errorPath' },
     'http.ping.failPath': { fieldId: 'http.ping.failPath' },
-    'http.ping.failValues': { fieldId: 'http.ping.failValues' },
+    'http.ping.failValues': {
+      fieldId: 'http.ping.failValues',
+      removeWhen: [{field: 'http.ping.failPath', is: ['']}],
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
     'http.clientCertificates.cert': { fieldId: 'http.clientCertificates.cert' },
     'http.clientCertificates.key': { fieldId: 'http.clientCertificates.key' },
@@ -383,6 +373,7 @@ export default {
           'name',
           'connectionFormView',
           'application',
+          'http._httpConnectorApiId',
           'mode',
           '_agentId',
         ],

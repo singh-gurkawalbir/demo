@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -13,8 +13,10 @@ import {
   getResourceSubType,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
+import SubFlowBlock from '../SubFlowBlock';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
+import IconBlock from '../IconBlock';
 import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
@@ -24,6 +26,12 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 const emptyObj = {};
 const useStyles = makeStyles({
   pgContainer: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  iconViewPgContainer: {
+    width: '137px',
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'center',
@@ -39,6 +47,7 @@ const PageGenerator = ({
   isViewMode,
   onDelete,
   onMove,
+  isSubFlow,
   openErrorCount,
   className,
   ...pg
@@ -57,6 +66,12 @@ const PageGenerator = ({
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
+  );
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
   );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
@@ -296,13 +311,17 @@ const PageGenerator = ({
   // #endregion
   // console.log('render: <PageGenerator>');
 
+  // eslint-disable-next-line no-nested-ternary
+  const Component = (isSubFlow && isSubFlowView) ? SubFlowBlock : (isIconView ? IconBlock : AppBlock);
+
   return (
-    <div className={clsx(classes.pgContainer, className)} >
-      <AppBlock
+    <div className={clsx({[classes.iconViewPgContainer]: isIconView}, {[classes.pgContainer]: !isIconView})} >
+      <Component
         integrationId={integrationId}
         name={blockName}
         onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
+        isSubFlow={isSubFlow}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
         assistant={assistant}

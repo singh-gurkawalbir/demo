@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import DynaUploadFile from '../../../../DynaForm/fields/DynaUploadFile';
@@ -66,7 +66,6 @@ export default function FileDataPanelTitle({editorId, fileType}) {
       resourceType={resourceType}
       onFieldChange={onFieldChange}
       options={fileType}
-      color=""
       placeholder={`Sample ${fileType.toUpperCase()} file (that would be parsed)`}
       id="uploadFile"
       persistData

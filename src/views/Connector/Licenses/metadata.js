@@ -1,9 +1,9 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import Delete from '../../../components/ResourceTable/commonActions/Delete';
 import Edit from '../../../components/ResourceTable/commonActions/Edit';
 import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
-import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 
 export default {
   useColumns: () => [
@@ -24,7 +24,7 @@ export default {
       key: 'created',
       heading: 'Created',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.created} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {

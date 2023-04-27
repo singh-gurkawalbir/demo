@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles({
@@ -13,14 +13,17 @@ const useStyles = makeStyles({
     wordBreak: 'break-word',
     lineHeight: 'inherit',
   },
+  noPadding: {
+    padding: 0,
+  },
 });
 
-export default function TooltipContent({ children, className, escapeUnsecuredDomains }) {
+export default function TooltipContent({ children, className, escapeUnsecuredDomains, basicInfo }) {
   const classes = useStyles();
 
   return (
     <Typography
-      className={clsx(classes.root, className)}
+      className={clsx(classes.root, {[classes.noPadding]: basicInfo}, className)}
       component="div"
       variant="body2">
       {/<\/?[a-z][\s\S]*>/i.test(children) ? (

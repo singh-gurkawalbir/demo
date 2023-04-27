@@ -8,7 +8,8 @@ import {
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Drawer } from '@material-ui/core';
+import { Drawer } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../reducers';
 import { DrawerProvider } from './DrawerContext';
 
@@ -24,6 +25,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     minHeight: '100%',
     flexDirection: 'column',
+    width: '100%',
   },
   small: {
     width: 475,

@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
+import { Typography, AccordionSummary, AccordionDetails, Accordion } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 import FormView from './FormView';
 import RawView from './RawView';

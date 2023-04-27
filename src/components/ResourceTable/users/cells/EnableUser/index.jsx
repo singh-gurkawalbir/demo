@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import CeligoSwitch from '../../../../CeligoSwitch';
+import { useDispatch, useSelector } from 'react-redux';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import { ACCOUNT_IDS } from '../../../../../constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
@@ -8,7 +8,7 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
-import Spinner from '../../../../Spinner';
+import { selectors } from '../../../../../reducers';
 
 export default function EnableUser({ user }) {
   const { confirmDialog } = useConfirmDialog();
@@ -16,6 +16,9 @@ export default function EnableUser({ user }) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [isLoading, setLoading] = useState(false);
+  const userPreferences = useSelector(state =>
+    selectors.userPreferences(state)
+  );
 
   const handleSwitch = useCallback(() => {
     confirmDialog({
@@ -25,7 +28,7 @@ export default function EnableUser({ user }) {
         {
           label: disabled ? 'Enable' : 'Disable',
           onClick: () => {
-            dispatch(actions.user.org.users.disable(userId, disabled));
+            dispatch(actions.user.org.users.disable(userId, disabled, userPreferences.defaultAShareId === userId));
           },
         },
         {
@@ -34,7 +37,7 @@ export default function EnableUser({ user }) {
         },
       ],
     });
-  }, [confirmDialog, userId, disabled, dispatch]);
+  }, [confirmDialog, disabled, dispatch, userId, userPreferences.defaultAShareId]);
 
   const getStatusMessage = useCallback((status, message) => {
     const { name, email } = sharedWithUser || {};
@@ -82,13 +85,12 @@ export default function EnableUser({ user }) {
   }
 
   return (
-    <CeligoSwitch
+    <Switch
       data-test="disableUser"
       disabled={!accepted || userId === ACCOUNT_IDS.OWN}
       checked={!disabled}
       onChange={handleSwitch}
       tooltip="Disable / Enable"
-      noPadding
       />
   );
 }

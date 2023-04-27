@@ -26,7 +26,7 @@ export default (state = defaultState, action) => {
         if (resourceType === 'audit') {
           draft.loadMoreStatus = 'received';
           draft.all = isNextPageCollection
-            ? [...draft.all || [], ...collection]
+            ? [...(draft.all || []), ...collection]
             : collection || emptySet;
 
           break;
@@ -37,7 +37,7 @@ export default (state = defaultState, action) => {
 
           draft[resourceTypeParts[0]] = {
             [resourceTypeParts[1]]: isNextPageCollection
-              ? [...draft[resourceTypeParts[0]][resourceTypeParts[1]] || [], ...collection]
+              ? [...(draft[resourceTypeParts[0]][resourceTypeParts[1]] || []), ...collection]
               : collection || emptySet,
           };
         }

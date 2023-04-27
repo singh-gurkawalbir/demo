@@ -1,13 +1,15 @@
-/* eslint-disable camelcase */
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
-import { IconButton } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import FormLabel from '@mui/material/FormLabel';
+import { IconButton } from '@mui/material';
+import {
+  isBoolean,
+} from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FilterPanel from '../../AFE/Editor/panels/NetSuiteLookupFilter';
-import Spinner from '../../Spinner';
 import RefreshIcon from '../../icons/RefreshIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
@@ -20,6 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const editorId = 'ns-mappingLookupFilter';
 
+// eslint-disable-next-line camelcase
 export default function DynaNetSuiteLookupFilters_afe(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -29,11 +32,17 @@ export default function DynaNetSuiteLookupFilters_afe(props) {
     connectionId,
     data,
     options = {},
+    recordTypeFieldId,
+    formKey,
     onFieldChange,
     required,
     disabled,
   } = props;
-  const { disableFetch, commMetaPath } = options;
+
+  const { disableFetch: optionDisableFetch, commMetaPath: optionCommMetaPath } = options;
+  const recordTypeFieldValue = useSelector(state => selectors.formState(state, formKey)?.fields?.[recordTypeFieldId]?.value);
+  const disableFetch = isBoolean(optionDisableFetch) ? optionDisableFetch : !recordTypeFieldValue;
+  const commMetaPath = optionCommMetaPath || (recordTypeFieldValue ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeFieldValue}/searchFilters?includeJoinFilters=true` : '');
   const isEditorInitialized = useSelector(state => selectors.editor(state, editorId).fieldId);
 
   useEffect(() => {

@@ -34,7 +34,7 @@ mutateStore(initialStore, draft => {
   }];
 });
 
-function renderFuntion(actionProps, data, errorType) {
+async function renderFuntion(actionProps, data, errorType) {
   renderWithProviders(
     <MemoryRouter initialEntries={[`/${errorType}`]}>
       <Route path="/:errorType">
@@ -47,7 +47,7 @@ function renderFuntion(actionProps, data, errorType) {
     </MemoryRouter>,
     {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('error Management view error details UI tests', () => {
@@ -57,19 +57,19 @@ describe('error Management view error details UI tests', () => {
   const resourceId = '62f7b0d8d07aa55c7643a19f';
   const errorId = '7587697723';
 
-  test('should display error details page after clicking on View error details', () => {
-    renderFuntion({resourceId}, {errorId}, 'resolved');
+  test('should display error details page after clicking on View error details', async () => {
+    await renderFuntion({resourceId}, {errorId}, 'resolved');
     const errordetails = screen.getByText('View error details');
 
-    userEvent.click(errordetails);
+    await userEvent.click(errordetails);
     expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/7587697723/view');
   });
 
-  test('should make dispatch call after clicking on View error details', () => {
-    renderFuntion({resourceId}, {errorId}, 'open');
+  test('should make dispatch call after clicking on View error details', async () => {
+    await renderFuntion({resourceId}, {errorId}, 'open');
     const errordetails = screen.getByText('View error details');
 
-    userEvent.click(errordetails);
+    await userEvent.click(errordetails);
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.patchFilter('openErrors', {
         activeErrorId: '7587697723',

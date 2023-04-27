@@ -1,29 +1,14 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import Spinner from '../../components/Spinner';
 import { FilledButton } from '../../components/Buttons';
+import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
 const useStyles = makeStyles(theme => ({
-  submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 125,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
-  },
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
@@ -46,7 +31,7 @@ export default function SignInSSOForm() {
   };
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       <TextField
         data-test="email"
         id="email"
@@ -61,12 +46,12 @@ export default function SignInSSOForm() {
         <FilledButton
           data-test="submit"
           type="submit"
-          className={classes.submit}
+          submit
           onClick={handleSignInWithSSO} >
           Sign in with SSO
         </FilledButton>
       )}
-    </div>
+    </LoginFormWrapper>
   );
 }
 

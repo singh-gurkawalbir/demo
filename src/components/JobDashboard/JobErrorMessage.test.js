@@ -1,8 +1,9 @@
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import JobErrorMessage from './JobErrorMessage';
+import { renderWithProviders } from '../../test/test-utils';
 
 const mockExternalURL = jest.fn().mockReturnValue('test');
 
@@ -25,8 +26,8 @@ describe('testsuite for Job Error Message', () => {
   afterEach(() => {
     windowSpy.mockRestore();
   });
-  test('should be able to click on export record link', () => {
-    render(
+  test('should be able to click on export record link', async () => {
+    renderWithProviders(
       <JobErrorMessage
         message="test message"
         exportDataURI="https://exportURI"
@@ -39,12 +40,12 @@ describe('testsuite for Job Error Message', () => {
     });
 
     expect(exportButton).toBeInTheDocument();
-    userEvent.click(exportButton);
+    await userEvent.click(exportButton);
     expect(document.querySelector('div > div:nth-child(2) > button > span > span').className).toEqual(expect.stringContaining('MuiTouchRipple-'));
     expect(screen.getByText(/Import Id: importURI/i)).toBeInTheDocument();
   });
-  test('should be able to click on import record link', () => {
-    render(
+  test('should be able to click on import record link', async () => {
+    renderWithProviders(
       <JobErrorMessage
         message="test message"
         exportDataURI="exportURI"
@@ -58,7 +59,7 @@ describe('testsuite for Job Error Message', () => {
     });
 
     expect(importButton).toBeInTheDocument();
-    userEvent.click(importButton);
+    await userEvent.click(importButton);
     expect(document.querySelector('div > div:nth-child(2) > button > span > span').className).toEqual(expect.stringContaining('MuiTouchRipple-'));
   });
 });

@@ -40,12 +40,6 @@ describe('testsuite for Error Panel', () => {
       data: {
         preview: {
           status: 'error',
-          error: [
-            {
-              code: 404,
-              message: '{"error":"InvalidEndpoint","description":"Not found"}',
-            },
-          ],
           data: {
             request: [
               {

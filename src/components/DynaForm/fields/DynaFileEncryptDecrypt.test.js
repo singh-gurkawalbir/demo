@@ -25,7 +25,7 @@ describe('dynaFileEncryptDecrypt tests', () => {
     };
 
     await renderWithProviders(<DynaFileEncryptDecrypt {...props} />, {initialStore});
-    userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByRole('checkbox'));
     expect(onFieldChange).toHaveBeenNthCalledWith(1, '_id', undefined, true);
     expect(onFieldChange).toHaveBeenNthCalledWith(2, '_id', true);
   });

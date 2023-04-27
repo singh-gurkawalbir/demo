@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { makeStyles } from '@material-ui/core/styles';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import makeStyles from '@mui/styles/makeStyles';
 import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
 import ViewErrorRequestResponse from './ViewErrorRequestResponse';

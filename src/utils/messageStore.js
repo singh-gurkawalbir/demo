@@ -35,6 +35,7 @@ const CONFIRM_REMOVE = 'Are you sure you want to remove this resource?';
 const NO_DEBUG_LOG = 'You don’t have any debug log entries.';
 const COMPONENT_INFO = 'The following components are created with this integration:';
 const KEY_COLUMN_DEPRECATION = 'You’re using a deprecated option “Key Columns” to group your records. Use the new and improved option in the “How would you like to sort and group records” section. Your group settings may be affected when you use the new sorting and grouping option.';
+const PREVIEW_FAILED = 'Failed to fetch preview data.';
 
 const MARKETPLACE = {
   HELPINFO: 'Jump-start your integrations with our Quickstart integration templates. Explore new or install your existing licensed integration apps.',
@@ -111,6 +112,10 @@ const USER_SIGN_IN = {
   SESSION_EXPIRED: 'For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.',
   CACHED: 'It looks like your browser has cached an older version of our app.Click \'Reload\' to refresh the page.',
   OWNER_ACCOUNT: 'You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.',
+  SIGNIN_FAILED: 'Sign in failed. Please try again.',
+  SIGNIN_REQUIRED: '{{label}} is required.',
+  INVALID_FIRST_LAST_NAME: 'Please enter your first and last name.',
+  INVALID_EMAIL: 'Please enter a valid email address',
 };
 // end region
 
@@ -210,9 +215,9 @@ const LCM = {
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
   NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: `You don't have any data to pull. Learn more about <a target='_blank' href=${REVISIONS_GUIDE_URL}> cloning and pulling your integrations</>.`,
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
-  PULL_MERGE_ERROR: 'The merging of your pull request was unsuccessful.',
+  PULL_MERGE_ERROR: 'The merge of your pull was unsuccessful. Try your pull again.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
-  REVERT_ERROR: 'You were unable to revert your changes successfully.',
+  REVERT_ERROR: 'Your revert was unsuccessful. Try reverting again.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   CREATE_SNAPSHOT_FORM_HELPINFO: 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
@@ -269,10 +274,6 @@ const MFA = {
   OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
   USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
   USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
-  NEW_PASSWORD_EMPTY: 'New password is required',
-  CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
-  INVALID_EMAIL: 'Please enter a valid email address.',
-  EMAIL_EMPTY: 'Email is required.',
   SSO_SIGN_UP: 'This is an SSO sign-up. Make sure you have access to <a className="link" href=ssoLink>this</a> SSO provider',
   INSTALL_AUTHENTICATOR: 'Install any authenticator app that supports TOTP protocol or time-based one time password.',
   SCAN_QR: ' Scan the QR code below with your verification app. Once your app reads the QR code, you\'ll get a 6-digit code.',
@@ -356,7 +357,7 @@ const SUBSCRIPTION = {
 
   <a target="_blank" rel="noopener noreferrer"
   href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with integration apps & templates.`,
-  TRY_UNLIMITED: 'Try unlimited flows free for 30 days',
+  TRY_FULL_ACCESS: 'Try full access free for 30 days',
   UNLIMITED_FLOWS_START: 'Congratulations! Your unlimited flows trial starts now.',
   REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out<br>for an email from one of our associates soon.',
   UPGRADE_TO_NEXT_PLAN: 'Upgrade to a {{nextPlan}} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.',
@@ -383,8 +384,8 @@ const SUBSCRIPTION = {
   RECEIVE_FOLLOW_UP_EMAIL: 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.',
   UNINSTALL_INSTANCE: ' Use this page to uninstall this instance (i.e. this tile) of the Integration App. Uninstalling an Integration App will remove all components, including the integration tile, from your integrator.io account. After uninstalling you can re-install from the marketplace as long as you have a valid subscription. Please be very certain that you want to uninstall as this action cannot be undone.',
   UNINSTALL_INFO: 'Once you uninstall this Integration App there is no going back. Please be certain.',
-  REQUEST_RECEIVED_VAN: '<a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN Connector</a> (Value Added Network) is not included in your accounts current subscription plan.<b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>',
-  VAN_LICENSE_APPROVED: '<b>Additional action required after saving</b><p>You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.</p>',
+  REQUEST_RECEIVED_VAN: '<a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN connector</a> (Value-added network) is not included in your account’s current subscription plan.<b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>',
+  VAN_LICENSE_APPROVED: '<b>Additional action required after saving</b><p>You must contact Celigo to gain access to our VAN customer portal to configure and manage your VAN service. After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.</p>',
   VAN_LICENSE_UPGRADE_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
 };
 // #endregion
@@ -425,6 +426,7 @@ const messages = {
   RESOURCE,
   ADDONS,
   KEY_COLUMN_DEPRECATION,
+  PREVIEW_FAILED,
   CONNECTION,
   NO_RESULT,
   PLAYGROUND,

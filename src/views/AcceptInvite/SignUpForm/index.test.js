@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import * as ReactRedux from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import SignUp from '.';
 import { getCreatedStore } from '../../../store';
@@ -16,7 +17,7 @@ function initSignUp({acceptInviteData}) {
     draft.auth.acceptInvite = acceptInviteData;
   });
   const ui = (
-    <SignUp />
+    <MemoryRouter><SignUp /></MemoryRouter>
   );
 
   return renderWithProviders(ui, {initialStore});
@@ -83,7 +84,7 @@ describe('Testsuite for SignUp', () => {
     mockGetFieldMeta.mockClear();
     mockUseFormInitWithPermissions.mockClear();
   });
-  test('should render signup and should test the signup button when there are values in store', () => {
+  test('should render signup and should test the signup button when there are values in store', async () => {
     initSignUp({
       acceptInviteData: {
         email: 'testEmail@email.com',
@@ -99,14 +100,14 @@ describe('Testsuite for SignUp', () => {
     expect(mockUseFormInitWithPermissions).toHaveBeenCalledWith({fieldMeta: 'mockGetFieldMeta', formKey: 'signupForm', remount: 0});
 
     const signUpButton = screen.getByRole('button', {
-      name: /sign up/i,
+      name: 'Sign Up',
     });
 
     expect(signUpButton).toBeInTheDocument();
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
-  test('should render signup and should test the signup button when there are no values in store', () => {
+  test('should render signup and should test the signup button when there are no values in store', async () => {
     initSignUp({
       acceptInviteData: undefined,
     });
@@ -115,14 +116,14 @@ describe('Testsuite for SignUp', () => {
     expect(screen.getByText(/ignoreformtouchedcheck =/i)).toBeInTheDocument();
 
     const signUpButton = screen.getByRole('button', {
-      name: /sign up/i,
+      name: 'Sign Up',
     });
 
     expect(signUpButton).toBeInTheDocument();
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
-  test('should render signup and should test the signup button when there is no email and no token', () => {
+  test('should render signup and should test the signup button when there is no email and no token', async () => {
     initSignUp({
       acceptInviteData: {
         email: '',
@@ -136,11 +137,11 @@ describe('Testsuite for SignUp', () => {
     expect(screen.getByText(/ignoreformtouchedcheck =/i)).toBeInTheDocument();
 
     const signUpButton = screen.getByRole('button', {
-      name: /sign up/i,
+      name: 'Sign Up',
     });
 
     expect(signUpButton).toBeInTheDocument();
-    userEvent.click(signUpButton);
+    await userEvent.click(signUpButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
   });
 });

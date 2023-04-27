@@ -4,13 +4,13 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import TerminalNode from '.';
 import { getCreatedStore } from '../../../../../store';
-import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import * as mockContext from '../../Context';
 import actions from '../../../../../actions';
 
 let initialStore;
 
-function initTerminalNode({id, data, asyncStatus}) {
+function initTerminalNode({ id, data, asyncStatus }) {
   mutateStore(initialStore, draft => {
     draft.session.asyncTask = {
       '234-flow_save_async_key': {
@@ -22,7 +22,7 @@ function initTerminalNode({id, data, asyncStatus}) {
     <TerminalNode id={id} data={data} />
   );
 
-  return renderWithProviders(ui, {initialStore});
+  return renderWithProviders(ui, { initialStore });
 }
 jest.mock('../Handles/DefaultHandle', () => ({
   __esModule: true,
@@ -49,9 +49,9 @@ describe('Testsuite for TerminalNode', () => {
   });
   test('should test diamond merge icon by mouse hover and unhover', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
-      dragNodeId: '789', flowId: '234', elements: [{target: '123', source: '456'}], elementsMap: {456: {type: 'router'}},
+      dragNodeId: '789', flowId: '234', elements: [{ target: '123', source: '456' }], elementsMap: { 456: { type: 'router' } },
     });
-    initTerminalNode({id: '123', data: {name: 'test name', draggable: true}, asyncStatus: 'completed'});
+    initTerminalNode({ id: '123', data: { name: 'test name', draggable: true }, asyncStatus: 'completed' });
     expect(screen.getByText(/mock defaulthandle target left/i)).toBeInTheDocument();
     const svgNode = document.querySelector('div > div > svg > path');
 
@@ -63,41 +63,33 @@ describe('Testsuite for TerminalNode', () => {
   });
   test('should test the merge icon when the drag is inprogress', () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
-      dragNodeId: '123', flowId: '234', elements: [{target: '123', source: '456'}], elementsMap: {456: {type: 'router'}},
+      dragNodeId: '123', flowId: '234', elements: [{ target: '123', source: '456' }], elementsMap: { 456: { type: 'router' } },
     });
-    initTerminalNode({id: '123', data: {name: 'test name', draggable: true}, asyncStatus: 'completed'});
+    initTerminalNode({ id: '123', data: { name: 'test name', draggable: true }, asyncStatus: 'completed' });
     expect(screen.getByText(/mock defaulthandle target left/i)).toBeInTheDocument();
     expect(screen.getByText(/test name/i)).toBeInTheDocument();
-    const mergeiconNode = document.querySelector('div > div');
+    const mergeiconNode = document.querySelector('svg');
 
-    expect(mergeiconNode.className).toEqual(expect.stringContaining('makeStyles-dragging-'));
+    expect(mergeiconNode).toHaveAttribute('class', expect.stringContaining('makeStyles-dragging-'));
   });
   test('should test the merge icon when the drag is not inprogress and is able to drag', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
-      dragNodeId: '987', flowId: '234', elements: [{target: '123', source: '456'}], elementsMap: {456: {type: 'router'}},
+      dragNodeId: '987', flowId: '234', elements: [{ target: '123', source: '456' }], elementsMap: { 456: { type: 'router' } },
     });
-    initTerminalNode({id: '123', data: {name: 'test name', draggable: true}, asyncStatus: 'loading'});
+    initTerminalNode({ id: '123', data: { name: 'test name', draggable: true }, asyncStatus: 'loading' });
     expect(screen.getByText(/mock defaulthandle target left/i)).toBeInTheDocument();
     expect(screen.getByText(/test name/i)).toBeInTheDocument();
-    const terminalNode = document.querySelectorAll('span');
 
-    expect(terminalNode[1]).toBeInTheDocument();
-    expect(terminalNode[1].getAttribute('title')).toBe('Drag to merge with other branch');
-    await userEvent.hover(terminalNode[1]);
-    expect(terminalNode[1].getAttribute('title')).not.toBe('Drag to merge with other branch');
+    expect(screen.getByLabelText('Drag to merge with other branch')).toBeInTheDocument();
   });
   test('should test the merge icon when the drag is not inprogress and not able to drag', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
-      dragNodeId: '987', flowId: '234', elements: [{target: '123', source: '456'}], elementsMap: {456: {type: 'router'}},
+      dragNodeId: '987', flowId: '234', elements: [{ target: '123', source: '456' }], elementsMap: { 456: { type: 'router' } },
     });
-    initTerminalNode({id: '123', data: {name: 'test name', draggable: false}, asyncStatus: 'loading'});
+    initTerminalNode({ id: '123', data: { name: 'test name', draggable: false }, asyncStatus: 'loading' });
     expect(screen.getByText(/mock defaulthandle target left/i)).toBeInTheDocument();
     expect(screen.getByText(/test name/i)).toBeInTheDocument();
-    const terminalNode = document.querySelectorAll('span');
 
-    expect(terminalNode[1]).toBeInTheDocument();
-    expect(terminalNode[1].getAttribute('title')).toBe('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.');
-    await userEvent.hover(terminalNode[1]);
-    expect(terminalNode[1].getAttribute('title')).not.toBe('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.');
+    expect(screen.getByLabelText('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.')).toBeInTheDocument();
   });
 });

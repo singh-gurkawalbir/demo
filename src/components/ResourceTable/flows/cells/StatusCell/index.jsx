@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import CeligoTimeAgo from '../../../../CeligoTimeAgo';
+import makeStyles from '@mui/styles/makeStyles';
+import { TimeAgo } from '@celigo/fuse-ui';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
@@ -22,7 +22,7 @@ export default function StatusCell({
   const history = useHistory();
 
   if (lastExecutedAtSortType === 'date') {
-    return <CeligoTimeAgo date={lastExecutedAtSort} />;
+    return <TimeAgo date={lastExecutedAtSort} />;
   }
 
   return (

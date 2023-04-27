@@ -1,7 +1,7 @@
 import { deepClone } from 'fast-json-patch/lib/core';
 import React, { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import { selectors } from '../../../../reducers';

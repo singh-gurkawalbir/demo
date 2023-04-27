@@ -14,8 +14,8 @@ describe('Testsuite for Foreign Object', () => {
       </ForeignObject>
     );
     expect(screen.getByText(/test children/i)).toBeInTheDocument();
-    expect(document.querySelector('foreignobject').getAttribute('x')).toBe('90');
-    expect(document.querySelector('foreignobject').getAttribute('y')).toBe('90');
+    expect(document.querySelector('foreignobject').getAttribute('x')).toBe('87');
+    expect(document.querySelector('foreignobject').getAttribute('y')).toBe('87');
   });
   test('should test the foreign object when edge x and edge y has no values', () => {
     jest.spyOn(mockGetPositionInEdge, 'getPositionInEdge').mockReturnValue([]);

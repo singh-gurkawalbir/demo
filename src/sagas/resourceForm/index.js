@@ -8,6 +8,9 @@ import { selectors } from '../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
+  fieldsWithRemoveDelete,
+  valuesToDelete,
+  valuesToRemove,
 } from '../../forms/formFactory/utils';
 import { commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
@@ -27,7 +30,7 @@ import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
-import { getAssistantConnectorType, getHttpConnector } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector, applicationsList } from '../../constants/applications';
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
@@ -55,7 +58,14 @@ export function* createFormValuesPatchSet({
     resourceId
   );
   let finalValues = values;
-
+  const formKey = yield select(
+    selectors.formKey,
+    resourceType,
+    resourceId
+  );
+  const data = yield select(selectors.formState, formKey);
+  const {fields: formContext } = data;
+  let newFields = formContext;
   let connection;
   let assistantData;
 
@@ -103,8 +113,10 @@ export function* createFormValuesPatchSet({
 
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
+    newFields = fieldsWithRemoveDelete(formContext);
+    finalValues = valuesToRemove(finalValues, newFields);
+    finalValues = valuesToDelete(finalValues, newFields);
   }
-
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
     fieldMeta: formState.fieldMeta,
@@ -810,6 +822,7 @@ export function* initFormValues({
   integrationId,
   fieldMeta: customFieldMeta,
   parentConnectionId,
+  options,
 }) {
   const applicationFieldState = yield select(selectors.fieldState, getAsyncKey('connections', parentConnectionId), 'application');
   const developerMode = yield select(selectors.developerMode);
@@ -888,6 +901,22 @@ export function* initFormValues({
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   } else if (resourceType === 'exports') {
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.webhook?._httpConnectorId);
+  } else if (resourceType === 'iClients') {
+    const applications = applicationsList().filter(app => app._httpConnectorId);
+    let app;
+
+    if (resource?.application) {
+      // new iclent inside resource
+      app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource.application.toLowerCase().replace(/\.|\s/g, '')) || {};
+    } else if (resource?._httpConnectorId) {
+      // existing Iclient
+      app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
+    } else if (connectionAssistant) {
+      // new Iclient inside connection
+      app = applications.find(a => a.id === connectionAssistant) || {};
+    }
+
+    httpPublishedConnector = getHttpConnector(app?._httpConnectorId);
   }
   try {
     const defaultFormAssets = getResourceFormAssets({
@@ -898,6 +927,8 @@ export function* initFormValues({
       connection,
       customFieldMeta,
       accountOwner,
+      parentConnectionId,
+      applicationFieldState,
     });
 
     const form = defaultFormAssets.fieldMeta;
@@ -923,7 +954,7 @@ export function* initFormValues({
         });
       }
       // standard form init fn...
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value);
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value, options?.apiChange);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);
@@ -953,3 +984,4 @@ export const resourceFormSagas = [
   ),
   ...connectionSagas,
 ];
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../reducers';
 import FieldMessage from '../../../../DynaForm/fields/FieldMessage';
 import { getTextAfterCount } from '../../../../../utils/string';

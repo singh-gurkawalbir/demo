@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Tabs, Tab, Divider } from '@material-ui/core';
+import { Tabs, Tab, Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import isEmpty from 'lodash/isEmpty';
 import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, buildExtractsHelperFromExtract, getSelectedExtractDataTypes} from '../../../../utils/mapping';
 import useFormContext from '../../../Form/FormContext';

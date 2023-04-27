@@ -1,15 +1,15 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import makeStyles from '@mui/styles/makeStyles';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import { useHistory } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import useConfirmDialog from '../../../components/ConfirmDialog';
-import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
@@ -41,14 +41,6 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.text.secondary,
       },
     },
-  },
-  accountListPopper: {
-    maxWidth: 250,
-    left: '116px !important',
-    top: '5px !important',
-  },
-  accountListPopperArrow: {
-    left: '110px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -168,7 +160,7 @@ function AccountList() {
                 history.push(getRoutePath('/'));
               }
 
-              dispatch(actions.user.org.accounts.leave(account.id));
+              dispatch(actions.user.org.accounts.leave(account.id, userPreferences.defaultAShareId === account.id));
             },
           },
           {
@@ -210,11 +202,7 @@ function AccountList() {
         id="accountList"
         open={open}
         anchorEl={anchorEl}
-        classes={{
-          popper: classes.accountListPopper,
-          arrow: classes.accountListPopperArrow,
-        }}
-        placement="bottom-end"
+        placement="bottom"
         onClose={handleClose}>
         <List
           dense className={classes.listWrapper}>

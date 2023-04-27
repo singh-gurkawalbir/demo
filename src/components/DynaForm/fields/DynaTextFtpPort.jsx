@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
+import TextField from '@mui/material/TextField';
+import { FormLabel, FormControl } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import useFormContext from '../../Form/FormContext';
@@ -16,6 +17,20 @@ const useStyle = makeStyles({
   },
 });
 
+function deriveFtpPort(ftpType, useImplicitFTPS) {
+  if (ftpType === 'sftp') {
+    return 22;
+  }
+
+  if (ftpType === 'ftps') {
+    if (useImplicitFTPS === true) {
+      return 990;
+    }
+  }
+
+  return 21;
+}
+
 export default function DynaTextFtpPort(props) {
   const {
     formKey,
@@ -28,20 +43,19 @@ export default function DynaTextFtpPort(props) {
     placeholder,
     value,
     label,
-    options,
     valueType,
     disabled,
   } = props;
   const {fields} = useFormContext(formKey);
   const classes = useStyle();
-  const ftptype = fields?.['ftp.type']?.value;
+  const ftpPort = deriveFtpPort(fields?.['ftp.type']?.value, fields?.['ftp.useImplicitFtps']?.value);
 
   useEffect(() => {
-    if ((!value || [21, 22, 990].includes(value)) && options) {
-      onFieldChange(id, options, true);
+    if ((!value || [21, 22, 990].includes(+value)) && ftpPort) {
+      onFieldChange(id, ftpPort, true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ftptype]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ftpPort]);
 
   const handleFieldChange = useCallback(
     event => {
@@ -55,7 +69,7 @@ export default function DynaTextFtpPort(props) {
   );
 
   return (
-    <FormControl className={classes.dynaTextFtpFiedWrapper}>
+    <FormControl variant="standard" className={classes.dynaTextFtpFiedWrapper}>
       <div>
         <FormLabel htmlFor={id} error={!isValid}>
           {label}

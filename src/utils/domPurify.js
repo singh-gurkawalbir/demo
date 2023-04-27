@@ -81,15 +81,11 @@ export default function getDomPurify(options = {}) {
 
     // check all anchor tags which doesn't has href attribute and converting them to text
     if (node.tagName === 'A' && !node.hasAttribute('href')) {
-      DOMPurify.addHook('afterSanitizeElements', node => {
-        if (node.tagName === 'A') {
-          const text = document.createTextNode(node.textContent);
+      const text = document.createTextNode(node.textContent);
 
-          if (node.parentNode) {
-            node.parentNode.replaceChild(text, node);
-          }
-        }
-      });
+      if (node.parentNode) {
+        node.parentNode.replaceChild(text, node);
+      }
     }
   });
 

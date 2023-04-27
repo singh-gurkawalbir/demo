@@ -5,9 +5,10 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTrueFixedWidthColmnMapper from './DynaTrueFixedWidthColumnMapper';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
+  const initialStore = reduxStore;
   const mockOnFieldChange = jest.fn();
   const props = {
     maxNumberOfColumns: 3,
@@ -49,15 +50,21 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
     isLoggable: true,
   };
 
+  mutateStore(initialStore, draft => {
+    draft.session.form[props.formKey] = {
+      showValidationBeforeTouched: true,
+    };
+  });
+
   test('should pass the initial render', () => {
-    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
+    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />, {initialStore});
 
     expect(screen.getByText('Field Description')).toBeInTheDocument();
     expect(screen.getByText('Start')).toBeInTheDocument();
     expect(screen.getByText('End')).toBeInTheDocument();
     expect(screen.getByText('Length')).toBeInTheDocument();
     expect(screen.getByText('Regex')).toBeInTheDocument();
-    const textfields = screen.getAllByRole('textbox');
+    const textfields = screen.getAllByRole('combobox');
 
     expect(textfields).toHaveLength(10);
   });
@@ -89,10 +96,10 @@ describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
       },
     ];
 
-    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />);
-    const fields = screen.getAllByRole('textbox');
+    renderWithProviders(<DynaTrueFixedWidthColmnMapper {...props} />, {initialStore});
+    const fields = screen.getAllByRole('combobox');
 
-    userEvent.type(fields[0], 'a');
+    await userEvent.type(fields[0], 'a');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('testId', newval));
   });
 });

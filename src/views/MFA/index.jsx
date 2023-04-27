@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import messageStore, { message } from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import OneTimePassCodeForm from './OneTimePassCodeForm';
 import actions from '../../actions';
 import Loader from '../../components/Loader';
-import Spinner from '../../components/Spinner';
 import UserSignInPage from '../../components/UserSignInPage';
 import RawHtml from '../../components/RawHtml';
 import NotificationToaster from '../../components/NotificationToaster';

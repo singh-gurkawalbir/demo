@@ -9,7 +9,7 @@ import FileDataPanelTitle from '.';
 
 const initialStore = getCreatedStore();
 
-function initFileDataPanelTitle(props = {}) {
+async function initFileDataPanelTitle(props = {}) {
   const mustateState = draft => {
     draft.session.editors = {
       filecsv: {
@@ -64,22 +64,22 @@ describe('fileDataPanelTitle UI tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should pass the initial render', () => {
-    initFileDataPanelTitle({editorId: 'filecsv', fileType: 'csv'});
+  test('should pass the initial render', async () => {
+    await initFileDataPanelTitle({editorId: 'filecsv', fileType: 'csv'});
     expect(screen.getByText('Sample CSV file (that would be parsed)')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Choose file'})).toBeInTheDocument();
   });
   test('should make a dispatch call when clicked on the fileupload button', async () => {
-    initFileDataPanelTitle({editorId: 'filecsv', fileType: 'csv'});
+    await initFileDataPanelTitle({editorId: 'filecsv', fileType: 'csv'});
     const file = new File(['test'], 'test.csv', {type: 'csv'});
     const uploadButton = document.querySelector('[type="file"]');
 
     expect(uploadButton).toBeInTheDocument();
-    userEvent.upload(uploadButton, file);
+    await userEvent.upload(uploadButton, file);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({file, fileId: '5b3c75dd5d3c125c88b5dd20-uploadFile', fileProps: {maxSize: undefined}, fileType: 'csv', type: 'FILE_PROCESS'}));
   });
-  test('should not render the uploadFile option for adaptorTypes other than ftp,s3 and simple', () => {
-    initFileDataPanelTitle({editorId: 'filescsv', fileType: 'csv'});
+  test('should not render the uploadFile option for adaptorTypes other than ftp,s3 and simple', async () => {
+    await initFileDataPanelTitle({editorId: 'filescsv', fileType: 'csv'});
     expect(screen.getByText('Sample CSV file')).toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Choose file'})).toBeNull();
   });

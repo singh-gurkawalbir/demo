@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
 import { INSTALL_STEP_TYPES } from '../../constants';
@@ -10,7 +11,6 @@ import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import InfoIconButton from '../InfoIconButton';
-import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
 import getImageUrl from '../../utils/image';
 
@@ -282,7 +282,7 @@ export default function InstallationStep(props) {
               type={
                 step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || (isNsBundleOrSuiteAppStep ? 'netsuite' : '')
               }
-              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId}
+              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId || step?.sourceConnection?.jdbc?.type}
             />
             )}
           </div>

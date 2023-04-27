@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import EditorField from '../DynaEditor';
 import { validateMockDataField } from '../../../../utils/flowDebugger';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
 import PopulateWithPreviewData from '../../../PopulateWithPreviewData';
 import ActionGroup from '../../../ActionGroup';
 import CeligoDivider from '../../../CeligoDivider';
@@ -66,12 +65,11 @@ function ModalTitle({
 }
 
 export default function MockDataEditorField(props) {
-  const {id, formKey, resourceType, resourceId, flowId, value} = props;
+  const { resourceType, resourceId, flowId } = props;
 
   const history = useHistory();
   const match = useRouteMatch();
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
@@ -85,16 +83,6 @@ export default function MockDataEditorField(props) {
 
   const expandMode = isPreviewPanelAvailableForResource ? 'drawer' : 'modal';
 
-  useEffect(() => {
-    const error = validateMockDataField(resourceType)(value);
-
-    if (error) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: error}));
-    } else {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
-    }
-  }, [dispatch, formKey, id, resourceType, value]);
-
   const handleExpandDrawer = useCallback(() => {
     const { formKey, id } = props;
 
@@ -105,6 +93,10 @@ export default function MockDataEditorField(props) {
     })}`);
   }, [history, match.url, props]);
 
+  const validateContent = useCallback(value =>
+    validateMockDataField(resourceType, value),
+  [resourceType]);
+
   return (
     <EditorField
       {...props}
@@ -113,7 +105,7 @@ export default function MockDataEditorField(props) {
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       customHandleEditorClick={expandMode === 'drawer' && handleExpandDrawer}
-      validateContent={validateMockDataField(resourceType)}
+      validateContent={validateContent}
       mode="json"
     />
   );

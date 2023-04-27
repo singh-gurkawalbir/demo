@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Typography, FormControl, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Button, Typography, FormControl, FormLabel } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import Spinner from '../../../Spinner';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import FieldMessage from '../../../DynaForm/fields/FieldMessage';
 import errorMessageStore from '../../../../utils/errorStore';
@@ -49,9 +49,6 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     marginLeft: theme.spacing(0.5),
     color: theme.palette.secondary.contrastText,
-  },
-  fileUploadStatus: {
-    marginTop: 60,
   },
 }));
 
@@ -103,14 +100,14 @@ export default function UploadFile() {
 
   if (uploadInProgress) {
     return (
-      <Spinner centerAll className={classes.fileUploadStatus} />
+      <Spinner size="large" center="screen" sx={{mt: '60px'}} />
     );
   }
 
   return (
     <div>
       <Typography variant="h5">{message.INSTALL_ZIP_FILE}</Typography>
-      <FormControl className={classes.formControlUploadFile}>
+      <FormControl variant="standard" className={classes.formControlUploadFile}>
         <div className={classes.fileUploadLabelWrapper}>
           <FormLabel required>
             Browse to Zip file

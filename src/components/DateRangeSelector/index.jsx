@@ -1,4 +1,5 @@
-import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
+import { List, ListItem, ListItemText } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -9,7 +10,7 @@ import 'react-date-range/dist/theme/default.css'; // theme css file
 import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import { useSelector } from 'react-redux';
-import ArrowPopper from '../ArrowPopper';
+import {ArrowPopper, Box} from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ActionButton from '../ActionButton';
@@ -76,10 +77,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-  parentPicker: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   listBtn: {
     background: theme.palette.background.paper,
     marginBottom: theme.spacing(1),
@@ -109,9 +106,6 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.background.paper,
       },
     },
-  },
-  rightCalendar: {
-    marginLeft: theme.spacing(2),
   },
   dateRangePopperBtnFull: {
     width: '100%',
@@ -176,7 +170,6 @@ export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
-  classProps = {},
   customPresets = [],
   showTime = true,
   clearable = false,
@@ -286,17 +279,13 @@ export default function DateRangeSelector({
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        classes={{
-          popper: clsx(classProps.filterTimeStampPopper, {[classProps.filterTimeStampPopperExpand]: selectedRange.preset === 'custom' }),
-          arrow: clsx(classProps.filterTimeStampPopperArrow, {[classProps.filterTimeStampArrowPopperExpand]: selectedRange.preset === 'custom'}),
-        }}
-        restrictToParent={false}
+        preventOverflow={false}
         placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
-            <div className={classes.parentPicker}>
-              <div className={classes.leftItems}>
+            <Box display="flex" flexDirection="row" columnGap="16px" alignItems="flex-start">
+              <Box>
                 <List className={classes.leftItemsList}>
                   {presets.map((m, i) => (
                     <div key={m.id}>
@@ -320,9 +309,8 @@ export default function DateRangeSelector({
                   setReset={setReset} selectedRange={selectedRange}
                   setSelectedRange={setSelectedRange} />
                 )}
-              </div>
+              </Box>
               {selectedRange.preset === 'custom' && (
-              <div className={classes.rightCalendar}>
                 <DateRange
                   isCalendar={isCalendar}
                   setSelectedRange={setSelectedRangeWithConstraint}
@@ -341,9 +329,8 @@ export default function DateRangeSelector({
                   inputRanges={[]}
                   showPreview={false}
                 />
-              </div>
               )}
-            </div>
+            </Box>
             <ActionGroup className={classes.actions}>
               <FilledButton onClick={handleSave}>
                 {primaryButtonLabel || 'Apply'}

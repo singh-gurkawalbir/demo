@@ -31,6 +31,7 @@ export function* pageProcessorPreview({
   includeStages = false,
   runOffline = false,
   addMockData,
+  includeFilterProcessing = false,
 }) {
   if (!flowId || (!_pageProcessorId && !routerId)) return;
 
@@ -45,6 +46,8 @@ export function* pageProcessorPreview({
   }
 
   let flow = yield call(filterPendingResources, { flow: flowClone });
+
+  const isIntegrationApp = flow?._connectorId;
 
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
@@ -119,7 +122,9 @@ export function* pageProcessorPreview({
       if (pageProcessor._exportId === updatedPageProcessorId) {
         pageProcessorMap[updatedPageProcessorId].options = {};
         // for lookup, remove inputFilters & output filters configured while making preview call for flowInput
-        delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
+        if (!includeFilterProcessing) {
+          delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
+        }
         delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
 
         return {
@@ -128,7 +133,7 @@ export function* pageProcessorPreview({
           _importId: pageProcessor._exportId,
         };
       }
-      if (pageProcessor._importId === updatedPageProcessorId) {
+      if (pageProcessor._importId === updatedPageProcessorId && !includeFilterProcessing) {
         // for imports, remove inputFilters configured while making preview call for flowInput
         delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
       }
@@ -165,7 +170,8 @@ export function* pageProcessorPreview({
   const body = {
     flow,
     _pageProcessorId: updatedPageProcessorId,
-    ...(routerId && {_routerId: routerId, options: scriptContext}),
+    ...(routerId && {_routerId: routerId}),
+    ...(isIntegrationApp && {options: scriptContext}),
     pageGeneratorMap,
     pageProcessorMap,
     includeStages,
@@ -204,6 +210,7 @@ export function* pageProcessorPreview({
         throwOnError,
         refresh,
         includeStages,
+        includeFilterProcessing,
       });
     }
     // Error handler

@@ -19,51 +19,6 @@ describe('getLookupMetadata component Test cases', () => {
 
     expect(nonExpressionRes).toBeNull();
 
-    const fields = [{
-      id: 'expression',
-      value: 'expressionValue',
-    }];
-
-    const expressionRes = response.optionsHandler('expression', [...fields, {
-      id: 'extract',
-    }, {
-      id: 'functions',
-    }]);
-
-    expect(expressionRes).toBe('expressionValue');
-
-    const expression1Res = response.optionsHandler('expression', [...fields, {
-      id: 'extract',
-      value: 'extractValue',
-    }]);
-
-    expect(expression1Res).toBe('expressionValue{{extractValue}}');
-
-    const expression2Res = response.optionsHandler('expression', [...fields, {
-      id: 'extract',
-    }, {
-      id: 'functions',
-      value: 'functionsValue',
-    }]);
-
-    expect(expression2Res).toBe('expressionValuefunctionsValue');
-
-    const expression3Res = response.optionsHandler('expression', [...fields, {
-      id: 'extract',
-      value: '*.extractValue',
-    }]);
-
-    expect(expression3Res).toBe('expressionValue{{*.extractValue}}');
-
-    const expression4Res = response.optionsHandler('expression', [{
-      id: 'extract',
-      value: '*.extractValue',
-    }, {
-      id: 'expression',
-    }]);
-
-    expect(expression4Res).toBe('{{*.extractValue}}');
-
     const lookuprelativeURIRes = response.optionsHandler('lookup.relativeURI', []);
 
     expect(lookuprelativeURIRes).toEqual({});

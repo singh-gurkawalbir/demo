@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { action } from '@storybook/addon-actions';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import RightDrawer from '../../../../../components/drawer/Right';

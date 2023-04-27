@@ -17,7 +17,7 @@ mutateStore(initialStore, draft => {
 });
 
 describe('uI test cases for errormessage', () => {
-  test('should test view export record link and view import record links are working fine when valid urls are provided', () => {
+  test('should test view export record link and view import record links are working fine when valid urls are provided', async () => {
     jest.spyOn(window, 'open').mockImplementation();
     renderWithProviders(<ErrorMessage
       errorId="68399487hnfi093i839209" message="errors in the data" flowId="5ea16c600e2fab71928a6152" resourceId="621ce7db7988314f51662c09"
@@ -27,11 +27,11 @@ describe('uI test cases for errormessage', () => {
     expect(retryfailed).toBeInTheDocument();
     const viewexportrecordlink = screen.getByText('View export record');
 
-    userEvent.click(viewexportrecordlink);
+    await userEvent.click(viewexportrecordlink);
     expect(window.open).toHaveBeenCalledWith('http://google.com', 'target=_blank0', undefined, false);
     const viewimportrecordlink = screen.getByText('View import record');
 
-    userEvent.click(viewimportrecordlink);
+    await userEvent.click(viewimportrecordlink);
     expect(window.open).toHaveBeenCalledWith('http://yahoo.com', 'target=_blank0', undefined, false);
   });
   test('should display export and import record text when invalid urls are provided', () => {

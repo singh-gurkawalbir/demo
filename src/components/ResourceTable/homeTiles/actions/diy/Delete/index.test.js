@@ -36,16 +36,16 @@ describe('homeTile delete action UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call mock handdelete function', () => {
+  test('should call mock handdelete function', async () => {
     const data = {key: 'keyText', name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Delete integration'));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Delete integration'));
     expect(mockuseHandleDelete).toHaveBeenCalledWith('2_integrationId', {_connectorId: undefined, mode: 'modeText', name: 'tileName', supportsMultiStore: true});
     expect(mockDelete).toHaveBeenCalledWith();
   });
-  test('should not show delete integration option because of permissions', () => {
+  test('should not show delete integration option because of permissions', async () => {
     const mockDelete = jest.fn();
     const mockuseHandleDelete = jest.spyOn(useHandleDelete, 'default');
 
@@ -54,7 +54,7 @@ describe('homeTile delete action UI tests', () => {
     const data = {key: 'keyText', name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'};
 
     initHomeTiles(data);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Delete integration')).not.toBeInTheDocument();
   });
 });

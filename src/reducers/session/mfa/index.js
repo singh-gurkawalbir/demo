@@ -28,6 +28,7 @@ export default (state = { codes: {}, sessionInfo: {} }, action) => {
         delete draft.codes.mobileCode;
         break;
       case actionTypes.MFA.SESSION_INFO.REQUEST:
+      case actionTypes.AUTH.VALIDATE_SESSION:
         draft.sessionInfo = {
           status: 'requested',
         };
@@ -94,7 +95,7 @@ selectors.isUserAuthenticated = state => {
 };
 selectors.agreeTOSAndPPRequired = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
-  const { agreeTOSAndPP } = state.sessionInfo.data;
+  const { agreeTOSAndPP = false } = state.sessionInfo.data;
   const isMFAResolved = selectors.isMFAResolved(state);
 
   return isMFAResolved && agreeTOSAndPP === false;

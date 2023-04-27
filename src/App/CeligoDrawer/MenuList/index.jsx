@@ -1,5 +1,5 @@
-import { Collapse, List } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Collapse, List } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';

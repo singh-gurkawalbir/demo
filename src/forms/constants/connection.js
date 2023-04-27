@@ -141,6 +141,7 @@ export default {
     'happyreturns',
     'brex',
     'bundleb2b',
+    'netsuitejdbc',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

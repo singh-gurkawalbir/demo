@@ -29,59 +29,77 @@ async function initDynaSelectOverrideMediaType(props = {}) {
   return renderWithProviders(ui);
 }
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
   test('should show empty dom when no props provided', () => {
     renderWithProviders(<DynaSelectOverrideMediaType />);
     expect(screen.getByText('Please select')).toBeInTheDocument();
   });
-  test('should show the modified options', () => {
+  test('should show the modified options', async () => {
     initDynaSelectOverrideMediaType(genProps);
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'CSV...',
-        'JSON...',
-        'Multipart / form-data...',
-        'URL encoded...',
-        'XML...',
+        'Please select',
+        'CSV',
+        'JSON',
+        'Multipart / form-data',
+        'URL encoded',
+        'XML',
       ]
     );
   });
-  test('should show the modified Options except for the dependable field', () => {
+  test('should show the modified Options except for the dependable field', async () => {
     renderWithProviders(
       <DynaSelectOverrideMediaType
         {...{...genProps, dependentFieldForMediaType: 'fieldForMediaType'}}
     />, {initialStore});
 
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'CSV...',
-        'Multipart / form-data...',
-        'URL encoded...',
-        'XML...',
+        'Please select',
+        'CSV',
+        'Multipart / form-data',
+        'URL encoded',
+        'XML',
       ]
     );
   });
-  test('should show option provided from props', () => {
+  test('should show option provided from props', async () => {
     initDynaSelectOverrideMediaType({...genProps, resourceType: 'anyresource'});
-    userEvent.click(screen.getByText('Please select'));
+    await userEvent.click(screen.getByText('Please select'));
     const menuItems = screen.getAllByRole('menuitem');
     const items = menuItems.map(each => each.textContent);
 
     expect(items).toEqual(
       [
-        'Please select...',
-        'someLabel...',
+        'Please select',
+        'someLabel',
       ]
     );
   });

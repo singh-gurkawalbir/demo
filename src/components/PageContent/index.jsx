@@ -1,12 +1,12 @@
 import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
     padding: theme.spacing(2),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)}px + ${theme.pageBarHeight}px))`,
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)} + ${theme.pageBarHeight}px))`,
     overflowY: 'auto',
   },
   pagingBarShow: {
@@ -26,7 +26,8 @@ export default function PageContent({children, showPagingBar = false, hidePaging
         classes.pageWrapper,
         {[classes.pagingBarShow]: showPagingBar},
         {[classes.pagingBarHide]: hidePagingBar},
-        className)}>{children}
+        className)}>
+      {children}
     </div>
   );
 }

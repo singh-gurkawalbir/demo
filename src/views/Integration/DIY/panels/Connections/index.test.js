@@ -91,9 +91,9 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
         <ConnectionsPanel integrationId="5ff579d745ceef7dcd797c15" childId={childId} />
       </MemoryRouter>, {initialStore});
   }
-  test('should click on Create connection', () => {
+  test('should click on Create connection', async () => {
     initStoreAndRender('some_connectorId', '5ff579d745ceef7dcd797c15');
-    userEvent.click(screen.getByText('Create connection'));
+    await userEvent.click(screen.getByText('Create connection'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -112,13 +112,13 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('someinitalURL/add/connections/somegeneratedID');
   });
-  test('should test registered connections buton', () => {
+  test('should test registered connections buton', async () => {
     initStoreAndRender(null, '5ff579d745ceef7dcd797c15');
 
-    userEvent.click(screen.getByText('Register connections'));
-    userEvent.click(screen.getByText('Register'));
+    await userEvent.click(screen.getByText('Register connections'));
+    await userEvent.click(screen.getByText('Register'));
     expect(screen.queryByText('Register')).not.toBeInTheDocument();
-    userEvent.click(screen.getByText('Create connection'));
+    await userEvent.click(screen.getByText('Create connection'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -134,12 +134,12 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
       }
     );
   });
-  test('should test when no child is passed', () => {
+  test('should test when no child is passed', async () => {
     initStoreAndRender(null, null);
-    userEvent.click(screen.getByText('Register connections'));
-    userEvent.click(screen.getByText('Register'));
+    await userEvent.click(screen.getByText('Register connections'));
+    await userEvent.click(screen.getByText('Register'));
     expect(screen.queryByText('Register')).not.toBeInTheDocument();
-    userEvent.click(screen.getByText('Create connection'));
+    await userEvent.click(screen.getByText('Create connection'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'RESOURCE_STAGE_PATCH',
@@ -157,7 +157,7 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
   test('should test table', () => {
     initStoreAndRender(null, null);
     expect(screen.getAllByRole('row')[0].textContent).toBe('NameStatusTypeAPILast updatedQueue sizeActions');
-    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 10:02:09 am0');
+    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 4:32:09 am0');
   });
   test('should test use effects dispatch call', () => {
     initStoreAndRender();
@@ -169,7 +169,7 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
       }
     );
   });
-  test('should test for standalone case', () => {
+  test('should test for standalone case', async () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -182,7 +182,7 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
       <MemoryRouter initialEntries={['someinitalURL']}>
         <ConnectionsPanel integrationId="5ff579d745ceef7dcd797c15" />
       </MemoryRouter>, {initialStore});
-    userEvent.click(screen.getByText('Create connection'));
+    await userEvent.click(screen.getByText('Create connection'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
         type: 'REGISTER_REQUEST',
@@ -194,6 +194,6 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
   test('should test table duplicate', () => {
     initStoreAndRender(null, '5ff579d745ceef7dcd797c15');
     expect(screen.getAllByRole('row')[0].textContent).toBe('NameStatusTypeAPILast updatedQueue sizeActions');
-    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 10:02:09 am0');
+    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 4:32:09 am0');
   });
 });

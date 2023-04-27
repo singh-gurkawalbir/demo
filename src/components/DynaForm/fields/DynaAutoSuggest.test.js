@@ -19,7 +19,7 @@ describe('dynaAutoSuggest tests', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument();
     expect(screen.getByText('Field message description')).toBeInTheDocument();
     expect(screen.getByRole('textbox', {name: ''})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('textbox'));
+    await userEvent.click(screen.getByRole('textbox'));
     expect(screen.queryAllByRole('option')).toHaveLength(0);
   });
   test('should able to test DynaAutoSuggest with some suggestions with labelName, valueName', async () => {
@@ -38,9 +38,9 @@ describe('dynaAutoSuggest tests', () => {
     await onFieldChange.mockClear();
     await renderWithProviders(<DynaAutoSuggest {...props} />);
     expect(screen.getByText('Field label')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('textbox'));
+    await userEvent.click(screen.getByRole('textbox'));
     expect(screen.getByRole('option', {name: 'label1'})).toBeInTheDocument();
-    userEvent.click(screen.getByRole('option', {name: 'label2'}));
+    await userEvent.click(screen.getByRole('option', {name: 'label2'}));
     expect(onFieldChange).not.toHaveBeenCalledWith('text-1234', 'val2');
   });
   test('should able to test DynaAutoSuggest with some suggestions without labelName, valueName', async () => {
@@ -53,8 +53,8 @@ describe('dynaAutoSuggest tests', () => {
 
     await onFieldChange.mockClear();
     await renderWithProviders(<DynaAutoSuggest {...props} />);
-    userEvent.click(screen.getByRole('textbox'));
-    userEvent.click(screen.getByRole('option', {name: 'val2 a'}));
+    await userEvent.click(screen.getByRole('textbox'));
+    await userEvent.click(screen.getByRole('option', {name: 'val2 a'}));
     expect(onFieldChange).toHaveBeenCalledWith('text-1234', 'val2a');
   });
 });

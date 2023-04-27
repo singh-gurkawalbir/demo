@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, mutateStore, reduxStore } from '../../../test/test-utils';
 import PreviewInfo from './PreviewInfo';
 
 let mockRecordValidity;
@@ -41,7 +41,7 @@ describe('preview Info Component', () => {
 
     expect(previewBtn).toBeEnabled();
     expect(screen.getByText('Number of records:')).toBeInTheDocument();
-    userEvent.click(previewBtn);
+    await userEvent.click(previewBtn);
     expect(fetchExportPreviewData).toHaveBeenCalledTimes(1);
   });
 
@@ -56,8 +56,37 @@ describe('preview Info Component', () => {
     const previewBtn = screen.getByRole('button', {name: 'Preview'});
     const changeRecordValidityBtn = screen.getByRole('button', {name: /changeRecordValidity/i});
 
-    userEvent.click(changeRecordValidityBtn);
-    userEvent.click(previewBtn);
+    await userEvent.click(changeRecordValidityBtn);
+    await userEvent.click(previewBtn);
     expect(screen.getByText('Enter a valid record size')).toBeInTheDocument();
+  });
+
+  test('should pass when click on the preview button fetchExportPreviewData to be called', async () => {
+    const initialStore = reduxStore;
+    const mustateState = draft => {
+      draft.data = {
+        resources: {
+          exports: [
+            {
+              _id: 'export-123',
+              type: 'delta',
+            },
+          ],
+        },
+      };
+    };
+
+    mutateStore(initialStore, mustateState);
+    const formKey = 'export-123';
+    const fetchExportPreviewData = jest.fn();
+    const resourceSampleData = {};
+
+    mockRecordValidity = false;
+
+    await initPreviewInfo({fetchExportPreviewData, resourceSampleData, formKey});
+    const previewBtn = screen.getByRole('button', {name: 'Preview'});
+
+    await userEvent.click(previewBtn);
+    expect(fetchExportPreviewData).toBeCalled();
   });
 });

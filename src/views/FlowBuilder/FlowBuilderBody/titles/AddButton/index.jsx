@@ -1,5 +1,6 @@
 import React from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import AddIcon from '../../../../../components/icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -20,7 +21,8 @@ export default function AddButton({onClick, type}) {
     <IconButton
       data-test={type === 'generator' ? 'addGenerator' : 'addProcessor'}
       className={classes.roundBtn}
-      onClick={onClick}>
+      onClick={onClick}
+      size="large">
       <AddIcon />
     </IconButton>
   );

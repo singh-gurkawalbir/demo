@@ -1,5 +1,5 @@
-import { Chip, TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Chip, TextField } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 import EditIcon from '../icons/EditIcon';
 
@@ -38,25 +38,25 @@ export default function ChipInput(props) {
   return (
     <>
       {isChipView && (
-        <Chip
-          {...props}
-          onClick={disabled ? () => {} : handleTagClick}
-          clickable={!disabled}
-          label={tag || 'tag'}
-          size="small"
-          icon={<EditIcon />}
-        />
+      <Chip
+        {...props}
+        onClick={disabled ? () => {} : handleTagClick}
+        clickable={!disabled}
+        label={tag || 'tag'}
+        size="small"
+        icon={<EditIcon />}
+      />
       )}
       {!isChipView && (
-        <TextField
-          disabled={disabled}
-          id="integration-tag"
-          autoFocus
-          defaultValue={tag}
-          className={classes.textField}
-          //   onChange={handleTagChange}
-          onBlur={handleBlur}
-        />
+      <TextField
+        variant="standard"
+        disabled={disabled}
+        id="integration-tag"
+        autoFocus
+        defaultValue={tag}
+        className={classes.textField}
+        //   onChange={handleTagChange}
+        onBlur={handleBlur} />
       )}
     </>
   );

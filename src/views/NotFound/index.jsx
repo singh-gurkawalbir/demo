@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { getHelpUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL } from '../../constants';
 import FilledButton from '../../components/Buttons/FilledButton';

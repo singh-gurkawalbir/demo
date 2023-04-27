@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import Paper from '@mui/material/Paper';
+import { alpha } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import SortableHandle from '../../Sortable/SortableHandle';
 
 const useStyles = makeStyles(theme => ({
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     boxSizing: 'border-box',
     border: '1px solid',
-    borderColor: fade(theme.palette.common.black, 0.1),
+    borderColor: alpha(theme.palette.common.black, 0.1),
     transitionProperty: 'all',
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeIn,
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
       transform: 'translateY(-5px)',
       boxShadow: '0 0 7px rgba(0,0,0,0.1)',
     },
-    [theme.breakpoints.between('sm', 'md')]: {
+    [theme.breakpoints.between('sm', 'lg')]: {
       minWidth: '100%',
       maxWidth: '100%',
     },

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -156,7 +157,6 @@ import ViewDetailsIcon from '../../../components/icons/ViewDetailsIcon';
 import VerticalLayoutIcon from '../../../components/icons/VerticalLayoutIcon';
 import WarningIcon from '../../../components/icons/WarningIcon';
 import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
-import ZendeskChatIcon from '../../../components/icons/ZendeskChatIcon';
 
 const icons = {
   AddIcon,
@@ -312,7 +312,6 @@ const icons = {
   ViewDetailsIcon,
   WarningIcon,
   WhatsNewIcon,
-  ZendeskChatIcon,
 };
 
 export default {

@@ -13,7 +13,7 @@ function initFieldHelp(props = {}) {
 }
 
 describe('FieldHelp UI tests', () => {
-  test('should pass the initial render', () => {
+  test('should pass the initial render', async () => {
     const props = {
       id: 'name',
       label: 'Name',
@@ -26,7 +26,7 @@ describe('FieldHelp UI tests', () => {
     };
 
     initFieldHelp(props);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Please name your script record so that you can easily reference it from other parts of the application.')).toBeInTheDocument();
     expect(screen.getByText('Was this helpful?')).toBeInTheDocument();

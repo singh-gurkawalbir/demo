@@ -42,24 +42,24 @@ describe('dynaSubmit Ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call the mockOnClick function on clicking the submit button when disable button is skipped from touch', () => {
+  test('should call the mockOnClick function on clicking the submit button when disable button is skipped from touch', async () => {
     initDynaSubmit({formKey: 'secondformKey', formDisabled: false, skipDisableButtonForFormTouched: true, onClick: mockOnClick });
-    userEvent.click(screen.getByText('Child text'));
+    await userEvent.click(screen.getByText('Child text'));
     expect(mockOnClick).toHaveBeenCalledWith('someValue');
   });
-  test('should make dispatch call for form validation when disable button is not skipped from touch', () => {
+  test('should make dispatch call for form validation when disable button is not skipped from touch', async () => {
     initDynaSubmit({formKey: 'secondformKey', formDisabled: false, ignoreFormTouchedCheck: true, skipDisableButtonForFormTouched: false, onClick: mockOnClick });
 
-    userEvent.click(screen.getByText('Child text'));
+    await userEvent.click(screen.getByText('Child text'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.form.showFormValidations('secondformKey')
     );
     expect(mockOnClick).not.toHaveBeenCalled();
   });
-  test('should make the dispatch call for validation and call mock on click function when clicked on submit button', () => {
+  test('should make the dispatch call for validation and call mock on click function when clicked on submit button', async () => {
     initDynaSubmit({formKey: 'secondformKey', isValid: true, formDisabled: false, ignoreFormTouchedCheck: true, skipDisableButtonForFormTouched: false, onClick: mockOnClick });
 
-    userEvent.click(screen.getByText('Child text'));
+    await userEvent.click(screen.getByText('Child text'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.form.showFormValidations('secondformKey')
     );

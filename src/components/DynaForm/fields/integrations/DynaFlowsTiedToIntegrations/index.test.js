@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+  fireEvent,
   screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -113,12 +114,12 @@ describe('dynaFlowsTiedToIntegration UI tests', () => {
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('Select...')).toBeInTheDocument();
   });
-  test('should diplay the attached flows when clicked on the dropdown', () => {
+  test('should diplay the attached flows when clicked on the dropdown', async () => {
     initDynaFlowsTiedToIntegration(props);
     const dropdown = screen.getByText('Select...');
 
     expect(dropdown).toBeInTheDocument();
-    userEvent.click(dropdown);
+    await userEvent.click(dropdown);
     expect(screen.getByText('flow2')).toBeInTheDocument();
     expect(screen.getByText('flow3')).toBeInTheDocument();
     expect(screen.getByText('flow4')).toBeInTheDocument();
@@ -130,9 +131,9 @@ describe('dynaFlowsTiedToIntegration UI tests', () => {
 
     expect(dropdownField).toBeInTheDocument();
     try {
-      await userEvent.click(dropdownField);
+      await fireEvent.click(dropdownField);
     } catch (e) {
-      expect(e.message).toBe('unable to click element as it has or inherits pointer-events set to "none".');
+      expect(e.message).toBe('Unable to perform pointer interaction as the element inherits `pointer-events: none`:');
     }
   });
 });

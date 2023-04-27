@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -95,7 +95,7 @@ export default function RunHistoryDrawer() {
       onClose={handleClose} >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
       <DrawerContent className={classes.runHistoryDrawer}>
-        <RunHistory flowId={flowId} className={classes.runHistoryPage} />
+        <RunHistory flowId={flowId} integrationId={integrationId} className={classes.runHistoryPage} />
       </DrawerContent>
     </RightDrawer>
   );

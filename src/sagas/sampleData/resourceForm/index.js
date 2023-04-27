@@ -27,6 +27,7 @@ import { processJsonSampleData } from '../../../utils/sampleData';
 import { evaluateExternalProcessor } from '../../editor';
 import { getCsvFromXlsx } from '../../../utils/file';
 import { safeParse } from '../../../utils/string';
+import { message } from '../../../utils/messageStore';
 
 /*
  * Parsers for different file types used for converting into JSON format
@@ -67,6 +68,11 @@ export function* _handlePreviewError({ e, resourceId }) {
       actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedError)
     );
   }
+  if (e.status === 500) {
+    return yield put(
+      actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED})
+    );
+  }
 }
 export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
   const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
@@ -77,11 +83,11 @@ export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestExportPreviewData({ formKey, executeProcessors = false }) {
+export function* _requestExportPreviewData({ formKey, executeProcessors = false, customStartDate }) {
   const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
-  const body = getFormattedResourceForPreview(resourceObj);
+  const body = getFormattedResourceForPreview(resourceObj, undefined, undefined, customStartDate);
 
   // for resource form we should not send the mockOutput in case of exports
   // else preview call may fail because of validations on mockOutput
@@ -290,7 +296,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   }));
 }
 
-export function* _requestPGExportSampleData({ formKey, refreshCache, executeProcessors }) {
+export function* _requestPGExportSampleData({ formKey, refreshCache, executeProcessors, customStartDate }) {
   const { resourceObj, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
@@ -310,7 +316,7 @@ export function* _requestPGExportSampleData({ formKey, refreshCache, executeProc
 
     return;
   }
-  yield call(_requestExportPreviewData, { formKey, executeProcessors });
+  yield call(_requestExportPreviewData, { formKey, executeProcessors, customStartDate });
 }
 
 export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
@@ -397,7 +403,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
   }
 }
 
-export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors }) {
+export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors, customStartDate }) {
   const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (ssLinkedConnectionId) {
@@ -413,7 +419,7 @@ export function* _requestExportSampleData({ formKey, refreshCache, executeProces
     // as part of IO-23131, we support mock input data for lookups
     yield call(_requestLookupSampleData, { formKey, refreshCache });
   } else {
-    yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors });
+    yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors, customStartDate });
   }
 }
 
@@ -485,11 +491,11 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   if (!resourceId || !VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA.includes(resourceType)) return;
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  const { refreshCache, executeProcessors, asyncKey } = options;
+  const { refreshCache, executeProcessors, asyncKey, customStartDate } = options;
 
   if (asyncKey) { yield put(actions.asyncTask.start(asyncKey)); }
   if (resourceType === 'exports') {
-    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
+    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors, customStartDate });
   }
   if (resourceType === 'imports') {
     yield call(_requestImportSampleData, { formKey, refreshCache });

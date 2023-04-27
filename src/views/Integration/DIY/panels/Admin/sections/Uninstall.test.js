@@ -63,7 +63,7 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15', steps: demoSteps});
     const buttons = screen.getAllByText('Uninstall');
 
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     expect(screen.getByText('Confirm uninstall')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to uninstall?')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
@@ -72,9 +72,9 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15'});
     let buttons = screen.getAllByText('Uninstall');
 
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     buttons = screen.getAllByText('Uninstall');
-    userEvent.click(buttons[2]);
+    await userEvent.click(buttons[2]);
     await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/uninstall'));
   });
   test('should make the respective url redirection when url contains childId', async () => {
@@ -83,9 +83,9 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection(props);
     let buttons = screen.getAllByText('Uninstall');
 
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     buttons = screen.getAllByText('Uninstall');
-    userEvent.click(buttons[2]);
+    await userEvent.click(buttons[2]);
     expect(mockHistoryPush).toBeCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/uninstall/child/admin');
   });
   test('should make the respective url redirection when integration is not of "framework 2"', async () => {
@@ -94,9 +94,9 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection(props);
     let buttons = screen.getAllByText('Uninstall');
 
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     buttons = screen.getAllByText('Uninstall');
-    userEvent.click(buttons[2]);
+    await userEvent.click(buttons[2]);
     expect(mockHistoryPush).toBeCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/uninstall/child/5ff579d745ceef7dcd797b26');
   });
   test('should make the respective url redirection when the integration is not of "framework 2" and does not contain integration settings', async () => {
@@ -105,9 +105,9 @@ describe('UninstallSection UI tests', () => {
     await initUninstallSection(props);
     let buttons = screen.getAllByText('Uninstall');
 
-    userEvent.click(buttons[1]);
+    await userEvent.click(buttons[1]);
     buttons = screen.getAllByText('Uninstall');
-    userEvent.click(buttons[2]);
+    await userEvent.click(buttons[2]);
     expect(mockHistoryPush).toBeCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/uninstall');
   });
 });

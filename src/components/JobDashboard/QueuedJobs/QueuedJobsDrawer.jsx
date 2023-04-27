@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
-import { Typography, makeStyles, Divider } from '@material-ui/core';
+import { Typography, Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';

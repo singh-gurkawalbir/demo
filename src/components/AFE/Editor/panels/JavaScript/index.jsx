@@ -1,20 +1,20 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   TextField,
   MenuItem,
   FormControl,
   FormLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { Spinner } from '@celigo/fuse-ui';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { hooksLabelMap, getScriptHookStub } from '../../../../../utils/hooks';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../../../Spinner';
 import CeligoSelect from '../../../../CeligoSelect';
 import OutlinedButton from '../../../../Buttons/OutlinedButton';
 
@@ -65,9 +65,16 @@ export default function JavaScriptPanel({ editorId }) {
   const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = rule || {};
   const insertStubKey = useSelector(state => selectors.editor(state, editorId).insertStubKey);
 
-  const { errorLine, error } =
+  const { errorLine, error, errSourceProcessor } =
     useSelector(state => selectors.editorPreviewError(state, editorId), shallowEqual);
-  const hasError = !!error;
+
+  let hasError = false;
+
+  if (errSourceProcessor) {
+    hasError = !!error && errSourceProcessor === 'javascript';
+  } else {
+    hasError = !!error;
+  }
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const {flowId} = useSelector(state => selectors.editor(state, editorId));
   const isIntegrationApp = !!useSelector(state => selectors.resource(state, 'flows', flowId)?._connectorId);
@@ -150,7 +157,7 @@ export default function JavaScriptPanel({ editorId }) {
     <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
-          <FormControl className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
@@ -179,7 +186,7 @@ export default function JavaScriptPanel({ editorId }) {
               {[defaultItem, ...scriptOptions]}
             </CeligoSelect>
           </FormControl>
-          <FormControl className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl}>
             <FormLabel htmlFor="entryFunction">
               Function
             </FormLabel>
@@ -206,7 +213,7 @@ export default function JavaScriptPanel({ editorId }) {
         {/* hide the script content */}
         <div className={classes.scriptPanel}>
           {fetchScript ? (
-            <Spinner centerAll />
+            <Spinner center="screen" />
           ) : (
             <CodePanel
               name="code"

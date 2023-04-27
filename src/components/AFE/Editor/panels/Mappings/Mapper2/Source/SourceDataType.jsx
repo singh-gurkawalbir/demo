@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { Divider, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import { Divider, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import { useHistory } from 'react-router-dom';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
-import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 
@@ -32,10 +32,6 @@ const useStyles = makeStyles(theme => ({
         display: 'none',
       },
     },
-  },
-  listPopper: {
-    maxWidth: theme.spacing(31),
-    top: '5px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -116,7 +112,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     width: theme.spacing(9),
-    marginLeft: -theme.spacing(13),
+    marginLeft: '-106px', // using theme.spacing for negative values results in "NaN"
     justifyContent: 'end',
     zIndex: 1,
   },
@@ -237,9 +233,6 @@ export default function SourceDataType({
         id="dataTypesList"
         open={open}
         anchorEl={anchorEl}
-        classes={{
-          popper: classes.listPopper,
-        }}
         placement="bottom-end"
         onClose={handleClose}>
         <List

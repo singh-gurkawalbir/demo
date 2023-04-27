@@ -6,15 +6,11 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
       retValues['/rdbms/once'] = undefined;
-      delete retValues['/rdbms/once/query'];
     } else if (retValues['/type'] === 'test') {
       retValues['/rdbms/once'] = undefined;
-      delete retValues['/rdbms/once/query'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/rdbms/once'] = undefined;
-      delete retValues['/rdbms/once/query'];
     }
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
@@ -51,12 +47,14 @@ export default {
           ],
         },
       ],
+      removeWhen: [{field: 'type', is: ['all']}],
     },
     'test.limit': {fieldId: 'test.limit'},
     rdbmsGrouping: {formId: 'rdbmsGrouping'},
     'rdbms.once.query': {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
+      deleteWhen: [{ field: 'type', is: ['all', 'test', 'delta'] }],
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },

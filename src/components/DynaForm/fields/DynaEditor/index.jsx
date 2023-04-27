@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import FormLabel from '@mui/material/FormLabel';
+import { useDispatch } from 'react-redux';
 import CodeEditor from '../../../CodeEditor';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
@@ -12,6 +13,8 @@ import ExpandEditorModal from './ExpandModeEditor/Modal';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isJsonString } from '../../../../utils/string';
+import actions from '../../../../actions';
+import { isJsonValue } from '../../../../utils/json';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -46,6 +49,38 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const useValidateContent = ({
+  id,
+  label,
+  mode,
+  formKey,
+  validateContent,
+  value,
+}) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!validateContent) return;
+
+    let errorMessages;
+
+    if (typeof validateContent === 'function') {
+      errorMessages = validateContent(value);
+    } else if (mode === 'json') {
+      errorMessages = isJsonValue(value, label);
+    } else { // no action to be performed
+      return;
+    }
+
+    if (errorMessages) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages}));
+    } else {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+};
+
 export default function DynaEditor(props) {
   const {
     id,
@@ -69,11 +104,15 @@ export default function DynaEditor(props) {
     isLoggable,
     validateContent,
     modalTitle,
+    formKey,
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
+
+  useValidateContent({id, formKey, label, mode, validateContent, value});
+
   const handleEditorClick = useCallback(() => {
     if (customHandleEditorClick) {
       customHandleEditorClick();

@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import { getResourceFromAlias, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';

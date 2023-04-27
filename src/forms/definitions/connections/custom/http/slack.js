@@ -19,7 +19,6 @@ export default {
         `https://slack.com/oauth/v2/authorize?user_scope=${formValues['/http/unencrypted/userScopes']}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] =
         'https://slack.com/api/oauth.v2.access';
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
@@ -165,6 +164,7 @@ export default {
       required: true,
       helpKey: 'slack.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
+      removeWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     settings: { fieldId: 'settings' },

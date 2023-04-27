@@ -344,9 +344,25 @@ Object {
       },
       "as2.partnerStationInfo.auth.basic.password": Object {
         "fieldId": "as2.partnerStationInfo.auth.basic.password",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "token",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.basic.username": Object {
         "fieldId": "as2.partnerStationInfo.auth.basic.username",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "token",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.failPath": Object {
         "fieldId": "as2.partnerStationInfo.auth.failPath",
@@ -359,43 +375,147 @@ Object {
       },
       "as2.partnerStationInfo.auth.token.headerName": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.headerName",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.location": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.location",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.paramName": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.paramName",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshBody": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshBody",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshHeaders": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshHeaders",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshMediaType": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshMediaType",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshMethod": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshMethod",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshRelativeURI": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshRelativeURI",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshToken": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshToken",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.refreshTokenPath": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.refreshTokenPath",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.scheme": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.scheme",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.token.token": Object {
         "fieldId": "as2.partnerStationInfo.auth.token.token",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.auth.type": Object {
         "defaultValue": [Function],
         "fieldId": "as2.partnerStationInfo.auth.type",
+        "removeWhen": Array [
+          Object {
+            "field": "as2.partnerStationInfo.auth.type",
+            "is": Array [
+              "none",
+            ],
+          },
+        ],
       },
       "as2.partnerStationInfo.encoding": Object {
         "fieldId": "as2.partnerStationInfo.encoding",
@@ -449,7 +569,7 @@ Object {
           Click
            
           <a
-            href="https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs"
+            href="https://docs.celigo.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs"
             target="_blank"
           >
             here
@@ -740,6 +860,14 @@ Object {
       },
       "ftp.entryParser": Object {
         "fieldId": "ftp.entryParser",
+        "removeWhen": Array [
+          Object {
+            "field": "ftp.entryParser",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "required": false,
       },
       "ftp.hostURI": Object {
@@ -750,10 +878,6 @@ Object {
       },
       "ftp.port": Object {
         "fieldId": "ftp.port",
-        "refreshOptionsOnChangesTo": Array [
-          "ftp.type",
-          "ftp.useImplicitFtps",
-        ],
         "validWhen": Object {
           "matchesRegEx": Object {
             "message": "Must be a number.",
@@ -873,6 +997,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -887,6 +1019,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -1103,6 +1236,14 @@ Object {
           "provider": "netsuite",
         },
         "ignoreEnvironmentFilter": true,
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "is": Array [
+              "basic",
+            ],
+          },
+        ],
         "requiredWhen": [Function],
         "type": "dynaiclient",
         "visibleWhen": Array [
@@ -1146,6 +1287,14 @@ Object {
       },
       "netsuite.email": Object {
         "fieldId": "netsuite.email",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "basic",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1180,6 +1329,14 @@ Object {
       },
       "netsuite.password": Object {
         "fieldId": "netsuite.password",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "basic",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1217,6 +1374,7 @@ Object {
       },
       "netsuite.token.auto.account": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "netsuite.token.auto.account",
         "label": "Account ID",
         "required": true,
@@ -1234,6 +1392,7 @@ Object {
       "netsuite.token.auto.roleId": Object {
         "defaultDisabled": true,
         "defaultValue": [Function],
+        "delete": true,
         "fieldId": "netsuite.token.auto.roleId",
         "isLoggable": true,
         "label": "Role",
@@ -1257,6 +1416,7 @@ Object {
         ],
       },
       "netsuite.tokenEnvironment": Object {
+        "delete": true,
         "fieldId": "netsuite.tokenEnvironment",
         "visibleWhen": Array [
           Object {
@@ -1269,6 +1429,14 @@ Object {
       },
       "netsuite.tokenId": Object {
         "fieldId": "netsuite.tokenId",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "token",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1280,6 +1448,14 @@ Object {
       },
       "netsuite.tokenSecret": Object {
         "fieldId": "netsuite.tokenSecret",
+        "removeWhen": Array [
+          Object {
+            "field": "netsuite.authType",
+            "isNot": Array [
+              "token",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "netsuite.authType",
@@ -1486,6 +1662,14 @@ Object {
       },
       "salesforce.username": Object {
         "fieldId": "salesforce.username",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.oauth2FlowType",
+            "is": Array [
+              "refreshToken",
+            ],
+          },
+        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -1616,6 +1800,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -1630,6 +1822,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -1728,6 +1921,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -1742,6 +1943,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -1854,6 +2056,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "required": true,
         "visibleWhen": Array [
           Object {
@@ -1873,6 +2083,7 @@ Object {
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2005,6 +2216,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2019,6 +2238,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2277,6 +2497,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2291,6 +2519,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2389,6 +2618,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2403,6 +2640,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2515,6 +2753,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "required": true,
         "visibleWhen": Array [
           Object {
@@ -2534,6 +2780,7 @@ Object {
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2666,6 +2913,14 @@ Object {
     "fieldMap": Object {
       "_agentId": Object {
         "fieldId": "_agentId",
+        "removeWhen": Array [
+          Object {
+            "field": "mode",
+            "is": Array [
+              "cloud",
+            ],
+          },
+        ],
         "visibleWhen": Array [
           Object {
             "field": "mode",
@@ -2680,6 +2935,7 @@ Object {
       },
       "mode": Object {
         "defaultValue": [Function],
+        "delete": true,
         "id": "mode",
         "isLoggable": true,
         "label": "Mode",
@@ -2943,7 +3199,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -3409,6 +3665,16 @@ Object {
         "formId": "common",
       },
       "delta.dateField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.dateField",
       },
       "dynamodb.expressionAttributeNames": Object {
@@ -3461,6 +3727,16 @@ Object {
         "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "once.booleanField",
         "label": "Once boolean field",
         "type": "text",
@@ -3480,6 +3756,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -3506,6 +3792,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -4407,6 +4701,16 @@ Object {
         "formId": "common",
       },
       "delta.dateField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.dateField",
       },
       "exportOneToMany": Object {
@@ -4425,6 +4729,16 @@ Object {
         "fieldId": "mongodb.projection",
       },
       "once.booleanField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "once.booleanField",
       },
       "rdbmsGrouping": Object {
@@ -4434,6 +4748,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -4460,6 +4784,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -5888,6 +6220,16 @@ Object {
       "delta.dateField": Object {
         "connectionId": [Function],
         "defaultValue": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
@@ -5910,6 +6252,16 @@ Object {
         ],
       },
       "delta.lagOffset": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.lagOffset",
       },
       "exportOneToMany": Object {
@@ -5920,6 +6272,16 @@ Object {
       },
       "once.booleanField": Object {
         "connectionId": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
@@ -5965,9 +6327,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -6083,6 +6442,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -6109,6 +6478,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -6235,6 +6612,14 @@ Object {
         "fieldId": "file.groupByFields",
       },
       "file.json.resourcePath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.json.resourcePath",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "fieldId": "file.json.resourcePath",
       },
       "file.sortByFields": Object {
@@ -6271,12 +6656,36 @@ Object {
         "type": "filetypeselect",
       },
       "file.xlsx.hasHeaderRow": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "file.xlsx.hasHeaderRow",
       },
       "file.xlsx.keyColumns": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "file.xlsx.keyColumns",
       },
       "file.xlsx.rowsPerRecord": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
       "fixed.format": Object {
@@ -6293,6 +6702,14 @@ Object {
         "fieldId": "pageSize",
       },
       "parsers": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "parsers",
         "uploadSampleDataFieldName": "uploadFile",
         "visibleWhenAll": Array [
@@ -6453,10 +6870,6 @@ Object {
       },
       "webhook.sampledata": Object {
         "fieldId": "webhook.sampledata",
-        "refreshOptionsOnChangesTo": Array [
-          "webhook.url",
-          "webhook.provider",
-        ],
         "sampleData": [Function],
       },
       "webhook.slackKey": Object {
@@ -6579,6 +6992,16 @@ Object {
         "formId": "common",
       },
       "delta.dateField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.dateField",
       },
       "exportOneToMany": Object {
@@ -6588,12 +7011,32 @@ Object {
         "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "once.booleanField",
       },
       "settings": Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -6623,12 +7066,28 @@ Object {
             ],
           },
         ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+            ],
+          },
+        ],
         "required": true,
         "skipSort": true,
         "type": "select",
       },
       "wrapper.configuration": Object {
         "fieldId": "wrapper.configuration",
+        "removeWhen": Array [
+          Object {
+            "field": "wrapper.configuration",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "wrapper.function": Object {
         "fieldId": "wrapper.function",
@@ -6894,6 +7353,16 @@ Object {
       "delta.dateField": Object {
         "connectionId": [Function],
         "defaultValue": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
@@ -6916,6 +7385,16 @@ Object {
         ],
       },
       "delta.lagOffset": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.lagOffset",
       },
       "exportOneToMany": Object {
@@ -6926,6 +7405,16 @@ Object {
       },
       "once.booleanField": Object {
         "connectionId": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
@@ -6971,9 +7460,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -7089,6 +7575,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -7115,6 +7611,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -7561,7 +8065,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -7737,6 +8241,16 @@ Object {
       "delta.dateField": Object {
         "connectionId": [Function],
         "defaultValue": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
@@ -7759,6 +8273,16 @@ Object {
         ],
       },
       "delta.lagOffset": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.lagOffset",
       },
       "exportOneToMany": Object {
@@ -7769,6 +8293,16 @@ Object {
       },
       "once.booleanField": Object {
         "connectionId": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
@@ -7814,9 +8348,6 @@ Object {
       },
       "salesforce.distributed.qualifier": Object {
         "fieldId": "salesforce.distributed.qualifier",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.distributed.referencedFields": Object {
         "connectionId": [Function],
@@ -7932,6 +8463,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -7958,6 +8499,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -8072,6 +8621,16 @@ Object {
         "fieldId": "mockOutput",
       },
       "rdbms.once.query": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
           Object {
@@ -8118,6 +8677,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -8212,6 +8779,16 @@ Object {
         "fieldId": "mockOutput",
       },
       "rdbms.once.query": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
           Object {
@@ -8258,6 +8835,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -8540,7 +9125,7 @@ Object {
       ],
     },
   },
-  "init": [Function],
+  "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -8566,9 +9151,37 @@ Object {
       },
       "dynamodb.expressionAttributeNames": Object {
         "fieldId": "dynamodb.expressionAttributeNames",
+        "removeWhenAll": Array [
+          Object {
+            "field": "dynamodb.method",
+            "is": Array [
+              "putItem",
+            ],
+          },
+          Object {
+            "field": "dynamodb.conditionExpression",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "dynamodb.expressionAttributeValues": Object {
         "fieldId": "dynamodb.expressionAttributeValues",
+        "removeWhenAll": Array [
+          Object {
+            "field": "dynamodb.method",
+            "is": Array [
+              "putItem",
+            ],
+          },
+          Object {
+            "field": "dynamodb.conditionExpression",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "dynamodb.ignoreExtract": Object {
         "fieldId": "dynamodb.ignoreExtract",
@@ -8589,6 +9202,14 @@ Object {
       },
       "dynamodb.itemDocument": Object {
         "fieldId": "dynamodb.itemDocument",
+        "removeWhen": Array [
+          Object {
+            "field": "dynamodb.method",
+            "isNot": Array [
+              "putItem",
+            ],
+          },
+        ],
       },
       "dynamodb.method": Object {
         "fieldId": "dynamodb.method",
@@ -9783,6 +10404,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.feedOptions": Object {
+        "fieldId": "unencrypted.feedOptions",
+      },
       "unencrypted.feedType": Object {
         "fieldId": "unencrypted.feedType",
       },
@@ -9899,6 +10523,7 @@ Object {
                 "http.lookups",
                 "http.batchSize",
                 "unencrypted.feedType",
+                "unencrypted.feedOptions",
                 "http.body",
                 "uploadFile",
               ],
@@ -10029,9 +10654,37 @@ Object {
       },
       "mongodb.ignoreExtract": Object {
         "fieldId": "mongodb.ignoreExtract",
+        "removeWhenAll": Array [
+          Object {
+            "field": "mongodb.ignoreLookupFilter",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "mongodb.lookupType",
+            "is": Array [
+              "lookup",
+            ],
+          },
+        ],
       },
       "mongodb.ignoreLookupFilter": Object {
         "fieldId": "mongodb.ignoreLookupFilter",
+        "removeWhenAll": Array [
+          Object {
+            "field": "mongodb.ignoreExtract",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "mongodb.lookupType",
+            "is": Array [
+              "source",
+            ],
+          },
+        ],
       },
       "mongodb.lookupType": Object {
         "fieldId": "mongodb.lookupType",
@@ -11205,7 +11858,7 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -11333,6 +11986,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -11439,9 +12100,25 @@ Object {
       },
       "salesforce.blobOperation": Object {
         "fieldId": "salesforce.blobOperation",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.blobsObjectType": Object {
         "fieldId": "salesforce.blobsObjectType",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.compositeOperation": Object {
         "fieldId": "salesforce.compositeOperation",
@@ -11483,13 +12160,38 @@ Object {
         "fieldId": "salesforce.document.name",
       },
       "salesforce.idLookup.extract": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.idLookup.extract",
       },
       "salesforce.idLookup.whereClause": Object {
-        "fieldId": "salesforce.idLookup.whereClause",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
         ],
+        "fieldId": "salesforce.idLookup.whereClause",
       },
       "salesforce.lookups": Object {
         "fieldId": "salesforce.lookups",
@@ -11502,6 +12204,20 @@ Object {
         "fieldId": "salesforce.sObjectType",
       },
       "salesforce.upsert.externalIdField": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.upsert.externalIdField",
         "refreshOptionsOnChangesTo": Array [
           "salesforce.sObjectType",
@@ -11616,6 +12332,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -11739,18 +12463,12 @@ Object {
       },
       "netsuite_da.internalIdLookup.expression": Object {
         "fieldId": "netsuite_da.internalIdLookup.expression",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.mapping": Object {
         "fieldId": "netsuite_da.mapping",
       },
       "netsuite_da.operation": Object {
         "fieldId": "netsuite_da.operation",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
@@ -11760,9 +12478,6 @@ Object {
       },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -11860,6 +12575,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -11983,18 +12706,12 @@ Object {
       },
       "netsuite_da.internalIdLookup.expression": Object {
         "fieldId": "netsuite_da.internalIdLookup.expression",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.mapping": Object {
         "fieldId": "netsuite_da.mapping",
       },
       "netsuite_da.operation": Object {
         "fieldId": "netsuite_da.operation",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
@@ -12004,9 +12721,6 @@ Object {
       },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -12109,6 +12823,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -12215,9 +12937,25 @@ Object {
       },
       "salesforce.blobOperation": Object {
         "fieldId": "salesforce.blobOperation",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.blobsObjectType": Object {
         "fieldId": "salesforce.blobsObjectType",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.compositeOperation": Object {
         "fieldId": "salesforce.compositeOperation",
@@ -12259,13 +12997,38 @@ Object {
         "fieldId": "salesforce.document.name",
       },
       "salesforce.idLookup.extract": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.idLookup.extract",
       },
       "salesforce.idLookup.whereClause": Object {
-        "fieldId": "salesforce.idLookup.whereClause",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
         ],
+        "fieldId": "salesforce.idLookup.whereClause",
       },
       "salesforce.lookups": Object {
         "fieldId": "salesforce.lookups",
@@ -12278,6 +13041,20 @@ Object {
         "fieldId": "salesforce.sObjectType",
       },
       "salesforce.upsert.externalIdField": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.upsert.externalIdField",
         "refreshOptionsOnChangesTo": Array [
           "salesforce.sObjectType",
@@ -12427,6 +13204,14 @@ Object {
         "defaultValue": [Function],
         "id": "rdbms.query",
         "label": "SQL query",
+        "removeWhen": Array [
+          Object {
+            "field": "rdbms.queryType",
+            "is": Array [
+              "BULK INSERT",
+            ],
+          },
+        ],
         "required": true,
         "type": "sqlquerybuilder",
         "visibleWhen": Array [
@@ -12720,6 +13505,14 @@ Object {
       },
       "autoPurgeAt": Object {
         "fieldId": "autoPurgeAt",
+        "removeWhen": Array [
+          Object {
+            "field": "autoPurgeAt",
+            "is": Array [
+              "never",
+            ],
+          },
+        ],
       },
       "description": Object {
         "fieldId": "description",
@@ -12813,6 +13606,7 @@ Object {
     "fieldMap": Object {
       "apiIdentifier": Object {
         "defaultValue": [Function],
+        "delete": true,
         "helpKey": "apiIdentifier",
         "id": "apiIdentifier",
         "label": "Invoke",
@@ -12842,6 +13636,7 @@ Object {
       },
       "script": Object {
         "defaultValue": [Function],
+        "delete": true,
         "hookStage": "handleRequest",
         "hookType": "script",
         "id": "script",
@@ -12851,6 +13646,14 @@ Object {
       },
       "shipworks.password": Object {
         "defaultValue": "",
+        "deleteWhen": Array [
+          Object {
+            "field": "enableShipworksAuthentication",
+            "is": Array [
+              false,
+            ],
+          },
+        ],
         "description": "Note: for security reasons this field must always be re-entered.",
         "id": "shipworks.password",
         "inputType": "password",
@@ -12874,6 +13677,14 @@ Object {
         ],
       },
       "shipworks.username": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "enableShipworksAuthentication",
+            "is": Array [
+              false,
+            ],
+          },
+        ],
         "id": "shipworks.username",
         "label": "Username",
         "requiredWhen": Array [
@@ -12896,6 +13707,7 @@ Object {
       },
       "shipworksApiIdentifier": Object {
         "defaultValue": [Function],
+        "delete": true,
         "helpKey": "apiIdentifier",
         "id": "shipworksApiIdentifier",
         "label": "Invoke",
@@ -13091,6 +13903,14 @@ Object {
       "_trialLicenseId": Object {
         "fieldId": "_trialLicenseId",
         "omitWhenHidden": true,
+        "removedWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "trialEnabled",
@@ -13135,6 +13955,14 @@ Object {
       "trialPeriod": Object {
         "fieldId": "trialPeriod",
         "omitWhenHidden": true,
+        "removedWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "requiredWhen": Array [
           Object {
             "field": "trialEnabled",
@@ -13212,6 +14040,24 @@ Object {
       "amazonmws.secretKey": Object {
         "fieldId": "amazonmws.secretKey",
       },
+      "application": Object {
+        "fieldId": "application",
+        "isLoggable": true,
+        "label": "Application",
+        "options": Array [],
+        "type": "iclientSelect",
+      },
+      "iclientFormView": Object {
+        "defaultValue": [Function],
+        "helpKey": "formView",
+        "id": "iclientFormView",
+        "isLoggable": true,
+        "label": "Form view",
+        "required": true,
+        "resourceType": "iclients",
+        "type": "iclientFormView",
+        "visible": true,
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -13238,6 +14084,14 @@ Object {
       },
       "oauth2.failValues": Object {
         "fieldId": "oauth2.failValues",
+        "removeWhen": Array [
+          Object {
+            "field": "oauth2.failPath",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "oauth2.grantType": Object {
         "fieldId": "oauth2.grantType",
@@ -13259,6 +14113,7 @@ Object {
       },
       "provider": Object {
         "fieldId": "provider",
+        "visible": false,
       },
     },
     "layout": Object {
@@ -13268,6 +14123,7 @@ Object {
           "fields": Array [
             "name",
             "provider",
+            "application",
           ],
           "label": "General",
         },
@@ -13370,9 +14226,31 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
+      },
+      "checkExistingExport": Object {
+        "flowResourceType": "pg",
+        "id": "checkExistingExport",
+        "label": "Use existing export",
+        "name": "checkExistingExport",
+        "refreshOptionsOnChangesTo": Array [
+          "application",
+          "connection",
+          "type",
+        ],
+        "required": false,
+        "resourceType": "exports",
+        "type": "existingCheckresource",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "application",
+            "isNot": Array [
+              "",
+            ],
+          },
+        ],
       },
       "connection": Object {
         "allowEdit": true,
@@ -13414,18 +14292,20 @@ Object {
       },
       "existingExport": Object {
         "allowEdit": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pg",
         "id": "exportId",
-        "label": "Would you like to use an existing export?",
+        "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "type",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13435,10 +14315,17 @@ Object {
               "",
             ],
           },
+          Object {
+            "field": "checkExistingExport",
+            "is": Array [
+              true,
+            ],
+          },
         ],
       },
       "type": Object {
         "dataTest": "exportType",
+        "defaultOpen": true,
         "defaultValue": "",
         "id": "type",
         "label": "What would you like to do?",
@@ -13467,6 +14354,7 @@ Object {
             "application",
             "type",
             "connection",
+            "checkExistingExport",
             "existingExport",
           ],
         },
@@ -13493,12 +14381,82 @@ Object {
         "isLoggable": true,
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 50+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],
         "required": true,
         "type": "selectapplication",
+      },
+      "checkExistingExport": Object {
+        "flowResourceType": "pp",
+        "id": "checkExistingExport",
+        "label": "Use existing lookup",
+        "name": "checkExistingExport",
+        "refreshOptionsOnChangesTo": Array [
+          "application",
+          "connection",
+          "resourceType",
+        ],
+        "required": false,
+        "resourceType": "exports",
+        "type": "existingCheckresource",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "application",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "connection",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "resourceType",
+            "is": Array [
+              "lookupRecords",
+              "lookupFiles",
+            ],
+          },
+        ],
+      },
+      "checkExistingImport": Object {
+        "flowResourceType": "pp",
+        "id": "checkExistingImport",
+        "label": "Use existing import",
+        "name": "checkExistingImport",
+        "refreshOptionsOnChangesTo": Array [
+          "application",
+          "connection",
+          "resourceType",
+        ],
+        "required": false,
+        "resourceType": "imports",
+        "type": "existingCheckresource",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "application",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "connection",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "resourceType",
+            "is": Array [
+              "importRecords",
+              "transferFiles",
+            ],
+          },
+        ],
       },
       "connection": Object {
         "allowEdit": true,
@@ -13531,18 +14489,20 @@ Object {
       },
       "existingExport": Object {
         "allowEdit": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pp",
         "id": "exportId",
-        "label": "Would you like to use an existing lookup?",
+        "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13565,22 +14525,30 @@ Object {
               "lookupFiles",
             ],
           },
+          Object {
+            "field": "checkExistingExport",
+            "is": Array [
+              true,
+            ],
+          },
         ],
       },
       "existingImport": Object {
         "allowEdit": true,
+        "defaultOpen": true,
         "defaultValue": "",
         "flowResourceType": "pp",
         "id": "importId",
-        "label": "Would you like to use an existing import?",
+        "label": "",
         "name": "importId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "importId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "imports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13603,10 +14571,17 @@ Object {
               "transferFiles",
             ],
           },
+          Object {
+            "field": "checkExistingImport",
+            "is": Array [
+              true,
+            ],
+          },
         ],
       },
       "resourceType": Object {
         "dataTest": "exportType",
+        "defaultOpen": true,
         "id": "resourceType",
         "label": "What would you like to do?",
         "mode": "destination",
@@ -13634,7 +14609,9 @@ Object {
             "application",
             "resourceType",
             "connection",
+            "checkExistingImport",
             "existingImport",
+            "checkExistingExport",
             "existingExport",
           ],
         },
@@ -13894,6 +14871,14 @@ Object {
     "fieldMap": Object {
       "export.netsuite.realtime.checkboxField": Object {
         "fieldId": "export.netsuite.realtime.checkboxField",
+        "removeWhen": Array [
+          Object {
+            "field": "export.netsuite.realtime.exportType",
+            "is": Array [
+              "always",
+            ],
+          },
+        ],
       },
       "export.netsuite.realtime.executionContext": Object {
         "fieldId": "export.netsuite.realtime.executionContext",
@@ -14139,6 +15124,14 @@ Object {
     "fieldMap": Object {
       "export.salesforce.booleanField": Object {
         "fieldId": "export.salesforce.booleanField",
+        "removeWhen": Array [
+          Object {
+            "field": "export.salesforce.exportType",
+            "isNot": Array [
+              "once",
+            ],
+          },
+        ],
       },
       "export.salesforce.exportType": Object {
         "fieldId": "export.salesforce.exportType",

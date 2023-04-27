@@ -1,4 +1,3 @@
-import { alterFileDefinitionRulesVisibility } from '../../../formFactory/utils';
 
 export default {
   optionsHandler: (fieldId, fields) => {
@@ -11,8 +10,6 @@ export default {
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
-
-      alterFileDefinitionRulesVisibility(fields);
 
       return {
         format: definition && definition.format,

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { useHistory, useLocation } from 'react-router-dom';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
@@ -99,11 +99,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 101,
     maxHeight: theme.spacing(4),
   },
-  addButton: {
-    // padding: theme.spacing(2),
-    // marginTop: -theme.spacing(1),
-    // marginLeft: -theme.spacing(1),
-  },
   status: {
     justifyContent: 'center',
     height: 'unset',
@@ -114,8 +109,8 @@ const useStyles = makeStyles(theme => ({
   },
   deleteButton: {
     position: 'absolute',
-    right: -theme.spacing(0.5),
-    top: -theme.spacing(0.5),
+    right: theme.spacing(-0.5),
+    top: theme.spacing(-0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
     color: 'rgb(0,0,0,0)',

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import produce from 'immer';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import DynaTableView from './DynaTable';
 
 const useStyles = makeStyles(theme => ({

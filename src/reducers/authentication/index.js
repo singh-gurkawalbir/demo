@@ -20,7 +20,7 @@ export default function (state = defaultState, action) {
       ...auth,
     };
   }
-  const { type, showAuthError, mfaError, mfaAuthInfo, payload, response } = action;
+  const { type, showAuthError, mfaError, mfaAuthInfo, payload, response, error } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -181,13 +181,17 @@ export default function (state = defaultState, action) {
         if (!draft.acceptInvite) draft.acceptInvite = {};
         draft.acceptInvite = {...payload, status: 'received'};
         break;
+      case actionTypes.AUTH.ACCEPT_INVITE.FAILED:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite = {...error, status: 'errored'};
+        break;
       case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR:
         if (!draft.acceptInvite) draft.acceptInvite = {};
         draft.acceptInvite = { status: 'errored'};
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.SUCCESS:
         if (!draft.acceptInvite) draft.acceptInvite = {};
-        draft.acceptInvite.redirectUrl = response.ssoRedirectURL || '/signin';
+        draft.acceptInvite.redirectUrl = response.ssoRedirectURL || '/home';
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.CLEAR:
         delete draft.acceptInvite;

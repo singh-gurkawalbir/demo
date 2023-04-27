@@ -29,7 +29,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-function renderFuntion(data) {
+async function renderFuntion(data) {
   renderWithProviders(
     <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}/view/reportDetails/:reportId`}]}>
       <Route path="/integrations/:integrationId">
@@ -39,18 +39,18 @@ function renderFuntion(data) {
       </Route>
     </MemoryRouter>, {initialStore}
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
 describe('uI test cases for view report', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should make a history call after clicking on view report details', () => {
-    renderFuntion({_id: '6287678bdh893338hdn3', status: 'completed', _flowIds: ['6287678bdh893338hdn3'], integrationId: '6287678493nff8e93873'});
+  test('should make a history call after clicking on view report details', async () => {
+    await renderFuntion({_id: '6287678bdh893338hdn3', status: 'completed', _flowIds: ['6287678bdh893338hdn3'], integrationId: '6287678493nff8e93873'});
     const viewReportsButton = screen.getByText('View report details');
 
-    userEvent.click(viewReportsButton);
+    await userEvent.click(viewReportsButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6287678493nff8e93873/view/reportDetails/6287678bdh893338hdn3');
   });
 });

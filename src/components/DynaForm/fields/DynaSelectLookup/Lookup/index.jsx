@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import ManageLookup from '../../../../drawer/Lookup/Manage';
 import { LOOKUP_FORM_KEY } from '../../../../../constants';

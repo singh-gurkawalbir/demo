@@ -32,7 +32,7 @@ describe('test suite for DynaLinkSuiteScriptIntegrator field', () => {
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
   });
 
-  test('should populate the saved value', () => {
+  test('should populate the saved value', async () => {
     const onFieldChange = jest.fn();
     const props = {
       onFieldChange,
@@ -61,7 +61,7 @@ describe('test suite for DynaLinkSuiteScriptIntegrator field', () => {
     const checkBox = screen.getByRole('checkbox');
 
     expect(checkBox).toBeChecked();
-    userEvent.click(checkBox);
+    await userEvent.click(checkBox);
     expect(onFieldChange).toHaveBeenCalledWith(props.id, false);
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });

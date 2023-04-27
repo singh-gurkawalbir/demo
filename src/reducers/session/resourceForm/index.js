@@ -157,4 +157,16 @@ selectors.resourceFormSaveProcessTerminated = (
 
   return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED, FORM_SAVE_STATUS.ABORTED].includes(state?.[key]?.formSaveStatus);
 };
+
+selectors.formKey = (state, resourceType, resourceId) => {
+  if (!state) {
+    return emptyObj;
+  }
+
+  const key = `${resourceType}-${resourceId}`;
+
+  return key;
+};
+
 // #endregion
+

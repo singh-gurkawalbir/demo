@@ -101,14 +101,14 @@ describe('Testsuite for Lookup', () => {
     expect(cancelButtonNode).toBeInTheDocument();
     expect(cancelButtonNode).toBeDisabled();
   });
-  test('should test the manage lookup cancel button', () => {
+  test('should test the manage lookup cancel button', async () => {
     initLookUp({onSave: mockOnSave, disabled: false, importId: 'import_id', flowId: 'flow_id', lookups: [{name: 'lookup_name'}], props: {test: 'test1'}});
     expect(screen.getByText(/mock drawer content/i)).toBeInTheDocument();
     expect(screen.getByText(/mock manage lookup/i)).toBeInTheDocument();
     const cancelButtonNode = screen.getByRole('button', { name: 'Cancel' });
 
     expect(cancelButtonNode).toBeInTheDocument();
-    userEvent.click(cancelButtonNode);
+    await userEvent.click(cancelButtonNode);
     expect(mockHistoryGoBack).toBeCalled();
   });
   test('should test the emply dom when there is no lookup', () => {
@@ -116,7 +116,7 @@ describe('Testsuite for Lookup', () => {
 
     expect(container).toBeEmptyDOMElement();
   });
-  test('should test the manage lookup save button', () => {
+  test('should test the manage lookup save button', async () => {
     initLookUp({onSave: mockOnSave, disabled: false, importId: 'import_id', flowId: 'flow_id', lookups: [{name: 'lookup_name'}], props: {test: 'test1'}});
     expect(screen.getByText(/mock drawer footer/i)).toBeInTheDocument();
     expect(screen.getByText(/mock save button group/i)).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe('Testsuite for Lookup', () => {
     });
 
     expect(saveButtonNode).toBeInTheDocument();
-    userEvent.click(saveButtonNode);
+    await userEvent.click(saveButtonNode);
     expect(mockOnSave).toHaveBeenCalledWith(true, 'test_val');
   });
 });

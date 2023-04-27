@@ -1,8 +1,8 @@
-import { makeStyles } from '@material-ui/core';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Typography from '@material-ui/core/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormGenerator from '..';
@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
   },
   accordionHeader: {
     display: 'flex',
+    '& .MuiAccordionSummary-expandIconWrapper': {
+      margin: '1px 4px 0 0',
+    },
   },
 }));
 
@@ -48,7 +51,7 @@ export default function CollapsedComponents(props) {
       const header = typeof label === 'function' ? label(resource) : label;
 
       return (
-        <ExpansionPanelExpandOnInValidState
+        <AccordionExpandOnInValidState
           // eslint-disable-next-line react/no-array-index-key
           key={index}
           collapsed={collapsed}
@@ -68,7 +71,7 @@ export default function CollapsedComponents(props) {
   return <div className={classes.fieldsContainer}>{transformedContainers}</div>;
 }
 
-const ExpansionPanelExpandOnInValidState = props => {
+const AccordionExpandOnInValidState = props => {
   const { collapsed, layout, classes, header, fieldMap, formKey} = props;
   const revalidationIdentifier = useSelector(state => selectors.formState(state, formKey)?.validationOnSaveIdentifier);
   const [shouldExpand, setShouldExpand] = useState(!collapsed);

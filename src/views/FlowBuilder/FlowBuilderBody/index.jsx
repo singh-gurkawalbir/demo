@@ -1,13 +1,16 @@
-import { makeStyles, useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactFlow, { MiniMap } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, useNodesState, useEdgesState, getOutgoers, isEdge, getIncomers } from 'reactflow';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
 import PageBar from './PageBar';
 import DefaultEdge from './CustomEdges/DefaultEdge';
+import IconLayoutEdge from './CustomEdges/IconLayoutEdge';
 import { layoutElements } from './lib';
+import {newlayoutElements} from './newlib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
@@ -19,13 +22,15 @@ import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
 import { useSelectorMemo } from '../../../hooks';
 import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
-// import { ExportFlowStateButton } from './ExportFlowStateButton';
 import EmptyNode from './CustomNodes/EmptyNode';
 import LoadingNotification from '../../../App/LoadingNotification';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 import { CanvasControls } from './CanvasControls';
 import AutoScroll from './AutoScroll';
 import CustomDragLayer from './DragPreview';
+import 'reactflow/dist/style.css';
+
+const defaultViewport = { x: 0, y: 0, zoom: 1 };
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -44,6 +49,7 @@ const useCalcCanvasStyle = fullscreen => {
 };
 
 // TODO: (AZHAR) suitescript and normal styles are repeating
+
 const useStyles = makeStyles(theme => ({
   canvasContainer: drawerWidth => ({
     overflow: 'hidden',
@@ -68,6 +74,18 @@ const useStyles = makeStyles(theme => ({
     stroke: theme.palette.secondary.lightest,
     width: 275,
     height: 170,
+  },
+  subppterminal: {
+    fill: theme.palette.secondary.lightest,
+    stroke: theme.palette.secondary.lightest,
+    width: 137,
+    height: 86,
+  },
+  iconterminal: {
+    fill: theme.palette.secondary.lightest,
+    stroke: theme.palette.secondary.lightest,
+    width: 75,
+    height: 70,
   },
   title: {
     display: 'flex',
@@ -109,6 +127,10 @@ const useStyles = makeStyles(theme => ({
 
 const nodeTypes = {
   pg: PgNode,
+  iconpp: PpNode,
+  iconpg: PgNode,
+  subflowpp: PpNode,
+  subflowpg: PgNode,
   pp: PpNode,
   terminal: TerminalNode,
   router: RouterNode,
@@ -118,14 +140,16 @@ const nodeTypes = {
 
 const edgeTypes = {
   default: DefaultEdge,
+  iconEdge: IconLayoutEdge,
 };
 const BUFFER_SIZE = 100;
 
-export function Canvas({ flowId, fullscreen }) {
+export function Canvas({ flowId, fullscreen, iconView}) {
   const dispatch = useDispatch();
   const menuDrawerWidth = useMenuDrawerWidth();
   const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
   const classes = useStyles(drawerWidth);
+  const [subFlowElements, setSubFlowElements] = useState([]);
   const [rfInstance, setRFInstance] = useState(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [isPanning, setIsPanning] = useState(false);
@@ -156,15 +180,72 @@ export function Canvas({ flowId, fullscreen }) {
   const isFlowSaveInProgress = useSelector(state =>
     selectors.isFlowSaveInProgress(state, flowId)
   );
+  const isSubFlowView = useSelector(state =>
+    selectors.fbSubFlowView(state, flowId)
+  );
 
-  const {elements: updatedLayout, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
-    elements, mergedFlow,
-  ]);
+  const iconViewElements = isSubFlowView ? subFlowElements : elements;
+  const {nodes: initialNodes, edges: initialEdges, x, y } = useMemo(() => iconView !== 'icon' ? layoutElements(elements, mergedFlow) : newlayoutElements(iconViewElements, mergedFlow, isSubFlowView), [elements, iconView, iconViewElements, isSubFlowView, mergedFlow]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useEffect(() => {
+    setNodes(initialNodes);
+  }, [initialNodes, setNodes]);
+  useEffect(() => {
+    setEdges(initialEdges);
+  }, [initialEdges, setEdges]);
+  // const graphNodes = elements.filter(ele => isNode(ele));
+
   const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {
     dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
-  }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
+    if (iconView !== 'icon') {
+      dispatch(actions.flow.iconView(flowId, 'bubble'));
+    }
+  }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow, iconView]);
+
+  const getAllOutgoingNodes = (node, nodes, edges) => getOutgoers(node, nodes, edges).reduce(
+    (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, nodes, edges)],
+    []
+  );
+
+  const getAllIncomingNodes = (node, nodes, edges) => getIncomers(node, nodes, edges).reduce(
+    (memo, incomer) => [...memo, incomer, ...getAllIncomingNodes(incomer, nodes, edges)],
+    []
+  );
+
+  const downstreamHighlighter = id => {
+    dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'left'}));
+    const node = elements.find(ele => ele.id === id);
+    const subFlow = getAllOutgoingNodes(node, nodes, edges).map(node => node.id);
+
+    const newElements = elements.map(ele => {
+      if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
+        return {...ele, isSubFlow: true};
+      }
+
+      return ele;
+    });
+
+    setSubFlowElements(newElements);
+  };
+  const upstreamHighlighter = id => {
+    dispatch(actions.flow.toggleSubFlowView(flowId, true, {nodeId: id, buttonPosition: 'right'}));
+    const node = elements.find(ele => ele.id === id);
+    const subFlow = getAllIncomingNodes(node, nodes, edges).map(node => node.id);
+
+    const newElements = elements.map(ele => {
+      if (subFlow.length && (subFlow.includes(ele.id) || ele.id === id)) {
+        return {...ele, isSubFlow: true};
+      }
+
+      return ele;
+    });
+
+    setSubFlowElements(newElements);
+  };
 
   const handleNodeDragStart = useCallback((evt, source) => {
     dispatch(actions.flow.dragStart(flowId, source.id));
@@ -186,9 +267,6 @@ export function Canvas({ flowId, fullscreen }) {
 
   const onLoad = useCallback(reactFlowInstance => {
     setRFInstance(reactFlowInstance);
-    setTimeout(() => {
-      reactFlowInstance.setTransform({x: 0, y: 0, zoom: 1});
-    }, 10);
   }, []);
 
   const handleMoveEnd = useCallback(() => setIsPanning(false), []);
@@ -197,6 +275,42 @@ export function Canvas({ flowId, fullscreen }) {
       setIsPanning(true);
     }
   }, [isPanning]);
+
+  const handleIconEdgeMouseHover = useCallback((evt, edge) => {
+    const {id} = edge;
+
+    const targetNodes = id.split('-');
+
+    const targetNodeId = targetNodes.length === 2 ? targetNodes[1] : targetNodes[2];
+
+    const targetNode = elements.find(e => e?.id === targetNodeId);
+
+    const getAllOutgoingNodes = (node, nodes, edges) => getOutgoers(node, nodes, edges).reduce(
+      (memo, outgoer) => [...memo, outgoer, ...getAllOutgoingNodes(outgoer, nodes, edges)],
+      []
+    );
+
+    const subsequentNodes = targetNode ? getAllOutgoingNodes(targetNode, nodes, edges).map(node => node.id) : [];
+
+    const includedEdges = elements.filter(ele => {
+      if (!isEdge(ele)) return false;
+
+      const nodes = ele.id.split('-');
+
+      return targetNodes.length === 2 ? (subsequentNodes.includes(nodes[0]) || subsequentNodes.includes(nodes[1]))
+        : (subsequentNodes.includes(nodes[0]) || subsequentNodes.includes(nodes[1]) || subsequentNodes.includes(nodes[2]));
+    }
+    ).map(ele => ele.id);
+
+    includedEdges.push(id);
+    dispatch(actions.flow.edgeHovered(flowId, includedEdges));
+
+    // setSelectedEdge(edge);
+  }, [dispatch, elements, flowId]);
+
+  const handleIconEdgeMouseLeave = useCallback(() => {
+    dispatch(actions.flow.edgeUnhover(flowId));
+  }, [dispatch, flowId]);
 
   return (
     <div className={classes.canvasContainer} style={calcCanvasStyle}>
@@ -209,7 +323,12 @@ export function Canvas({ flowId, fullscreen }) {
         <FlowProvider
           elements={elements}
           elementsMap={elementsMap}
+          iconView={iconView}
+          downstreamHighlighter={downstreamHighlighter}
+          upstreamHighlighter={upstreamHighlighter}
           flow={mergedFlow}
+          // setSelectedEdge={setSelectedEdge}
+          // selectedEdge={selectedEdge}
           flowId={flowId}
           translateExtent={translateExtent}
           dragNodeId={dragStepId}
@@ -219,20 +338,27 @@ export function Canvas({ flowId, fullscreen }) {
             className={isPanning ? classes.isPanning : classes.canPan}
             onNodeDragStart={handleNodeDragStart}
             onNodeDragStop={handleNodeDragStop}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onEdgeMouseEnter={handleIconEdgeMouseHover}
+            onEdgeMouseLeave={handleIconEdgeMouseLeave}
             onNodeDrag={handleNodeDrag}
             onMoveEnd={handleMoveEnd}
             onMove={handleMove}
-            nodesDraggable={false}
+            nodesConnectable={false}
             minZoom={0.4}
             maxZoom={1.25}
             panOnScroll
+            nodesDraggable={false}
             translateExtent={translateExtent}
-                // nodeExtent={translateExtent}
-            onLoad={onLoad}
-            elements={updatedLayout}
+            onInit={onLoad}
+            defaultViewport={defaultViewport}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             preventScrolling={false}
+            attributionPosition="top-right"
             onlyRenderVisibleElements
             >
             <SourceTitle onClick={handleAddNewSource} />
@@ -249,6 +375,14 @@ export function Canvas({ flowId, fullscreen }) {
                   case GRAPH_ELEMENTS_TYPE.MERGE:
                   case GRAPH_ELEMENTS_TYPE.EMPTY:
                     return classes.minimap;
+                  case GRAPH_ELEMENTS_TYPE.SUBFLOW_PP:
+                    return classes.subppterminal;
+                  case GRAPH_ELEMENTS_TYPE.SUBFLOW_PG:
+                    return classes.subppterminal;
+                  case GRAPH_ELEMENTS_TYPE.ICON_PP:
+                    return classes.iconterminal;
+                  case GRAPH_ELEMENTS_TYPE.ICON_PG:
+                    return classes.iconterminal;
 
                   default:
                     return classes.terminal;
@@ -270,20 +404,24 @@ export function Canvas({ flowId, fullscreen }) {
   );
 }
 
-export default function FlowBuilderBody({ flowId, integrationId }) {
+export default function FlowBuilderBody({ flowId, integrationId}) {
   const dispatch = useDispatch();
+  const iconView = useSelector(state =>
+    selectors.fbIconview(state, flowId)
+  );
 
   useEffect(
     () => () => {
       dispatch(actions.bottomDrawer.clear());
+      dispatch(actions.flow.clear(flowId));
     },
-    [dispatch]
+    [dispatch, flowId]
   );
 
   return (
     <>
-      <PageBar flowId={flowId} integrationId={integrationId} />
-      <Canvas flowId={flowId} integrationId={integrationId} />
+      <PageBar flowId={flowId} integrationId={integrationId} iconView={iconView} />
+      <Canvas flowId={flowId} integrationId={integrationId} iconView={iconView} />
     </>
   );
 }

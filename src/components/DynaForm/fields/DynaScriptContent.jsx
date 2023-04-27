@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import EditorField from './DynaEditor';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import scriptHookStubs from '../../../utils/scriptHookStubs';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   editor: {
@@ -68,9 +68,7 @@ export default function DynaScriptContent(props) {
 
   if (scriptContent === undefined) {
     return (
-      <span className={classes.spinner}>
-        <Spinner />
-      </span>
+      <Spinner />
     );
   }
 

@@ -23,7 +23,6 @@ export default {
       delete retValues['/http/auth/oauth/authURI'];
       delete retValues['/http/auth/oauth/tokenURI'];
       delete retValues['/http/auth/oauth/scopeDelimiter'];
-      delete retValues['/http/auth/oauth/scope'];
       delete retValues['/http/auth/oauth/callbackURL'];
       delete retValues['/http/_iClientId'];
       retValues['/http/auth/oauth'] = undefined;
@@ -46,11 +45,8 @@ export default {
       delete retValues['/http/auth/cookie/uri'];
       delete retValues['/http/auth/cookie/body'];
       delete retValues['/http/encrypted/cookieString'];
-      delete retValues['/instanceURI'];
-      delete retValues['/http/unencrypted/username'];
       delete retValues['/http/unencrypted/password'];
       delete retValues['/http/encrypted/cookieString'];
-      delete retValues['/http/unencrypted/company'];
       retValues['/http/auth/cookie'] = undefined;
     }
 
@@ -105,6 +101,7 @@ export default {
 
         return subdomain;
       },
+      deleteWhen: [{ field: 'http.auth.type', isNot: ['cookie'] }],
     },
     'oauth.instanceURI': {
       id: 'oauth.instanceURI',
@@ -156,6 +153,7 @@ export default {
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.http.unencrypted.username',
+      deleteWhen: [{ field: 'http.auth.type', isNot: ['cookie'] }],
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -176,6 +174,7 @@ export default {
       defaultValue: '',
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.http.unencrypted.company',
+      deleteWhen: [{ field: 'http.auth.type', isNot: ['cookie'] }],
     },
     'http.unencrypted.locale': {
       id: 'http.unencrypted.locale',
@@ -187,6 +186,7 @@ export default {
       fieldId: 'http.auth.oauth.scope',
       scopes: ['api', 'offline_access', 'api:concurrent_access'],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      deleteWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
     },
     genericOauthConnector: {
       formId: 'genericOauthConnector',

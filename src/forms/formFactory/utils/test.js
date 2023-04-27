@@ -15,7 +15,6 @@ import {
   getFieldWithReferenceById,
   fieldIDsExceptClockedFields,
   isFormTouched,
-  alterFileDefinitionRulesVisibility,
   getFieldConfig,
   refGeneration,
   convertFieldsToFieldReferenceObj,
@@ -316,6 +315,96 @@ describe('Form Utils', () => {
 
       expect(merged).toEqual({
         html: { name: 'hello', rateLimit: { failValues: ['bad', 'fail'] } },
+      });
+    });
+    test('result patch set should succeed in patching resource when field on resource has a value but the value in the patch is empty string', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/name',
+          value: '',
+        },
+      ];
+      const fieldMeta = {
+        fieldMap: {
+          'html.name': {
+            fieldId: 'html.name',
+            defaultValue: '',
+            name: '/html/name',
+          },
+        },
+      };
+      const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: { name: '' },
+      });
+    });
+    test('result patch set should succeed in patching resource when field on resource has a value of empty string but the value in the patch is not empty string', () => {
+      const resource = {
+        html: {
+          name: '',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/name',
+          value: 'adfs',
+        },
+      ];
+      const fieldMeta = {
+        fieldMap: {
+          'html.name': {
+            fieldId: 'html.name',
+            defaultValue: '',
+            name: '/html/name',
+          },
+        },
+      };
+      const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: { name: 'adfs' },
+      });
+    });
+    test('result patch set should succeed in patching resource when field on resource has a value of empty string but the value in the patch is empty string', () => {
+      const resource = {
+        html: {
+          name: '',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html/name',
+          value: '',
+        },
+      ];
+      const fieldMeta = {
+        fieldMap: {
+          'html.name': {
+            fieldId: 'html.name',
+            defaultValue: '',
+            name: '/html/name',
+          },
+        },
+      };
+      const sanitized = sanitizePatchSet({ patchSet, fieldMeta, resource });
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+
+      expect(merged).toEqual({
+        html: { name: '' },
       });
     });
   });
@@ -1549,192 +1638,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
       expect(res).toBe(true);
     });
   });
-  describe('alterFileDefinitionRulesVisibility', () => {
-    test('should alter fields for filetype csv', () => {
-      const fields = [{
-        fieldId: 'file.filedefinition.rules',
-        defaultVisible: false,
-        id: 'file.filedefinition.rules',
-        label: 'File parser helper',
-        resourceType: 'exports',
-        value: '',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }, {
-        fieldId: 'file.type',
-        id: 'file.type',
-        label: 'File type',
-        value: 'csv',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }];
-      const expectedFields = [{
-        fieldId: 'file.filedefinition.rules',
-        id: 'file.filedefinition.rules',
-        label: 'File parser helper',
-        resourceType: 'exports',
-        value: '',
-        visible: false,
-        defaultVisible: false,
-      }, {
-        fieldId: 'file.type',
-        id: 'file.type',
-        label: 'File type',
-        value: 'csv',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }];
 
-      alterFileDefinitionRulesVisibility(fields);
-
-      expect(fields).toEqual(expectedFields);
-    });
-    test('should alter fields if file definition rules contains userDefinitionId', () => {
-      const fields = [{
-        fieldId: 'file.filedefinition.rules',
-        id: 'file.filedefinition.rules',
-        value: '',
-        userDefinitionId: '1234',
-        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
-      }, {
-        fieldId: 'file.type',
-        id: 'file.type',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }, {
-        fieldId: 'edix12.format',
-        format: 'edi',
-        id: 'edix12.format',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'fixed.format',
-        format: 'edi',
-        id: 'fixed.format',
-        visible: true,
-        defaultVisible: false,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'edifact.format',
-        format: 'edifact',
-        id: 'edifact.format',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      ];
-
-      const expectedFields = [{
-        fieldId: 'file.filedefinition.rules',
-        id: 'file.filedefinition.rules',
-        value: '',
-        visible: false,
-        userDefinitionId: '1234',
-        defaultVisible: false,
-        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
-      }, {
-        fieldId: 'file.type',
-        id: 'file.type',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }, {
-        fieldId: 'edix12.format',
-        defaultVisible: false,
-        format: 'edi',
-        id: 'edix12.format',
-        visible: false,
-      },
-      {
-        fieldId: 'fixed.format',
-        format: 'edi',
-        defaultVisible: false,
-        id: 'fixed.format',
-        visible: false,
-      },
-      {
-        defaultVisible: false,
-        fieldId: 'edifact.format',
-        format: 'edifact',
-        id: 'edifact.format',
-        visible: false,
-      },
-      ];
-
-      alterFileDefinitionRulesVisibility(fields);
-
-      expect(fields).toEqual(expectedFields);
-    });
-    test('should alter fields if file definition is selected as file type', () => {
-      const fields = [{
-        fieldId: 'file.filedefinition.rules',
-        id: 'file.filedefinition.rules',
-        value: '',
-        visibleWhenAll: [{ field: 'file.type', is: ['filedefinition', 'fixed', 'delimited/edifact'] }, { field: 'outputMode', is: ['records'] }],
-      }, {
-        value: 'filedefinition',
-        fieldId: 'file.type',
-        id: 'file.type',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'edix12.format',
-        format: 'edi',
-        id: 'edix12.format',
-        value: '',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'fixed.format',
-        format: 'edi',
-        id: 'fixed.format',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'edifact.format',
-        format: 'edifact',
-        id: 'edifact.format',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }];
-
-      const expectedFields = [{
-        defaultVisible: false,
-        fieldId: 'file.filedefinition.rules',
-        id: 'file.filedefinition.rules',
-        value: '',
-        visible: false,
-      }, {
-        value: 'filedefinition',
-        fieldId: 'file.type',
-        id: 'file.type',
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'edix12.format',
-        format: 'edi',
-        id: 'edix12.format',
-        value: '',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'fixed.format',
-        format: 'edi',
-        id: 'fixed.format',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      },
-      {
-        fieldId: 'edifact.format',
-        format: 'edifact',
-        id: 'edifact.format',
-        visible: true,
-        visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-      }];
-
-      alterFileDefinitionRulesVisibility(fields);
-
-      expect(fields).toEqual(expectedFields);
-    });
-  });
   describe('getFieldConfig', () => {
     const testCases = [
       [{type: 'text', value: null}, {}, {}, false],

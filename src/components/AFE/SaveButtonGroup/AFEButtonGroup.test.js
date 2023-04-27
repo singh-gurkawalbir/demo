@@ -36,13 +36,13 @@ describe('saveButtonGroup tests', () => {
 
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
     expect(close).toBeEnabled();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockClose).toHaveBeenCalledTimes(1);
   });
   test('should able to test SaveButtonGroup when form is dirty', async () => {
     await initSaveButtonGroup({makeDirty: true, editorId: 'inputFilter'});
     expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    await userEvent.click(screen.getByRole('button', {name: 'Save'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.saveRequest('inputFilter'));
   });
 });

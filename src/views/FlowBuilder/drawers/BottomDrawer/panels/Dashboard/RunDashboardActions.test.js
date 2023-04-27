@@ -123,16 +123,16 @@ describe('RunDashboardActions test cases', () => {
     expect(downloadDiagnostics).toBeInTheDocument();
 
     // refresh icon
-    userEvent.click(refresshIcon);
+    await userEvent.click(refresshIcon);
     expect(mockDispatchFn).toBeCalledWith(actions.errorManager.latestFlowJobs.request({ flowId: 'flow_id_1', refresh: true }));
 
     // cancelicon
-    userEvent.click(cancelIcon);
+    await userEvent.click(cancelIcon);
     expect(screen.queryByText(/Confirm cancel run/i)).toBeInTheDocument();
     const cancelRunButton = screen.getByRole('button', { name: 'Cancel run'});
 
     expect(cancelRunButton).toBeInTheDocument();
-    userEvent.click(cancelRunButton);
+    await userEvent.click(cancelRunButton);
     expect(mockDispatchFn).toBeCalledWith(actions.errorManager.latestFlowJobs.cancelLatestJobs({flowId: 'flow_id_1', jobIds: ['job_id_2'] }));
 
     // download diagnostics
@@ -164,7 +164,7 @@ describe('RunDashboardActions test cases', () => {
     expect(screen.queryByText(/Cancel run/i)).toBeInTheDocument();
     expect(downloadFiles).toBeInTheDocument();
 
-    userEvent.click(downloadFiles);
+    await userEvent.click(downloadFiles);
     expect(mockDispatchFn).toBeCalledWith(actions.job.downloadFiles({ jobId: 'job_id_3' }));
   });
 
@@ -181,12 +181,12 @@ describe('RunDashboardActions test cases', () => {
     expect(screen.queryByText(/Cancel run/i)).toBeInTheDocument();
     expect(downloadFiles).toBeInTheDocument();
 
-    userEvent.click(downloadFiles);
+    await userEvent.click(downloadFiles);
     const downloadButton = screen.getByRole('button', {name: /Download/i});
     const buttonRef = screen.getAllByRole('button').find(eachButton => !eachButton.hasAttribute('data-test'));
 
     expect(downloadButton).toBeInTheDocument();
     expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+    await userEvent.click(buttonRef);
   });
 });

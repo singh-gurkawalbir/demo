@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { message } from '../../utils/messageStore';
-import ChatbotWidget from '../../components/ChatbotWidget';
-import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import useScript from '../../hooks/useScript';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const scriptUrl = process.env.ZD_CHATBOT_URL + process.env.ZD_CHATBOT_KEY;
+const scriptId = 'ze-snippet';
+
 export default function PageContent() {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -32,14 +35,45 @@ export default function PageContent() {
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
   const isDefaultAccountSet = useSelector(selectors.isDefaultAccountSet);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
-  const agreeTOSAndPPRequired = useSelector(selectors.agreeTOSAndPPRequired);
+  const agreeTOSAndPPRequired = useSelector(selectors.userRequiredToAgreeTOSAndPP);
   const environment = useSelector(state => selectors.userPreferences(state)?.environment);
   const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
   const isAccountSwitchInProgress = useSelector(state => selectors.isAccountSwitchInProgress(state));
+  const { email, name } = useSelector(state => selectors.userProfile(state), shallowEqual) || {};
+
+  useScript(scriptUrl, scriptId, agreeTOSAndPPRequired, () => {
+    // Hiding the default launcher
+    window.zE('webWidget', 'hide');
+
+    // Closing the chatbot shows the default launcher, hence hiding the default launcher
+    window.zE('webWidget:on', 'close', () => {
+      window.zE('webWidget', 'hide');
+    });
+
+    // Prefilling values on ticket form
+    window.zE('webWidget', 'prefill', {
+      email: {
+        value: email,
+      },
+      name: {
+        value: name,
+      },
+    });
+  });
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
+    // Setting the position of the chatbot window
+    window.zESettings = {
+      webWidget: {
+        offset: {
+          horizontal: '46px',
+          vertical: '46px',
+        },
+      },
+    };
+
     if (!isNoneTierLicense) return;
     enqueueSnackbar({
       message: message.NONE_TIER_USER_ERROR,
@@ -69,7 +103,6 @@ export default function PageContent() {
         // page content below the app/page bars.
         className={clsx({[classes.toolbar]: !agreeTOSAndPPRequired })}
       />
-      <ChatbotWidget />
       <AppRouting />
     </main>
   );

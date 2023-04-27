@@ -85,6 +85,7 @@ describe('mockInput sagas', () => {
             throwOnError: true,
             includeStages: false,
             refresh,
+            includeFilterProcessing: true,
           }), previewData],
         ])
         .call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined })
@@ -98,6 +99,7 @@ describe('mockInput sagas', () => {
           throwOnError: true,
           includeStages: false,
           refresh,
+          includeFilterProcessing: true,
         })
         .put(actions.mockInput.received(resourceId, previewData))
         .run();
@@ -126,6 +128,7 @@ describe('mockInput sagas', () => {
             throwOnError: true,
             includeStages: false,
             refresh,
+            includeFilterProcessing: true,
           }), previewData._PARENT],
         ])
         .call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined })
@@ -139,6 +142,7 @@ describe('mockInput sagas', () => {
           throwOnError: true,
           includeStages: false,
           refresh,
+          includeFilterProcessing: true,
         })
         .put(actions.mockInput.received(resourceId, previewData))
         .run();
@@ -186,6 +190,7 @@ describe('mockInput sagas', () => {
             throwOnError: true,
             includeStages: false,
             refresh,
+            includeFilterProcessing: true,
           }), previewData],
         ])
         .call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined })
@@ -198,6 +203,7 @@ describe('mockInput sagas', () => {
           throwOnError: true,
           includeStages: false,
           refresh,
+          includeFilterProcessing: true,
         })
         .put(actions.mockInput.received(resourceId, previewData))
         .run();
@@ -226,6 +232,7 @@ describe('mockInput sagas', () => {
             throwOnError: true,
             includeStages: false,
             refresh,
+            includeFilterProcessing: true,
           }), previewData._PARENT],
         ])
         .call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined })
@@ -239,6 +246,7 @@ describe('mockInput sagas', () => {
           throwOnError: true,
           includeStages: false,
           refresh,
+          includeFilterProcessing: true,
         })
         .put(actions.mockInput.received(resourceId, previewData))
         .run();

@@ -6,14 +6,9 @@ export default {
 
     retValues['/_scriptId'] = retValues['/script']._scriptId;
     retValues['/function'] = retValues['/script'].function;
-    delete retValues['/script'];
     if (retValues['/enableShipworksAuthentication'] === false) {
-      delete retValues['/shipworks/username'];
-      delete retValues['/shipworks/password'];
       retValues['/shipworks'] = undefined;
     }
-    delete retValues['/shipworksApiIdentifier'];
-    delete retValues['/apiIdentifier'];
 
     return retValues;
   },
@@ -44,6 +39,7 @@ export default {
       hookStage: 'handleRequest',
       label: 'Script',
       required: true,
+      delete: true,
     },
     enableShipworksAuthentication: {
       id: 'enableShipworksAuthentication',
@@ -67,6 +63,12 @@ export default {
           is: [true],
         },
       ],
+      deleteWhen: [
+        {
+          field: 'enableShipworksAuthentication',
+          is: [false],
+        },
+      ],
     },
     'shipworks.password': {
       id: 'shipworks.password',
@@ -88,6 +90,12 @@ export default {
           is: [true],
         },
       ],
+      deleteWhen: [
+        {
+          field: 'enableShipworksAuthentication',
+          is: [false],
+        },
+      ],
     },
     apiIdentifier: {
       id: 'apiIdentifier',
@@ -96,6 +104,7 @@ export default {
       type: 'apiidentifier',
       visible: r => r && !isNewId(r._id),
       defaultValue: r => `v1/apis/${r._id}/request`,
+      delete: true,
     },
     shipworksApiIdentifier: {
       id: 'shipworksApiIdentifier',
@@ -116,6 +125,7 @@ export default {
           },
         ];
       },
+      delete: true,
     },
   },
 

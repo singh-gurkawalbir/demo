@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -133,9 +132,9 @@ function initFlowBuilderBody(props = {}) {
   renderWithProviders(ui, { initialStore });
 }
 
-jest.mock('react-flow-renderer', () => ({
+jest.mock('reactflow', () => ({
   __esModule: true,
-  ...jest.requireActual('react-flow-renderer'),
+  ...jest.requireActual('reactflow'),
   default: props => (
     <div>
       {/* eslint-disable-next-line react/button-has-type */}
@@ -209,7 +208,7 @@ describe('FlowBuilderBody UI tests', () => {
     expect(runFlowButton).toBeInTheDocument();
   });
 
-  test('should display all 4 control buttons: zoom in, out, fit, and hide miniMap', () => {
+  test('should display all 4 control buttons: zoom in, out, fit, and hide miniMap', async () => {
     const props = {
       flowId: '62c6f122a2f4a703c3dee3d0',
       fullScreen: true,
@@ -217,11 +216,9 @@ describe('FlowBuilderBody UI tests', () => {
     };
 
     initFlowBuilderBody(props);
-    const controlButtons = document.querySelectorAll(
-      '[ class="react-flow__controls-button"] > span'
-    );
+    const controlButtons = document.querySelectorAll('.react-flow__controls-button > span');
 
-    const actualTitles = Array.from(controlButtons).map(cb => cb.title);
+    const actualTitles = Array.from(controlButtons).map(cb => cb.getAttribute('aria-label'));
 
     const expectedButtonTitles = [
       'Zoom in',
@@ -233,20 +230,20 @@ describe('FlowBuilderBody UI tests', () => {
     expect(actualTitles).toEqual(expectedButtonTitles);
   });
 
-  test('should make the respective dispatch calls when navigating the mini map', () => {
+  test('should make the respective dispatch calls when navigating the mini map', async () => {
     const props = { flowId: '62c6f122a2f4a703c3dee3d0' };
 
     initFlowBuilderBody(props);
-    userEvent.click(screen.getByText('DragStop')); // Drag events have been modified as buttons //
+    await userEvent.click(screen.getByText('DragStop')); // Drag events have been modified as buttons //
     expect(mockDispatchFn).toBeCalled();
-    userEvent.click(screen.getByText('NodeDrag'));
+    await userEvent.click(screen.getByText('NodeDrag'));
     expect(mockDispatchFn).toBeCalled();
   });
-  test('should make the respective dispatch call when clicked on SourceTitle', () => {
+  test('should make the respective dispatch call when clicked on SourceTitle', async () => {
     const props = { flowId: '62c6f122a2f4a703c3dee3d0' };
 
     initFlowBuilderBody(props);
-    userEvent.click(screen.getByText('SOURCES'));
+    await userEvent.click(screen.getByText('SOURCES'));
     expect(mockDispatchFn).toBeCalledWith(
       actions.flow.addNewPGStep('62c6f122a2f4a703c3dee3d0')
     );

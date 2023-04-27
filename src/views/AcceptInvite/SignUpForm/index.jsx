@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState} from 'react';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -8,23 +8,11 @@ import getFieldMeta from './metadata';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     marginTop: theme.spacing(5),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
 }));
 
@@ -48,17 +36,18 @@ export default function SignUp() {
   useFormInitWithPermissions({formKey, fieldMeta, remount: count});
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       <DynaForm formKey={formKey} />
-
       <DynaSubmit
         className={classes.submit}
+        submit
         formKey={formKey}
+        fullWidth
         onClick={handleOnSubmit}
         ignoreFormTouchedCheck>
         Sign up
       </DynaSubmit>
-    </div>
+    </LoginFormWrapper>
   );
 }
 

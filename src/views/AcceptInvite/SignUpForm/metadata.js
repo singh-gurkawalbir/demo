@@ -1,5 +1,5 @@
 import { EMAIL_REGEX } from '../../../constants';
-import messageStore from '../../../utils/messageStore';
+import messageStore, { message } from '../../../utils/messageStore';
 
 export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
   const fieldMeta = {
@@ -14,7 +14,7 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
         validWhen: {
           matchesRegEx: {
             pattern: '\\w+\\s\\w+',
-            message: 'Please enter your first and last name.',
+            message: message.USER_SIGN_IN.INVALID_FIRST_LAST_NAME,
           },
         },
       },
@@ -30,7 +30,7 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
         validWhen: {
           matchesRegEx: {
             pattern: EMAIL_REGEX,
-            message: 'Please enter a valid email address.',
+            message: message.USER_SIGN_IN.INVALID_EMAIL,
           },
         },
       },
@@ -62,7 +62,7 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
           required: true,
           type: 'signinpassword',
           inputType: 'password',
-          errorMessage: messageStore('NEW_PASSWORD_EMPTY'),
+          errorMessage: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'New password'}),
           placeholder: 'Enter new password *',
           noApi: true,
           validWhen: {
@@ -81,7 +81,7 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
           name: 'confirmPassword',
           type: 'signinpassword',
           inputType: 'password',
-          errorMessage: messageStore('CONFIRM_NEW_PASSWORD_EMPTY'),
+          errorMessage: messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'Confirm new password'}),
           placeholder: 'Confirm new password *',
           noApi: true,
           validWhen: {

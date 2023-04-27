@@ -74,7 +74,7 @@ describe('dynaAliasId UI tests', () => {
     const ManageButton = screen.getByRole('button', {name: 'Manage'});
 
     expect(ManageButton).toBeInTheDocument();
-    userEvent.click(ManageButton);
+    await userEvent.click(ManageButton);
     await waitFor(() => expect(mockHistorypush).toHaveBeenCalledWith('/integrations/63368c92bb74b66e32ab05ee/aliases/manage'));
   });
 });

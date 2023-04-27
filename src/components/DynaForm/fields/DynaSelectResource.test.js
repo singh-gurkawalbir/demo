@@ -51,13 +51,12 @@ jest.mock('../../LoadResources', () => ({
   ),
 }));
 // Mocking Spinner child component as part of unit testing
-jest.mock('../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../Spinner'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (
     <div>
       <div>Mocking Spinner</div>
-      <div>size = {props.size}</div>
     </div>
   ),
 }));
@@ -225,7 +224,6 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking load resources/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking spinner/i)).toBeInTheDocument();
-    expect(screen.getByText(/size = medium/i)).toBeInTheDocument();
     expect(screen.getByText(/resources = connections/i)).toBeInTheDocument();
   });
   test('should test the spinner and empty resources when mocked load resource component resource type is equal to connectorLicenses', () => {
@@ -270,7 +268,6 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking load resources/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking spinner/i)).toBeInTheDocument();
-    expect(screen.getByText(/size = medium/i)).toBeInTheDocument();
     expect(screen.getByText(/resources =/i)).toBeInTheDocument();
   });
   test('should test the dyna select options and it should render connection name followed by offline when there is no options and no filters and when offline set to true and check permission has set to false', () => {
@@ -314,7 +311,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the dyna select options and it should render connection name when there is no options and no filters and when offline set to false and check permission has set to false', () => {
@@ -358,7 +355,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the dyna select options and it should render connection id followed by offline when there is no options and no filters and when offline set to true and check permission has set to false and when there is no connection name', () => {
@@ -402,7 +399,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id - offline","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -447,7 +444,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -495,7 +492,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"optionsearch":"conn_id","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
@@ -541,7 +538,7 @@ describe('Testsuite for Dyna Select Resource', () => {
 
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna select/i)).toBeInTheDocument();
-    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id"\}\]\}\]/i)).toBeInTheDocument();
+    expect(screen.getByText(/options = \[\{"items":\[\{"optionsearch":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i)).toBeInTheDocument();
     expect(mockGetItemInfo).toHaveBeenCalled();
   });
   test('should test the Dyna Multi Select when there are resource', () => {
@@ -588,7 +585,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     initDynaSelectResource({props, loadResources, resourcesData});
     expect(screen.getByText(/mocking dyna multi select/i)).toBeInTheDocument();
     expect(screen.getByText(
-      /options = \[\{"items":\[\{"label":"test connection - offline","value":"conn_id"\}\]\}\]/i
+      /options = \[\{"items":\[\{"label":"test connection - offline","value":"conn_id","connInfo":\{\}\}\]\}\]/i
     )).toBeInTheDocument();
   });
   test('should test the connection loading chip when the resourcetype is connection and when there is value and set skipPingConnection to false', () => {
@@ -636,7 +633,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     expect(screen.getByText(/mocking onlinestatus/i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.connections.pingAndUpdate('conn_id', {flowId: 'flow_id', integrationId: 'integration_id', parentId: 'resource_id', parentType: 'connections'}));
   });
-  test('should test the add new icon when allownew is set to true when the resource type is connection', () => {
+  test('should test the add new icon when allownew is set to true when the resource type is connection', async () => {
     jest.spyOn(Resource, 'generateNewId').mockReturnValue('mockNewId');
     jest.spyOn(MockUseIntegration, 'default').mockReturnValue('mockIntegrationFromURL');
     jest.spyOn(ApplicationList, 'applicationsList').mockReturnValue([{id: 'acumatica', assistant: 'acumatica', type: 'http'}]);
@@ -688,8 +685,9 @@ describe('Testsuite for Dyna Select Resource', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [{ path: '/_connectionId', op: 'add', value: {} },
+      { path: '/_connectorId', op: 'add', value: {} },
       { path: '/_httpConnectorId', op: 'add', value: {} },
       { path: '/adaptorType', op: 'add', value: {} },
       { path: '/application', op: 'add', value: {} },
@@ -704,12 +702,13 @@ describe('Testsuite for Dyna Select Resource', () => {
       { op: 'replace', path: '/assistant', value: 'acumatica' },
       { op: 'replace', path: '/_connectionId', value: undefined },
       { op: 'replace', path: '/integrationId', value: 'integration_id' },
+      { op: 'replace', path: '/_connectorId', value: 'connector_id' },
       { op: 'replace', path: '/statusExport', value: true },
     ],
     ));
     expect(mockHistoryPush).toBeCalled();
   });
-  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to true', () => {
+  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to true', async () => {
     jest.spyOn(Resource, 'generateNewId').mockReturnValue('mockNewId');
     jest.spyOn(MockUseIntegration, 'default').mockReturnValue('mockIntegrationFromURL');
     jest.spyOn(ApplicationList, 'applicationsList').mockReturnValue([{id: 'acumatica', assistant: 'acumatica', type: 'http'}]);
@@ -761,7 +760,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [
       { path: '/_connectionId', op: 'add', value: {} },
       { path: '/http', op: 'add', value: {} },
@@ -776,7 +775,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     ));
     expect(mockHistoryPush).toBeCalled();
   });
-  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to false', () => {
+  test('should test the add new icon when allownew is set to true when the resource type is asyncHelper when statusExport is set to false', async () => {
     jest.spyOn(Resource, 'generateNewId').mockReturnValue('mockNewId');
     jest.spyOn(MockUseIntegration, 'default').mockReturnValue('mockIntegrationFromURL');
     jest.spyOn(ApplicationList, 'applicationsList').mockReturnValue([{id: 'acumatica', assistant: 'acumatica', type: 'http'}]);
@@ -828,7 +827,7 @@ describe('Testsuite for Dyna Select Resource', () => {
     });
 
     expect(addButtonNode).toBeInTheDocument();
-    userEvent.click(addButtonNode);
+    await userEvent.click(addButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mockNewId', [
       { path: '/_connectionId', op: 'add', value: {} },
       { path: '/http', op: 'add', value: {} },

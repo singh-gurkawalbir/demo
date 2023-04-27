@@ -123,7 +123,7 @@ describe('installBase test cases', () => {
 
     expect(updateButton).toBeInTheDocument();
     expect(screen.queryByText(/You don't have any install base/)).toBeInTheDocument();
-    userEvent.click(updateButton);
+    await userEvent.click(updateButton);
 
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.connectors.installBase.update({
@@ -183,10 +183,10 @@ describe('installBase test cases', () => {
     expect(updateButton).toBeInTheDocument();
     expect(license1Button).toBeInTheDocument();
     expect(emptyButton).toBeInTheDocument();
-    userEvent.click(emptyButton);
-    userEvent.click(license1Button);
+    await userEvent.click(emptyButton);
+    await userEvent.click(license1Button);
     mockDispatchFn.mockClear();
-    userEvent.click(updateButton);
+    await userEvent.click(updateButton);
 
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.connectors.installBase.update({

@@ -2,10 +2,6 @@ export default {
   preSave: formValues => {
     const newValues = formValues;
 
-    if (newValues['/export/netsuite/realtime/exportType'] === 'always') {
-      newValues['/export/netsuite/realtime/checkboxField'] = undefined;
-    }
-
     return newValues;
   },
   optionsHandler: (fieldId, fields) => {
@@ -41,6 +37,8 @@ export default {
     },
     'export.netsuite.realtime.checkboxField': {
       fieldId: 'export.netsuite.realtime.checkboxField',
+      removeWhen: [{ field: 'export.netsuite.realtime.exportType', is: ['always'] }],
+
     },
   },
   layout: {

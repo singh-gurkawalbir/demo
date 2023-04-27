@@ -2,8 +2,8 @@ import React, {useMemo} from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { matchPath, Link, useLocation } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Breadcrumbs, Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Breadcrumbs, Typography } from '@mui/material';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       maxWidth: 150,
     },
     [theme.breakpoints.up('md')]: {
@@ -181,28 +181,44 @@ const routes = [
     ],
   },
   {
-    path: getRoutePath('/templates/:integrationAppName/:integrationId'),
-    breadcrumb: IntegrationCrumb,
+    path: getRoutePath('/templates'),
+    breadcrumb: 'Templates',
+    skipLink: true,
     childRoutes: [
       {
-        path: '/flows/sections/:sectionId',
-        breadcrumb: FlowGroupCrumb,
+        path: buildDrawerUrl({path: drawerPaths.RESOURCE.ADD}),
+        breadcrumb: AddResourceTypeCrumb,
+      },
+      {
+        path: buildDrawerUrl({path: drawerPaths.RESOURCE.EDIT}),
+        breadcrumb: EditResourceTypeCrumb,
         childRoutes: [
+          { path: '/logs', breadcrumb: FlowStepDebugLogs },
+        ],
+      },
+      {
+        path: getRoutePath('/:integrationAppName/:integrationId'),
+        breadcrumb: IntegrationCrumb,
+        childRoutes: [
+          {
+            path: '/flows/sections/:sectionId',
+            breadcrumb: FlowGroupCrumb,
+            childRoutes: [
+              ...flowBuilderRoutes,
+            ],
+          },
+          { path: '/dashboard', breadcrumb: 'Dashboard' },
+          { path: '/connections', breadcrumb: 'Connections' },
+          { path: '/users', breadcrumb: 'Users' },
+          { path: '/auditlog', breadcrumb: 'Audit log' },
+          { path: '/notifications', breadcrumb: 'Notifications' },
+          { path: '/admin', breadcrumb: 'Admin' },
+          { path: '/analytics', breadcrumb: 'Analytics' },
           ...flowBuilderRoutes,
         ],
       },
-      { path: '/dashboard', breadcrumb: 'Dashboard' },
-      { path: '/connections', breadcrumb: 'Connections' },
-      { path: '/users', breadcrumb: 'Users' },
-      { path: '/auditlog', breadcrumb: 'Audit log' },
-      { path: '/notifications', breadcrumb: 'Notifications' },
-      { path: '/admin', breadcrumb: 'Admin' },
-      { path: '/analytics', breadcrumb: 'Analytics' },
-      ...flowBuilderRoutes,
     ],
   },
-  { path: getRoutePath('/templates'), breadcrumb: 'Templates' },
-
   {
     path: getRoutePath('/connectors/:integrationId/settings'),
     breadcrumb: IntegrationAppCrumb,

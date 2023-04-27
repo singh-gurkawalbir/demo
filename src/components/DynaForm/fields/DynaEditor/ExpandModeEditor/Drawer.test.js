@@ -106,9 +106,9 @@ describe('expandModeDrawer UI tests', () => {
     expect(screen.getByText('Edit content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
     expect(screen.getByText('Close')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Save'));
+    await userEvent.click(screen.getByText('Save'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchAndCommitStaged('scripts', '62fb62165ac68227ae0974ad', patchSet)));
-    userEvent.click(screen.getByText('Close'));
+    await userEvent.click(screen.getByText('Close'));
     await waitFor(() => expect(mockHistoryGoBack).toHaveBeenCalled());
   });
   test('should render the done and cancel buttons for newly formed resource and should make a dispatch call and redirection when clicked on "Done"', async () => {
@@ -116,7 +116,7 @@ describe('expandModeDrawer UI tests', () => {
     expect(screen.getByText('Edit content')).toBeInTheDocument();
     expect(screen.getByText('Done')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Done'));
+    await userEvent.click(screen.getByText('Done'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange('scripts-62fb62165ac68227ae0974ad')('content', editorValue)));
     await waitFor(() => expect(mockHistoryGoBack).toHaveBeenCalled());
   });

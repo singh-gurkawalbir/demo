@@ -84,7 +84,7 @@ describe('tokenGenerator UI tests', () => {
   test('should make a dispatch call when clicked on connectionToken label', async () => {
     initTokenGenerator({...props});
     await waitFor(() => expect(screen.getByText('test label')).toBeInTheDocument());
-    userEvent.click(screen.getByText('test label'));
+    await userEvent.click(screen.getByText('test label'));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.connections.requestToken('5b3c75dd5d3c125c88b5dd20', 'testId', 'formValue')));
   });
 });

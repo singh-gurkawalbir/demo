@@ -39,7 +39,7 @@ describe('saveButtonGroup tests', () => {
 
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
     expect(close).toBeEnabled();
-    userEvent.click(close);
+    await userEvent.click(close);
     expect(mockClose).toHaveBeenCalledTimes(1);
   });
   test('should able to test SaveButtonGroup when editorType is inputFilter', async () => {

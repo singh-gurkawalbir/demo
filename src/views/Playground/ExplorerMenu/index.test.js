@@ -89,49 +89,52 @@ describe('explorerMenu test suite', () => {
   test('should able to click on an integration and it should verify the expanded flow tree', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
 
-    expect(screen.getByRole('treeitem', {name: /Test integration name/i})).toBeInTheDocument();
+    const truncatedIntegrationName = screen.getByRole('treeitem');
+
+    expect(truncatedIntegrationName).toBeInTheDocument();
+    expect(truncatedIntegrationName).toHaveTextContent(/^T.*(\.{3})?$/i);
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
 
     expect(integrationNameSvgNode).toBeInTheDocument();
-    userEvent.click(integrationNameSvgNode);
+    await userEvent.click(integrationNameSvgNode);
     expect(screen.getAllByRole('treeitem')).toHaveLength(3);
     const flowNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > div > div:nth-child(1) > svg > path');
 
     expect(flowNode).toBeInTheDocument();
-    userEvent.click(flowNode);
+    await userEvent.click(flowNode);
     const openInFlowBuilderSVGNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(1) > div > div:nth-child(1) > svg > path');
 
     expect(openInFlowBuilderSVGNode).toBeInTheDocument();
-    userEvent.click(openInFlowBuilderSVGNode);
+    await userEvent.click(openInFlowBuilderSVGNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/12345/flowBuilder/67890');
     const testExportNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(2) > div > div:nth-child(1) > svg > path');
 
     expect(testExportNode).toBeInTheDocument();
-    userEvent.click(testExportNode);
+    await userEvent.click(testExportNode);
     const viewExportNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(2) > ul > div > div > li:nth-child(1) > div > div:nth-child(1) > svg > path');
 
     expect(viewExportNode).toBeInTheDocument();
-    userEvent.click(viewExportNode);
+    await userEvent.click(viewExportNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/exports/xsjxks');
     const viewConnectionNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(2) > ul > div > div > li:nth-child(2) > div > div:nth-child(1) > svg > path');
 
     expect(viewConnectionNode).toBeInTheDocument();
-    userEvent.click(viewConnectionNode);
+    await userEvent.click(viewConnectionNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/connections/abcde');
     const importSvgNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(3) > div > div:nth-child(1) > svg > path');
 
     expect(importSvgNode).toBeInTheDocument();
-    userEvent.click(importSvgNode);
+    await userEvent.click(importSvgNode);
     expect(viewExportNode).not.toBeInTheDocument();
     const viewImportSvgNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(3) > ul > div > div > li:nth-child(1) > div > div:nth-child(1) > svg > path');
 
     expect(viewImportSvgNode).toBeInTheDocument();
-    userEvent.click(viewImportSvgNode);
+    await userEvent.click(viewImportSvgNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/imports/nxksnn');
     const viewImportConnectionNode = document.querySelector('div > div > ul > li > ul > div > div > li:nth-child(1) > ul > div > div > li:nth-child(3) > ul > div > div > li:nth-child(2) > div > div:nth-child(1) > svg > path');
 
     expect(viewImportConnectionNode).toBeInTheDocument();
-    userEvent.click(viewImportConnectionNode);
+    await userEvent.click(viewImportConnectionNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/connections/fghijk');
   });
   test('should able to click on an integration and it should verify no flows text by expanding', async () => {
@@ -140,11 +143,11 @@ describe('explorerMenu test suite', () => {
       draft.data.resources.flows = [];
     });
 
-    expect(screen.getByRole('treeitem', {name: /Test integration name/i})).toBeInTheDocument();
+    expect(screen.getByRole('treeitem', {name: /^T.*(\.{3})?$/i})).toBeInTheDocument();  // truncated Integartion name
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
 
     expect(integrationNameSvgNode).toBeInTheDocument();
-    userEvent.click(integrationNameSvgNode);
+    await userEvent.click(integrationNameSvgNode);
     expect(screen.getAllByRole('treeitem')).toHaveLength(2);
     expect(screen.getByText(/no flows/i)).toBeInTheDocument();
   });
@@ -175,12 +178,12 @@ describe('explorerMenu test suite', () => {
     const integrationNameSvgNode = document.querySelector('svg[viewBox="0 0 24 24"]');
 
     expect(integrationNameSvgNode).toBeInTheDocument();
-    userEvent.click(integrationNameSvgNode);
+    await userEvent.click(integrationNameSvgNode);
     expect(screen.getByText(/67890/i)).toBeInTheDocument();
     const TestFlowNode = document.querySelector('div > div > ul > li > ul > div > div > li > div > div:nth-child(1) > svg > path');
 
     expect(TestFlowNode).toBeInTheDocument();
-    userEvent.click(TestFlowNode);
+    await userEvent.click(TestFlowNode);
     expect(screen.getByText(/xsjxks/i)).toBeInTheDocument();
   });
 });

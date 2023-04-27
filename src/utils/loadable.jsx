@@ -1,8 +1,8 @@
 import React from 'react';
 import Loadable from 'react-loadable';
-import { makeStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 import Loader from '../components/Loader';
 import LoadingNotification from '../App/LoadingNotification';
 

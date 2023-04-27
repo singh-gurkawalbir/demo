@@ -10,27 +10,13 @@ export default {
         newValues['/netsuite/tokenEnvironment'];
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
-
-      newValues['/netsuite/email'] = undefined;
-      newValues['/netsuite/password'] = undefined;
-    } else if (newValues['/netsuite/authType'] === 'basic') {
-      newValues['/netsuite/tokenId'] = undefined;
-      newValues['/netsuite/tokenSecret'] = undefined;
-      newValues['/netsuite/_iClientId'] = undefined;
     } else if (newValues['/netsuite/authType'] === 'token-auto') {
-      newValues['/netsuite/email'] = undefined;
-      newValues['/netsuite/password'] = undefined;
       newValues['/netsuite/account'] =
         newValues['/netsuite/token/auto/account'];
-      newValues['/netsuite/tokenId'] = undefined;
-      newValues['/netsuite/tokenSecret'] = undefined;
       newValues['/netsuite/roleId'] = newValues['/netsuite/token/auto/roleId'];
     }
 
     delete newValues['/netsuite/token/auto'];
-    delete newValues['/netsuite/token/auto/roleId'];
-    delete newValues['/netsuite/token/auto/account'];
-    delete newValues['/netsuite/tokenEnvironment'];
 
     return newValues;
   },
@@ -60,11 +46,13 @@ export default {
       fieldId: 'netsuite.email',
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
       requiredWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      removeWhen: [{ field: 'netsuite.authType', isNot: ['basic'] }],
     },
     'netsuite.password': {
       fieldId: 'netsuite.password',
       visibleWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
       requiredWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
+      removeWhen: [{ field: 'netsuite.authType', isNot: ['basic'] }],
     },
     'netsuite.environment': {
       fieldId: 'netsuite.environment',
@@ -74,12 +62,14 @@ export default {
     'netsuite.tokenEnvironment': {
       fieldId: 'netsuite.tokenEnvironment',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+      delete: true,
     },
     'netsuite._iClientId': {
       fieldId: 'netsuite._iClientId',
       visibleWhen: [
         { field: 'netsuite.authType', is: ['token', 'token-auto'] },
       ],
+      removeWhen: [{ field: 'netsuite.authType', is: ['basic'] }],
       filter: { provider: 'netsuite' },
       type: 'dynaiclient',
       connType: 'netsuite',
@@ -131,6 +121,7 @@ export default {
       required: true,
       defaultValue: r => r && r.netsuite && r.netsuite.account,
       visibleWhen: [{ field: 'netsuite.authType', is: ['token-auto'] }],
+      delete: true,
     },
     'netsuite.roleId': {
       fieldId: 'netsuite.roleId',
@@ -163,14 +154,17 @@ export default {
         ];
       },
       defaultValue: r => r && r.netsuite && r.netsuite.roleId,
+      delete: true,
     },
     'netsuite.tokenId': {
       fieldId: 'netsuite.tokenId',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+      removeWhen: [{ field: 'netsuite.authType', isNot: ['token'] }],
     },
     'netsuite.tokenSecret': {
       fieldId: 'netsuite.tokenSecret',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
+      removeWhen: [{ field: 'netsuite.authType', isNot: ['token'] }],
     },
     'netsuite.linkSuiteScriptIntegrator': {
       fieldId: 'netsuite.linkSuiteScriptIntegrator',

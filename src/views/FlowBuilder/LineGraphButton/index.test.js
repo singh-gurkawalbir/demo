@@ -69,14 +69,14 @@ describe('LineGraphButton UI tests', () => {
 
     expect(LineGraphButon).toBeDisabled();
   });
-  test('should run the onClickHandler function passed in props', () => {
+  test('should run the onClickHandler function passed in props', async () => {
     const mockOnClickHandler = jest.fn();
     const props = {flowId: '62c6f122a2f4a703c3dee3d0', onClickHandler: mockOnClickHandler};
 
     initLineGraphButton(props);
     const LineGraphButon = document.querySelector('[ data-test="charts"]');
 
-    userEvent.click(LineGraphButon);
+    await userEvent.click(LineGraphButon);
     expect(mockOnClickHandler).toBeCalledWith('charts');
   });
 });

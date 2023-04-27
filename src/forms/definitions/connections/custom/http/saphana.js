@@ -7,24 +7,17 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/sap/opu/odata/sap/API_SALES_ORDER_SRV',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/http/unencrypted/host']}-api.s4hana.ondemand.com`,
+    '/http/baseURI': `https://${formValues['/http/unencrypted/host']}`,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
     'http.unencrypted.host': {
       id: 'http.unencrypted.host',
       startAdornment: 'https://',
-      endAdornment: '-api.s4hana.ondemand.com',
       type: 'text',
       label: 'Host',
       helpKey: 'saphana.connection.http.unencrypted.host',
       required: true,
-      validWhen: {
-        matchesRegEx: {
-          pattern: '^[\\S]+$',
-          message: 'Subdomain should not contain spaces.',
-        },
-      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',

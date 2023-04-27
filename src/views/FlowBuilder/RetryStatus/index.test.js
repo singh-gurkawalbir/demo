@@ -137,20 +137,20 @@ describe('RetryStatus UI tests', () => {
     initRetryStatus(props);
     expect(screen.getByText('Retry completed.')).toBeInTheDocument();
   });
-  test('should run the onClick function when clicked on view results', () => {
+  test('should run the onClick function when clicked on view results', async () => {
     const props = {flowId: 'f5'};
 
     initRetryStatus(props);
-    userEvent.click(screen.getByText('View results'));
+    await userEvent.click(screen.getByText('View results'));
     expect(mockHistoryPush).toBeCalled();
   });
-  test('should open a dropdown when clicked on view results and a user retried a error for more than one step', () => {
+  test('should open a dropdown when clicked on view results and a user retried a error for more than one step', async () => {
     const props = {flowId: 'f4'};
 
     initRetryStatus(props);
-    userEvent.click(screen.getByText('View results'));
+    await userEvent.click(screen.getByText('View results'));
     // On clicking the View results, a dropdown containing resources for which retry is completed are shown
-    userEvent.click(screen.getByText('e1'));
+    await userEvent.click(screen.getByText('e1'));
     expect(mockHistoryPush).toBeCalled();
   });
 });

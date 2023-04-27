@@ -1,9 +1,9 @@
 import React from 'react';
-import CeligoTimeAgo from '../../../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 
 export default function AutoPurgeAt({ accessToken }) {
   if (accessToken && accessToken.autoPurgeAt) {
-    return <CeligoTimeAgo date={accessToken.autoPurgeAt} />;
+    return <TimeAgo date={accessToken.autoPurgeAt} />;
   }
 
   return 'Never';

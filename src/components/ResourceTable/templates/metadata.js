@@ -1,12 +1,12 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
+import { TimeAgo } from '@celigo/fuse-ui';
 import Delete from '../commonActions/Delete';
 import UploadZipFile from './actions/UploadZipFile';
 import Download from '../commonActions/Download';
 import Edit from '../commonActions/Edit';
 import LogoStrip from '../../LogoStrip';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
 import TextOverflowCell from '../../TextOverflowCell';
 
@@ -34,7 +34,7 @@ export default {
       key: 'lastUpdated',
       heading: 'Last updated',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {

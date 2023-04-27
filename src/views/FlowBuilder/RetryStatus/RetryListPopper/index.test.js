@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import RetryListPopper from './index';
@@ -21,27 +20,28 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('SelectResource UI Tests', () => {
-  test('should open a dropdown when clicked on view results', () => {
+  test('should open a dropdown when clicked on view results', async () => {
     initRetryListPopper({resources});
-    userEvent.click(screen.getByText('View results'));
+    await userEvent.click(screen.getByText('View results'));
     expect(screen.getByText(/name1/i)).toBeInTheDocument();
   });
 
-  test('should open the retries tab of the specific resource when clicked on the resource', () => {
+  test('should open the retries tab of the specific resource when clicked on the resource', async () => {
     initRetryListPopper({resources});
-    userEvent.click(screen.getByText('View results'));
-    userEvent.click(screen.getByText('name1'));
+    await userEvent.click(screen.getByText('View results'));
+    await userEvent.click(screen.getByText('name1'));
     expect(mockHistoryPush).toBeCalled();
   });
-  test('should close the arrowPopper when clicked outside the component', () => {
+  test('should close the arrowPopper when clicked outside the component', async () => {
     renderWithProviders(
       <MemoryRouter>
-        <div>exterior<RetryListPopper resources={resources} /></div>
+        <div>exterior</div>
+        <RetryListPopper resources={resources} />
       </MemoryRouter>
     );
-    userEvent.click(screen.getByText('View results'));
+    await userEvent.click(screen.getByText('View results'));
     expect(screen.getByText(/name1/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText('exterior'));
-    expect(screen.queryByText(/name1/i)).toBeNull();
+    await userEvent.click(screen.getByText('exterior'));
+    await waitFor(() => expect(screen.queryByText(/name1/i)).toBeNull());
   });
 });

@@ -2,6 +2,8 @@ import isObject from 'lodash/isObject';
 import set from 'lodash/set';
 import jsonPatch from 'fast-json-patch';
 import customCloneDeep from './customCloneDeep';
+import { safeParse } from './string';
+import errorMessageStore from './errorStore';
 
 export default {
   /*
@@ -137,3 +139,10 @@ export function getChangesPatchSet(updateFn, ...args) {
     return [];
   }
 }
+
+export const isJsonValue = (value, label) => {
+  // value is parsable
+  if (!value || safeParse(value)) return;
+
+  return errorMessageStore('INVALID_JSON_VALUE', {label});
+};

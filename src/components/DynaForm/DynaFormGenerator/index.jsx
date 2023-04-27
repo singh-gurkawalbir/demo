@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import FormFragment from '../../Form/FormFragment';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';

@@ -1,5 +1,4 @@
 import { isNewId } from '../../utils/resource';
-import { alterFileDefinitionRulesVisibility } from '../formFactory/utils';
 
 export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   outputMode: {
@@ -509,8 +508,6 @@ export const getFileProviderExportsOptionsHandler = (fieldId, fields) => {
       field => field.id === 'file.fileDefinition.resourcePath'
     );
 
-    alterFileDefinitionRulesVisibility(fields);
-
     return {
       format: definition && definition.format,
       definitionId: definition && definition.value,
@@ -625,8 +622,12 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
   } else if (fieldId === 'file.skipAggregation') {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
+    const batchSize = fields.find(field => field.id === 'file.batchSize')?.value;
 
-    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue;
+    // TODO: value being changed in optionalHandler. check if a DynaForm util to handle inter field dependencies can be created.
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || // Skip aggregation should be true for file definitions
+    skipAggregationField.defaultValue || // or the user defined value
+    batchSize > 1; // or when batchSize is greater than 1
   } else if (fieldId === 'file.encoding') {
     const fileType = fields.find(field => field.id === 'file.type');
 
@@ -653,15 +654,22 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
 
   return null;
 };
-export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+export const updateHTTPFrameworkFormValues = (formValues, resource, connector) => {
+  let httpConnector = connector;
+
   if (!httpConnector) {
     return formValues;
+  }
+  if (resource?.http?._httpConnectorApiId) {
+    httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
   }
   const retValues = { ...formValues };
 
   if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.[0]?.includes('/:_version')) {
     if (retValues['/http/unencrypted/version']) {
       retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+    } else if (retValues['/http/unencrypted']?.version) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted'].version}`;
     } else {
       const versionRelativeURI = httpConnector.versions?.[0]?.name;
 
@@ -687,7 +695,7 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
     retValues['/http/headers'] = httpHeaders;
   }
 
-  retValues['/http/_httpConnectorId'] = httpConnector?._id;
+  retValues['/http/_httpConnectorId'] = connector?._id;
   if (retValues['/http/unencrypted/version']) {
     const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
 

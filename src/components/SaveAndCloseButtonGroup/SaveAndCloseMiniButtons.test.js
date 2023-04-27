@@ -1,18 +1,19 @@
 
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SaveAndCloseMiniButtons from './SaveAndCloseMiniButtons';
+import { renderWithProviders } from '../../test/test-utils';
 
-jest.mock('../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../Spinner'),
-  default: ({children}) => (<div role="status" >{children}</div>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: ({children}) => (<div role="status" >{children}</div>),
 }));
 
 describe('test suite for SaveAndCloseMiniButtons', () => {
   test('should pass initial rendering', () => {
-    render(<SaveAndCloseMiniButtons />);
+    renderWithProviders(<SaveAndCloseMiniButtons />);
     const saveButton = document.querySelector('[data-test="save"]');
     const closeButton = document.querySelector('[data-test="cancel"]');
 
@@ -23,7 +24,7 @@ describe('test suite for SaveAndCloseMiniButtons', () => {
   });
 
   test('save and close button should be disabled when conditions satisfy', () => {
-    render(<SaveAndCloseMiniButtons inProgress disabled submitButtonLabel="Submit" submitTransientLabel="Transient Submit" />);
+    renderWithProviders(<SaveAndCloseMiniButtons inProgress disabled submitButtonLabel="Submit" submitTransientLabel="Transient Submit" />);
     const saveButton = screen.getByRole('button', { name: /submit/i});
     const closeButton = screen.getByRole('button', { name: /close/i });
 
@@ -38,34 +39,34 @@ describe('test suite for SaveAndCloseMiniButtons', () => {
   });
 
   test('should display spinner if inProgess and enabled', () => {
-    render(<SaveAndCloseMiniButtons inProgress submitTransientLabel="SUBMIT Transient" />);
+    renderWithProviders(<SaveAndCloseMiniButtons inProgress submitTransientLabel="SUBMIT Transient" />);
     const spinner = screen.getByRole('status');
 
     expect(spinner).toBeInTheDocument();
     expect(spinner.textContent).toBe('SUBMIT Transient');
   });
   test('should not show Close button when shouldNotShowCancelButton is set', () => {
-    render(<SaveAndCloseMiniButtons shouldNotShowCancelButton />);
+    renderWithProviders(<SaveAndCloseMiniButtons shouldNotShowCancelButton />);
     const closeButton = screen.queryByRole('button', { name: /close/i });
 
     expect(closeButton).not.toBeInTheDocument();
   });
 
-  test('should be able to execute handleSave and handleCancel', () => {
+  test('should be able to execute handleSave and handleCancel', async () => {
     const handleSave = jest.fn();
     const handleCancel = jest.fn();
 
-    render(<SaveAndCloseMiniButtons submitButtonLabel="Save" isDirty handleSave={handleSave} handleCancel={handleCancel} />);
+    renderWithProviders(<SaveAndCloseMiniButtons submitButtonLabel="Save" isDirty handleSave={handleSave} handleCancel={handleCancel} />);
     const saveButton = screen.getByRole('button', { name: /save/i });
     const closeButton = screen.getByRole('button', { name: /close/i });
 
     expect(handleSave).not.toHaveBeenCalled();
     expect(handleCancel).not.toHaveBeenCalled();
 
-    userEvent.click(saveButton);
+    await userEvent.click(saveButton);
     expect(handleSave).toHaveBeenCalledTimes(1);
 
-    userEvent.click(closeButton);
+    await userEvent.click(closeButton);
     expect(handleCancel).toHaveBeenCalledTimes(1);
   });
 });

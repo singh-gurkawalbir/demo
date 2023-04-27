@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -53,7 +53,10 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
     };
   }, shallowEqual);
 
-  const useSS2Framework = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value === 'true';
+  const isSS2ForOldSchema = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value === 'true';
+  const isSS2ForNewSchema = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.frameworkVersion'))?.value === 'suiteapp2.0';
+
+  const isSS2Framework = isSS2ForNewSchema || isSS2ForOldSchema;
 
   const patchEditor = useCallback(
     value => {
@@ -85,8 +88,8 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             }
           } else if (filter.type === 'checkbox') {
             filterData.options = [
-              { id: useSS2Framework ? true : 'T', text: 'Yes', type: useSS2Framework ? 'boolean' : 'string' },
-              { id: useSS2Framework ? false : 'F', text: 'No', type: useSS2Framework ? 'boolean' : 'string' },
+              { id: isSS2Framework ? true : 'T', text: 'Yes', type: isSS2Framework ? 'boolean' : 'string' },
+              { id: isSS2Framework ? false : 'F', text: 'No', type: isSS2Framework ? 'boolean' : 'string' },
             ];
           }
 
@@ -94,7 +97,7 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
         }),
         'id'
       ),
-    [filters, useSS2Framework]
+    [filters, isSS2Framework]
   );
 
   useEffect(() => {

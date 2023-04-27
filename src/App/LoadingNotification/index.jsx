@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, Snackbar, LinearProgress, Paper, Typography } from '@material-ui/core';
+import { Snackbar, LinearProgress, Paper, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../reducers';
 

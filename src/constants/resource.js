@@ -34,7 +34,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   export: 'Export',
   filedefinition: 'File definition',
   flow: 'Flow',
-  iclient: 'IClient',
+  iclient: 'iClient',
   import: 'Import',
   integration: 'Integration',
   script: 'Script',
@@ -48,6 +48,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   ssoclient: 'SSO client',
   user: 'User',
   notification: 'Notification',
+  mfa: 'MFA',
 });
 export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)

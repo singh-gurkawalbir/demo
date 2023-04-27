@@ -71,9 +71,9 @@ describe('ViewAliasDetailsDrawer tests', () => {
     const pageInfo = buttons.find(b => b.getAttribute('data-test') === 'openPageInfo');
     const closeLogs = buttons.find(b => b.getAttribute('data-test') === 'closeLogs');
 
-    userEvent.click(pageInfo);
+    await userEvent.click(pageInfo);
     expect(screen.getByText('View information about the alias and the resource it references')).toBeInTheDocument();
-    userEvent.click(closeLogs);
+    await userEvent.click(closeLogs);
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
   test('Should able to test the viewAlias details drawer from manage alias i.e inherited from parent', async () => {

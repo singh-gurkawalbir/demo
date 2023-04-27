@@ -1,6 +1,6 @@
 import React from 'react';
-import { FormHelperText } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormHelperText } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import ErrorIcon from '../../icons/ErrorIcon';
 import WarningIcon from '../../icons/WarningIcon';
@@ -14,25 +14,23 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
-  error: {
+  stack: {
     display: 'flex',
-    alignItems: 'top',
+    alignItems: 'flex-start',
+  },
+  error: {
     color: theme.palette.error.main,
   },
   warning: {
-    display: 'flex',
-    alignItems: 'top',
     color: theme.palette.warning.main,
   },
   icon: {
     marginTop: 2,
-    marginRight: 3,
+    marginRight: theme.spacing(0.5),
     fontSize: theme.spacing(2),
     verticalAlign: 'text-bottom',
   },
   description: {
-    display: 'flex',
-    alignItems: 'top',
     color: theme.palette.text.hint,
     '& a': {
       marginLeft: theme.spacing(0.5),
@@ -41,6 +39,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const ShowInfo = type => (
+  <>
+    {/<\/?[a-z][\s\S]*>/i.test(type) ? (
+      <RawHtml html={type} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
+    ) : (type)}
+  </>
+);
 export default function FieldMessage({ description, errorMessages, warningMessages, isValid, className }) {
   const classes = useStyles();
   const shownError = isValid ? description : errorMessages;
@@ -48,29 +53,23 @@ export default function FieldMessage({ description, errorMessages, warningMessag
   return description || errorMessages || warningMessages ? (
     <FormHelperText
       error={!isValid}
-      className={clsx(classes.descriptionWrapper, className)}
+      className={clsx(classes.stack, classes.descriptionWrapper, className)}
       component="div">
       {description && isValid && (
-      <div className={classes.description}>
-        {/<\/?[a-z][\s\S]*>/i.test(description) ? (
-          <RawHtml html={description} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
-        ) : (description)}
+      <div className={clsx(classes.stack, classes.description)}>
+        {ShowInfo(description)}
       </div>
       )}
       {warningMessages && (
-      <div className={classes.warning}>
+      <div className={clsx(classes.stack, classes.warning)}>
         {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
-        {/<\/?[a-z][\s\S]*>/i.test(warningMessages) ? (
-          <RawHtml html={warningMessages} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
-        ) : (warningMessages)}
+        {ShowInfo(warningMessages)}
       </div>
       )}
       {errorMessages && (
-      <div className={classes.error}>
+      <div className={clsx(classes.stack, classes.error)}>
         {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
-        {/<\/?[a-z][\s\S]*>/i.test(shownError) ? (
-          <RawHtml html={shownError} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
-        ) : (shownError)}
+        {ShowInfo(shownError)}
       </div>
       )}
     </FormHelperText>

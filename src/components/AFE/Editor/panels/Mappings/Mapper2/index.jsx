@@ -2,8 +2,8 @@
 import React, {useCallback, useEffect, useMemo, useRef } from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import isEmpty from 'lodash/isEmpty';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';

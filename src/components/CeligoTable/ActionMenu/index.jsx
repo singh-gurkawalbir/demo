@@ -1,20 +1,11 @@
-import { IconButton, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Tooltip } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import ArrowPopper from '../../ArrowPopper';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import MultipleAction from './MultipleAction';
 import TextButton from '../../Buttons/TextButton';
 
-const useStyles = makeStyles(theme => ({
-  actionsMenuPopper: {
-    maxWidth: 250,
-    top: `${theme.spacing(1)}px !important`,
-  },
-}));
-
 export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, iconLabel, tooltip }) {
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
   const open = Boolean(anchorEl);
@@ -51,8 +42,9 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
       {open && (
       <ArrowPopper
         placement="bottom-end"
-        restrictToParent={false}
-        classes={{ popper: classes.actionsMenuPopper }}
+        preventOverflow={false}
+        variant="menu"
+        offset={[0, 4]}
         open={open}
         anchorEl={anchorEl}
         id={actionsPopoverId}

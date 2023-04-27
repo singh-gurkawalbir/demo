@@ -1,8 +1,8 @@
 import React, { useEffect, useState, cloneElement, useCallback, useMemo } from 'react';
-import FormControl from '@material-ui/core/FormControl';
+import FormControl from '@mui/material/FormControl';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Spinner from '../../../Spinner';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
 import DynaMultiSelect from '../DynaMultiSelect';
@@ -64,6 +64,7 @@ export default function RefreshGenericResource(props) {
     removeRefresh = false,
     urlToOpen,
     value,
+    className,
   } = props;
 
   const classes = useStyles();
@@ -131,9 +132,10 @@ export default function RefreshGenericResource(props) {
   return (
     <div>
       <FormControl
+        variant="standard"
         key={id}
         disabled={disabled}
-        className={classes.refreshGenericResourceWrapper}>
+        className={clsx(classes.refreshGenericResourceWrapper, className)}>
 
         <div className={classes.refreshRoot}>
           {cloneElement(children, {

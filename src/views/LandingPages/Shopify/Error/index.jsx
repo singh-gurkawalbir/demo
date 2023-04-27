@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { Button, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
-import CeligoLogo from '../../../../components/CeligoLogo';
+import { CeligoLogo } from '@celigo/fuse-ui';
 import useQuery from '../../../../hooks/useQuery';
 import ShopifyLandingPageHeader from '../PageHeader';
 import NotificationToaster from '../../../../components/NotificationToaster';
@@ -82,20 +83,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     width: theme.spacing(50),
   },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
-  errorIcon: {
-    fill: theme.palette.error.main,
-    // fontSize: theme.spacing(2),
-    marginRight: 5,
-  },
+
   errorNotification: {
     border: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',

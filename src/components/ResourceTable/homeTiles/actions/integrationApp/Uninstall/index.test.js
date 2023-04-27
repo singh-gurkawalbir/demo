@@ -36,20 +36,20 @@ describe("homeTile's Uninstall action UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should verify the uninstall button is visible and handle delete function is called in clicking it', () => {
+  test('should verify the uninstall button is visible and handle delete function is called in clicking it', async () => {
     const data = {_id: 'someId', name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'};
 
     initHomeTiles(data, initialStore);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Uninstall integration'));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Uninstall integration'));
     expect(mockuseHandleDelete).toHaveBeenCalledWith('2_integrationId', {_connectorId: 'some_connectorId', mode: 'modeText', name: 'tileName', supportsMultiStore: true});
     expect(mockDelete).toHaveBeenCalledWith();
   });
-  test('should verify the uninstall button is not avaiable because of permission', () => {
+  test('should verify the uninstall button is not avaiable because of permission', async () => {
     const data = {_id: 'someId', name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'};
 
     initHomeTiles(data);
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.queryByText('Uninstall integration')).not.toBeInTheDocument();
   });
 });

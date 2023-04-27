@@ -30,11 +30,11 @@ describe('pin actions of homeTile UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should make dispatch call when when clicked on Pin Integration', () => {
+  test('should make dispatch call when when clicked on Pin Integration', async () => {
     initHomeTiles({key: 'somekey', name: 'tileName', pinned: false, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true});
-    userEvent.click(screen.queryByRole('button', {name: /more/i}));
+    await userEvent.click(screen.queryByRole('button', {name: /more/i}));
 
-    userEvent.click(screen.getByText('Pin integration'));
+    await userEvent.click(screen.getByText('Pin integration'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.user.preferences.pinIntegration('somekey'));
   });
 });

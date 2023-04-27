@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ResetPasswordForm from './ResetPasswordForm';
 
 const useStyles = makeStyles(theme => ({
@@ -8,12 +9,12 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '30% 70%',
     height: '100vh',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '100%',
     },
   },
   marketingContentWrapper: {
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       display: 'none',
     },
   },
@@ -38,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     width: 300,
     marginTop: '50%',
     height: '100%',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       marginTop: 0,
     },
   },
@@ -48,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '40px',
   },
   resetPasswordForm: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
   },

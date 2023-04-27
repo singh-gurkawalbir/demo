@@ -1,72 +1,34 @@
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography} from '@material-ui/core';
 import { useLocation, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import ErrorIcon from '../../../components/icons/ErrorIcon';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../../components/Buttons';
-import getImageUrl from '../../../utils/image';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
-
-const path = getImageUrl('images/googlelogo.png');
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     margin: theme.spacing(1, 0, 2, 0),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
     marginBottom: 10,
   },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
   forgotPass: {
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
   googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
     minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
   },
@@ -112,7 +74,7 @@ export default function SignIn({dialogOpen, className}) {
     const errorMessage = selectors.authenticationErrored(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
-      return 'Sign in failed. Please try again.';
+      return message.USER_SIGN_IN.SIGNIN_FAILED;
     }
     if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
@@ -162,7 +124,7 @@ export default function SignIn({dialogOpen, className}) {
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
-    <div className={clsx(classes.editableFields, className)}>
+    <LoginFormWrapper className={className}>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -190,14 +152,7 @@ export default function SignIn({dialogOpen, className}) {
 
         <ForgotPassworLink email={email} />
         {!isAuthenticating && showError && error && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            <ErrorIcon /> {error}
-          </Typography>
+        <ShowErrorMessage error={error} />
         )}
         { isAuthenticating ? <Spinner />
           : (
@@ -205,6 +160,7 @@ export default function SignIn({dialogOpen, className}) {
               data-test="submit"
               type="submit"
               className={classes.submit}
+              submit
               value="Submit">
               Sign in and connect
             </FilledButton>
@@ -216,17 +172,18 @@ export default function SignIn({dialogOpen, className}) {
         {!dialogOpen && (
         <form onSubmit={handleSignInWithGoogle}>
           <TextField
+            variant="standard"
             data-private
             type="hidden"
             id="attemptedRoute"
             name="attemptedRoute"
-            value={attemptedRoute || getRoutePath('/')}
-          />
+            value={attemptedRoute || getRoutePath('/')} />
 
           <OutlinedButton
             type="submit"
             color="secondary"
-            className={classes.googleBtn}>
+            className={classes.googleBtn}
+            googleBtn>
             Sign in with Google
           </OutlinedButton>
         </form>
@@ -237,14 +194,15 @@ export default function SignIn({dialogOpen, className}) {
            <OutlinedButton
              type="submit"
              color="secondary"
-             className={classes.googleBtn}>
+             className={classes.googleBtn}
+             googleBtn>
              Sign in with Google
            </OutlinedButton>
          </form>
         )}
       </div>
       )}
-    </div>
+    </LoginFormWrapper>
   );
 }
 

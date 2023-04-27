@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../../actions';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
 import RightDrawer from '../../../../../components/drawer/Right';

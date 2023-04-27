@@ -220,15 +220,14 @@ selectors.getAllParsableErrors = (state, resourceId) => {
 
   if (stages) { return null; }
 
-  const httpResponseStage = data.find(val => val.name === 'raw')?.data;
-
   const previewError = selectors.sampleDataError(state, resourceId);
 
-  if (!errors && !httpResponseStage && previewError) {
+  if (!errors && previewError) {
     // Incase of http/rest previews , we do get instances when
     // preview has request stage but no response
     // In that case, preview returns error which needs to be shown for parse stage
     // Refer @IO-31463
+    // Even when stages are given, when errors are returned, that takes precedence Refer @IO-33613
     return previewError;
   }
 

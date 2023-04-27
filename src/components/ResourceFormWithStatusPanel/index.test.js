@@ -2,7 +2,8 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { mutateStore, renderWithProviders } from '../../test/test-utils';
+import { act } from 'react-dom/test-utils';
+import { renderWithProviders, mutateStore } from '../../test/test-utils';
 import ResourceFormWithStatusPanel from '.';
 import actions from '../../actions';
 import {getCreatedStore} from '../../store';
@@ -206,7 +207,7 @@ describe('resourceFormWithStatusPanel UI test', () => {
 
     expect(message).toBeInTheDocument();
     expect(message).toHaveAttribute('href',
-      'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
+      'https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
     );
   });
   test('should test for bundle install notification', async () => {
@@ -224,7 +225,7 @@ describe('resourceFormWithStatusPanel UI test', () => {
 
     renderWithStoreAsndProps(store, props);
 
-    store.dispatch(actions.resourceForm.showBundleInstallNotification('/', 'exports', '5e74798ec2c20f66f05cd370'));
+    act(() => { store.dispatch(actions.resourceForm.showBundleInstallNotification('/', 'exports', '5e74798ec2c20f66f05cd370')); });
     const link = screen.getByRole('link');
 
     expect(link).toHaveAttribute('href', '/');

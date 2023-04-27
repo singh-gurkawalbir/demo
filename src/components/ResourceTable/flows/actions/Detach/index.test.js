@@ -63,16 +63,16 @@ describe('detach flow action UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should not show detach flow option because of permissions', () => {
+  test('should not show detach flow option because of permissions', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null});
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.queryByText('Detach flow')).not.toBeInTheDocument();
   });
-  test('should click on detach button and dispatch call should be made for detaching', () => {
+  test('should click on detach button and dispatch call should be made for detaching', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null}, initialStore);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Detach flow'));
-    userEvent.click(screen.getByText('Detach'));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Detach flow'));
+    await userEvent.click(screen.getByText('Detach'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.resource.patchAndCommitStaged('flows', '5d95f7d1795b356dfcb5d6c4',
         [{op: 'replace',
@@ -81,11 +81,11 @@ describe('detach flow action UI test cases', () => {
         }])
     );
   });
-  test('should click on detach button when flow was part of a flow group', () => {
+  test('should click on detach button when flow was part of a flow group', async () => {
     initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null, _flowGroupingId: 'someflowGroupId'}, initialStore);
-    userEvent.click(screen.getByRole('button', {name: /more/i}));
-    userEvent.click(screen.getByText('Detach flow'));
-    userEvent.click(screen.getByText('Detach'));
+    await userEvent.click(screen.getByRole('button', {name: /more/i}));
+    await userEvent.click(screen.getByText('Detach flow'));
+    await userEvent.click(screen.getByText('Detach'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.resource.patchAndCommitStaged('flows', '5d95f7d1795b356dfcb5d6c4',
         [

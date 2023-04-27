@@ -45,7 +45,7 @@ describe('test cases for Manage User Panel', () => {
     const value1 = screen.getByText('Users');
 
     expect(value1).toBeInTheDocument();
-    userEvent.click(screen.getByText('Invite user'));
+    await userEvent.click(screen.getByText('Invite user'));
     expect(history.push).toHaveBeenCalledTimes(1);
   });
   test('case for the Invite user button who is not a account owner', () => {

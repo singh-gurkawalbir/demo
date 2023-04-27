@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { Divider, makeStyles } from '@material-ui/core';
+import { Divider } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../actions';
 import RadioGroup from '../radiogroup/DynaRadioGroup';
 import DynaSelect from '../DynaSelect';

@@ -80,10 +80,10 @@ describe('dynaChildIntegrations UI tests', () => {
     initDynaChildIntegrations(props);
     expect(screen.getByText('Choose resource')).toBeInTheDocument();
   });
-  test('should display integrations in the dropdown when clicked on please select option', () => {
+  test('should display integrations in the dropdown when clicked on please select option', async () => {
     initDynaChildIntegrations(props);
     expect(screen.getByText('Choose resource')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Choose resource'));
+    await userEvent.click(screen.getByText('Choose resource'));
     expect(screen.getByText('integration2')).toBeInTheDocument();
     expect(screen.getByText('integration3')).toBeInTheDocument();
     expect(screen.getByText('integration4')).toBeInTheDocument();

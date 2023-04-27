@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
 import { isNewId } from '../../../utils/resource';
 import RetryTableFilters from './RetryTableFilters';
-import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { DEFAULT_FILTERS, FILTER_KEYS } from '../../../utils/errorManagement';
 import messageStore, { message } from '../../../utils/messageStore';
@@ -55,7 +55,7 @@ export default function RetryList({ flowId }) {
     <>
       <RetryTableFilters flowId={flowId} resourceId={resourceId} filterKey={FILTER_KEYS.RETRIES} />
       {retryListStatus === 'requested' ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <div className={classes.retriesList}>
           <ResourceTable

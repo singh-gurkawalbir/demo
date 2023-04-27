@@ -1,10 +1,10 @@
 import React, {useState, useCallback} from 'react';
 import PropTypes from 'prop-types';
-import IconButton from '@material-ui/core/IconButton';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@mui/material/IconButton';
+import SnackbarContent from '@mui/material/SnackbarContent';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
@@ -104,7 +104,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.secondary.main,
-    fontSize: props => props.transparent ? 13 : 17,
   },
   actionButton: {
     padding: 0,
@@ -133,7 +132,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-start',
       },
     },
-    '& >*.MuiTypography-root': {
+    '& >.MuiTypography-root': {
       fontSize: 13,
     },
     '& > * svg': {
@@ -173,7 +172,7 @@ const variantIcon = {
  * props.fullWidth : set to true for full width notification.
  */
 export default function NotificationToaster(props) {
-  const classes = useStyles(props);
+  const classes = useStyles();
   const {
     className,
     children,
@@ -214,7 +213,10 @@ export default function NotificationToaster(props) {
       aria-describedby="client-snackbar"
       elevation={4}
       message={(
-        <Typography component="div" id="client-snackbar" className={classes.message}>
+        <Typography
+          component="div" id="client-snackbar" className={classes.message}
+          sx={{ fontSize: props.transparent ? 13 : 17,
+          }}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
           {children}
         </Typography>
@@ -228,7 +230,8 @@ export default function NotificationToaster(props) {
               aria-label="close"
               color="inherit"
               onClick={onCloseHandler}
-              className={classes.actionButton}>
+              className={classes.actionButton}
+              size="large">
               <CloseIcon className={classes.icon} />
             </IconButton>,
           ]

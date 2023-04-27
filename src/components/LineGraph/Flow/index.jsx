@@ -12,7 +12,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import * as d3 from 'd3';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
@@ -25,7 +27,6 @@ import {
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import Spinner from '../../Spinner';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
 import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../constants';
@@ -290,7 +291,7 @@ export default function FlowCharts({ flowId, integrationId, range, selectedResou
   if (data.status === COMM_STATES.LOADING) {
     return (
 
-      <Spinner centerAll />
+      <Spinner center="screen" />
 
     );
   }

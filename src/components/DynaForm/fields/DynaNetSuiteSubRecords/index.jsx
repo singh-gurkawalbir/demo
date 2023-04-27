@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
@@ -64,7 +64,9 @@ export default function DynaNetSuiteSubRecords(props) {
   const {
     resourceContext,
     connectionId,
+    formKey,
     options = {},
+    recordTypeFieldId = 'netsuite_da.recordType',
     onFieldChange,
     id,
     defaultValue,
@@ -76,7 +78,12 @@ export default function DynaNetSuiteSubRecords(props) {
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
   const { resourceId } = resourceContext;
-  const { recordType } = options;
+  const recordType = useSelector(state => {
+    // We still support options incase IA uses this field and feeds recordType through options
+    if (options?.recordType) return options.recordType;
+
+    return selectors.formState(state, formKey)?.fields?.[recordTypeFieldId]?.value;
+  });
 
   const {hasSubrecord, status} = useSelector(state => {
     const {data: recordTypes, status} = selectors.metadataOptionsAndResources(state, {

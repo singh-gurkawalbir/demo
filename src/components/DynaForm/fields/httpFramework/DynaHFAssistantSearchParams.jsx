@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { isArray } from 'lodash';
@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaValueTitle: {
     paddingLeft: '28px',
-    width: `calc(100% - ${theme.spacing(2)}px)`,
+    width: `calc(100% - ${theme.spacing(2)})`,
   },
 }));
 

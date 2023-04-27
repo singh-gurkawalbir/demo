@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { JOB_STATUS, JOB_TYPES } from '../../../../../constants';
-import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';
 import { JOB_UI_STATUS, RETRY_JOB_UI_STATUS } from '../../../../../utils/jobdashboard';
 
@@ -24,7 +24,7 @@ export default function FlowStepStatus({ job }) {
     return (
       <div className={classes.flexContainer}>
         <div className={classes.spinnerWrapper}>
-          <Spinner size={18} />
+          <Spinner size="small" />
         </div>
         {job.type === JOB_TYPES.RETRY ? RETRY_JOB_UI_STATUS[job.status] : JOB_UI_STATUS[job.status]}
       </div>

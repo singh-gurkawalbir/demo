@@ -6,28 +6,18 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
       retValues['/test'] = undefined;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateField'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
-      delete retValues['/delta/dateField'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'delta') {
       retValues['/once'] = undefined;
       retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateField'];
     }
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
@@ -67,14 +57,17 @@ export default {
           ],
         },
       ],
+      removeWhen: [{field: 'type', is: ['all']}],
     },
-    'test.limit': {fieldId: 'test.limit'},
+    'test.limit': {fieldId: 'test.limit', deleteWhen: [{field: 'type', is: ['all', 'delta', 'once']}]},
     exportOneToMany: { formId: 'exportOneToMany' },
     'delta.dateField': {
       fieldId: 'delta.dateField',
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'once']}],
     },
     'once.booleanField': {
       fieldId: 'once.booleanField',
+      deleteWhen: [{field: 'type', is: ['all', 'test', 'delta']}],
     },
     rdbmsGrouping: { formId: 'rdbmsGrouping' },
     advancedSettings: { formId: 'advancedSettings' },

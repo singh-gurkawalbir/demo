@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 import DynaText from '../DynaText';
 import DynaSelect from '../DynaSelect';

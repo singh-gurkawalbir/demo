@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { FormControl } from '@mui/material';
 import DynaText from './DynaText';
 import FieldMessage from './FieldMessage';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
@@ -78,7 +78,6 @@ export default function DynaTypeableSelect(props) {
   const [value, setValue] = useState(propValue?.toString() || '');
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-
   const handleFocusIn = useCallback(evt => {
     // this component is a combo of textArea and react-select. trigger focus in when user tries to focus in textarea
     if (evt.target.type !== 'textarea') {
@@ -89,27 +88,20 @@ export default function DynaTypeableSelect(props) {
       onTouch(id);
     }
   }, [id, isFocused, onTouch]);
-  const handleFocusOut = useCallback(evt => {
-    // this component is a combo of textArea and react-select. trigger focus out when user tries to focus out of react-select
-    if (evt.target.type === 'textarea') {
-      return;
-    }
-    if (isFocused) { setIsFocused(false); }
-  }, [isFocused]);
 
   useEffect(() => {
     const div = ref.current;
 
     // Bind the event listener
     div.addEventListener('focusin', handleFocusIn, true);
-    div.addEventListener('focusout', handleFocusOut, true);
+    // div.addEventListener('focusout', handleFocusOut, true);
 
     return () => {
       // Unbind the event listener on clean up
       div.removeEventListener('focusin', handleFocusIn, true);
-      div.removeEventListener('focusout', handleFocusOut, true);
+      // div.removeEventListener('focusout', handleFocusOut, true);
     };
-  }, [handleFocusIn, handleFocusOut]);
+  }, [handleFocusIn]);
   const handleChange = useCallback(newObj => {
     const newVal = newObj.value;
 
@@ -133,6 +125,20 @@ export default function DynaTypeableSelect(props) {
         setValue(propValue);
         setIsFocused(false);
       }
+      if (evt.key === 'Home') {
+        evt.preventDefault();
+        // eslint-disable-next-line no-param-reassign
+        if (evt.shiftKey) evt.target.selectionStart = 0;
+        else evt.target.setSelectionRange(0, 0);
+      }
+      if (evt.key === 'End') {
+        evt.preventDefault();
+        const len = evt.target.value.length;
+
+        // eslint-disable-next-line no-param-reassign
+        if (evt.shiftKey) evt.target.selectionEnd = len;
+        else evt.target.setSelectionRange(len, len);
+      }
     },
     [propValue],
   );
@@ -153,6 +159,7 @@ export default function DynaTypeableSelect(props) {
         setValue(newValue);
         onBlur(id, newValue);
         setIsTyping(false);
+        setIsFocused(false);
       }
     },
     [id, onBlur, propValue, suggestions, value],
@@ -199,10 +206,14 @@ export default function DynaTypeableSelect(props) {
 
   return (
     <FormControl
+      variant="standard"
       ref={ref}
       error={!isValid}
       disabled={disabled}
-      className={classes.root}>
+      className={classes.root}
+      onBlur={() => {
+        setIsFocused(false);
+      }}>
       {isFocused && (
       <Select
         {...isLoggableAttr(isLoggable)}

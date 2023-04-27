@@ -6,15 +6,6 @@ export default {
       ...formValues,
     };
 
-    if (retValues['/dynamodb/method'] === 'putItem') {
-      if (retValues['/dynamodb/conditionExpression'] === '') {
-        retValues['/dynamodb/expressionAttributeValues'] = undefined;
-        retValues['/dynamodb/expressionAttributeNames'] = undefined;
-      }
-    } else {
-      retValues['/dynamodb/itemDocument'] = undefined;
-    }
-
     if (retValues['/dynamodb/expressionAttributeNames']) {
       try {
         retValues['/dynamodb/expressionAttributeNames'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeNames']));
@@ -73,6 +64,7 @@ export default {
     },
     'dynamodb.itemDocument': {
       fieldId: 'dynamodb.itemDocument',
+      removeWhen: [{ field: 'dynamodb.method', isNot: ['putItem'] }],
     },
     'dynamodb.updateExpression': {
       fieldId: 'dynamodb.updateExpression',
@@ -97,9 +89,17 @@ export default {
     },
     'dynamodb.expressionAttributeNames': {
       fieldId: 'dynamodb.expressionAttributeNames',
+      removeWhenAll: [
+        { field: 'dynamodb.method', is: ['putItem'] },
+        { field: 'dynamodb.conditionExpression', is: [''] },
+      ],
     },
     'dynamodb.expressionAttributeValues': {
       fieldId: 'dynamodb.expressionAttributeValues',
+      removeWhenAll: [
+        { field: 'dynamodb.method', is: ['putItem'] },
+        { field: 'dynamodb.conditionExpression', is: [''] },
+      ],
     },
     'dynamodb.ignoreExtract': {
       fieldId: 'dynamodb.ignoreExtract',

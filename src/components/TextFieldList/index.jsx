@@ -1,7 +1,7 @@
 // import clsx from 'clsx';
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Input, InputLabel } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Input, InputLabel } from '@mui/material';
 import { generateId } from '../../utils/string';
 import TrashIcon from '../icons/TrashIcon';
 import ActionButton from '../ActionButton';
@@ -12,6 +12,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(0.5),
     border: `solid 1px ${theme.palette.secondary.lightest}`,
+    padding: '0px 15px',
+    height: 38,
   },
   rowContainer: {
     display: 'flex',
@@ -93,6 +95,7 @@ export default function TextFieldList({ label, disabled, value, onChange, classN
           <ActionButton
             disabled={disabled || !(value)}
             data-test={`delete-${index}`}
+            tooltip="Delete"
             onClick={() => handleDelete(key)}>
             <TrashIcon />
           </ActionButton>

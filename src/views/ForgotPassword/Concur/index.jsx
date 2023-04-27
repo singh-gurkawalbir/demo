@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../../reducers';
@@ -8,6 +9,7 @@ import { TextButton } from '../../../components/Buttons';
 import actions from '../../../actions';
 import messageStore, { message } from '../../../utils/messageStore';
 import getImageUrl from '../../../utils/image';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 /* Todo: (Azhar) Concur form should be in a separate component */
 const useStyles = makeStyles(theme => ({
@@ -52,21 +54,6 @@ const useStyles = makeStyles(theme => ({
       width: '327px',
     },
   },
-  alertMsg: {
-    width: '100%',
-    fontSize: 14,
-    textAlign: 'left',
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(2),
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
   title: {
     margin: theme.spacing(0, 0, 4, 0),
     lineHeight: '38px',
@@ -87,7 +74,7 @@ const useStyles = makeStyles(theme => ({
     // bottom: theme.spacing(8),
   },
   ForgotPasswordForm: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
   },
@@ -155,14 +142,7 @@ export default function ConcurForgotPassword(props) {
           </Typography>
           )}
           { showError && resetRequestErrorMsg && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            {resetRequestErrorMsg}
-          </Typography>
+            <ShowErrorMessage error={resetRequestErrorMsg} />
           )}
           <div className={classes.mfaInfo}>
             <span className={classes.infoText}>

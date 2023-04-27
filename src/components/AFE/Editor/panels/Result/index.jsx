@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
-import Spinner from '../../../../Spinner';
 import CodePanel from '../Code';
 
 export default function ResultPanel({ editorId, mode }) {
@@ -18,7 +18,7 @@ export default function ResultPanel({ editorId, mode }) {
         hasWarning={!!warning}
     />
       {previewStatus === 'requested' && (
-      <Spinner isOverlay centerAll size="small">Loading...</Spinner>
+      <Spinner overlay center="screen" size="small">Loading...</Spinner>
       )}
     </>
   );

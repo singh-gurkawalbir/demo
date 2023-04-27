@@ -8,9 +8,11 @@ export default function FormButton({
   onClick,
   children,
   id,
+  submit,
   className,
   color,
   variant,
+  fullWidth,
   skipDisableButtonForFormTouched = false,
   ...props
 }) {
@@ -50,8 +52,12 @@ export default function FormButton({
       }
       color={color}
       className={className}
+      submit={submit}
+      fullWidth={fullWidth}
       disabled={buttonDisabled}
-      onClick={onClickBtn}>
+      onClick={onClickBtn}
+      {...(submit && { type: 'submit', role: 'button' })}
+    >
       {children}
     </FilledButton>
   );

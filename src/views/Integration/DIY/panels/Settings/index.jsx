@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
+import { Grid, List, ListItem } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';

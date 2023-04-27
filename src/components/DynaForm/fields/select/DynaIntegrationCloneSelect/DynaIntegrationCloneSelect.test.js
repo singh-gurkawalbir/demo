@@ -57,7 +57,7 @@ describe('dynaIntegrationCloneSelect tests', () => {
     expect(screen.getByText('_label')).toBeInTheDocument();
     expect(screen.getByText('_name1')).toBeInTheDocument();
     expect(screen.getByText('_name2')).toBeInTheDocument();
-    userEvent.click(screen.getByText('_name2'));
+    await userEvent.click(screen.getByText('_name2'));
     expect(onFieldChange).toHaveBeenCalledWith('_id', {environment: 'Production', label: '_name2', value: '_id2'});
   });
   test('should be able to test component with account having Sandbox', async () => {

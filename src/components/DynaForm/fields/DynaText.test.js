@@ -145,7 +145,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
-    userEvent.type(textBoxNode, 'vewhucw');
+    await userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
   test('should test the textbox by changing the value when the clipboard is set to false and when there is no delimiter', async () => {
@@ -188,7 +188,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
-    userEvent.type(textBoxNode, 'vewhucw');
+    await userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
   test('should test the textbox placeholder to have lookup name when the resource is not of type connection', async () => {
@@ -234,7 +234,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
     expect(textBoxNode.getAttribute('placeholder')).toBe('test_place_holder');
-    userEvent.type(textBoxNode, 'vewhucw');
+    await userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
   test('should test the textbox placeholder to have http export when the resource is not of type connection and when isLookup is set to false', async () => {
@@ -280,7 +280,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
     expect(textBoxNode.getAttribute('placeholder')).toBe('test_place_holder');
-    userEvent.type(textBoxNode, 'vewhucw');
+    await userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
   test('should test the textbox placeholder when the startAdornment and endAdornment set to true', async () => {
@@ -377,7 +377,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
     const copyToClipBoardButtonNode = document.querySelector('button[data-test="copyToClipboard"]');
 
     expect(copyToClipBoardButtonNode).toBeInTheDocument();
-    userEvent.click(copyToClipBoardButtonNode);
+    await userEvent.click(copyToClipBoardButtonNode);
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Copied to clipboard'});
   });
 });

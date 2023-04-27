@@ -9,12 +9,13 @@ import React, {
 // eslint-disable-next-line no-unused-vars
 import sqlParser from 'sql-parser-mistic';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
 import { isEmpty } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import config from './config';
 import '../Filter/queryBuilder.css';
 import {
@@ -28,7 +29,6 @@ import { ReferencedFieldsModal } from '../../../../DynaForm/fields/DynaSalesforc
 import { selectors } from '../../../../../reducers';
 import { stringCompare } from '../../../../../utils/sort';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -251,7 +251,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
 
   return (
     <div className={classes.container}>
-      {!commFiltersMetadata ? (<Spinner centerAll />)
+      {!commFiltersMetadata ? (<Spinner center="screen" />)
         : (<div className="salesforce-Qualifier" ref={qbuilder} />)}
       {openModal ? (
         <ReferencedFieldsModal

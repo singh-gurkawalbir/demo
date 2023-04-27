@@ -1,20 +1,16 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
-import { useStoreState } from 'react-flow-renderer';
+import makeStyles from '@mui/styles/makeStyles';
+import { useStore } from 'reactflow';
 import { useSelector } from 'react-redux';
 import Title from '../Title';
 import { useFlowContext } from '../../Context';
-import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
+import { FB_SOURCE_COLUMN_WIDTH, FB_ICON_VIEW_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useHandleAddGenerator } from '../../../hooks';
 import { selectors } from '../../../../../reducers';
-
-const minTitleWidth = 140;
 
 const useStyles = makeStyles(theme => ({
   sourceTitle: {
     cursor: 'default',
-    width: ({ titleWidth }) => titleWidth,
-    left: ({ xOffset }) => xOffset,
     background: `linear-gradient(${theme.palette.background.default}, 95%, #FFF0)`,
   },
 }));
@@ -22,8 +18,15 @@ const useStyles = makeStyles(theme => ({
 const SourceTitle = () => {
   // we don't care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const [x, , scale] = useStoreState(s => s.transform);
-  const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
+  const [x, , scale] = useStore(s => s.transform);
+  const {flowId} = useFlowContext();
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
+
+  const minTitleWidth = isIconView ? 80 : 140;
+  const width = isIconView ? FB_ICON_VIEW_SOURCE_COLUMN_WIDTH : FB_SOURCE_COLUMN_WIDTH;
+  const columnWidth = Math.max(0, width * scale + x);
   const titleWidth = Math.max(columnWidth, minTitleWidth);
   let xOffset = (columnWidth - titleWidth) / 2; // + menuWidth;
 
@@ -35,13 +38,17 @@ const SourceTitle = () => {
     xOffset = columnWidth - titleWidth;
   }
 
-  const { flowId } = useFlowContext();
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const classes = useStyles({ xOffset, titleWidth });
   const handleAddGenerator = useHandleAddGenerator();
 
   return (
-    <Title className={classes.sourceTitle} onClick={handleAddGenerator} type="generator">
+    <Title
+      className={classes.sourceTitle} onClick={handleAddGenerator} type="generator"
+      sx={{
+        width: titleWidth,
+        left: xOffset,
+      }}>
       {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
     </Title>
   );

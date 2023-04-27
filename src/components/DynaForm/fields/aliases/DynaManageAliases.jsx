@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { FormControl, FormLabel } from '@material-ui/core';
+import { FormControl, FormLabel } from '@mui/material';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 import FieldHelp from '../../FieldHelp';
 import AliasDrawerWrapper from '../../../drawer/Aliases';
@@ -20,7 +20,7 @@ export default function DynaManageAliases({ id, label, resourceContext, ...props
   return (
     <>
       <AliasDrawerWrapper resourceType={resourceContext.resourceType} resourceId={resourceContext.resourceId} />
-      <FormControl>
+      <FormControl variant="standard">
         <div>
           <FormLabel>
             {label}

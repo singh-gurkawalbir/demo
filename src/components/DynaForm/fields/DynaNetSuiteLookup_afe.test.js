@@ -19,15 +19,17 @@ jest.mock('react-router-dom', () => ({
 
 const initialStore = reduxStore;
 
-mutateStore(initialStore, draft => {
-  draft.session.metadata = {application: {someconnectionId: {somePath: {
-    data: [{name: 'someName', scriptId: 'once', doesNotSupportCreate: true}],
-  }}}};
-});
-
 const mockOnFieldChange = jest.fn();
 
-function initDynaNetSuiteLookupafe() {
+function initDynaNetSuiteLookupafe(props) {
+  mutateStore(initialStore, draft => {
+    draft.session.form.someFormKey = {
+      fields: {
+        'netsuite_da.recordType': { value: props?.noRecordType ? '' : 'account' },
+      },
+    };
+  });
+
   renderWithProviders(
     <MemoryRouter initialEntries={['/integrations/none/flowBuilder/new-DOsWPJry5/edit/exports/new-NNW5LX']}>
       <Route path="/integrations/none/flowBuilder/new-DOsWPJry5/edit/exports/new-NNW5LX">
@@ -39,7 +41,7 @@ function initDynaNetSuiteLookupafe() {
           onFieldChange={mockOnFieldChange}
           connectionId="someconnectionId"
           selectOptions={[{}]}
-          options={[]}
+          options={props?.options}
           filterKey="suitescript-recordTypes"
           errorMessages="someErrorMessage"
           formKey="someFormKey"
@@ -49,7 +51,7 @@ function initDynaNetSuiteLookupafe() {
           placeholder="someplaceholder"
       />
       </Route>
-    </MemoryRouter>);
+    </MemoryRouter>, { initialStore });
 }
 
 describe('DynaNetSuiteLookupafe test cases', () => {
@@ -67,7 +69,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should call on field change function with json stringify value', () => {
+  test('should call on field change function with json stringify value', async () => {
     initDynaNetSuiteLookupafe();
 
     expect(screen.getByText('ProvidedLabel')).toBeInTheDocument();
@@ -81,7 +83,7 @@ describe('DynaNetSuiteLookupafe test cases', () => {
 
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.editor.init('someID', 'netsuiteLookupFilter', {
         formKey: 'someFormKey',
@@ -91,19 +93,54 @@ describe('DynaNetSuiteLookupafe test cases', () => {
         fieldId: 'someID',
         onSave: saveFunction,
         stage: 'importMappingExtract',
-        customOptions: [],
+        customOptions: {
+          disableFetch: false,
+          commMetaPath: 'netsuite/metadata/suitescript/connections/undefined/recordTypes/account/searchFilters?includeJoinFilters=true',
+          resetValue: [],
+        },
       })
     );
     saveFunction({rule: 'somestring'});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', JSON.stringify('somestring'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/none/flowBuilder/new-DOsWPJry5/edit/exports/new-NNW5LX/editor/someID');
   });
-  test('should call on field change function with id and empty string when savefunction is called with empty array rule', () => {
+  test('should work as expected when the record type options are passed through options instead of fetching from form state', async () => {
+    const options = {
+      disableFetch: false,
+      commMetaPath: 'custom_options_path',
+      resetValue: [],
+    };
+
+    initDynaNetSuiteLookupafe({ options });
+
+    const actionButton = screen.getByRole('button');
+
+    await userEvent.click(actionButton);
+    expect(mockDispatchFn).toHaveBeenCalledWith(
+      actions.editor.init('someID', 'netsuiteLookupFilter', {
+        formKey: 'someFormKey',
+        flowId: 'someflowId',
+        resourceId: 'SomeresourceId',
+        resourceType: 'resourceType',
+        fieldId: 'someID',
+        onSave: saveFunction,
+        stage: 'importMappingExtract',
+        customOptions: options,
+      })
+    );
+  });
+  test('should call on field change function with id and empty string when save function is called with empty array rule', async () => {
     initDynaNetSuiteLookupafe();
     const actionButton = screen.getByRole('button');
 
-    userEvent.click(actionButton);
+    await userEvent.click(actionButton);
     saveFunction({rule: []});
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', '');
+  });
+  test('should not be able to open filter AFE if recordTypeField is not selected', () => {
+    initDynaNetSuiteLookupafe({ noRecordType: true });
+    const actionButton = screen.getByRole('button');
+
+    expect(actionButton).toBeDisabled();
   });
 });

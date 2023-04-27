@@ -10,6 +10,7 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   key: 'delete',
+  mode: 'delete',
   useLabel: rowData => {
     const tableContext = useGetTableContext();
 
@@ -86,10 +87,11 @@ export default {
       }
 
       const disclaimer = resourceType === 'flows' && 'Are you sure you want to delete this flow? Deleting a flow will cancel the run that is currently running.';
+      const checkType = type === 'iclient' ? 'iClient' : type;
 
       confirmDialog({
         title: 'Confirm delete',
-        message: disclaimer || `Are you sure you want to delete this ${type}?`,
+        message: disclaimer || `Are you sure you want to delete this ${checkType}?`,
         buttons: [
           {
             label: 'Delete',

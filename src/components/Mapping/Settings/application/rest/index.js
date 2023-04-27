@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import mappingUtil, { wrapTextForSpecialChars } from '../../../../../utils/mapping';
+import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 import {
   isProduction,
@@ -278,8 +278,7 @@ export default {
         expression: {
           id: 'expression',
           name: 'expression',
-          refreshOptionsOnChangesTo: ['functions', 'extract'],
-          type: 'text',
+          type: 'multifieldexpression',
           multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
@@ -566,31 +565,7 @@ export default {
           },
         ],
       },
-      optionsHandler: (fieldId, fields) => {
-        if (fieldId === 'expression') {
-          const functionsField = fields.find(field => field.id === 'functions');
-          const extractField = fields.find(field => field.id === 'extract');
-          const expressionField = fields.find(
-            field => field.id === 'expression'
-          );
-          let expressionValue = '';
-
-          if (expressionField.value) expressionValue = expressionField.value;
-
-          if (extractField.value) {
-            const isGroupedField = extractField.value.indexOf('*.') === 0;
-            const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
-
-            expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
-            extractField.value = '';
-          } else if (functionsField.value) {
-            expressionValue += functionsField.value;
-            functionsField.value = '';
-          }
-
-          return expressionValue;
-        }
-
+      optionsHandler: fieldId => {
         if (fieldId === 'lookup.relativeURI') {
           return { resourceName };
         }

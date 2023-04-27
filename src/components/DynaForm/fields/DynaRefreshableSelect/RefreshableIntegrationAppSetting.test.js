@@ -9,6 +9,24 @@ import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
+jest.mock('react-truncate-markup', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-truncate-markup'),
+  default: props => {
+    if (props.children.length > props.lines) { props.onTruncate(true); }
+
+    return (
+      <span
+        width="100%">
+        <span />
+        <div>
+          {props.children}
+        </div>
+      </span>
+    );
+  },
+}));
+
 function initRefreshableIntegrationAppSetting(props = {}) {
   mutateStore(initialStore, draft => {
     draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
@@ -84,30 +102,30 @@ describe('refreshableIntegrationAppSetting UI tests', () => {
     const selectDropdown = screen.getByText('Please select');
 
     expect(selectDropdown).toBeInTheDocument();
-    const refreshButton = document.querySelector('[title="Refresh"]');
+    const refreshButton = document.querySelector('button[data-test="refreshResource"]');
 
     expect(refreshButton).toBeInTheDocument();
   });
-  test('should open the dropdown when clicked on dropdown', () => {
+  test('should open the dropdown when clicked on dropdown', async () => {
     initRefreshableIntegrationAppSetting(props);
     const dropDownValue = screen.getByText('Please select');
 
     expect(dropDownValue).toBeInTheDocument();
-    userEvent.click(dropDownValue);
+    await userEvent.click(dropDownValue);
     expect(screen.getByText('label1')).toBeInTheDocument();
     expect(screen.getByText('label2')).toBeInTheDocument();
     expect(screen.getByText('label3')).toBeInTheDocument();
   });
-  test('should call the onFieldChange function when an option is selected from the dropdown', () => {
+  test('should call the onFieldChange function when an option is selected from the dropdown', async () => {
     initRefreshableIntegrationAppSetting(props);
     const dropDownValue = screen.getByText('Please select');
 
     expect(dropDownValue).toBeInTheDocument();
-    userEvent.click(dropDownValue);
+    await userEvent.click(dropDownValue);
     const option = screen.getByText('label2');
 
     expect(option).toBeInTheDocument();
-    userEvent.click(option);
+    await userEvent.click(option);
     expect(mockonFieldChange).toHaveBeenCalled();
   });
   test('should make a dispatch call when clicked on refresh button in the select', async () => {
@@ -115,7 +133,7 @@ describe('refreshableIntegrationAppSetting UI tests', () => {
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(refreshButton).toBeInTheDocument();
-    userEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata(null, 'demo fieldname', '6ced8663a56953365bd28541')));
   });
   test('should make a dispatch call when autoPostBack prop is true', async () => {
@@ -123,11 +141,11 @@ describe('refreshableIntegrationAppSetting UI tests', () => {
     const dropDownValue = screen.getByText('Please select');
 
     expect(dropDownValue).toBeInTheDocument();
-    userEvent.click(dropDownValue);
+    await userEvent.click(dropDownValue);
     const option = screen.getByText('label2');
 
     expect(option).toBeInTheDocument();
-    userEvent.click(option);
+    await userEvent.click(option);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.refreshMetadata('value2', 'demo fieldname', '6ced8663a56953365bd28541', {key: 'fieldValue', autoPostBack: true})));
     expect(mockonFieldChange).toHaveBeenCalled();
   });

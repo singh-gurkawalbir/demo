@@ -1,13 +1,13 @@
-import { Divider, IconButton, makeStyles } from '@material-ui/core';
+import { Divider, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import {EditableText, TimeAgo } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import Status from '../../../../components/Buttons/Status';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
-import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
-import EditableText from '../../../../components/EditableText';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import FlowToggle from '../../../../components/FlowToggle';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
@@ -26,17 +26,10 @@ import LineGraphButton from '../../LineGraphButton';
 import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
+import FlowIconView from '../../../../components/icons/FlowIconView';
+import Help from '../../../../components/Help';
 
-const calcPageBarTitleStyles = makeStyles(theme => ({
-  editableTextInput: {
-    width: `calc(100vw - ${52 + 410}px)`,
-  },
-  editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
-  },
-}));
 const CalcPageBarTitle = ({integrationId, flowId}) => {
-  const classes = calcPageBarTitleStyles();
   const patchFlow = usePatchFlow(flowId);
   const handleTitleChange = useCallback(
     title => {
@@ -52,20 +45,14 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
   )?.merged || emptyObject;
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <EditableText
       disabled={isViewMode}
       text={flow.name}
+      placeholder={isNewFlowFn(flowId) ? 'New flow' : `Unnamed (id:${flowId})`}
             // multiline
-      defaultText={isNewFlowFn(flowId) ? 'New flow' : `Unnamed (id:${flowId})`}
       onChange={handleTitleChange}
-      inputClassName={
-              drawerOpened
-                ? classes.editableTextInputShift
-                : classes.editableTextInput
-            }
           />
   );
 };
@@ -102,7 +89,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
       {isNewFlow ? (
         'Never'
       ) : (
-        <CeligoTimeAgo date={flow.lastModified} />
+        <TimeAgo date={flow.lastModified} />
       )}
       {isUserInErrMgtTwoDotZero && <LastRun flowId={flowId} />}
       {isUserInErrMgtTwoDotZero && <RetryStatus flowId={flowId} />}
@@ -126,11 +113,7 @@ const pageChildreUseStyles = makeStyles(theme => ({
     margin: [[-7, 0]],
   },
   flowToggle: {
-    marginRight: 12,
-    marginLeft: 12,
-    '& > div:first-child': {
-      padding: '8px 0px 4px 0px',
-    },
+    margin: theme.spacing(0, 1.5, '-6px'),
   },
   chartsIcon: { marginRight: theme.spacing(3) },
   circle: {
@@ -149,6 +132,41 @@ const pageChildreUseStyles = makeStyles(theme => ({
         zIndex: 1,
       },
     },
+  },
+  helpIcon: {
+    padding: 0,
+    '& svg': {
+      fontSize: theme.spacing(3),
+      color: theme.palette.secondary.light,
+    },
+    '&:hover': {
+      background: 'none',
+      '& svg': {
+        color: theme.palette.primary.main,
+      },
+
+    },
+  },
+  profilePopper: {
+    zIndex: theme.zIndex.drawer + 1,
+    wordBreak: 'break-word',
+    minWidth: 318,
+    maxWidth: 320,
+    left: '18px !important',
+    top: '10px !important',
+  },
+  profilePopperArrow: {
+    left: '276px !important',
+  },
+  profilePaper: {
+    padding: '10px 8px',
+  },
+  helptextContent: {
+    minWidth: 'unset',
+    maxWidth: 'unset',
+  },
+  flowIcon: {
+    marginRight: theme.spacing(1.5),
   },
 }));
 
@@ -175,15 +193,21 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId}) => {
+const PageBarChildren = ({integrationId, flowId, isIconView, children}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
 
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const { showIconView } = preferences;
+
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
+
+  const showIconViewToggle = process.env.ICON_VIEW_FLOWBUILDER === 'true' && showIconView;
 
   const pushOrReplaceHistory = usePushOrReplaceHistory();
 
@@ -214,11 +238,41 @@ const PageBarChildren = ({integrationId, flowId}) => {
     title: `${flowDetails?.schedule ? 'Edit' : 'Add'} schedule`,
     placement: 'bottom',
   };
+  const tooltipIconView = {
+    title: !isIconView ? 'Swith to iconic view' : 'Swith to bubble view',
+    placement: 'bottom',
+  };
+
+  const handleViewChange = () => {
+    dispatch(actions.flow.toggleSubFlowView(flowId, false));
+    if (isIconView) {
+      dispatch(actions.flow.iconView(flowId, 'bubble'));
+    } else {
+      dispatch(actions.flow.iconView(flowId, 'icon'));
+    }
+  };
 
   return (
     <div className={classes.actions}>
+      {children}
+      {(showIconViewToggle && (
+        <>
+          {(isIconView && (
+          <Help
+            title="How to operate?" className={classes.helpIcon} disablePortal={false} placement="left-start"
+            helpKey="flowbuilder.iconView" />
+          ))}
+          <IconButtonWithTooltip
+            onClick={handleViewChange}
+            data-test="flowSettings"
+            tooltipProps={tooltipIconView}
+            className={classes.flowIcon}>
+            <FlowIconView />
+          </IconButtonWithTooltip>
+        </>
+      ))}
       {isUserInErrMgtTwoDotZero && (
-      <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
+        <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
       {!isDataLoaderFlow && (
         <div className={clsx(classes.flowToggle)}>
@@ -260,7 +314,9 @@ const PageBarChildren = ({integrationId, flowId}) => {
         />
       )}
       <Divider orientation="vertical" className={classes.divider} />
-      <IconButton onClick={handleExitClick} size="small">
+      <IconButton
+        onClick={handleExitClick}
+        size="small">
         <CloseIcon />
       </IconButton>
     </div>
@@ -296,18 +352,28 @@ export default function PageBar({flowId, integrationId}) {
 
     return flow?.description;
   });
+  const flowName = useSelector(state => {
+    const flow = selectors.resourceData(state, 'flows',
+      flowId
+    ).merged;
+
+    return flow?.name;
+  });
+  const isIconView = useSelector(state =>
+    selectors.fbIconview(state, flowId) === 'icon'
+  );
 
   return (
     <CeligoPageBar
       title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
+      infoTitleName={flowName}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
       infoText={description}
       escapeUnsecuredDomains
     >
-      <TotalErrors flowId={flowId} />
-      <PageBarChildren
-        flowId={flowId} integrationId={integrationId}
-      />
+      <PageBarChildren flowId={flowId} integrationId={integrationId} isIconView={isIconView}>
+        <TotalErrors flowId={flowId} />
+      </PageBarChildren>
     </CeligoPageBar>
   );
 }

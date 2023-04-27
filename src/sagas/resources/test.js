@@ -2046,9 +2046,9 @@ describe('deleteIntegration saga', () => {
       [call(deleteResource, {resourceType: 'integrations', id: '123'}), {}],
     ])
     .call(deleteResource, {resourceType: 'integrations', id: '123'})
-    .put(actions.resource.requestCollection('integrations', null, true))
+    .put(actions.resource.clearCollection('integrations'))
     .put(actions.resource.requestCollection('tiles', null, true))
-    .put(actions.resource.requestCollection('scripts', null, true))
+    .put(actions.resource.clearCollection('scripts'))
     .put(actions.resource.integrations.redirectTo('123', HOME_PAGE_PATH))
     .run());
 });
@@ -2425,6 +2425,19 @@ describe('authorizedConnection saga', () => {
           'connections',
           connectionId
         ), {merged: {offline: true, rest: {authType: 'oauth'}}}],
+      ])
+      .put(actions.connection.madeOnline(connectionId))
+      .put(actions.resource.request('connections', connectionId))
+      .run();
+  });
+  test('should dispatch resource request action if oauth connection is of type Ns jdbc', () => {
+    expectSaga(authorizedConnection, { connectionId })
+      .provide([
+        [select(
+          selectors.resourceData,
+          'connections',
+          connectionId
+        ), {merged: {offline: true, jdbc: {type: 'netsuitejdbc'}}}],
       ])
       .put(actions.connection.madeOnline(connectionId))
       .put(actions.resource.request('connections', connectionId))

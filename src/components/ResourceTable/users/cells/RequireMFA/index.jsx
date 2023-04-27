@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Tooltip } from '@material-ui/core';
-import CeligoSwitch from '../../../../CeligoSwitch';
+import { Tooltip } from '@mui/material';
+import { Switch } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
@@ -65,12 +65,11 @@ export default function RequireAccountMFA({ user }) {
     return (
       <Tooltip placement="bottom" title={message.MFA.ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP}>
         <div>
-          <CeligoSwitch
+          <Switch
             data-test="ssoRequired"
             disabled
             tooltip="No / Yes"
             checked={accountMFARequired}
-            noPadding
             onChange={handleSwitch} />
         </div>
       </Tooltip>
@@ -78,13 +77,12 @@ export default function RequireAccountMFA({ user }) {
   }
 
   return (
-    <CeligoSwitch
+    <Switch
       data-test="mfaRequired"
       checked={accountMFARequired}
       onChange={handleSwitch}
       disabled={switchInProgress}
       tooltip="No / Yes"
-      noPadding
       />
   );
 }

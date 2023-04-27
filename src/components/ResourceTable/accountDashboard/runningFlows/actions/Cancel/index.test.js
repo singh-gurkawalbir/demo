@@ -17,7 +17,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-function renderFunction() {
+async function renderFunction() {
   renderWithProviders(
     <ConfirmDialogProvider>
       <MemoryRouter>
@@ -28,15 +28,15 @@ function renderFunction() {
       </MemoryRouter>
     </ConfirmDialogProvider>
   );
-  userEvent.click(screen.getByRole('button', {name: /more/i}));
+  await userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 describe('cancel Run UI Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  test('should show the confirm dialog box and click on Yes, cancel button', () => {
-    renderFunction();
-    userEvent.click(screen.getByText('Cancel run'));
+  test('should show the confirm dialog box and click on Yes, cancel button', async () => {
+    await renderFunction();
+    await userEvent.click(screen.getByText('Cancel run'));
     const title = screen.getByText('Confirm cancel');
 
     expect(screen.getByText('No, go back')).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('cancel Run UI Tests', () => {
     const yesButton = screen.getByText('Yes, cancel');
 
     expect(yesButton).toBeInTheDocument();
-    userEvent.click(yesButton);
+    await userEvent.click(yesButton);
     expect(mockDispatch).toHaveBeenCalledWith(actions.job.dashboard.running.cancel({ jobId: 'someId' }));
   });
 });

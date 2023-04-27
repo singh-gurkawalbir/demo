@@ -1,7 +1,7 @@
 import React from 'react';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import makeStyles from '@mui/styles/makeStyles';
 import { sortBy } from 'lodash';
 import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
@@ -97,7 +97,7 @@ export function ResourceTypeFilter(props) {
     [...resourceTypeFilterOptionsByResourceType.integrations, 'accesstoken', 'ssoclient', 'user', 'api'];
 
   return (
-    <FormControl className={classes.formControl}>
+    <FormControl variant="standard" className={classes.formControl}>
       <CeligoSelect
         value={filters.resourceType || ''}
         onChange={onChange}
@@ -169,7 +169,7 @@ export function ResourceIdFilter(props) {
   ));
 
   return (
-    <FormControl className={classes.formControl}>
+    <FormControl variant="standard" className={classes.formControl}>
       <CeligoSelect
         isLoggable
         inputProps={resourceIdInput}
@@ -197,7 +197,7 @@ export function AuditLogActionFilter({
   resourceId,
 }) {
   return (
-    <FormControl className={classes.formControl}>
+    <FormControl variant="standard" className={classes.formControl}>
       <CeligoSelect
         isLoggable
         inputProps={eventInput}
