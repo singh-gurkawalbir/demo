@@ -359,8 +359,7 @@ export default function DynaSelectResource(props) {
 
       return result;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
+  }, [resources, optionRef.current, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
