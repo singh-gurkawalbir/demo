@@ -1,3 +1,9 @@
+import {
+  HTTP_PAGING_TOKEN_REGEX_STRING,
+  HTTP_PAGING_SKIP_REGEX_STRING,
+  HTTP_PAGING_PAGE_REGEX_STRING,
+} from '../../../../constants';
+
 export default {
   'http.successMediaType': {
     isLoggable: true,
@@ -162,21 +168,21 @@ export default {
         items: [
           { label: 'Next page token',
             value: 'token',
-            regex: /.*{{.*export\.http\.paging\.token.*}}/,
+            regex: HTTP_PAGING_TOKEN_REGEX_STRING,
             description: 'Add {{export.http.paging.token}} to either the relative URI or HTTP request body to complete the setup.',
             helpKey: 'export.paging.token',
             fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'] },
 
           { label: 'Skip number parameter',
             value: 'skip',
-            regex: /.*{{.*export\.http\.paging\.skip.*}}/,
+            regex: HTTP_PAGING_SKIP_REGEX_STRING,
             description: 'Add {{export.http.paging.skip}} to either the relative URI or HTTP request body to complete the setup.',
             helpKey: 'export.paging.skip',
             fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body']},
 
           { label: 'Page number parameter',
             value: 'page',
-            regex: /.*{{.*export\.http\.paging\.page.*}}/,
+            regex: HTTP_PAGING_PAGE_REGEX_STRING,
             description: 'Add {{export.http.paging.page}} to either the relative URI or HTTP request body to complete the setup.',
             helpKey: 'export.paging.page',
             fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'],

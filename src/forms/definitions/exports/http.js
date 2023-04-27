@@ -1,6 +1,7 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 import { safeParse } from '../../../utils/string';
 import { initializeHttpForm } from '../../metaDataUtils/httpConnectorUtils';
+import { LAST_EXPORT_DATE_TIME_REGEX_STRING } from '../../../constants';
 
 export default {
   init: initializeHttpForm,
@@ -376,7 +377,7 @@ export default {
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data',
               value: 'delta',
-              regex: /.*{{.*lastExportDateTime.*}}/,
+              regex: LAST_EXPORT_DATE_TIME_REGEX_STRING,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
               fieldsToValidate: ['http.relativeURI', 'http.body'] },
