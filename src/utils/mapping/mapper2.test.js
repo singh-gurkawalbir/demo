@@ -33,15 +33,15 @@ import util, {
   parentHasAnyChildMatch,
   applySearchFilter,
   countMatches,
-  findNodeInTreeWithParents,
-  findNodeWithGivenParentsList,
-  findLastNodeWithMatchingParent,
-  constructDestinationTreeFromParentsList,
-  getRequiredMappingsJsonPaths,
-  markPresentDestinations,
-  makeBaseDestinationTree,
 } from '.';
 import {generateId} from '../string';
+import { constructDestinationTreeFromParentsList,
+  findLastNodeWithMatchingParent,
+  findNodeInTreeWithParents,
+  findNodeWithGivenParentsList,
+  getRequiredMappingsJsonPaths,
+  markPresentDestinations,
+  makeBaseDestinationTree } from './maper2';
 
 jest.mock('../string');
 

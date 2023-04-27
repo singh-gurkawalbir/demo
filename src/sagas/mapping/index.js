@@ -5,7 +5,7 @@ import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree, makeBaseDestinationTree, getRequiredMappingsJsonPaths} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree } from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
@@ -19,6 +19,7 @@ import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { safeParse, generateId } from '../../utils/string';
 import { getMappingsEditorId } from '../../utils/editor';
+import { getRequiredMappingsJsonPaths, makeBaseDestinationTree } from '../../utils/mapping/maper2';
 
 export function* fetchRequiredMappingData({
   flowId,

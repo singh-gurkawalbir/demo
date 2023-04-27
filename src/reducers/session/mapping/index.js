@@ -21,13 +21,13 @@ import {
   getCombinedExtract,
   buildExtractsHelperFromExtract,
   getSelectedExtractDataTypes,
-  isMapper2HandlebarExpression,
+  isMapper2HandlebarExpression } from '../../../utils/mapping';
+import { generateId } from '../../../utils/string';
+import { constructDestinationTreeFromParentsList,
+  findLastNodeWithMatchingParent,
   findNodeInTreeWithParents,
   findNodeWithGivenParentsList,
-  markPresentDestinations,
-  constructDestinationTreeFromParentsList,
-  findLastNodeWithMatchingParent} from '../../../utils/mapping';
-import { generateId } from '../../../utils/string';
+  markPresentDestinations } from '../../../utils/mapping/maper2';
 
 export const expandRow = (draft, key) => {
   if (!draft || !key) return;
