@@ -55,7 +55,7 @@ describe('jobStatusWithTag test cases', () => {
   test('should show Started cloumn', () => {
     initRunHistoryTable({ key, startedAt: '2022-05-18T18:16:31.989Z', endedAt: '2022-05-18T18:16:35.989Z'});
     headerIndex = indexOfCell('Started', 'columnheader');
-    cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    cellIndex = indexOfCell('05/18/2022 6:16:31 pm', 'cell');
 
     expect(screen.getByRole('rowheader')).toBeInTheDocument();
     expectFunction(headerIndex - 1, cellIndex);
@@ -63,7 +63,7 @@ describe('jobStatusWithTag test cases', () => {
   test('should show Completed(time) cloumn', () => {
     initRunHistoryTable({ key, startedAt: '2022-05-18T18:16:31.989Z', endedAt: '2022-05-18T18:16:35.989Z'});
     headerIndex = indexOfCell('Completed', 'columnheader');
-    cellIndex = indexOfCell('05/18/2022 11:46:35 pm', 'cell');
+    cellIndex = indexOfCell('05/18/2022 6:16:35 pm', 'cell');
 
     expect(screen.getByRole('rowheader')).toBeInTheDocument();
     expectFunction(headerIndex - 1, cellIndex);
