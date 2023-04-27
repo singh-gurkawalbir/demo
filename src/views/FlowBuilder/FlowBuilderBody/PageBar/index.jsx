@@ -175,7 +175,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId}) => {
+const PageBarChildren = ({integrationId, flowId, children}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -217,6 +217,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
 
   return (
     <div className={classes.actions}>
+      {children}
       {isUserInErrMgtTwoDotZero && (
       <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
@@ -304,10 +305,9 @@ export default function PageBar({flowId, integrationId}) {
       infoText={description}
       escapeUnsecuredDomains
     >
-      <TotalErrors flowId={flowId} />
-      <PageBarChildren
-        flowId={flowId} integrationId={integrationId}
-      />
+      <PageBarChildren flowId={flowId} integrationId={integrationId}>
+        <TotalErrors flowId={flowId} />
+      </PageBarChildren>
     </CeligoPageBar>
   );
 }
