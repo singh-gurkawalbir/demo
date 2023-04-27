@@ -9,6 +9,7 @@ export default {
   useLabel: () => 'Delete integration',
   mode: 'delete',
   icon: TrashIcon,
+  mode: 'delete',
   useHasAccess: tile => {
     const canDelete = useSelector(state => selectors.resourcePermissionsForTile(
       state,
