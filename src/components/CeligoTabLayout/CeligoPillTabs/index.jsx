@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { PillTabGroup } from '@celigo/fuse-ui';
 import { useTabContext } from '../CeligoTabWrapper';
@@ -6,6 +6,10 @@ import { useTabContext } from '../CeligoTabWrapper';
 export default function CeligoPillTabs(props) {
   const { tabs, defaultTab } = props;
   const {activeTab, setActiveTab} = useTabContext();
+
+  const handleChange = useCallback((event, value) => {
+    setActiveTab(value);
+  }, [setActiveTab]);
 
   useEffect(() => {
     setActiveTab(defaultTab || tabs?.[0]?.value);
@@ -19,7 +23,7 @@ export default function CeligoPillTabs(props) {
     <Box textAlign="center" position="relative">
       <PillTabGroup
         value={activeTab}
-        onChange={setActiveTab}
+        onChange={handleChange}
         exclusive
         options={tabs}
       />
