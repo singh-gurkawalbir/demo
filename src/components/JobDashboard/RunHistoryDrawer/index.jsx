@@ -80,12 +80,14 @@ export default function RunHistoryDrawer() {
       })
     );
   }, [dispatch, selectedDate, flowId]);
-  useEffect(() =>
-    () => {
+  useEffect(() => {
+    dispatch(actions.resource.requestCollection(`integrations/${match.params.integrationId}/ashares`));
+
+    return () => {
       dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
-    },
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+  }, []);
 
   return (
     <RightDrawer
@@ -95,7 +97,7 @@ export default function RunHistoryDrawer() {
       onClose={handleClose} >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
       <DrawerContent className={classes.runHistoryDrawer}>
-        <RunHistory flowId={flowId} integrationId={integrationId} className={classes.runHistoryPage} />
+        <RunHistory flowId={flowId} integrationId={match.params.integrationId} className={classes.runHistoryPage} />
       </DrawerContent>
     </RightDrawer>
   );

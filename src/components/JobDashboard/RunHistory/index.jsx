@@ -92,7 +92,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
     return usersList.reduce((acc, {sharedWithUser}) => {
       const { _id, name, email } = sharedWithUser;
 
-      acc[_id] = name || email;
+      acc[_id] = name || email || _id;
 
       return acc;
     }, {});
@@ -305,6 +305,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
             </CeligoSelect>
             {filter?.status === 'canceled' && (
               <MultiSelectFilter
+                data-test="filter-canceled-by"
                 Icon={FilterIcon}
                 ButtonLabel={ButtonLabel}
                 disabled={!runHistory?.length || isLoadingHistory}
