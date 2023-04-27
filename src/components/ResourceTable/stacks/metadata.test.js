@@ -119,7 +119,7 @@ describe('metadata of stacks UI Tests', () => {
     renderFunction(resource);
 
     const headerI = indexOfCell('Last updated', 'columnheader');
-    const cellI = indexOfCell('03/20/2020 5:17:55 am', 'cell');
+    const cellI = indexOfCell('03/19/2020 11:47:55 pm', 'cell');
 
     expect(headerI).toBeGreaterThan(-1);
     expect(cellI).toBeGreaterThan(-1);

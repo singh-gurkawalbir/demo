@@ -51,7 +51,7 @@ export default function Mapping(props) {
 
   // let the mapping init and sample data load happen so that the state is updated
   if (!mappingStatus || mappingStatus === 'requested') {
-    return <Spinner center />;
+    return <Spinner center="screen" size="large" />;
   }
 
   return (

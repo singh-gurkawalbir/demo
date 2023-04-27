@@ -10,7 +10,6 @@ import { selectors } from '../../../../../reducers';
 const useStyles = makeStyles(theme => ({
   message: {
     position: 'relative',
-    top: theme.spacing(-1),
     display: 'flex',
     alignItems: 'center',
     lineHeight: theme.spacing(2),

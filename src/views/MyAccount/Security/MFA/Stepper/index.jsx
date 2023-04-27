@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       width: 2,
       position: 'absolute',
       top: 0,
-      left: -theme.spacing(1.5),
+      left: theme.spacing(-1.5),
     },
   },
   childrenContainer: {

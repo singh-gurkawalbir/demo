@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   xs: {
-    marginTop: theme.spacing(-0.5),
     width: theme.spacing(3),
     height: theme.spacing(3),
     '& > svg': {
@@ -53,7 +52,6 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         aria-owns={!anchorEl ? null : 'pageInfo'}
         tabIndex={tabIndex}
         aria-haspopup="true"
-        sx={{padding: '3px'}}
       >
         <InfoIcon />
       </IconButton>

@@ -109,7 +109,7 @@ describe('running flows metadata column UI Tests', () => {
   test('should verify Last open error', () => {
     renderFunction({_id: id, _flowId: flowId, lastErrorAt: '2021-05-18T18:16:31.989Z'});
     const headerIndex = indexOfCell('Last open error', 'columnheader');
-    const cellIndex = indexOfCell('05/18/2021 11:46:31 pm', 'cell');
+    const cellIndex = indexOfCell('05/18/2021 6:16:31 pm', 'cell');
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
@@ -120,7 +120,7 @@ describe('running flows metadata column UI Tests', () => {
   test('should verify Last run', () => {
     renderFunction({_id: id, _flowId: 'flowID', lastExecutedAt: '2022-05-18T18:16:31.989Z'});
     const headerIndex = indexOfCell('Last run', 'columnheader');
-    const cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    const cellIndex = indexOfCell('05/18/2022 6:16:31 pm', 'cell');
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
