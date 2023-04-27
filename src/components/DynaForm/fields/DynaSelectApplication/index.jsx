@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { FormControl, InputLabel } from '@material-ui/core';
+import { FormControl, InputLabel, Typography } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
@@ -15,6 +15,8 @@ import { isNewId } from '../../../../utils/resource';
 import FieldHelp from '../../FieldHelp';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import { ReactSelectUseStyles, CustomReactSelectStyles } from '../reactSelectStyles/styles';
+import getImageUrl from '../../../../utils/image';
+import TextButton from '../../../Buttons/TextButton';
 
 const isLoadingANewConnectionForm = ({fieldMeta, operation, resourceType, resourceId }) => {
   // if its new resourceId and its of connections resourceType having a single field
@@ -175,6 +177,40 @@ export default function SelectApplication(props) {
     }
   }, [isMulti, value, onFieldChange, proceedOnChange, applications, id, dispatch, resourceType, resourceId, match, flowId]);
 
+  const NoOptionsMessage = props => {
+    const imagePath = getImageUrl('images/react/empty-states/connections.png');
+
+    return (
+      <>
+        <components.NoOptionsMessage {...props} />
+        <img
+          className={classes.appLogo}
+          src={imagePath}
+          type="connections"
+          alt="" />
+
+        <Typography>
+          {`We weren't able to find "${inputValue}"`}
+        </Typography>
+        <div>
+          <Typography>Try using</Typography>
+          <TextButton
+            onClick={() => {
+              const universalConnectorOptions = options[1]?.options;
+              const httpOptionProps = universalConnectorOptions?.find(option => option.value === 'http');
+
+              const refState = ref?.current?.state;
+
+              refState.value = httpOptionProps;
+              handleChange({value: 'http', label: 'HTTP'});
+            }}>HTTP
+          </TextButton>
+          <Typography>connector</Typography>
+        </div>
+      </>
+    );
+  };
+
   const handleFocus = useCallback(() => {
     const refState = ref?.current?.state;
     const inputValue = refState?.value?.label;
@@ -242,7 +278,7 @@ export default function SelectApplication(props) {
         inputValue={inputValue}
         placeholder={placeholder}
         closeMenuOnSelect
-        components={{ Option, DropdownIndicator }}
+        components={{ Option, DropdownIndicator, NoOptionsMessage }}
         defaultValue={defaultValue}
         menuIsOpen={menuIsOpen}
         options={options}
