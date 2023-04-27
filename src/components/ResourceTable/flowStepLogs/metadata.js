@@ -117,7 +117,6 @@ export default {
       icon: TrashIcon,
       mode: 'delete',
       useLabel: () => 'Delete log',
-      mode: 'delete',
       useOnClick: () => {
         const dispatch = useDispatch();
 
