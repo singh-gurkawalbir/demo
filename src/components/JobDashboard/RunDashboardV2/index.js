@@ -23,7 +23,7 @@ export default function RunDashboardV2({ flowId }) {
     // Only when the dashboard is entirely refreshed , show loading
     // it can be updated in between to get latest job status in which case, no need to show loader
     return (
-      <Spinner center="horizontal" size="large" />
+      <Spinner center="horizontal" />
     );
   }
 
