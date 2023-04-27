@@ -5,10 +5,28 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { getConnectorCustomSettings, isDisplayRefSupportedType } from '../../utils/httpConnector';
+
+export function* getCustomSettingsMetadata({ metadata, resourceId, resourceType }) {
+  const isHttpConnector = yield select(selectors.isHttpConnector, resourceId, resourceType);
+
+  if (!isDisplayRefSupportedType(resourceType) || !isHttpConnector) {
+    return metadata;
+  }
+  const formKey = `${resourceType}-${resourceId}`;
+
+  const formContext = yield select(selectors.formState, formKey);
+
+  return getConnectorCustomSettings(formContext?.fieldMeta, metadata);
+}
 
 export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
-  const resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
+  let resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
+  if (isDisplayRefSupportedType(resourceType)) {
+    // TODO : need to include in the existing above selector
+    resource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
+  }
   if (!resource) return; // nothing to do.
 
   let initScriptId; let
@@ -49,10 +67,10 @@ export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
 
   // inject the current setting values (found in resource.settings)
   // into the respective field’s defaultValue prop.
-  let newFieldMeta = metadata;
+  let newFieldMeta = yield call(getCustomSettingsMetadata, { metadata, resourceId, resourceType });
 
-  if (resource.settings && metadata && typeof metadata.fieldMap === 'object') {
-    newFieldMeta = produce(metadata, draft => {
+  if (resource.settings && newFieldMeta && typeof newFieldMeta.fieldMap === 'object') {
+    newFieldMeta = produce(newFieldMeta, draft => {
       Object.keys(draft.fieldMap).forEach(key => {
         const field = draft.fieldMap[key];
 

@@ -80,7 +80,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
-  const isVanConnector = !!connection.van?.contentBasedFlowRouter?._scriptId;
+  const isVanConnector = !!connection?.van?.contentBasedFlowRouter?._scriptId;
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const handleSubmit = useCallback(
