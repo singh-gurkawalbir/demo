@@ -170,7 +170,7 @@ const DestinationTree = React.memo((
         switcherIcon={SwitcherIcon}
         defaultExpandAll
         onSelect={onSelect}
-         />
+      />
     </div>
   );
 });

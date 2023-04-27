@@ -257,7 +257,6 @@ describe('ewrv', () => {
       }};
     });
     renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
-    screen.debug(null, Infinity);
     expect(screen.getByText("Your search term doesn't match any destination fields.")).toBeInTheDocument();
     expect(screen.getByText('This import has required fields that you must configure with the destination drop-down list.')).toBeInTheDocument();
   });

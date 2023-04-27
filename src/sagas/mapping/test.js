@@ -661,7 +661,7 @@ describe('mappingInit saga', () => {
     expect(saga5).toBeTruthy();
     mock.mockRestore();
   });
-  test('qqshould trigger mapping init correctly for IA which has mappings2', async () => {
+  test('should trigger mapping init correctly for IA which has mappings2', async () => {
     const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
     const flowId = 'flow28';
     const importId = 'import28';
