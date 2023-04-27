@@ -3,6 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
+  searchParameterFieldsMeta,
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
@@ -339,6 +340,7 @@ export function fieldMeta({ resource, assistantData }) {
   });
   let basicFields = [];
   let pathParameterFields = [];
+  let searchParameterFields = [];
   let headerFields = [];
   let ignoreConfigFields = [];
   let howToFindIdentifierFields = [];
@@ -371,6 +373,16 @@ export function fieldMeta({ resource, assistantData }) {
         operationParameters: operationDetails.parameters,
         values: assistantConfig.pathParams,
       });
+      if (operationDetails.queryParameters?.filter(qp => !qp.readOnly).length > 0) {
+        searchParameterFields = searchParameterFieldsMeta({
+          parameters: operationDetails.queryParameters,
+          paramLocation: PARAMETER_LOCATION.QUERY,
+          value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
+          operationChanged: resource.assistantMetadata?.operationChanged,
+          url: operationDetails.url,
+          isHTTPFramework: true,
+        });
+      }
       ignoreConfigFields = ignoreConfigFieldsMeta({
         operationDetails,
         values: assistantConfig,
@@ -390,6 +402,7 @@ export function fieldMeta({ resource, assistantData }) {
     ...basicFields,
     ...headerFields,
     ...pathParameterFields,
+    ...searchParameterFields,
     ...ignoreConfigFields,
     ...howToFindIdentifierFields,
   ];
