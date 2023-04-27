@@ -18,6 +18,7 @@ import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import SearchBar from './SearchBar';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
 import { message } from '../../../../../../utils/messageStore';
+import RawHtml from '../../../../../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
@@ -226,6 +227,8 @@ export default function Mapper2({editorId}) {
   const searchKey = useSelector(state => selectors.searchKey(state));
   const importId = useSelector(state => selectors.mapping(state).importId);
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editor layout is required for adjusting horizontal scroll in both layouts
+  const showNotification = useSelector(state => selectors.mapping(state)?.showNotificationFlag);
+  const requiredMappingsJsonPaths = useSelector(state => selectors.mapping(state)?.requiredMappingsJsonPaths);
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
@@ -280,6 +283,16 @@ export default function Mapper2({editorId}) {
       settingDrawerActive.current = { wasActive: activeKey };
     }
   }, [activeKey]);
+
+  useEffect(() => {
+    if (showNotification) {
+      enqueueSnackbar({
+        message: <RawHtml html={message.MAPPER2.OBJECT_ARRAY_NOTIFICATION} />,
+        variant: 'info',
+      });
+      dispatch(actions.mapping.v2.toggleShowNotificationFlag());
+    }
+  }, [dispatch, enqueueSnackbar, showNotification]);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));
@@ -360,6 +373,13 @@ export default function Mapper2({editorId}) {
         <Typography component="div" variant="caption" className={classes.infoFilter}>
           <InfoIcon />
           {filterInfo}
+        </Typography>
+      )}
+
+      {!isEmpty(requiredMappingsJsonPaths) && (
+        <Typography component="div" variant="caption" className={classes.infoFilter}>
+          <InfoIcon />
+          This import has required fields that you must configure with the destination drop-down list.
         </Typography>
       )}
 

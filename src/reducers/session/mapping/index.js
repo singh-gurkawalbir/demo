@@ -21,8 +21,13 @@ import {
   getCombinedExtract,
   buildExtractsHelperFromExtract,
   getSelectedExtractDataTypes,
-  isMapper2HandlebarExpression} from '../../../utils/mapping';
+  isMapper2HandlebarExpression } from '../../../utils/mapping';
 import { generateId } from '../../../utils/string';
+import { constructDestinationTreeFromParentsList,
+  findLastNodeWithMatchingParent,
+  findNodeInTreeWithParents,
+  findNodeWithGivenParentsList,
+  markPresentDestinations } from '../../../utils/mapping/maper2';
 
 export const expandRow = (draft, key) => {
   if (!draft || !key) return;
@@ -242,6 +247,35 @@ const recursivelySearchExtracts = (currNode, inputValues, skipFilter) => {
   return clonedNode;
 };
 
+const wrapUpInList = (value, isGroupedSampleData, skipNodeWrap) => {
+  if (!value) return [];
+
+  const copyValue = customCloneDeep(value);
+
+  if (skipNodeWrap) {
+    // changing key as it will not match any node when searched
+    copyValue.key = generateId();
+
+    return [copyValue];
+  }
+
+  if (isGroupedSampleData) {
+    return [{
+      key: generateId(),
+      title: '',
+      dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      children: copyValue,
+    }];
+  }
+
+  return [{
+    key: generateId(),
+    title: '',
+    dataType: MAPPING_DATA_TYPES.OBJECT,
+    children: copyValue,
+  }];
+};
+
 const emptyObj = {};
 const emptyArr = [];
 
@@ -288,6 +322,8 @@ export default (state = {}, action) => {
     propValue,
     isSettingsPatch,
     selectedExtractJsonPath,
+    destinationTree,
+    requiredMappingsJsonPaths,
   } = action;
 
   return produce(state, draft => {
@@ -327,6 +363,8 @@ export default (state = {}, action) => {
           mappingsCopy: customCloneDeep(mappings),
           lookupsCopy: customCloneDeep(lookups),
           v2TreeDataCopy: customCloneDeep(v2TreeData),
+          destinationTree: customCloneDeep(destinationTree),
+          requiredMappingsJsonPaths: customCloneDeep(requiredMappingsJsonPaths),
         };
         break;
       }
@@ -750,6 +788,20 @@ export default (state = {}, action) => {
         // find drop position
         const {nodeSubArray: dropSubArr, nodeIndexInSubArray: dropSubArrIndex } = findNodeInTree(v2TreeData, 'key', dropKey);
 
+        // find dragObject parentNode
+        if (dragParentKey) {
+          const {node: dragParentNode} = findNodeInTree(v2TreeData, 'key', dragParentKey);
+
+          if (dragParentNode && dragParentNode?.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+            if (draft.mapping.isGroupedOutput && draft.mapping.v2TreeData[0]?.key === dragParentKey) {
+              // do not show notification
+            } else {
+              // show notification
+              draft.mapping.showNotificationFlag = true;
+            }
+          }
+        }
+
         // drag obj is inserted as the 0th child of a parent
         if (dropPosition === 0) {
           // It is the parent node which is also the drop node.
@@ -1043,6 +1095,19 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.MAPPING.V2.PATCH_DESTINATION_FILTER: {
+        if (!draft.mapping) break;
+        const { finalDestinationTree } = draft.mapping;
+
+        if (!finalDestinationTree || !finalDestinationTree.length || !finalDestinationTree[0].children) break;
+
+        const inputValues = [inputValue.toUpperCase()];
+
+        draft.mapping.finalDestinationTree[0] = recursivelySearchExtracts(finalDestinationTree[0], inputValues, inputValue === propValue);
+
+        break;
+      }
+
       case actionTypes.MAPPING.V2.DELETE_ALL:
         if (!draft.mapping) break;
 
@@ -1130,6 +1195,63 @@ export default (state = {}, action) => {
         delete draft.mapping.newRowKey;
         break;
       }
+
+      case actionTypes.MAPPING.V2.FINAL_DESTINATION_TREE: {
+        if (!draft.mapping.destinationTree) break;
+        const treeData = draft.mapping.isGroupedOutput ? draft.mapping.v2TreeData[0].children : draft.mapping.v2TreeData;
+
+        const {node = {}, parentsList = []} = findNodeInTreeWithParents(treeData, 'key', v2Key);
+        let treeToBeRendered = [];
+
+        if (node) {
+          if (!parentsList.length) treeToBeRendered = [];
+          if (parentsList.length === 1) treeToBeRendered = wrapUpInList(draft.mapping.destinationTree, draft.mapping.isGroupedOutput, false);
+          if (parentsList.length > 1) {
+            const {node: destinationNode} = findNodeWithGivenParentsList(draft.mapping.destinationTree, parentsList.slice(0, -1));
+
+            treeToBeRendered = wrapUpInList(destinationNode, draft.mapping.isGroupedOutput, true);
+          }
+        }
+
+        draft.mapping.finalDestinationTree = markPresentDestinations(treeData, treeToBeRendered);
+
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION: {
+        if (!draft.mapping.destinationTree) break;
+        const treeData = draft.mapping.isGroupedOutput ? draft.mapping.v2TreeData[0].children : draft.mapping.v2TreeData;
+
+        const {parentsList = []} = findNodeInTreeWithParents(draft.mapping.destinationTree, 'key', v2Key);
+
+        if (isEmpty(parentsList)) break;
+
+        const {node = {}, leftParentsList = []} = findLastNodeWithMatchingParent(treeData, parentsList);
+
+        if (!isEmpty(node)) {
+          const newNode = constructDestinationTreeFromParentsList(leftParentsList);
+
+          node.children.push(newNode);
+          newNode.parentKey = node.key;
+          insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, newNode, draft.mapping.lookups);
+        } else {
+          const newNode = constructDestinationTreeFromParentsList(parentsList);
+
+          if (draft.mapping.isGroupedOutput) {
+            const node = draft.mapping.v2TreeData[0];
+
+            node.children.push(newNode);
+            newNode.parentKey = node.key;
+          } else {
+            draft.mapping.v2TreeData.push(newNode);
+          }
+        }
+        break;
+      }
+      case actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG: {
+        delete draft.mapping.showNotificationFlag;
+        break;
+      }
       default:
     }
   });
@@ -1159,6 +1281,14 @@ selectors.v2MappingsExtractsTree = state => {
   }
 
   return state.mapping.extractsTree || emptyArr;
+};
+
+selectors.v2MappingsDestinationTree = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.finalDestinationTree || emptyArr;
 };
 
 selectors.searchKey = state => {

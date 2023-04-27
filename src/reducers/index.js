@@ -7607,3 +7607,26 @@ selectors.getShopifyStoreLink = (state, resourceId) => {
 
   return SHOPIFY_APP_STORE_LINKS.NETSUITE_IA_APP;
 };
+
+selectors.isHttpConnector = (state, resourceId, resourceType) => {
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resourceType === 'connections') {
+    const isNewHTTPFramework = !!getHttpConnector(resource?.http?._httpConnectorId);
+
+    if (!isNewHTTPFramework) return false;
+  }
+  if (!['exports', 'imports'].includes(resourceType) || !resource?._connectionId) {
+    return false;
+  }
+
+  const connectionObj = selectors.resourceData(
+    state,
+    'connections',
+    resource._connectionId,
+  )?.merged || emptyObject;
+
+  const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
+
+  return isNewHTTPFramework && resource?.http?.sessionFormType !== 'http';
+};

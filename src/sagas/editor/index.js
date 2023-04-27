@@ -19,13 +19,16 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
+import { isValidDisplayAfterRef, isDisplayRefSupportedType, getDisplayRef } from '../../utils/httpConnector';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
+import { fetchMetadataFieldList } from '../../utils/form/metadata';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR, STANDALONE_INTEGRATION, emptyObject } from '../../constants';
 import { getLastExportDateTime } from '../flows';
+import errorMessageStore from '../../utils/errorStore';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -147,6 +150,45 @@ export function* invokeProcessor({ editorId, processor, body }) {
   return yield call(apiCallWithRetry, { path, opts, hidden: true });
 }
 
+export function* validateCustomSettings({ id, result }) {
+  const editor = yield select(selectors.editor, id);
+  const { resourceType, resourceId } = editor;
+  const formKey = `${resourceType}-${resourceId}`;
+  // fetch form fields list of fields
+  const formContext = yield select(selectors.formState, formKey);
+  const csMetadata = result?.data || {};
+  const { fieldMap } = csMetadata;
+  const fields = fetchMetadataFieldList(csMetadata);
+  const displayAfterFieldIds = fields.filter(fieldId => !!fieldMap[fieldId]?.displayAfter);
+  const invalidFieldId = displayAfterFieldIds.find(fieldId => {
+    const displayAfterRef = getDisplayRef(fieldMap[fieldId], resourceType);
+
+    if (!displayAfterRef) return true;
+
+    // if ref is settings  ref, pass settings metadata and validate against settings fields
+    if (displayAfterRef.startsWith('settings.')) {
+      const index = displayAfterRef.indexOf('.');
+      const settingsRef = displayAfterRef.substr(index + 1);
+
+      if (!isValidDisplayAfterRef(settingsRef, csMetadata)) {
+        return true;
+      }
+    } else if (!isValidDisplayAfterRef(displayAfterRef, formContext.fieldMeta)) {
+      // else, validate against resourceForm's metadata fields
+
+      return true;
+    }
+
+    return false;
+  });
+
+  if (invalidFieldId) {
+    const invalidFieldPath = fieldMap[invalidFieldId].displayAfter;
+
+    return errorMessageStore('INVALID_DISPLAY_REF_CUSTOM_SETTINGS', { invalidFieldPath });
+  }
+}
+
 export function* requestPreview({ id }) {
   const editor = yield select(selectors.editor, id);
 
@@ -165,8 +207,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups, v2TreeData, isGroupedSampleData} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
+    const {mappings, lookups, v2TreeData, isGroupedSampleData, requiredMappingsJsonPaths} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData, requiredMappingsJsonPaths);
 
     if (errMessage) {
       const violations = {
@@ -226,6 +268,20 @@ export function* requestPreview({ id }) {
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
     return yield put(actions.editor.previewFailed(id, {errorMessage: e.message, errSourceProcessor: editor.activeProcessor}));
+  }
+
+  if (editor.editorType === 'settingsForm') {
+    const isHttpConnector = yield select(selectors.isHttpConnector, editor?.resourceId, editor?.resourceType);
+
+    if (isHttpConnector) {
+      // validation of custom settings happen only for http connector 2.0 in simple view
+      const errorMessage = yield call(validateCustomSettings, { id, result: finalResult });
+
+      if (errorMessage) {
+      // Incase of invalid displayAfter ref, we throw error for http connector simple view
+        return yield put(actions.editor.previewFailed(id, { errorMessage }));
+      }
+    }
   }
 
   return yield put(actions.editor.previewResponse(id, finalResult));
@@ -836,7 +892,12 @@ export function* initEditor({ id, editorType, options }) {
       });
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
-      const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
+      let sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
+
+      if (isDisplayRefSupportedType(resourceType)) {
+        // TODO : need to include in the existing above selector
+        sectionMeta = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
+      }
       const { settingsForm, settings} = sectionMeta || {};
       const integrationAllSections = yield select(selectors.getAllSections, 'integrations', integrationId);
 
