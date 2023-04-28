@@ -10,6 +10,7 @@ import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../LoadResources';
 import DynaSelect from './DynaSelect';
+import DynaEditable from './DynaEditable';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
@@ -24,6 +25,7 @@ import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 import { getHttpConnector} from '../../../constants/applications';
+import DynaAutocomplete from './DynaAutocomplete';
 
 const emptyArray = [];
 const emptyObj = {};
@@ -405,7 +407,7 @@ export default function DynaSelectResource(props) {
       }),
     [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email, _httpConnectorId]
   );
-  const handleEditResource = useCallback(() => {
+  const handleEditResource = useCallback(resourceId => {
     if (
       resourceType === 'asyncHelpers' ||
       (resourceType === 'exports' && statusExport)
@@ -457,7 +459,7 @@ export default function DynaSelectResource(props) {
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.EDIT,
       baseUrl: location.pathname,
-      params: { resourceType, id: value },
+      params: { resourceType, id: resourceId || value },
     }));
   }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
@@ -514,13 +516,16 @@ export default function DynaSelectResource(props) {
           />
           ) : (
             <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-              <DynaSelect
-                {...props}
-                disabled={disableSelect}
-                removeHelperText={isAddingANewResource}
-                options={[{ items: truncatedItems(resourceItems || []) }]}
-                isSelectFlowResource={isSelectFlowResource}
+              { resourceType === 'connections' ? <DynaEditable {...props} onEditClick={handleEditResource} options={resourceItems} />
+                : (
+                  <DynaSelect
+                    {...props}
+                    disabled={disableSelect}
+                    removeHelperText={isAddingANewResource}
+                    options={[{ items: truncatedItems(resourceItems || []) }]}
+                    isSelectFlowResource={isSelectFlowResource}
           />
+                )}
               {resourceType === 'connections' && !!value && !skipPingConnection && (
               <ConnectionLoadingChip
                 connectionId={value}
@@ -532,7 +537,7 @@ export default function DynaSelectResource(props) {
             </div>
 
           )}
-          <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
+          {/* <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
             {allowNew && (
             <IconButtonWithTooltip
               tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
@@ -554,7 +559,7 @@ export default function DynaSelectResource(props) {
             </IconButtonWithTooltip>
             )}
 
-          </div>
+          </div> */}
         </>
       </LoadResources>
 
