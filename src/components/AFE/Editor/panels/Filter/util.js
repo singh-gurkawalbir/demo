@@ -333,7 +333,7 @@ export function generateIOFilterExpression(rules, context) {
               break;
             }
             case 'epochtime':
-              rhs = ['epochtime', rhs];
+              lhs = ['epochtime', lhs];
               break;
             default:
           }
