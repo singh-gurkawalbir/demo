@@ -65,7 +65,7 @@ export default {
       isLoggable: true,
       required: true,
       type: 'select',
-      label: 'Server Data Source',
+      label: 'Server data source',
       options: [{
         items: [
           {label: 'NetSuite.com', value: 'NetSuite.com'},
