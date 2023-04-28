@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
+import { getTransformPaths } from '../../../../utils/jsonPaths';
 import actions from '../../../../actions';
 import DynaKeyValue from '../DynaKeyValue';
 import DynaSelectMultiApplication from '../DynaSelectMultiApplication';
@@ -26,6 +27,13 @@ export default function DynaSortAndGroup(props) {
 
     if (resourceSubType !== 'http' && resourceSubType !== 'rdbms') {
       return options;
+    }
+
+    if (resourceSubType === 'http') {
+      // We support showing all nested paths as suggestions while grouping only incase of http
+      const paths = getTransformPaths(sampleData);
+
+      return paths.map(path => path?.replaceAll('[*]', '[0]').replaceAll('[0]', '.0'));
     }
 
     return options.filter(opt =>

@@ -7,6 +7,7 @@ export const HTTP_CONNECTOR_DISPLAY_REF_MAP = {
   'http._httpConnectorResourceId': 'assistantMetadata.resource',
   'http._httpConnectorEndpointId': 'assistantMetadata.operation',
   'http._httpConnectorVersionId': 'assistantMetadata.version',
+  type: 'assistantMetadata.exportType',
 };
 
 export function getDisplayRef(field, resourceType) {

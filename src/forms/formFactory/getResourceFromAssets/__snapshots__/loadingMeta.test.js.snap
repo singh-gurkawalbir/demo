@@ -4218,7 +4218,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -7409,7 +7409,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
