@@ -22,6 +22,7 @@ import httpConnectorSagas from './httpConnectors';
 import { getHttpConnector} from '../../constants/applications';
 import { NO_ENVIRONMENT_RESOURCE_TYPES } from '../../constants/resource';
 import { AUDIT_LOG_FILTER_KEY, getAuditLogFilterKey } from '../../constants/auditLog';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -142,7 +143,8 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
     : false;
-  const data = yield select(selectors.resourceData, resourceType, id);
+  const _data = yield select(selectors.resourceData, resourceType, id);
+  const data = customCloneDeep(_data);
   const { patch, master } = data;
   let { merged } = data;
   const isNew = isNewId(id);
