@@ -267,7 +267,6 @@ export default {
             'jdbc.authType',
             'jdbc.email',
             'jdbc.password',
-            'jdbc.environment',
             'netsuite.tokenAccount',
             'jdbc.account',
             'jdbc.roleId',
@@ -293,28 +292,40 @@ export default {
   actions: [
     {
       id: 'saveandclosegroup',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'netsuite.authType',
           is: [''],
+        },
+        {
+          field: 'jdbc.serverDataSource',
+          isNot: ['NetSuite.com'],
         },
       ],
     },
     {
       id: 'oauthandcancel',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'netsuite.authType',
           is: ['token-auto'],
+        },
+        {
+          field: 'jdbc.serverDataSource',
+          is: ['NetSuite2.com'],
         },
       ],
     },
     {
       id: 'testandsavegroup',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'netsuite.authType',
           is: ['token'],
+        },
+        {
+          field: 'jdbc.serverDataSource',
+          is: ['NetSuite2.com'],
         },
       ],
     },
