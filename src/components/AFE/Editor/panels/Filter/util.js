@@ -132,10 +132,10 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                 }
               } while (!dataTypeFound);
 
-              if (i === 2 && exp[i][0].toLowerCase() === 'epochtime') {
+              if (tempExp[0].toLowerCase() === 'epochtime' && !isArray(tempExp[1])) {
                 temp.type = 'value';
-                temp.value = exp[i]?.[1];
-                temp.dataType = 'epochtime';
+                [, temp.value] = tempExp;
+                temp.dataType = tempExp[0].toLowerCase();
                 // eslint-disable-next-line no-continue
                 continue;
               }
@@ -332,6 +332,9 @@ export function generateIOFilterExpression(rules, context) {
               lhs = typeof convertedValue === 'boolean' ? convertedValue : lhs;
               break;
             }
+            case 'epochtime':
+              rhs = ['epochtime', rhs];
+              break;
             default:
           }
         } else if (rr.data.lhs.type === 'expression') {
