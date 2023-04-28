@@ -3,6 +3,7 @@ import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { makeStyles } from '@material-ui/core/styles';
+import LoadResources from '../../LoadResources';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -80,14 +81,11 @@ export default function RunHistoryDrawer() {
       })
     );
   }, [dispatch, selectedDate, flowId]);
-  useEffect(() => {
-    dispatch(actions.resource.requestCollection(`integrations/${match.params.integrationId}/ashares`));
-
-    return () => {
-      dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
-    };
+  useEffect(() => () => {
+    dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
+  },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  []);
 
   return (
     <RightDrawer
@@ -97,7 +95,9 @@ export default function RunHistoryDrawer() {
       onClose={handleClose} >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
       <DrawerContent className={classes.runHistoryDrawer}>
-        <RunHistory flowId={flowId} integrationId={match.params.integrationId} className={classes.runHistoryPage} />
+        <LoadResources resources={`integrations/${match.params.integrationId}/ashares`}>
+          <RunHistory flowId={flowId} integrationId={match.params.integrationId} className={classes.runHistoryPage} />
+        </LoadResources>
       </DrawerContent>
     </RightDrawer>
   );
