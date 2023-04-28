@@ -75,13 +75,14 @@ export default function DynaNetsuiteUserRolesOptions(props) {
     onFieldChange(id, value);
 
     if (netsuiteResourceType === 'environment') {
-      ['netsuite.account', 'netsuite.roleId'].forEach(id =>
+      ['netsuite.account', 'netsuite.roleId', 'jdbc.account', 'jdbc.roleId'].forEach(id =>
         onFieldChange(id, '', true)
       );
     }
   };
 
   // we dont want to show the fields unless the connection is validated
+
   if (!userRoles) {
     return null;
   }

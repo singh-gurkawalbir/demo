@@ -57,6 +57,18 @@ export default {
 
     return newValues;
   },
+  optionsHandler(fieldId, fields) {
+    const { value: env } =
+      fields.find(field => field.id === 'jdbc.environment') || {};
+    const { value: acc } =
+      fields.find(field => field.id === 'jdbc.account') || {};
+
+    if (fieldId === 'jdbc.account' && env !== '') {
+      return { env };
+    }
+
+    if (fieldId === 'jdbc.roleId' && env !== '' && acc !== '') return { env, acc };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     'jdbc.host': { fieldId: 'jdbc.host' },
@@ -108,7 +120,24 @@ export default {
         return false;
       },
     },
-    'jdbc.authType': { fieldId: 'jdbc.authType'},
+    'jdbc.authType': { fieldId: 'jdbc.authType',
+      visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite2.com'] }],
+    },
+    'jdbc.email': {
+      fieldId: 'jdbc.email',
+      visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
+      requiredWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
+    },
+    'jdbc.password': {
+      fieldId: 'jdbc.password',
+      visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
+      requiredWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
+    },
+    'jdbc.environment': {
+      fieldId: 'jdbc.environment',
+      netsuiteResourceType: 'environment',
+      visible: false,
+    },
     'netsuite.tokenAccount': {
       id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
@@ -124,6 +153,28 @@ export default {
       },
       label: 'Account ID',
       uppercase: true,
+    },
+    'jdbc.account': {
+      fieldId: 'jdbc.account',
+      netsuiteResourceType: 'account',
+      refreshOptionsOnChangesTo: [
+        'validate',
+        'jdbc.account',
+        'jdbc.environment',
+        'jdbc.roleId',
+      ],
+      visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
+    },
+    'jdbc.roleId': {
+      fieldId: 'jdbc.roleId',
+      netsuiteResourceType: 'role',
+      refreshOptionsOnChangesTo: [
+        'validate',
+        'jdbc.account',
+        'jdbc.environment',
+        'jdbc.roleId',
+      ],
+      visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
     'netsuite.token.auto.account': {
       id: 'netsuite.token.auto.account',
@@ -208,7 +259,12 @@ export default {
           },
           { fields: [
             'jdbc.authType',
+            'jdbc.email',
+            'jdbc.password',
+            'jdbc.environment',
             'netsuite.tokenAccount',
+            'jdbc.account',
+            'jdbc.roleId',
             'netsuite.token.auto.account',
             'netsuite.token.auto.roleId',
             'netsuite.tokenId',
@@ -253,6 +309,15 @@ export default {
         {
           field: 'netsuite.authType',
           is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'validateandsave',
+      visibleWhen: [
+        {
+          field: 'jdbc.serverDataSource',
+          is: ['NetSuite.com'],
         },
       ],
     },

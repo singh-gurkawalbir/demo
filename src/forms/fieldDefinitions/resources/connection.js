@@ -2154,6 +2154,10 @@ export default {
     type: 'netsuiteuserroles',
     label: 'Account ID',
   },
+  'jdbc.account': {
+    type: 'netsuiteuserroles',
+    label: 'Account ID',
+  },
   'netsuite.tokenId': {
     type: 'text',
     inputType: 'password',
@@ -2192,7 +2196,17 @@ export default {
     type: 'netsuiteuserroles',
     label: 'Environment',
   },
+  'jdbc.environment': {
+    isLoggable: true,
+    type: 'netsuiteuserroles',
+    label: 'Environment',
+  },
   'netsuite.roleId': {
+    isLoggable: true,
+    type: 'netsuiteuserroles',
+    label: 'Role',
+  },
+  'jdbc.roleId': {
     isLoggable: true,
     type: 'netsuiteuserroles',
     label: 'Role',
@@ -2202,6 +2216,18 @@ export default {
     label: 'Email',
   },
   'netsuite.password': {
+    type: 'text',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+    inputType: 'password',
+    label: 'Password',
+  },
+  'jdbc.email': {
+    type: 'text',
+    label: 'Email',
+  },
+  'jdbc.password': {
     type: 'text',
     defaultValue: '',
     description:

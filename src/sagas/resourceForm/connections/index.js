@@ -86,7 +86,12 @@ export function* netsuiteUserRoles({ connectionId, values, hideNotificationMessa
     reqPayload = { _connectionId: connectionId };
   } else {
     // retrieving userRoles for a new connection
-    const { '/netsuite/email': email, '/netsuite/password': password } = values;
+    let { '/netsuite/email': email, '/netsuite/password': password } = values;
+
+    if (values['/jdbc/email']) {
+      email = values['/jdbc/email'];
+      password = values['/jdbc/password'];
+    }
 
     reqPayload = { email, password };
   }
