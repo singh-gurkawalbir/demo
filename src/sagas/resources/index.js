@@ -973,7 +973,7 @@ export function* updateFlowNotification({ flowId, isSubscribed }) {
   }
 
   if (response) {
-    yield put(actions.resource.requestCollection('notifications', null, true));
+    yield put(actions.resource.requestCollection('notifications'));
   }
 }
 
