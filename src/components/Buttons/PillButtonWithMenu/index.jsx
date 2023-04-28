@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { ListItem, makeStyles, Menu, MenuItem, Typography } from '@material-ui/core';
+import { makeStyles, Menu, MenuItem, Typography } from '@material-ui/core';
 import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
@@ -63,10 +63,8 @@ const useStyles = makeStyles(theme => ({
   },
   dropdownMenuTitle: {
     padding: theme.spacing(1.5, 2, 0.5),
-    '& .MuiTypography-root': {
-      lineHeight: 1,
-      fontSize: 11,
-    },
+    lineHeight: 1,
+    fontSize: 11,
   },
 }));
 
@@ -119,9 +117,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         }}
       >
         {menuTitle && (
-        <ListItem className={classes.dropdownMenuTitle}>
-          <Typography variant="caption">{menuTitle}</Typography>
-        </ListItem>
+          <Typography variant="caption" component="div" className={classes.dropdownMenuTitle}>{menuTitle}</Typography>
         )}
         {actionsMenu?.map(({ Icon, dataTestId, label, disabled, description, link }) => (
           <MenuItem

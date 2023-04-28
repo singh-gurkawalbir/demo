@@ -18,7 +18,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import PillButtonWithMenu from '../../../components/Buttons/PillButtonWithMenu';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
-import IntegrationFolder from '../../../components/icons/IntegrationFolder';
+import FolderIcon from '../../../components/icons/FolderIcon';
 import DownloadIntegrationIcon from '../../../components/icons/DownloadIntegrationIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -118,7 +118,7 @@ export default function IntegrationCeligoPageBar() {
         baseUrl: location.pathname,
         params: { resourceType: 'integrations', id: generateNewId() },
       }),
-      Icon: IntegrationFolder,
+      Icon: FolderIcon,
     },
   ];
 
