@@ -42,6 +42,10 @@ export default {
     newValues['/jdbc/type'] = 'netsuitejdbc';
     newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
     newValues['/jdbc/user'] = 'TBA';
+    if (newValues['/jdbc/serverDataSource'] === 'NetSuite.com') {
+      newValues['/jdbc/user'] = newValues['/jdbc/email'];
+      delete newValues['/jdbc/email'];
+    }
     newValues['/jdbc/concurrencyLevel'] = newValues['/rdbms/concurrencyLevel'];
 
     newValues['/type'] = 'jdbc';
@@ -125,11 +129,13 @@ export default {
     },
     'jdbc.email': {
       fieldId: 'jdbc.email',
+      helpKey: 'connection.netsuite.email',
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
       requiredWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
     'jdbc.password': {
       fieldId: 'jdbc.password',
+      helpKey: 'connection.netsuite.password',
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
       requiredWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
