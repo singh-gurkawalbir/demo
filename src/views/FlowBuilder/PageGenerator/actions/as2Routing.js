@@ -10,6 +10,37 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormOnCancelContext from '../../../../components/FormOnCancelContext';
 
+const getVanFieldMeta = defaultValue => ({
+  fieldMap: {
+    'van.contentBasedFlowRouter': {
+      id: 'van.contentBasedFlowRouter',
+      name: 'contentBasedFlowRouter',
+      type: 'hook',
+      editorResultMode: 'text',
+      label:
+        'Choose a script and function name to use for determining AS2 message routing',
+      hookType: 'script',
+      hookStage: 'contentBasedFlowRouter',
+      // we can "fake" sample data by piggy backing off the default hook and simply
+      // override the sample data below.
+      preHookData: {
+        httpHeaders: {
+          'as2-from': 'OpenAS2_appA',
+          'as2-to': 'OpenAS2_appB',
+        },
+        mimeHeaders: {
+          'content-type': 'application/edi-x12',
+          'content-disposition': 'Attachment; filename=rfc1767.dat',
+        },
+        rawMessageBody: 'sample message',
+      },
+      defaultValue,
+    },
+  },
+  layout: {
+    fields: ['van.contentBasedFlowRouter'],
+  },
+});
 const getFieldMeta = defaultValue => ({
   fieldMap: {
     'as2.contentBasedFlowRouter': {
@@ -49,36 +80,62 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
-
+  const isVanConnector = !!connection?.van?.contentBasedFlowRouter?._scriptId;
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const handleSubmit = useCallback(
     () => {
-      const patchSet = [
-        {
-          op: 'replace',
-          path: '/as2/contentBasedFlowRouter/_scriptId',
-          value: formValues?.contentBasedFlowRouter?._scriptId,
-        },
-        {
-          op: 'replace',
-          path: '/as2/contentBasedFlowRouter/function',
-          value: formValues?.contentBasedFlowRouter?.function,
-        },
-      ];
+      let patchSet;
+
+      if (isVanConnector) {
+        patchSet = [
+          {
+            op: 'replace',
+            path: '/van/contentBasedFlowRouter/_scriptId',
+            value: formValues?.contentBasedFlowRouter?._scriptId,
+          },
+          {
+            op: 'replace',
+            path: '/van/contentBasedFlowRouter/function',
+            value: formValues?.contentBasedFlowRouter?.function,
+          },
+        ];
+      } else {
+        patchSet = [
+          {
+            op: 'replace',
+            path: '/as2/contentBasedFlowRouter/_scriptId',
+            value: formValues?.contentBasedFlowRouter?._scriptId,
+          },
+          {
+            op: 'replace',
+            path: '/as2/contentBasedFlowRouter/function',
+            value: formValues?.contentBasedFlowRouter?.function,
+          },
+        ];
+      }
 
       // using PATCH call here as other fields on the connection doc are not impacted
       dispatch(
         actions.resource.patch('connections', connectionId, patchSet, formKey)
       );
     },
-    [formValues?.contentBasedFlowRouter?._scriptId, formValues?.contentBasedFlowRouter?.function, dispatch, connectionId]
+    [isVanConnector, dispatch, connectionId, formValues?.contentBasedFlowRouter?._scriptId, formValues?.contentBasedFlowRouter?.function]
   );
-  const value =
-    connection && connection.as2 && connection.as2.contentBasedFlowRouter
+  let value;
+
+  if (isVanConnector) {
+    value =
+    connection && connection.van && connection.van.contentBasedFlowRouter
+      ? connection.van.contentBasedFlowRouter
+      : {};
+  } else {
+    value = connection && connection.as2 && connection.as2.contentBasedFlowRouter
       ? connection.as2.contentBasedFlowRouter
       : {};
-  const fieldMeta = getFieldMeta(value);
+  }
+
+  const fieldMeta = isVanConnector ? getVanFieldMeta(value) : getFieldMeta(value);
 
   const [count, setCount] = useState(0);
 
