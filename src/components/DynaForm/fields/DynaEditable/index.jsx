@@ -1,14 +1,11 @@
-import { TextField, makeStyles, FormControl, FormLabel, Typography, IconButton, Paper, MenuList, Grid, MenuItem } from '@material-ui/core';
+import { TextField, makeStyles, Typography, IconButton, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import clsx from 'clsx';
-import React, { useContext, useEffect, useState } from 'react';
-import { setValue } from '../../../../utils/form';
+import React, { useContext, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import TextButton from '../../../Buttons/TextButton';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
 import SearchIcon from '../../../icons/SearchIcon';
-import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   fieldWrapper: {
@@ -49,51 +46,41 @@ const DropdownContext = React.createContext({});
 const Option = option => {
   const data = useContext(DropdownContext);
 
-  const {classes, onEditClick} = data;
+  const {onEditClick} = data;
 
   return (<><Typography>{option?.label}</Typography><IconButton onClick={() => onEditClick(option.value)}><EditIcon /></IconButton></>);
 };
 
 const Component = props => {
   const {classes} = props;
+  const data = useContext(DropdownContext);
+  const {onCreateClick} = data;
 
   return (
-    <><MenuList {...props} />
+    <Paper>
+      {props.children}
       <TextButton
         startIcon={<AddIcon />}
-        className={classes?.createButton}>
+        className={classes?.createButton}
+        onClick={onCreateClick}>
         Create connection
       </TextButton>
-    </>
+    </Paper>
   );
 };
 
 export default function DynaEditable(props) {
-  const {options, id, onFieldChange, value, onEditClick} = props;
+  const {options, id, onFieldChange, value, onCreateClick, onEditClick} = props;
   const classes = useStyles();
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
+  const [renderValue, setRenderValue] = useState(selectedValue);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const handleEditClick = () => alert('clicked');
-  const handleChange = newVal => { console.log({newVal}); };
   const dropdownProps = {
-    allOptions: options, onEditClick, classes,
+    allOptions: options, onEditClick, onCreateClick, classes,
   };
 
-  console.log({value});
-  console.log({inputValue});
-  console.log({selectedValue});
-  const mismatch = selectedValue !== inputValue;
-
-  console.log({mismatch});
-
-  //   useEffect(() => {
-  //     setInputValue(selectedValue);
-  //     console.log({selectedValue});
-  //     console.log({inputValue});
-  //   }, [mismatch, selectedValue, value]);
-
-  const handleInputChange = newVal => setInputValue(newVal);
+  const handleInputChange = (evt, newVal) => setInputValue(newVal);
 
   return (
     <div>
@@ -104,14 +91,15 @@ export default function DynaEditable(props) {
           options={options}
           getOptionLabel={option => option?.label}
           renderOption={Option}
-        //   value={value}
+          value={renderValue}
           popupIcon={<SearchIcon />}
           open={isMenuOpen}
-        //   inputValue={inputValue}
+          inputValue={inputValue}
           onInputChange={handleInputChange}
           onFocus={() => setIsMenuOpen(true)}
           onClose={() => setIsMenuOpen(false)}
-          onChange={(event, newValue) => { setIsMenuOpen(false); onFieldChange(id, newValue?.value); }}
+          onBlur={() => { setIsMenuOpen(false); setInputValue(selectedValue); }}
+          onChange={(event, newValue) => { setIsMenuOpen(false); setRenderValue(newValue?.label); onFieldChange(id, newValue?.value); }}
           className={classes.inputTextField}
           PaperComponent={Component}
           {...isLoggableAttr(true)}
