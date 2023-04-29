@@ -1797,6 +1797,7 @@ const resourceForm = {
       parentConnectionId,
       options,
     }),
+  reInitialize: formKey => action(actionTypes.RESOURCE_FORM.RE_INITIALIZE, { formKey }),
   initComplete: (
     resourceType,
     resourceId,

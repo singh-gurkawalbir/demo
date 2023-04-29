@@ -963,8 +963,68 @@ export function* initFormValues({
   }
 }
 
+export function* reInitializeForm({ formKey }) {
+  const formContext = yield select(selectors.formState, formKey) || {};
+
+  const { flowId, resourceId, resourceType } = formContext.parentContext;
+
+  if (!formKey || !resourceId || isNewId(resourceId) || !resourceType) return;
+
+  const stagedResource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged || {};
+
+  const resourceFormState = yield select(selectors.resourceFormState, resourceType, resourceId) || {};
+
+  const connection = yield select(selectors.resource, 'connections', stagedResource._connectionId) || {};
+
+  const connectorMetaData = yield select(selectors.httpConnectorMetaData, connection.http?._httpConnectorId, connection.http?._httpConnectorVersionId, connection.http?._httpConnectorApiId);
+
+  const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+    acc[`/${curr}`] = stagedResource[curr];
+
+    return acc;
+  }, {});
+
+  // use this function to get the corresponding preSave function for this current form
+  const { preSave } = getResourceFormAssets({
+    resourceType,
+    resource: stagedResource,
+    isNew: false,
+    connection,
+    assistantData: connectorMetaData,
+  });
+  const finalValues = preSave(formContext.value, stagedRes, { connection });
+  const newFinalValues = {...finalValues};
+
+  const allPatches = sanitizePatchSet({
+    patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
+    fieldMeta: resourceFormState.fieldMeta,
+    resource: {},
+  });
+
+  yield put(actions.resource.clearStaged(resourceId));
+  yield put(
+    actions.resource.patchStaged(resourceId, allPatches)
+  );
+
+  const allTouchedFields = Object.values(formContext.fields)
+    .filter(field => !!field.touched)
+    .map(field => ({ id: field.id, value: field.value }));
+
+  yield put(
+    actions.resourceForm.init(
+      resourceType,
+      resourceId,
+      false,
+      false,
+      flowId,
+      allTouchedFields
+    )
+  );
+}
+
 export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
+  takeEvery(actionTypes.RESOURCE_FORM.RE_INITIALIZE, reInitializeForm),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE,
