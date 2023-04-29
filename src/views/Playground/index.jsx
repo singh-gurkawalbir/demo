@@ -80,7 +80,7 @@ export default function Editors() {
 
   return (
     <>
-      <CeligoPageBar title="Developer playground" infoText={infoText.developerPlayground}>
+      <CeligoPageBar title="Playground" infoText={infoText.developerPlayground}>
         <ExportExampleButton editorId={editorId} />
         {editorId && (
           <Tooltip title="Fullscreen mode" placement="right">
