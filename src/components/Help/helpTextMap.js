@@ -23,6 +23,8 @@ export default {
   'connection.jdbc.port': 'Displays 1708. This is required while configuring the <a href="https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_1202105110.html"> data source </a>in NetSuite.',
   'connection.jdbc.serverDataSource': 'Select the <a href="https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1549957264.html"> NetSuite SuiteAnalytics Connect </a> server data source, either <b>NetSuite.com</b> or <b>NetSuite2.com.</b>',
   'connection.jdbc.StaticSchema': 'Choose Yes to use the <a href="https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_164485063706.html">static data model</a>, which provides the structure, the name of all available record types, and the fields in the NetSuite2.com data source. (To use the static data model in your account, you must add the StaticSchema attribute and set it to 1.)  ',
+  'connection.jdbc.email': 'Email to log in into your NetSuite account',
+  'connection.jdbc.password': 'Password to log in into your NetSuite account',
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
 'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   'connection.partnerrequireasynchronousmdns':

@@ -83,7 +83,7 @@ export default function DynaNetsuiteUserRolesOptions(props) {
 
   // we dont want to show the fields unless the connection is validated
 
-  if (!userRoles) {
+  if (!userRoles || id === 'jdbc.environment') {
     return null;
   }
 
