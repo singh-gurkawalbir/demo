@@ -68,14 +68,16 @@ export default function DynaSettings(props) {
 
   const isHttpConnectorResource = useSelector(state => selectors.isHttpConnector(state, resourceId, resourceType));
 
+  const isParentHttpConnectorView = useSelector(state => selectors.isHttpConnectorParentFormView(state, resourceId));
+
   const handleResourceFormRemount = useCallback(() => {
     // Do this change only for http connector simple view as display after effects only there
-    if (!isDisplayRefSupportedType(resourceType) || !isHttpConnectorResource) {
+    if (!isDisplayRefSupportedType(resourceType) || !isHttpConnectorResource || isParentHttpConnectorView) {
       return;
     }
 
     dispatch(actions.resourceForm.reInitialize(parentFormKey));
-  }, [dispatch, isHttpConnectorResource, parentFormKey, resourceType]);
+  }, [dispatch, isHttpConnectorResource, isParentHttpConnectorView, parentFormKey, resourceType]);
 
   const hasSettingsForm = useSelector(state => {
     if (['exports', 'imports'].includes(resourceType)) {

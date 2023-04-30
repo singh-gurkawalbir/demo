@@ -963,7 +963,7 @@ export function* initFormValues({
   }
 }
 
-export function* reInitializeForm({ formKey }) {
+export function* reInitializeForm({ formKey, additionalPatches = {} }) {
   const formContext = yield select(selectors.formState, formKey) || {};
 
   const { flowId, resourceId, resourceType } = formContext.parentContext;
@@ -993,10 +993,9 @@ export function* reInitializeForm({ formKey }) {
     assistantData: connectorMetaData,
   });
   const finalValues = preSave(formContext.value, stagedRes, { connection });
-  const newFinalValues = {...finalValues};
 
   const allPatches = sanitizePatchSet({
-    patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
+    patchSet: defaultPatchSetConverter({ ...stagedRes, ...finalValues, ...additionalPatches }),
     fieldMeta: resourceFormState.fieldMeta,
     resource: {},
   });

@@ -1797,7 +1797,7 @@ const resourceForm = {
       parentConnectionId,
       options,
     }),
-  reInitialize: formKey => action(actionTypes.RESOURCE_FORM.RE_INITIALIZE, { formKey }),
+  reInitialize: (formKey, additionalPatches) => action(actionTypes.RESOURCE_FORM.RE_INITIALIZE, { formKey, additionalPatches }),
   initComplete: (
     resourceType,
     resourceId,
@@ -2425,6 +2425,10 @@ const httpConnectors = {
     action(actionTypes.HTTP_CONNECTORS.REQUEST_CONNECTOR, {
       httpConnectorId,
     }),
+  resourceForm: {
+    switchView: resourceId => action(actionTypes.HTTP_CONNECTORS.RESOURCE_FORM.SWITCH_VIEW, { resourceId }),
+    clear: resourceId => action(actionTypes.HTTP_CONNECTORS.RESOURCE_FORM.CLEAR, { resourceId }),
+  },
 };
 const analytics = {
   gainsight: {
