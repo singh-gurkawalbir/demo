@@ -6,7 +6,7 @@ import CloseButton from './CloseButton';
 import { isNewId, convertResourceLabelToLowercase } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
-import DynaHTTPFrameworkBubbleFormView from '../../../DynaForm/fields/DynaHTTPFrameworkkBubbleFormView';
+import DynaHTTPFrameworkBubbleFormView from '../../../DynaForm/fields/DynaHTTPFrameworkBubbleFormView';
 import DynaConnectionFormView from '../../../DynaForm/fields/DynaConnectionFormView';
 import DynaIclientFormView from '../../../DynaForm/fields/DynaIcielntFormView';
 import { CONNECTORS_TO_IGNORE, emptyObject } from '../../../../constants';
