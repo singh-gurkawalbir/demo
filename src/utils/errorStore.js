@@ -18,6 +18,7 @@ const messages = {
   MAPPER2_WRONG_HANDLEBAR_FOR_ROWS: "Mapper 2.0: The source field values should start with 'rows' since input data is of the type rows. For instance rows.field1, rows.field2, etc.",
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
   MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
+  MAPPER2_MISSING_REQUIRED_FIELDS: 'Mapper 2.0: This import has required destination fields that you must configure with the destination drop-down list.',
   SIGN_UP_CONSENT: 'You must agree to the Terms of Service / Service Subscription Agreement and Privacy Policy to continue.',
   // #endregion
 
@@ -44,7 +45,7 @@ const messages = {
   FILTERSTREE_VALIDATE_FIELDOP_TYPECONV: 'Field operation {{{operationName}}} must be called by a Type Conversion Operation but was called by {{{callingOperation}}}.',
   FILTERSTREE_VALIDATE_FIELDOP_ARGSIZE: 'Field operation {{{operationName}}} expects exactly 1 argument but received {{{argCount}}}.',
   // #endregion
-
+  INVALID_DISPLAY_REF_CUSTOM_SETTINGS: 'The field path set in displayAfter does not exist: {{{invalidFieldPath}}}',
   // #region jsonEditor error messages
   INVALID_JSON_VALUE: '{{{label}}} must be a valid JSON',
 };

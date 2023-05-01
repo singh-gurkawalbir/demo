@@ -1,6 +1,7 @@
 import { convertGraphQLQueryToHTTPBody, getGraphqlRelativeURI } from '../../../utils/graphql';
 import { isNewId } from '../../../utils/resource';
 import http from './http';
+import { LAST_EXPORT_DATE_TIME_REGEX_STRING, HTTP_PAGING_TOKEN_REGEX_STRING } from '../../../constants';
 
 export default {
   preSave: formValues => {
@@ -111,7 +112,7 @@ export default {
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data',
               value: 'delta',
-              regex: /.*{{.*lastExportDateTime.*}}/,
+              regex: LAST_EXPORT_DATE_TIME_REGEX_STRING,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
             },
@@ -157,7 +158,7 @@ export default {
           items: [
             { label: 'Next page token (cursor)',
               value: 'token',
-              regex: /.*{{.*export\.http\.paging\.token.*}}/,
+              regex: HTTP_PAGING_TOKEN_REGEX_STRING,
               description: 'Add {{export.http.paging.token}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.paging.token',
             },

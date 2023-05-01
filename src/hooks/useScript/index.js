@@ -30,7 +30,7 @@ const useScript = (url = '', id = '', agreeTOSAndPPRequired, callBack) => {
       delete window.zEmbed;
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, id]);
+  }, [url, id, agreeTOSAndPPRequired]);
 };
 
 export default useScript;

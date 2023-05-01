@@ -238,7 +238,6 @@ export default function DynaSelectResource(props) {
     allowNew,
     allowEdit,
     checkPermissions = false,
-    filter,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
     statusExport,
@@ -254,6 +253,7 @@ export default function DynaSelectResource(props) {
     isValueValid = false,
     isSelectFlowResource,
   } = props;
+  let {filter} = props;
   const { options = {}, getItemInfo } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -310,7 +310,12 @@ export default function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceContext.resourceType,
+      resourceContext.resourceId
+    ) || {};
   // When adding a new resource and subsequently editing it disable selecting a new connection
   // TODO @Raghu: Using URLs for condition! Do we need it?
   const isAddingANewResource =
@@ -328,6 +333,10 @@ export default function DynaSelectResource(props) {
     }
     if (resourceType === 'connections' && checkPermissions) {
       filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
+    }
+    if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+      filter = {...filter, _httpConnectorId: (merged._httpConnectorId || merged.http._httpConnectorId)};
+      filteredResources = filteredResources.filter(sift(filter));
     }
 
     return filteredResources.map(conn => {
@@ -350,24 +359,31 @@ export default function DynaSelectResource(props) {
 
       return result;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
-  const { merged } =
-    useSelectorMemo(
-      selectors.makeResourceDataSelector,
-      resourceContext.resourceType,
-      resourceContext.resourceId
-    ) || {};
+  }, [resources, optionRef.current, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
-      assistant: merged?.assistant,
+      assistant: (merged?.assistant || merged?.application?.toLowerCase().replace(/\.|\s/g, '')),
     }),
     [merged]
   );
   const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+  let isIclientEditDisable = false;
 
+  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+    const globalIclient = {};
+    const globalIclientCheck = resourceItems.find(res => res?.value === merged?.http?._iClientId);
+    const existingGlobalIclient = !resourceItems.find(res => res?.isGlobal);
+
+    globalIclient.value = merged?.http?._iClientId;
+    globalIclient.label = `${merged?.application} Celigo iClient`;
+    globalIclient.isGlobal = true;
+    if (!globalIclientCheck && existingGlobalIclient) {
+      resourceItems.push(globalIclient);
+    }
+    isIclientEditDisable = !resourceItems.find(res => !res.isGlobal && res?.value === value);
+  }
   const handleAddNewResourceMemo = useCallback(
     () =>
       handleAddNewResource({
@@ -529,7 +545,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value}
+              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value || isIclientEditDisable}
               data-test="editNewResource"
               onClick={handleEditResource}
               buttonSize="small">

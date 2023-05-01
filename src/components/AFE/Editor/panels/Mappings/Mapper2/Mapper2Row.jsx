@@ -16,6 +16,7 @@ import SettingsIcon from '../../../../../icons/SettingsIcon';
 import Mapper2ExtractsTypeableSelect from './Source/Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Generates from './Destination/Mapper2Generates';
+import Mapper2GeneratesWithDropdown from './Destination/Mapper2GeneratesWithDropdown';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
@@ -34,7 +35,6 @@ const useStyles = makeStyles(theme => ({
     },
     '&>div': {
       width: '100%',
-      border: '3px solid transparent',
     },
     '&:nth-of-type(2)': {
       '&>div': {
@@ -141,6 +141,8 @@ const Mapper2Row = React.memo(props => {
   }, shallowEqual);
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
   const mapper2Filter = useSelector(selectors.mapper2Filter);
+  const importSampleData = useSelector(state => selectors.mappingImportSampleData(state));
+  const searchKey = useSelector(state => selectors.searchKey(state));
 
   const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
   const hasChildren = !!children?.length;
@@ -223,16 +225,32 @@ const Mapper2Row = React.memo(props => {
       key={nodeKey}
       className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
       <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
-        <Mapper2Generates
-          key={generate}
-          id={`fieldMappingGenerate-${nodeKey}`}
-          nodeKey={nodeKey}
-          value={generate}
-          disabled={isFilterApplied || generateDisabled || isRequired || disabled}
-          dataType={dataType}
-          onBlur={handleGenerateBlur}
-          isRequired={isRequired}
-          />
+        {(importSampleData && searchKey === undefined && !isFilterApplied)
+          ? (
+            <Mapper2GeneratesWithDropdown
+              key={generate}
+              id={`fieldMappingGenerate-${nodeKey}`}
+              nodeKey={nodeKey}
+              value={generate}
+              disabled={isFilterApplied || generateDisabled || isRequired || disabled}
+              dataType={dataType}
+              onBlur={handleGenerateBlur}
+              isRequired={isRequired}
+              editorLayout={editorLayout}
+            />
+          )
+          : (
+            <Mapper2Generates
+              key={generate}
+              id={`fieldMappingGenerate-${nodeKey}`}
+              nodeKey={nodeKey}
+              value={generate}
+              disabled={isFilterApplied || generateDisabled || isRequired || disabled}
+              dataType={dataType}
+              onBlur={handleGenerateBlur}
+              isRequired={isRequired}
+            />
+          )}
       </div>
 
       {hideExtractField ? null : (

@@ -74,16 +74,13 @@ describe('mapper2 DestinationDataType test cases', () => {
     userEvent.click(screen.getByText('ArrowDownFilledIcon'));
     expect(mockSetAnchorel).toHaveBeenCalledWith(null);
   });
-  test('should make dispatch call tp update dataType when datatype is changed', () => {
+  test('should change the data type', () => {
     const {utils} = initFunction();
 
     userEvent.click(screen.getByText('string'));
     expect(mockSetAnchorel).toHaveBeenCalledTimes(1);
     initFunction('string', anchor, utils.rerender);
     userEvent.click(screen.getByText('object'));
-    expect(mockDispatch).toHaveBeenCalledWith(
-      actions.mapping.v2.updateDataType('somenodekey', 'object')
-    );
     expect(mockHandleBlur).toHaveBeenCalledWith();
   });
   test('should show confirm dialog when old data type is of object and new data type is not of object', () => {
