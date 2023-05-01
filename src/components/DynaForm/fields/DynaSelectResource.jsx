@@ -373,7 +373,7 @@ export default function DynaSelectResource(props) {
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
   let isIclientEditDisable = false;
 
-  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId) && merged?.http?._iClientId) {
     const globalIclient = {};
     const iClientPresentInAccount = resourceItems.find(res => res?.value === merged?.http?._iClientId);
     const existingGlobalIclient = !!(iClientPresentInAccount?.isGlobal);
