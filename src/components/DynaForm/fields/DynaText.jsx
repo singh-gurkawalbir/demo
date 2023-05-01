@@ -16,6 +16,7 @@ import HelpLink from '../../HelpLink';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import { emptyObject } from '../../../constants';
+import { applicationsList } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -113,13 +114,24 @@ function DynaText(props) {
     resourceId
   ) || {};
 
+  const staggedResource = merged || emptyObject;
+  const connection = useSelector(
+    state =>
+      selectors.resource(state, 'connections', staggedResource?._connectionId) ||
+      emptyObject
+  );
+  const applications = applicationsList().filter(app => app?._httpConnectorId);
+  const app = applications.find(a => a._httpConnectorId === (connection?.http?._httpConnectorId || connection?._httpConnectorId)) || {};
+
   if (resourceType === 'connections') {
     dataResourceType = 'connection';
   } else {
     dataResourceType = (merged?.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
   }
-  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
-  const applicationPlaceholder = isApplicationPlaceholder ? `${applicationType} ${dataResourceType}` : '';
+
+  // const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
+  const applicationPlaceholder = isApplicationPlaceholder ? `${(merged.application || app.name)} ${dataResourceType}` : '';
+
   const updatedLabel = `Name your ${dataResourceType}`;
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
