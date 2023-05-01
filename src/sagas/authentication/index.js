@@ -500,14 +500,17 @@ export function* auth({ email, password }) {
       hidden: true,
     });
 
-    if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
+    if (apiAuthentications?.success && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
       yield call(setCSRFToken, apiAuthentications._csrf);
-      yield call(
-        getResourceCollection,
-        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
-      );
+      if (apiAuthentications?.isAccountUser) {
+        // This request will fail in case of owner user
+        yield call(
+          getResourceCollection,
+          actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+        );
+      }
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }

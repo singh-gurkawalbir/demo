@@ -587,8 +587,9 @@ describe('auth saga flow', () => {
       })
     );
     const authResponse = {
-      succes: true,
+      success: true,
       mfaRequired: true,
+      isAccountUser: true,
       _csrf,
     };
 
