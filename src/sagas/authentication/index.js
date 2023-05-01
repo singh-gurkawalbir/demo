@@ -499,12 +499,13 @@ export function* auth({ email, password }) {
       message: 'Authenticating User',
       hidden: true,
     });
+    const resp = yield call(validateSession);
 
     if (apiAuthentications?.success && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
       yield call(setCSRFToken, apiAuthentications._csrf);
-      if (apiAuthentications?.isAccountUser) {
+      if (apiAuthentications?.isAccountUser && resp.mfaSetupRequired) {
         // This request will fail in case of owner user
         yield call(
           getResourceCollection,
@@ -514,7 +515,6 @@ export function* auth({ email, password }) {
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
-    yield call(validateSession);
     const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);
