@@ -129,7 +129,6 @@ function DynaText(props) {
     dataResourceType = (merged?.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
   }
 
-  // const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
   const applicationPlaceholder = isApplicationPlaceholder ? `${(merged.application || app.name)} ${dataResourceType}` : '';
 
   const updatedLabel = `Name your ${dataResourceType}`;
