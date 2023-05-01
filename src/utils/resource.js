@@ -1017,7 +1017,7 @@ export const getAssistantFromResource = resource => {
   if (assistant === 'ebay' || assistant === 'ebayfinance') {
     return 'ebay';
   }
-  if (!assistant && resource.http._httpConnectorId) {
+  if (!assistant && resource?.http?._httpConnectorId) {
     const applications = applicationsList().filter(app => app._httpConnectorId);
     const app = applications.find(a => a._httpConnectorId === resource.http._httpConnectorId) || {};
 
