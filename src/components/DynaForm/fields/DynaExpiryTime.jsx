@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
+import { TimeAgo } from '@celigo/fuse-ui';
 import DynaSelect from './DynaSelect';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 // this can be loggable
 export default function DynaExpiryTime(props) {
@@ -18,7 +18,7 @@ export default function DynaExpiryTime(props) {
   return (
     <>
       <DynaSelect {...props} />
-      {timeValue && <>Expires in <CeligoTimeAgo date={timeValue} /></>}
+      {timeValue && <>Expires in <TimeAgo date={timeValue} /></>}
     </>
   );
 }

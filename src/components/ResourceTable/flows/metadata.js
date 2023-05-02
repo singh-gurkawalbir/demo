@@ -1,5 +1,6 @@
 import React from 'react';
 import pick from 'lodash/pick';
+import { TimeAgo } from '@celigo/fuse-ui';
 import AuditLogs from '../commonActions/AuditLogs';
 import Clone from '../commonActions/Clone';
 import Download from '../commonActions/Download';
@@ -15,7 +16,6 @@ import StatusCell from './cells/StatusCell';
 import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
@@ -74,7 +74,7 @@ export default {
         key: 'lastUpdated',
         heading: 'Last updated',
         isLoggable: true,
-        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+        Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {

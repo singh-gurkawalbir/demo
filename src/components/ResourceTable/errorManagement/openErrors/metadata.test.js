@@ -126,7 +126,7 @@ describe("openErros table's metadata UI tests", () => {
   test('should verify SelectDate coulmn', () => {
     initFunction({errorId: 'someErrorId', occurredAt: '2022-05-18T18:16:31.989Z'}, {}, initialStore);
     headerIndex = indexOfCell(' Timestamp', 'columnheader');
-    cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    cellIndex = indexOfCell('05/18/2022 6:16:31 pm', 'cell');
     expect(screen.getByRole('rowheader')).toBeInTheDocument();
     expectFunction(headerIndex - 1, cellIndex);
   });

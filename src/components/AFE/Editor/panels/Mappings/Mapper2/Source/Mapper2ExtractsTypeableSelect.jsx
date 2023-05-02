@@ -34,6 +34,12 @@ const useStyles = makeStyles(theme => ({
       height: theme.spacing(5),
       paddingRight: theme.spacing(14),
     },
+    '& .MuiInputBase-inputMultiline': {
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      lineHeight: 1.3,
+      overflow: 'visible !important',
+    },
   },
   sourceCustomTextField: {
     '& > * .MuiFilledInput-input': {

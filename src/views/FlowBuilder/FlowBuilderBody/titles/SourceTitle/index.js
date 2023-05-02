@@ -11,8 +11,6 @@ import { selectors } from '../../../../../reducers';
 const useStyles = makeStyles(theme => ({
   sourceTitle: {
     cursor: 'default',
-    width: ({ titleWidth }) => titleWidth,
-    left: ({ xOffset }) => xOffset,
     background: `linear-gradient(${theme.palette.background.default}, 95%, #FFF0)`,
   },
 }));
@@ -45,7 +43,12 @@ const SourceTitle = () => {
   const handleAddGenerator = useHandleAddGenerator();
 
   return (
-    <Title className={classes.sourceTitle} onClick={handleAddGenerator} type="generator">
+    <Title
+      className={classes.sourceTitle} onClick={handleAddGenerator} type="generator"
+      sx={{
+        width: titleWidth,
+        left: xOffset,
+      }}>
       {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
     </Title>
   );
