@@ -125,8 +125,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
 const DateRange = props => {
-  const { isCalendar, setSelectedRange, ranges } = props;
+  const { isCalendar, setSelectedRange, ranges} = props;
   const handleDateRangeSelection = useCallback(({ selection: range }) => {
     let { startDate, endDate } = range;
 
@@ -207,6 +208,10 @@ export default function DateRangeSelector({
       preset,
     },
   );
+  const today = new Date();
+  const lastAuditDate = new Date(today);
+
+  lastAuditDate.setDate(lastAuditDate.getDate() + 1);
   const [reset, setReset] = useState(false);
 
   const [selectedRange, setSelectedRange] = useState(initalValue);
@@ -337,7 +342,7 @@ export default function DateRangeSelector({
                   direction="horizontal"
                   showTime={showTime}
                   maxDate={toDate || new Date()}
-                  minDate={fromDate || addYears(new Date(), -1)}
+                  minDate={fromDate || addYears(lastAuditDate, -1)}
                   inputRanges={[]}
                   showPreview={false}
                 />

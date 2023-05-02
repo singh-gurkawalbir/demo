@@ -299,6 +299,7 @@ export default function Filters(props) {
             value={date}
             showCustomRangeValue
             customPresets={AUDIT_LOGS_RANGE_FILTERS}
+
          />
           <Help
             title="Download"
