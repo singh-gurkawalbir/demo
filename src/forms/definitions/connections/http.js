@@ -239,12 +239,6 @@ export default {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
-    'http._httpConnectorVersionId': {
-      fieldId: 'http._httpConnectorVersionId',
-      type: 'text',
-      visible: false,
-      label: 'API version',
-    },
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
       fieldId: 'http.headers',
@@ -484,7 +478,6 @@ export default {
         collapsed: true,
         label: 'Application details',
         fields: [
-          'http._httpConnectorVersionId',
           'http.baseURI',
           'http.headers',
           'http.mediaType',
