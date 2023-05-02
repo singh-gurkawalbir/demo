@@ -1,5 +1,4 @@
-import { TextField, InputAdornment, Button, FormControl, FormLabel, makeStyles, Typography, IconButton, Paper } from '@material-ui/core';
-// import FormControl from '@material-ui/core/FormControl';
+import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Typography, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useContext, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
@@ -8,26 +7,27 @@ import EditIcon from '../../../icons/EditIcon';
 import SearchIcon from '../../../icons/SearchIcon';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
+import TextButton from '../../../Buttons/TextButton';
+import ActionButton from '../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
-  fieldWrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  dynaSelectWrapper: {
-    width: '100%',
-  },
-  focusVisibleMenuItem: {
-    backgroundColor: theme.palette.secondary.lightest,
-    transition: 'all .8s ease',
-  },
-  dynaSelectMenuItem: {
-    wordBreak: 'break-word',
-  },
-  inputTextField: {
-    '& div': {
-      padding: '0px !important',
+  connectionFieldWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    '& .MuiFilledInput-root': {
+      padding: 0,
+      display: 'flex',
+      alignItems: 'center',
+      paddingRight: theme.spacing(1),
+      '& .MuiFilledInput-input': {
+        border: 'none',
+        height: '38px',
+        padding: '0px 15px',
+      },
     },
+  },
+  searchIconConnection: {
+    color: theme.palette.secondary.light,
   },
   textareaInput: {
     '& .MuiInputBase-input': {
@@ -35,11 +35,26 @@ const useStyles = makeStyles(theme => ({
       lineHeight: 1,
     },
   },
-  editButton: {
-    marginLeft: 400,
+  optionCreateConnection: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
-  createButton: {
-    pl: 2,
+  createConnectionBtn: {
+    padding: theme.spacing(1.5, 0),
+  },
+  dropdownitemsConnection: {
+    width: '100%',
+    '& ul': {
+      '& li': {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '11px 15px',
+        '&:before': {
+          content: 'unset',
+        },
+      },
+    },
   },
 }));
 
@@ -50,7 +65,12 @@ const Option = option => {
 
   const {onEditClick} = data;
 
-  return (<><Typography>{option?.label}</Typography><IconButton onClick={() => onEditClick(option.value)}><EditIcon /></IconButton></>);
+  return (
+    <>
+      <Typography>{option?.label}</Typography>
+      <ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton>
+    </>
+  );
 };
 
 const PaperComponentCustom = options => {
@@ -60,18 +80,17 @@ const PaperComponentCustom = options => {
   const {onCreateClick} = data;
 
   return (
-    <Paper className={classes.paper} {...containerProps}>
+    <Paper className={classes.dropdownitemsConnection} {...containerProps}>
       {children}
       {(
-        <Button
-          fullWidth
-          color="primary"
-          className={classes.buttonBackground}
+        <TextButton
           onMouseDown={event => { event.preventDefault(); onCreateClick(); }}
-        >
-          <AddIcon />
-          <Typography >Create connection</Typography>
-        </Button>
+          bold
+          fullWidth
+          className={classes.createConnectionBtn}
+          startIcon={<AddIcon />}>
+          Create connection
+        </TextButton>
       )}
     </Paper>
   );
@@ -120,7 +139,7 @@ export default function DynaEditable(props) {
             onClose={() => setIsMenuOpen(false)}
             onBlur={() => { setIsMenuOpen(false); setInputValue(selectedValue); }}
             onChange={(event, newValue) => { setIsMenuOpen(false); setRenderValue(newValue?.label); onFieldChange(id, newValue?.value); }}
-            className={classes.inputTextField}
+            className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
             {...isLoggableAttr(true)}
             renderInput={params => (
@@ -128,12 +147,13 @@ export default function DynaEditable(props) {
                 {...params}
                 variant="filled"
                 className={classes.textareaInput}
+                placeholder="Select or create connection"
                 fullWidth
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
                     <InputAdornment position="end">
-                      <SearchIcon />
+                      <SearchIcon className={classes.searchIconConnection} />
                     </InputAdornment>
                   ),
                 }}
