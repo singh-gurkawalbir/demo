@@ -85,7 +85,7 @@ export default {
       allowNew: true,
       allowEdit: true,
       validWhen: {
-        isNot: { values: [''], message: 'Please select a connection' },
+        isNot: { values: [''], message: 'Please select or create a connection' },
       },
     },
     name: {
