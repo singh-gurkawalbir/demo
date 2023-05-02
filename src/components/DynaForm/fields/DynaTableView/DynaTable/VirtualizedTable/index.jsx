@@ -117,7 +117,7 @@ const VirtualizedTable = ({
     if (!rowValid) return INVALID_ITEM_SIZE;
 
     return ITEM_SIZE;
-  }, [items, optionsMapFinal, touched]);
+  }, [INVALID_ITEM_SIZE, ITEM_SIZE, items, optionsMapFinal, touched]);
 
   const rowProps = useMemo(() => ({
     items,

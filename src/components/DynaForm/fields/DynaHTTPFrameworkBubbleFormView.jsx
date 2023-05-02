@@ -9,7 +9,7 @@ import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, handleIsRemoveLogic, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
@@ -102,7 +102,10 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       connection,
       assistantData: connectorMetaData,
     });
-    const finalValues = preSave(formContext.value, stagedRes, { connection });
+    let finalValues = preSave(formContext.value, stagedRes, { connection });
+
+    finalValues = handleIsRemoveLogic(formContext.fields, finalValues);
+
     const newFinalValues = {...finalValues};
 
     stagedRes['/useParentForm'] = selectedApplication === `${isParent}`;
