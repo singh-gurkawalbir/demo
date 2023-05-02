@@ -4,8 +4,8 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    const roleId = newValues['/netsuite/token/auto/roleId'] || newValues['/jdbc/roleId'];
-    const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'] || newValues['/jdbc/account'];
+    let roleId = newValues['/netsuite/token/auto/roleId'];
+    let accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
 
     if (newValues['/netsuite/authType'] === 'token') {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
@@ -16,7 +16,24 @@ export default {
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
     }
+    newValues['/type'] = 'jdbc';
+    newValues['/jdbc/type'] = 'netsuitejdbc';
+    newValues['/jdbc/user'] = 'TBA';
+    newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
+    newValues['/jdbc/concurrencyLevel'] = newValues['/rdbms/concurrencyLevel'];
 
+    if (newValues['/jdbc/serverDataSource'] === 'NetSuite.com') {
+      newValues['/netsuite/authType'] = 'basic';
+      roleId = newValues['/jdbc/roleId'];
+      accId = newValues['/jdbc/account'];
+      newValues['/jdbc/user'] = newValues['/jdbc/email'];
+      delete newValues['/jdbc/email'];
+      delete newValues['/netsuite/tokenAccount'];
+    } else {
+      newValues['/jdbc/email'] = undefined;
+      newValues['/jdbc/password'] = undefined;
+    }
+    const configuredProperties = newValues['/rdbms/options'] || [];
     let properties = [
       { name: 'ServerDataSource', value: newValues['/jdbc/serverDataSource'] },
       { name: 'StaticSchema', value: newValues['/jdbc/StaticSchema'] ? '1' : '0' },
@@ -25,29 +42,10 @@ export default {
     if (roleId) {
       properties = [{ name: 'RoleID', value: roleId }, ...properties];
     }
-
     if (accId) {
       properties = [{ name: 'AccountID', value: accId }, ...properties];
     }
-
-    const configuredProperties = newValues['/rdbms/options'] || [];
-
-    newValues['/type'] = 'jdbc';
-    newValues['/jdbc/type'] = 'netsuitejdbc';
-    newValues['/jdbc/user'] = 'TBA';
-    newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
-    newValues['/jdbc/concurrencyLevel'] = newValues['/rdbms/concurrencyLevel'];
     newValues['/jdbc/properties'] = [...properties, ...configuredProperties];
-
-    if (newValues['/jdbc/serverDataSource'] === 'NetSuite.com') {
-      newValues['/netsuite/authType'] = 'basic';
-      newValues['/jdbc/user'] = newValues['/jdbc/email'];
-      delete newValues['/jdbc/email'];
-      delete newValues['/netsuite/requestLevelCredentials'];
-    } else {
-      newValues['/jdbc/email'] = undefined;
-      newValues['/jdbc/password'] = undefined;
-    }
 
     delete newValues['/netsuite/token/auto'];
     delete newValues['/netsuite/roleId'];
@@ -57,23 +55,10 @@ export default {
     delete newValues['/jdbc/serverDataSource'];
     delete newValues['/jdbc/roleId'];
     delete newValues['/jdbc/account'];
-    delete newValues['/jdbc/environment'];
     delete newValues['/rdbms/concurrencyLevel'];
     delete newValues['/rdbms/options'];
 
     return newValues;
-  },
-  optionsHandler(fieldId, fields) {
-    const { value: env } = fields.find(field => field.id === 'jdbc.environment') || {};
-    const { value: acc } = fields.find(field => field.id === 'jdbc.account') || {};
-
-    if (fieldId === 'jdbc.account' && env !== '') {
-      return { env };
-    }
-
-    if (fieldId === 'jdbc.roleId' && env !== '' && acc !== '') {
-      return { env, acc };
-    }
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -107,21 +92,24 @@ export default {
     },
     'jdbc.authType': {
       fieldId: 'jdbc.authType',
+      defaultValue: r => {
+        // passing '' because basic option not present in dropdown options
+        if (r?.netsuite?.authType === 'basic') return '';
+
+        return r?.netsuite?.authType;
+      },
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite2.com'] }],
     },
     'jdbc.email': {
       fieldId: 'jdbc.email',
       required: true,
+      defaultValue: r => r?.jdbc?.user,
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
     'jdbc.password': {
       fieldId: 'jdbc.password',
       required: true,
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
-    },
-    'jdbc.environment': {
-      fieldId: 'jdbc.environment',
-      netsuiteResourceType: 'environment',
     },
     'netsuite.tokenAccount': {
       id: 'netsuite.tokenAccount',
@@ -137,28 +125,15 @@ export default {
     },
     'jdbc.account': {
       fieldId: 'jdbc.account',
-      netsuiteResourceType: 'account',
       required: true,
-      refreshOptionsOnChangesTo: [
-        'validate',
-        'jdbc.account',
-        'jdbc.environment',
-        'jdbc.roleId',
-      ],
-      defaultValue: r => r?.jdbc?.properties?.find(field => field.name === 'AccountID')?.value || '',
+      defaultValue: r => r?.jdbc?.properties?.find(field => field.name === 'AccountID')?.value,
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
     'jdbc.roleId': {
       fieldId: 'jdbc.roleId',
-      netsuiteResourceType: 'role',
       required: true,
-      refreshOptionsOnChangesTo: [
-        'validate',
-        'jdbc.account',
-        'jdbc.environment',
-        'jdbc.roleId',
-      ],
-      defaultValue: r => r?.jdbc?.properties?.find(field => field.name === 'RoleID')?.value || '',
+      uppercase: true,
+      defaultValue: r => r?.jdbc?.properties?.find(field => field.name === 'RoleID')?.value,
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
     'netsuite.token.auto.account': {
@@ -246,7 +221,6 @@ export default {
               'jdbc.authType',
               'jdbc.email',
               'jdbc.password',
-              'jdbc.environment',
               'netsuite.tokenAccount',
               'jdbc.account',
               'jdbc.roleId',
@@ -299,20 +273,11 @@ export default {
     },
     {
       id: 'testandsavegroup',
-      visibleWhenAll: [
+      visibleWhen: [
         {
           field: 'netsuite.authType',
           is: ['token'],
         },
-        {
-          field: 'jdbc.serverDataSource',
-          is: ['NetSuite2.com'],
-        },
-      ],
-    },
-    {
-      id: 'validateandsave',
-      visibleWhen: [
         {
           field: 'jdbc.serverDataSource',
           is: ['NetSuite.com'],

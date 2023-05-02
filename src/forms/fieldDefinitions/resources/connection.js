@@ -2404,19 +2404,14 @@ export default {
     inputType: 'password',
     label: 'Password',
   },
-  'jdbc.environment': {
-    isLoggable: true,
-    type: 'netsuiteuserroles',
-    label: 'Environment',
-  },
   'jdbc.account': {
-    type: 'netsuiteuserroles',
+    type: 'text',
     label: 'Account ID',
     helpKey: 'connection.netsuite.account',
   },
   'jdbc.roleId': {
     isLoggable: true,
-    type: 'netsuiteuserroles',
+    type: 'text',
     label: 'Role',
     helpKey: 'connection.netsuite.roleId',
   },
