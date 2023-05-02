@@ -95,7 +95,7 @@ selectors.isUserAuthenticated = state => {
 };
 selectors.agreeTOSAndPPRequired = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
-  const { agreeTOSAndPP } = state.sessionInfo.data;
+  const { agreeTOSAndPP = false } = state.sessionInfo.data;
   const isMFAResolved = selectors.isMFAResolved(state);
 
   return isMFAResolved && agreeTOSAndPP === false;

@@ -316,7 +316,7 @@ const routes = [
   { path: getRoutePath('/accesstokens'), breadcrumb: 'API tokens' },
   // Dev tools
   { path: getRoutePath('/resources'), breadcrumb: 'Resources' },
-  { path: getRoutePath('/playground'), breadcrumb: 'Developer playground' },
+  { path: getRoutePath('/playground'), breadcrumb: 'Playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
   { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
   { path: getRoutePath('/reports'), breadcrumb: 'Reports' },

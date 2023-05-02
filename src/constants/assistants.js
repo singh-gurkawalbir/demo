@@ -108,7 +108,6 @@ export const REST_ASSISTANTS = [
 export const CONNECTORS_TO_IGNORE = [
   'yammer',
   'hybris',
-  'etsy',
   'concur',
   'concurall',
   'concurv4',
