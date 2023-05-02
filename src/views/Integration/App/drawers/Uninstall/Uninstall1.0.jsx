@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography, Box } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import { selectors } from '../../../../../reducers';
 import LoadResource from '../../../../../components/LoadResource';
@@ -17,7 +18,6 @@ import InstallationStep from '../../../../../components/InstallStep';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import Loader from '../../../../../components/Loader';
-import Spinner from '../../../../../components/Spinner';
 import {HOME_PAGE_PATH} from '../../../../../constants';
 import messageStore, { message } from '../../../../../utils/messageStore';
 

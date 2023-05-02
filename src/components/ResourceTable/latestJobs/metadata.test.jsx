@@ -1,12 +1,12 @@
 
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import defaultRef from './metadata';
 import FlowStepName from './cells/FlowStepName';
 import FlowStepStatus from './cells/FlowStepStatus';
 import { JOB_STATUS, JOB_TYPES } from '../../../constants';
 import ErrorCell from '../../JobDashboard/RunHistory/ErrorCell';
 import HeaderWithHelpText from '../commonCells/HeaderWithHelpText';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 describe('metdata flows test cases', () => {
   test('should pass the initial render with default value', () => {
@@ -152,7 +152,7 @@ describe('metdata flows test cases', () => {
     const value9Ref = columns[8].Value({ rowData: jobdata });
 
     expect(value9Ref).toEqual(
-      <CeligoTimeAgo date="2022-10-18T06:48:36.672Z" />
+      <TimeAgo date="2022-10-18T06:48:36.672Z" />
     );
   });
 });

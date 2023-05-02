@@ -12,6 +12,7 @@ import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
 import { isEmpty, uniqBy } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import config from './config';
 import '../Filter/queryBuilder.css';
 import {
@@ -26,7 +27,6 @@ import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
 import { stringCompare } from '../../../../../utils/sort';
-import Spinner from '../../../../Spinner';
 import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
@@ -467,6 +467,6 @@ export function SalesforceLookupFilterPanelData({
 export default function NetSuiteLookupFilterPanel(props) {
   const { sampleDataStatus } = useSelector(state => selectors.editor(state, props.editorId));
 
-  return sampleDataStatus === 'requested' ? <Spinner centerAll /> : <SalesforceLookupFilterPanelData {...props} />;
+  return sampleDataStatus === 'requested' ? <Spinner center="screen" /> : <SalesforceLookupFilterPanelData {...props} />;
 }
 

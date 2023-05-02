@@ -20,6 +20,9 @@ const useStyles = makeStyles({
     flexGrow: '1',
     textAlign: 'left',
     width: '100%',
+    '& .Mui-disabled': {
+      '-webkitTextFillColor': 'rgba(103, 122, 137, 0.8)',
+    },
   },
 });
 

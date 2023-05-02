@@ -807,7 +807,10 @@ describe('commitStagedChanges saga', () => {
           path,
           opts: {
             method: 'post',
-            body: newResource,
+            body: {
+              name: 'bob',
+              sandbox: false,
+            },
           },
         })
       );
@@ -1048,7 +1051,23 @@ describe('commitStagedChanges saga', () => {
             path,
             opts: {
               method: 'post',
-              body: merged,
+              body: {
+                _connectionId: '61ee2b2d2959b91c0ab9cc2b',
+                assistant: 'zendesk',
+                resourceType: 'exportRecords',
+                assistantMetadata: {
+                  resource: 'apps',
+                  version: 'v2',
+                  operation: 'list_all_apps',
+                },
+                name: 'Zendesk export',
+                oneToMany: 'false',
+                rest: {
+                  method: 'GET',
+                  relativeURI: '/api/v2/apps.json',
+                },
+                sandbox: false,
+              },
             },
           }), updated],
           [call(apiCallWithRetry, {
@@ -1072,7 +1091,23 @@ describe('commitStagedChanges saga', () => {
           path,
           opts: {
             method: 'post',
-            body: merged,
+            body: {
+              _connectionId: '61ee2b2d2959b91c0ab9cc2b',
+              assistant: 'zendesk',
+              resourceType: 'exportRecords',
+              assistantMetadata: {
+                resource: 'apps',
+                version: 'v2',
+                operation: 'list_all_apps',
+              },
+              name: 'Zendesk export',
+              oneToMany: 'false',
+              rest: {
+                method: 'GET',
+                relativeURI: '/api/v2/apps.json',
+              },
+              sandbox: false,
+            },
           },
         })
         .call(apiCallWithRetry, {
@@ -1157,12 +1192,28 @@ describe('commitStagedChanges saga', () => {
             },
           }), updated],
         ])
-        .call(isDataLoaderFlow, merged)
+        .call(isDataLoaderFlow, {
+          name: 'DataLoader',
+          _exportId: 'e1',
+          _importId: 'i1',
+          disabled: false,
+          _integrationId: '61d3d3bfb006a065998cf267',
+          _connectorId: 'c1',
+          sandbox: false,
+        })
         .call(apiCallWithRetry, {
           path,
           opts: {
             method: 'post',
-            body: merged,
+            body: {
+              name: 'DataLoader',
+              _exportId: 'e1',
+              _importId: 'i1',
+              disabled: false,
+              _integrationId: '61d3d3bfb006a065998cf267',
+              _connectorId: 'c1',
+              sandbox: false,
+            },
           },
         })
         .put(actions.resource.clearStaged(tempId))

@@ -13,7 +13,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { AppShell } from '@celigo/fuse-ui';
+import { AppShell, Spinner } from '@celigo/fuse-ui';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
@@ -32,7 +32,6 @@ import AcceptInvite from '../views/AcceptInvite';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
-import colors from '../theme/colors';
 import AppErroredModal from './AppErroredModal';
 import WithAuth from './AppRoutingWithAuth';
 import CrashReporter from './CrashReporter';
@@ -47,7 +46,6 @@ import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
-import Spinner from '../components/Spinner';
 import Loader from '../components/Loader';
 
 // The makeStyles function below does not have access to the theme.
@@ -284,41 +282,49 @@ export default function App() {
                 <FormOnCancelProvider>
                   <SnackbarProvider
                     sx={{
-                      // '& .SnackbarItem-variantInfo': {
-                      //   bgcolor: colors.celigoWhite,
-                      //   '&:before': {
-                      //     bgcolor: colors.celigoAccent2,
-                      //   },
-                      //   '& div > span > svg': {
-                      //     color: colors.celigoAccent2,
-                      //   },
-                      // },
-                      // '& .SnackbarItem-variantSuccess': {
-                      //   bgcolor: colors.celigoWhite,
-                      //   '&:before': {
-                      //     bgcolor: colors.celigoSuccess,
-                      //   },
-                      //   '& div > span > svg': {
-                      //     color: colors.celigoSuccess,
-                      //   },
-                      // },
-                      // '& .SnackbarItem-variantWarning': {
-                      //   bgcolor: colors.celigoWhite,
-                      //   '&:before': {
-                      //     bgcolor: colors.celigoWarning,
-                      //   },
-                      //   '& div > span > svg': {
-                      //     color: colors.celigoWarning,
-                      //   },
-                      // },
-                      '& .SnackbarItem-variantError': {
-                        bgcolor: colors.celigoWhite,
-                        color: colors.celigoNeutral8,
+                      '& .SnackbarContent-root': {
+                        bgcolor: theme => theme.palette.background.paper,
+                        color: theme => theme.palette.text.primary,
                         '&:before': {
-                          bgcolor: colors.celigoError,
+                          content: '""',
+                          width: 5,
+                          height: '100%',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          borderRadius: '4px 0 0 4px',
+                        },
+                      },
+                      '& .SnackbarItem-variantInfo': {
+                        '&:before': {
+                          bgcolor: theme => theme.palette.primary.main,
                         },
                         '& div > svg': {
-                          color: colors.celigoError,
+                          color: theme => theme.palette.primary.main,
+                        },
+                      },
+                      '& .SnackbarItem-variantSuccess': {
+                        '&:before': {
+                          bgcolor: theme => theme.palette.success.main,
+                        },
+                        '& div > svg': {
+                          color: theme => theme.palette.success.main,
+                        },
+                      },
+                      '& .SnackbarItem-variantWarning': {
+                        '&:before': {
+                          bgcolor: theme => theme.palette.warning.main,
+                        },
+                        '& div > svg': {
+                          color: theme => theme.palette.warning.main,
+                        },
+                      },
+                      '& .SnackbarItem-variantError': {
+                        '&:before': {
+                          bgcolor: theme => theme.palette.error.main,
+                        },
+                        '& div > svg': {
+                          color: theme => theme.palette.error.main,
                         },
                       },
                       '& .SnackbarItem-message': {

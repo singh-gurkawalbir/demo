@@ -2,26 +2,23 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import actions, { auditResourceTypePath } from '../../actions';
 import { selectors } from '../../reducers';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import LoadResources from '../LoadResources';
-import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
 import { getAuditLogFilterKey } from '../../constants/auditLog';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     width: '100%',
     height: '100%',
   },
   tableContainer: {
     height: 'calc(100% - 69px)',
-  },
-  spinnerContainer: {
-    margin: theme.spacing(1),
   },
 }));
 
@@ -88,7 +85,7 @@ export default function AuditLog({
       resources={integrationId ? resourcesToLoad : [...resourcesToLoad, 'integrations']}>
       <>
         {isLoadingAuditLog
-          ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
+          ? <Spinner center="horizontal" size="large" /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
                 resourceDetails={resourceDetails}

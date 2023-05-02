@@ -4,13 +4,13 @@ import clsx from 'clsx';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { matchPath, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import NoResultTypography from '../../NoResultTypography';
 import ResourceTable from '../../ResourceTable';
-import Spinner from '../../Spinner';
 import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
@@ -416,7 +416,7 @@ export default function ErrorTable({
         filterKey={filterKey}
       />
       {isFreshDataLoad ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <>
           <ErrorTableWithPanel

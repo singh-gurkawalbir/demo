@@ -65,12 +65,12 @@ describe('agents metadata UI tests', () => {
     expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Last heartbeat', 'columnheader');
-    cellI = existanceOfCellInDom('03/20/2021 5:17:55 am', 'cell');
+    cellI = existanceOfCellInDom('03/19/2021 11:47:55 pm', 'cell');
 
     expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Last updated', 'columnheader');
-    cellI = existanceOfCellInDom('03/20/2020 5:17:55 am', 'cell');
+    cellI = existanceOfCellInDom('03/19/2020 11:47:55 pm', 'cell');
     expectFunction(headerI - 1, cellI);
 
     headerI = existanceOfCellInDom('Access token', 'columnheader');

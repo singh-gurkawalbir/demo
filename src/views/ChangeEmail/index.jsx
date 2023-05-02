@@ -1,10 +1,10 @@
 import React, { useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
-import Spinner from '../../components/Spinner';
 import { ACTIVE_SESSION_MESSAGE } from '../../constants';
 import UserSignInPage from '../../components/UserSignInPage';
 
@@ -41,5 +41,5 @@ export default function ChangeEmail(props) {
     );
   }
 
-  return <Spinner centerAll />;
+  return <Spinner center="screen" />;
 }

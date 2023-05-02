@@ -403,7 +403,7 @@ describe('Flows index file UI tests', () => {
       const row = screen.getAllByRole('row');
 
       expect(row[0].textContent).toBe('NameErrorsLast updatedLast runMappingScheduleSettingsRunOff/OnActions');
-      expect(row[1].textContent).toBe(' Bulk insert with harcode and mulfield mapping settingsSuccess08/13/2021 1:32:49 pm04/23/2020 4:38:41 pm');
+      expect(row[1].textContent).toBe(' Bulk insert with harcode and mulfield mapping settingsSuccess08/13/2021 8:02:49 am04/23/2020 11:08:41 am');
     });
     test('should test all the use-efftects function', async () => {
       const mockDispatch = jest.fn();

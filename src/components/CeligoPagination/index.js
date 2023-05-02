@@ -4,10 +4,10 @@ import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { Spinner } from '@celigo/fuse-ui';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
 import useHandleNextAndPreviousPage from '../../hooks/useHandleNextAndPreviousPage';
 
@@ -48,10 +48,6 @@ const useStyles = makeStyles(theme => ({
   spinnerWrapper: {
     width: 32,
     height: 27,
-  },
-  spinner: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
   },
 }));
 
@@ -112,7 +108,10 @@ export default function Pagination({
         {loading ? (
           <div className={classes.spinnerWrapper}>
             <Spinner
-              className={classes.spinner}
+              sx={{
+                ml: 1,
+                mr: 1,
+              }}
               />
           </div>
 

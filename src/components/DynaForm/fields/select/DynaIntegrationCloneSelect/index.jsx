@@ -3,8 +3,8 @@ import {useSelector } from 'react-redux';
 import { FormControl, FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import Select, { components } from 'react-select';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
-import Spinner from '../../../../Spinner';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import FieldHelp from '../../../FieldHelp';
 import FieldMessage from '../../FieldMessage';
@@ -19,9 +19,6 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     width: '100%',
-  },
-  spinnerWrapper: {
-    textAlign: 'center',
   },
   environment: {
     display: 'flex',
@@ -100,7 +97,6 @@ export const CloneSelect = props => {
 };
 
 export default function DynaIntegrationCloneSelect(props) {
-  const classes = useStyles();
   const { integrationId, isValid } = props;
   const isLoadingCloneFamily = useSelector(state => selectors.isLoadingCloneFamily(state, integrationId));
   const cloneList = useSelector(state => selectors.cloneFamily(state, integrationId));
@@ -117,7 +113,7 @@ export default function DynaIntegrationCloneSelect(props) {
   );
 
   if (isLoadingCloneFamily) {
-    return <Spinner className={classes.spinnerWrapper} />;
+    return <Spinner sx={{textAlign: 'center'}} />;
   }
 
   return (

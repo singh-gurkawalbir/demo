@@ -104,7 +104,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.secondary.main,
-    fontSize: props => props.transparent ? 13 : 17,
   },
   actionButton: {
     padding: 0,
@@ -133,7 +132,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-start',
       },
     },
-    '& >*.MuiTypography-root': {
+    '& >.MuiTypography-root': {
       fontSize: 13,
     },
     '& > * svg': {
@@ -173,7 +172,7 @@ const variantIcon = {
  * props.fullWidth : set to true for full width notification.
  */
 export default function NotificationToaster(props) {
-  const classes = useStyles(props);
+  const classes = useStyles();
   const {
     className,
     children,
@@ -214,7 +213,10 @@ export default function NotificationToaster(props) {
       aria-describedby="client-snackbar"
       elevation={4}
       message={(
-        <Typography component="div" id="client-snackbar" className={classes.message}>
+        <Typography
+          component="div" id="client-snackbar" className={classes.message}
+          sx={{ fontSize: props.transparent ? 13 : 17,
+          }}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
           {children}
         </Typography>

@@ -50,10 +50,10 @@ function initRefreshSearchFilters(props = {}) {
   return renderWithProviders(<RefreshSearchFilters {...props} />, {initialStore});
 }
 
-jest.mock('../../../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../Spinner'),
-  default: () => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (
     <div>Loading...</div>
 
   ),

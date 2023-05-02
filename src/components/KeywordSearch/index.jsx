@@ -7,10 +7,9 @@ import { selectors } from '../../reducers';
 export default function KeywordSearch({
   filterKey,
   placeholder = 'Search…',
-  size = 'small',
+  size = 'large',
   onFocus,
-  sx,
-  className}) {
+  sx}) {
   const dispatch = useDispatch();
   const filter = useSelector(state => selectors.filter(state, filterKey));
 
@@ -36,6 +35,7 @@ export default function KeywordSearch({
 
   return (
     <SearchInput
+      autoFocus
       value={filter?.keyword || ''}
       onChange={handleKeywordChange}
       onFocus={onFocus}
@@ -43,7 +43,6 @@ export default function KeywordSearch({
       debounceDuration={300}
       size={size}
       sx={sx}
-      className={className}
     />
   );
 }

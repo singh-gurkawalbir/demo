@@ -2,7 +2,7 @@ import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { VariableSizeList } from 'react-window';
-import Spinner from '../../../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import TableRow, { isCellValid } from '../TableRow';
 
 const VirtualizedListRow = ({index, style, data}) => {
@@ -157,7 +157,7 @@ const VirtualizedTable = ({
   if (isAnyColumnFetching) {
     return (
       <div style={{height: `${maxHeightOfSelect}px`}}>
-        <Spinner centerAll />
+        <Spinner center="screen" />
       </div>
     );
   }

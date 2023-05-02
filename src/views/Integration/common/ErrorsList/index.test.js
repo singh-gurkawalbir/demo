@@ -253,7 +253,7 @@ describe('ErrorsListDrawer UI tests', () => {
     const header = rows.find(({textContent}) => textContent === 'ApplicationTypeFlow step nameErrorsLast open error');
 
     expect(header).toBeInTheDocument();
-    const rowContent = rows.find(({textContent}) => textContent === 'ImportPost customer to HubSpot companies4 errors08/04/2022 4:39:35 pm');
+    const rowContent = rows.find(({textContent}) => textContent === 'ImportPost customer to HubSpot companies4 errors08/04/2022 11:09:35 am');
 
     expect(rowContent).toBeInTheDocument();
   });
@@ -264,7 +264,7 @@ describe('ErrorsListDrawer UI tests', () => {
     const rows = screen.getAllByRole('row');
 
     expect(rows[0].textContent).toBe('ApplicationTypeFlow step nameErrorsLast open error');
-    expect(rows[1].textContent).toBe('ImportPost customer to HubSpot companies4 errors08/04/2022 4:39:35 pm');
+    expect(rows[1].textContent).toBe('ImportPost customer to HubSpot companies4 errors08/04/2022 11:09:35 am');
   });
   test('should click the close button', async () => {
     iniStoreAndRender(0);

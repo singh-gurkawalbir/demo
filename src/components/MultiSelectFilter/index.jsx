@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   moreIcon: {
-    marginTop: -theme.spacing(1),
+    marginTop: theme.spacing(-1),
   },
   heading: {
     fontWeight: 'bold',
@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel, disabled}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -202,6 +202,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
     <>
       {ButtonLabel ? (
         <OutlinedButton
+          disabled={disabled}
           onClick={toggleClick}
           endIcon={<ArrowDownIcon />}
           color="secondary"
@@ -209,7 +210,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
           {ButtonLabel}
         </OutlinedButton>
       ) : (
-        <ActionButton onClick={toggleClick}>
+        <ActionButton disabled={disabled} onClick={toggleClick}>
           <Icon />
         </ActionButton>
       )}

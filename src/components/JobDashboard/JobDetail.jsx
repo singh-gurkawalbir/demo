@@ -7,13 +7,13 @@ import clsx from 'clsx';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import ChildJobDetail, { JobDetailsStyles } from './ChildJobDetail';
 import { JOB_STATUS } from '../../constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobActionsMenu from './JobActionsMenu';
-import Spinner from '../Spinner';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import DateTimeDisplay from '../DateTimeDisplay';
@@ -172,7 +172,7 @@ export default function JobDetail({
   }
   function RowIcon({expanded, childLoaded}) {
     if (expanded && !childLoaded) {
-      return <Spinner size={24} />;
+      return <Spinner />;
     }
 
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;

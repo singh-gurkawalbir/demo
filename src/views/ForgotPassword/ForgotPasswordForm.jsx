@@ -3,11 +3,11 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { TextButton, FilledButton} from '../../components/Buttons';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
-import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
@@ -17,8 +17,8 @@ const useStyles = makeStyles(theme => ({
   submit: {
     marginTop: theme.spacing(4),
   },
-  forgotPasswordSpinner: {
-    marginTop: theme.spacing(1),
+  cancelBtn: {
+    fontSize: theme.spacing(2),
   },
 }));
 export default function ForgotPassword({setShowError, email}) {
@@ -97,7 +97,7 @@ export default function ForgotPassword({setShowError, email}) {
         />
         <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 
-        { isAuthenticating ? <Spinner className={classes.forgotPasswordSpinner} />
+        { isAuthenticating ? <Spinner sx={{mt: 1}} />
           : (
             <FilledButton
               data-test="submit"

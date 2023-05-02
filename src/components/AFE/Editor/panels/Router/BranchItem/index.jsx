@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     position: 'absolute',
-    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
+    left: 16,
   },
   listItem: {
     display: 'flex',
@@ -197,11 +197,14 @@ export default function BranchItem({
         >
           <AccordionSummary
             classes={{
-              expandIcon: classes.expandIcon,
+              expandIconWrapper: classes.expandIcon,
               focused: classes.focused,
             }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
+            sx={{
+              ...(allowSorting ? {'& .MuiAccordionSummary-expandIconWrapper': {left: 40}} : {}),
+            }}
           >
             <div className={classes.summaryContainer}>
               {allowSorting && <DragHandle />}

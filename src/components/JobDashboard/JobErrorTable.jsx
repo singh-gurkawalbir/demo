@@ -3,6 +3,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useRouteMatch} from 'react-router-dom';
 import { TablePagination, IconButton, Tooltip, Divider, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -11,7 +12,6 @@ import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
 import ChevronRight from '../icons/ArrowRightIcon';
 import ExpandMore from '../icons/ArrowDownIcon';
-import Spinner from '../Spinner';
 import CeligoTable from '../CeligoTable';
 import DateTimeDisplay from '../DateTimeDisplay';
 import useConfirmDialog from '../ConfirmDialog';
@@ -425,7 +425,7 @@ export default function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-      <Spinner centerAll>
+      <Spinner center="screen" >
         Uploading...
       </Spinner>
       )}
@@ -454,7 +454,7 @@ export default function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
-        <Spinner centerAll>
+        <Spinner center="screen" >
           Loading job errors
         </Spinner>
 

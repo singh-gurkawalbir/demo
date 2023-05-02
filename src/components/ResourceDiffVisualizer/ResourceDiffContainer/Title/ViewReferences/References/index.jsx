@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Tabs, Tab } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import Spinner from '../../../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import CeligoTable from '../../../../../CeligoTable';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
@@ -81,7 +81,7 @@ export default function References({ resourceId, resourceType, integrationId }) 
   }, [dispatch, resourceType, resourceId]);
 
   if (!resourceReferences) {
-    return <Spinner centerAll />;
+    return <Spinner center="screen" />;
   }
 
   if (!resourceReferences.length) {

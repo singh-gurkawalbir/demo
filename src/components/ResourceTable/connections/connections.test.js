@@ -25,10 +25,10 @@ jest.mock('../commonCells/ConnectorName', () => ({
   default: ({resource}) => (<span>{resource.connectorName}</span>),
 }));
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: ({date}) => (<span>{date}</span>),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: ({date}) => (<span>{date}</span>),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -514,14 +514,12 @@ describe('test suite for Connections', () => {
         connectorName: 'HTTP',
         lastModified: '1 week ago',
       }];
+      const connections = ['conn1', 'conn2'];
 
       mutateStore(globalStore, draft => {
         draft.session.connections.tradingPartnerConnections = {
           conn123: {
-            connections: [
-              { name: 'conn1' },
-              { name: 'conn2' },
-            ],
+            connections: connections.map(name => ({name})),
           },
         };
       });
@@ -548,7 +546,7 @@ describe('test suite for Connections', () => {
       expect(confirmDialog).toContainElement(confirmButton);
       expect(confirmDialog).toContainElement(cancelButton);
 
-      const connectionsList = Array.from(document.querySelectorAll('p'));
+      const connectionsList = Array.from(document.querySelectorAll('p')).filter(ele => connections.includes(ele.textContent.trim()));
 
       connectionsList.forEach(connection => expect(confirmDialog).toContainElement(connection));
       const connectionsListNames = connectionsList.map(ele => ele.textContent.trim());

@@ -129,7 +129,6 @@ const useStyles = makeStyles(theme => ({
     '& span': {
       padding: [[0, 5]],
     },
-    backgroundColor: 'transparent',
   },
   iconHoverSandbox: {
     '&:hover svg': {

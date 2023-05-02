@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { FormLabel } from '@mui/material';
-import Spinner from '../../../../../Spinner';
+import { Spinner } from '@celigo/fuse-ui';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
 

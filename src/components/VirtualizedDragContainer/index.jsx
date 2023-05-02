@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { areEqual, VariableSizeList } from 'react-window';
+import { Spinner } from '@celigo/fuse-ui';
 import SortableList from '../Sortable/SortableList';
 import SortableItem from '../Sortable/SortableItem';
 import useSortableList from '../../hooks/useSortableList';
 import MappingRow from '../Mapping/MappingRow';
-import Spinner from '../Spinner';
 import { emptyObject } from '../../constants';
 
 function itemKey(index, data) {

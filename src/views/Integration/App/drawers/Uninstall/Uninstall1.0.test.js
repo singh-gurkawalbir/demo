@@ -52,10 +52,10 @@ jest.mock('../../../../../components/Loader', () => ({
 }));
 
 // Mocking child component Spinner as part of unit testing
-jest.mock('../../../../../components/Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../../components/Spinner'),
-  default: () => <div>Mocking Spinner</div>,
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => <div>Mocking Spinner</div>,
 }));
 
 // Mocking LoadResources component Spinner as part of unit testing

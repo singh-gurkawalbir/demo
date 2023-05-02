@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
+import { Typography } from '@mui/material';
 import StatusCircle from '../../StatusCircle';
 import TextButton from '../TextButton';
 
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     textAlign: 'left',
     padding: theme.spacing(0, 0, 0, 0.5),
-    '& > * .MuiButton-startIcon': {
+    '& > .MuiButton-startIcon': {
       marginRight: 0,
     },
   },
@@ -43,7 +44,7 @@ export default function Status({ children, className, size, variant, onClick, da
   return (
     <div className={clsx(classes.statusTextContainer, className)}>
       <StatusCircle variant={variant} size={size} />
-      {children}
+      <Typography variant="body2">{children}</Typography>
     </div>
   );
 }

@@ -5,16 +5,15 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { TimeAgo, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ChildJobDetail from './ChildJobDetail';
 import JobStatusWithTag from '../../ResourceTable/runHistory/JobStatusWithTag';
 import JobActionsMenu from './JobActionsMenu';
-import Spinner from '../../Spinner';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import { getJobDuration } from '../../../utils/errorManagement';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { getTextAfterCount } from '../../../utils/string';
 import { JobDetailsStyles } from '../ChildJobDetail';
 
@@ -67,7 +66,7 @@ export default function JobDetail({
 
   function RowIcon({expanded, childLoaded}) {
     if (expanded && !childLoaded) {
-      return <Spinner size={24} />;
+      return <Spinner />;
     }
 
     return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
@@ -94,8 +93,8 @@ export default function JobDetail({
           <JobStatusWithTag job={job} />
         </TableCell>
         <TableCell className={classes.duration}>{getJobDuration(job)}</TableCell>
-        <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><CeligoTimeAgo date={job.startedAt} /></TableCell>
-        <TableCell className={classes.completed}><CeligoTimeAgo date={job.endedAt} /></TableCell>
+        <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><TimeAgo date={job.startedAt} /></TableCell>
+        <TableCell className={classes.completed}><TimeAgo date={job.endedAt} /></TableCell>
         <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>

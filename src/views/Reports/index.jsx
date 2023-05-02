@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect, useCallback, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generatePath, Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import CeligoSelect from '../../components/CeligoSelect';
@@ -19,7 +20,6 @@ import ViewReportDetails from './ViewReportDetails';
 import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
-import Spinner from '../../components/Spinner';
 import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
@@ -58,9 +58,6 @@ const useStyles = makeStyles(theme => ({
   reportsHeading: {
     display: 'flex',
     alignItems: 'center',
-  },
-  reportsRefreshSpinner: {
-    margin: 20,
   },
 }));
 const defaultFilter = {
@@ -169,14 +166,15 @@ const RefreshPaginationComponent = ({resourceType}) => {
   );
 };
 const Loading = ({resourceType}) => {
-  const classes = useStyles();
   const resourceStatus = useSelectorMemo(
     selectors.makeAllResourceStatusSelector,
     resourceType || ''
   );
   const {isReady: isDataReadyAfterUserRefresh} = resourceStatus?.[0] || {};
 
-  return !isDataReadyAfterUserRefresh ? <Spinner loading size="large" className={classes.reportsRefreshSpinner} /> : null;
+  return !isDataReadyAfterUserRefresh ? (
+    <Spinner center="horizontal" size="large" sx={{m: '20px'}} />
+  ) : null;
 };
 
 export default function Reports() {

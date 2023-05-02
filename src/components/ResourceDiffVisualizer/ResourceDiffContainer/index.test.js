@@ -7,10 +7,10 @@ import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import ResourceDiffContainer from '.';
 import { getCreatedStore } from '../../../store';
 
-jest.mock('../../Spinner', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../Spinner'),
-  default: () => (<div data-testid="spinner" />),
+  ...jest.requireActual('@celigo/fuse-ui'),
+  Spinner: () => (<div data-testid="spinner" />),
 }));
 
 function initResourceDiffContainer(props = {}, initialStore) {

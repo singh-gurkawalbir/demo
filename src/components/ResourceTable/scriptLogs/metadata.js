@@ -1,5 +1,5 @@
 import React from 'react';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 import ResourceName from '../../ResourceName';
 import TextOverflowCell from '../../TextOverflowCell';
 import ViewLogDetail from './actions/ViewLogDetail';
@@ -9,7 +9,7 @@ export default {
     {
       key: 'time',
       heading: 'Time',
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.time} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.time} />,
     },
     {
       key: 'stepName',

@@ -1,8 +1,8 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import HeaderWithHelpText from '../commonCells/HeaderWithHelpText';
 import FlowStepName from './cells/FlowStepName';
 import FlowStepStatus from './cells/FlowStepStatus';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import ErrorCell from '../../JobDashboard/RunHistory/ErrorCell';
 
 export default {
@@ -58,7 +58,7 @@ export default {
       key: 'completed',
       heading: 'Completed',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.endedAt} />,
     },
   ],
 };

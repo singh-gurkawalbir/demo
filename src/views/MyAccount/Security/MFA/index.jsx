@@ -1,11 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { Typography } from '@mui/material';
-import { Switch } from '@celigo/fuse-ui';
+import { Typography, Box } from '@mui/material';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../components/PanelHeader';
 import Help from '../../../../components/Help';
-import Spinner from '../../../../components/Spinner';
 import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -16,7 +15,6 @@ import NotificationToaster from '../../../../components/NotificationToaster';
 import { MFA_URL } from '../../../../constants';
 import infoText from '../../../../components/Help/infoText';
 import AccountSettings from './AccountSettings';
-import ActionGroup from '../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,7 +86,7 @@ function MyUserSettings() {
 
   return (
     <div className={classes.userSettings}>
-      <ActionGroup>
+      <Box display="flex" flexDirection="row" alignItems="center" lineHeight="1.2">
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Switch
           onChange={handleEnableMFA}
@@ -101,7 +99,7 @@ function MyUserSettings() {
           title="Enable MFA"
           helpKey="mfa.enable"
           sx={{ml: 0.5}} />
-      </ActionGroup>
+      </Box>
       { isMFAEnabled || isMFASetupIncomplete ? (
         <div className={classes.mfaConfig}>
           <MFAConfiguration />
@@ -134,7 +132,7 @@ function MFADetails() {
       <>
         <div className={classes.collapseContainer}>
           <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
+            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center="screen" /> }
           </CollapsableContainer>
         </div>
         <div className={classes.collapseContainer}>
@@ -146,7 +144,7 @@ function MFADetails() {
 
   return (
     <div className={classes.collapseContainer}>
-      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />}
+      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner center="screen" />}
     </div>
   );
 }

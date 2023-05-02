@@ -1,6 +1,6 @@
 
 import React from 'react';
-import CeligoTimeAgo from '../../../CeligoTimeAgo';
+import { TimeAgo } from '@celigo/fuse-ui';
 import metadata from './metadata';
 
 describe('dynaChildLicenses metaData tests', () => {
@@ -12,7 +12,7 @@ describe('dynaChildLicenses metaData tests', () => {
       rowData: {created: '2018-06-06T00:00:00.000Z'},
     });
 
-    expect(timeStamp).toEqual(<CeligoTimeAgo date="2018-06-06T00:00:00.000Z" />);
+    expect(timeStamp).toEqual(<TimeAgo date="2018-06-06T00:00:00.000Z" />);
 
     let status = useColumns.find(eachColumn => eachColumn.key === 'status');
     let integrationStatus = status.Value({

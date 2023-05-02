@@ -1,20 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
-import { Switch } from '@celigo/fuse-ui';
-import Spinner from '../../../../Spinner';
+import { Switch, Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
-const useStyles = makeStyles(() => ({
-  spinnerOnOff: {
-    marginLeft: 12,
-  },
-}));
-
 export default function OnOffCell({ ssLinkedConnectionId, flow, tooltip }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const { defaultConfirmDialog } = useConfirmDialog();
   const flowName = flow.ioFlowName || flow.name || `Unnamed (id: ${flow._id})`;
@@ -49,7 +40,7 @@ export default function OnOffCell({ ssLinkedConnectionId, flow, tooltip }) {
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner className={classes.spinnerOnOff} />;
+    return <Spinner sx={{ml: 1.5}} />;
   }
 
   return (

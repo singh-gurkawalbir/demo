@@ -3,8 +3,8 @@ import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner } from '@celigo/fuse-ui';
 import { getDomain } from '../../../utils/resource';
-import Spinner from '../../../components/Spinner';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -166,14 +166,14 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <Spinner centerAll isOverlay> Loading </Spinner>
+      <Spinner center="screen" overlay> Loading </Spinner>
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-      <Spinner centerAll isOverlay> Loading </Spinner>
+      <Spinner center="screen" overlay> Loading </Spinner>
       )}
       {suiteletUrl && (
         <Iframe

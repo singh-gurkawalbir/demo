@@ -128,9 +128,7 @@ export default function InstallBase(props) {
         parentUrl="/connectors"
         title={`View / Update Install Base: ${connector.name}`}>
         <div className={classes.actions}>
-          <KeywordSearch
-            filterKey={filterKey}
-          />
+          <KeywordSearch filterKey={filterKey} />
           <TextButton onClick={handleUpdateClick}>
             {selectedUsers ? `Update ${selectedUsers} user(s)` : 'Update'}
           </TextButton>

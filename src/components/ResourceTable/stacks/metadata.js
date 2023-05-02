@@ -1,4 +1,5 @@
 import React from 'react';
+import { TimeAgo } from '@celigo/fuse-ui';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import StackSystemToken from '../../StackSystemToken';
 import Delete from '../commonActions/Delete';
@@ -7,7 +8,6 @@ import AuditLogs from '../commonActions/AuditLogs';
 import GenerateToken from '../commonActions/GenerateToken';
 import Edit from '../commonActions/Edit';
 import StackShares from './actions/StackShares';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
@@ -48,7 +48,7 @@ export default {
       key: 'lastUpdated',
       heading: 'Last updated',
       isLoggable: true,
-      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <TimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {

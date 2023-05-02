@@ -4,6 +4,7 @@ import { Divider, Typography, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import clsx from 'clsx';
+import { Spinner } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
 import { TextButton } from '../../../../Buttons';
@@ -13,7 +14,6 @@ import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGrou
 import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
 import { message } from '../../../../../utils/messageStore';
-import Spinner from '../../../../Spinner';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import NotificationToaster from '../../../../NotificationToaster';
 
@@ -189,7 +189,7 @@ export default function RouterPanel({ editorId }) {
       <Divider orientation="horizontal" className={classes.divider} />
 
       {isLoading ? (
-        <Spinner centerAll />
+        <Spinner center="screen" />
       ) : (
         <SortableContainer
           className={classes.branchList}

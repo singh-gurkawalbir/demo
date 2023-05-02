@@ -64,6 +64,11 @@ export default function IntegrationTabs({ tabs, className }) {
             sx={{
               minWidth: 'auto',
               fontSize: 14,
+              padding: '9px 12px 4px',
+              lineHeight: 1.75,
+              '&>.MuiTab-iconWrapper': {
+                marginRight: theme => theme.spacing(0.5),
+              },
             }}
           />
         ))}

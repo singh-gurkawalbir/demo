@@ -7,11 +7,18 @@ import PropTypes from 'prop-types';
 const useStyles = makeStyles(theme => ({
   editorButton: {
     marginLeft: theme.spacing(1),
-    display: 'inline-block',
+    display: 'flex',
     padding: 0,
     borderRadius: 2,
     color: theme.palette.secondary.light,
     cursor: 'pointer',
+    '& > span': {
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     '&:hover': {
       background: 'transparent',
       '& > span': {

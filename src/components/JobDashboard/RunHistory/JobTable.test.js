@@ -4,10 +4,10 @@ import React from 'react';
 import JobTable from './JobTable';
 import {renderWithProviders} from '../../../test/test-utils';
 
-jest.mock('../../CeligoTimeAgo', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../CeligoTimeAgo'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TimeAgo: props => (
     <div>{props.date}</div>
   ),
 }));

@@ -3,13 +3,13 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography, Box } from '@mui/material';
+import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import InstallationStep from '../../../../../components/InstallStep';
 import { HOME_PAGE_PATH, UNINSTALL_STEP_TYPES, RESOURCE_DEPENDENCIES } from '../../../../../constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
-import Spinner from '../../../../../components/Spinner';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import openExternalUrl from '../../../../../utils/window';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
@@ -162,7 +162,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   }
   if (!uninstallSteps || uninstallSteps.length === 0) {
     return (
-      <Spinner centerAll />
+      <Spinner center="screen" />
     );
   }
 

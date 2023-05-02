@@ -29,6 +29,9 @@ export const resourceButtonStyles = makeStyles(theme => ({
     fontSize: 16,
     fontFamily: 'source sans pro',
     marginRight: theme.spacing(1),
+    flexDirection: 'column',
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     '& >* svg': {
       marginBottom: 5,
       fontSize: `${theme.spacing(6)}px !important`,
