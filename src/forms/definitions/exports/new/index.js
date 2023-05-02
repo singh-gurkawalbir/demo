@@ -94,6 +94,7 @@ export default {
       name: '/_connectionId',
       type: 'selectresource',
       resourceType: 'connections',
+      showEditableDropdown: true,
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,

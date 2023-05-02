@@ -245,6 +245,7 @@ export default function DynaSelectResource(props) {
     hideOnEmptyList = false,
     appTypeIsStatic = false,
     statusExport,
+    showEditableDropdown,
     ignoreEnvironmentFilter,
     resourceContext,
     skipPingConnection,
@@ -264,7 +265,6 @@ export default function DynaSelectResource(props) {
   const [newResourceId, setNewResourceId] = useState(generateNewId());
 
   const optionRef = useRef(options);
-  const isNewStepConnField = (id === 'connection');
 
   useEffect(() => {
     if (!isEqual(optionRef.current, options)) {
@@ -515,7 +515,7 @@ export default function DynaSelectResource(props) {
           />
           ) : (
             <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-              { isNewStepConnField ? <DynaSelectConnection {...props} onCreateClick={handleAddNewResourceMemo} onEditClick={handleEditResource} options={resourceItems} />
+              { showEditableDropdown ? <DynaSelectConnection {...props} onCreateClick={handleAddNewResourceMemo} onEditClick={handleEditResource} options={resourceItems} />
                 : (
                   <DynaSelect
                     {...props}
@@ -537,7 +537,7 @@ export default function DynaSelectResource(props) {
 
           )}
           <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
-            {allowNew && !isNewStepConnField && (
+            {allowNew && !showEditableDropdown && (
             <IconButtonWithTooltip
               tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
               data-test="addNewResource"
@@ -547,7 +547,7 @@ export default function DynaSelectResource(props) {
             </IconButtonWithTooltip>
             )}
 
-            {allowEdit && !isNewStepConnField && (
+            {allowEdit && !showEditableDropdown && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
               tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value || isIclientEditDisable}

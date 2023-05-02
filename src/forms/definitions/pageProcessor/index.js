@@ -190,6 +190,7 @@ export default {
       type: 'selectresource',
       checkPermissions: true,
       resourceType: 'connections',
+      showEditableDropdown: true,
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
