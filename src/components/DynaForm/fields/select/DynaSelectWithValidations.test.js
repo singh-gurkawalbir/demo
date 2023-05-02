@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaSelectWithValidations from './DynaSelectWithValidations';
 
-const props = {formKey: '_formKey', value: '/file/name', options: [{items: [{value: '/file/name', fieldsToValidate: ['_field1'], description: '_description', regex: {test: k => !!k}}]}]};
+const props = {formKey: '_formKey', value: '/file/name', options: [{items: [{value: '/file/name', fieldsToValidate: ['_field1'], description: '_description', regex: 'something'}]}]};
 
 async function initDynaSelectWithValidations(props = {}) {
   const initialStore = reduxStore;

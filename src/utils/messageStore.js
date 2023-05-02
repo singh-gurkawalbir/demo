@@ -264,7 +264,7 @@ const MFA = {
   ACCOUNT_SETTINGS_UPDATED: 'MFA account settings saved successfully.',
   ENABLED: 'MFA enabled successfully.',
   DISABLED: 'MFA disabled successfully.',
-  REAUTHENTICATE_ACCOUNT: '    Re-authenticate your account <br /> Enter your account password to confirm if you want to reset MFA.',
+  REAUTHENTICATE_ACCOUNT: 'Enter your account password to confirm if you want to reset MFA.',
   PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
   RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
   href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,

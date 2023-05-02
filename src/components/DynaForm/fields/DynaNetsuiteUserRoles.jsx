@@ -82,7 +82,6 @@ export default function DynaNetsuiteUserRolesOptions(props) {
   };
 
   // we dont want to show the fields unless the connection is validated
-
   if (!userRoles) {
     return null;
   }

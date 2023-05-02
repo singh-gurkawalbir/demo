@@ -41,7 +41,7 @@ export default function XmlParseRules({ editorId }) {
     if (!formContext.value) return;
     const rule = {
       ...formContext.value,
-      V0_json: formContext.value.V0_json === 'true',
+      V0_json: formContext.value.V0_json,
     };
 
     dispatch(actions.editor.patchRule(editorId, rule));

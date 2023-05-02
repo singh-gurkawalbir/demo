@@ -15,3 +15,8 @@ export const URI_VALIDATION_PATTERN = /(?:(?:https?:)?\/\/)?(?:\S+(?::\S*)?@)?(?
 export const NUMBER_REGEX = /^[\d]+$/;
 export const VALID_MONGO_ID = /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i;
 
+export const LAST_EXPORT_DATE_TIME_REGEX_STRING = '.*{{.*lastExportDateTime.*}}';
+export const HTTP_PAGING_TOKEN_REGEX_STRING = '.*{{.*export\\.http\\.paging\\.token.*}}';
+export const HTTP_PAGING_SKIP_REGEX_STRING = '.*{{.*export\\.http\\.paging\\.skip.*}}';
+export const HTTP_PAGING_PAGE_REGEX_STRING = '.*{{.*export\\.http\\.paging\\.page.*}}';
+

@@ -34,6 +34,7 @@ export default {
       newValues['/jdbc/password'] = undefined;
     }
     const configuredProperties = newValues['/rdbms/options'] || [];
+
     let properties = [
       { name: 'ServerDataSource', value: newValues['/jdbc/serverDataSource'] },
       { name: 'StaticSchema', value: newValues['/jdbc/StaticSchema'] ? '1' : '0' },
