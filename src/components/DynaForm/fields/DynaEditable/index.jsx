@@ -60,6 +60,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const Label = ({ option, connInfo = {} }) => {
+  const classes = useStyles();
+  //   const { httpConnectorId, httpConnectorApiId, httpConnectorVersionId } = connInfo;
+  //   const connectorData = useSelector(state => selectors.connectorData(state, httpConnectorId) || {});
+  //   const { versions = [], apis = [] } = connectorData;
+  const currApi = {};
+  let currVersion = '1.0';
+
+  //   currVersion = currVersion?.filter(ver => ver._id === httpConnectorVersionId)?.[0];
+  currVersion = {name: '1.0'};
+
+  //   if (!httpConnectorId) {
+  //     return null;
+  //   }
+
+  return (
+    <Typography>{option?.label || ''}
+      <Typography component="div" variant="caption" className={classes.addClass}>
+        {currApi?.name && <div><span><b>API type:</b></span> <span>{currApi.name}</span></div>}
+        {currVersion?.name && <div><span><b>API version:</b> </span><span>{currVersion.name}</span></div>}
+      </Typography>
+    </Typography>
+  );
+};
+
 const DropdownContext = React.createContext({});
 
 const Option = option => {
@@ -69,7 +94,7 @@ const Option = option => {
 
   return (
     <>
-      <Typography>{option?.label}</Typography>
+      <Label option={option} connInfo={option?.connInfo} />
       <ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton>
     </>
   );
