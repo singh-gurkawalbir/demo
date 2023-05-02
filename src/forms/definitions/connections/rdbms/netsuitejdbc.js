@@ -4,9 +4,6 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    let roleId = newValues['/netsuite/token/auto/roleId'];
-    let accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
-
     if (newValues['/netsuite/authType'] === 'token') {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
       newValues['/netsuite/requestLevelCredentials'] = true;
@@ -15,12 +12,16 @@ export default {
       newValues['/netsuite/roleId'] = newValues['/netsuite/token/auto/roleId'];
       newValues['/netsuite/tokenId'] = undefined;
       newValues['/netsuite/tokenSecret'] = undefined;
+      newValues['/netsuite/tokenAccount'] = undefined;
     }
     newValues['/type'] = 'jdbc';
     newValues['/jdbc/type'] = 'netsuitejdbc';
     newValues['/jdbc/user'] = 'TBA';
     newValues['/jdbc/database'] = newValues['/jdbc/serverDataSource'];
     newValues['/jdbc/concurrencyLevel'] = newValues['/rdbms/concurrencyLevel'];
+
+    let roleId = newValues['/netsuite/roleId'];
+    let accId = newValues['/netsuite/account'];
 
     if (newValues['/jdbc/serverDataSource'] === 'NetSuite.com') {
       newValues['/netsuite/authType'] = 'basic';
