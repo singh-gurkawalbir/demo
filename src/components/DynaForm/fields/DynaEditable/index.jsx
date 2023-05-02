@@ -1,4 +1,4 @@
-import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Typography, Paper } from '@material-ui/core';
+import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useContext, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
@@ -9,6 +9,7 @@ import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
 import ActionButton from '../../../ActionButton';
+import { OptionLabel } from '../DynaSelectConnection';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -55,47 +56,30 @@ const useStyles = makeStyles(theme => ({
         '&:before': {
           content: 'unset',
         },
+        '&:hover': {
+          '& $optionEditIcon': {
+            display: 'flex',
+          },
+        },
       },
     },
   },
+  optionEditIcon: {
+    display: 'none',
+  },
 }));
-
-export const Label = ({ option, connInfo = {} }) => {
-  const classes = useStyles();
-  //   const { httpConnectorId, httpConnectorApiId, httpConnectorVersionId } = connInfo;
-  //   const connectorData = useSelector(state => selectors.connectorData(state, httpConnectorId) || {});
-  //   const { versions = [], apis = [] } = connectorData;
-  const currApi = {};
-  let currVersion = '1.0';
-
-  //   currVersion = currVersion?.filter(ver => ver._id === httpConnectorVersionId)?.[0];
-  currVersion = {name: '1.0'};
-
-  //   if (!httpConnectorId) {
-  //     return null;
-  //   }
-
-  return (
-    <Typography>{option?.label || ''}
-      <Typography component="div" variant="caption" className={classes.addClass}>
-        {currApi?.name && <div><span><b>API type:</b></span> <span>{currApi.name}</span></div>}
-        {currVersion?.name && <div><span><b>API version:</b> </span><span>{currVersion.name}</span></div>}
-      </Typography>
-    </Typography>
-  );
-};
 
 const DropdownContext = React.createContext({});
 
 const Option = option => {
   const data = useContext(DropdownContext);
 
-  const {onEditClick} = data;
+  const {onEditClick, classes} = data;
 
   return (
     <>
-      <Label option={option} connInfo={option?.connInfo} />
-      <ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton>
+      <OptionLabel option={option} connInfo={option?.connInfo} />
+      <span className={classes.optionEditIcon}><ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton></span>
     </>
   );
 };
@@ -125,13 +109,14 @@ const PaperComponentCustom = options => {
 
 export default function DynaEditable(props) {
   const {options, id, onFieldChange, value, required, isValid, label, disabled, removeHelperText, onCreateClick, onEditClick} = props;
-  const classes = useStyles();
+  const [isOptionHovered, setIsOptionHovered] = useState(false);
+  const classes = useStyles({isOptionHovered});
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
   const [renderValue, setRenderValue] = useState(selectedValue);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownProps = {
-    allOptions: options, onEditClick, onCreateClick, classes,
+    allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
   };
 
   const handleInputChange = (evt, newVal) => { setIsMenuOpen('true'); setInputValue(newVal); };

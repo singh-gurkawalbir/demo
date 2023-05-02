@@ -78,6 +78,7 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
+      showEditableDropdown: true,
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
