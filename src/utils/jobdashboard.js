@@ -175,13 +175,22 @@ function getExportJobStatusDetails(job) {
     };
   }
   if (job.uiStatus !== JOB_STATUS.RUNNING) {
+    if (job.status === JOB_STATUS.CANCELED) {
+      return {
+        showStatusTag: true,
+        variant: 'warning',
+        status: JOB_UI_STATUS[job.uiStatus],
+        canceledBy: job.canceledBy,
+      };
+    }
+
     let errorPercentage = 0;
     let resolvedPercentage = 0;
     const total =
       (job.numSuccess || 0) + (job.numError || 0) + (job.numResolved || 0);
 
     if (
-      [JOB_STATUS.CANCELED, JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(
+      [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(
         job.status
       )
     ) {
@@ -231,13 +240,22 @@ function getImportJobStatusDetails(job) {
     };
   }
   if (job.uiStatus !== JOB_STATUS.RUNNING || !job.percentComplete) {
+    if (job.status === JOB_STATUS.CANCELED) {
+      return {
+        showStatusTag: true,
+        variant: 'warning',
+        status: JOB_UI_STATUS[job.uiStatus],
+        canceledBy: job.canceledBy,
+      };
+    }
+
     let errorPercentage = 0;
     let resolvedPercentage = 0;
     const total =
       (job.numSuccess || 0) + (job.numError || 0) + (job.numResolved || 0);
 
     if (
-      [JOB_STATUS.CANCELED, JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].indexOf(
+      [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].indexOf(
         job.status
       ) > -1
     ) {
