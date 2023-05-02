@@ -92,7 +92,7 @@ describe('mapper2 DestinationDataType test cases', () => {
     await userEvent.click(screen.getByText('string'));
     expect(mockSetAnchorel).toHaveBeenCalledTimes(1);
     initFunction('string', anchorIn, utils.rerender);
-    userEvent.click(screen.getByText('object'));
+    await userEvent.click(screen.getByText('object'));
     expect(mockHandleBlur).toHaveBeenCalledWith();
   });
   test('should show confirm dialog when old data type is of object and new data type is not of object', async () => {
