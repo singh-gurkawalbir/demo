@@ -197,11 +197,11 @@ function Settings({
 
   return (
     <>
-      <LoadResources required resources="notifications">
-        <DrawerContent>
+      <DrawerContent>
+        <LoadResources required resources="notifications">
           <DynaForm formKey={formKey} />
-        </DrawerContent>
-      </LoadResources>
+        </LoadResources>
+      </DrawerContent>
       <DrawerFooter>
         <SaveAndCloseButtonGroupForm
           formKey={formKey}
