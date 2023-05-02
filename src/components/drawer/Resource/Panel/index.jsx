@@ -31,6 +31,13 @@ export const isNestedDrawer = url => !!matchPath(url, {
   strict: false});
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    height: '100vh',
+    overflowX: 'hidden',
+  },
+  occupyFullWidth: {
+    width: '100%',
+  },
   baseFormWithPreview: {
     display: 'flex',
     '& > div:first-child': {

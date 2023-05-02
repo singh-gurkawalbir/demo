@@ -22,7 +22,7 @@ export default function JobStatusWithTag({job}) {
     if (canceledBy === 'system') return 'system';
     const user = selectors.availableUsersList(state, _integrationId)?.find(user => user.sharedWithUser?._id === canceledBy);
 
-    return user?.sharedWithUser?.name || user?.sharedWithUser?.email;
+    return user?.sharedWithUser?.name || user?.sharedWithUser?.email || canceledBy;
   });
 
   if (!status) {

@@ -5,7 +5,7 @@ import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree } from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
@@ -19,6 +19,7 @@ import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { safeParse, generateId } from '../../utils/string';
 import { getMappingsEditorId } from '../../utils/editor';
+import { getRequiredMappingsJsonPaths, makeBaseDestinationTree } from '../../utils/mapping/maper2';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -269,6 +270,8 @@ export function* mappingInit({
   let mappingsTreeData;
   let extractsTree;
   let importSampleData;
+  let destinationTree;
+  const requiredMappingsJsonPaths = [];
 
   // only http and file imports are supported
   if (isFileAdaptor(importResource) ||
@@ -294,6 +297,10 @@ export function* mappingInit({
       // save import sample data in state for auto creation of mappings
       importSampleData = yield call(getImportSampleData, {importId});
 
+      // generate tree structure based on import sample data for destination field
+      destinationTree = makeBaseDestinationTree(importSampleData, options.assistant?.requiredMappings || []);
+      getRequiredMappingsJsonPaths(destinationTree, requiredMappingsJsonPaths);
+
       // this needs to be updated when v2 mappings are supported for other adaptors like NS
       if (importResource.mappings?.length || isEmpty(importResource.mapping)) {
         version = 2;
@@ -318,6 +325,8 @@ export function* mappingInit({
       subRecordMappingId,
       isGroupedSampleData,
       isMonitorLevelAccess,
+      destinationTree,
+      requiredMappingsJsonPaths,
     })
   );
   yield call(refreshGenerates, {isInit: true});
@@ -578,11 +587,12 @@ export function* validateMappings() {
     lookups,
     validationErrMsg,
     isGroupedSampleData,
+    requiredMappingsJsonPaths,
   } = yield select(selectors.mapping);
   const {
     isSuccess,
     errMessage,
-  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
+  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData, requiredMappingsJsonPaths);
   const newValidationErrMsg = isSuccess ? undefined : errMessage;
 
   if (newValidationErrMsg !== validationErrMsg) {
@@ -781,6 +791,7 @@ export const mappingSagas = [
     actionTypes.MAPPING.V2.TOGGLE_OUTPUT,
     actionTypes.MAPPING.V2.UPDATE_DATA_TYPE,
     actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE,
+    actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION,
   ], validateMappings),
   takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

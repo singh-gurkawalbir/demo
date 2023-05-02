@@ -587,12 +587,17 @@ describe('auth saga flow', () => {
       })
     );
     const authResponse = {
-      succes: true,
+      success: true,
       mfaRequired: true,
+      isAccountUser: true,
       _csrf,
     };
+    const validateSessionResponse = {
+      mfaSetupRequired: true,
+    };
 
-    expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
+    expect(saga.next(authResponse).value).toEqual(call(validateSession));
+    expect(saga.next(validateSessionResponse).value).toEqual(call(setCSRFToken, _csrf));
     expect(saga.next().value).toEqual(call(getResourceCollection, actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')));
     expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
   });

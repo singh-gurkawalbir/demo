@@ -3,6 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
+  searchParameterFieldsMeta,
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
@@ -14,7 +15,7 @@ function hiddenFieldsMeta({ values }) {
   }));
 }
 
-function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistantConfig, assistantData }) {
   let resourceDefaultValue = assistantConfig.resource;
   let operationDefaultValue = assistantConfig.operation || assistantConfig.operationUrl;
 
@@ -33,6 +34,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       required: true,
       type: 'hfoptions',
       label: 'Resource',
+      helpKey: 'import.http._httpConnectorResourceId',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
@@ -40,12 +42,14 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       value: operationDefaultValue,
       required: true,
       label: 'API endpoint',
+      helpKey: 'import.http._httpConnectorEndpointId',
     },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       type: 'hfoptions',
       required: true,
+      helpKey: 'import.http._httpConnectorVersionId',
     },
     createEndpoint: {
       fieldId: 'assistantMetadata.createEndpoint',
@@ -88,7 +92,6 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
-    fieldDefinitions[fieldId].helpKey = `${assistant}.import.${fieldId}`;
 
     if (helpTexts[fieldId]) {
       fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
@@ -337,6 +340,7 @@ export function fieldMeta({ resource, assistantData }) {
   });
   let basicFields = [];
   let pathParameterFields = [];
+  let searchParameterFields = [];
   let headerFields = [];
   let ignoreConfigFields = [];
   let howToFindIdentifierFields = [];
@@ -369,6 +373,16 @@ export function fieldMeta({ resource, assistantData }) {
         operationParameters: operationDetails.parameters,
         values: assistantConfig.pathParams,
       });
+      if (operationDetails.queryParameters?.filter(qp => !qp.readOnly).length > 0) {
+        searchParameterFields = searchParameterFieldsMeta({
+          parameters: operationDetails.queryParameters,
+          paramLocation: PARAMETER_LOCATION.QUERY,
+          value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
+          operationChanged: resource.assistantMetadata?.operationChanged,
+          url: operationDetails.url,
+          isHTTPFramework: true,
+        });
+      }
       ignoreConfigFields = ignoreConfigFieldsMeta({
         operationDetails,
         values: assistantConfig,
@@ -388,6 +402,7 @@ export function fieldMeta({ resource, assistantData }) {
     ...basicFields,
     ...headerFields,
     ...pathParameterFields,
+    ...searchParameterFields,
     ...ignoreConfigFields,
     ...howToFindIdentifierFields,
   ];

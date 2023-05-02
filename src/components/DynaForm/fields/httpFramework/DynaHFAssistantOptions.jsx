@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import MaterialUiSelect from '../DynaSelect';
+import DynaSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { selectOptions } from './util';
@@ -8,8 +8,10 @@ import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
+import { getHelpKey, getEndPointCustomSettings, getUserDefinedWithEndPointCustomSettingsPatch } from '../../../../utils/httpConnector';
 
 const emptyObj = {};
+
 export const useHFSetInitializeFormData = ({
   resourceType,
   resourceId,
@@ -45,6 +47,30 @@ export const useHFSetInitializeFormData = ({
     resourceType,
   ]);
 };
+
+function useGetCustomSettingsPatchOnFieldChange(props) {
+  const { resourceId, resourceType } = props;
+  // TODO: handle for form script as well
+  const userDefinedCustomSettingsForm = useSelector(state => selectors.resource(state, resourceType, resourceId)?.settingsForm?.form);
+
+  const getCustomSettingsPatch = useCallback((assistantFieldType, value, assistantData, fields) => {
+    if (assistantFieldType === 'resource') {
+      return getUserDefinedWithEndPointCustomSettingsPatch(undefined, userDefinedCustomSettingsForm);
+    }
+    if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
+      const resource = fields.find(field => field.id === 'assistantMetadata.resource')?.value;
+
+      const httpConnectorMetaData = assistantData[resourceType === 'imports' ? 'import' : 'export'];
+      const endpointCustomSettings = getEndPointCustomSettings(httpConnectorMetaData, resource, value);
+
+      return getUserDefinedWithEndPointCustomSettingsPatch(endpointCustomSettings, userDefinedCustomSettingsForm);
+    }
+
+    return [];
+  }, [resourceType, userDefinedCustomSettingsForm]);
+
+  return getCustomSettingsPatch;
+}
 
 function setDefaultValuesForDelta(paramName, paramsMeta, params, result) {
   const anyParamValuesSet = paramsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(params, field.id) && params[field.id] !== field.defaultValue);
@@ -119,11 +145,11 @@ function DynaAssistantOptions(props) {
       resourceType,
       resourceId
     ) || /* istanbul ignore next */ {};
-  const staggedResource = merged || emptyObject;
+  const stagedResource = merged || emptyObject;
 
   const connection = useSelector(
     state =>
-      selectors.resource(state, 'connections', staggedResource._connectionId) ||
+      selectors.resource(state, 'connections', stagedResource._connectionId) ||
       emptyObj
   );
 
@@ -132,6 +158,7 @@ function DynaAssistantOptions(props) {
   );
 
   const dispatch = useDispatch();
+  const getCustomSettingsPatch = useGetCustomSettingsPatchOnFieldChange({ resourceId, resourceType });
   const selectOptionsItems = useMemo(() => {
     if (['version', 'resource', 'operation', 'createEndpoint', 'updateEndpoint'].includes(assistantFieldType)) {
       return selectOptions({
@@ -169,6 +196,7 @@ function DynaAssistantOptions(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, value]);
+
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
     const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
@@ -278,6 +306,11 @@ function DynaAssistantOptions(props) {
         });
       }
 
+      // custom settings patch
+      const csPatch = getCustomSettingsPatch(assistantFieldType, value, assistantData, fields) || [];
+
+      patch.push(...csPatch);
+
       dispatch(
         actions.resource.patchStaged(
           resourceContext.resourceId,
@@ -335,8 +368,9 @@ function DynaAssistantOptions(props) {
   }, [id, value, assistantFieldType]);
 
   return (
-    <MaterialUiSelect
-      {...props}
+    <DynaSelect
+      helpKey={getHelpKey(resourceType, id)}
+      {...props} // If helpKey is passed from the props, they will override the above helpKey
       label={label}
       options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}

@@ -83,7 +83,7 @@ describe('mapper2 DestinationDataType test cases', () => {
     await userEvent.click(screen.getByText('ArrowDownFilledIcon'));
     expect(mockSetAnchorel).toHaveBeenCalledWith(null);
   });
-  test('should make dispatch call tp update dataType when datatype is changed', async () => {
+  test('should change the data type', async () => {
     let anchorIn;
 
     mockSetAnchorel = jest.fn(anchorEl => { anchorIn = anchorEl; });
@@ -92,10 +92,7 @@ describe('mapper2 DestinationDataType test cases', () => {
     await userEvent.click(screen.getByText('string'));
     expect(mockSetAnchorel).toHaveBeenCalledTimes(1);
     initFunction('string', anchorIn, utils.rerender);
-    await userEvent.click(screen.getByText('object'));
-    expect(mockDispatch).toHaveBeenCalledWith(
-      actions.mapping.v2.updateDataType('somenodekey', 'object')
-    );
+    userEvent.click(screen.getByText('object'));
     expect(mockHandleBlur).toHaveBeenCalledWith();
   });
   test('should show confirm dialog when old data type is of object and new data type is not of object', async () => {

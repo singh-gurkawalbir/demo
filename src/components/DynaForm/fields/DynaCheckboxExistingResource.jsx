@@ -219,7 +219,7 @@ export default function DynaCheckboxExistingResource(props) {
         />
         {labelSubText && (<Typography variant="caption" className={classes.infoText}>{labelSubText}</Typography>)}
 
-        <FieldHelp {...props} />
+        <FieldHelp {...props} label={label || props.label} />
         <FieldMessage {...props} />
       </FormControl>
     </LoadResources>
