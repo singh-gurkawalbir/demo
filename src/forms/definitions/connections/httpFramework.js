@@ -224,7 +224,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
-      '{"field": "value"}',
+        '{"field": "value"}',
     },
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
@@ -235,7 +235,7 @@ export default {
             r.http &&
             r.http.unencrypted &&
             JSON.stringify(r.http.unencrypted)) ||
-            '{"field": "value"}',
+          '{"field": "value"}',
     },
     httpBasic: {
       formId: 'httpBasic',

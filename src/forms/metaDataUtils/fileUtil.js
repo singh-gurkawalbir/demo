@@ -664,15 +664,12 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, connector) =
     httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
   }
   const retValues = { ...formValues };
-  let resourceVersion;
-
-  if (retValues['/http/_httpConnectorVersionId']) {
-    resourceVersion = connector.versions?.find(ver => ver._id === retValues['/http/_httpConnectorVersionId'])?.name;
-  }
 
   if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.[0]?.includes('/:_version')) {
-    if (resourceVersion) {
-      retValues['/http/baseURI'] += `/${resourceVersion}`;
+    if (retValues['/http/unencrypted/version']) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+    } else if (retValues['/http/unencrypted']?.version) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted'].version}`;
     } else {
       const versionRelativeURI = httpConnector.versions?.[0]?.name;
 
@@ -691,23 +688,26 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, connector) =
     if (httpHeaders?.find(header => header.name === headerName)) {
       const index = httpHeaders?.findIndex(header => header.name === headerName);
 
-      httpHeaders[index].value = resourceVersion;
+      httpHeaders[index].value = retValues['/http/unencrypted/version'] || retValues['/http/unencrypted']?.version;
     } else {
-      httpHeaders.push({name: headerName, value: resourceVersion});
+      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version'] || retValues['/http/unencrypted']?.version});
     }
     retValues['/http/headers'] = httpHeaders;
   }
 
   retValues['/http/_httpConnectorId'] = connector?._id;
+  if (retValues['/http/unencrypted/version']) {
+    const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
 
+    retValues['/http/_httpConnectorVersionId'] = version?._id;
+  } else {
+    retValues['/http/_httpConnectorVersionId'] = undefined;
+  }
   if (!resource?._id || isNewId(resource?._id)) {
     const settingFields = httpConnector?.supportedBy?.connection?.preConfiguredFields?.find(field => field.path === 'settingsForm');
     const fieldMap = settingFields?.values?.[0];
 
     if (fieldMap) { retValues['/settingsForm'] = {form: fieldMap}; }
-  }
-  if (!retValues['/http/_httpConnectorVersionId']) {
-    retValues['/http/_httpConnectorVersionId'] = undefined;
   }
 
   return retValues;

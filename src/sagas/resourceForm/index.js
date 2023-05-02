@@ -904,9 +904,9 @@ export function* initFormValues({
     } else if (resource?._httpConnectorId) {
       // existing Iclient
       app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
-    } else if (applicationFieldState?.value) {
+    } else if (connectionAssistant) {
       // new Iclient inside connection
-      app = applications.find(a => a.name === applicationFieldState.value) || {};
+      app = applications.find(a => a.id === connectionAssistant) || {};
     }
 
     httpPublishedConnector = getHttpConnector(app?._httpConnectorId);
