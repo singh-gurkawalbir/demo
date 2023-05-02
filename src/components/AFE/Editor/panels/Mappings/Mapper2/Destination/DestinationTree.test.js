@@ -78,7 +78,7 @@ describe('DestinationTree test cases', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should verify the various label in the field', () => {
+  test('should verify the various label in the field', async () => {
     mutateStore(initialStore);
     renderWithProviders(<DestinationTree
       propValue="id"
@@ -92,7 +92,7 @@ describe('DestinationTree test cases', () => {
 
     expect(tree.textContent).toBe('BillToAddressobjectidstringBillToAddress2 * (required)objectid * (required)string');
 
-    userEvent.click(screen.getByText('BillToAddress'));
+    await userEvent.click(screen.getByText('BillToAddress'));
 
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.addSelectedDestination('GAGcQO8TyyQ')

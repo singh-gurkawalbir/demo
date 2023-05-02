@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen} from '@testing-library/react';
+import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
@@ -153,16 +153,6 @@ describe('Mapper2Row UI test cases', () => {
       actions.mapping.v2.patchField('generate', undefined, 'sometext')
     );
   });
-  test('should make dispatch call when extract field is changed', async () => {
-    initMapper2Row({});
-
-    const typableExtractInput = screen.getByTestId('mapper2ExtractsTypeableSelect');
-
-    await userEvent.type(typableExtractInput, 'sometext');
-    expect(mockDispatch).toHaveBeenCalledWith(
-      actions.mapping.v2.patchField('extract', undefined, 'sometext', undefined, 'somejsonpath')
-    );
-  });
   test('should make dispatch call to add new row when add button is clicked', async () => {
     const nodeKey = 'somenodeey';
 
@@ -260,5 +250,18 @@ describe('Mapper2Row UI test cases', () => {
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row dataType="object" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
     expect(screen.queryByTestId('mapper2ExtractsTypeableSelect')).not.toBeInTheDocument();
+  });
+
+  test('should make dispatch call when extract field is changed', async () => {
+    initMapper2Row({});
+
+    const typableExtractInput = screen.getByTestId('mapper2ExtractsTypeableSelect');
+
+    await userEvent.type(typableExtractInput, 'sometext');
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.mapping.v2.patchField('extract', undefined, 'sometext', undefined, 'somejsonpath')
+      );
+    });
   });
 });

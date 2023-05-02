@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Divider, FormControl, InputAdornment, TextField, Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Divider, FormControl, InputAdornment, TextField, Tooltip } from '@mui/material';
 import clsx from 'clsx';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';

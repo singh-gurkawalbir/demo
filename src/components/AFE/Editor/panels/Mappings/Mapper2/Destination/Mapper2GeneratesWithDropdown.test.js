@@ -54,25 +54,25 @@ describe('Mapper2GeneratesWithDropdown ui test cases', () => {
   test('should select a field', async () => {
     mutateStore(initialStore);
     renderWithProviders(<Mapper2GeneratesWithDropdown id="randomID" />, {initialStore});
-    userEvent.type(
+    await userEvent.type(
       screen.getByRole('textbox'),
       'BillToAddress'
     );
 
-    userEvent.click(screen.getAllByText('BillToAddress')[0]);
+    await userEvent.click(screen.getAllByText('BillToAddress')[0]);
     await waitFor(() => expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.patchDestinationFilter('BillToAddress', '')
     ));
   });
-  test('should ciclk outide the field and call onBlur function', () => {
+  test('should ciclk outide the field and call onBlur function', async () => {
     mutateStore(initialStore);
     const {utils} = renderWithProviders(<Mapper2GeneratesWithDropdown onBlur={onBlur} id="randomID" />, {initialStore});
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByRole('textbox'),
       'BillToAddress'
     );
-    userEvent.click(utils.container);
+    await userEvent.click(utils.container);
 
     expect(onBlur).toHaveBeenCalledWith('BillToAddress');
   });
