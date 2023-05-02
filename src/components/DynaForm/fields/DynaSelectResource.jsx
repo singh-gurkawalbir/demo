@@ -24,7 +24,7 @@ import DynaSelectConnection from './DynaSelectConnection';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
-import { RESOURCE_TYPE_LABEL_TO_SINGULAR, RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 
 const emptyArray = [];
 const emptyObj = {};
@@ -132,7 +132,7 @@ const getType = resourceType => {
 
   if (['connectorLicenses'].includes(resourceType)) {
     type = MODEL_PLURAL_TO_LABEL[resourceType]?.toLowerCase();
-  } else if (RESOURCE_TYPE_LABEL_TO_SINGULAR[resourceType]) {
+  } else if (RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]) {
     type = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   }
 
@@ -369,6 +369,7 @@ export default function DynaSelectResource(props) {
     }),
     [merged]
   );
+  let isIclientEditDisable = false;
   const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
@@ -383,6 +384,7 @@ export default function DynaSelectResource(props) {
     if (!globalIclientCheck && existingGlobalIclient) {
       resourceItems.push(globalIclient);
     }
+    isIclientEditDisable = !resourceItems.find(res => !res.isGlobal && res?.value === value);
   }
   const handleAddNewResourceMemo = useCallback(
     () =>
@@ -548,7 +550,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && !isNewStepConnField && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value}
+              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value || isIclientEditDisable}
               data-test="editNewResource"
               onClick={handleEditResource}
               buttonSize="small">
