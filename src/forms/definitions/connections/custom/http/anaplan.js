@@ -103,7 +103,6 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
-      removeWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
       deleteWhen: [{ field: 'http.auth.type', isNot: ['token'] }],
       label: 'Generate token',
       inputboxLabel: 'Token',

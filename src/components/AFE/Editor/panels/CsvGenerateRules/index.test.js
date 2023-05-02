@@ -17,7 +17,6 @@ jest.mock('../../../../DynaForm/fields/DynaSelectWithInput', () => ({
     <div>
       Column Delimiter
       <input onChange={e => props.onFieldChange(props.id, e.target.value)} data-testid={props.label} type="text" value={props.value} />
-      {/* <span>{props.errorMessages}</span> */}
     </div>
 
   ),
@@ -167,16 +166,6 @@ describe('csvGeneratePanel UI tests', () => {
       columnDelimiter: 'Comma (,)S',
     })));
   });
-  // eslint-disable-next-line jest/no-commented-out-tests
-  // test('should make the respective dispatch call when row delimiter value is changed', async () => {
-  //   initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
-  //   const rowField = screen.getByRole('option', {name: 'LF (\\n)'});
-
-  //   expect(rowField).toBeInTheDocument();
-  //   await userEvent.click(rowField);
-  //   await userEvent.click(document.querySelector('[value="\r"]'));
-  //   await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(1));
-  // });
   test('should make a dispatch call when Include Header checkbox is checked', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
     const checkbox1 = screen.getByRole('checkbox', {name: 'Include header'});
