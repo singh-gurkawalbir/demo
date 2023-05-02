@@ -198,7 +198,7 @@ function Settings({
   return (
     <>
       <DrawerContent>
-        <LoadResources required resources="notifications">
+        <LoadResources required resources="notifications" >
           <DynaForm formKey={formKey} />
         </LoadResources>
       </DrawerContent>
