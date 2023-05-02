@@ -82,13 +82,10 @@ describe('formView tests', () => {
     useDispatchSpy.mockClear();
     onFieldChange.mockClear();
   });
-  test('should able to test FormView with googledrive Assistant type http', async () => {
+  test('should not display FormView with googledrive Assistant type http', async () => {
     await initFormView(props);
-    expect(screen.getByText('FieldLabel')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
-    expect(screen.getByRole('menuitem', { name: 'Please select' })).toBeInTheDocument();
-    userEvent.click(screen.getByRole('menuitem', { name: 'Google Drive' }));
-    expect(mockDispatchFn).toHaveBeenCalled();
+    expect(screen.queryByText('FieldLabel')).not.toBeInTheDocument();
+    expect(screen.queryAllByRole('menuitem')).toHaveLength(0);
   });
   test('should able to test FormView with acumaticaecommerce Assistant type rest', async () => {
     await initFormView({...props, resourceId: 'imp3'});

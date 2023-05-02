@@ -316,8 +316,7 @@ export default function DynaSelectResource(props) {
 
       return result;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
+  }, [resources, optionRef.current, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
@@ -330,11 +329,11 @@ export default function DynaSelectResource(props) {
 
   if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
     const globalIclient = {};
-    const globalIclientCheck = resourceItems.find(res => res?.value === merged._iClientId);
+    const globalIclientCheck = resourceItems.find(res => res?.value === merged?.http?._iClientId);
     const existingGlobalIclient = !resourceItems.find(res => res?.isGlobal);
 
     globalIclient.value = merged?.http?._iClientId;
-    globalIclient.label = `${merged.application} Celigo iClient`;
+    globalIclient.label = `${merged?.application} Celigo iClient`;
     globalIclient.isGlobal = true;
     if (!globalIclientCheck && existingGlobalIclient) {
       resourceItems.push(globalIclient);

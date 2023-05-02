@@ -98,7 +98,7 @@ export default {
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
       validWhen: {
-        isNot: { values: [''], message: 'Please select a connection' },
+        isNot: { values: [''], message: 'Please select or create a connection' },
       },
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [

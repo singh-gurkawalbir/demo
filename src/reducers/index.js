@@ -7235,7 +7235,7 @@ selectors.httpPagingValidationError = (state, formKey, pagingMethodsToValidate, 
   if (pagingMethodsToValidate && pagingMethod && Object.keys(pagingMethodsToValidate).includes(pagingMethod)) {
     const regex = pagingMethodsToValidate[pagingMethod];
 
-    const validated = pagingFieldsToValidate?.some(f => regex.test(formFields[f]?.value));
+    const validated = pagingFieldsToValidate?.some(f => new RegExp(regex).test(formFields[f]?.value));
 
     if (!validated) {
       return `The paging method selected must use {{export.http.paging.${pagingMethod}}} in either the relative URI or HTTP request body.`;
