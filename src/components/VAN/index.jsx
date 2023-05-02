@@ -80,7 +80,7 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
                 disabled={upgradeRequested}
                 id="request-van-upgrade-buttton"
                 className={classes.upgradeButton}>
-                {!upgradeRequested ? 'Request access' : 'Access Requested'}
+                {!upgradeRequested ? 'Request access' : 'Access requested'}
               </FilledButton>
             </ButtonWithTooltip>
           </Typography>
