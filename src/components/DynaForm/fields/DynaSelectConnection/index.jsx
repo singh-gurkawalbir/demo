@@ -1,12 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useStyles } from '@material-ui/pickers/views/Calendar/SlideTransition';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { getHttpConnector } from '../../../../constants/applications';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaEditable from '../DynaEditable';
 
+const useStyles = makeStyles(theme => ({
+  apiType: {
+    color: theme.palette.secondary.light,
+    lineHeight: '14px',
+  },
+}));
 export const OptionLabel = ({ option, connInfo = {} }) => {
   const classes = useStyles();
   const { httpConnectorId, httpConnectorApiId, httpConnectorVersionId } = connInfo;
@@ -16,10 +22,6 @@ export const OptionLabel = ({ option, connInfo = {} }) => {
   let currVersion = currApi?.versions?.length ? currApi.versions : versions;
 
   currVersion = currVersion?.filter(ver => ver._id === httpConnectorVersionId)?.[0];
-
-  if (!httpConnectorId) {
-    return null;
-  }
 
   return (
     <Typography>{option?.label || ''}
@@ -32,7 +34,7 @@ export const OptionLabel = ({ option, connInfo = {} }) => {
 };
 
 export default function DynaSelectConnection(props) {
-  const {id,
+  const {
     options,
     disabled,
     onCreateClick,
@@ -41,11 +43,9 @@ export default function DynaSelectConnection(props) {
   const [isConnectorCalled, setIsConnectorCalled] = useState({});
   const dispatch = useDispatch();
   const connectorData = useSelector(selectors.httpConnectorsList);
-  const hasHTTPConnectorInfo = useMemo(() => id !== '_borrowConcurrencyFromConnectionId' && options?.some(option =>
-    option.items?.some(item =>
-      getHttpConnector(item.connInfo?.httpConnectorId) && (item.connInfo?.httpConnectorApiId || item.connInfo?.httpConnectorVersionId)
-    )
-  ), [id, options]);
+  const hasHTTPConnectorInfo = useMemo(() => options?.some(option =>
+    getHttpConnector(option.connInfo?.httpConnectorId) && (option.connInfo?.httpConnectorApiId || option.connInfo?.httpConnectorVersionId)
+  ), [options]);
 
   useEffect(() => {
     if (options.length && hasHTTPConnectorInfo) {
