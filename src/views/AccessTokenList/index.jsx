@@ -48,7 +48,7 @@ export default function AccessTokenList(props) {
         }>
         <ResourceDrawer {...newProps} />
 
-        <CeligoPageBar title="API tokens" infoText={infoText.accesstokens}>
+        <CeligoPageBar title="API tokens" infoText={infoText.accesstokens} contentId="accesstokens">
           <ActionGroup>
             <KeywordSearch
               filterKey={filterKey}
