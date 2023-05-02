@@ -113,7 +113,7 @@ export default function DynaXmlParse_afe({
   useEffect(() => {
     setForm(getForm(options, resourceId, isParserSupported));
     setRemountKey(remountKey => remountKey + 1);
-  }, [isParserSupported]);
+  }, [isParserSupported, options, resourceId]);
 
   // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
