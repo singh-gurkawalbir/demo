@@ -2,11 +2,19 @@ import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import { Tabs, Tab, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
+const useStyles = makeStyles({
+  tab: {
+    minWidth: 'auto',
+    fontSize: 14,
+  },
+});
 
 export default function IntegrationTabs({ tabs, className }) {
+  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const { dashboardTab, childId } = match.params;
@@ -44,7 +52,7 @@ export default function IntegrationTabs({ tabs, className }) {
   );
 
   return (
-    <Box sx={{ p: theme => theme.spacing(0, 3) }} className={className}>
+    <Box sx={{ padding: theme => theme.spacing(0, 3) }} className={className}>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}
@@ -56,14 +64,13 @@ export default function IntegrationTabs({ tabs, className }) {
         {tabs.map(({ label, Icon }, i) => (
           <Tab
             key={label}
+            className={classes.tab}
             data-test={label}
             id={`tab-${i}`}
             {...{ 'aria-controls': `tabpanel-${i}` }}
             icon={<Icon />}
             label={label}
             sx={{
-              minWidth: 'auto',
-              fontSize: 14,
               padding: '9px 12px 4px',
               lineHeight: 1.75,
               '&>.MuiTab-iconWrapper': {
