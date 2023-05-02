@@ -6,14 +6,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import { selectors } from '../../../reducers';
-import AddIcon from '../../icons/AddIcon';
-import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../LoadResources';
 import DynaSelect from './DynaSelect';
+import DynaEditable from './DynaEditable';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
-import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import { generateNewId } from '../../../utils/resource';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
@@ -21,8 +20,6 @@ import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/for
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
-import IconButtonWithTooltip from '../../IconButtonWithTooltip';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 import { getHttpConnector} from '../../../constants/applications';
 
 const emptyArray = [];
@@ -126,42 +123,6 @@ const handleAddNewResource = args => {
   }));
 };
 
-const getType = resourceType => {
-  let type = 'connection';
-
-  if (['connectorLicenses'].includes(resourceType)) {
-    type = MODEL_PLURAL_TO_LABEL[resourceType]?.toLowerCase();
-  } else if (RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]) {
-    type = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
-  }
-
-  return type;
-};
-
-const addIconTitle = (resourceType, title) => {
-  if (title) {
-    return title;
-  }
-
-  return `Add ${getType(resourceType)}`;
-};
-
-const ediIconTitle = (resourceType, title) => {
-  if (title) {
-    return title;
-  }
-
-  return `Edit ${getType(resourceType)}`;
-};
-
-const disabledIconTitle = (resourceType, title) => {
-  if (title) {
-    return title;
-  }
-
-  return `Select a ${getType(resourceType)} to allow editing`;
-};
-
 const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
@@ -236,7 +197,6 @@ export default function DynaSelectResource(props) {
     value,
     resourceType,
     allowNew,
-    allowEdit,
     checkPermissions = false,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
@@ -247,9 +207,6 @@ export default function DynaSelectResource(props) {
     integrationId,
     connectorId,
     flowId,
-    addTitle,
-    editTitle,
-    disabledTitle,
     isValueValid = false,
     isSelectFlowResource,
   } = props;
@@ -369,7 +326,6 @@ export default function DynaSelectResource(props) {
   );
   const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
-  let isIclientEditDisable = false;
 
   if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
     const globalIclient = {};
@@ -382,7 +338,6 @@ export default function DynaSelectResource(props) {
     if (!globalIclientCheck && existingGlobalIclient) {
       resourceItems.push(globalIclient);
     }
-    isIclientEditDisable = !resourceItems.find(res => !res.isGlobal && res?.value === value);
   }
   const handleAddNewResourceMemo = useCallback(
     () =>
@@ -404,7 +359,7 @@ export default function DynaSelectResource(props) {
       }),
     [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email, _httpConnectorId]
   );
-  const handleEditResource = useCallback(() => {
+  const handleEditResource = useCallback(resourceId => {
     if (
       resourceType === 'asyncHelpers' ||
       (resourceType === 'exports' && statusExport)
@@ -456,7 +411,7 @@ export default function DynaSelectResource(props) {
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.EDIT,
       baseUrl: location.pathname,
-      params: { resourceType, id: value },
+      params: { resourceType, id: resourceId || value },
     }));
   }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
@@ -513,13 +468,16 @@ export default function DynaSelectResource(props) {
           />
           ) : (
             <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-              <DynaSelect
-                {...props}
-                disabled={disableSelect}
-                removeHelperText={isAddingANewResource}
-                options={[{ items: truncatedItems(resourceItems || []) }]}
-                isSelectFlowResource={isSelectFlowResource}
+              { resourceType === 'connections' ? <DynaEditable {...props} onCreateClick={handleAddNewResourceMemo} onEditClick={handleEditResource} options={resourceItems} />
+                : (
+                  <DynaSelect
+                    {...props}
+                    disabled={disableSelect}
+                    removeHelperText={isAddingANewResource}
+                    options={[{ items: truncatedItems(resourceItems || []) }]}
+                    isSelectFlowResource={isSelectFlowResource}
           />
+                )}
               {resourceType === 'connections' && !!value && !skipPingConnection && (
               <ConnectionLoadingChip
                 connectionId={value}
@@ -531,29 +489,6 @@ export default function DynaSelectResource(props) {
             </div>
 
           )}
-          <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
-            {allowNew && (
-            <IconButtonWithTooltip
-              tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
-              data-test="addNewResource"
-              onClick={handleAddNewResourceMemo}
-              buttonSize="small">
-              <AddIcon />
-            </IconButtonWithTooltip>
-            )}
-
-            {allowEdit && (
-            // Disable adding a new resource when the user has selected an existing resource
-            <IconButtonWithTooltip
-              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value || isIclientEditDisable}
-              data-test="editNewResource"
-              onClick={handleEditResource}
-              buttonSize="small">
-              <EditIcon />
-            </IconButtonWithTooltip>
-            )}
-
-          </div>
         </>
       </LoadResources>
 
