@@ -1,8 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import helpContent from '../../utils/helpContent';
 import HelpDocumentationLink from '../HelpDocumentationLink';
 import HelpVideoLink from '../HelpVideoLink';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   buttonRef: {
@@ -15,10 +17,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function HelpContentLinks({ contentId }) {
+  const isHelpContentEnabled = useSelector(state => selectors.userProfilePreferencesProps(state).helpContent);
   const isContentLinkPresent = helpContent.documentationLinks[contentId] || helpContent.videoLinks[contentId];
   const classes = useStyles();
 
-  return ENABLE_HELP_CONTENT === 'true' && isContentLinkPresent ? (
+  return isHelpContentEnabled && ENABLE_HELP_CONTENT === 'true' && isContentLinkPresent ? (
     <div className={classes.buttonRef}>
       <HelpDocumentationLink contentId={contentId} />
       <HelpVideoLink contentId={contentId} />
