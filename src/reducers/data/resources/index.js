@@ -296,11 +296,7 @@ selectors.connectionHasAs2Routing = (state, id) => {
 
   if (!connection) return false;
 
-  return !!(
-    connection.as2 &&
-    connection.as2.contentBasedFlowRouter &&
-    connection.as2.contentBasedFlowRouter._scriptId
-  );
+  return !!(connection.as2?.contentBasedFlowRouter?._scriptId || connection.van?.contentBasedFlowRouter?._scriptId);
 };
 
 selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {

@@ -5,7 +5,6 @@ export default {
     const newValues = {...formValues};
 
     const roleId = newValues['/netsuite/token/auto/roleId'];
-    const accId = newValues['/netsuite/tokenAccount'] || newValues['/netsuite/token/auto/account'];
 
     if (newValues['/netsuite/authType'] === 'token') {
       newValues['/netsuite/account'] = newValues['/netsuite/tokenAccount'];
@@ -23,6 +22,8 @@ export default {
       newValues['/netsuite/roleId'] = newValues['/netsuite/token/auto/roleId'];
     }
 
+    const accId = newValues['/netsuite/account'];
+
     let properties = [
       {name: 'ServerDataSource', value: newValues['/jdbc/serverDataSource']},
       {name: 'StaticSchema', value: newValues['/jdbc/StaticSchema'] ? 1 : 0 },
@@ -33,7 +34,7 @@ export default {
     }
 
     if (accId) {
-      properties = [{name: 'AccountID', value: accId}, ...properties];
+      properties = [{name: 'AccountID', value: newValues['/netsuite/account']}, ...properties];
     }
 
     const configuredProperties = newValues['/rdbms/options'] || [];
@@ -65,7 +66,7 @@ export default {
       isLoggable: true,
       required: true,
       type: 'select',
-      label: 'Server Data Source',
+      label: 'Server data source',
       options: [{
         items: [
           {label: 'NetSuite.com', value: 'NetSuite.com'},

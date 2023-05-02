@@ -67,6 +67,24 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
     height: '100%',
   },
+  emptyOptionMessage: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+    paddingBottom: theme.spacing(4),
+    '& .MuiButtonBase-root': {
+      fontSize: theme.spacing(2),
+      fontFamily: 'source sans pro',
+      letterSpacing: 'normal',
+      padding: theme.spacing(0, 0.5),
+      minWidth: 'auto',
+    },
+  },
+  emptyMessage: {
+    width: '100%',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 export function CustomReactSelectStyles() {

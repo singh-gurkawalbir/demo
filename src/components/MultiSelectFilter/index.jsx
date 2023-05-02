@@ -104,7 +104,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel, disabled}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel, disabled, 'data-test': dataTest}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -211,6 +211,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
           onClick={toggleClick}
           endIcon={<ArrowDownIcon />}
           color="secondary"
+          data-test={dataTest}
           className={classes.dateRangePopperBtn}>
           {ButtonLabel}
         </OutlinedButton>
