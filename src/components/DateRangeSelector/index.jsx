@@ -208,10 +208,6 @@ export default function DateRangeSelector({
       preset,
     },
   );
-  const today = new Date();
-  const lastAuditDate = new Date(today);
-
-  lastAuditDate.setDate(lastAuditDate.getDate() + 1);
   const [reset, setReset] = useState(false);
 
   const [selectedRange, setSelectedRange] = useState(initalValue);
@@ -342,7 +338,7 @@ export default function DateRangeSelector({
                   direction="horizontal"
                   showTime={showTime}
                   maxDate={toDate || new Date()}
-                  minDate={fromDate || addYears(lastAuditDate, -1)}
+                  minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}
                 />

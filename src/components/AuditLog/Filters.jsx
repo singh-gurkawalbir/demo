@@ -153,9 +153,14 @@ export default function Filters(props) {
       setDate(dateFilter);
       const selectedRange = getSelectedRange(dateFilter);
 
-      const fromDate = selectedRange.startDate && moment(selectedRange.startDate).startOf('day').toISOString();
+      let fromDate = selectedRange.startDate && moment(selectedRange.startDate).startOf('day').toISOString();
       const toDate = selectedRange.endDate && moment(selectedRange.endDate).endOf('day').toISOString();
 
+      const oneYearOldTime = new Date(new Date().setFullYear(new Date().getFullYear() - 1) + (10 * 60 * 1000));
+
+      if (new Date(fromDate) < oneYearOldTime) {
+        fromDate = oneYearOldTime.toISOString();
+      }
       dispatch(actions.auditLogs.download(
         {
           resourceType,
