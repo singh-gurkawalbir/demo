@@ -44,6 +44,8 @@ const useStyles = makeStyles(theme => ({
   },
   dropdownitemsConnection: {
     width: '100%',
+    marginLeft: 1,
+    marginTop: theme.spacing(4.8),
     '& ul': {
       '& li': {
         display: 'flex',
