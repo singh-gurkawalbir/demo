@@ -93,7 +93,7 @@ describe('Testsuite for AccountSettings', () => {
     userEvent.click(saveButtonNode);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'MFA_ACCOUNT_SETTINGS_UPDATE',
-      accountSettings: { dontAllowTrustedDevices: undefined, trustDeviceForPeriod: '10' },
+      accountSettings: { dontAllowTrustedDevices: false, trustDeviceForPeriod: '10' },
     }));
   }, 10000);
   test('should able to load spinner when the account settings status is pending', async () => {
