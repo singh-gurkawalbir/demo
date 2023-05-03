@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -113,13 +113,28 @@ export default function DynaEditable(props) {
   const classes = useStyles({isOptionHovered});
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
-  const [renderValue, setRenderValue] = useState(selectedValue);
+  const [selectOptions] = useState(options);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownProps = {
     allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
   };
 
-  const handleInputChange = (evt, newVal) => { setIsMenuOpen('true'); setInputValue(newVal); };
+  const handleInputChange = (evt, newVal) => { setInputValue(newVal); };
+
+  useEffect(() => {
+    if (inputValue !== selectedValue) {
+      handleInputChange({}, selectedValue);
+      setInputValue(selectedValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedValue]);
+  useEffect(() => {
+    if (selectOptions.length !== options.length) {
+      handleInputChange({}, selectedValue);
+      setInputValue(selectedValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options]);
 
   return (
     <div>
@@ -137,11 +152,10 @@ export default function DynaEditable(props) {
         <DropdownContext.Provider value={dropdownProps}>
           <Autocomplete
             disablePortal
-            id="combo-box-demo"
+            id="connections-dropdown"
             options={options}
             getOptionLabel={option => option?.label}
             renderOption={Option}
-            value={renderValue}
             disableClearable
             forcePopupIcon={false}
             open={isMenuOpen}
@@ -150,27 +164,31 @@ export default function DynaEditable(props) {
             onFocus={() => setIsMenuOpen(true)}
             onClose={() => setIsMenuOpen(false)}
             onBlur={() => { setIsMenuOpen(false); setInputValue(selectedValue); }}
-            onChange={(event, newValue) => { setIsMenuOpen(false); setRenderValue(newValue?.label); onFieldChange(id, newValue?.value); }}
+            onChange={(event, newValue) => { setIsMenuOpen(false); setInputValue(newValue?.label); onFieldChange(id, newValue?.value); }}
             className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
             {...isLoggableAttr(true)}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="filled"
-                className={classes.textareaInput}
-                placeholder="Select or create connection"
-                fullWidth
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <SearchIcon className={classes.searchIconConnection} />
-                    </InputAdornment>
-                  ),
-                }}
+            renderInput={params => {
+              const updatedParams = {...params, inputProps: {...params.inputProps, value: inputValue}};
+
+              return (
+                <TextField
+                  {...updatedParams}
+                  variant="filled"
+                  className={classes.textareaInput}
+                  placeholder="Select or create connection"
+                  fullWidth
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon className={classes.searchIconConnection} />
+                      </InputAdornment>
+                    ),
+                  }}
              />
-            )} />
+              );
+            }} />
         </DropdownContext.Provider>
         {!removeHelperText && <FieldMessage {...props} />}
       </FormControl>
