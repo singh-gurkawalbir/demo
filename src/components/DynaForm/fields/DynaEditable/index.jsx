@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -10,6 +10,7 @@ import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
 import ActionButton from '../../../ActionButton';
 import { OptionLabel } from '../DynaSelectConnection';
+import filter from '../../../AFE/metadata/filter';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -129,7 +130,9 @@ export default function DynaEditable(props) {
     allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
   };
 
-  const handleInputChange = (evt, newVal) => { setInputValue(newVal); };
+  const handleInputChange = useCallback((evt, newVal) => {
+    if (evt) { setInputValue(newVal); }
+  }, []);
 
   useEffect(() => {
     if (inputValue !== selectedValue) {
@@ -145,6 +148,24 @@ export default function DynaEditable(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options]);
+
+  const handleFocus = useCallback(() =>
+    setIsMenuOpen(true), []);
+
+  const handleClose = useCallback(() => setIsMenuOpen(false), []);
+
+  const handleBlur = useCallback(() => {
+    setIsMenuOpen(false);
+    setInputValue(selectedValue);
+  }, [selectedValue]);
+
+  const filterOptions = useCallback(options => options?.filter(option => option?.label.includes(inputValue || '')), [inputValue]);
+
+  const handleChange = useCallback((event, newValue) => {
+    setIsMenuOpen(false);
+    setInputValue(newValue?.label);
+    onFieldChange(id, newValue?.value);
+  }, [id, onFieldChange]);
 
   return (
     <div>
@@ -171,15 +192,16 @@ export default function DynaEditable(props) {
             open={isMenuOpen}
             inputValue={inputValue}
             onInputChange={handleInputChange}
-            onFocus={() => setIsMenuOpen(true)}
-            onClose={() => setIsMenuOpen(false)}
-            onBlur={() => { setIsMenuOpen(false); setInputValue(selectedValue); }}
-            onChange={(event, newValue) => { setIsMenuOpen(false); setInputValue(newValue?.label); onFieldChange(id, newValue?.value); }}
+            onFocus={handleFocus}
+            onClose={handleClose}
+            onBlur={handleBlur}
+            filterOptions={filterOptions}
+            onChange={handleChange}
             className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
             {...isLoggableAttr(true)}
             renderInput={params => {
-              const updatedParams = {...params, inputProps: {...params.inputProps, value: inputValue}};
+              const updatedParams = {...params, inputProps: {...params.inputProps, value: inputValue || ''}};
 
               return (
                 <TextField

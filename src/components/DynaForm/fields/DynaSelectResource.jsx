@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import { selectors } from '../../../reducers';
+import AddIcon from '../../icons/AddIcon';
+import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../LoadResources';
 import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
@@ -19,12 +21,10 @@ import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/for
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 import { getHttpConnector} from '../../../constants/applications';
 import DynaSelectConnection from './DynaSelectConnection';
-import IconButtonWithTooltip from '../../IconButtonWithTooltip';
-import AddIcon from '../../icons/AddIcon';
-import EditIcon from '../../icons/EditIcon';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 
 const emptyArray = [];
 const emptyObj = {};
@@ -197,7 +197,7 @@ const useStyles = makeStyles(theme => ({
     '& > div:last-child': {
       position: 'absolute',
       right: '50px',
-      top: theme.spacing(4.5),
+      top: theme.spacing(4),
     },
     '& >* .MuiSelect-selectMenu': {
       paddingRight: 140,
@@ -238,22 +238,22 @@ export default function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
-    addTitle,
-    editTitle,
-    disabledTitle,
     checkPermissions = false,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
     statusExport,
-    showEditableDropdown,
     ignoreEnvironmentFilter,
     resourceContext,
     skipPingConnection,
     integrationId,
     connectorId,
     flowId,
+    addTitle,
+    editTitle,
+    disabledTitle,
     isValueValid = false,
     isSelectFlowResource,
+    showEditableDropdown,
   } = props;
   let {filter} = props;
   const { options = {}, getItemInfo } = props;
@@ -369,9 +369,9 @@ export default function DynaSelectResource(props) {
     }),
     [merged]
   );
-  let isIclientEditDisable = false;
   const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+  let isIclientEditDisable = false;
 
   if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
     const globalIclient = {};
