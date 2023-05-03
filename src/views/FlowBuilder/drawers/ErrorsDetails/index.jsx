@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   errorDetailsDrawerContent: {
     overflowY: 'hidden',
   },
+  runCompleteRow: {
+    marginBottom: '-20px',
+  },
 }));
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
@@ -207,7 +210,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const Title = () => (
     <>
       {`Errors: ${resourceName}`}
-      {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
+      {endedAt && <DrawerHeaderSubTitle className={classes.runCompleteRow}>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
 
