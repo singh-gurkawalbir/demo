@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -161,5 +160,23 @@ describe('testsuite for JobStatus', () => {
       },
     });
     expect(screen.getByText(/Completing.../i)).toBeInTheDocument();
+  });
+  test('should display info of who canceled the job', async () => {
+    await initJobStatus({
+      job: {
+        id: 123,
+        _flowId: 8765,
+        integrationId: '0987',
+        name: 'test name 1',
+        type: 'export',
+        status: 'canceled',
+        uiStatus: 'canceled',
+        doneExporting: true,
+        canceledBy: 'system',
+      },
+    });
+    expect(screen.getByText('Canceled')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button'));
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Canceled by system');
   });
 });

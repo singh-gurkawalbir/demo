@@ -16,6 +16,7 @@ export default {
     {
       key: 'status',
       heading: 'Status',
+      HeaderValue: () => <HeaderWithHelpText title="Status" helpKey="runConsole.status" />,
       isLoggable: true,
       Value: ({rowData: r}) => <FlowStepStatus job={r} />,
     },

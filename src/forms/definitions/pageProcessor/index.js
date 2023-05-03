@@ -291,7 +291,7 @@ export default {
       const expression = [];
       let adaptorType = `${adaptorTypePrefix}${adaptorTypeSuffix}`;
 
-      if (fieldId === 'exportId') {
+      if (fieldId === 'exportId' || fieldId === 'checkExistingExport') {
         expression.push({ isLookup: true });
       }
 

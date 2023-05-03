@@ -2393,6 +2393,28 @@ export default {
     required: true,
     skipSort: true,
   },
+  'jdbc.email': {
+    type: 'text',
+    label: 'Email',
+  },
+  'jdbc.password': {
+    type: 'text',
+    defaultValue: '',
+    description: 'Note: for security reasons this field must always be re-entered.',
+    inputType: 'password',
+    label: 'Password',
+  },
+  'jdbc.account': {
+    type: 'text',
+    label: 'Account ID',
+    helpKey: 'connection.netsuite.account',
+  },
+  'jdbc.roleId': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Role',
+    helpKey: 'connection.netsuite.roleId',
+  },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
   'salesforce.sandbox': {
