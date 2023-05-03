@@ -5,7 +5,7 @@ import { Typography } from '@material-ui/core';
 import { getHttpConnector } from '../../../../constants/applications';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import DynaEditable from '../DynaEditable';
+import DynaEditable from '../DynaEditableSelect';
 
 const useStyles = makeStyles(theme => ({
   apiType: {
