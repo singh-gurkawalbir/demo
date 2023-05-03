@@ -128,13 +128,13 @@ export default {
     'jdbc.account': {
       fieldId: 'jdbc.account',
       required: true,
+      uppercase: true,
       defaultValue: r => r?.jdbc?.properties?.find(field => field.name === 'AccountID')?.value,
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
     'jdbc.roleId': {
       fieldId: 'jdbc.roleId',
       required: true,
-      uppercase: true,
       defaultValue: r => r?.jdbc?.properties?.find(field => field.name === 'RoleID')?.value,
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite.com'] }],
     },
