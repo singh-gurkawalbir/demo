@@ -84,7 +84,7 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
   }
   const onFieldChangeFn = selectedApplication => {
     // first get the previously selected application values
-    // stagged state we will break up the scope to selected application and actual value
+    // staged state we will break up the scope to selected application and actual value
 
     // selecting the other option
     const {id} = props;

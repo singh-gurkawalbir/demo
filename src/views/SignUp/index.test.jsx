@@ -87,4 +87,9 @@ describe('signUp', () => {
     await userEvent.click(signInLinkNode);
     expect(signInLinkNode.closest('a')).toHaveAttribute('href', '/signin');
   });
+  test('should show successful sign up message', async () => {
+    store({signup: {status: 'done', message: 'success message'}});
+    await initSignUp();
+    expect(screen.getByText('success message')).toBeInTheDocument();
+  });
 });

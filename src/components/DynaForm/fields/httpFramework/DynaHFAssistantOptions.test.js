@@ -251,6 +251,11 @@ describe('dynaHFAssistantOptions UI tests', () => {
         path: '/assistantMetadata/version',
         value: 'v2',
       },
+      {
+        op: 'replace',
+        path: '/settingsForm',
+        value: {},
+      },
     ];
 
     initDynaHFAssistantOptions({ ...props, id: endpoints[2].id });

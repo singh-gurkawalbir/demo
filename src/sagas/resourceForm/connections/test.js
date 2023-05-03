@@ -133,6 +133,23 @@ describe('ping connection saga', () => {
       )
       .run();
   });
+  test('should handle api error properly for SAP invalid credentials', () => {
+    const connectionPayload = { name: 'new Connection', assistant: 'sapbydesign' };
+    const resp = {errors: [{Errors: 'Errors', code: 401, message: 'The SAP credentials you entered are invalid. Check your username and password and try again.'}]};
+
+    expectSaga(pingConnection, { resourceId, values })
+      .provide([
+        [matchers.call.fn(createPayload), connectionPayload],
+        [matchers.call.fn(apiCallWithRetry), resp],
+      ])
+      .call.fn(createPayload)
+      .call.fn(apiCallWithRetry)
+      .put(actions.resource.connections.testErrored(
+        resourceId,
+        inferErrorMessages(resp)
+      ))
+      .run();
+  });
   test('should handle api error properly', () => {
     const connectionPayload = { name: 'new Connection' };
     const error = new Error('error');

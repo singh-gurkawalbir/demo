@@ -515,7 +515,7 @@ export const isBlobTypeResource = (resource = {}) =>
 export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};
 
-  return adaptorTypeMap[adaptorType] === 'as2';
+  return ['as2', 'van'].includes(adaptorTypeMap[adaptorType]);
 };
 
 export const isRestCsvMediaTypeExport = (resource, connection) => {

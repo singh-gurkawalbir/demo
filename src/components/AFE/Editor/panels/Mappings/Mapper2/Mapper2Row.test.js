@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen} from '@testing-library/react';
+import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
@@ -80,6 +80,12 @@ jest.mock('./Destination/Mapper2Generates', () => ({
   default: props => <input disabled={props.disabled} onChange={e => props.onBlur(e.target.value)} data-testid="fieldMappingGenerate" type="text" />,
 }));
 
+jest.mock('./Destination/Mapper2GeneratesWithDropdown', () => ({
+  __esModule: true,
+  ...jest.requireActual('./Destination/Mapper2GeneratesWithDropdown'),
+  default: props => <input disabled={props.disabled} onChange={e => props.onBlur(e.target.value)} data-testid="fieldMapper2GeneratesWithDropdown" type="text" />,
+}));
+
 jest.mock('./Source/Mapper2ExtractsTypeableSelect', () => ({
   __esModule: true,
   ...jest.requireActual('./Source/Mapper2ExtractsTypeableSelect'),
@@ -97,7 +103,7 @@ function initMapper2Row(props = {}, initialStore) {
     </ConfirmDialogProvider>
   );
 
-  return renderWithProviders(ui, initialStore);
+  return renderWithProviders(ui, {initialStore});
 }
 
 describe('Mapper2Row UI test cases', () => {
@@ -121,14 +127,30 @@ describe('Mapper2Row UI test cases', () => {
       actions.mapping.v2.patchField('generate', undefined, 'sometext')
     );
   });
-  test('should make dispatch call when extract field is changed', async () => {
-    initMapper2Row({});
+  test('reshould make dispatch call when generate field is changed', () => {
+    mutateStore(initialStore, draft => {
+      draft.session.mapping.mapping = {importSampleData: {
+        id: 'ae36eaba-cff3-4454-9f1f-9c1a8e69b37a',
+        rowNumber: 1,
+        note: '',
+        AccountRef: {
+          value: 'mrcool5@gmail.com',
+        },
+        ShipToAddress: {
+          id: '6077167f-eee0-4ae0-96f8-217df2975424',
+          rowNumber: 1,
+          note: null,
+          custom: {},
+          files: [],
+        } }};
+    });
+    initMapper2Row({}, initialStore);
 
-    const typableExtractInput = screen.getByTestId('mapper2ExtractsTypeableSelect');
+    const generateInput = screen.getByTestId('fieldMapper2GeneratesWithDropdown');
 
-    await userEvent.type(typableExtractInput, 'sometext');
+    userEvent.type(generateInput, 'sometext');
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.mapping.v2.patchField('extract', undefined, 'sometext', undefined, 'somejsonpath')
+      actions.mapping.v2.patchField('generate', undefined, 'sometext')
     );
   });
   test('should make dispatch call to add new row when add button is clicked', async () => {
@@ -228,5 +250,18 @@ describe('Mapper2Row UI test cases', () => {
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row dataType="object" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
     expect(screen.queryByTestId('mapper2ExtractsTypeableSelect')).not.toBeInTheDocument();
+  });
+
+  test('should make dispatch call when extract field is changed', async () => {
+    initMapper2Row({});
+
+    const typableExtractInput = screen.getByTestId('mapper2ExtractsTypeableSelect');
+
+    await userEvent.type(typableExtractInput, 'sometext');
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        actions.mapping.v2.patchField('extract', undefined, 'sometext', undefined, 'somejsonpath')
+      );
+    });
   });
 });

@@ -356,7 +356,6 @@ export default {
       if (fieldId === 'checkExistingExport') {
         importLabel = 'Use existing lookup';
       }
-
       const visible = !!connectionField.value;
 
       return { filter, appType, label: importLabel, visible };

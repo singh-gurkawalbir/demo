@@ -80,6 +80,7 @@ export default function ResetAuthorizationModal({ onClose }) {
 
   return (
     <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
+      <> Re-authenticate your account</>
       <>
         {message.MFA.REAUTHENTICATE_ACCOUNT}
         <div className={classes.container}>

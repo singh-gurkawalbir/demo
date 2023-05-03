@@ -4412,6 +4412,9 @@ Object {
       "http.response.failValues": Object {
         "fieldId": "http.response.failValues",
       },
+      "http.response.fileURLPaths": Object {
+        "fieldId": "http.response.fileURLPaths",
+      },
       "http.response.resourcePath": Object {
         "fieldId": "http.response.resourcePath",
       },
@@ -4513,7 +4516,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -4642,6 +4645,7 @@ Object {
                 Object {
                   "fields": Array [
                     "http.errorMediaType",
+                    "http.response.fileURLPaths",
                   ],
                 },
               ],
@@ -4682,7 +4686,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -7923,7 +7927,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -10608,7 +10612,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
