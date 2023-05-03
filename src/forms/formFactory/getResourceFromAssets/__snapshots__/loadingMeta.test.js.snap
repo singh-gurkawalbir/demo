@@ -7574,10 +7574,11 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "validWhen": Object {
           "isNot": Object {
-            "message": "Please select a connection",
+            "message": "Please select or create a connection",
             "values": Array [
               "",
             ],
@@ -11220,10 +11221,11 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "validWhen": Object {
           "isNot": Object {
-            "message": "Please select a connection",
+            "message": "Please select or create a connection",
             "values": Array [
               "",
             ],
@@ -13396,6 +13398,7 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "visibleWhenAll": Array [
           Object {
@@ -13602,6 +13605,7 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "visibleWhenAll": Array [
           Object {
