@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   createConnectionBtn: {
     padding: '15px 0px',
     '& > * .MuiSvgIcon-root': {
-      fontSize: 14,
+      fontSize: 12,
     },
   },
   dropdownitemsConnection: {
