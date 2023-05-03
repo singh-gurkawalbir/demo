@@ -8,7 +8,6 @@ import DynaSelectResource from './DynaSelectResource';
 import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
-import DynaEditable from './DynaEditable';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaUpdateOptions from './select/DynaUpdateOptions';
 import DynaRefreshCollection from './integrations/DynaRefreshCollection';
@@ -271,7 +270,6 @@ export default {
   salesforcereferencedfieldsia:
     Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
   salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
-  selectsuggest: DynaEditable,
   netsuitelookupfilters: DynaNetSuiteLookupFilters_afe,
   netsuitelookup: DynaNetSuiteLookup_afe,
   iaexpression: DynaIAExpression,

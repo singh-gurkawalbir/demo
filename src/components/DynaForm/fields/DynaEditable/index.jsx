@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -10,7 +10,6 @@ import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
 import ActionButton from '../../../ActionButton';
 import { OptionLabel } from '../DynaSelectConnection';
-import filter from '../../../AFE/metadata/filter';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -136,14 +135,12 @@ export default function DynaEditable(props) {
 
   useEffect(() => {
     if (inputValue !== selectedValue) {
-      handleInputChange({}, selectedValue);
       setInputValue(selectedValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedValue]);
   useEffect(() => {
     if (selectOptions.length !== options.length) {
-      handleInputChange({}, selectedValue);
       setInputValue(selectedValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
