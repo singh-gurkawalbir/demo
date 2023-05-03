@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
       alignItems: 'center',
       paddingRight: theme.spacing(1),
+      height: '38px',
       '& .MuiFilledInput-input': {
         border: 'none',
         height: '38px',
@@ -41,18 +42,21 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   createConnectionBtn: {
-    padding: theme.spacing(1.5, 0),
+    padding: '15px 0px',
+    '& > * .MuiSvgIcon-root': {
+      fontSize: 14,
+    },
   },
   dropdownitemsConnection: {
     width: '100%',
     marginLeft: 1,
-    marginTop: theme.spacing(4.8),
+    marginTop: theme.spacing(5),
     '& ul': {
       '& li': {
         display: 'flex',
         justifyContent: 'space-between',
+        padding: '12px 15px',
         alignItems: 'center',
-        padding: '11px 15px',
         '&:before': {
           content: 'unset',
         },
@@ -63,9 +67,13 @@ const useStyles = makeStyles(theme => ({
         },
       },
     },
+    '& > .MuiAutocomplete-listbox': {
+      maxHeight: '217px',
+    },
   },
   optionEditIcon: {
     display: 'none',
+    height: 20,
   },
 }));
 
@@ -79,7 +87,9 @@ const Option = option => {
   return (
     <>
       <OptionLabel option={option} connInfo={option?.connInfo} />
-      <span className={classes.optionEditIcon}><ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton></span>
+      <span className={classes.optionEditIcon}>
+        <ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton>
+      </span>
     </>
   );
 };
@@ -99,7 +109,7 @@ const PaperComponentCustom = options => {
           bold
           fullWidth
           className={classes.createConnectionBtn}
-          startIcon={<AddIcon />}>
+          startIcon={<AddIcon bold />}>
           Create connection
         </TextButton>
       )}
