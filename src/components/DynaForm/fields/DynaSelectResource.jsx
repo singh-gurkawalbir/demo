@@ -197,7 +197,7 @@ const useStyles = makeStyles(theme => ({
     '& > div:last-child': {
       position: 'absolute',
       right: '50px',
-      top: theme.spacing(4),
+      top: theme.spacing(4.5),
     },
     '& >* .MuiSelect-selectMenu': {
       paddingRight: 140,
