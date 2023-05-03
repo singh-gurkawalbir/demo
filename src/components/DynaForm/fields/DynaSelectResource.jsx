@@ -338,6 +338,7 @@ export default function DynaSelectResource(props) {
       filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
     }
     if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       filter = {...filter, _httpConnectorId: (merged._httpConnectorId || merged.http._httpConnectorId)};
       filteredResources = filteredResources.filter(sift(filter));
     }

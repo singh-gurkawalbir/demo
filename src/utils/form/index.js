@@ -844,7 +844,7 @@ export const isRequired = (field, fieldsById) => {
     defaultResult: false,
   });
 };
-export const isRemoved = (field, fieldsById) => {
+export const isRemove = (field, fieldsById) => {
   const { defaultRemoved, removeWhen = [], removeWhenAll = [] } = field;
 
   return evaluateAnyAndAllRules({
@@ -856,7 +856,7 @@ export const isRemoved = (field, fieldsById) => {
   });
 };
 
-export const isDeleted = (field, fieldsById) => {
+export const isDelete = (field, fieldsById) => {
   const { defaultdeleted, deleteWhen = [], deleteWhenAll = [] } = field;
 
   return evaluateAnyAndAllRules({

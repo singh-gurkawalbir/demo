@@ -1475,7 +1475,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
     },
   }};
   const resource = {};
-  const expectedOutput = {
+  const expctedOutput = {
     fieldMap: {
       'http.baseURI': {
         defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
@@ -1557,6 +1557,27 @@ describe('updateFinalMetadataWithHttpFramework', () => {
         type: 'relativeuri',
         visible: false,
       },
+      'http.unencrypted.version': {
+        fieldId: 'http.unencrypted.version',
+        id: 'http.unencrypted.version',
+        label: 'API version',
+        name: '/http/unencrypted/version',
+        options: [
+          {
+            items: [
+              {
+                label: '2022-01',
+                value: '2022-01',
+              },
+
+            ],
+
+          },
+
+        ],
+        type: 'select',
+        visible: false,
+      },
       settings: {
         defaultValue: {
           accessLicenseNumber: 'DDB98B391CF2CD41',
@@ -1580,8 +1601,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
         id: 'settings.storeName',
         label: 'Store Name',
         name: '/settings/storeName',
-        required: false,
-        visible: false,
+        required: true,
         _conditionIdValuesMap: [],
         _conditionIds: [],
         type: 'text',
@@ -1599,7 +1619,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
   test('should return modified field metadata to support new http framework', () => {
     const metaData = updateFinalMetadataWithHttpFramework(inputFieldMetaData, connector, resource);
 
-    expect(metaData).toEqual(expectedOutput);
+    expect(metaData).toEqual(expctedOutput);
   });
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();

@@ -8,9 +8,7 @@ import { selectors } from '../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
-  fieldsWithRemoveDelete,
-  valuesToDelete,
-  valuesToRemove,
+  handleIsRemoveLogic,
 } from '../../forms/formFactory/utils';
 import { commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
@@ -58,14 +56,11 @@ export function* createFormValuesPatchSet({
     resourceId
   );
   let finalValues = values;
-  const formKey = yield select(
-    selectors.formKey,
+  const formData = yield select(
+    selectors.formContext,
     resourceType,
     resourceId
   );
-  const data = yield select(selectors.formState, formKey);
-  const {fields: formContext } = data;
-  let newFields = formContext;
   let connection;
   let assistantData;
 
@@ -113,9 +108,7 @@ export function* createFormValuesPatchSet({
 
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
-    newFields = fieldsWithRemoveDelete(formContext);
-    finalValues = valuesToRemove(finalValues, newFields);
-    finalValues = valuesToDelete(finalValues, newFields);
+    finalValues = handleIsRemoveLogic(formData.fields, finalValues);
   }
   const patchSet = sanitizePatchSet({
     patchSet: defaultPatchSetConverter(finalValues),
@@ -911,9 +904,9 @@ export function* initFormValues({
     } else if (resource?._httpConnectorId) {
       // existing Iclient
       app = applications.find(a => a._httpConnectorId === resource._httpConnectorId) || {};
-    } else if (applicationFieldState?.value) {
+    } else if (connectionAssistant) {
       // new Iclient inside connection
-      app = applications.find(a => a.name === applicationFieldState.value) || {};
+      app = applications.find(a => a.id === connectionAssistant) || {};
     }
 
     httpPublishedConnector = getHttpConnector(app?._httpConnectorId);

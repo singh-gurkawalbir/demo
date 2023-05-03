@@ -306,7 +306,7 @@ export function Canvas({ flowId, fullscreen, iconView}) {
     dispatch(actions.flow.edgeHovered(flowId, includedEdges));
 
     // setSelectedEdge(edge);
-  }, [dispatch, elements, flowId]);
+  }, [dispatch, edges, elements, flowId, nodes]);
 
   const handleIconEdgeMouseLeave = useCallback(() => {
     dispatch(actions.flow.edgeUnhover(flowId));

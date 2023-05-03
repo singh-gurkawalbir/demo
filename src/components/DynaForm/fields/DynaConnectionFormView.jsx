@@ -9,7 +9,7 @@ import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, handleIsRemoveLogic, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
@@ -43,6 +43,7 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+
   const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
@@ -83,7 +84,9 @@ export default function FormView(props) {
       isNew: false,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, stagedRes);
+    let finalValues = preSave(formContext.value, stagedRes);
+
+    finalValues = handleIsRemoveLogic(formContext.fields, finalValues);
     const newFinalValues = {...finalValues};
 
     // if assistant is selected back again assign it to the export to the export obj as well
@@ -140,7 +143,7 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [_httpConnectorId, accountOwner, dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!_httpConnectorId || !sourceForm || stagedResource?._connectorId) {
     return null;

@@ -9,7 +9,7 @@ import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { FILE_PROVIDER_ASSISTANTS, emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, handleIsRemoveLogic, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isSapByDesignSoapConnection, isEbayFinanceConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
@@ -94,7 +94,10 @@ export default function FormView(props) {
       assistantData,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, staggedRes, { connection });
+    let finalValues = preSave(formContext.value, staggedRes, { connection });
+
+    finalValues = handleIsRemoveLogic(formContext.fields, finalValues);
+
     const newFinalValues = {...finalValues};
 
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
@@ -116,7 +119,7 @@ export default function FormView(props) {
       }
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues } ),
+      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
