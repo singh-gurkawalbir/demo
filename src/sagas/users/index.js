@@ -546,7 +546,7 @@ export function* requestLicenseEntitlementUsage() {
       opts,
     });
   } catch (error) {
-    return yield put(actions.api.failure(path, 'GET', error, false));
+    return yield put(actions.api.failure(path, 'GET', error?.message || error, false));
   }
 
   yield put(actions.license.receivedLicenseEntitlementUsage(response));
