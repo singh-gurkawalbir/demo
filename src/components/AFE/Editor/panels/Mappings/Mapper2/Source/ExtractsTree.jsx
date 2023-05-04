@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
     },
     '& .childTree-indent-unit': {
-      width: theme.spacing(1),
+      width: theme.spacing(1.5),
       position: 'relative',
       height: '100%',
     },
