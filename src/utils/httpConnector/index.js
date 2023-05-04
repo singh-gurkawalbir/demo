@@ -130,18 +130,24 @@ export function getHelpKey(resourceType, id) {
   return `${type}.${id}`;
 }
 
-export function getEndPointMetadata(connectorMetadata = {}, resourceId, operationId) {
+export function getEndPointMetadata(connectorMetadata = {}, resourceId, operationId, resourceType) {
   if (!resourceId || !operationId) return;
 
-  const resourceMetadata = connectorMetadata.resources?.find(resource => resource._id === resourceId);
+  const httpConnectorMetaData = connectorMetadata[resourceType === 'imports' ? 'import' : 'export'];
+
+  const resourceMetadata = httpConnectorMetaData.resources?.find(resource => resource._id === resourceId);
 
   if (!resourceMetadata) return;
+
+  if (resourceType === 'imports') {
+    return resourceMetadata.operations?.find(operation => operation.id === operationId);
+  }
 
   return resourceMetadata.endpoints?.find(operation => operation.id === operationId);
 }
 
-export function getEndPointCustomSettings(connectorMetadata = {}, resourceId, operationId) {
-  const endPointMetadata = getEndPointMetadata(connectorMetadata, resourceId, operationId);
+export function getEndPointCustomSettings(connectorMetadata = {}, resourceId, operationId, resourceType) {
+  const endPointMetadata = getEndPointMetadata(connectorMetadata, resourceId, operationId, resourceType);
 
   return endPointMetadata?.settingsForm;
 }
