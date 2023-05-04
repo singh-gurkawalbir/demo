@@ -17,7 +17,7 @@ async function initSaveButtonGroup(props = {editorId: 'mappings', onClose: mockC
         editorType: 'inputFilter',
         activeProcessor: 'javascript',
         data: {javascript: '{}'},
-        rule: {javascript: {_init_code: 'something'}},
+        rule: {javascript: {_init_code: 'something', entryFunction: 'entryFunction', scriptId: 'scriptId'}},
         originalRule: {javascript: {}},
       },
     };
@@ -30,6 +30,9 @@ describe('saveButtonGroup tests', () => {
   const mockDispatchFn = jest.fn();
 
   useDispatchSpy.mockReturnValue(mockDispatchFn);
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   test('should able to test SaveButtonGroup when form is not dirty', async () => {
     await initSaveButtonGroup();
     const close = screen.getByRole('button', {name: 'Close'});

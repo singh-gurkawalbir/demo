@@ -41,6 +41,7 @@ describe('exportFilter processor logic', () => {
         javascript: {
           fetchScriptContent: true,
           entryFunction: 'filter',
+          scriptId: 'somescriptID',
         },
       },
       originalRule: {
@@ -175,6 +176,7 @@ describe('exportFilter processor logic', () => {
       const expectedOutput = {
         rules: {
           function: 'filter',
+          _scriptId: 'somescriptID',
         },
         data: {record: {id: 123}},
       };
@@ -203,6 +205,7 @@ describe('exportFilter processor logic', () => {
   describe('dirty util', () => {
     test('should correctly call the javascript dirty util if active processor is script type', () => {
       editor.activeProcessor = 'javascript';
+      delete editor.rule.javascript.scriptId;
 
       expect(dirty(editor)).toBe(false);
     });
@@ -226,6 +229,7 @@ describe('exportFilter processor logic', () => {
   });
   describe('patchSet util', () => {
     test('should add and return the backgroundPatches when a script is present', () => {
+      delete editor.rule.javascript.scriptId;
       editor.activeProcessor = 'javascript';
       const expectedPatches = {
         foregroundPatches: [{
@@ -258,6 +262,7 @@ describe('exportFilter processor logic', () => {
       expect(patchSet(editor)).toEqual(expectedPatches);
     });
     test('should not return the backgroundPatches for /content when no script is present', () => {
+      delete editor.rule.javascript.scriptId;
       editor.activeProcessor = 'filter';
       const expectedPatches = {
         foregroundPatches: [{

@@ -279,6 +279,7 @@ export const getImportMetadata = (connectorMeta, connectionVersion, connectionAP
                       name: pp.label,
                       in: 'path',
                       required: true,
+                      description: pp.description,
                       config: pp.config,
                       suggestions: pp.values,
                     });
@@ -574,6 +575,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+        } else if (resource._connectorId && key === 'http._iClientId') {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true, visible: true, _httpConnectorId: (resource?._httpConnectorId || resource?.http?._httpConnectorId), preConfiguredFieldValue: preConfiguredField.values?.[0], iClientConditionsMap: tempFiledMeta.fieldMap[key]?._conditionIdValuesMap, iClientConditions: tempFiledMeta.fieldMap[key]?.conditions, _conditionIdValuesMap: [], conditions: []};
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }

@@ -193,7 +193,7 @@ export function CustomReactSelectStyles() {
       alignItems: 'center',
       display: 'flex',
       flex: '1',
-      padding: '2px 8px',
+      padding: '2px 15px',
       position: 'relative',
       overflow: 'hidden',
       flexWrap: 'wrap',

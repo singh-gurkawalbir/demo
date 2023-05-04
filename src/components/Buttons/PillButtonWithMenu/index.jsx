@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { ListItem, makeStyles, Menu, MenuItem, Typography } from '@material-ui/core';
+import { makeStyles, Menu, MenuItem, Typography } from '@material-ui/core';
 import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
@@ -28,23 +28,43 @@ const useStyles = makeStyles(theme => ({
     },
   },
   menuItem: {
-    padding: theme.spacing(1, 2, 2),
+    padding: theme.spacing(0.5),
+    margin: theme.spacing(0, 1, 2),
+    overflow: 'visible',
+    borderRadius: 2,
+    border: 0,
     '&:hover': {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.default,
       '&:before': {
         display: 'none',
       },
     },
+    '&:after': {
+      content: '""',
+      width: 'calc(100% + 16px)',
+      height: 1,
+      backgroundColor: theme.palette.secondary.lightest,
+      position: 'absolute',
+      bottom: theme.spacing(-1),
+      left: theme.spacing(-1),
+    },
     '&+$menuItem': {
       border: 0,
-      padding: theme.spacing(0.5, 2),
+      '&:after': {
+        display: 'none',
+      },
     },
     '&:nth-child(3)': {
-      marginTop: theme.spacing(1.5),
+      marginBottom: theme.spacing(0),
     },
     '&:last-child': {
-      paddingBottom: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
+  },
+  dropdownMenuTitle: {
+    padding: theme.spacing(1.5, 2, 0.5),
+    lineHeight: 1,
+    fontSize: 11,
   },
 }));
 
@@ -92,14 +112,12 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         onClose={handleMenuClose}
         className={classes.createMenu}
         transformOrigin={{
-          vertical: -34,
+          vertical: -32,
           horizontal: 176,
         }}
       >
         {menuTitle && (
-        <ListItem>
-          <Typography variant="caption">{menuTitle}</Typography>
-        </ListItem>
+          <Typography variant="caption" component="div" className={classes.dropdownMenuTitle}>{menuTitle}</Typography>
         )}
         {actionsMenu?.map(({ Icon, dataTestId, label, disabled, description, link }) => (
           <MenuItem

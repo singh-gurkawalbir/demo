@@ -1229,7 +1229,7 @@ describe('all modal sagas', () => {
           opts,
         }), throwError(error)],
       ])
-      .put(actions.api.failure(path, 'GET', error, false))
+      .put(actions.api.failure(path, 'GET', error.message, false))
       .run()
     );
   });

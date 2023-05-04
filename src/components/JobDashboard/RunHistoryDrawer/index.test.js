@@ -1,4 +1,3 @@
-
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -9,6 +8,11 @@ import RunHistoryDrawer from '.';
 import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
 import { getCreatedStore } from '../../../store';
+
+jest.mock('../../LoadResources', () => ({
+  __esModule: true,
+  default: ({children}) => <>{children}</>,
+}));
 
 let initialStore;
 const mockHistoryPush = jest.fn();
