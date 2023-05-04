@@ -24,5 +24,11 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.isHttpConnectorParentFormView = (state, resourceId) => !!state[resourceId]?.view;
+selectors.isHttpConnectorParentFormView = (state, resourceId) => {
+  if (!state || !resourceId || !state[resourceId]) {
+    return false;
+  }
+
+  return !!state[resourceId].view;
+};
 
