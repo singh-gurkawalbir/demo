@@ -78,6 +78,7 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
+      showEditableDropdown: true,
       defaultValue: '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
@@ -85,7 +86,7 @@ export default {
       allowNew: true,
       allowEdit: true,
       validWhen: {
-        isNot: { values: [''], message: 'Please select a connection' },
+        isNot: { values: [''], message: 'Please select or create a connection' },
       },
     },
     name: {

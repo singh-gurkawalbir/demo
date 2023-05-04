@@ -22,6 +22,10 @@ export function identify(userInfo, accountInfo) {
       visitor: userInfo,
       account: accountInfo,
     });
+    // eslint-disable-next-line no-undef
+    pendo.startSendingEvents();
+    // eslint-disable-next-line no-undef
+    pendo.startGuides();
   } catch (ex) {
     // We can't do anything here, just a safe check to prevent it from crashing our app.
   }
@@ -30,6 +34,16 @@ export function track(eventId, details = {}) {
   try {
     // eslint-disable-next-line no-undef
     pendo.track(eventId, details);
+  } catch (ex) {
+    // We can't do anything here, just a safe check to prevent it from crashing our app.
+  }
+}
+export function stopSendingEvents() {
+  try {
+    // eslint-disable-next-line no-undef
+    pendo.stopSendingEvents();
+    // eslint-disable-next-line no-undef
+    pendo.stopGuides();
   } catch (ex) {
     // We can't do anything here, just a safe check to prevent it from crashing our app.
   }

@@ -50,6 +50,7 @@ const useStyles = makeStyles(() => ({
 
 export default function JobDetail({
   job,
+  integrationId,
 }) {
   const classes = JobDetailsStyles();
   const jobDetailsClasses = useStyles();
@@ -90,7 +91,7 @@ export default function JobDetail({
           </ul>
         </TableCell>
         <TableCell className={classes.status}>
-          <JobStatusWithTag job={job} />
+          <JobStatusWithTag job={job} integrationId={integrationId} />
         </TableCell>
         <TableCell className={classes.duration}>{getJobDuration(job)}</TableCell>
         <TableCell className={clsx(classes.started, jobDetailsClasses.started)}><CeligoTimeAgo date={job.startedAt} /></TableCell>
