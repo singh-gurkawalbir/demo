@@ -36,8 +36,8 @@ export const useFeatureVisibility = () => {
     const feature = featureData[featureName];
     const noUserRestirction = !feature?.allowedUsers || feature?.allowedUsers?.length === 0;
     const noDomainRestriction = !feature?.enabledDomains || feature?.enabledDomains?.length === 0;
-    const isCurrentDomainEnabled = feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain));
-    const isCurrentUserEnabled = feature?.allowedUsers && (feature?.enabledDomains?.length === 0 || feature?.allowedUsers?.includes(userId));
+    const isCurrentDomainEnabled = noDomainRestriction || (feature?.enabledDomains && (feature?.enabledDomains?.length === 0 || feature?.enabledDomains?.includes(domain)));
+    const isCurrentUserEnabled = noUserRestirction || (feature?.allowedUsers && (feature?.allowedUsers?.length === 0 || feature?.allowedUsers?.includes(userId)));
 
     if (feature?.enabled === 'true') {
       if (noDomainRestriction) {
