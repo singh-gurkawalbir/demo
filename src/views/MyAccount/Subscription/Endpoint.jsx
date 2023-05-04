@@ -295,7 +295,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} contentId="subscription" />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>
@@ -351,7 +351,7 @@ export default function Endpoint() {
                 onClick={onStartFreeTrialClick}
                 className={classes.subscriptionUpgradeBtn}
                 id="myaccout-unlimited-flows-button">
-                Get unlimited flows
+                Start free trial
               </FilledButton>
               )}
               {(licenseActionDetails.subscriptionActions.actions.indexOf(

@@ -18,6 +18,7 @@ import {
   removeCSRFToken,
 } from '../../utils/session';
 import { safeParse } from '../../utils/string';
+import { generateInnerHTMLForSignUp } from '../utils/index';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
@@ -250,6 +251,7 @@ export function* initializeLogrocket() {
     // eslint-disable-next-line no-undef
     release: RELEASE_VERSION,
     mergeIframes: true,
+    childDomains: ['*'],
     console: {
       isEnabled: {
         debug: false,
@@ -497,19 +499,22 @@ export function* auth({ email, password }) {
       message: 'Authenticating User',
       hidden: true,
     });
+    const resp = yield call(validateSession);
 
-    if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
+    if (apiAuthentications?.success && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
       yield call(setCSRFToken, apiAuthentications._csrf);
-      yield call(
-        getResourceCollection,
-        actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
-      );
+      if (apiAuthentications?.isAccountUser && resp.mfaSetupRequired) {
+        // This request will fail in case of owner user
+        yield call(
+          getResourceCollection,
+          actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+        );
+      }
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
-    yield call(validateSession);
     const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);
@@ -643,6 +648,20 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
+export function* signUpWithGoogle({ returnTo, utmParams = {}}) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const htmlForUtmParams = generateInnerHTMLForSignUp(utmParams);
+  const form = document.createElement('form');
+
+  form.id = 'signinWithGoogle';
+  form.method = 'POST';
+  form.action = `/auth/google?returnTo=${returnTo || getRoutePath('/')}`;
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">${htmlForUtmParams}`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 export function* signInWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
   const form = document.createElement('form');
@@ -739,6 +758,7 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH.SIGNUP_WITH_GOOGLE, signUpWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),

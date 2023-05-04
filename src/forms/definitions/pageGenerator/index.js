@@ -108,6 +108,7 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
+      showEditableDropdown: true,
       checkPermissions: true,
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
@@ -133,7 +134,7 @@ export default {
       required: false,
       flowResourceType: 'pg',
       resourceType: 'exports',
-      label: 'Use existing Export',
+      label: 'Use existing export',
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -155,9 +156,10 @@ export default {
       resourceType: 'exports',
       label: '',
       defaultValue: '',
-      required: false,
+      required: true,
       allowEdit: true,
       defaultOpen: true,
+      omitWhenHidden: true,
       refreshOptionsOnChangesTo: [
         'application',
         'connection',
@@ -323,13 +325,17 @@ export default {
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
-      let label =
+      let label = '';
+
+      if (fieldId === 'checkExistingExport') {
+        label =
         isWebhook || type === 'realtime'
-          ? 'Would you like to use an existing listener?'
+          ? 'Use existing listener'
           : exportField.label;
 
-      if (type === 'transferFiles') {
-        label = 'Would you like to use an existing transfer?';
+        if (type === 'transferFiles') {
+          label = 'Use existing transfer';
+        }
       }
 
       return {

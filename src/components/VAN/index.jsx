@@ -41,7 +41,7 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
 
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
-      title: 'Request upgrade',
+      title: 'Request access to VAN connector',
       message: 'We will contact you to discuss your business needs and get you access to VAN.',
       buttons: [
         { label: 'Submit request',
@@ -80,7 +80,7 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
                 disabled={upgradeRequested}
                 id="request-van-upgrade-buttton"
                 className={classes.upgradeButton}>
-                {!upgradeRequested ? 'Request upgrade' : 'Access Requested'}
+                {!upgradeRequested ? 'Request access' : 'Access requested'}
               </FilledButton>
             </ButtonWithTooltip>
           </Typography>

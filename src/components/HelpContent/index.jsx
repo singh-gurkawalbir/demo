@@ -4,12 +4,14 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
+import clsx from 'clsx';
 import actions from '../../actions';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import ThumbsUpIcon from '../icons/ThumbsUpIcon';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
 import ThumbsDownIcon from '../icons/ThumbsDownIcon';
 import CloseIcon from '../icons/CloseIcon';
+import HelpContentLinks from '../HelpContentLinks';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -92,6 +94,13 @@ const useStyles = makeStyles(theme => ({
   closeButton: {
     padding: 0,
   },
+  basicInfoWrapper: {
+    minWidth: 'auto',
+    padding: theme.spacing(1, 1.5),
+    '& $content': {
+      paddingTop: 0,
+    },
+  },
 }));
 
 const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) => {
@@ -168,25 +177,27 @@ const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) =
   );
 };
 
-export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, ...rest }) {
+export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, basicInfo, contentId, ...rest }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.titleWrapper}>
-        <Typography className={classes.title} variant="h6">
-          {title}
-        </Typography>
-        <IconButton
-          size="small"
-          data-test="close"
-          aria-label="Close"
+    <div className={clsx(classes.wrapper, {[classes.basicInfoWrapper]: basicInfo})}>
+      {!basicInfo && (
+        <div className={classes.titleWrapper}>
+          <Typography className={classes.title} variant="h6">
+            {title}
+          </Typography>
+          <IconButton
+            size="small"
+            data-test="close"
+            aria-label="Close"
           // onClick={e => { e.stopPropagation(); }}
-          onClick={onClose}
-          className={classes.closeButton}>
-          <CloseIcon />
-        </IconButton>
-      </div>
+            onClick={onClose}
+            className={classes.closeButton}>
+            <CloseIcon />
+          </IconButton>
+        </div>
+      )}
       {supportFeedback ? (
         <FeedBackComponent
           {...rest}
@@ -199,6 +210,9 @@ export default function HelpContent({ title, caption, children, supportFeedback 
       <Typography variant="subtitle2" className={classes.caption}>
         Field path: {caption}
       </Typography>
+      )}
+      {contentId && (
+        <HelpContentLinks contentId={contentId} />
       )}
     </div>
   );

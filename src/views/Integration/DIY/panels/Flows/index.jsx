@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowsPanelWithStatus: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   content: {
     width: '100%',
@@ -92,6 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowPanelTitle: {
     overflowX: 'auto',
+    alignItems: 'center',
     '&>h4': {
       minWidth: '300px',
     },
@@ -513,10 +514,13 @@ export default function FlowsPanel({ integrationId, childId }) {
         <QueuedJobsDrawer integrationId={integrationId} />
         <FlowgroupDrawer integrationId={integrationId} />
 
-        <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle}>
+        <PanelHeader
+          title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle} placement="right-end"
+          contentId="flows">
           <ActionGroup>
             <KeywordSearch
               filterKey={searchFilterKey}
+              autoFocus
             />
             {canCreate && !isIntegrationApp && (
             <TextButton

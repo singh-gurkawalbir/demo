@@ -30,6 +30,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      skipEmptyRuleCleanup: true,
       context: scriptContext,
     };
   },
@@ -72,6 +73,7 @@ export default {
 
     return javascript.validate({
       data: editor.data?.javascript,
+      rule: editor?.rule?.javascript,
     });
   },
   dirty: editor => {

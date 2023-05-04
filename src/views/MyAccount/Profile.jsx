@@ -314,8 +314,8 @@ export default function ProfilePanel() {
   const enabledFeatures = useFeatureVisibility();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, darkTheme: undefined };
+    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, helpContent } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, helpContent, darkTheme: undefined };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -373,7 +373,7 @@ export default function ProfilePanel() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} contentId="profile" />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit

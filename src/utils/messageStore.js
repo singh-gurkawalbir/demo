@@ -190,6 +190,9 @@ const MAPPER2 = {
   DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows,
     all of this parent record row's child rows will be deleted when your selected data type is applied.
     <br><br>Are you sure you want to continue?`,
+  OBJECT_DATA_TYPE_WARNING: `The selected destination field will have an "object" data type that can't be mapped to a
+    source field. The current source field will be removed unless you choose another data type.
+    <br><br>Are you sure you want to continue?`,
   MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will be ignored. Delete all 2.0 mappings to use 1.0 mappings instead.',
   BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Learn about Mapper 2.0</a></b>',
   DYNAMIC_LOOKUP_SOURCE_TOOLTIP: 'Dynamic lookups do not provide source field list',
@@ -207,6 +210,7 @@ const MAPPER2 = {
   LEARN_MORE_MAPPER2: 'Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   AUTO_POPULATE_LEARN_MORE: 'Auto-populate is not available for this connector.<br><br>Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   CONTAINS_SUBRECORDS: 'This import contains subrecord imports, select which import you would like to edit the mapping for.',
+  OBJECT_ARRAY_NOTIFICATION: 'All other child fields of this parent that have the same field<br>name will remain in place. If necessary, you can move each<br>remaining field individually.',
 };
 // #endregion
 
@@ -260,7 +264,7 @@ const MFA = {
   ACCOUNT_SETTINGS_UPDATED: 'MFA account settings saved successfully.',
   ENABLED: 'MFA enabled successfully.',
   DISABLED: 'MFA disabled successfully.',
-  REAUTHENTICATE_ACCOUNT: '    Re-authenticate your account <br /> Enter your account password to confirm if you want to reset MFA.',
+  REAUTHENTICATE_ACCOUNT: 'Enter your account password to confirm if you want to reset MFA.',
   PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
   RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
   href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,
@@ -384,8 +388,8 @@ const SUBSCRIPTION = {
   RECEIVE_FOLLOW_UP_EMAIL: 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.',
   UNINSTALL_INSTANCE: ' Use this page to uninstall this instance (i.e. this tile) of the Integration App. Uninstalling an Integration App will remove all components, including the integration tile, from your integrator.io account. After uninstalling you can re-install from the marketplace as long as you have a valid subscription. Please be very certain that you want to uninstall as this action cannot be undone.',
   UNINSTALL_INFO: 'Once you uninstall this Integration App there is no going back. Please be certain.',
-  REQUEST_RECEIVED_VAN: '<a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN Connector</a> (Value Added Network) is not included in your accounts current subscription plan.<b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>',
-  VAN_LICENSE_APPROVED: '<b>Additional action required after saving</b><p>You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.</p>',
+  REQUEST_RECEIVED_VAN: '<a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN connector</a> (Value-added network) is not included in your account’s current subscription plan.<b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>',
+  VAN_LICENSE_APPROVED: '<b>Additional action required after saving</b><p>You must contact Celigo to gain access to our VAN customer portal to configure and manage your VAN service. After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.</p>',
   VAN_LICENSE_UPGRADE_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
 };
 // #endregion

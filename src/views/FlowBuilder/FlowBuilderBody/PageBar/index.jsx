@@ -212,7 +212,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, isIconView}) => {
+const PageBarChildren = ({integrationId, flowId, isIconView, children}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -273,6 +273,7 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
 
   return (
     <div className={classes.actions}>
+      {children}
       {(showIconViewToggle && (
         <>
           {(isIconView && (
@@ -290,7 +291,7 @@ const PageBarChildren = ({integrationId, flowId, isIconView}) => {
         </>
       ))}
       {isUserInErrMgtTwoDotZero && (
-      <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
+        <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
       {!isDataLoaderFlow && (
         <div className={clsx(classes.flowToggle)}>
@@ -379,10 +380,9 @@ export default function PageBar({flowId, integrationId}) {
       infoText={description}
       escapeUnsecuredDomains
     >
-      <TotalErrors flowId={flowId} />
-      <PageBarChildren
-        flowId={flowId} integrationId={integrationId} isIconView={isIconView}
-      />
+      <PageBarChildren flowId={flowId} integrationId={integrationId} isIconView={isIconView}>
+        <TotalErrors flowId={flowId} />
+      </PageBarChildren>
     </CeligoPageBar>
   );
 }

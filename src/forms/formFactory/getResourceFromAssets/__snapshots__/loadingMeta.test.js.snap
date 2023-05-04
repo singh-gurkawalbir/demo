@@ -4114,6 +4114,9 @@ Object {
       "http.response.failValues": Object {
         "fieldId": "http.response.failValues",
       },
+      "http.response.fileURLPaths": Object {
+        "fieldId": "http.response.fileURLPaths",
+      },
       "http.response.resourcePath": Object {
         "fieldId": "http.response.resourcePath",
       },
@@ -4215,7 +4218,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -4344,6 +4347,7 @@ Object {
                 Object {
                   "fields": Array [
                     "http.errorMediaType",
+                    "http.response.fileURLPaths",
                   ],
                 },
               ],
@@ -4384,7 +4388,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -7405,7 +7409,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -7570,10 +7574,11 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "validWhen": Object {
           "isNot": Object {
-            "message": "Please select a connection",
+            "message": "Please select or create a connection",
             "values": Array [
               "",
             ],
@@ -9970,7 +9975,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -11216,10 +11221,11 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "validWhen": Object {
           "isNot": Object {
-            "message": "Please select a connection",
+            "message": "Please select or create a connection",
             "values": Array [
               "",
             ],
@@ -13360,7 +13366,7 @@ Object {
       "checkExistingExport": Object {
         "flowResourceType": "pg",
         "id": "checkExistingExport",
-        "label": "Use existing Export",
+        "label": "Use existing export",
         "name": "checkExistingExport",
         "refreshOptionsOnChangesTo": Array [
           "application",
@@ -13392,6 +13398,7 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "visibleWhenAll": Array [
           Object {
@@ -13425,13 +13432,14 @@ Object {
         "id": "exportId",
         "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "type",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13517,7 +13525,7 @@ Object {
       "checkExistingExport": Object {
         "flowResourceType": "pp",
         "id": "checkExistingExport",
-        "label": "Use existing Export",
+        "label": "Use existing lookup",
         "name": "checkExistingExport",
         "refreshOptionsOnChangesTo": Array [
           "application",
@@ -13552,7 +13560,7 @@ Object {
       "checkExistingImport": Object {
         "flowResourceType": "pp",
         "id": "checkExistingImport",
-        "label": "Use existing Import",
+        "label": "Use existing import",
         "name": "checkExistingImport",
         "refreshOptionsOnChangesTo": Array [
           "application",
@@ -13597,6 +13605,7 @@ Object {
         ],
         "required": true,
         "resourceType": "connections",
+        "showEditableDropdown": true,
         "type": "selectresource",
         "visibleWhenAll": Array [
           Object {
@@ -13621,13 +13630,14 @@ Object {
         "id": "exportId",
         "label": "",
         "name": "exportId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "exportId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "exports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [
@@ -13666,13 +13676,14 @@ Object {
         "id": "importId",
         "label": "",
         "name": "importId",
+        "omitWhenHidden": true,
         "refreshOptionsOnChangesTo": Array [
           "application",
           "connection",
           "resourceType",
           "importId",
         ],
-        "required": false,
+        "required": true,
         "resourceType": "imports",
         "type": "selectflowresource",
         "visibleWhenAll": Array [

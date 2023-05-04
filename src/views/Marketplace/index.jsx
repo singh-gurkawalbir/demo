@@ -12,8 +12,8 @@ export default function Marketplace() {
 
   return (
     <>
-      <CeligoPageBar title="Marketplace" infoText={message.MARKETPLACE.HELPINFO}>
-        <KeywordSearch filterKey={filterKey} />
+      <CeligoPageBar title="Marketplace" infoText={message.MARKETPLACE.HELPINFO} contentId="marketplace">
+        <KeywordSearch filterKey={filterKey} autoFocus placeHolder="Search templates & integration apps" />
       </CeligoPageBar>
       <ApplicationsList filter={filter} />
     </>
