@@ -1,5 +1,6 @@
 import { get, sortBy } from 'lodash';
 import moment from 'moment';
+import { convertUtcToTimezone } from '../date';
 
 export const MAX_ERRORS_TO_RETRY_OR_RESOLVE = 1000;
 
@@ -34,11 +35,15 @@ export const ERROR_MANAGEMENT_RANGE_FILTERS = [
   {id: 'custom', label: 'Custom'},
 ];
 
-export const getFilteredErrors = (errors = [], options = {}) => {
+export const getFilteredErrors = (errors = [], options = {}, preferences = {}, timezone) => {
   const { keyword, searchBy = [] } = options;
 
   function searchKey(resource, key) {
-    const value = get(resource, key);
+    let value = get(resource, key);
+
+    if (key === 'occurredAt') {
+      value = `${value}|${convertUtcToTimezone(value, preferences.dateFormat, preferences.timeFormat, timezone)}`;
+    }
 
     return typeof value === 'string' ? value : '';
   }
