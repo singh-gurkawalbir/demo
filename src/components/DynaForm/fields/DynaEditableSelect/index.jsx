@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
   connectionFieldFormControl: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    borderRadius: 2,
     '&:focus': {
       borderColor: theme.palette.primary.main,
     },
@@ -54,15 +55,13 @@ const useStyles = makeStyles(theme => ({
   },
   createConnectionBtn: {
     padding: '15px 0px',
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     '& > * .MuiSvgIcon-root': {
       fontSize: 12,
     },
   },
   dropdownitemsConnection: {
     width: '100%',
-    marginLeft: 1,
-    marginTop: theme.spacing(5),
+    marginTop: 39,
     '& ul': {
       '& li': {
         display: 'flex',
@@ -86,7 +85,7 @@ const useStyles = makeStyles(theme => ({
       maxHeight: '217px',
     },
     '& > .MuiAutocomplete-noOptions': {
-      textAlign: 'center',
+      display: 'none',
     },
   },
   optionEditIcon: {
@@ -141,7 +140,7 @@ export default function DynaEditable(props) {
   const classes = useStyles({isOptionHovered});
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
-  const [selectOptions] = useState(options);
+  const [selectOptions, setSelectedOptions] = useState(options);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownProps = {
     allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
@@ -160,6 +159,7 @@ export default function DynaEditable(props) {
   useEffect(() => {
     if (selectOptions.length !== options.length) {
       setInputValue(selectedValue);
+      setSelectedOptions(options);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options]);
@@ -200,6 +200,7 @@ export default function DynaEditable(props) {
           <Autocomplete
             disablePortal
             id="connections-dropdown"
+            data-test="connection"
             options={options}
             getOptionLabel={option => option?.label}
             renderOption={Option}
