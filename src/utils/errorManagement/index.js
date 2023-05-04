@@ -34,14 +34,14 @@ export const ERROR_MANAGEMENT_RANGE_FILTERS = [
   {id: 'last30days', label: 'Last 30 days'},
   {id: 'custom', label: 'Custom'},
 ];
-
+const ERROR_MANAGEMENT_2_DATE_FIELDS = ['occurredAt', 'resolvedAt'];
 export const getFilteredErrors = (errors = [], options = {}, preferences = {}, timezone) => {
   const { keyword, searchBy = [] } = options;
 
   function searchKey(resource, key) {
     let value = get(resource, key);
 
-    if (key === 'occurredAt') {
+    if (ERROR_MANAGEMENT_2_DATE_FIELDS.includes(key)) {
       value = `${value}|${convertUtcToTimezone(value, preferences.dateFormat, preferences.timeFormat, timezone)}`;
     }
 
