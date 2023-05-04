@@ -288,6 +288,7 @@ const Mapper2Row = React.memo(props => {
               disabled={isFilterApplied || disabled || !generate}
               aria-label="settings"
               onClick={handleSettingsClick}
+              tooltip="Settings"
               key="settings"
               className={classes.rowActionButton}>
               <SettingsIcon />
@@ -300,6 +301,7 @@ const Mapper2Row = React.memo(props => {
           aria-label="add"
           onClick={addNewRowHandler}
           key="add_button"
+          tooltip="Add row"
           disabled={isFilterApplied || generateDisabled || disabled}
           className={classes.rowActionButton}>
           <AddIcon />
@@ -313,6 +315,7 @@ const Mapper2Row = React.memo(props => {
             <ActionButton
               data-test={`fieldMappingRemove-${nodeKey}`}
               aria-label="delete"
+              tooltip="Delete row"
               disabled={isFilterApplied || isEmptyRow || generateDisabled || isRequired || disabled}
               onClick={handleDeleteClick}
               key="delete_button"

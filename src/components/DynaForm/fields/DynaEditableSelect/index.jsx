@@ -13,8 +13,6 @@ import { OptionLabel } from '../DynaSelectConnection';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
     '& .MuiFilledInput-root': {
       padding: 0,
       display: 'flex',
@@ -26,6 +24,20 @@ const useStyles = makeStyles(theme => ({
         height: '38px',
         padding: '0px 15px',
       },
+    },
+  },
+  connectionFieldFormControl: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: 2,
+    '&:focus': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&:active': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
     },
   },
   searchIconConnection: {
@@ -49,8 +61,7 @@ const useStyles = makeStyles(theme => ({
   },
   dropdownitemsConnection: {
     width: '100%',
-    marginLeft: 1,
-    marginTop: theme.spacing(5),
+    marginTop: 39,
     '& ul': {
       '& li': {
         display: 'flex',
@@ -59,6 +70,9 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         '&:before': {
           content: 'unset',
+        },
+        '& > .MuiTypography-root': {
+          fontSize: '15px',
         },
         '&:hover': {
           '& $optionEditIcon': {
@@ -180,6 +194,7 @@ export default function DynaEditable(props) {
         key={id}
         disabled={disabled}
         required={required}
+        className={classes.connectionFieldFormControl}
         fullWidth>
         <DropdownContext.Provider value={dropdownProps}>
           <Autocomplete
