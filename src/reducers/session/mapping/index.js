@@ -21,7 +21,8 @@ import {
   getCombinedExtract,
   buildExtractsHelperFromExtract,
   getSelectedExtractDataTypes,
-  isMapper2HandlebarExpression } from '../../../utils/mapping';
+  isMapper2HandlebarExpression,
+  isMappingRowTouched} from '../../../utils/mapping';
 import { generateId } from '../../../utils/string';
 import { constructDestinationTreeFromParentsList,
   findLastNodeWithMatchingParent,
@@ -324,6 +325,7 @@ export default (state = {}, action) => {
     selectedExtractJsonPath,
     destinationTree,
     requiredMappingsJsonPaths,
+    clickedRowKey,
   } = action;
 
   return produce(state, draft => {
@@ -1221,31 +1223,48 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION: {
         if (!draft.mapping.destinationTree) break;
         const treeData = draft.mapping.isGroupedOutput ? draft.mapping.v2TreeData[0].children : draft.mapping.v2TreeData;
+        const {node: clickedNode, nodeIndexInSubArray: clickedNodeIndex, nodeSubArray: clickedNodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', clickedRowKey);
+
+        if (!clickedNode || !clickedNodeSubArray) break;
 
         const {parentsList = []} = findNodeInTreeWithParents(draft.mapping.destinationTree, 'key', v2Key);
 
         if (isEmpty(parentsList)) break;
 
         const {node = {}, leftParentsList = []} = findLastNodeWithMatchingParent(treeData, parentsList);
+        let finalKey;
 
         if (!isEmpty(node)) {
-          const newNode = constructDestinationTreeFromParentsList(leftParentsList);
+          const {node: newNode, key} = constructDestinationTreeFromParentsList(leftParentsList);
 
-          node.children.push(newNode);
+          finalKey = key;
+          if (clickedNode?.parentKey === node.key) {
+            if (!isMappingRowTouched(clickedNode, draft.mapping.lookups)) {
+              clickedNodeSubArray.splice(clickedNodeIndex, 1, newNode);
+            } else {
+              clickedNodeSubArray.splice(clickedNodeIndex + 1, 0, newNode);
+            }
+          } else {
+            node.children.push(newNode);
+          }
+
           newNode.parentKey = node.key;
           insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, newNode, draft.mapping.lookups);
         } else {
-          const newNode = constructDestinationTreeFromParentsList(parentsList);
+          const {node: newNode, key} = constructDestinationTreeFromParentsList(parentsList);
 
-          if (draft.mapping.isGroupedOutput) {
-            const node = draft.mapping.v2TreeData[0];
-
-            node.children.push(newNode);
-            newNode.parentKey = node.key;
+          finalKey = key;
+          if (!isMappingRowTouched(clickedNode, draft.mapping.lookups)) {
+            clickedNodeSubArray.splice(clickedNodeIndex, 1, newNode);
           } else {
-            draft.mapping.v2TreeData.push(newNode);
+            clickedNodeSubArray.splice(clickedNodeIndex + 1, 0, newNode);
           }
         }
+
+        const {parentsList: addedChildParents = []} = findNodeInTreeWithParents(draft.mapping.v2TreeData, 'key', finalKey);
+        const addedChildParentsKeys = addedChildParents.map(node => node.key);
+
+        draft.mapping.expandedKeys = [...new Set([...(draft.mapping.expandedKeys || []), ...addedChildParentsKeys])];
         break;
       }
       case actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG: {

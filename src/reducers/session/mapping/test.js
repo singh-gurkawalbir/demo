@@ -5991,7 +5991,7 @@ describe('mapping reducer', () => {
         },
       };
 
-      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d2'));
+      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d2', 'v1'));
       const newState = {
         mapping: {
           importId: 'imp-123',
@@ -6043,6 +6043,7 @@ describe('mapping reducer', () => {
               generate: 'test',
               jsonPath: 'test',
               children: [{
+                key: 'v11',
                 dataType: 'string',
                 generate: 'id',
                 extract: '$.id',
@@ -6060,7 +6061,7 @@ describe('mapping reducer', () => {
         },
       };
 
-      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d11'));
+      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d11', 'v1'));
       const newState = {
         mapping: {
           importId: 'imp-123',
@@ -6075,6 +6076,7 @@ describe('mapping reducer', () => {
               generate: 'test',
               jsonPath: 'test',
               children: [{
+                key: 'v11',
                 dataType: 'string',
                 generate: 'id',
                 extract: '$.id',
@@ -6094,6 +6096,64 @@ describe('mapping reducer', () => {
             generate: 'name',
             jsonPath: 'name',
           }],
+          expandedKeys: ['new_key'],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+    test('should delete the empty node of tree if a value is selected from the empty row dropdown', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              title: '',
+              dataType: 'string',
+              sourceDataType: 'string',
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('d11', 'v1'));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'new_key',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'name',
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          expandedKeys: ['new_key'],
           extractsTree: [],
         },
       };
