@@ -7,7 +7,7 @@ import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import DynaText from './DynaText';
 
-export default function DynaTextPlaceholder(props) {
+export default function DynaHttpConnectorName(props) {
   const {
     isApplicationPlaceholder = false,
     isVanConnector = false,
@@ -56,13 +56,12 @@ export default function DynaTextPlaceholder(props) {
   );
   const isVanLicenseAbsent = (isVanConnector && licenseActionDetails.van === false);
 
-  // copyToClipboard used to copy the value from clipboard.
-  // subsectionfield used to add the padding to the field.
+  const finalPlaceHolder = isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder;
+  const disableUpdate = resource.type === 'van' ? isVanLicenseAbsent : disabled || disableText;
+
   return (
-    <>
-      <DynaText
-        {...props} placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder} label={updatedLabel} disabled={resource.type === 'van' ? isVanLicenseAbsent : disabled || disableText}
+    <DynaText
+      {...props} placeholder={finalPlaceHolder} label={updatedLabel} disabled={disableUpdate}
 />
-    </>
   );
 }
