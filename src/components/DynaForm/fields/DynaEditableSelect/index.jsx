@@ -70,6 +70,9 @@ const useStyles = makeStyles(theme => ({
     '& > .MuiAutocomplete-listbox': {
       maxHeight: '217px',
     },
+    '& > .MuiAutocomplete-noOptions': {
+      display: 'none',
+    },
   },
   optionEditIcon: {
     display: 'none',
