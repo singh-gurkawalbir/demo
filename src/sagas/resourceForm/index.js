@@ -69,6 +69,8 @@ export function* createFormValuesPatchSet({
   const connectorMetaData = yield select(
     selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
 
+  const isHttpConnectorParentFormView = yield select(selectors.isHttpConnectorParentFormView, resourceId);
+
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
   if (_httpConnectorId) {
@@ -82,6 +84,7 @@ export function* createFormValuesPatchSet({
     isNew: formState.isNew,
     assistantData,
     accountOwner,
+    isHttpConnectorParentFormView,
   });
 
   if (typeof preSave === 'function') {
@@ -826,6 +829,7 @@ export function* initFormValues({
     'flows',
     flowId
   ))?.merged || emptyObject;
+  const isHttpConnectorParentFormView = yield select(selectors.isHttpConnectorParentFormView, resourceId);
 
   if (isNewId(resourceId)) {
     resource._id = resourceId;
@@ -917,6 +921,7 @@ export function* initFormValues({
       accountOwner,
       parentConnectionId,
       applicationFieldState,
+      isHttpConnectorParentFormView,
     });
 
     const form = defaultFormAssets.fieldMeta;
@@ -968,7 +973,7 @@ export function* reInitializeForm({ formKey, additionalPatches = {} }) {
 
   const { flowId, resourceId, resourceType } = formContext.parentContext;
 
-  if (!formKey || !resourceId || isNewId(resourceId) || !resourceType) return;
+  if (!formKey || !resourceId || !resourceType) return;
 
   const stagedResource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged || {};
 
@@ -977,6 +982,8 @@ export function* reInitializeForm({ formKey, additionalPatches = {} }) {
   const connection = yield select(selectors.resource, 'connections', stagedResource._connectionId) || {};
 
   const connectorMetaData = yield select(selectors.httpConnectorMetaData, connection.http?._httpConnectorId, connection.http?._httpConnectorVersionId, connection.http?._httpConnectorApiId);
+
+  const isCurrentParentFormView = yield select(selectors.isHttpConnectorParentFormView, resourceId);
 
   const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
     acc[`/${curr}`] = stagedResource[curr];
@@ -991,6 +998,8 @@ export function* reInitializeForm({ formKey, additionalPatches = {} }) {
     isNew: false,
     connection,
     assistantData: connectorMetaData,
+    // We need the form view before switched as we need preSave of previous form view. hence negation
+    isHttpConnectorParentFormView: !isCurrentParentFormView,
   });
   const finalValues = preSave(formContext.value, stagedRes, { connection });
 
