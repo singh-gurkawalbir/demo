@@ -107,8 +107,8 @@ export default function (props) {
     }
 
     return selectedScopes.length ? selectedScopes : defaultValue;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourceId]);
+  }, [defaultValue, pathToScopeField, resource, selectedScopes]);
+
   const [showScopesModal, setShowScopesModal] = useState(false);
 
   const {flattenedScopes, subHeaderMap} = useMemo(() => {
