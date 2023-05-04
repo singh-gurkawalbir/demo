@@ -408,7 +408,7 @@ export default function DynaSelectResource(props) {
       }),
     [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email, _httpConnectorId]
   );
-  const handleEditResource = useCallback(resourceId => {
+  const handleEditResource = useCallback((evt, resourceId) => {
     if (
       resourceType === 'asyncHelpers' ||
       (resourceType === 'exports' && statusExport)

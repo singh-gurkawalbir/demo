@@ -88,7 +88,7 @@ const Option = option => {
     <>
       <OptionLabel option={option} connInfo={option?.connInfo} />
       <span className={classes.optionEditIcon}>
-        <ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton>
+        <ActionButton onClick={evt => onEditClick(evt, option.value)}><EditIcon /></ActionButton>
       </span>
     </>
   );
