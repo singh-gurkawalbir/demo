@@ -17,7 +17,7 @@ async function initSaveButtonGroup(props = {editorId: 'responseMappings', onClos
         editorType: 'inputFilter',
         activeProcessor: 'javascript',
         data: {javascript: '{}'},
-        rule: {javascript: {_init_code: 'something'}},
+        rule: {javascript: {_init_code: 'something', scriptId: 'scriptID', entryFunction: 'entryFunction'}},
         originalRule: {javascript: {}},
       },
       responseMappings: {

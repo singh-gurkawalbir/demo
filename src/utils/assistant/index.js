@@ -215,6 +215,29 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
+function extractQueryParameters(queryString, assistant) {
+  const queryParams = qs.parse(queryString, {
+    delimiter: /[?&]/,
+    depth: 0,
+    decoder(str, defaultDecoder) {
+      if (assistant !== 'liquidplanner') return defaultDecoder(str);
+
+      // a unique case where query name contains '=' operator
+      // IO-1683
+      if (str === 'filter[]') {
+        return 'filter[]=name';
+      }
+      if (str.startsWith('name=')) {
+        return defaultDecoder(str.substring(5));
+      }
+
+      return defaultDecoder(str);
+    },
+  }); /* depth should be 0 to handle IO-1683 */
+
+  return queryParams;
+}
+
 function populateDefaults({
   child = {},
   parent = {},
@@ -294,6 +317,93 @@ function populateDefaults({
   });
 
   return childWithDefaults;
+}
+
+export function searchParameterFieldsMeta({
+  label,
+  paramLocation,
+  parameters = [],
+  oneMandatoryQueryParamFrom,
+  value,
+  operationChanged,
+  isDeltaExport,
+  deltaDefaults = {},
+  url,
+  isHTTPFramework = false,
+}) {
+  let searchParamsField;
+  const defaultValue = {};
+  const filteredValues = value;
+
+  if (url) {
+    const [, queryPart] = url.split('?');
+    const queryObj = new URLSearchParams(queryPart);
+    const parameterIds = parameters.map(param => param.id);
+
+    if (queryPart) {
+      [...queryObj.entries()].filter(([key]) => !parameterIds.includes(key)).map(([key]) => key).forEach(key => {
+        delete filteredValues[key];
+      });
+    }
+  }
+
+  parameters.forEach(p => {
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
+      if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
+        try {
+          defaultValue[p.id] = JSON.parse(p.defaultValue);
+        } catch (e) {
+          defaultValue[p.id] = [];
+        }
+      } else {
+        defaultValue[p.id] = p.defaultValue;
+      }
+    }
+  });
+
+  if (parameters.length > 0) {
+    searchParamsField = {
+      fieldId: 'assistantMetadata.searchParams',
+      id:
+        paramLocation === PARAMETER_LOCATION.QUERY
+          ? 'assistantMetadata.queryParams'
+          : 'assistantMetadata.bodyParams',
+      label,
+      value: !isEmpty(filteredValues) ? filteredValues : defaultValue,
+      paramMeta: {
+        paramLocation,
+        fields: parameters,
+        oneMandatoryQueryParamFrom,
+        isDeltaExport,
+        defaultValuesForDeltaExport: deltaDefaults,
+      },
+    };
+
+    if (isHTTPFramework) {
+      searchParamsField.type = 'hfsearchparams';
+      searchParamsField.keyName = 'name';
+      searchParamsField.valueName = 'value';
+      searchParamsField.keyPlaceholder = 'Search, select or add a name';
+    }
+
+    if (
+      parameters.filter(p => !!p.required).length > 0 ||
+      (oneMandatoryQueryParamFrom && oneMandatoryQueryParamFrom.length > 0)
+    ) {
+      searchParamsField.required = true;
+      searchParamsField.validWhen = {
+        isNot: {
+          values: [undefined, {}],
+        },
+      };
+    }
+  }
+
+  if (searchParamsField) {
+    return [searchParamsField];
+  }
+
+  return [];
 }
 
 export function getExportVersionAndResource({
@@ -1007,25 +1117,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     if (urlMatch.urlParts && urlMatch.urlParts[urlMatch.urlParts.length - 1]) {
       toParseQueryString = urlMatch.urlParts[urlMatch.urlParts.length - 1];
     }
-
-    queryParams = qs.parse(toParseQueryString, {
-      delimiter: /[?&]/,
-      depth: 0,
-      decoder(str, defaultDecoder) {
-        if (exportDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-        // a unique case where query name contains '=' operator
-        // IO-1683
-        if (str === 'filter[]') {
-          return 'filter[]=name';
-        }
-        if (str.startsWith('name=')) {
-          return defaultDecoder(str.substring(5));
-        }
-
-        return defaultDecoder(str);
-      },
-    }); /* depth should be 0 to handle IO-1683 */
+    queryParams = extractQueryParameters(toParseQueryString, exportDoc.assistant);
   }
 
   if (exportAdaptorSubSchema.postBody) {
@@ -1989,8 +2081,8 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   }
 
   const pathParams = {};
-  let queryParams = {};
   const bodyParams = {};
+  let queryParams = {};
   let lookupUrl;
   let lookupQueryParams;
   let identifierValue;
@@ -2133,26 +2225,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
             lookupUrlInfo.urlParts &&
             lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1]
           ) {
-            lookupQueryParams = qs.parse(
+            lookupQueryParams = extractQueryParameters(
               lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1],
-              { delimiter: /[?&]/,
-                depth: 0,
-                decoder(str, defaultDecoder) {
-                  if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-                  // a unique case where query name contains '=' operator
-                  // IO-1683
-                  if (str === 'filter[]') {
-                    return 'filter[]=name';
-                  }
-                  if (str.startsWith('name=')) {
-                    return defaultDecoder(str.substring(5));
-                  }
-
-                  return defaultDecoder(str);
-                },
-              }
-            ); /* depth should be 0 to handle IO-1683 */
+              importDoc.assistant
+            );
           }
 
           lookupUrl = lookupUrlInfo.urlMatch;
@@ -2167,30 +2243,16 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importAdaptorSubSchema.relativeURI &&
     importAdaptorSubSchema.relativeURI[0].indexOf('?') > 0
   ) {
+    let toParseQueryString = importAdaptorSubSchema.relativeURI[0].split('?')?.[1];
+
     if (url1Info.urlParts && url1Info.urlParts[url1Info.urlParts.length - 1]) {
-      queryParams = qs.parse(url1Info.urlParts[url1Info.urlParts.length - 1], {
-        delimiter: /[?&]/,
-        depth: 0,
-        decoder(str, defaultDecoder) {
-          if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-          // a unique case where query name contains '=' operator
-          // IO-1683
-          if (str === 'filter[]') {
-            return 'filter[]=name';
-          }
-          if (str.startsWith('name=')) {
-            return defaultDecoder(str.substring(5));
-          }
-
-          return defaultDecoder(str);
-        },
-      }); /* depth should be 0 to handle IO-1683 */
-      url1Info.urlParts.splice(
-        url1Info.urlParts.length - 1
-      ); /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
+      toParseQueryString = url1Info.urlParts[url1Info.urlParts.length - 1];
+      url1Info.urlParts.splice(url1Info.urlParts.length - 1);
+      /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
     }
+    queryParams = extractQueryParameters(toParseQueryString, importDoc.assistant);
   }
+
   if (importAdaptorSubSchema.existingExtract) {
     identifierValue = importAdaptorSubSchema.existingExtract;
     lookupType = 'source';
@@ -2232,6 +2294,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     resource,
     operation,
     pathParams = {},
+    queryParams = {},
     lookupType,
     ignoreExisting = false,
     ignoreMissing = false,
@@ -2519,21 +2582,31 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     });
   }
 
-  let defaultQueryString = '';
+  const allQueryParams = {};
 
   if (operationDetails.queryParameters) {
-    operationDetails.queryParameters.forEach(p => {
-      if (defaultQueryString.length > 0) {
-        defaultQueryString += '&';
+    operationDetails.queryParameters.forEach(queryParam => {
+      allQueryParams[queryParam.id] = queryParam.defaultValue;
+      if (!queryParam.readOnly) {
+        allQueryParams[queryParam.id] = queryParams[queryParam.id];
       }
-
-      defaultQueryString += [p.id, p.defaultValue].join('=');
     });
   }
+  if (queryParams) {
+    Object.keys(queryParams).forEach(qp => {
+      if (!allQueryParams[qp]) {
+        allQueryParams[qp] = queryParams[qp];
+      }
+    });
+  }
+  const queryString = qs.stringify(allQueryParams, {
+    encode: false,
+    indices: false,
+  });
 
-  if (defaultQueryString) {
+  if (queryString) {
     importDoc.relativeURI = importDoc.relativeURI.map(
-      u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
+      u => u + (u.indexOf('?') === -1 ? '?' : '&') + queryString
     );
   }
 

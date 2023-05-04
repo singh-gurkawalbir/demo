@@ -403,6 +403,8 @@ describe('mappingInit saga', () => {
               {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
+        destinationTree: [],
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -448,6 +450,8 @@ describe('mappingInit saga', () => {
         importId,
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
+        destinationTree: undefined,
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -492,6 +496,8 @@ describe('mappingInit saga', () => {
         v2TreeData: undefined,
         extractsTree: undefined,
         isMonitorLevelAccess: false,
+        destinationTree: undefined,
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -575,6 +581,8 @@ describe('mappingInit saga', () => {
               {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
+        destinationTree: [],
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -645,6 +653,8 @@ describe('mappingInit saga', () => {
         v2TreeData: undefined,
         extractsTree: undefined,
         isMonitorLevelAccess: false,
+        destinationTree: undefined,
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -731,6 +741,8 @@ describe('mappingInit saga', () => {
               {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
+        destinationTree: [],
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -777,6 +789,8 @@ describe('mappingInit saga', () => {
         v2TreeData: undefined,
         extractsTree: undefined,
         isMonitorLevelAccess: false,
+        destinationTree: undefined,
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -841,6 +855,8 @@ describe('mappingInit saga', () => {
               {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
+        destinationTree: [],
+        requiredMappingsJsonPaths: [],
       }))
       .run();
 
@@ -904,6 +920,8 @@ describe('mappingInit saga', () => {
               {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
+        destinationTree: [],
+        requiredMappingsJsonPaths: [],
       }))
       .run();
   });

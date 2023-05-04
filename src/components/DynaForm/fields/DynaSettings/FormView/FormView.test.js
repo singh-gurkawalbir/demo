@@ -63,7 +63,6 @@ describe('formView tests', () => {
 
     await renderWithProviders(<FormView {...props} />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.customSettings.formRequest('imports', '_impId2', 'general'));
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should able to test FormView with settingsForm having error', async () => {
     const props = {

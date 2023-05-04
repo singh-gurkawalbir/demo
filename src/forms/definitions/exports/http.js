@@ -1,7 +1,10 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 import { safeParse } from '../../../utils/string';
+import { initializeHttpForm } from '../../metaDataUtils/httpConnectorUtils';
+import { LAST_EXPORT_DATE_TIME_REGEX_STRING } from '../../../constants';
 
 export default {
+  init: initializeHttpForm,
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
@@ -339,6 +342,7 @@ export default {
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
+    'http.response.fileURLPaths': { fieldId: 'http.response.fileURLPaths' },
     'http.response.successValues': {
       fieldId: 'http.response.successValues',
     },
@@ -373,7 +377,7 @@ export default {
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data',
               value: 'delta',
-              regex: /.*{{.*lastExportDateTime.*}}/,
+              regex: LAST_EXPORT_DATE_TIME_REGEX_STRING,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
               fieldsToValidate: ['http.relativeURI', 'http.body'] },
@@ -500,11 +504,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView', 'semiassistantoperationselect'] },
-      // {
-      //   collapsed: true,
-      //   label: 'Assistant Helper',
-      //   fields: ['semiassistantoperationselect'],
-      // },
       {
         collapsed: true,
         label: r => {
@@ -595,6 +594,7 @@ export default {
           {
             fields: [
               'http.errorMediaType',
+              'http.response.fileURLPaths',
             ],
           },
         ],
