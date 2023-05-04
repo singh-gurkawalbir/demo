@@ -10,6 +10,7 @@ import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
 import ActionButton from '../../../ActionButton';
 import { OptionLabel } from '../DynaSelectConnection';
+import { stringCompare } from '../../../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -87,9 +88,15 @@ const Option = option => {
   return (
     <>
       <OptionLabel option={option} connInfo={option?.connInfo} />
+      { allowEdit && (
       <span className={classes.optionEditIcon}>
-        <ActionButton disabled={!allowEdit} onClick={evt => onEditClick(evt, option.value)}><EditIcon /></ActionButton>
+        <ActionButton
+          data-test="editResource"
+          onClick={evt => onEditClick(evt, option.value)}>
+          <EditIcon />
+        </ActionButton>
       </span>
+      )}
     </>
   );
 };
@@ -103,13 +110,13 @@ const PaperComponentCustom = options => {
   return (
     <Paper className={classes.dropdownitemsConnection} {...containerProps}>
       {children}
-      {(
+      {allowNew && (
         <TextButton
           onMouseDown={event => { event.preventDefault(); onCreateClick(); }}
           bold
           fullWidth
-          disabled={!allowNew}
           className={classes.createConnectionBtn}
+          data-test="addNewResource"
           startIcon={<AddIcon bold />}>
           Create connection
         </TextButton>
@@ -119,15 +126,37 @@ const PaperComponentCustom = options => {
 };
 
 export default function DynaEditable(props) {
-  const {options, id, onFieldChange, value, required, isValid, label, disabled, removeHelperText, onCreateClick, onEditClick, allowEdit, allowNew } = props;
+  const {
+    options,
+    id,
+    onFieldChange,
+    value,
+    required,
+    isValid,
+    label,
+    disabled,
+    removeHelperText,
+    onCreateClick,
+    onEditClick,
+    allowEdit,
+    allowNew,
+  } = props;
   const [isOptionHovered, setIsOptionHovered] = useState(false);
   const classes = useStyles({isOptionHovered});
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
   const [selectOptions] = useState(options);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const sortedOptions = options =>
+    options.sort(stringCompare('label')).map(i => ({
+      label: i.label,
+      optionSearch: i.label,
+      value: i.value,
+      itemInfo: i.itemInfo,
+      connInfo: i.connInfo,
+    }));
   const dropdownProps = {
-    allOptions: options, onEditClick, allowEdit, allowNew, onCreateClick, classes, setIsOptionHovered,
+    allOptions: sortedOptions(options), onEditClick, allowEdit, allowNew, onCreateClick, classes, setIsOptionHovered,
   };
 
   const handleInputChange = useCallback((evt, newVal) => {
@@ -175,7 +204,6 @@ export default function DynaEditable(props) {
       </div>
       <FormControl
         key={id}
-        disabled={disabled}
         required={required}
         fullWidth>
         <DropdownContext.Provider value={dropdownProps}>
@@ -188,6 +216,7 @@ export default function DynaEditable(props) {
             disableClearable
             forcePopupIcon={false}
             open={isMenuOpen}
+            disabled={disabled}
             inputValue={inputValue}
             onInputChange={handleInputChange}
             onFocus={handleFocus}

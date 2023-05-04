@@ -517,7 +517,17 @@ export default function DynaSelectResource(props) {
           />
           ) : (
             <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-              { showEditableDropdown ? <DynaSelectConnection {...props} onCreateClick={handleAddNewResourceMemo} onEditClick={handleEditResource} options={resourceItems} />
+              { showEditableDropdown
+                ? (
+                  <DynaSelectConnection
+                    {...props}
+                    allowEdit={allowEdit}
+                    allowNew={allowNew}
+                    onCreateClick={handleAddNewResourceMemo}
+                    disabled={disableSelect}
+                    onEditClick={handleEditResource}
+                    options={resourceItems} />
+                )
                 : (
                   <DynaSelect
                     {...props}
