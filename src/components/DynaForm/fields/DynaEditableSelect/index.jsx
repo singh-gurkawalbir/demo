@@ -82,13 +82,13 @@ const DropdownContext = React.createContext({});
 const Option = option => {
   const data = useContext(DropdownContext);
 
-  const {onEditClick, classes} = data;
+  const {onEditClick, classes, allowEdit} = data;
 
   return (
     <>
       <OptionLabel option={option} connInfo={option?.connInfo} />
       <span className={classes.optionEditIcon}>
-        <ActionButton onClick={evt => onEditClick(evt, option.value)}><EditIcon /></ActionButton>
+        <ActionButton disabled={!allowEdit} onClick={evt => onEditClick(evt, option.value)}><EditIcon /></ActionButton>
       </span>
     </>
   );
@@ -98,7 +98,7 @@ const PaperComponentCustom = options => {
   const classes = useStyles();
   const { containerProps, children } = options;
   const data = useContext(DropdownContext);
-  const {onCreateClick} = data;
+  const {onCreateClick, allowNew} = data;
 
   return (
     <Paper className={classes.dropdownitemsConnection} {...containerProps}>
@@ -108,6 +108,7 @@ const PaperComponentCustom = options => {
           onMouseDown={event => { event.preventDefault(); onCreateClick(); }}
           bold
           fullWidth
+          disabled={!allowNew}
           className={classes.createConnectionBtn}
           startIcon={<AddIcon bold />}>
           Create connection
@@ -118,7 +119,7 @@ const PaperComponentCustom = options => {
 };
 
 export default function DynaEditable(props) {
-  const {options, id, onFieldChange, value, required, isValid, label, disabled, removeHelperText, onCreateClick, onEditClick} = props;
+  const {options, id, onFieldChange, value, required, isValid, label, disabled, removeHelperText, onCreateClick, onEditClick, allowEdit, allowNew } = props;
   const [isOptionHovered, setIsOptionHovered] = useState(false);
   const classes = useStyles({isOptionHovered});
   const selectedValue = options.find(option => option.value === value)?.label;
@@ -126,7 +127,7 @@ export default function DynaEditable(props) {
   const [selectOptions] = useState(options);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownProps = {
-    allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
+    allOptions: options, onEditClick, allowEdit, allowNew, onCreateClick, classes, setIsOptionHovered,
   };
 
   const handleInputChange = useCallback((evt, newVal) => {
