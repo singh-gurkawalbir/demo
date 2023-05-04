@@ -279,6 +279,7 @@ export const getImportMetadata = (connectorMeta, connectionVersion, connectionAP
                       name: pp.label,
                       in: 'path',
                       required: true,
+                      description: pp.description,
                       config: pp.config,
                       suggestions: pp.values,
                     });

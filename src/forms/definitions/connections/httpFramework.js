@@ -178,6 +178,7 @@ export default {
     name: {
       fieldId: 'name',
       label: 'Name your connection',
+      type: 'httpConnectorName',
       isApplicationPlaceholder: true,
     },
     'http.type': {
