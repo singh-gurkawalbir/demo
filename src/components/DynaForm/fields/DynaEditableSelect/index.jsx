@@ -13,8 +13,6 @@ import { OptionLabel } from '../DynaSelectConnection';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
     '& .MuiFilledInput-root': {
       padding: 0,
       display: 'flex',
@@ -26,6 +24,19 @@ const useStyles = makeStyles(theme => ({
         height: '38px',
         padding: '0px 15px',
       },
+    },
+  },
+  connectionFieldFormControl: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    '&:focus': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&:active': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
     },
   },
   searchIconConnection: {
@@ -43,6 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
   createConnectionBtn: {
     padding: '15px 0px',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     '& > * .MuiSvgIcon-root': {
       fontSize: 12,
     },
@@ -60,6 +72,9 @@ const useStyles = makeStyles(theme => ({
         '&:before': {
           content: 'unset',
         },
+        '& > .MuiTypography-root': {
+          fontSize: '15px',
+        },
         '&:hover': {
           '& $optionEditIcon': {
             display: 'flex',
@@ -69,6 +84,9 @@ const useStyles = makeStyles(theme => ({
     },
     '& > .MuiAutocomplete-listbox': {
       maxHeight: '217px',
+    },
+    '& > .MuiAutocomplete-noOptions': {
+      textAlign: 'center',
     },
   },
   optionEditIcon: {
@@ -176,6 +194,7 @@ export default function DynaEditable(props) {
         key={id}
         disabled={disabled}
         required={required}
+        className={classes.connectionFieldFormControl}
         fullWidth>
         <DropdownContext.Provider value={dropdownProps}>
           <Autocomplete
