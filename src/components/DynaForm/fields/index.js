@@ -195,7 +195,7 @@ export default {
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
   text: DynaText,
-  textwithplaceholder: DynaHttpConnectorName,
+  httpConnectorName: DynaHttpConnectorName,
   textlist: DynaTextList,
   editor: DynaEditor,
   textarea: DynaText,
