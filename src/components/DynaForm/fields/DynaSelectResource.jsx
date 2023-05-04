@@ -253,6 +253,7 @@ export default function DynaSelectResource(props) {
     disabledTitle,
     isValueValid = false,
     isSelectFlowResource,
+    defaultValue,
     showEditableDropdown,
   } = props;
   let {filter} = props;
@@ -373,15 +374,16 @@ export default function DynaSelectResource(props) {
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
   let isIclientEditDisable = false;
 
-  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId) && merged?.http?._iClientId) {
     const globalIclient = {};
-    const globalIclientCheck = resourceItems.find(res => res?.value === merged?.http?._iClientId);
-    const existingGlobalIclient = !resourceItems.find(res => res?.isGlobal);
+    const iClientPresentInAccount = resourceItems.find(res => res?.value === merged?.http?._iClientId);
+    const existingGlobalIclient = !!(iClientPresentInAccount?.isGlobal);
 
     globalIclient.value = merged?.http?._iClientId;
-    globalIclient.label = `${merged?.application} Celigo iClient`;
+    globalIclient.label = `${merged?.application || defaultValue} Celigo iClient`;
     globalIclient.isGlobal = true;
-    if (!globalIclientCheck && existingGlobalIclient) {
+
+    if (!iClientPresentInAccount && !existingGlobalIclient) {
       resourceItems.push(globalIclient);
     }
     isIclientEditDisable = !resourceItems.find(res => !res.isGlobal && res?.value === value);
