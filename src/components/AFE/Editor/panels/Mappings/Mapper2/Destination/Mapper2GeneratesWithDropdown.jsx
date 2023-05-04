@@ -287,6 +287,7 @@ export default function Mapper2GeneratesWithDropdown(props) {
         >
         {isFocused && !disabled && (
           <DestinationTree
+            nodeKey={nodeKey}
             destDataType={dataType}
             propValue={propValue}
             setIsFocused={setIsFocused}

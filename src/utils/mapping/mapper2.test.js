@@ -6464,9 +6464,11 @@ describe('v2 mapping utils', () => {
     test('should not throw exception for invalid args', () => {
       expect(constructDestinationTreeFromParentsList()).toEqual({
         node: undefined,
+        key: undefined,
       });
       expect(constructDestinationTreeFromParentsList(null)).toEqual({
         node: undefined,
+        key: undefined,
       });
     });
     test('should correctly return the node from parentsList', () => {
@@ -6493,31 +6495,34 @@ describe('v2 mapping utils', () => {
       }];
 
       expect(constructDestinationTreeFromParentsList(parentsList)).toEqual({
+        node: {
+          key: 'new_key',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'new_key',
+              title: '',
+              generate: 'child2',
+              parentKey: 'new_key',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              jsonPath: 'mothers_side.child2',
+              children: [
+                {
+                  key: 'new_key',
+                  title: '',
+                  generate: 'grandchild1',
+                  parentKey: 'new_key',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  jsonPath: 'mothers_side.child2.grandchild1',
+                },
+              ],
+            },
+          ],
+        },
         key: 'new_key',
-        title: '',
-        generate: 'mothers_side',
-        dataType: MAPPING_DATA_TYPES.OBJECT,
-        jsonPath: 'mothers_side',
-        children: [
-          {
-            key: 'new_key',
-            title: '',
-            generate: 'child2',
-            parentKey: 'new_key',
-            dataType: MAPPING_DATA_TYPES.OBJECT,
-            jsonPath: 'mothers_side.child2',
-            children: [
-              {
-                key: 'new_key',
-                title: '',
-                generate: 'grandchild1',
-                parentKey: 'new_key',
-                dataType: MAPPING_DATA_TYPES.STRING,
-                jsonPath: 'mothers_side.child2.grandchild1',
-              },
-            ],
-          },
-        ],
       });
 
       parentsList = [{
@@ -6528,20 +6533,23 @@ describe('v2 mapping utils', () => {
         jsonPath: 'mothers_side',
       }];
       expect(constructDestinationTreeFromParentsList(parentsList)).toEqual({
+        node: {
+          key: 'new_key',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          jsonPath: 'mothers_side',
+          children: [
+            {
+              key: 'new_key',
+              title: '',
+              parentKey: 'new_key',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              isEmptyRow: true,
+            },
+          ],
+        },
         key: 'new_key',
-        title: '',
-        generate: 'mothers_side',
-        dataType: MAPPING_DATA_TYPES.OBJECT,
-        jsonPath: 'mothers_side',
-        children: [
-          {
-            key: 'new_key',
-            title: '',
-            parentKey: 'new_key',
-            dataType: MAPPING_DATA_TYPES.STRING,
-            isEmptyRow: true,
-          },
-        ],
       });
     });
   });
