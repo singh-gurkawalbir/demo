@@ -190,6 +190,7 @@ export default function DynaEditable(props) {
             forcePopupIcon={false}
             open={isMenuOpen}
             inputValue={inputValue}
+            freeSolo
             onInputChange={handleInputChange}
             onFocus={handleFocus}
             onClose={handleClose}
