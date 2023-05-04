@@ -7630,5 +7630,7 @@ selectors.isHttpConnector = (state, resourceId, resourceType) => {
 
   const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
 
-  return isNewHTTPFramework && resource?.http?.sessionFormType !== 'http';
+  const isHttpConnectorParentFormView = selectors.isHttpConnectorParentFormView(state, resourceId);
+
+  return isNewHTTPFramework && !isHttpConnectorParentFormView;
 };
