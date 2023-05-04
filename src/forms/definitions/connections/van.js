@@ -7,6 +7,7 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name',
+      type: 'textwithplaceholder',
       isVanConnector: true,
       isApplicationPlaceholder: false },
     'van.as2Id': {
