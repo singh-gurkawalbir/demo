@@ -12,6 +12,7 @@ import { emptyList, HOME_PAGE_PATH} from '../../constants';
 import useConfirmDialog from '../ConfirmDialog';
 import { FilledButton } from '../Buttons';
 import { message } from '../../utils/messageStore';
+import * as pendo from '../../utils/analytics/pendo';
 
 const useStyles = makeStyles(theme => ({
   contentWrapper: {
@@ -90,6 +91,10 @@ const ExpiredSessionContent = () => {
   const handleUserLogout = () => {
     dispatch(actions.auth.logout());
   };
+
+  useEffect(() => {
+    pendo.stopSendingEvents();
+  }, []);
 
   return (
     <ModalDialog show disableEnforceFocus onClose={handleUserLogout} className={classes.sessionExpiredModal}>

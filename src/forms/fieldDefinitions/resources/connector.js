@@ -163,6 +163,7 @@ export default {
     label: 'Enable trials',
     defaultDisabled: r => isNewId(r._id),
     helpKey: 'license.trialEnabled',
+    contentId: 'freeTrialForIA',
   },
   trialPeriod: {
     isLoggable: true,

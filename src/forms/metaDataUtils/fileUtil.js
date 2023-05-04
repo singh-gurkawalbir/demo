@@ -667,7 +667,7 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, connector) =
   let resourceVersion;
 
   if (retValues['/http/_httpConnectorVersionId']) {
-    resourceVersion = connector.versions?.find(ver => ver._id === retValues['/http/_httpConnectorVersionId'])?.name;
+    resourceVersion = httpConnector.versions?.find(ver => ver._id === retValues['/http/_httpConnectorVersionId'])?.name;
   }
 
   if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.[0]?.includes('/:_version')) {

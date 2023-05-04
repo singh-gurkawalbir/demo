@@ -539,6 +539,7 @@ export const applicationsList = () => {
       export: true,
       import: true,
       assistant: pc.legacyId,
+      application: pc.legacyId || getConnectorId(pc.legacyId, pc.name),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
       webhook: pc.supportsWebhook,
