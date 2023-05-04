@@ -45,6 +45,7 @@ export default {
     isLoggable: true,
     type: 'replaceconnection',
     resourceType: 'connections',
+    showEditableDropdown: true,
     parentResourceType: 'imports',
     label: 'Connection',
     skipDefault: true,

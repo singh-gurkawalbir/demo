@@ -178,7 +178,7 @@ export default function SelectApplication(props) {
   }, [isMulti, value, onFieldChange, proceedOnChange, applications, id, dispatch, resourceType, resourceId, match, flowId]);
 
   const NoOptionsMessage = props => {
-    const imagePath = getImageUrl('images/react/empty-states/connections.png');
+    const imagePath = getImageUrl('/images/react/empty-states/noOption.png');
 
     return (
       <div className={classes.emptyOptionMessage}>

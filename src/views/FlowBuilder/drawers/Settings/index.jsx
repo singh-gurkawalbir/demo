@@ -196,11 +196,12 @@ function Settings({
   }, [dispatch, isUserInErrMgtTwoDotZero]);
 
   return (
-    <LoadResources required resources="notifications">
+    <>
       <DrawerContent>
-        <DynaForm formKey={formKey} />
+        <LoadResources required resources="notifications" >
+          <DynaForm formKey={formKey} />
+        </LoadResources>
       </DrawerContent>
-
       <DrawerFooter>
         <SaveAndCloseButtonGroupForm
           formKey={formKey}
@@ -209,7 +210,7 @@ function Settings({
           remountAfterSaveFn={remountFn}
           />
       </DrawerFooter>
-    </LoadResources>
+    </>
   );
 }
 

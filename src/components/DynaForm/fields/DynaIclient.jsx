@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import DynaSelect from './DynaSelect';
 import DynaSelectResource from './DynaSelectResource';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { isProduction } from '../../../forms/formFactory/utils';
+import { setValue } from '../../../utils/form';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
   const iClients = useSelector(state =>
@@ -24,13 +26,47 @@ export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
 };
 
 export default function DynaIclient(props) {
-  const { connectionId, connectorId, connType, hideFromUI } = props;
+  const { connectionId, connectorId, connType, formKey, hideFromUI, defaultValue, _httpConnectorId, onFieldChange, id, iClientConditionsMap, iClientConditions} = props;
   const { iClients } = useLoadIClientOnce({
     connectionId,
     disableLoad: !connectorId,
   });
 
-  return hideFromUI ? null : (
+  const fields = useSelector(state => selectors.formState(state, formKey)?.fields, shallowEqual);
+  const preConfiguredValue = useMemo(() => {
+    let tempField = customCloneDeep(props);
+
+    tempField = {...tempField, _conditionIdValuesMap: iClientConditionsMap, conditions: iClientConditions};
+    const newValue = setValue(tempField, fields);
+
+    return newValue;
+  }, [fields, iClientConditions, iClientConditionsMap, props]);
+
+  const hideNew = useMemo(() => {
+    if (hideFromUI) {
+      return true;
+    }
+    if (_httpConnectorId && iClients?.length <= 1) {
+      if (iClients?.length === 1) {
+        // Single IA iClientId present so no need to show dropdown
+        onFieldChange(id, iClients[0]._id);
+      }
+      if (iClients?.length === 0) {
+        // No IA iCLient present then calculate preconfigured field iCLientId
+        onFieldChange(id, preConfiguredValue);
+      }
+
+      return true;
+    }
+    if (_httpConnectorId && iClients?.length > 1) {
+      // multiple IA iClient present then show the drodown
+      onFieldChange(id, defaultValue);
+    }
+
+    return false;
+  }, [_httpConnectorId, defaultValue, hideFromUI, iClients, id, onFieldChange, preConfiguredValue]);
+
+  return hideNew ? null : (
     <>
       {connectorId && (
         <DynaSelect

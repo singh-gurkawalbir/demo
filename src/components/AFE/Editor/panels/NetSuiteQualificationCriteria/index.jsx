@@ -289,7 +289,7 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
   };
 
   useEffect(() => {
-    if (filtersMetadata) {
+    if (filtersMetadata && filters?.length) {
       const filtersConfig = generateFiltersConfig(filtersMetadata);
       const qbContainer = jQuery(qbuilder.current);
 
