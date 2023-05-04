@@ -123,7 +123,7 @@ export default function DynaEditable(props) {
   const classes = useStyles({isOptionHovered});
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
-  const [selectOptions] = useState(options);
+  const [selectOptions, setSelectedOptions] = useState(options);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownProps = {
     allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
@@ -142,6 +142,7 @@ export default function DynaEditable(props) {
   useEffect(() => {
     if (selectOptions.length !== options.length) {
       setInputValue(selectedValue);
+      setSelectedOptions(options);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options]);
@@ -181,6 +182,7 @@ export default function DynaEditable(props) {
           <Autocomplete
             disablePortal
             id="connections-dropdown"
+            data-test="connection"
             options={options}
             getOptionLabel={option => option?.label}
             renderOption={Option}
