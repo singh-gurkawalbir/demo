@@ -50,7 +50,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
     }
 
-    return selectors.editor(state, editorId)?.skipEmptyRuleCleanup;
+    // skip empty rule cleanup for other filter types like ioFilter
+    return true;
   });
 
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -66,10 +67,6 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
           actionType: 'setSkipEmptyRuleCleanup',
           position,
         })
-      );
-    } else {
-      dispatch(
-        actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: value})
       );
     }
   }, [dispatch, type, position, editorId]);
@@ -933,7 +930,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
   useEffect(() => {
     // iterate over rulesState and find empty rules
-    if (!rulesState || skipEmptyRuleCleanup) return;
+    if (!rulesState || skipEmptyRuleCleanup || type !== 'branchFilter') return;
 
     const $qb = jQuery(qbuilder.current);
 
@@ -968,13 +965,10 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       });
   }, [position, filtersMetadata, type, setSkipEmptyRuleCleanup]);
 
-  // On component unmount,
-  // 1. Reset editor validations,
-  // 2. Cleanup any empty rules on remount,
+  // On component unmount Reset editor validations,
   // this useEffect handles switching between rules and javascript panels
   useEffect(() => () => {
     patchEditorValidation();
-    setSkipEmptyRuleCleanup(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
