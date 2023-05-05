@@ -522,7 +522,7 @@ export default function DynaSelectResource(props) {
                   <DynaSelectConnection
                     {...props}
                     onCreateClick={handleAddNewResourceMemo}
-                    disabled={disableSelect}
+                    disabled={disabled}
                     onEditClick={handleEditResource}
                     options={resourceItems} />
                 )
