@@ -4,6 +4,8 @@ import { Tabs, Tab } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
+// import Custom from '../panels/Custom';
+import CustomPanel from '../panels/Custom';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
 import TabContent from '../../../components/TabContent';
@@ -39,8 +41,16 @@ const tabs = [
     Icon: CompletedIcon,
     Panel: Completed,
     dataTest: 'account-dashboard-completed-flows',
-  }];
-export default function DashboardTabs() {
+  },
+  {
+    path: 'custom',
+    label: 'Custom',
+    Icon: CompletedIcon,
+    Panel: CustomPanel,
+    dataTest: 'account-dashboard-completed-flows',
+  },
+];
+export default function DashboardTabs(props) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -63,6 +73,8 @@ export default function DashboardTabs() {
     },
     [history, match.params, match.path]
   );
+
+  props.func(match.params.dashboardTab);
 
   return (
     <TabContent>

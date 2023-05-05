@@ -22,7 +22,12 @@ import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editor from './editor';
-import { authenticationSagas, initializeApp, initializeLogrocket, invalidateSession } from './authentication';
+import {
+  authenticationSagas,
+  initializeApp,
+  initializeLogrocket,
+  invalidateSession,
+} from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -59,7 +64,7 @@ import { customSettingsSagas } from './customSettings';
 import lifecycleManagementSagas from './lifecycleManagement';
 import uiFieldsSagas from './uiFields';
 import exportDataSagas from './exportData';
-import {logsSagas} from './logs';
+import { logsSagas } from './logs';
 import ssoSagas from './sso';
 import flowbuildersagas from './flowbuilder';
 import mfaSagas from './mfa';
@@ -71,6 +76,7 @@ import flowGroupSagas from './flowGroups';
 import aliasSagas from './aliases';
 import { appSagas } from './app';
 import { sendRequest } from './api';
+import customApiSagas from './dashboardSettings';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -129,7 +135,7 @@ export function* apiCallWithRetry(args) {
     const { data, headers } = apiResp?.response || {};
 
     if (requireHeaders) {
-      return { data, headers};
+      return { data, headers };
     }
 
     return data;
@@ -141,7 +147,10 @@ export function* apiCallWithRetry(args) {
 }
 
 export function* apiCallWithPaging(args) {
-  const response = yield call(apiCallWithRetry, {...args, requireHeaders: true});
+  const response = yield call(apiCallWithRetry, {
+    ...args,
+    requireHeaders: true,
+  });
 
   if (!response) return response;
 
@@ -155,7 +164,7 @@ export function* apiCallWithPaging(args) {
   // for audit logs, pagination is supported at UI level so
   // we need to store the nextLinkPath in state
   if (args.path.includes('/audit')) {
-    return {data, nextLinkPath};
+    return { data, nextLinkPath };
   }
 
   if (nextLinkPath) {
@@ -166,7 +175,11 @@ export function* apiCallWithPaging(args) {
         path: nextLinkPath,
       });
 
-      if (nextPageData !== undefined && !Array.isArray(nextPageData) && !nextLinkPath.includes('/ui/assistants')) {
+      if (
+        nextPageData !== undefined &&
+        !Array.isArray(nextPageData) &&
+        !nextLinkPath.includes('/ui/assistants')
+      ) {
         // eslint-disable-next-line no-console
         console.warn('Getting unexpected collection values: ', nextPageData);
         nextPageData = undefined;
@@ -238,12 +251,13 @@ export function* allSagas() {
     ...lifecycleManagementSagas,
     ...flowbuildersagas,
     ...uiFieldsSagas,
+    ...customApiSagas,
   ]);
 }
 
 export default function* rootSaga() {
   const t = yield fork(allSagas);
-  const {logrocket, logout, switchAcc} = yield race({
+  const { logrocket, logout, switchAcc } = yield race({
     logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
     logout: take(actionsTypes.AUTH.USER.LOGOUT),
     switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
@@ -262,7 +276,9 @@ export default function* rootSaga() {
   }
   if (logout) {
     // invalidate the session and clear the store
-    yield call(invalidateSession, { isExistingSessionInvalid: logout.isExistingSessionInvalid });
+    yield call(invalidateSession, {
+      isExistingSessionInvalid: logout.isExistingSessionInvalid,
+    });
 
     // restart the root saga again
     yield spawn(rootSaga);
@@ -280,11 +296,12 @@ export default function* rootSaga() {
     // so when we perform initialization the app knows which account to show
     // TODO: we should wait for update preferences to complete...inorder to prevent a race
     // with initSession to get preferences.
-    yield put(actions.auth.clearStore({
-      authenticated: true,
-    }));
+    yield put(
+      actions.auth.clearStore({
+        authenticated: true,
+      })
+    );
 
     yield put(actions.auth.initSession({ switchAcc: true }));
   }
 }
-
