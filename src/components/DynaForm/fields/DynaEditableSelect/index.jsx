@@ -141,7 +141,6 @@ export default function DynaEditable(props) {
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
   const [selectOptions, setSelectedOptions] = useState(options);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownProps = {
     allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
   };
@@ -164,20 +163,13 @@ export default function DynaEditable(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options]);
 
-  const handleFocus = useCallback(() =>
-    setIsMenuOpen(true), []);
-
-  const handleClose = useCallback(() => setIsMenuOpen(false), []);
-
   const handleBlur = useCallback(() => {
-    setIsMenuOpen(false);
     setInputValue(selectedValue);
   }, [selectedValue]);
 
   const filterOptions = useCallback(options => options?.filter(option => option?.label.includes(inputValue || '')), [inputValue]);
 
   const handleChange = useCallback((event, newValue) => {
-    setIsMenuOpen(false);
     setInputValue(newValue?.label);
     onFieldChange(id, newValue?.value);
   }, [id, onFieldChange]);
@@ -206,11 +198,8 @@ export default function DynaEditable(props) {
             renderOption={Option}
             disableClearable
             forcePopupIcon={false}
-            open={isMenuOpen}
             inputValue={inputValue}
             onInputChange={handleInputChange}
-            onFocus={handleFocus}
-            onClose={handleClose}
             onBlur={handleBlur}
             filterOptions={filterOptions}
             onChange={handleChange}
@@ -239,8 +228,8 @@ export default function DynaEditable(props) {
               );
             }} />
         </DropdownContext.Provider>
-        {!removeHelperText && <FieldMessage {...props} />}
       </FormControl>
+      {!removeHelperText && <FieldMessage {...props} />}
     </div>
   );
 }
