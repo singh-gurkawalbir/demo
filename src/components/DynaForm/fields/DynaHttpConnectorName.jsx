@@ -31,19 +31,19 @@ export default function DynaHttpConnectorName(props) {
   const staggedResource = merged || emptyObject;
   const connection = useSelector(
     state =>
-      selectors.resource(state, 'connections', (staggedResource?._connectionId || staggedResource?._id)) ||
+      selectors.resource(state, 'connections', (staggedResource._connectionId || staggedResource._id)) ||
       emptyObject
   );
   const applications = applicationsList().filter(app => app?._httpConnectorId);
-  const app = applications.find(a => a._httpConnectorId === (connection?.http?._httpConnectorId || connection?._httpConnectorId || merged?.http?._httpConnectorId || merged?._httpConnectorId)) || {};
+  const app = applications.find(a => a._httpConnectorId === (connection?.http?._httpConnectorId || connection?._httpConnectorId || merged.http?._httpConnectorId || merged._httpConnectorId)) || {};
 
   if (resourceType === 'connections') {
     dataResourceType = 'connection';
   } else {
-    dataResourceType = (merged?.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
+    dataResourceType = (merged.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
   }
 
-  const applicationPlaceholder = isApplicationPlaceholder ? `${(merged?.application || app?.name)} ${dataResourceType}` : '';
+  const applicationPlaceholder = isApplicationPlaceholder ? `${(merged.application || app.name)} ${dataResourceType}` : '';
 
   const updatedLabel = `Name your ${dataResourceType}`;
   const resource = useSelectorMemo(
@@ -55,10 +55,10 @@ export default function DynaHttpConnectorName(props) {
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
-  const isVanLicenseAbsent = (isVanConnector && licenseActionDetails?.van === false);
+  const isVanLicenseAbsent = (isVanConnector && licenseActionDetails.van === false);
 
-  const finalPlaceHolder = isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder;
-  const disableUpdate = resource?.type === 'van' ? isVanLicenseAbsent : disabled || disableText;
+  const finalPlaceHolder = isApplicationPlaceholder && (merged.http?._httpConnectorId || merged.isHttpConnector || merged._httpConnectorId || merged.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder;
+  const disableUpdate = resource.type === 'van' ? isVanLicenseAbsent : disabled || disableText;
 
   return (
     <DynaText
