@@ -10,7 +10,7 @@ import {
   getFormattedNetsuiteMetadataData,
 } from '../metadata';
 import { getUnionObject, getTransformPaths } from '../jsonPaths';
-import { getSampleFileMeta, isFileMetaExpectedForResource } from '../flowData';
+import { getSampleFileMeta, isFileMetaExpectedForHook } from '../flowData';
 import customCloneDeep from '../customCloneDeep';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
@@ -663,7 +663,7 @@ export const wrapSampleDataWithContext = ({
         status,
         data: {
           data: data ? [data] : [],
-          files: isFileMetaExpectedForResource(resource) ? getSampleFileMeta(resource) : undefined,
+          files: isFileMetaExpectedForHook(resource) ? getSampleFileMeta(resource) : undefined,
           errors: [],
           ...resourceIds,
           ...contextFields,

@@ -448,9 +448,7 @@ export function isFileAdaptor(resource) {
 
   return (
     ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType]) ||
-      resource.type === 'simple' ||
-      (adaptorTypeMap[resource.adaptorType] === 'http' && resource?.http?.type === 'file') ||
-      (resource.adaptorType === 'HTTPExport' && !!resource?.http?.response?.fileURLPaths)
+      resource.type === 'simple' || (adaptorTypeMap[resource.adaptorType] === 'http' && resource?.http?.type === 'file')
   );
 }
 
