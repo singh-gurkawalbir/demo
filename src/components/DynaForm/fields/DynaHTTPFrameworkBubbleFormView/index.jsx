@@ -30,6 +30,16 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
 
   const isParentView = useSelector(state => selectors.isHttpConnectorParentFormView(state, resourceId));
 
+  const newResourceId = useSelector(state => selectors.createdResourceId(state, resourceId));
+
+  useEffect(() => {
+    if (isParentView) {
+      // Incase of resource creation user should still be in the same parent view once it is created
+      dispatch(actions.httpConnectors.resourceForm.switchView(newResourceId));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newResourceId]);
+
   const { _httpConnectorId, _httpConnectorVersionId, _httpConnectorApiId, publishedHttpConnectorId } = useSelector(state => {
     const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
     const connection = selectors.resource(state, 'connections', resource._connectionId) || {};
