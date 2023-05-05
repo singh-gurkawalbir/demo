@@ -53,7 +53,7 @@ export default function NameCell({al, actionProps}) {
       return al._resourceId || '';
     }
 
-    return al.deletedInfo.name || '';
+    return resourceName || al._resourceId || '';
   }
 
   if (resourceType === 'users') {
