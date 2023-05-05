@@ -147,14 +147,7 @@ export default function DynaEditable(props) {
   const [inputValue, setInputValue] = useState(selectedValue);
   const [selectOptions] = useState(options);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const sortedOptions = options =>
-    options.sort(stringCompare('label')).map(i => ({
-      label: i.label,
-      optionSearch: i.label,
-      value: i.value,
-      itemInfo: i.itemInfo,
-      connInfo: i.connInfo,
-    }));
+  const sortedOptions = options => options.sort(stringCompare('label'));
   const dropdownProps = {
     allOptions: sortedOptions(options), onEditClick, allowEdit, allowNew, onCreateClick, classes, setIsOptionHovered,
   };
