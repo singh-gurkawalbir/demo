@@ -328,7 +328,7 @@ export const getSampleFileMeta = resource => {
         {
           fileMeta: {
             fileName: 'sampleFileName',
-            fileSize: 1234,
+            lastModifiedTime: 'Fri, 01 Jan 2000 00:00:00 GMT',
           },
         },
       ],
