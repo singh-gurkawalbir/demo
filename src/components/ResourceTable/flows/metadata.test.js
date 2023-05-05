@@ -120,10 +120,10 @@ describe('flows metadata UI test case', () => {
     cellIndex = indexOfCell('Name of the flow', 'rowheader');
     expectFunction(headerIndex, cellIndex);
     headerIndex = indexOfCell('Last updated', 'columnheader');
-    cellIndex = indexOfCell('05/03/2022 6:24:08 am', 'cell');
+    cellIndex = indexOfCell('05/03/2022 12:54:08 am', 'cell');
     expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Last run', 'columnheader');
-    cellIndex = indexOfCell('03/03/2022 9:06:36 pm', 'cell');
+    cellIndex = indexOfCell('03/03/2022 3:36:36 pm', 'cell');
     expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Mapping', 'columnheader');
     cellIndex = indexOfCell('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
@@ -158,10 +158,10 @@ describe('flows metadata UI test case', () => {
     cellIndex = indexOfCell('Name of the flow', 'rowheader');
     expectFunction(headerIndex, cellIndex);
     headerIndex = indexOfCell('Last updated', 'columnheader');
-    cellIndex = indexOfCell('05/03/2022 6:24:08 am', 'cell');
+    cellIndex = indexOfCell('05/03/2022 12:54:08 am', 'cell');
     expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Last run', 'columnheader');
-    cellIndex = indexOfCell('03/03/2022 9:06:36 pm', 'cell');
+    cellIndex = indexOfCell('03/03/2022 3:36:36 pm', 'cell');
     expectFunction(headerIndex - 1, cellIndex);
     headerIndex = indexOfCell('Mapping', 'columnheader');
     cellIndex = indexOfCell('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');

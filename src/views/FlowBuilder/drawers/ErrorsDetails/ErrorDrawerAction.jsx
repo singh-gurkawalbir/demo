@@ -46,7 +46,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
 
   return (
     <>
-      { true && (
+      {retryStatus === 'inProgress' && (
       <div className={classes.retryContainer}>
         <Divider orientation="vertical" className={classes.divider} />
         <Spinner size="small" sx={{ mr: 0.5, display: 'flex'}} />

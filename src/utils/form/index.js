@@ -18,6 +18,7 @@ import {
   splitDelimitedValue,
 } from './field';
 import { validateAllFields } from './validation';
+import { getFieldIdsInLayoutOrder } from './metadata';
 
 // Because this function can be passed with the state of a component form
 // it is not mutating the supplied fields array but returning a new instance
@@ -843,7 +844,7 @@ export const isRequired = (field, fieldsById) => {
     defaultResult: false,
   });
 };
-export const isRemoved = (field, fieldsById) => {
+export const isRemove = (field, fieldsById) => {
   const { defaultRemoved, removeWhen = [], removeWhenAll = [] } = field;
 
   return evaluateAnyAndAllRules({
@@ -855,7 +856,7 @@ export const isRemoved = (field, fieldsById) => {
   });
 };
 
-export const isDeleted = (field, fieldsById) => {
+export const isDelete = (field, fieldsById) => {
   const { defaultdeleted, deleteWhen = [], deleteWhenAll = [] } = field;
 
   return evaluateAnyAndAllRules({
@@ -1088,24 +1089,6 @@ export const getNextStateFromFields = formState => {
 
   formState.isValid = isValid && !isDiscretelyInvalid;
 };
-
-export function getFieldIdsInLayoutOrder(layout) {
-  const fields = [];
-
-  if (!layout) return fields;
-  if (layout.fields?.length) {
-    // add the fields in this layout to the list
-    fields.push(...layout.fields);
-  }
-  if (layout.containers?.length) {
-    // traverse through each container and fetch the fields
-    layout.containers.forEach(container => {
-      fields.push(...getFieldIdsInLayoutOrder(container));
-    });
-  }
-
-  return fields;
-}
 
 export function getFirstErroredFieldId(formState) {
   const { fields, fieldMeta } = formState || {};

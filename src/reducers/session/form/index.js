@@ -176,4 +176,14 @@ selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) 
 
   return isVisible(actionButtonMeta, form.fields);
 };
+
+selectors.formContext = (state, resourceType, resourceId) => {
+  if (!state) {
+    return {};
+  }
+
+  const key = `${resourceType}-${resourceId}`;
+
+  return state[key] || {};
+};
 // #endregion

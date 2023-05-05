@@ -58,11 +58,6 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.primary.main,
     },
   },
-  selectWrapper: {
-    '& .MuiBackdrop-root': {
-      backgroundColor: 'transparent',
-    },
-  },
 }));
 
 export const DoneButton = ({onClose}) => {

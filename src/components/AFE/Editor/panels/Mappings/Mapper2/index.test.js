@@ -252,11 +252,15 @@ describe('ewrv', () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
-      draft.session.mapping = {mapping: {searchKey: 'somsearchkey'}};
+      draft.session.mapping = {mapping: {searchKey: 'somsearchkey',
+        requiredMappingsJsonPaths: [
+          'mothers_side+object',
+        ],
+      }};
     });
     renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
-
     expect(screen.getByText("Your search term doesn't match any destination fields.")).toBeInTheDocument();
+    expect(screen.getByText('This import has required fields that you must configure with the destination drop-down list.')).toBeInTheDocument();
   });
   test('should show message that not match found when some filter is apllied', () => {
     const initialStore = getCreatedStore();

@@ -42,7 +42,7 @@ function renderFuntion(data, actionProps) {
 describe('flowStepLogs meta data UI tests', () => {
   test('should verify the time column', async () => {
     await renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
-    expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();
+    expect(screen.getByText('05/18/2022 6:16:31 pm')).toBeInTheDocument();
     await userEvent.click(screen.getByText('Time'));
     await userEvent.click(screen.getAllByRole('button')[0]);
     await userEvent.click(screen.getByText('Last 4 hours'));

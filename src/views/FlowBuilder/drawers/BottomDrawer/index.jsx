@@ -60,6 +60,10 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     width: '100%',
     cursor: 'ns-resize',
+    '& .MuiTab-iconWrapper': {
+      marginRight: theme.spacing(0.5),
+    },
+
   },
   tabPanel: {
     overflow: 'auto',

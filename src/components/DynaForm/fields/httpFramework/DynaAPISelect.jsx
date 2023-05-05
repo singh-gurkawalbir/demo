@@ -11,7 +11,7 @@ import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../constants';
 import {useHFSetInitializeFormData} from './DynaHFAssistantOptions';
 import getResourceFormAssets from '../../../../forms/formFactory/getResourceFromAssets';
-import { defaultPatchSetConverter, sanitizePatchSet } from '../../../../forms/formFactory/utils';
+import { defaultPatchSetConverter, handleIsRemoveLogic, sanitizePatchSet } from '../../../../forms/formFactory/utils';
 import MultiApiSelect from '../../../MultiApiSelect';
 import FieldMessage from '../FieldMessage';
 
@@ -78,7 +78,10 @@ export default function APISelect(props) {
       isNew: false,
       accountOwner,
     });
-    const finalValues = preSave(formContext.value, stagedRes);
+    let finalValues = preSave(formContext.value, stagedRes);
+
+    finalValues = handleIsRemoveLogic(formContext.fields, finalValues);
+
     const newFinalValues = {...finalValues};
 
     if (val) {
@@ -120,7 +123,7 @@ export default function APISelect(props) {
         {apiChange: true}
       )
     );
-  }, [accountOwner, dispatch, formContext?.fields, formContext?.value, id, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [accountOwner, dispatch, formContext?.fields, formContext?.value, id, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!data || !data.length) {
     return null;

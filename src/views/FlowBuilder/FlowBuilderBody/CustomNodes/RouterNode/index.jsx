@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Position } from 'reactflow';
 import { Badge, IconButton, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useHandleRouterClick } from '../../../hooks';
@@ -34,16 +35,17 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(20),
     height: '38px',
     position: 'absolute',
-  },
-  name: {
     textTransform: 'none',
     fontWeight: 600,
     color: theme.palette.text.secondary,
+    wordBreak: 'break-all',
     background: theme.palette.background.paper,
-    whiteSpace: 'nowrap',
     ' & > * br': {
       display: 'none',
     },
+  },
+  nameGap: {
+    top: -45,
   },
 }));
 
@@ -56,11 +58,12 @@ export default function RouterNode({id: routerId, data = {}}) {
   const badgeContent = routeRecordsTo === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
   const handleRouterClick = useHandleRouterClick(routerId);
+  const nameGap = name?.length > 25 && name.indexOf(' ') > -1;
 
   return (
     <div className={classes.container}>
-      <div className={classes.nameContainer}>
-        <CeligoTruncate isLoggable className={classes.name} lines={1}>{name}</CeligoTruncate>
+      <div className={clsx(classes.nameContainer, nameGap && classes.nameGap)}>
+        <CeligoTruncate isLoggable lines={2}>{name}</CeligoTruncate>
       </div>
       <DefaultHandle type="target" position={Position.Left} />
       <Tooltip title="Edit branching" placement="bottom" aria-label="Edit branching">
@@ -70,7 +73,7 @@ export default function RouterNode({id: routerId, data = {}}) {
           className={classes.button}
           onClick={handleRouterClick}
           disabled={isFlowSaveInProgress}
-          sx={{padding: '3px', width: 32 }}
+          sx={{width: 32 }}
         >
           <Badge
             badgeContent={badgeContent}

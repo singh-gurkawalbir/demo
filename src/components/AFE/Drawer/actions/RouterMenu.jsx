@@ -81,7 +81,6 @@ export default function RouterMenu({ editorId }) {
           size="small"
           disabled={!isEdit}
           onClick={handleOpenMenu}
-          sx={{padding: '3px'}}
         >
           <EllipsisHorizontalIcon />
         </IconButton>
@@ -95,8 +94,7 @@ export default function RouterMenu({ editorId }) {
         onClose={handleCloseMenu}
       >
         <MenuItem
-          data-test="deleteBranching" className={classes.deleteWrapper} disabled={isViewMode} onClick={handleDelete}
-          sx={{fontSize: '14px'}}>
+          data-test="deleteBranching" className={classes.deleteWrapper} disabled={isViewMode} onClick={handleDelete}>
           <TrashIcon /> Delete branching
         </MenuItem>
       </ArrowPopper>

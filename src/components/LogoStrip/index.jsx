@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
   logoStripBtn: {
     padding: 0,
-    fontSize: theme.spacing(2.5),
+    fontSize: theme.spacing(1.5),
     color: theme.palette.secondary.main,
   },
 }));
@@ -67,7 +67,10 @@ export default function LogoStrip(props) {
             aria-haspopup="true"
             onClick={handleClick}
             size="large">
-            <Box display="flex" flexDirection="column" alignItems="center" sx={{height: 24, width: 24}} >+{applicationsCount - apps.length}</Box>
+            <Box
+              display="flex" flexDirection="column" alignItems="center" justifyContent="center"
+              sx={{height: 24, width: 24}} >+{applicationsCount - apps.length}
+            </Box>
           </IconButton>
           <ArrowPopper
             placement="bottom-end"

@@ -150,7 +150,7 @@ export default function ErrorTableFilters({
         hasErrors &&
           (
             <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} sx={{ width: '100%', height: 4}} />
+              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} sx={{ width: '100%', height: theme => theme.spacing(4)}} />
             </div>
           )
         }
