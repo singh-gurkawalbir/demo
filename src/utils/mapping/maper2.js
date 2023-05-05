@@ -116,6 +116,7 @@ export const findLastNodeWithMatchingParent = (data, parentsList) => {
 // will add a empty row in the end of c if the dataType is object or objectarray
 export const constructDestinationTreeFromParentsList = (parentsList = []) => {
   let node = {};
+  let finalKey;
 
   if (isEmpty(parentsList)) return node;
 
@@ -123,9 +124,11 @@ export const constructDestinationTreeFromParentsList = (parentsList = []) => {
     node = customCloneDeep(parentsList[0]);
 
     node.key = generateId();
+    finalKey = node.key;
     if (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      finalKey = generateId();
       node.children = [{
-        key: generateId(),
+        key: finalKey,
         title: '',
         dataType: MAPPING_DATA_TYPES.STRING,
         isEmptyRow: true,
@@ -133,19 +136,19 @@ export const constructDestinationTreeFromParentsList = (parentsList = []) => {
       }];
     }
 
-    return node;
+    return {node, key: finalKey};
   }
 
   node = customCloneDeep(parentsList[0]);
   node.key = generateId();
-  const childNode = constructDestinationTreeFromParentsList(parentsList.slice(1));
+  const {node: childNode, key: childFinalkey} = constructDestinationTreeFromParentsList(parentsList.slice(1));
 
   if (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     childNode.parentKey = node.key;
     node.children = [childNode];
   }
 
-  return node;
+  return {node, key: childFinalkey};
 };
 
 // to create the set of jsonPath+dataType from the given tree
