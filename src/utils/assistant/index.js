@@ -335,7 +335,7 @@ export function searchParameterFieldsMeta({
   const defaultValue = {};
   const filteredValues = value;
 
-  if (url) {
+  if (url && !isArray(url)) {
     const [, queryPart] = url.split('?');
     const queryObj = new URLSearchParams(queryPart);
     const parameterIds = parameters.map(param => param.id);
