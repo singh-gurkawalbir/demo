@@ -322,6 +322,18 @@ export const isUIDataExpectedForResource = (resource, connection) => {
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 // Gives sample file data
 export const getSampleFileMeta = resource => {
+  if (resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths) {
+    return [
+      [
+        {
+          fileMeta: {
+            fileName: 'sampleFileName',
+            fileSize: 1234,
+          },
+        },
+      ],
+    ];
+  }
   if (resource?.adaptorType === 'FTPExport') {
     return [
       {
