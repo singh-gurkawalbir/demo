@@ -19,6 +19,7 @@ import SearchBar from './SearchBar';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
 import { message } from '../../../../../../utils/messageStore';
 import RawHtml from '../../../../../RawHtml';
+import useConfirmDialog from '../../../../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
@@ -217,6 +218,7 @@ const dragConfig = {
 export default function Mapper2({editorId}) {
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const treeData = useSelector(state => selectors.filteredV2TreeData(state).filteredTreeData);
@@ -229,6 +231,7 @@ export default function Mapper2({editorId}) {
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editor layout is required for adjusting horizontal scroll in both layouts
   const showNotification = useSelector(state => selectors.mapping(state)?.showNotificationFlag);
   const requiredMappingsJsonPaths = useSelector(state => selectors.mapping(state)?.requiredMappingsJsonPaths);
+  const showAddDestinationDialog = useSelector(state => selectors.mapping(state)?.replaceRow?.showAddDestinationDialog);
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
@@ -293,6 +296,33 @@ export default function Mapper2({editorId}) {
       dispatch(actions.mapping.v2.toggleShowNotificationFlag());
     }
   }, [dispatch, enqueueSnackbar, showNotification]);
+
+  useEffect(() => {
+    if (showAddDestinationDialog) {
+      confirmDialog({
+        title: 'Confirm row replacement',
+        message: <RawHtml html={message.MAPPER2.REPLACE_ROW_NOTIFICATION} />,
+        buttons: [
+          {
+            label: 'Confirm',
+            onClick: () => {
+              dispatch(actions.mapping.v2.replaceRow(true));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+            onClick: () => {
+              dispatch(actions.mapping.v2.replaceRow(false));
+            },
+          },
+        ],
+        onDialogClose: () => {
+          dispatch(actions.mapping.v2.replaceRow(false));
+        },
+      });
+    }
+  }, [confirmDialog, dispatch, showAddDestinationDialog]);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));

@@ -1762,6 +1762,7 @@ const mapping = {
     patchDestinationFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_DESTINATION_FILTER, { inputValue, propValue }),
     makeFinalDestinationTree: v2Key => action(actionTypes.MAPPING.V2.FINAL_DESTINATION_TREE, { v2Key }),
     addSelectedDestination: (v2Key, clickedRowKey) => action(actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION, { v2Key, clickedRowKey }),
+    replaceRow: value => action(actionTypes.MAPPING.V2.REPLACE_ROW, { value }),
     toggleShowNotificationFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG, {}),
   },
 };

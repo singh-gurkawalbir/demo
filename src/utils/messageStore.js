@@ -211,6 +211,7 @@ const MAPPER2 = {
   AUTO_POPULATE_LEARN_MORE: 'Auto-populate is not available for this connector.<br><br>Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   CONTAINS_SUBRECORDS: 'This import contains subrecord imports, select which import you would like to edit the mapping for.',
   OBJECT_ARRAY_NOTIFICATION: 'All other child fields of this parent that have the same field<br>name will remain in place. If necessary, you can move each<br>remaining field individually.',
+  REPLACE_ROW_NOTIFICATION: 'All other child fields of this parent that have the same field<br>name will remain in place. If necessary, you can move each<br>remaining field individually.',
 };
 // #endregion
 
