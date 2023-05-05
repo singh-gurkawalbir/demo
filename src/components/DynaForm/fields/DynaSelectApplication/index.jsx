@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { FormControl, InputLabel, Typography } from '@material-ui/core';
+import { FormControl, InputLabel, Typography, makeStyles } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
@@ -18,6 +18,11 @@ import { ReactSelectUseStyles, CustomReactSelectStyles } from '../reactSelectSty
 import getImageUrl from '../../../../utils/image';
 import TextButton from '../../../Buttons/TextButton';
 
+const useStyles = makeStyles({
+  subTextNoOptions: {
+    fontSize: 14,
+  },
+});
 const isLoadingANewConnectionForm = ({fieldMeta, operation, resourceType, resourceId }) => {
   // if its new resourceId and its of connections resourceType having a single field
   // its probably a new connections resource form
@@ -52,6 +57,7 @@ export default function SelectApplication(props) {
   } = props;
   const match = useRouteMatch();
   const classes = ReactSelectUseStyles();
+  const classesNoOptions = useStyles();
   const ref = useRef(null);
   const [menuIsOpen, setMenuIsOpen] = useState(!value);
   const [inputValue, setInputValue] = useState();
@@ -192,7 +198,7 @@ export default function SelectApplication(props) {
         <Typography variant="body2">
           {`We weren't able to find "${inputValue}"`}
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" className={classesNoOptions.subTextNoOptions}>
           Try using
           <TextButton
             onClick={() => {
@@ -206,7 +212,7 @@ export default function SelectApplication(props) {
             }}
             color="primary">HTTP
           </TextButton>
-          connector
+          connector.
         </Typography>
       </div>
     );
