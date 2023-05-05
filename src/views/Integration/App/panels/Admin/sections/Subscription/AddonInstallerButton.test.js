@@ -20,7 +20,7 @@ async function initAddonButton(props = {}) {
         _id: '5a6ec1bae9aaa11c9bc86106',
         created: '2018-01-29T06:39:54.268Z',
         lastModified: '2022-06-27T07:52:09.014Z',
-        expires: '2023-05-05T00:00:00.000Z',
+        expires: '2123-05-05T00:00:00.000Z',
         type: 'connector',
         upgradeText: 'Request upgrade',
         _integrationId: '678901234567891123456789',

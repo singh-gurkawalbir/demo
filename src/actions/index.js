@@ -1761,7 +1761,7 @@ const mapping = {
     deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
     patchDestinationFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_DESTINATION_FILTER, { inputValue, propValue }),
     makeFinalDestinationTree: v2Key => action(actionTypes.MAPPING.V2.FINAL_DESTINATION_TREE, { v2Key }),
-    addSelectedDestination: v2Key => action(actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION, { v2Key }),
+    addSelectedDestination: (v2Key, clickedRowKey) => action(actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION, { v2Key, clickedRowKey }),
     toggleShowNotificationFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG, {}),
   },
 };
@@ -1797,6 +1797,7 @@ const resourceForm = {
       parentConnectionId,
       options,
     }),
+  reInitialize: (formKey, additionalPatches) => action(actionTypes.RESOURCE_FORM.RE_INITIALIZE, { formKey, additionalPatches }),
   initComplete: (
     resourceType,
     resourceId,
@@ -2424,6 +2425,10 @@ const httpConnectors = {
     action(actionTypes.HTTP_CONNECTORS.REQUEST_CONNECTOR, {
       httpConnectorId,
     }),
+  resourceForm: {
+    switchView: resourceId => action(actionTypes.HTTP_CONNECTORS.RESOURCE_FORM.SWITCH_VIEW, { resourceId }),
+    clear: resourceId => action(actionTypes.HTTP_CONNECTORS.RESOURCE_FORM.CLEAR, { resourceId }),
+  },
 };
 const analytics = {
   gainsight: {

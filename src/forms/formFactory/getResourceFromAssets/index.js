@@ -184,7 +184,7 @@ const getSuiteScriptFormMeta = ({resourceType, resource}) => {
 
   return meta;
 };
-const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, accountOwner, parentConnectionId, applicationFieldState}) => {
+const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, accountOwner, parentConnectionId, applicationFieldState, isHttpConnectorParentFormView}) => {
   let meta;
 
   const { type } = getResourceSubType(resource);
@@ -268,7 +268,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
         } else if (isNewHTTPFramework) {
           const showAssistantView = assistantData?.import?.resources?.[0]?.operations?.length;
 
-          if (!resource?.useParentForm && resource?.http?.sessionFormType !== 'http' && showAssistantView) {
+          if (!resource?.useParentForm && !isHttpConnectorParentFormView && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
               resource,
@@ -338,7 +338,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
         } else if (isNewHTTPFramework) {
           const showAssistantView = assistantData?.export?.resources?.[0]?.endpoints?.length;
 
-          if (!resource?.useParentForm && resource?.http?.sessionFormType !== 'http' && showAssistantView) {
+          if (!resource?.useParentForm && !isHttpConnectorParentFormView && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
               resource,
@@ -483,6 +483,7 @@ const getResourceFormAssets = ({
   accountOwner,
   parentConnectionId,
   applicationFieldState,
+  isHttpConnectorParentFormView,
 }) => {
   let meta;
 
@@ -494,7 +495,7 @@ const getResourceFormAssets = ({
       meta = getSuiteScriptFormMeta({resourceType, resource});
     } else {
       // TODO: @Siddharth, find better way to inject custom form field meta instead of directly applied from resourceFormInit
-      meta = customFieldMeta || getFormMeta({resourceType, isNew, resource, connection, assistantData, accountOwner, parentConnectionId, applicationFieldState});
+      meta = customFieldMeta || getFormMeta({resourceType, isNew, resource, connection, assistantData, accountOwner, parentConnectionId, applicationFieldState, isHttpConnectorParentFormView});
     }
   } catch (e) {
     throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);

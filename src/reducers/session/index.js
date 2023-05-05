@@ -45,6 +45,7 @@ import loadResources, { selectors as fromLoadResources } from './loadResources';
 import aliases, {selectors as fromAliases} from './aliases';
 import flowbuilder, { selectors as fromFlowbuilder } from './flowbuilder';
 import uiFields, { selectors as fromUIFields } from './uiFields';
+import httpConnector, { selectors as fromHttpConnector } from './httpConnector';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -94,6 +95,7 @@ export default combineReducers({
   aliases,
   flowbuilder,
   uiFields,
+  httpConnector,
 });
 
 // #region PUBLIC SELECTORS
@@ -145,6 +147,7 @@ const subSelectors = {
   aliases: fromAliases,
   flowbuilder: fromFlowbuilder,
   uiFields: fromUIFields,
+  httpConnector: fromHttpConnector,
 };
 
 genSelectors(selectors, subSelectors);

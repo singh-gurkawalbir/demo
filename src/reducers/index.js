@@ -6213,9 +6213,11 @@ selectors.errorFilter = (state, params = {}) => {
 selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
   selectors.allResourceErrorDetails,
   selectors.errorFilter,
-  (errorDetails, errorFilter) => ({
+  selectors.userProfilePreferencesProps,
+  selectors.userTimezone,
+  (errorDetails, errorFilter, preferences, timezone) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, errorFilter),
+    errors: getFilteredErrors(errorDetails.errors, errorFilter, preferences, timezone),
   })
 );
 
@@ -7630,5 +7632,7 @@ selectors.isHttpConnector = (state, resourceId, resourceType) => {
 
   const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
 
-  return isNewHTTPFramework && resource?.http?.sessionFormType !== 'http';
+  const isHttpConnectorParentFormView = selectors.isHttpConnectorParentFormView(state, resourceId);
+
+  return isNewHTTPFramework && !isHttpConnectorParentFormView;
 };

@@ -1670,7 +1670,7 @@ export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = []
   return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
-const isMappingRowTouched = (node, lookups) => {
+export const isMappingRowTouched = (node, lookups) => {
   if (!node || isEmpty(node)) return false;
 
   const isEmptyRow = (!node.generate && node.dataType === MAPPING_DATA_TYPES.STRING && isMappingWithoutExtract(node, lookups));

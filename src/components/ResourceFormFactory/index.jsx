@@ -79,6 +79,8 @@ const ResourceFormFactory = props => {
     resourceId
   ).merged;
 
+  const isHttpConnectorParentFormView = useSelector(state => selectors.isHttpConnectorParentFormView(state, resourceId));
+
   let assistantData;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
@@ -149,6 +151,7 @@ const ResourceFormFactory = props => {
           integrationId,
           assistantData,
           accountOwner,
+          isHttpConnectorParentFormView,
         });
       } catch (e) {
         metadataAssets = {};
@@ -156,7 +159,7 @@ const ResourceFormFactory = props => {
 
       return metadataAssets;
     },
-    [resourceType, resource, isNew, connection, integrationId, assistantData, accountOwner]
+    [resourceType, resource, isNew, connection, integrationId, assistantData, accountOwner, isHttpConnectorParentFormView]
   );
   const { fieldMeta, skipClose } = formState;
 
