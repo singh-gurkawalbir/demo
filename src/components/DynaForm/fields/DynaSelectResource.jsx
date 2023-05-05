@@ -408,7 +408,7 @@ export default function DynaSelectResource(props) {
       }),
     [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email, _httpConnectorId]
   );
-  const handleEditResource = useCallback(resourceId => {
+  const handleEditResource = useCallback((evt, resourceId) => {
     if (
       resourceType === 'asyncHelpers' ||
       (resourceType === 'exports' && statusExport)
@@ -517,7 +517,15 @@ export default function DynaSelectResource(props) {
           />
           ) : (
             <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-              { showEditableDropdown ? <DynaSelectConnection {...props} onCreateClick={handleAddNewResourceMemo} onEditClick={handleEditResource} options={resourceItems} />
+              { showEditableDropdown
+                ? (
+                  <DynaSelectConnection
+                    {...props}
+                    onCreateClick={handleAddNewResourceMemo}
+                    disabled={disabled}
+                    onEditClick={handleEditResource}
+                    options={resourceItems} />
+                )
                 : (
                   <DynaSelect
                     {...props}
