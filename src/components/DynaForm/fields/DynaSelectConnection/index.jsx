@@ -24,7 +24,7 @@ export const OptionLabel = ({ option, connInfo = {} }) => {
   currVersion = currVersion?.filter(ver => ver._id === httpConnectorVersionId)?.[0];
 
   return (
-    <Typography>{option?.label || ''}
+    <Typography data-value={option?.value}>{option?.label || ''}
       <Typography component="div" variant="caption" className={classes.addClass}>
         {currApi?.name && <div><span><b>API type:</b></span> <span>{currApi.name}</span></div>}
         {currVersion?.name && <div><span><b>API version:</b> </span><span>{currVersion.name}</span></div>}
