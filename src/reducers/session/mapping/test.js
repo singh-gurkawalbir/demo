@@ -6083,12 +6083,6 @@ describe('mapping reducer', () => {
                 jsonPath: 'test.id',
               }],
             },
-            {
-              key: 'new_key',
-              dataType: 'string',
-              generate: 'name',
-              jsonPath: 'name',
-            },
           ],
           destinationTree: [{
             key: 'd11',
@@ -6096,7 +6090,17 @@ describe('mapping reducer', () => {
             generate: 'name',
             jsonPath: 'name',
           }],
-          expandedKeys: ['new_key'],
+          replaceRow: {
+            showAddDestinationDialog: true,
+            clickedRowKey: 'v1',
+            nodeToBeAdded: {
+              key: 'new_key',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'name',
+            },
+            finalKeyToOpen: 'new_key',
+          },
           extractsTree: [],
         },
       };
@@ -6153,7 +6157,260 @@ describe('mapping reducer', () => {
             generate: 'name',
             jsonPath: 'name',
           }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+    test('should replace the generate filled node of tree if a value is selected from the dropdown', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              title: '',
+              generate: 'name',
+              dataType: 'string',
+              sourceDataType: 'string',
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'object',
+            generate: 'name',
+            jsonPath: 'name',
+            children: [
+              {
+                key: 'c1',
+                dataType: 'string',
+                generate: 'fname',
+                jsonPath: 'fname',
+                parentKey: 'd11',
+              },
+              {
+                key: 'c2',
+                dataType: 'string',
+                generate: 'lname',
+                jsonPath: 'lname',
+                parentKey: 'd11',
+              },
+            ],
+          }],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.addSelectedDestination('c1', 'v1'));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'new_key',
+            dataType: 'object',
+            generate: 'name',
+            jsonPath: 'name',
+            children: [
+              {
+                key: 'new_key',
+                dataType: 'string',
+                generate: 'fname',
+                jsonPath: 'fname',
+                parentKey: 'new_key',
+              },
+            ],
+          }],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'object',
+            generate: 'name',
+            jsonPath: 'name',
+            children: [
+              {
+                key: 'c1',
+                dataType: 'string',
+                generate: 'fname',
+                jsonPath: 'fname',
+                parentKey: 'd11',
+              },
+              {
+                key: 'c2',
+                dataType: 'string',
+                generate: 'lname',
+                jsonPath: 'lname',
+                parentKey: 'd11',
+              },
+            ],
+          }],
           expandedKeys: ['new_key'],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.REPLACE_ROW', () => {
+    test('should clear replaceRow when value passed is false', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          replaceRow: {
+            showAddDestinationDialog: true,
+            clickedRowKey: 'v1',
+            nodeToBeAdded: {
+              key: 'd11',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'name',
+            },
+            finalKeyToOpen: 'd11',
+          },
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.replaceRow(false));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+
+    test('should correctly update treeData when the value passed is true', () => {
+      generateId.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'v1',
+              dataType: 'object',
+              generate: 'test',
+              jsonPath: 'test',
+              children: [{
+                key: 'v11',
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+                jsonPath: 'test.id',
+              }],
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          replaceRow: {
+            showAddDestinationDialog: true,
+            clickedRowKey: 'v1',
+            nodeToBeAdded: {
+              key: 'c1',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'name',
+            },
+            finalKeyToOpen: 'c1',
+          },
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.replaceRow(true));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          isGroupedOutput: false,
+          v2TreeData: [
+            {
+              key: 'c1',
+              dataType: 'string',
+              generate: 'name',
+              jsonPath: 'name',
+            },
+          ],
+          destinationTree: [{
+            key: 'd11',
+            dataType: 'string',
+            generate: 'name',
+            jsonPath: 'name',
+          }],
+          expandedKeys: [],
           extractsTree: [],
         },
       };
