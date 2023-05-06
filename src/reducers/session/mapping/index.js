@@ -1283,7 +1283,11 @@ export default (state = {}, action) => {
         }
 
         const {parentsList: addedChildParents = []} = findNodeInTreeWithParents(draft.mapping.v2TreeData, 'key', finalKey);
-        const addedChildParentsKeys = addedChildParents.map(node => node.key);
+        const addedChildParentsKeys = addedChildParents
+          .filter(node => (node?.dataType === MAPPING_DATA_TYPES.OBJECT || node?.dataType === MAPPING_DATA_TYPES.OBJECTARRAY))
+          .map(node => node.key);
+
+        if (isEmpty(addedChildParentsKeys)) break;
 
         draft.mapping.expandedKeys = [...new Set([...(draft.mapping.expandedKeys || []), ...addedChildParentsKeys])];
         break;
@@ -1300,7 +1304,9 @@ export default (state = {}, action) => {
             insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, nodeToBeAdded, draft.mapping.lookups);
 
             const {parentsList: addedChildParents = []} = findNodeInTreeWithParents(draft.mapping.v2TreeData, 'key', finalKeyToOpen);
-            const addedChildParentsKeys = addedChildParents.map(node => node.key);
+            const addedChildParentsKeys = addedChildParents
+              .filter(node => (node?.dataType === MAPPING_DATA_TYPES.OBJECT || node?.dataType === MAPPING_DATA_TYPES.OBJECTARRAY))
+              .map(node => node.key);
 
             draft.mapping.expandedKeys = [...new Set([...(draft.mapping.expandedKeys || []), ...addedChildParentsKeys])];
           }

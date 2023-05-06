@@ -231,7 +231,7 @@ export default function Mapper2({editorId}) {
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editor layout is required for adjusting horizontal scroll in both layouts
   const showNotification = useSelector(state => selectors.mapping(state)?.showNotificationFlag);
   const requiredMappingsJsonPaths = useSelector(state => selectors.mapping(state)?.requiredMappingsJsonPaths);
-  const showAddDestinationDialog = useSelector(state => selectors.mapping(state)?.replaceRow?.showAddDestinationDialog);
+  const replaceRowinfo = useSelector(state => selectors.mapping(state)?.replaceRow);
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
@@ -298,9 +298,9 @@ export default function Mapper2({editorId}) {
   }, [dispatch, enqueueSnackbar, showNotification]);
 
   useEffect(() => {
-    if (showAddDestinationDialog) {
+    if (replaceRowinfo?.showAddDestinationDialog) {
       confirmDialog({
-        title: 'Confirm row replacement',
+        title: 'Confirm field selection',
         message: <RawHtml html={message.MAPPER2.REPLACE_ROW_NOTIFICATION} />,
         buttons: [
           {
@@ -322,7 +322,7 @@ export default function Mapper2({editorId}) {
         },
       });
     }
-  }, [confirmDialog, dispatch, showAddDestinationDialog]);
+  }, [confirmDialog, dispatch, replaceRowinfo]);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));

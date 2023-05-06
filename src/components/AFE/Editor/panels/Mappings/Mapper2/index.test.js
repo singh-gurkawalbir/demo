@@ -353,7 +353,7 @@ describe('ewrv', () => {
     renderWithProviders(<MemoryRouter><ConfirmDialogProvider><Mapper2 /></ConfirmDialogProvider></MemoryRouter>, {initialStore});
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText('All other child fields of this parent that have the same fieldname will remain in place. If necessary, you can move eachremaining field individually.', {exact: false})).toBeInTheDocument();
+    expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
     userEvent.click(screen.getByText('Confirm'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.replaceRow(true)
@@ -374,7 +374,7 @@ describe('ewrv', () => {
     renderWithProviders(<MemoryRouter><ConfirmDialogProvider><Mapper2 /></ConfirmDialogProvider></MemoryRouter>, {initialStore});
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText('All other child fields of this parent that have the same fieldname will remain in place. If necessary, you can move eachremaining field individually.', {exact: false})).toBeInTheDocument();
+    expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
     userEvent.click(screen.getByText('Cancel'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.replaceRow(false)
@@ -395,7 +395,7 @@ describe('ewrv', () => {
     renderWithProviders(<MemoryRouter><ConfirmDialogProvider><Mapper2 /></ConfirmDialogProvider></MemoryRouter>, {initialStore});
 
     expect(screen.getByTestId('closeModalDialog')).toBeInTheDocument();
-    expect(screen.getByText('All other child fields of this parent that have the same fieldname will remain in place. If necessary, you can move eachremaining field individually.', {exact: false})).toBeInTheDocument();
+    expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
     userEvent.click(screen.getByTestId('closeModalDialog'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.replaceRow(false)
