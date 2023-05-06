@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -100,7 +100,7 @@ const DropdownContext = React.createContext({});
 const Option = option => {
   const data = useContext(DropdownContext);
 
-  const {onEditClick, classes, allowEdit, inputRef} = data;
+  const {handleEditClick, classes, allowEdit} = data;
 
   return (
     <>
@@ -109,7 +109,7 @@ const Option = option => {
       <span className={classes.optionEditIcon}>
         <ActionButton
           data-test="editResource"
-          onClick={evt => { inputRef.current.blur(); onEditClick(evt, option.value); }}>
+          onClick={evt => handleEditClick(evt, option)}>
           <EditIcon />
         </ActionButton>
       </span>
@@ -122,14 +122,14 @@ const PaperComponentCustom = options => {
   const classes = useStyles();
   const { containerProps, children } = options;
   const data = useContext(DropdownContext);
-  const {onCreateClick, allowNew, inputRef} = data;
+  const {handleCreateClick, allowNew} = data;
 
   return (
     <Paper className={classes.dropdownitemsConnection} {...containerProps}>
       {children}
       {allowNew && (
         <TextButton
-          onMouseDown={event => { inputRef.current.blur(); event.preventDefault(); onCreateClick(); }}
+          onMouseDown={handleCreateClick}
           bold
           fullWidth
           className={classes.createConnectionBtn}
@@ -164,13 +164,31 @@ export default function DynaEditable(props) {
   const [selectOptions, setSelectedOptions] = useState(options);
   const inputRef = useRef(null);
   const sortedOptions = options => options.sort(stringCompare('label'));
-  const dropdownProps = {
-    onEditClick, allowEdit, allowNew, onCreateClick, classes, inputRef,
-  };
 
   const handleInputChange = useCallback((evt, newVal) => {
     if (evt) { setInputValue(newVal); }
   }, []);
+
+  const handleCreateClick = useCallback(event => {
+    inputRef.current.blur();
+    event.preventDefault();
+    onCreateClick();
+  }, [onCreateClick]);
+
+  const handleEditClick = useCallback((evt, option) => {
+    inputRef.current.blur();
+    onEditClick(evt, option.value);
+  }, [inputRef, onEditClick]);
+
+  const dropdownProps = useMemo(() => (
+    {
+      handleEditClick,
+      allowEdit,
+      allowNew,
+      handleCreateClick,
+      classes,
+      inputRef,
+    }), [allowEdit, allowNew, classes, handleCreateClick, handleEditClick]);
 
   useEffect(() => {
     if (inputValue !== selectedValue) {
