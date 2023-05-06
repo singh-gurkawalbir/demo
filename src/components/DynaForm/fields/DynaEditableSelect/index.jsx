@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -158,15 +158,14 @@ export default function DynaEditable(props) {
     allowEdit,
     allowNew,
   } = props;
-  const [isOptionHovered, setIsOptionHovered] = useState(false);
-  const classes = useStyles({isOptionHovered});
+  const classes = useStyles();
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
   const [selectOptions, setSelectedOptions] = useState(options);
   const inputRef = useRef(null);
   const sortedOptions = options => options.sort(stringCompare('label'));
   const dropdownProps = {
-    allOptions: useMemo(() => sortedOptions(options), [options]), onEditClick, allowEdit, allowNew, onCreateClick, classes, setIsOptionHovered, inputRef,
+    onEditClick, allowEdit, allowNew, onCreateClick, classes, inputRef,
   };
 
   const handleInputChange = useCallback((evt, newVal) => {
@@ -191,7 +190,7 @@ export default function DynaEditable(props) {
     setInputValue(selectedValue);
   }, [selectedValue]);
 
-  const filterOptions = useCallback(options => options?.filter(option => option?.label.includes(inputValue || '')), [inputValue]);
+  const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
 
   const handleChange = useCallback((event, newValue) => {
     setInputValue(newValue?.label);
@@ -216,7 +215,7 @@ export default function DynaEditable(props) {
             disablePortal
             id="connections-dropdown"
             data-test="connection"
-            options={options}
+            options={sortedOptions(options)}
             getOptionLabel={option => option?.label}
             renderOption={Option}
             disableClearable
