@@ -65,14 +65,16 @@ export function getAttachedCustomSettingsMetadata(metadata, csMetadata, settings
     };
   });
 
-  // create a cs container and push the leftover fields
+  if (fields.length) {
+    // create a cs container and push the leftover fields
     updatedFieldMetadata.layout?.containers?.push({
       collapsed: true,
       label: 'Custom settings',
       fields,
     });
+  }
 
-    return updatedFieldMetadata;
+  return updatedFieldMetadata;
 }
 
 export function initializeHttpConnectorForm(fieldMeta, resource, resourceType) {
