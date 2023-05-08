@@ -131,6 +131,7 @@ function TabPanel({ children, value, index, className }) {
 export default function BottomDrawer({
   flowId,
   integrationId,
+  childId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -156,6 +157,11 @@ export default function BottomDrawer({
   const defaultBottomDrawerTab = useSelector(
     state => selectors.filter(state, 'bottomDrawer')?.defaultTab
   );
+  const __integrationId = useSelector(state => {
+    const isIAV2 = selectors.isIntegrationAppVersion2(state, integrationId);
+
+    return isIAV2 ? (childId || integrationId) : integrationId;
+  });
 
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
@@ -486,7 +492,7 @@ export default function BottomDrawer({
                   : <RunDashboardPanel flowId={flowId} />;
                 break;
               case 'runHistory':
-                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={integrationId} /> : null;
+                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={__integrationId} /> : null;
                 break;
 
               case 'connections':
