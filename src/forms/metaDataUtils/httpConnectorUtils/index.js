@@ -3,7 +3,7 @@ import { fetchMetadataFieldList, pushField } from '../../../utils/form/metadata'
 import { getMetadataWithFilteredDisplayRef, refineCustomSettings } from '../../../utils/httpConnector';
 import customCloneDeep from '../../../utils/customCloneDeep';
 
-function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSettingsFieldId) {
+export function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSettingsFieldId) {
   const updatedLayout = customCloneDeep(layout);
 
   pushField(updatedLayout, formFieldId, customSettingsFieldId);
@@ -11,7 +11,7 @@ function getUpdatedFormLayoutWithCustomSettings(layout, formFieldId, customSetti
   return updatedLayout;
 }
 
-function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSettingsMetadata = {}, customSettings) {
+export function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSettingsMetadata = {}, customSettings) {
   const updatedFieldMetadata = customCloneDeep(resourceFieldMetadata);
   const { fieldMap: customSettingsFieldMap = {} } = customSettingsMetadata;
   const customSettingsFields = fetchMetadataFieldList(customSettingsMetadata);
@@ -27,7 +27,7 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
   // 1. add the cs field in field map with possible visibleWhen rules of ref field
   // 2. for each field, go through the layout and push this cs field beside the ref field in fields array
   displayAfterFieldIds.forEach(fieldId => {
-    // fetch cs fieldmap
+    // fetch cs field map
     const field = customSettingsFieldMap[fieldId];
 
     // add this cs field in field map
@@ -47,7 +47,7 @@ function getUpdatedFieldMetaWithCustomSettings(resourceFieldMetadata, customSett
   return updatedFieldMetadata;
 }
 
-function getAttachedCustomSettingsMetadata(metadata, csMetadata, settings) {
+export function getAttachedCustomSettingsMetadata(metadata, csMetadata, settings) {
   const updatedFieldMetadata = customCloneDeep(metadata);
   const { fieldMap: csFieldMap = {} } = csMetadata || {};
 
