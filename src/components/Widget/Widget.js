@@ -266,56 +266,52 @@ export default function Widget({
   // });
 
   return (
-    <div>
-      {/* <MuiBox data={graphData} value={connectionName} /> */}
-      <Card
-        variant="outlined"
-        sx={{
+    <Card
+      variant="outlined"
+      sx={{
         // minHeight: "300px",
         // minWidth: "300px",
-          height: '100%',
-          backgroundColor: '#ffffff',
-          borderRadius: 1,
-          padding: '10px',
-        }}
+        height: '100%',
+        backgroundColor: '#ffffff',
+        borderRadius: 1,
+        padding: '10px',
+      }}
     >
-        <div className="root">
-          <div className="header">
-            <h2> Widget - {title}</h2>
-            <div className="spacer" />
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="demo-simple-select-standard-label">
-                Graph Type
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-standard-label"
-                id="demo-simple-select-standard"
-                value={impl.label}
-                onChange={handleSelection}
-                label="graphType"
+      <div className="root">
+        <div className="header">
+          <h2> Widget - {title}</h2>
+          <div className="spacer" />
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="demo-simple-select-standard-label">
+              Graph Type
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-standard-label"
+              id="demo-simple-select-standard"
+              value={impl.label}
+              onChange={handleSelection}
+              label="graphType"
             >
-                {renderedOptions}
-              </Select>
-            </FormControl>
-            <IconButton aria-label="delete" onClick={() => onRemoveItem(id)}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </div>
-          <div className="body1" />
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              top: 70,
-            }}
-        >
-            {impl.config(data)}
-          </div>
+              {renderedOptions}
+            </Select>
+          </FormControl>
+          <IconButton aria-label="delete" onClick={() => onRemoveItem(id)}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
         </div>
-      </Card>
-
-    </div>
+        <div className="body1" />
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: 70,
+          }}
+        >
+          {impl.config(data)}
+        </div>
+      </div>
+    </Card>
   );
 }

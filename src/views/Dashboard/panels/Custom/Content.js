@@ -467,7 +467,7 @@ export default function Content({colsize, id, data}) {
   );
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
-  const customId = useSelector(selectors.customId);
+  // const customId = useSelector(selectors.customId);
 
   if (layouts.lg.length === 0) {
     setLayouts(initialLayouts);
@@ -566,35 +566,6 @@ export default function Content({colsize, id, data}) {
 
   return (
     <div className={classes.responsiveContainer}>
-      <h2>{customId}</h2>
-      {/* <MuiBox data={data.connections} value={connectionName} /> */}
-      {/* <div className={classes.root}>
-        <Box
-          component="span"
-          data-testid="box"
-          m={4} // margin
-          p={4} // padding
-          boxShadow={12}
-          borderBottom={8}
-          className={`${classes.box} ${classes.boxBackground} ${classes.connections}`}
-      >
-          <ActionGroup position="left">
-            <Typography
-              variant="h1"
-              className={classes.titleStatusPanel}
-              data-testid="heading"
-          >
-              <Box> {number}</Box>
-            </Typography>
-            <Typography variant="subtitle2" data-testid="subheading">
-              <Box>{connectionName}</Box>
-            </Typography>
-          </ActionGroup>
-          <ActionGroup position="right">
-            <ConnectionsIcon className={classes.iconStyle} />
-          </ActionGroup>
-        </Box> */}
-      {/* </div> */}
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
