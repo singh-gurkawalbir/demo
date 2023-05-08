@@ -3,8 +3,7 @@ import { IconButton } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-
-import ArrowPopper from '../ArrowPopper';
+import { ArrowPopper } from '@celigo/fuse-ui';
 import HelpContent from '../HelpContent';
 import InfoIcon from '../icons/InfoIcon';
 import TooltipContent from '../TooltipContent';
