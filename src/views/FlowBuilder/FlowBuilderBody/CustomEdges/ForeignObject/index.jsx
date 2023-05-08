@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getPositionInEdge } from '../../lib';
 
-export default function ForeignObject({edgePath, position, offset = 0, size = 26, children, ...rest}) {
+export default function ForeignObject({edgePath, position, offset = 0, size = 28, children, ...rest}) {
   const [edgeX, edgeY] = useMemo(() =>
     getPositionInEdge(edgePath, position, offset) || [], [edgePath, position, offset]);
 
