@@ -103,7 +103,6 @@ export function* _fetchAssistantSampleData({ resource }) {
     selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
   const adaptorType = getImportAdaptorType(resource);
 
-  console.log('connectorMetaData', connectorMetaData, assistantMetadata, connection?.http?._httpConnectorId);
   if (getHttpConnector(connection?.http?._httpConnectorId) && !connectorMetaData) {
     connectorMetaData = yield call(getConnectorMetadata, {
       connectionId: connection._id,
@@ -111,7 +110,6 @@ export function* _fetchAssistantSampleData({ resource }) {
       httpVersionId: connection?.http?._httpConnectorVersionId,
       _httpConnectorApiId: connection?.http?._httpConnectorApiId,
     });
-    console.log('sampledata', connectorMetaData);
     if (!connectorMetaData) {
       return false;
     }
@@ -254,7 +252,6 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const connection = yield select(selectors.resource, 'connections', _connectionId);
   const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
 
-  console.log('connectionAssistant', connectionAssistant, getHttpConnector(connection?.http?._httpConnectorId));
   if (connectionAssistant || getHttpConnector(connection?.http?._httpConnectorId)) {
     return yield call(_fetchAssistantSampleData, { resource: {...resource, assistant: connectionAssistant} });
   }
