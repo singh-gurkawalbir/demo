@@ -1,12 +1,17 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  InfoIconButton,
+} from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import RightDrawer from '../Right';
-import DrawerHeader from '../Right/DrawerHeader';
-import DrawerContent from '../Right/DrawerContent';
-import DrawerFooter from '../Right/DrawerFooter';
 import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
@@ -14,7 +19,6 @@ import TextButton from '../../Buttons/TextButton';
 import { ALIAS_FORM_KEY } from '../../../constants';
 import actions from '../../../actions';
 import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
-import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
 import getFieldMeta from './CreateAliasFormMeta';
 import { message } from '../../../utils/messageStore';
@@ -82,7 +86,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
 
   return (
     <>
-      <DrawerContent>
+      <DrawerContent withPadding>
         <DynaForm formKey={ALIAS_FORM_KEY[resourceType]} />
       </DrawerContent>
 
@@ -106,22 +110,24 @@ export default function CreateAliasDrawer({resourceId, resourceType, height = 's
 
   return (
     <RightDrawer
+      isIntegrated
       height={height}
-      width="default"
       path={[drawerPaths.ALIASES.ADD, drawerPaths.ALIASES.EDIT]} >
-      <DrawerHeader
-        title={isEdit ? 'Edit alias' : 'Create alias'}
-        infoText={isEdit ? message.ALIAS.EDIT_ALIAS_FORM_HELPINFO : message.ALIAS.CREATE_ALIAS_FORM_HELPINFO}
-        disableClose={disabled}
-        handleClose={setCancelTriggered} >
-        <ActionGroup>
-          <TextButton
-            {...anchorProps}
-            startIcon={<InstallationGuideIcon />}>
-            Aliases guide
-          </TextButton>
-        </ActionGroup>
+      <DrawerHeader >
+        <DrawerTitle>
+          {isEdit ? 'Edit alias' : 'Create alias'}
+          <InfoIconButton
+            info={isEdit ? message.ALIAS.EDIT_ALIAS_FORM_HELPINFO : message.ALIAS.CREATE_ALIAS_FORM_HELPINFO}
+            title={isEdit ? 'Edit alias' : 'Create alias'}
+          />
+        </DrawerTitle>
+        <TextButton
+          {...anchorProps}
+          startIcon={<InstallationGuideIcon />}>
+          Aliases guide
+        </TextButton>
         <CeligoDivider position="right" />
+        <DrawerCloseButton disable={disabled} onClick={setCancelTriggered} />
       </DrawerHeader>
       <AliasForm parentUrl={match.url} isEdit={isEdit} resourceId={resourceId} resourceType={resourceType} />
     </RightDrawer>

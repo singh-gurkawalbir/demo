@@ -1,8 +1,13 @@
 import React, { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
+import {
+  DrawerBackButton,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@celigo/fuse-ui';
 import RightDrawer from '../../Right';
-import DrawerHeader from '../../Right/DrawerHeader';
-import DrawerContent from '../../Right/DrawerContent';
 import UploadFile from './UploadFile';
 import Preview from './Preview';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
@@ -18,14 +23,21 @@ export default function InstallIntegrationDrawer() {
     path: drawerPaths.INSTALL.INTEGRATION,
     baseUrl: match.url,
   });
+  const showBackButton = !!location.pathname.includes('/preview');
+  const handleBackClick = useCallback(() => {
+    history.goBack();
+  }, [history]);
 
   return (
     <RightDrawer
-      onClose={handleClose}
       path={drawerPaths.INSTALL.INTEGRATION}
       height="tall">
-      <DrawerHeader title="Upload integration" showBackButton={location.pathname.includes('/preview')} />
-      <DrawerContent>
+      <DrawerHeader>
+        {showBackButton && <DrawerBackButton onClick={handleBackClick} />}
+        <DrawerTitle>Upload integration</DrawerTitle>
+        <DrawerCloseButton onClick={handleClose} />
+      </DrawerHeader>
+      <DrawerContent withPadding>
         <Switch>
           <Route
             path={buildDrawerUrl({
