@@ -18,14 +18,14 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(1.5),
     display: 'flex',
     marginRight: theme.spacing(1.5),
     color: theme.palette.secondary.light,
     borderRadius: theme.spacing(0.5),
-    '& svg': {
-      fontSize: theme.spacing(2.5),
-    },
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   menuItem: {
     padding: theme.spacing(0.5),
@@ -56,13 +56,23 @@ const useStyles = makeStyles(theme => ({
     },
     '&:nth-child(3)': {
       marginBottom: theme.spacing(0),
+      '& $icon': {
+        '& svg': {
+          fontSize: theme.spacing(2.5),
+        },
+      },
     },
     '&:last-child': {
       marginBottom: theme.spacing(1),
+      '& $icon': {
+        '& svg': {
+          fontSize: theme.spacing(2),
+        },
+      },
     },
   },
   dropdownMenuTitle: {
-    padding: theme.spacing(1.5, 2, 0.5),
+    padding: theme.spacing(2, 2, 1),
     lineHeight: 1,
     fontSize: 11,
   },
@@ -112,7 +122,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         onClose={handleMenuClose}
         className={classes.createMenu}
         transformOrigin={{
-          vertical: -32,
+          vertical: -36,
           horizontal: 176,
         }}
       >

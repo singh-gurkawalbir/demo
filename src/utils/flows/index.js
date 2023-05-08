@@ -268,8 +268,13 @@ export function isSetupInProgress(flow) {
     .some(router => (router.branches || [])
       .some(branch => (branch.pageProcessors || [])
         .some(pp => pp.setupInProgress)));
+  const noPageProcessorInRouters = flow.routers
+    ? !(flow.routers || [])
+      .some(router => (router.branches || [])
+        .some(branch => (branch.pageProcessors || []).length > 0))
+    : false;
 
-  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress || (arePPsEmpty && areRoutersEmpty);
+  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress || (arePPsEmpty && areRoutersEmpty) || noPageProcessorInRouters;
 }
 
 /*

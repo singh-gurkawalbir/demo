@@ -26,7 +26,7 @@ export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
 };
 
 export default function DynaIclient(props) {
-  const { connectionId, connectorId, connType, formKey, hideFromUI, defaultValue, _httpConnectorId, onFieldChange, id, iClientConditionsMap, iClientConditions} = props;
+  const { connectionId, connectorId, connType, formKey, hideFromUI, defaultValue, _httpConnectorId, onFieldChange, id, iClientConditionsMap, iClientConditions, preConfiguredFieldValue} = props;
   const { iClients } = useLoadIClientOnce({
     connectionId,
     disableLoad: !connectorId,
@@ -51,9 +51,13 @@ export default function DynaIclient(props) {
         // Single IA iClientId present so no need to show dropdown
         onFieldChange(id, iClients[0]._id);
       }
-      if (iClients?.length === 0) {
-        // No IA iCLient present then calculate preconfigured field iCLientId
+      if (iClients?.length <= 0 && preConfiguredValue) {
+        // No IA iCLient present then calculate preconfigured field iCLientId  with conditions
         onFieldChange(id, preConfiguredValue);
+      }
+      if (iClients?.length <= 0 && !preConfiguredValue && preConfiguredFieldValue) {
+        // No IA iCLient present then calculate preconfigured field iCLientId without conditions
+        onFieldChange(id, preConfiguredFieldValue);
       }
 
       return true;
@@ -64,7 +68,7 @@ export default function DynaIclient(props) {
     }
 
     return false;
-  }, [_httpConnectorId, defaultValue, hideFromUI, iClients, id, onFieldChange, preConfiguredValue]);
+  }, [_httpConnectorId, defaultValue, hideFromUI, iClients, id, onFieldChange, preConfiguredFieldValue, preConfiguredValue]);
 
   return hideNew ? null : (
     <>

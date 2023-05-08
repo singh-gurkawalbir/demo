@@ -34,23 +34,27 @@ export function getDisplayRef(field, resourceType) {
 }
 
 export function refineCustomSettings(settingsFormMetadata, resourceType) {
-  const updatedFieldMetadata = customCloneDeep(settingsFormMetadata) || {};
+  if (!settingsFormMetadata || !settingsFormMetadata.fieldMap) return settingsFormMetadata;
+  const updatedFieldMetadata = customCloneDeep(settingsFormMetadata);
   const fieldIds = Object.keys(updatedFieldMetadata.fieldMap);
 
   fieldIds.forEach(fieldId => {
     const displayAfterRef = getDisplayRef(updatedFieldMetadata.fieldMap[fieldId], resourceType);
 
-    updatedFieldMetadata.fieldMap[fieldId].displayAfter = displayAfterRef;
+    if (updatedFieldMetadata.fieldMap[fieldId].displayAfter) {
+      updatedFieldMetadata.fieldMap[fieldId].displayAfter = displayAfterRef;
+    }
   });
 
   return updatedFieldMetadata;
 }
 
 export const isDisplayRefSupportedType = resourceType => DISPLAY_REF_SUPPORTED_RESOURCE_TYPES.includes(resourceType);
-export function isValidDisplayAfterRef(refId, refMetadata) {
-  const { layout, fieldMap } = refMetadata;
 
-  if (!refId) return false;
+export function isValidDisplayAfterRef(refId, refMetadata) {
+  const { layout, fieldMap } = refMetadata || {};
+
+  if (!refId || !fieldMap) return false;
 
   if (!layout) {
     return !!fieldMap[refId];
@@ -131,11 +135,10 @@ export function getHelpKey(resourceType, id) {
 }
 
 export function getEndPointMetadata(connectorMetadata = {}, resourceId, operationId, resourceType) {
-  if (!resourceId || !operationId) return;
-
+  if (!resourceId || !operationId || !['exports', 'imports'].includes(resourceType)) return;
   const httpConnectorMetaData = connectorMetadata[resourceType === 'imports' ? 'import' : 'export'];
 
-  const resourceMetadata = httpConnectorMetaData.resources?.find(resource => resource._id === resourceId);
+  const resourceMetadata = httpConnectorMetaData?.resources?.find(resource => resource._id === resourceId);
 
   if (!resourceMetadata) return;
 
