@@ -2681,6 +2681,16 @@ const accountSettings = {
   received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
 };
 
+// {Code that has been added in dashboard}
+const dashboard = {
+  request: () => action(actionTypes.DASHBOARD.REQUEST),
+  update: newDefaultAShareId =>
+    action(actionTypes.DASHBOARD.UPDATE, { newDefaultAShareId }),
+  received: defaultAShareId =>
+    action(actionTypes.DASHBOARD.RECEIVED, { defaultAShareId }),
+  // Code that has been added in dashboard}
+};
+
 const uiFields = {
   requestFlowLevel: flowId => action(actionTypes.UI_FIELDS.FLOW_LEVEL.REQUEST, { flowId }),
   receivedFlowLevel: (flowId, resources) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.RECEIVED, { flowId, resources }),
@@ -2741,4 +2751,5 @@ export default {
   integrationLCM,
   httpConnectors,
   uiFields,
+  dashboard,
 };

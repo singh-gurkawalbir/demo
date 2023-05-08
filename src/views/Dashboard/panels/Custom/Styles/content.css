@@ -1,0 +1,33 @@
+.btn {
+    display: flex;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    cursor: pointer;
+    padding: 0.875rem;
+    padding-bottom: 0.9375rem;
+    text-align: center;
+    border: none;
+    text-decoration: none;
+    background: blue;
+    color: white;
+    font-family: var(--f-text);
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+    background-color: #ee984d;
+    padding-left: 40px;
+    padding-right: 40px;
+    /* margin-bottom: var(--p-button); */
+    margin-bottom: 10px;
+}
+
+.upload {
+    margin-bottom: 10px;
+}
+
+.MuiButton-contained {
+    text-decoration: underline !important;
+}

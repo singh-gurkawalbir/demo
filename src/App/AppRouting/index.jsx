@@ -264,31 +264,31 @@ export default function AppRouting() {
 
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dashboard/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})'),
-          getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/:tab/sections/:sectionId'),
-          getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dashboard/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/:tab'),
         ]}
         component={Integration}
         />
       <Route
-        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/:tab/sections/:sectionId')]}
         component={Integration}
         />
 
       <Route
-        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows|custom)'),
           getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/:tab')]}
         component={Integration}
         />
@@ -308,7 +308,7 @@ export default function AppRouting() {
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
       <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
-      <Route path={getRoutePath('/dashboard/:dashboardTab(runningFlows|completedFlows)')} component={Dashboard} />
+      <Route path={getRoutePath('/dashboard/:dashboardTab(runningFlows|completedFlows|custom)')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route path={getRoutePath('/productPortal')} component={ProductPortal} />
       <Route

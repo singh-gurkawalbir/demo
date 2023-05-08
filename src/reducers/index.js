@@ -118,6 +118,7 @@ import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 import customCloneDeep from '../utils/customCloneDeep';
 import { convertUtcToTimezone } from '../utils/date';
+import customReducer, { selectors as fromCustomReducer } from './dashboard';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -129,6 +130,7 @@ const combinedReducers = combineReducers({
   user,
   auth,
   comms,
+  customReducer,
 });
 const rootReducer = (state, action) => {
   const newState = combinedReducers(state, action);
@@ -169,6 +171,7 @@ const subSelectors = {
   comms: fromComms,
   auth: fromAuth,
   user: fromUser,
+  customReducer: fromCustomReducer,
 };
 
 genSelectors(selectors, subSelectors);
