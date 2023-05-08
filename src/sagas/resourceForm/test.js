@@ -76,6 +76,11 @@ describe('resourceForm sagas', () => {
             resourceId,
           ), {merged: {_connectionId: 'conn1'}}],
           [select(
+            selectors.formContext,
+            resourceType,
+            resourceId,
+          ), {fields: [{id: 123}, {name: 'ab'}]}],
+          [select(
             selectors.resource,
             'connections',
             'conn1'

@@ -18,9 +18,6 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: theme.spacing(2),
-    '& .MuiAccordionSummary-content': {
-      margin: '10px 0',
-    },
   },
   noDataMessage: {
     padding: theme.spacing(1),
@@ -41,8 +38,7 @@ export default function DynaCeligoTable(props) {
       <AccordionSummary
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
-        expandIcon={<ExpandMoreIcon />}
-        >
+        expandIcon={<ExpandMoreIcon />}>
         <Typography variant={isTitleBold ? 'h6' : undefined}>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>

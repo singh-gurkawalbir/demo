@@ -40,7 +40,6 @@ export default function CeligoDivider({ orientation = 'vertical', height = 'larg
       orientation={orientation}
       className={clsx(classes.divider, classes[position], classes[height], className)}
       height={height}
-      sx={{backgroundColor: theme => theme.palette.secondary.lightest}}
   />
   );
 }

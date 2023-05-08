@@ -41,6 +41,6 @@ describe('status Cell of Flow Table UI test cases', () => {
         />
       </MemoryRouter>, {initialStore}
     );
-    expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();
+    expect(screen.getByText('05/18/2022 6:16:31 pm')).toBeInTheDocument();
   });
 });

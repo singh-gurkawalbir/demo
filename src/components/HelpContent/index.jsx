@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
-    marginRight: -theme.spacing(1.5),
+    marginRight: theme.spacing(-1.5),
     padding: theme.spacing(1, 1.5, 0, 0),
     maxHeight: 200,
     '&.MuiTypography-root': {

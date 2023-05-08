@@ -3665,6 +3665,16 @@ Object {
         "formId": "common",
       },
       "delta.dateField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.dateField",
       },
       "dynamodb.expressionAttributeNames": Object {
@@ -3717,6 +3727,16 @@ Object {
         "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "once.booleanField",
         "label": "Once boolean field",
         "type": "text",
@@ -3736,6 +3756,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -3762,6 +3792,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -4374,6 +4412,9 @@ Object {
       "http.response.failValues": Object {
         "fieldId": "http.response.failValues",
       },
+      "http.response.fileURLPaths": Object {
+        "fieldId": "http.response.fileURLPaths",
+      },
       "http.response.resourcePath": Object {
         "fieldId": "http.response.resourcePath",
       },
@@ -4475,7 +4516,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -4604,6 +4645,7 @@ Object {
                 Object {
                   "fields": Array [
                     "http.errorMediaType",
+                    "http.response.fileURLPaths",
                   ],
                 },
               ],
@@ -4644,7 +4686,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -4663,6 +4705,16 @@ Object {
         "formId": "common",
       },
       "delta.dateField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.dateField",
       },
       "exportOneToMany": Object {
@@ -4681,6 +4733,16 @@ Object {
         "fieldId": "mongodb.projection",
       },
       "once.booleanField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "once.booleanField",
       },
       "rdbmsGrouping": Object {
@@ -4690,6 +4752,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -4716,6 +4788,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -6144,6 +6224,16 @@ Object {
       "delta.dateField": Object {
         "connectionId": [Function],
         "defaultValue": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
@@ -6166,6 +6256,16 @@ Object {
         ],
       },
       "delta.lagOffset": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.lagOffset",
       },
       "exportOneToMany": Object {
@@ -6176,6 +6276,16 @@ Object {
       },
       "once.booleanField": Object {
         "connectionId": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
@@ -6336,6 +6446,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -6362,6 +6482,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -6488,6 +6616,14 @@ Object {
         "fieldId": "file.groupByFields",
       },
       "file.json.resourcePath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.json.resourcePath",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
         "fieldId": "file.json.resourcePath",
       },
       "file.sortByFields": Object {
@@ -6524,12 +6660,36 @@ Object {
         "type": "filetypeselect",
       },
       "file.xlsx.hasHeaderRow": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "file.xlsx.hasHeaderRow",
       },
       "file.xlsx.keyColumns": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "file.xlsx.keyColumns",
       },
       "file.xlsx.rowsPerRecord": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
       "fixed.format": Object {
@@ -6546,6 +6706,14 @@ Object {
         "fieldId": "pageSize",
       },
       "parsers": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "json",
+            ],
+          },
+        ],
         "fieldId": "parsers",
         "uploadSampleDataFieldName": "uploadFile",
         "visibleWhenAll": Array [
@@ -6828,6 +6996,16 @@ Object {
         "formId": "common",
       },
       "delta.dateField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.dateField",
       },
       "exportOneToMany": Object {
@@ -6837,12 +7015,32 @@ Object {
         "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "once.booleanField",
       },
       "settings": Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -6872,12 +7070,28 @@ Object {
             ],
           },
         ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+            ],
+          },
+        ],
         "required": true,
         "skipSort": true,
         "type": "select",
       },
       "wrapper.configuration": Object {
         "fieldId": "wrapper.configuration",
+        "removeWhen": Array [
+          Object {
+            "field": "wrapper.configuration",
+            "is": Array [
+              "",
+            ],
+          },
+        ],
       },
       "wrapper.function": Object {
         "fieldId": "wrapper.function",
@@ -7143,6 +7357,16 @@ Object {
       "delta.dateField": Object {
         "connectionId": [Function],
         "defaultValue": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
@@ -7165,6 +7389,16 @@ Object {
         ],
       },
       "delta.lagOffset": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.lagOffset",
       },
       "exportOneToMany": Object {
@@ -7175,6 +7409,16 @@ Object {
       },
       "once.booleanField": Object {
         "connectionId": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
@@ -7335,6 +7579,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -7361,6 +7615,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -7665,7 +7927,7 @@ Object {
                 ],
                 "helpKey": "export.delta",
                 "label": "Delta – export only modified data",
-                "regex": /\\.\\*\\{\\{\\.\\*lastExportDateTime\\.\\*\\}\\}/,
+                "regex": ".*{{.*lastExportDateTime.*}}",
                 "value": "delta",
               },
               Object {
@@ -7983,6 +8245,16 @@ Object {
       "delta.dateField": Object {
         "connectionId": [Function],
         "defaultValue": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldName": "deltaExportDateFields",
         "filterKey": "salesforce-recordType",
         "id": "delta.dateField",
@@ -8005,6 +8277,16 @@ Object {
         ],
       },
       "delta.lagOffset": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "delta.lagOffset",
       },
       "exportOneToMany": Object {
@@ -8015,6 +8297,16 @@ Object {
       },
       "once.booleanField": Object {
         "connectionId": [Function],
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldName": "onceExportBooleanFields",
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
@@ -8175,6 +8467,16 @@ Object {
         "fieldId": "settings",
       },
       "test.limit": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "delta",
+              "once",
+            ],
+          },
+        ],
         "fieldId": "test.limit",
       },
       "type": Object {
@@ -8201,6 +8503,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -8315,6 +8625,16 @@ Object {
         "fieldId": "mockOutput",
       },
       "rdbms.once.query": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
           Object {
@@ -8361,6 +8681,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -8455,6 +8783,16 @@ Object {
         "fieldId": "mockOutput",
       },
       "rdbms.once.query": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
+              "test",
+              "delta",
+            ],
+          },
+        ],
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
           Object {
@@ -8501,6 +8839,14 @@ Object {
                 "label": "Limit – export a set number of records",
                 "value": "test",
               },
+            ],
+          },
+        ],
+        "removeWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "all",
             ],
           },
         ],
@@ -10266,7 +10612,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -10312,42 +10658,34 @@ Object {
       },
       "mongodb.ignoreExtract": Object {
         "fieldId": "mongodb.ignoreExtract",
-        "removeWhen": Array [
+        "removeWhenAll": Array [
           Object {
-            "AND": Array [
-              Object {
-                "field": "mongodb.ignoreLookupFilter",
-                "isNot": Array [
-                  "",
-                ],
-              },
-              Object {
-                "field": "mongodb.lookupType",
-                "is": Array [
-                  "source",
-                ],
-              },
+            "field": "mongodb.ignoreLookupFilter",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "mongodb.lookupType",
+            "is": Array [
+              "lookup",
             ],
           },
         ],
       },
       "mongodb.ignoreLookupFilter": Object {
         "fieldId": "mongodb.ignoreLookupFilter",
-        "removeWhen": Array [
+        "removeWhenAll": Array [
           Object {
-            "AND": Array [
-              Object {
-                "field": "mongodb.ignoreExtract",
-                "isNot": Array [
-                  "",
-                ],
-              },
-              Object {
-                "field": "mongodb.lookupType",
-                "is": Array [
-                  "lookup",
-                ],
-              },
+            "field": "mongodb.ignoreExtract",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "mongodb.lookupType",
+            "is": Array [
+              "source",
             ],
           },
         ],
@@ -11652,6 +11990,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -11758,9 +12104,25 @@ Object {
       },
       "salesforce.blobOperation": Object {
         "fieldId": "salesforce.blobOperation",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.blobsObjectType": Object {
         "fieldId": "salesforce.blobsObjectType",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.compositeOperation": Object {
         "fieldId": "salesforce.compositeOperation",
@@ -11802,9 +12164,37 @@ Object {
         "fieldId": "salesforce.document.name",
       },
       "salesforce.idLookup.extract": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.idLookup.extract",
       },
       "salesforce.idLookup.whereClause": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.idLookup.whereClause",
       },
       "salesforce.lookups": Object {
@@ -11818,6 +12208,20 @@ Object {
         "fieldId": "salesforce.sObjectType",
       },
       "salesforce.upsert.externalIdField": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.upsert.externalIdField",
         "refreshOptionsOnChangesTo": Array [
           "salesforce.sObjectType",
@@ -11932,6 +12336,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -12167,6 +12579,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -12407,6 +12827,14 @@ Object {
         ],
       },
       "blobKeyPath": Object {
+        "deleteWhen": Array [
+          Object {
+            "field": "inputMode",
+            "isNot": Array [
+              "blob",
+            ],
+          },
+        ],
         "fieldId": "blobKeyPath",
       },
       "common": Object {
@@ -12513,9 +12941,25 @@ Object {
       },
       "salesforce.blobOperation": Object {
         "fieldId": "salesforce.blobOperation",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.blobsObjectType": Object {
         "fieldId": "salesforce.blobsObjectType",
+        "removeWhen": Array [
+          Object {
+            "field": "salesforce.api",
+            "is": Array [
+              "compositerecord",
+            ],
+          },
+        ],
       },
       "salesforce.compositeOperation": Object {
         "fieldId": "salesforce.compositeOperation",
@@ -12557,9 +13001,37 @@ Object {
         "fieldId": "salesforce.document.name",
       },
       "salesforce.idLookup.extract": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.idLookup.extract",
       },
       "salesforce.idLookup.whereClause": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.idLookup.whereClause",
       },
       "salesforce.lookups": Object {
@@ -12573,6 +13045,20 @@ Object {
         "fieldId": "salesforce.sObjectType",
       },
       "salesforce.upsert.externalIdField": Object {
+        "deleteWhenAll": Array [
+          Object {
+            "field": "salesforce.compositeOperation",
+            "is": Array [
+              "insert",
+            ],
+          },
+          Object {
+            "field": "ignoreExisting",
+            "is": Array [
+              "false",
+            ],
+          },
+        ],
         "fieldId": "salesforce.upsert.externalIdField",
         "refreshOptionsOnChangesTo": Array [
           "salesforce.sObjectType",

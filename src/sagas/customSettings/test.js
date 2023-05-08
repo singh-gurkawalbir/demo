@@ -10,7 +10,7 @@ import { apiCallWithRetry } from '../index';
 
 describe('initSettingsForm saga', () => {
   const resourceId = '1234';
-  const resourceType = 'imports';
+  const resourceType = 'flows';
 
   test('should not make API call if no init hook present', () => {
     const resourceState = {

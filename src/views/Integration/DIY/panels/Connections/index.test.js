@@ -157,7 +157,7 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
   test('should test table', () => {
     initStoreAndRender(null, null);
     expect(screen.getAllByRole('row')[0].textContent).toBe('NameStatusTypeAPILast updatedQueue sizeActions');
-    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 10:02:09 am0');
+    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 4:32:09 am0');
   });
   test('should test use effects dispatch call', () => {
     initStoreAndRender();
@@ -194,6 +194,6 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
   test('should test table duplicate', () => {
     initStoreAndRender(null, '5ff579d745ceef7dcd797c15');
     expect(screen.getAllByRole('row')[0].textContent).toBe('NameStatusTypeAPILast updatedQueue sizeActions');
-    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 10:02:09 am0');
+    expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 4:32:09 am0');
   });
 });

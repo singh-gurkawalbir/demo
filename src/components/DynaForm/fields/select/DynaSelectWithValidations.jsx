@@ -26,7 +26,7 @@ export default function DynaSelectWithValidations(props) {
     setDescription(itemDescription);
 
     // if either of the fields contain the regex, remove the description
-    const validated = fieldsToValidate?.some(field => regex.test(formFields[field]?.value));
+    const validated = fieldsToValidate?.some(field => new RegExp(regex).test(formFields[field]?.value));
 
     if (validated) {
       setDescription('');

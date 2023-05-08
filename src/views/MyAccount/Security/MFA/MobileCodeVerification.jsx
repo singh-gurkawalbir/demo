@@ -8,8 +8,7 @@ import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   verify: {
-    position: 'relative',
-    bottom: theme.spacing(2),
+    marginTop: theme.spacing(-1),
   },
 }));
 

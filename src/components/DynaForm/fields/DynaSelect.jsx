@@ -144,6 +144,11 @@ const useStyles = makeStyles(theme => ({
   },
   dynaSelectWrapper: {
     width: '100%',
+    '& $dynaSelectValue': {
+      '& .MuiSelect-select': {
+        paddingRight: theme.spacing(13),
+      },
+    },
   },
   focusVisibleMenuItem: {
     backgroundColor: theme.palette.secondary.lightest,
@@ -168,6 +173,9 @@ const useStyles = makeStyles(theme => ({
   apiType: {
     color: theme.palette.secondary.light,
     lineHeight: '14px',
+  },
+  dynaSelectValue: {
+    width: '100%',
   },
 }));
 
@@ -223,8 +231,7 @@ const Row = ({ index, style, data }) => {
         }
 
         setOpen(false);
-      }}
-      sx={{fontSize: '14px'}}>
+      }}>
       <CeligoTruncate isLoggable={isLoggable} placement="left" lines={1}>
         {label}
       </CeligoTruncate>
@@ -429,6 +436,7 @@ export default function DynaSelect(props) {
           onOpen={openSelect}
           onClose={closeSelect}
           disabled={disabled}
+          className={classes.dynaSelectValue}
           // TODO: memoize this
           input={<Input name={name} id={id} />}>
           {
