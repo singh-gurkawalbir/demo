@@ -173,6 +173,12 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'transfers',
   'connectors',
 ]);
+export const RESOURCE_TYPES_WITHOUT_CREATE_EDIT_PAGE = Object.freeze([
+  'asyncHelpers',
+  'filedefinitions',
+  'ssoclients',
+  'users',
+]);
 
 export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Stack']);
 
