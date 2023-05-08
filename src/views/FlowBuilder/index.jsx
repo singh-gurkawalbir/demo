@@ -73,6 +73,7 @@ export default function FlowBuilder() {
   }, [integrationLoaded]);
 
   if (!integrationLoaded) return null;
+  // TO DO: Snigdha Below code should be refactored as part of https://celigo.atlassian.net/browse/IO-36723
 
   return (
     <LoadResources integrationId={__integrationId} required resources="connections" spinner={spinner} >
