@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 //
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useRouteMatch, Link } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+// import AddIcon from '@mui/icons-material/Add';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import Tabs from './Tabs';
@@ -13,10 +13,10 @@ import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
 import { HOME_PAGE_PATH } from '../../constants';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import { TextButton } from '../../components/Buttons';
+// import { TextButton } from '../../components/Buttons';
 
-import { buildDrawerUrl} from '../../utils/rightDrawer';
-import Drawer from './panels/Custom/CustomDrawer';
+// import { buildDrawerUrl} from '../../utils/rightDrawer';
+// import Drawer from './panels/Custom/CustomDrawer';
 import {
   FILTER_KEYS_AD,
   DEFAULT_RANGE,
@@ -94,15 +94,15 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch]
   );
-  const [val, setVal] = useState('');
+  // const [val, setVal] = useState('');
 
-  const handleClick = () => {
-    // console.log("Custom");
-  };
+  // const handleClick = () => {
+  //   // console.log("Custom");
+  // };
 
-  const pull_data = data_new => {
-    setVal(data_new);
-  };
+  // const pull_data = data_new => {
+  //   setVal(data_new);
+  // };
 
   if (!isUserInErrMgtTwoDotZero) {
     history.push(getRoutePath(HOME_PAGE_PATH));
@@ -124,7 +124,7 @@ export default function Dashboard() {
            />
         ) : (
           <CeligoPageBar title="Dashboard" infoText={infoTextDashboard}>
-            <div>
+            {/* <div>
               {val === 'custom' && (
                 <TextButton
                   component={Link}
@@ -140,11 +140,11 @@ export default function Dashboard() {
                 </TextButton>
               )}
               <Drawer integrationId={integrationId} />
-            </div>
+            </div> */}
           </CeligoPageBar>
         )}
       </div>
-      <Tabs func={pull_data} />
+      <Tabs />
       <QueuedJobsDrawer integrationId={integrationId} />
     </LoadResources>
   );

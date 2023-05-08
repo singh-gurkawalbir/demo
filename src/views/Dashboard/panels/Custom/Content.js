@@ -448,11 +448,11 @@ const initialLayouts = {
 };
 
 const initialGraphTypes = [
-  { id: '0', type: 'Area', dataType: 'connections' },
+  { id: '0', type: 'Bar', dataType: 'connections' },
   { id: '1', type: 'Bar', dataType: 'connections' },
-  { id: '2', type: 'Pie', dataType: 'connections' },
+  { id: '2', type: 'Bar', dataType: 'connections' },
   { id: '3', type: 'Bar', dataType: 'imports' },
-  { id: '4', type: 'Area', dataType: 'flows' },
+  { id: '4', type: 'Bar', dataType: 'flows' },
 ];
 
 export default function Content({colsize, id, data}) {

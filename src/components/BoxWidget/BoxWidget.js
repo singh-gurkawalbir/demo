@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
   box: {
     height: 100,
-    width: 350,
+    width: 650,
     display: 'flex',
     borderRadius: 7,
     // borderColor: '#8EC635',
@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
     height: 55,
   },
   connections: {
-    borderColor: '#8EC635',
-    color: '#8EC635',
+    borderColor: '#3CB73A',
+    color: '#3CB73A',
   },
   flows: {
-    borderColor: '#9C3A99',
-    color: '#9C3A99',
+    borderColor: '#075497',
+    color: '#075497',
   },
 }));
 
@@ -52,8 +52,8 @@ const MuiBox = ({ data, value }) => {
       <Box
         component="span"
         data-testid="box"
-        m={4} // margin
-        p={4} // padding
+        m={4}
+        p={4}
         boxShadow={12}
         borderBottom={8}
         className={`${classes.box} ${classes.boxBackground} ${

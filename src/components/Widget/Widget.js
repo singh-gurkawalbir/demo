@@ -9,8 +9,6 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import PieGraph from '../Graphs/PieGraph';
-import AreaGraph from '../Graphs/AreaGraph';
 import MuiBox from '../BoxWidget/BoxWidget';
 import BarGraph from '../Graphs/BarGraph';
 
@@ -211,14 +209,14 @@ export default function Widget({
     setData(data1);
   };
 
-  const color = ['#CC33FF', '#7D3C98', '#2E86C1', '#138D75', '#28B463'];
+  const color = ['#D93535', '#05B39C'];
 
   const options = [
     {
       label: 'Area',
       value: 'Area',
       config: data => (
-        <AreaGraph
+        <BarGraph
           data={data} color={color} onChange={handleBarClick}
         />
       ),
@@ -237,7 +235,7 @@ export default function Widget({
     {
       label: 'Pie',
       value: 'Pie',
-      config: data => <PieGraph data={data} color={color} />,
+      config: data => <BarGraph data={data} color={color} onChange={handleBarClick} />,
     },
   ];
 
