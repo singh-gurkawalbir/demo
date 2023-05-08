@@ -317,11 +317,16 @@ export function* getImportSampleData({ importId }) {
   const { type } = file || {};
   const connectionAssistant = getAssistantFromConnection(assistant, connection);
 
-  if (getHttpConnector(connection?.http?._httpConnectorId) || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
-    // get assistants sample data
+  if (getHttpConnector(connection?.http?._httpConnectorId)) {
+    // get http2.0 assistants sample data
     const assistantSampleData = yield call(_fetchAssistantSampleData, { resource: {...resource, assistant: connectionAssistant} });
 
     return assistantSampleData?.previewData;
+  } if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+    // get sample data for non http2.0 assistants
+    const assistantSampleData = yield select(selectors.assistantPreviewData, importId);
+
+    return assistantSampleData?.data;
   }
   const isIntegrationApp = !!_connectorId;
 
