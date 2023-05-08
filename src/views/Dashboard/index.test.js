@@ -61,7 +61,7 @@ function initDashboard() {
       <Route
         path="/integrations/:integrationId/dashboard/runningFlows"
             >
-        <Dashboard />
+        <Dashboard func={jest.fn()} />
       </Route>
     </MemoryRouter>
   );
