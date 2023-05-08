@@ -8,9 +8,9 @@ import SearchIcon from '../../../icons/SearchIcon';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
-import ActionButton from '../../../ActionButton';
 import { OptionLabel } from '../DynaSelectConnection';
 import { stringCompare } from '../../../../utils/sort';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -56,13 +56,17 @@ const useStyles = makeStyles(theme => ({
   },
   createConnectionBtn: {
     padding: '15px 0px',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
+    color: theme.palette.background.toggle,
     '& > * .MuiSvgIcon-root': {
-      fontSize: 12,
+      fontSize: 10,
     },
   },
   dropdownitemsConnection: {
     width: '100%',
     marginTop: 39,
+    boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
     '& ul': {
       '& li': {
         display: 'flex',
@@ -107,11 +111,13 @@ const Option = option => {
       <OptionLabel option={option} connInfo={option?.connInfo} />
       { allowEdit && (
       <span className={classes.optionEditIcon}>
-        <ActionButton
+        <IconButtonWithTooltip
+          tooltipProps={{title: 'Edit connection'}}
           data-test="editResource"
-          onClick={evt => handleEditClick(evt, option)}>
+          onClick={evt => handleEditClick(evt, option)}
+          noPadding>
           <EditIcon />
-        </ActionButton>
+        </IconButtonWithTooltip>
       </span>
       )}
     </>
