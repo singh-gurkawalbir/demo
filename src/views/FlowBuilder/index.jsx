@@ -75,33 +75,35 @@ export default function FlowBuilder() {
   if (!integrationLoaded) return null;
 
   return (
-    <LoadResources integrationId={__integrationId} required resources="connections,imports,exports,flows,scripts" spinner={spinner} >
-      <Redirection>
-        <ResourceDrawer flowId={flowId} integrationId={integrationId} />
-        <ConfigConnectionDebugger />
-        <HooksDrawer flowId={flowId} integrationId={integrationId} />
-        <ScheduleDrawer flowId={flowId} />
-        <ChartsDrawer flowId={flowId} />
-        <QueuedJobsDrawer integrationId={integrationId} />
-        <EditorDrawer />
-        <ErrorDetailsDrawer flowId={flowId} />
-        <IsLoggableContextProvider isLoggable>
-          <SettingsDrawer
+    <LoadResources integrationId={__integrationId} required resources="connections" spinner={spinner} >
+      <LoadResources integrationId={__integrationId} required resources="imports,exports,flows,scripts" spinner={spinner} >
+        <Redirection>
+          <ResourceDrawer flowId={flowId} integrationId={integrationId} />
+          <ConfigConnectionDebugger />
+          <HooksDrawer flowId={flowId} integrationId={integrationId} />
+          <ScheduleDrawer flowId={flowId} />
+          <ChartsDrawer flowId={flowId} />
+          <QueuedJobsDrawer integrationId={integrationId} />
+          <EditorDrawer />
+          <ErrorDetailsDrawer flowId={flowId} />
+          <IsLoggableContextProvider isLoggable>
+            <SettingsDrawer
+              integrationId={integrationId}
+              resourceType="flows"
+              resourceId={flowId}
+              flowId={flowId} />
+          </IsLoggableContextProvider>
+          <ReplaceConnectionDrawer
+            flowId={flowId}
             integrationId={integrationId}
-            resourceType="flows"
-            resourceId={flowId}
-            flowId={flowId} />
-        </IsLoggableContextProvider>
-        <ReplaceConnectionDrawer
-          flowId={flowId}
-          integrationId={integrationId}
-          childId={childId} />
+            childId={childId} />
 
-        <FBComponent
-          flowId={flowId} integrationId={integrationId}
-          childId={childId} />
-        <MappingDrawerRoute integrationId={integrationId} />
-      </Redirection>
+          <FBComponent
+            flowId={flowId} integrationId={integrationId}
+            childId={childId} />
+          <MappingDrawerRoute integrationId={integrationId} />
+        </Redirection>
+      </LoadResources>
     </LoadResources>
   );
 }
