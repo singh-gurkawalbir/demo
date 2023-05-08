@@ -24,6 +24,7 @@ import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 import { getHttpConnector} from '../../../constants/applications';
+import DynaSelectConnection from './DynaSelectConnection';
 
 const emptyArray = [];
 const emptyObj = {};
@@ -196,7 +197,7 @@ const useStyles = makeStyles(theme => ({
     '& > div:last-child': {
       position: 'absolute',
       right: '50px',
-      top: theme.spacing(4),
+      top: theme.spacing(4.5),
     },
     '& >* .MuiSelect-selectMenu': {
       paddingRight: 140,
@@ -252,6 +253,8 @@ export default function DynaSelectResource(props) {
     disabledTitle,
     isValueValid = false,
     isSelectFlowResource,
+    defaultValue,
+    showEditableDropdown,
   } = props;
   let {filter} = props;
   const { options = {}, getItemInfo } = props;
@@ -371,15 +374,16 @@ export default function DynaSelectResource(props) {
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
   let isIclientEditDisable = false;
 
-  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
+  if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId) && merged?.http?._iClientId) {
     const globalIclient = {};
-    const globalIclientCheck = resourceItems.find(res => res?.value === merged?.http?._iClientId);
-    const existingGlobalIclient = !resourceItems.find(res => res?.isGlobal);
+    const iClientPresentInAccount = resourceItems.find(res => res?.value === merged?.http?._iClientId);
+    const existingGlobalIclient = !!(iClientPresentInAccount?.isGlobal);
 
     globalIclient.value = merged?.http?._iClientId;
-    globalIclient.label = `${merged?.application} Celigo iClient`;
+    globalIclient.label = `${merged?.application || defaultValue} Celigo iClient`;
     globalIclient.isGlobal = true;
-    if (!globalIclientCheck && existingGlobalIclient) {
+
+    if (!iClientPresentInAccount && !existingGlobalIclient) {
       resourceItems.push(globalIclient);
     }
     isIclientEditDisable = !resourceItems.find(res => !res.isGlobal && res?.value === value);
@@ -404,7 +408,7 @@ export default function DynaSelectResource(props) {
       }),
     [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email, _httpConnectorId]
   );
-  const handleEditResource = useCallback(() => {
+  const handleEditResource = useCallback((evt, resourceId) => {
     if (
       resourceType === 'asyncHelpers' ||
       (resourceType === 'exports' && statusExport)
@@ -456,7 +460,7 @@ export default function DynaSelectResource(props) {
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.EDIT,
       baseUrl: location.pathname,
-      params: { resourceType, id: value },
+      params: { resourceType, id: resourceId || value },
     }));
   }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
@@ -513,13 +517,24 @@ export default function DynaSelectResource(props) {
           />
           ) : (
             <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-              <DynaSelect
-                {...props}
-                disabled={disableSelect}
-                removeHelperText={isAddingANewResource}
-                options={[{ items: truncatedItems(resourceItems || []) }]}
-                isSelectFlowResource={isSelectFlowResource}
+              { showEditableDropdown
+                ? (
+                  <DynaSelectConnection
+                    {...props}
+                    onCreateClick={handleAddNewResourceMemo}
+                    disabled={disabled}
+                    onEditClick={handleEditResource}
+                    options={resourceItems} />
+                )
+                : (
+                  <DynaSelect
+                    {...props}
+                    disabled={disableSelect}
+                    removeHelperText={isAddingANewResource}
+                    options={[{ items: truncatedItems(resourceItems || []) }]}
+                    isSelectFlowResource={isSelectFlowResource}
           />
+                )}
               {resourceType === 'connections' && !!value && !skipPingConnection && (
               <ConnectionLoadingChip
                 connectionId={value}
@@ -532,7 +547,7 @@ export default function DynaSelectResource(props) {
 
           )}
           <div className={clsx({[classes.dynaSelectMultiSelectActionsFlow]: isSelectFlowResource}, {[classes.dynaSelectMultiSelectActions]: !isSelectFlowResource})}>
-            {allowNew && (
+            {allowNew && !showEditableDropdown && (
             <IconButtonWithTooltip
               tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
               data-test="addNewResource"
@@ -542,7 +557,7 @@ export default function DynaSelectResource(props) {
             </IconButtonWithTooltip>
             )}
 
-            {allowEdit && (
+            {allowEdit && !showEditableDropdown && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
               tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value || isIclientEditDisable}

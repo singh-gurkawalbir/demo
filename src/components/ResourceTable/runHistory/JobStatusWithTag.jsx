@@ -14,14 +14,14 @@ const InfoTag = ({color, label, info}) => (
   </Box>
 );
 
-export default function JobStatusWithTag({job}) {
-  const { status, type, _integrationId, canceledBy } = job || {};
+export default function JobStatusWithTag({job, integrationId}) {
+  const { status, type, canceledBy } = job || {};
   const isParentJob = type === 'flow';
   const userName = useSelector(state => {
     if (canceledBy === 'system') return 'system';
-    const user = selectors.availableUsersList(state, _integrationId)?.find(user => user.sharedWithUser?._id === canceledBy);
+    const user = selectors.availableUsersList(state, integrationId)?.find(user => user.sharedWithUser?._id === canceledBy);
 
-    return user?.sharedWithUser?.name || user?.sharedWithUser?.email;
+    return user?.sharedWithUser?.name || user?.sharedWithUser?.email || canceledBy;
   });
 
   if (!status) {

@@ -211,6 +211,7 @@ const MAPPER2 = {
   AUTO_POPULATE_LEARN_MORE: 'Auto-populate is not available for this connector.<br><br>Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   CONTAINS_SUBRECORDS: 'This import contains subrecord imports, select which import you would like to edit the mapping for.',
   OBJECT_ARRAY_NOTIFICATION: 'All other child fields of this parent that have the same field<br>name will remain in place. If necessary, you can move each<br>remaining field individually.',
+  REPLACE_ROW_NOTIFICATION: 'All your mappings associated with this destination field will be removed when your selected field will be applied.<br><br>Are you sure you want to continue?',
 };
 // #endregion
 
@@ -264,7 +265,7 @@ const MFA = {
   ACCOUNT_SETTINGS_UPDATED: 'MFA account settings saved successfully.',
   ENABLED: 'MFA enabled successfully.',
   DISABLED: 'MFA disabled successfully.',
-  REAUTHENTICATE_ACCOUNT: '    Re-authenticate your account <br /> Enter your account password to confirm if you want to reset MFA.',
+  REAUTHENTICATE_ACCOUNT: 'Enter your account password to confirm if you want to reset MFA.',
   PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
   RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
   href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,

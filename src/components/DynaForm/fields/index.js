@@ -176,6 +176,7 @@ import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
 import DynaMultiFieldExpression from './DynaMultiFieldExpression';
 import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
+import DynaHttpConnectorName from './DynaHttpConnectorName';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -194,6 +195,7 @@ export default {
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
   text: DynaText,
+  httpConnectorName: DynaHttpConnectorName,
   textlist: DynaTextList,
   editor: DynaEditor,
   textarea: DynaText,
