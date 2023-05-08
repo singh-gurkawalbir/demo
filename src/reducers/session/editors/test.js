@@ -1018,6 +1018,104 @@ describe('editors reducers', () => {
 
       expect(newState).toHaveProperty('query', {id: 'query'});
     });
+    describe('should set the skipEmptyRuleCleanup to false for router if patch contains active processor', () => {
+      test('and branches exist in rules', () => {
+        const options = {
+          id: 'router123',
+          editorType: 'router',
+          stage: 'flowInput',
+          rule: {
+            branches: [
+              {
+                id: 'branch0',
+                inputFilter: ['rule'],
+                skipEmptyRuleCleanup: true,
+              },
+              {
+                id: 'branch1',
+                inputFilter: ['rule1'],
+                skipEmptyRuleCleanup: false,
+              },
+              {
+                id: 'branch2',
+                inputFilter: ['rule2'],
+              },
+            ],
+          },
+        };
+        const initialState = reducer(
+          undefined,
+          actions.editor.initComplete('router123', options)
+        );
+        const newState = reducer(
+          initialState,
+          actions.editor.patchFeatures(
+            'router123',
+            {activeProcessor: 'json'}
+          )
+        );
+        const expectedState = {
+          router123: {
+            id: 'router123',
+            editorType: 'router',
+            stage: 'flowInput',
+            rule: {
+              activeProcessor: 'json',
+              branches: [
+                {
+                  id: 'branch0',
+                  inputFilter: ['rule'],
+                  skipEmptyRuleCleanup: false,
+                },
+                {
+                  id: 'branch1',
+                  inputFilter: ['rule1'],
+                  skipEmptyRuleCleanup: false,
+                },
+                {
+                  id: 'branch2',
+                  inputFilter: ['rule2'],
+                  skipEmptyRuleCleanup: false,
+                },
+              ],
+            },
+          },
+        };
+
+        expect(newState).toMatchObject(expectedState);
+      });
+      test('and branches do not exist in rules', () => {
+        const options = {
+          id: 'router123',
+          editorType: 'router',
+          stage: 'flowInput',
+          rule: { },
+        };
+        const initialState = reducer(
+          undefined,
+          actions.editor.initComplete('router123', options)
+        );
+        const newState = reducer(
+          initialState,
+          actions.editor.patchFeatures(
+            'router123',
+            {activeProcessor: 'json'}
+          )
+        );
+        const expectedState = {
+          router123: {
+            id: 'router123',
+            editorType: 'router',
+            stage: 'flowInput',
+            rule: {
+              activeProcessor: 'json',
+            },
+          },
+        };
+
+        expect(newState).toMatchObject(expectedState);
+      });
+    });
   });
   describe('PATCH.FILE_KEY_COLUMN action', () => {
     test('should not throw error if state does not exist', () => {

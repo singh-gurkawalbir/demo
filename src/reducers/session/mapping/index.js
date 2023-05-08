@@ -22,7 +22,7 @@ import {
   buildExtractsHelperFromExtract,
   getSelectedExtractDataTypes,
   isMapper2HandlebarExpression,
-  isMappingRowTouched} from '../../../utils/mapping';
+  isMappingWithoutExtract} from '../../../utils/mapping';
 import { generateId } from '../../../utils/string';
 import { constructDestinationTreeFromParentsList,
   findLastNodeWithMatchingParent,
@@ -1103,7 +1103,7 @@ export default (state = {}, action) => {
 
         if (!finalDestinationTree || !finalDestinationTree.length || !finalDestinationTree[0].children) break;
 
-        const inputValues = [inputValue.toUpperCase()];
+        const inputValues = inputValue === '' ? [] : [inputValue.toUpperCase()];
 
         draft.mapping.finalDestinationTree[0] = recursivelySearchExtracts(finalDestinationTree[0], inputValues, inputValue === propValue);
 
@@ -1234,15 +1234,24 @@ export default (state = {}, action) => {
         const {node = {}, leftParentsList = []} = findLastNodeWithMatchingParent(treeData, parentsList);
         let finalKey;
 
+        // if node is not empty then value can be added as child to the node
         if (!isEmpty(node)) {
           const {node: newNode, key} = constructDestinationTreeFromParentsList(leftParentsList);
 
           finalKey = key;
           if (clickedNode?.parentKey === node.key) {
-            if (!isMappingRowTouched(clickedNode, draft.mapping.lookups)) {
+            if (isMappingWithoutExtract(clickedNode, draft.mapping.lookups)) {
               clickedNodeSubArray.splice(clickedNodeIndex, 1, newNode);
             } else {
-              clickedNodeSubArray.splice(clickedNodeIndex + 1, 0, newNode);
+              // adding temporary information to show confirm dialog
+              // will be handled in MAPPING.V2.REPLACE_ROW
+              draft.mapping.replaceRow = {
+                showAddDestinationDialog: true,
+                clickedRowKey,
+                nodeToBeAdded: newNode,
+                finalKeyToOpen: key,
+              };
+              break;
             }
           } else {
             node.children.push(newNode);
@@ -1254,17 +1263,56 @@ export default (state = {}, action) => {
           const {node: newNode, key} = constructDestinationTreeFromParentsList(parentsList);
 
           finalKey = key;
-          if (!isMappingRowTouched(clickedNode, draft.mapping.lookups)) {
+          if (isMappingWithoutExtract(clickedNode, draft.mapping.lookups)) {
             clickedNodeSubArray.splice(clickedNodeIndex, 1, newNode);
+
+            if (draft.mapping.isGroupedOutput) {
+              newNode.parentKey = draft.mapping.v2TreeData[0]?.key;
+            }
           } else {
-            clickedNodeSubArray.splice(clickedNodeIndex + 1, 0, newNode);
+            // adding temporary information to show confirm dialog
+            // will be handled in MAPPING.V2.REPLACE_ROW
+            draft.mapping.replaceRow = {
+              showAddDestinationDialog: true,
+              clickedRowKey,
+              nodeToBeAdded: newNode,
+              finalKeyToOpen: key,
+            };
+            break;
           }
         }
 
         const {parentsList: addedChildParents = []} = findNodeInTreeWithParents(draft.mapping.v2TreeData, 'key', finalKey);
-        const addedChildParentsKeys = addedChildParents.map(node => node.key);
+        const addedChildParentsKeys = addedChildParents
+          .filter(node => (node?.dataType === MAPPING_DATA_TYPES.OBJECT || node?.dataType === MAPPING_DATA_TYPES.OBJECTARRAY))
+          .map(node => node.key);
+
+        if (isEmpty(addedChildParentsKeys)) break;
 
         draft.mapping.expandedKeys = [...new Set([...(draft.mapping.expandedKeys || []), ...addedChildParentsKeys])];
+        break;
+      }
+      case actionTypes.MAPPING.V2.REPLACE_ROW: {
+        if (value) {
+          const { clickedRowKey, nodeToBeAdded, finalKeyToOpen } = draft.mapping.replaceRow;
+          const {node: clickedNode, nodeIndexInSubArray: clickedNodeIndex, nodeSubArray: clickedNodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', clickedRowKey);
+
+          if (!isEmpty(clickedNode)) {
+            if (clickedNode?.parentKey) nodeToBeAdded.parentKey = clickedNode?.parentKey;
+            clickedNodeSubArray.splice(clickedNodeIndex, 1, nodeToBeAdded);
+
+            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, nodeToBeAdded, draft.mapping.lookups);
+
+            const {parentsList: addedChildParents = []} = findNodeInTreeWithParents(draft.mapping.v2TreeData, 'key', finalKeyToOpen);
+            const addedChildParentsKeys = addedChildParents
+              .filter(node => (node?.dataType === MAPPING_DATA_TYPES.OBJECT || node?.dataType === MAPPING_DATA_TYPES.OBJECTARRAY))
+              .map(node => node.key);
+
+            draft.mapping.expandedKeys = [...new Set([...(draft.mapping.expandedKeys || []), ...addedChildParentsKeys])];
+          }
+        }
+
+        delete draft.mapping.replaceRow;
         break;
       }
       case actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG: {

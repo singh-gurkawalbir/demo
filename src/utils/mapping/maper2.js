@@ -126,9 +126,8 @@ export const constructDestinationTreeFromParentsList = (parentsList = []) => {
     node.key = generateId();
     finalKey = node.key;
     if (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      finalKey = generateId();
       node.children = [{
-        key: finalKey,
+        key: generateId(),
         title: '',
         dataType: MAPPING_DATA_TYPES.STRING,
         isEmptyRow: true,
