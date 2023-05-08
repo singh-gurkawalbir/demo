@@ -10,7 +10,7 @@ import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
 import { OptionLabel } from '../DynaSelectConnection';
 import { stringCompare } from '../../../../utils/sort';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
+import ActionButton from '../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -111,13 +111,14 @@ const Option = option => {
       <OptionLabel option={option} connInfo={option?.connInfo} />
       { allowEdit && (
       <span className={classes.optionEditIcon}>
-        <IconButtonWithTooltip
-          tooltipProps={{title: 'Edit connection'}}
+        <ActionButton
+          tooltip="Edit connection"
+          placement="bottom"
           data-test="editResource"
           onClick={evt => handleEditClick(evt, option)}
           noPadding>
           <EditIcon />
-        </IconButtonWithTooltip>
+        </ActionButton>
       </span>
       )}
     </>
