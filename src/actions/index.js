@@ -1759,6 +1759,10 @@ const mapping = {
     searchTree: searchKey => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey }),
     updateFilter: filter => action(actionTypes.MAPPING.V2.UPDATE_FILTER, { filter }),
     deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
+    patchDestinationFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_DESTINATION_FILTER, { inputValue, propValue }),
+    makeFinalDestinationTree: v2Key => action(actionTypes.MAPPING.V2.FINAL_DESTINATION_TREE, { v2Key }),
+    addSelectedDestination: v2Key => action(actionTypes.MAPPING.V2.ADD_SELECTED_DESTINATION, { v2Key }),
+    toggleShowNotificationFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_NOTIFICATION_FLAG, {}),
   },
 };
 

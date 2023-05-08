@@ -16,9 +16,6 @@ const useStyles = makeStyles(theme => ({
       border: `1px solid ${theme.palette.secondary.lightest}`,
       width: 256,
     },
-    '& .MuiBackdrop-root': {
-      backgroundColor: 'transparent',
-    },
   },
   icon: {
     backgroundColor: theme.palette.background.default,

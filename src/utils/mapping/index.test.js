@@ -3995,10 +3995,124 @@ describe('mapping utils', () => {
           errMessage: "Mapper 2.0: quantity: You can't map boolean (source) to [number] (destination)",
         },
       },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            title: '',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            jsonPath: 'fname',
+          },
+          {
+            key: 'key2',
+            title: '',
+            generate: 'mothers_side',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            jsonPath: 'mothers_side',
+            isRequired: true,
+            children: [
+              {
+                key: 'c1',
+                title: '',
+                extract: '$.child1',
+                generate: 'child1',
+                parentKey: 'key2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                jsonPath: 'mothers_side.child1',
+                isRequired: true,
+              },
+              {
+                key: 'c3',
+                title: '',
+                extract: '$.child3',
+                generate: 'child3',
+                parentKey: 'key2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                jsonPath: 'mothers_side.child3',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            title: '',
+            extract: '$.lname',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            jsonPath: 'lname',
+            isRequired: true,
+          },
+        ],
+        requiredMappingsJsonPaths: [
+          'mothers_side+object',
+          'mothers_side.child1+string',
+          'lname+string',
+        ],
+        result: {
+          isSuccess: true,
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            title: '',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            jsonPath: 'fname',
+          },
+          {
+            key: 'key2',
+            title: '',
+            generate: 'mothers_side',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            jsonPath: 'mothers_side',
+            isRequired: true,
+            children: [
+              {
+                key: 'c1',
+                title: '',
+                extract: '$.child1',
+                generate: 'child1',
+                parentKey: 'key2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                jsonPath: 'mothers_side.child1',
+                isRequired: true,
+              },
+              {
+                key: 'c3',
+                title: '',
+                extract: '$.child3',
+                generate: 'child3',
+                parentKey: 'key2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                jsonPath: 'mothers_side.child3',
+              },
+            ],
+          },
+        ],
+        requiredMappingsJsonPaths: [
+          'mothers_side+object',
+          'mothers_side.child1+string',
+          'lname+string',
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_MISSING_REQUIRED_FIELDS'),
+        },
+      },
     ];
 
-    testCases.forEach(({mappings, lookups, v2TreeData, isGroupedSampleData, result}) => {
-      expect(util.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData)).toEqual(result);
+    testCases.forEach(({mappings, lookups, v2TreeData, isGroupedSampleData, result, requiredMappingsJsonPaths}) => {
+      expect(util.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData, requiredMappingsJsonPaths)).toEqual(result);
     });
   });
   test('getExtractPaths util', () => {

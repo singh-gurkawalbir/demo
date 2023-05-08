@@ -12,7 +12,9 @@ const useStyles = makeStyles(theme => ({
     justifyItems: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: alpha(theme.palette.secondary.light, 0.5),
+    '&>.MuiBackdrop-root': {
+      backgroundColor: alpha(theme.palette.secondary.light, 0.7),
+    },
   },
   paper: {
     padding: theme.spacing(2, 4),

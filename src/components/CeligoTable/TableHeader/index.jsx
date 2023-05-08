@@ -70,7 +70,6 @@ export default function TableHeader({
         <TableCell
           align="center"
           className={classes.actionColHead}
-          sx={{padding: '10px 16px'}}
         >
           Actions
         </TableCell>

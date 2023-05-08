@@ -494,7 +494,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
-      <Spinner center />
+      <Spinner size="large" center="screen" />
     );
   }
 

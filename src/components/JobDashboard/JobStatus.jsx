@@ -3,9 +3,12 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Button } from '@mui/material';
 import { Box, Spinner } from '@celigo/fuse-ui';
+import { useSelector } from 'react-redux';
 import DashboardTag from '../tags/DashboardTag';
 import { getJobStatusDetails } from '../../utils/jobdashboard';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
+import InfoIconButton from '../InfoIconButton';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -35,9 +38,25 @@ export default function JobStatus({ job }) {
       params: { flowId: job._flowId },
     }));
   }, [history, job._flowId, match.url]);
+  const integrationsUsers = useSelector(state => selectors.availableUsersList(state, job._integrationId));
 
   if (!jobStatusDetails) return '';
+
   if (jobStatusDetails.showStatusTag) {
+    if (jobStatusDetails.canceledBy) {
+      const user = integrationsUsers.find(user => user.sharedWithUser?._id === jobStatusDetails.canceledBy);
+      const userName = jobStatusDetails.canceledBy === 'system' ? 'system' : user?.sharedWithUser?.name || user?.sharedWithUser?.email || jobStatusDetails.canceledBy;
+
+      return (
+        <Box display="flex">
+          <DashboardTag color={jobStatusDetails.variant} label={jobStatusDetails.status} />
+          <Box>
+            <InfoIconButton info={`Canceled by ${userName}`} size="xs" placement="right" basicInfo />
+          </Box>
+        </Box>
+      );
+    }
+
     return (
       <DashboardTag
         color={jobStatusDetails.variant}

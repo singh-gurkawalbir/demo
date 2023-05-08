@@ -2,6 +2,15 @@ export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
+    if (
+      resource &&
+      !resource._connectorId &&
+      resource.http &&
+      resource.http._iClientId
+    ) {
+      retValues['/http/_iClientId'] = undefined;
+    }
+
     return {
       ...retValues,
       '/type': 'http',
@@ -102,7 +111,6 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'squareup.connection.http._iClientId',
       visibleWhenAll: [{field: 'accountType', is: ['sandbox']}],
-      remove: r => !!((r && !r._connectorId && r?.http && r?.http?._iClientId)),
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',

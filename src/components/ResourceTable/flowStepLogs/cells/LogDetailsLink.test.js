@@ -35,7 +35,7 @@ describe('logDetailsLink UI tests', () => {
 
     act(() => store.dispatch(actions.user.profile.update(profile)));
 
-    await userEvent.click(screen.getByText('05/18/2022 11:46:31 pm'));
+    await userEvent.click(screen.getByText('05/18/2022 6:16:31 pm'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.logs.flowStep.setActiveLog('someresourceId', 'somelogKey')
     );

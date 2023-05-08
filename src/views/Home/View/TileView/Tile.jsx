@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   headerTileStatus: {
     fontSize: 13,
     paddingLeft: 0,
-    '& > * .MuiButton-startIcon': {
+    '& > .MuiButton-startIcon': {
       margin: 0,
     },
   },

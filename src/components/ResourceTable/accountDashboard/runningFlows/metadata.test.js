@@ -88,7 +88,7 @@ describe('running flows metadata column UI Tests', () => {
     renderFunction({startedAt: '2022-05-18T18:16:31.989Z'});
 
     const headerIndex = indexOfCell('Started', 'columnheader');
-    const cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    const cellIndex = indexOfCell('05/18/2022 6:16:31 pm', 'cell');
 
     expect(headerIndex).toBeGreaterThan(-1);
     expect(cellIndex).toBeGreaterThan(-1);
