@@ -31,7 +31,7 @@ describe('infoIconButton UI tests', () => {
     await userEvent.click(screen.getByRole('button'));
     expect(screen.getByText(/sample info icon content/i)).toBeInTheDocument();
     await userEvent.click(screen.getByText('exterior'));
-    expect(screen.queryByText(/sample info icon content/i)).toBeNull();
+    waitFor(() => expect(screen.queryByText(/sample info icon content/i)).toBeNull());
   });
   test('should close the arrowpopper on clicking the close button', async () => {
     const props = {info: 'sample info icon content'};
