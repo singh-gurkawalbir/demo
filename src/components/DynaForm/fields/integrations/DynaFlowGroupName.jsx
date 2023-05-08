@@ -101,7 +101,9 @@ export default function DynaFlowGroupName(props) {
         <TextButton
           onClick={handleDeleteFlowGroupClick}
           startIcon={<TrashIcon />}
-          className={classes.deleteFlowBtn}>
+          className={classes.deleteFlowBtn}
+          error
+        >
           Delete flow group
         </TextButton>
       </ButtonWithTooltip>
