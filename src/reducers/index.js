@@ -3508,6 +3508,12 @@ selectors.isIntegrationAppV1 = (state, integrationId) => {
   return !!integration?._connectorId && !isIntegrationAppV2;
 };
 
+selectors.getParentIntegrationId = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return integration?._parentId || integration?._id;
+};
+
 selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (!state || !integrationId) {
     return null;
