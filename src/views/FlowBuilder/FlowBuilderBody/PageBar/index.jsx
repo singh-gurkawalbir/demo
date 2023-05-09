@@ -125,7 +125,7 @@ const pageChildreUseStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
-    margin: [[-7, 0, -7, 8]],
+    margin: [[-7, 0]],
   },
   flowToggle: {
     marginRight: 12,
