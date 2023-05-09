@@ -160,7 +160,16 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   addSearchBar: {
-    paddingTop: theme.spacing(6),
+    '&$virtualTree': {
+      overflow: 'hidden',
+      '& .rc-tree-list': {
+        paddingTop: theme.spacing(3),
+        overflow: 'hidden',
+        '& .rc-tree-treenode:last-child': {
+          paddingBottom: theme.spacing(3),
+        },
+      },
+    },
   },
   emptyMessage: {
     padding: theme.spacing(3),
@@ -176,8 +185,22 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     '&+$mappingDrawerContent': {
       paddingTop: 0,
+      height: `calc(100% - ${theme.spacing(6)}px)`,
       '& .rc-tree-list': {
-        paddingBottom: theme.spacing(6),
+        height: '100%',
+      },
+      '& $virtualTree': {
+        '& .rc-tree-list': {
+          overflow: 'hidden',
+          '& .rc-tree-treenode:last-child': {
+            paddingBottom: theme.spacing(6),
+          },
+        },
+      },
+      '& $addSearchBar': {
+        '& .rc-tree-list': {
+          paddingTop: 0,
+        },
       },
     },
     '& > svg': {
@@ -412,9 +435,9 @@ export default function Mapper2({editorId}) {
         </Typography>
       )}
 
-      <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
+      <div className={clsx(classes.mappingDrawerContent)}>
         <Tree
-          className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'})}
+          className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'}, {[classes.addSearchBar]: searchKey !== undefined})}
           height={allNodes > 50 ? Math.round(window.innerHeight) - 262 : undefined}
           itemHeight={allNodes > 50 ? 20 : undefined}
           titleRender={Row}
