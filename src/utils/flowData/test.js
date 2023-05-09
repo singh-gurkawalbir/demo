@@ -1159,6 +1159,34 @@ describe('getSampleFileMeta util', () => {
       },
     ]);
   });
+  test('should return correct fileMeta for HTTP exports,when fileURLPaths are present in http.response', () => {
+    const resource = {
+      adaptorType: 'HTTPExport',
+      http: {
+        response: {
+          fileURLPaths: ['path1'],
+        },
+      },
+    };
+
+    expect(getSampleFileMeta(resource)).toEqual([
+      [
+        {
+          fileMeta: {
+            fileName: 'sampleFileName',
+            lastModifiedTime: 'Fri, 01 Jan 2000 00:00:00 GMT',
+          },
+        },
+      ],
+    ]);
+  });
+  test('should return undefined for resources in which fileMeta is not expected', () => {
+    const resource = {
+      adaptorType: 'ShopifyExport',
+    };
+
+    expect(getSampleFileMeta(resource)).toBeUndefined();
+  });
 });
 describe('isFileMetaExpectedForResource util', () => {
   test('should return false in case of invalid arguments', () => {
