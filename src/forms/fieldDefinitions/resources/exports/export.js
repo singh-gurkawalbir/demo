@@ -50,6 +50,7 @@ export default {
     isLoggable: true,
     type: 'replaceconnection',
     resourceType: 'connections',
+    showEditableDropdown: true,
     parentResourceType: 'exports',
     label: 'Connection',
     appTypeIsStatic: true,
@@ -167,6 +168,7 @@ export default {
       return [];
     },
     showLookup: false,
+    contentId: 'traceKeyTemplate',
   },
   oneToMany: {
     isLoggable: true,

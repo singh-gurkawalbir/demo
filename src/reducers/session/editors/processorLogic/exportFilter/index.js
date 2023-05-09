@@ -73,6 +73,7 @@ export default {
 
     return javascript.validate({
       data: editor.data?.javascript,
+      rule: editor?.rule?.javascript,
     });
   },
   dirty: editor => {

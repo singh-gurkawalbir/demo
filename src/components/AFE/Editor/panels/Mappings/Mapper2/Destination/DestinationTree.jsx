@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
     },
     '& .childTree-indent-unit': {
-      width: theme.spacing(3),
+      width: theme.spacing(1.5),
       position: 'relative',
       height: '100%',
     },
@@ -133,6 +133,7 @@ const TreeTitle = props => {
 // based on the sample data
 const DestinationTree = React.memo((
   {
+    nodeKey,
     destDataType,
     propValue,
     setIsFocused,
@@ -145,10 +146,10 @@ const DestinationTree = React.memo((
   const selectedKeys = useMemo(() => getSelectedKeyInDestinationDropdown(destinationTreeData[0], propValue, destDataType), [destDataType, destinationTreeData, propValue]);
 
   const onSelect = useCallback((keys, e) => {
-    dispatch(actions.mapping.v2.addSelectedDestination(e.node.key));
+    dispatch(actions.mapping.v2.addSelectedDestination(e.node.key, nodeKey));
 
     setIsFocused(false);
-  }, [dispatch, setIsFocused]);
+  }, [dispatch, nodeKey, setIsFocused]);
 
   if (isEmpty(destinationTreeData)) return null;
 

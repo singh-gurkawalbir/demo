@@ -240,6 +240,15 @@ export default function reducer(state = {}, action) {
             }FormBuilder`;
             // clear the output panel
             delete draft[id].result;
+
+            const {branches} = draft[id].rule || {};
+
+            if (Array.isArray(branches)) {
+              draft[id].rule.branches = branches.map(branch => ({
+                ...branch,
+                skipEmptyRuleCleanup: false,
+              }));
+            }
           }
         }
 

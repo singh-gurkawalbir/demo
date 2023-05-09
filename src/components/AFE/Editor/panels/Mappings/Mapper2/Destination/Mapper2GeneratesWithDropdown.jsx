@@ -104,7 +104,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(-2),
   },
   extractListPopperCompact: {
-    width: theme.spacing(44),
+    width: theme.spacing(38),
     marginLeft: theme.spacing(-2),
   },
   arrowWithLockIcon: {
@@ -287,6 +287,7 @@ export default function Mapper2GeneratesWithDropdown(props) {
         >
         {isFocused && !disabled && (
           <DestinationTree
+            nodeKey={nodeKey}
             destDataType={dataType}
             propValue={propValue}
             setIsFocused={setIsFocused}

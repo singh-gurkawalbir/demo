@@ -18,7 +18,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import PillButtonWithMenu from '../../../components/Buttons/PillButtonWithMenu';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
-import IntegrationFolder from '../../../components/icons/IntegrationFolder';
+import FolderIcon from '../../../components/icons/FolderIcon';
 import DownloadIntegrationIcon from '../../../components/icons/DownloadIntegrationIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -100,7 +100,7 @@ export default function IntegrationCeligoPageBar() {
     },
     {
       label: 'Connection',
-      description: 'Store credentials to apps',
+      description: 'Access data for an app',
       dataTestId: 'createConnection',
       Icon: ConnectionsIcon,
       link: buildDrawerUrl({
@@ -118,7 +118,7 @@ export default function IntegrationCeligoPageBar() {
         baseUrl: location.pathname,
         params: { resourceType: 'integrations', id: generateNewId() },
       }),
-      Icon: IntegrationFolder,
+      Icon: FolderIcon,
     },
   ];
 
@@ -130,7 +130,7 @@ export default function IntegrationCeligoPageBar() {
   }, [history, isConnectionCreated]);
 
   return (
-    <CeligoPageBar title="My integrations">
+    <CeligoPageBar title="My integrations" contentId="home">
       <KeywordSearch filterKey={FILTER_KEY} placeholder="Search integrations & flows" />
 
       <ActionGroup>

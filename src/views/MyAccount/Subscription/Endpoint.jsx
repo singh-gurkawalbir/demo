@@ -296,7 +296,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} contentId="subscription" />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>

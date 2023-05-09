@@ -25,12 +25,19 @@ export default {
     options: context,
     data: typeof data === 'string' ? JSON.parse(data) : data,
   }),
-  validate: ({ data }) => {
+  validate: ({ data, rule }) => {
     let dataError;
 
     if (!data) dataError = 'Must provide some sample data.';
     else if (typeof data === 'string') {
       dataError = util.validateJsonString(data);
+    }
+
+    if (!rule.scriptId) {
+      return {ruleError: 'Script is required'};
+    }
+    if (!rule.entryFunction) {
+      return {ruleError: 'Function is required'};
     }
 
     return { dataError: dataError !== null && dataError };

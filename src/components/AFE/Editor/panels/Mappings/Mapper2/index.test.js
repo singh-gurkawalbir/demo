@@ -6,6 +6,7 @@ import { getCreatedStore } from '../../../../../../store';
 import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
 import Mapper2 from './index';
 import actions from '../../../../../../actions';
+import { ConfirmDialogProvider } from '../../../../../ConfirmDialog';
 
 const mockDispatch = jest.fn();
 
@@ -338,5 +339,68 @@ describe('ewrv', () => {
     renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
 
     expect(mockSetItem).toHaveBeenCalled();
+  });
+  test('should show a dialog box and confirm should call required actions', () => {
+    const initialStore = getCreatedStore();
+
+    mutateStore(initialStore, draft => {
+      draft.session.mapping = {
+        mapping: {
+          replaceRow: {
+            showAddDestinationDialog: true,
+          },
+        },
+      };
+    });
+    renderWithProviders(<MemoryRouter><ConfirmDialogProvider><Mapper2 /></ConfirmDialogProvider></MemoryRouter>, {initialStore});
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
+    userEvent.click(screen.getByText('Confirm'));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actions.mapping.v2.replaceRow(true)
+    );
+  });
+  test('should show a dialog box and cancel should call required actions', () => {
+    const initialStore = getCreatedStore();
+
+    mutateStore(initialStore, draft => {
+      draft.session.mapping = {
+        mapping: {
+          replaceRow: {
+            showAddDestinationDialog: true,
+          },
+        },
+      };
+    });
+    renderWithProviders(<MemoryRouter><ConfirmDialogProvider><Mapper2 /></ConfirmDialogProvider></MemoryRouter>, {initialStore});
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
+    userEvent.click(screen.getByText('Cancel'));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actions.mapping.v2.replaceRow(false)
+    );
+  });
+  test('should show a dialog box and cross icon should call required actions', () => {
+    const initialStore = getCreatedStore();
+
+    mutateStore(initialStore, draft => {
+      draft.session.mapping = {
+        mapping: {
+          replaceRow: {
+            showAddDestinationDialog: true,
+          },
+        },
+      };
+    });
+    renderWithProviders(<MemoryRouter><ConfirmDialogProvider><Mapper2 /></ConfirmDialogProvider></MemoryRouter>, {initialStore});
+
+    expect(screen.getByTestId('closeModalDialog')).toBeInTheDocument();
+    expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('closeModalDialog'));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      actions.mapping.v2.replaceRow(false)
+    );
   });
 });
