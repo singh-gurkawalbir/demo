@@ -10,7 +10,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Typography, Link } from '@mui/material';
 import differenceBy from 'lodash/differenceBy';
 import isEmpty from 'lodash/isEmpty';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
@@ -24,7 +24,6 @@ import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({

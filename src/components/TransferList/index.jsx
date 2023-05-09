@@ -7,9 +7,9 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
 import { ListSubheader } from '@mui/material';
-import OutlinedButton from '../Buttons/OutlinedButton';
+import { OutlinedButton } from '@celigo/fuse-ui';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr 100px 1fr',
@@ -18,9 +18,6 @@ const useStyles = makeStyles(theme => ({
     height: 300,
     wordBreak: 'break-word',
     overflow: 'auto',
-  },
-  button: {
-    margin: theme.spacing(1),
   },
   actions: {
     alignItems: 'center',
@@ -140,7 +137,7 @@ export default function TransferList(props) {
         <OutlinedButton
           color="secondary"
           size="small"
-          className={classes.button}
+          sx={{margin: 1}}
           onClick={handleAllRight}
           data-test="movaAllRight"
           disabled={left.length === 0}
@@ -150,7 +147,7 @@ export default function TransferList(props) {
         <OutlinedButton
           size="small"
           color="secondary"
-          className={classes.button}
+          sx={{margin: 1}}
           data-test="moveSelectedRight"
           onClick={handleCheckedRight}
           disabled={leftChecked.length === 0}
@@ -161,7 +158,7 @@ export default function TransferList(props) {
           size="small"
           color="secondary"
           data-test="moveSelectedLeft"
-          className={classes.button}
+          sx={{margin: 1}}
           onClick={handleCheckedLeft}
           disabled={rightChecked.length === 0}
           aria-label="move selected left">
@@ -171,7 +168,7 @@ export default function TransferList(props) {
           color="secondary"
           size="small"
           data-test="moveAllLeft"
-          className={classes.button}
+          sx={{margin: 1}}
           onClick={handleAllLeft}
           disabled={right.length === 0}
           aria-label="move all left">

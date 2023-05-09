@@ -1,29 +1,17 @@
 import React from 'react';
-import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import { TextButton } from '../Buttons';
 import useHandleNextAndPreviousPage from '../../hooks/useHandleNextAndPreviousPage';
 
 const useStyles = makeStyles(theme => ({
   label: {
     padding: theme.spacing(0, 1),
-  },
-  arrowBtn: {
-    padding: 0,
-    minWidth: theme.spacing(3),
-    maxWidth: theme.spacing(4),
-    display: 'flex',
-    marginLeft: 0,
-    '& > * svg': {
-      marginLeft: theme.spacing(1),
-    },
   },
   resultsLabel: {
     display: 'flex',
@@ -39,11 +27,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     marginRight: theme.spacing(3),
-  },
-  arrowBtnRight: {
-    '& > svg': {
-      marginRight: 0,
-    },
   },
   spinnerWrapper: {
     width: 32,
@@ -100,7 +83,16 @@ export default function Pagination({
       <div className={classes.pagesCountWrapper}>
         <TextButton
           onClick={handlePrevPage}
-          className={classes.arrowBtn}
+          sx={{
+            padding: 0,
+            minWidth: 24,
+            maxWidth: 36,
+            display: 'flex',
+            ml: 0,
+            '& > * svg': {
+              ml: 1,
+            },
+          }}
           data-testid="prevPage"
           disabled={page === 0}
           startIcon={<ArrowLeftIcon />} />
@@ -118,7 +110,19 @@ export default function Pagination({
         ) : (
           <TextButton
             onClick={handleNextPage}
-            className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
+            sx={{
+              padding: 0,
+              minWidth: 24,
+              maxWidth: 36,
+              display: 'flex',
+              ml: 0,
+              '& > * svg': {
+                ml: 1,
+              },
+              '& > svg': {
+                mr: 0,
+              },
+            }}
             disabled={disableNextPage}
             data-testid="nextPage"
             startIcon={<ArrowRightIcon />} />

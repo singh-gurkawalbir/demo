@@ -3,14 +3,12 @@ import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
 import { isEqual } from 'lodash';
 import React, { useCallback, useState, useMemo } from 'react';
-import { ArrowPopper, Box } from '@celigo/fuse-ui';
+import { ArrowPopper, Box, TextButton, FilledButton, OutlinedButton } from '@celigo/fuse-ui';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
-import { TextButton, FilledButton } from '../Buttons';
 import ActionGroup from '../ActionGroup';
-import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,18 +50,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 600,
     '&>div': {
       maxWidth: 'inherit',
-    },
-  },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
-    fontSize: 15,
-    justifyContent: 'space-between',
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
     },
   },
   actions: {
@@ -207,7 +193,18 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
           endIcon={<ArrowDownIcon />}
           color="secondary"
           data-test={dataTest}
-          className={classes.dateRangePopperBtn}>
+          sx={{
+            borderColor: 'secondary.lightest',
+            minHeight: 36,
+            color: 'secondary.main',
+            fontFamily: 'source sans pro',
+            fontSize: '15px',
+            justifyContent: 'space-between',
+            '&:hover': {
+              borderColor: 'primary.main',
+              color: 'secondary.dark',
+            },
+          }}>
           {ButtonLabel}
         </OutlinedButton>
       ) : (

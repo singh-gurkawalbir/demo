@@ -1,7 +1,7 @@
 import React from 'react';
+import { TextButton } from '@celigo/fuse-ui';
 import openExternalUrl from '../../../utils/window';
 import RawHtml from '../../RawHtml';
-import { TextButton } from '../../Buttons';
 
 const handleRecordLinkClick = url => openExternalUrl({ url });
 const recordLabels = {

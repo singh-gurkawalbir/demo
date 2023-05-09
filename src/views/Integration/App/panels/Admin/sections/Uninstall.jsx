@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Typography, Divider } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { selectors } from '../../../../../../reducers';
@@ -9,13 +10,9 @@ import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
-import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
 import messageStore from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  button: {
-    margin: theme.spacing(3, 0, 3, 2),
-  },
   divider: {
     margin: theme.spacing(2, 0),
   },
@@ -99,7 +96,7 @@ export default function UninstallSection({ childId, integrationId }) {
         <OutlinedButton
           data-test="uninstallConnector"
           error
-          className={classes.button}
+          sx={{ margin: '24px 0px 24px 16px'}}
           endIcon={<DeleteIcon />}
           onClick={handleUninstall}>
           Uninstall

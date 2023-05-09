@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { TextButton } from '@celigo/fuse-ui';
 import ViewReferencesIcon from '../../../../icons/ViewReferencesIcon';
 import ReferencesModal from './ReferencesModal';
-import TextButton from '../../../../Buttons/TextButton';
 
 export default function ViewReferences({ resourceId, resourceType, integrationId }) {
   const [showReferences, setShowReferences] = useState(false);

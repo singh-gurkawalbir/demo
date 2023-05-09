@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import AddIcon from '../../../icons/AddIcon';
@@ -10,7 +11,6 @@ import metadata from './metadata';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { generateNewId } from '../../../../utils/resource';
 import LoadResources from '../../../LoadResources';
-import { TextButton } from '../../../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import customCloneDeep from '../../../../utils/customCloneDeep';
 

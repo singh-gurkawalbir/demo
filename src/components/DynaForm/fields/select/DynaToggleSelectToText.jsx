@@ -1,8 +1,8 @@
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import DynaText from '../DynaText';
 import DynaSelect from '../DynaSelect';
-import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   dynaToggleTextWrapper: {

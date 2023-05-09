@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import CeligoDivider from '../../../CeligoDivider';
 import Icon from '../../../icons/InstallationGuideIcon';
-import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles({
   button: {
@@ -27,7 +27,7 @@ export default function HandlebarGuide() {
       {hasWideScreen ? (
         <TextButton
           {...anchorProps}
-          className={classes.button}
+          sx={{mr: '0 !important'}}
           startIcon={<Icon />}>
           Handlebars guide
         </TextButton>

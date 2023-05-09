@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import actions from '../../../../../../../actions';
-import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import ErrorContent from '../../../../../../../components/ErrorContent';
 import RawHtml from '../../../../../../../components/RawHtml';
 import useEnqueueSnackbar from '../../../../../../../hooks/enqueueSnackbar';
@@ -12,7 +12,6 @@ import ParentUpgradeButton from './ParentUpgradeButton';
 export default function RequestUpgradeButton(props) {
   const {
     id,
-    className,
     license,
     isLicenseExpired,
     istwoDotZeroFrameWork,
@@ -97,7 +96,7 @@ export default function RequestUpgradeButton(props) {
   if (isChildLicenseInUpgrade && !changeEditionId) {
     return (
       <FilledButton
-        className={className}
+        sx={{margin: 1}}
         disabled
         data-test="requestUpgrade"
       >
@@ -108,7 +107,7 @@ export default function RequestUpgradeButton(props) {
   if (upgradeText === '' && istwoDotZeroFrameWork) {
     return (
       <FilledButton
-        className={className}
+        sx={{margin: 1}}
         disabled
         data-test="requestUpgrade"
       >
@@ -120,7 +119,6 @@ export default function RequestUpgradeButton(props) {
     return (
       <ParentUpgradeButton
         id={id}
-        className={className}
         onClick={handleUpgradeEdition}
         nextPlan={nextPlan}
         changeEditionId={changeEditionId}
@@ -131,7 +129,7 @@ export default function RequestUpgradeButton(props) {
   if (upgradeText && upgradeText !== 'upgradeEdition') {
     return (
       <FilledButton
-        className={className}
+        sx={{margin: 1}}
         disabled={disabledRequestUpgrade}
         onClick={handleUpgrade}
         data-test="requestUpgrade"

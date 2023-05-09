@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import Loader from '../../components/Loader';
-import { OutlinedButton } from '../../components/Buttons';
 
-const useStyles = makeStyles(theme => ({
-  uploadButton: {
-    margin: theme.spacing(1),
-  },
+const useStyles = makeStyles(() => ({
   fileInput: {
     display: 'none',
   },
@@ -55,7 +51,7 @@ export default function UploadFile(props) {
         <OutlinedButton
           data-test="selectFile"
           component="span"
-          className={classes.uploadButton}>
+          sx={{margin: 1}}>
           Select template zip file
         </OutlinedButton>
         <input

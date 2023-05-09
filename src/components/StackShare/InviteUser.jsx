@@ -1,6 +1,7 @@
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import DrawerContent from '../drawer/Right/DrawerContent';
@@ -8,7 +9,6 @@ import DrawerFooter from '../drawer/Right/DrawerFooter';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import DynaForm from '../DynaForm';
 import ActionGroup from '../ActionGroup';
-import { TextButton } from '../Buttons';
 
 const fieldMeta = {
   fieldMap: {

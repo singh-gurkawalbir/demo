@@ -4,6 +4,7 @@ import { makeStyles } from '@mui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
@@ -11,15 +12,9 @@ import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../constants';
 import { getStatusVariantAndMessage } from '../../utils/connections';
-import { TextButton } from '../Buttons';
 import {message as messageStore} from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  fixConnectionBtn: {
-    fontSize: 15,
-    lineHeight: '17px',
-    padding: 6,
-  },
   titleStatusPanel: {
     color: theme.palette.secondary.main,
     fontFamily: 'Roboto400',
@@ -113,7 +108,11 @@ export default function ConnectionStatusPanel({ className, resourceId, resourceT
             <TextButton
               data-test="fixConnection"
               color="primary"
-              className={classes.fixConnectionBtn}
+              sx={{
+                fontSize: '15px',
+                lineHeight: '17px',
+                padding: 0.75,
+              }}
               onClick={handleConnectionFixClick}>
               Fix your connection
             </TextButton>

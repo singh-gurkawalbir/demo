@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import CopyIcon from '../../../icons/CopyIcon';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   clipBoardContainer: {

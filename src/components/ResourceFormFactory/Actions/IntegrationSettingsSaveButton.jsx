@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { FORM_SAVE_STATUS } from '../../../constants';
-import { FilledButton } from '../../Buttons';
 import useHandleIntegrationSettings from './Groups/hooks/useHandleIntegrationSettings';
 
 export default function IntegrationSettingsSaveButton(props) {

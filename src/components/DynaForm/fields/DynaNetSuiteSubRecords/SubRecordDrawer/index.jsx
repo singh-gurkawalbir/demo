@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import DynaForm from '../../..';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
-import { TextButton } from '../../../../Buttons';
 import DynaSubmit from '../../../DynaSubmit';
 import getFormFieldMetadata from './util';
 import RightDrawer from '../../../../drawer/Right';

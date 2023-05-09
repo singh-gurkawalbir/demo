@@ -2,20 +2,12 @@ import React, { useCallback } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { MenuItem } from '@mui/material';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
-import { TextButton } from '../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
-  currentContainer: {
-    padding: theme.spacing(0, 0.5),
-    fontSize: '0.75rem',
-    '& .MuiButton-endIcon': {
-      color: theme.palette.secondary.main,
-    },
-  },
   content: {
     maxWidth: 350,
     '& .MuiMenuItem-root': {
@@ -63,7 +55,13 @@ export default function RetryListPopper({resources}) {
         data-private
         onClick={handleMenu}
         endIcon={<ArrowDownIcon />}
-        className={classes.currentContainer}
+        sx={{
+          padding: '0px 4px',
+          fontSize: '0.75rem',
+          '& .MuiButton-endIcon': {
+            color: 'secondary.main',
+          },
+        }}
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true"
         color="primary"

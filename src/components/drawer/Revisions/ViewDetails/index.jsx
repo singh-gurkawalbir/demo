@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Tabs, Tab } from '@mui/material';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import { FilledButton } from '@celigo/fuse-ui';
 import DrawerContent from '../../Right/DrawerContent';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerFooter from '../../Right/DrawerFooter';
@@ -14,7 +15,6 @@ import ViewDetails from './RevisionDetails';
 import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';
 import useHandleInvalidRevision from '../hooks/useHandleInvalidRevision';
 import ActionGroup from '../../../ActionGroup';
-import { FilledButton } from '../../../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const allTabs = {

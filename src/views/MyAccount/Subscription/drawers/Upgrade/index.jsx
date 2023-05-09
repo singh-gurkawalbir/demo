@@ -2,24 +2,15 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { FilledButton } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
-import FilledButton from '../../../../../components/Buttons/FilledButton';
 import { message } from '../../../../../utils/messageStore';
 
-const useStyles = makeStyles(theme => ({
-  button: {
-    display: 'block',
-    margin: theme.spacing(3, 0),
-  },
-}));
-
 export default function UpgradeDrawer() {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -39,7 +30,10 @@ export default function UpgradeDrawer() {
         </Typography>
 
         <FilledButton
-          className={classes.button}
+          sx={{
+            display: 'block',
+            margin: '24px 0px',
+          }}
           onClick={onStartFreeTrialInterestedClick}>
           Yes, I&apos;m interested
         </FilledButton>

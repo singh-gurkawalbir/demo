@@ -2,9 +2,9 @@ import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import CopyIcon from '../../../../components/icons/CopyIcon';
-import { TextButton } from '../../../../components/Buttons';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
 import { useFieldPickerContext } from '../FieldPickerContext';
 

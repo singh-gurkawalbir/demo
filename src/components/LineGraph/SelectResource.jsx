@@ -1,10 +1,9 @@
 import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useState, useMemo } from 'react';
-import { ArrowPopper, Box } from '@celigo/fuse-ui';
+import { ArrowPopper, Box, OutlinedButton, TextButton, FilledButton } from '@celigo/fuse-ui';
 import { emptyList } from '../../constants';
 import ActionGroup from '../ActionGroup';
-import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,17 +38,6 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     marginTop: theme.spacing(2),
-  },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
-    fontSize: 15,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
-    },
   },
   selectResourceItem: {
     display: 'flex',
@@ -130,7 +118,17 @@ export default function SelectResource(props) {
       <OutlinedButton
         onClick={toggleClick}
         color="secondary"
-        className={classes.dateRangePopperBtn}>
+        sx={{
+          borderColor: 'secondary.lightest',
+          minHeight: 36,
+          color: 'secondary.main',
+          fontFamily: 'source sans pro',
+          fontSize: '15px',
+          '&:hover': {
+            borderColor: 'primary.main',
+            color: 'secondary.dark',
+          },
+        }}>
         {buttonName}
       </OutlinedButton>
       <ArrowPopper

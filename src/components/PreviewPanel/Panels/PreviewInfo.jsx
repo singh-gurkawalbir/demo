@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import {Box} from '@celigo/fuse-ui';
+import {Box, OutlinedButton} from '@celigo/fuse-ui';
 import React, { useMemo, useCallback, useEffect, useReducer } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
@@ -10,7 +10,6 @@ import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import {OutlinedButton} from '../../Buttons';
 import { capitalizeFirstLetter } from '../../../utils/string';
 import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 import { sampleDataStage } from '../../../utils/flowData';
@@ -21,9 +20,6 @@ import reducer from './stateReducer';
 import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
-  previewBtn: {
-    minHeight: theme.spacing(5),
-  },
   error: {
     color: 'red',
     marginRight: theme.spacing(0.5),
@@ -270,7 +266,9 @@ export default function PreviewInfo(props) {
         }
           <OutlinedButton
             color="secondary"
-            className={classes.previewBtn}
+            sx={{
+              minHeight: 40,
+            }}
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">

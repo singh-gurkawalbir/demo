@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import ResourceDrawer from '../../../../../../components/drawer/Resource';
 import PanelHeader from '../../../../../../components/PanelHeader';
@@ -11,7 +12,6 @@ import LoadResources from '../../../../../../components/LoadResources';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
-import { TextButton } from '../../../../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
 import { message } from '../../../../../../utils/messageStore';
 

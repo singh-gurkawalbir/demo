@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
@@ -10,7 +11,6 @@ import DrawerContent from '../../../../../components/drawer/Right/DrawerContent'
 import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
 import { selectors } from '../../../../../reducers';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import TextButton from '../../../../../components/Buttons/TextButton';
 import ActionGroup from '../../../../../components/ActionGroup';
 
 export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, flowId }) {

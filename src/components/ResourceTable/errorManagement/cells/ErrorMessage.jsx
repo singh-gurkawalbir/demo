@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import RawHtml from '../../../RawHtml';
 import { selectors } from '../../../../reducers';
 import openExternalUrl from '../../../../utils/window';
 import {getParsedMessage} from '../../../../utils/string';
-import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

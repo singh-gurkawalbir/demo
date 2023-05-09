@@ -3,6 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@mui/styles';
+import { TextButton } from '@celigo/fuse-ui';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -15,7 +16,6 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import { isTradingPartnerSupported, generateNewId } from '../../../../../utils/resource';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
