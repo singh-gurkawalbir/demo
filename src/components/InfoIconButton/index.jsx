@@ -7,6 +7,7 @@ import { ArrowPopper } from '@celigo/fuse-ui';
 import HelpContent from '../HelpContent';
 import InfoIcon from '../icons/InfoIcon';
 import TooltipContent from '../TooltipContent';
+import HelpContentLinks from '../HelpContentLinks';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -65,9 +66,12 @@ export default function InfoIconButton({ info, size = 'small', className, escape
       >
         <HelpContent
           title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}
-          contentId={contentId}>
+        >
           <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} basicInfo={basicInfo}>{info}</TooltipContent>
         </HelpContent>
+        {contentId && (
+          <HelpContentLinks contentId={contentId} />
+        )}
       </ArrowPopper>
     </>
   );
