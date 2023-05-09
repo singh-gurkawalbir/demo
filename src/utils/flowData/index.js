@@ -320,8 +320,29 @@ export const isUIDataExpectedForResource = (resource, connection) => {
 };
 
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
+
+export const isFileMetaExpectedForHook = resource => {
+  if (resource?.adaptorType === 'HTTPExport' && !!resource?.http?.response?.fileURLPaths) {
+    return true;
+  }
+
+  return isFileMetaExpectedForResource(resource);
+};
+
 // Gives sample file data
 export const getSampleFileMeta = resource => {
+  if (resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths) {
+    return [
+      [
+        {
+          fileMeta: {
+            fileName: 'sampleFileName',
+            lastModifiedTime: 'Fri, 01 Jan 2000 00:00:00 GMT',
+          },
+        },
+      ],
+    ];
+  }
   if (resource?.adaptorType === 'FTPExport') {
     return [
       {

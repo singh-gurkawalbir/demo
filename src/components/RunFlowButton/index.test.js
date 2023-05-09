@@ -75,7 +75,7 @@ const deltaFlow = [
     _exportId: '5c9b5d5646fc7429c2a405fa',
     _importId: '5c9b5d5646fc7429c2a40234',
     pageGenerators: ['1'],
-    routers: ['1'],
+    routers: [{ branches: [{ pageProcessors: [{setupInProgress: false}]}]}],
     createdAt: '2020-07-20T06:12:14.256Z',
     lastExecutedAt: '2020-07-30T13:06:07.325Z',
   },

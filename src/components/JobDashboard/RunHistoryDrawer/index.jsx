@@ -95,8 +95,8 @@ export default function RunHistoryDrawer() {
       onClose={handleClose} >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
       <DrawerContent className={classes.runHistoryDrawer}>
-        <LoadResources resources={`integrations/${match.params.integrationId}/ashares`}>
-          <RunHistory flowId={flowId} integrationId={match.params.integrationId} className={classes.runHistoryPage} />
+        <LoadResources resources={`integrations/${match.params.integrationId || flow._integrationId}/ashares`}>
+          <RunHistory flowId={flowId} integrationId={match.params.integrationId || flow._integrationId} className={classes.runHistoryPage} />
         </LoadResources>
       </DrawerContent>
     </RightDrawer>

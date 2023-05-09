@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -8,8 +8,9 @@ import SearchIcon from '../../../icons/SearchIcon';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import TextButton from '../../../Buttons/TextButton';
-import ActionButton from '../../../ActionButton';
 import { OptionLabel } from '../DynaSelectConnection';
+import { stringCompare } from '../../../../utils/sort';
+import ActionButton from '../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   connectionFieldWrapper: {
@@ -55,13 +56,17 @@ const useStyles = makeStyles(theme => ({
   },
   createConnectionBtn: {
     padding: '15px 0px',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
+    color: theme.palette.background.toggle,
     '& > * .MuiSvgIcon-root': {
-      fontSize: 12,
+      fontSize: 10,
     },
   },
   dropdownitemsConnection: {
     width: '100%',
     marginTop: 39,
+    boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
     '& ul': {
       '& li': {
         display: 'flex',
@@ -99,14 +104,23 @@ const DropdownContext = React.createContext({});
 const Option = option => {
   const data = useContext(DropdownContext);
 
-  const {onEditClick, classes} = data;
+  const {handleEditClick, classes, allowEdit} = data;
 
   return (
     <>
       <OptionLabel option={option} connInfo={option?.connInfo} />
+      { allowEdit && (
       <span className={classes.optionEditIcon}>
-        <ActionButton onClick={() => onEditClick(option.value)}><EditIcon /></ActionButton>
+        <ActionButton
+          tooltip="Edit connection"
+          placement="bottom"
+          data-test="editResource"
+          onClick={evt => handleEditClick(evt, option)}
+          noPadding>
+          <EditIcon />
+        </ActionButton>
       </span>
+      )}
     </>
   );
 };
@@ -115,17 +129,18 @@ const PaperComponentCustom = options => {
   const classes = useStyles();
   const { containerProps, children } = options;
   const data = useContext(DropdownContext);
-  const {onCreateClick} = data;
+  const {handleCreateClick, allowNew} = data;
 
   return (
     <Paper className={classes.dropdownitemsConnection} {...containerProps}>
       {children}
-      {(
+      {allowNew && (
         <TextButton
-          onMouseDown={event => { event.preventDefault(); onCreateClick(); }}
+          onMouseDown={handleCreateClick}
           bold
           fullWidth
           className={classes.createConnectionBtn}
+          data-test="addNewResource"
           startIcon={<AddIcon bold />}>
           Create connection
         </TextButton>
@@ -135,20 +150,52 @@ const PaperComponentCustom = options => {
 };
 
 export default function DynaEditable(props) {
-  const {options, id, onFieldChange, value, required, isValid, label, disabled, removeHelperText, onCreateClick, onEditClick} = props;
-  const [isOptionHovered, setIsOptionHovered] = useState(false);
-  const classes = useStyles({isOptionHovered});
+  const {
+    options,
+    id,
+    onFieldChange,
+    value,
+    required,
+    isValid,
+    label,
+    disabled,
+    removeHelperText,
+    onCreateClick,
+    onEditClick,
+    allowEdit,
+    allowNew,
+  } = props;
+  const classes = useStyles();
   const selectedValue = options.find(option => option.value === value)?.label;
   const [inputValue, setInputValue] = useState(selectedValue);
   const [selectOptions, setSelectedOptions] = useState(options);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const dropdownProps = {
-    allOptions: options, onEditClick, onCreateClick, classes, setIsOptionHovered,
-  };
+  const inputRef = useRef(null);
+  const sortedOptions = options => options.sort(stringCompare('label'));
 
   const handleInputChange = useCallback((evt, newVal) => {
     if (evt) { setInputValue(newVal); }
   }, []);
+
+  const handleCreateClick = useCallback(event => {
+    inputRef.current.blur();
+    event.preventDefault();
+    onCreateClick();
+  }, [onCreateClick]);
+
+  const handleEditClick = useCallback((evt, option) => {
+    inputRef.current.blur();
+    onEditClick(evt, option.value);
+  }, [inputRef, onEditClick]);
+
+  const dropdownProps = useMemo(() => (
+    {
+      handleEditClick,
+      allowEdit,
+      allowNew,
+      handleCreateClick,
+      classes,
+      inputRef,
+    }), [allowEdit, allowNew, classes, handleCreateClick, handleEditClick]);
 
   useEffect(() => {
     if (inputValue !== selectedValue) {
@@ -164,20 +211,13 @@ export default function DynaEditable(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options]);
 
-  const handleFocus = useCallback(() =>
-    setIsMenuOpen(true), []);
-
-  const handleClose = useCallback(() => setIsMenuOpen(false), []);
-
   const handleBlur = useCallback(() => {
-    setIsMenuOpen(false);
     setInputValue(selectedValue);
   }, [selectedValue]);
 
-  const filterOptions = useCallback(options => options?.filter(option => option?.label.includes(inputValue || '')), [inputValue]);
+  const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
 
   const handleChange = useCallback((event, newValue) => {
-    setIsMenuOpen(false);
     setInputValue(newValue?.label);
     onFieldChange(id, newValue?.value);
   }, [id, onFieldChange]);
@@ -192,7 +232,6 @@ export default function DynaEditable(props) {
       </div>
       <FormControl
         key={id}
-        disabled={disabled}
         required={required}
         className={classes.connectionFieldFormControl}
         fullWidth>
@@ -201,17 +240,16 @@ export default function DynaEditable(props) {
             disablePortal
             id="connections-dropdown"
             data-test="connection"
-            options={options}
+            options={sortedOptions(options)}
             getOptionLabel={option => option?.label}
             renderOption={Option}
             disableClearable
             forcePopupIcon={false}
-            open={isMenuOpen}
+            disabled={disabled}
             inputValue={inputValue}
             onInputChange={handleInputChange}
-            onFocus={handleFocus}
-            onClose={handleClose}
             onBlur={handleBlur}
+            blurOnSelect
             filterOptions={filterOptions}
             onChange={handleChange}
             className={classes.connectionFieldWrapper}
@@ -225,6 +263,7 @@ export default function DynaEditable(props) {
                   {...updatedParams}
                   variant="filled"
                   className={classes.textareaInput}
+                  inputRef={inputRef}
                   placeholder="Select or create connection"
                   fullWidth
                   InputProps={{
@@ -239,8 +278,8 @@ export default function DynaEditable(props) {
               );
             }} />
         </DropdownContext.Provider>
-        {!removeHelperText && <FieldMessage {...props} />}
       </FormControl>
+      {!removeHelperText && <FieldMessage {...props} />}
     </div>
   );
 }
