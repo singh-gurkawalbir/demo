@@ -234,20 +234,9 @@ mutateStore(initialStore, draft => {
   }};
 });
 
-describe('ewrv', () => {
+describe('Mapper2 component test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
-  });
-  test('should scroll left when whell is scrolled', async () => {
-    renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
-
-    await userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
-
-    waitFor(async () => {
-      await fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
-      await fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
-      expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toBe(12);
-    });
   });
   test('should show message when no destination fiels is matched', () => {
     const initialStore = getCreatedStore();
@@ -340,7 +329,7 @@ describe('ewrv', () => {
 
     expect(mockSetItem).toHaveBeenCalled();
   });
-  test('should show a dialog box and confirm should call required actions', () => {
+  test('should show a dialog box and confirm should call required actions', async () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -356,12 +345,12 @@ describe('ewrv', () => {
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
-    userEvent.click(screen.getByText('Confirm'));
+    await userEvent.click(screen.getByText('Confirm'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.replaceRow(true)
     );
   });
-  test('should show a dialog box and cancel should call required actions', () => {
+  test('should show a dialog box and cancel should call required actions', async () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -377,12 +366,12 @@ describe('ewrv', () => {
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
-    userEvent.click(screen.getByText('Cancel'));
+    await userEvent.click(screen.getByText('Cancel'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.replaceRow(false)
     );
   });
-  test('should show a dialog box and cross icon should call required actions', () => {
+  test('should show a dialog box and cross icon should call required actions', async () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
@@ -398,9 +387,20 @@ describe('ewrv', () => {
 
     expect(screen.getByTestId('closeModalDialog')).toBeInTheDocument();
     expect(screen.getByText('All your mappings associated with this destination field will be removed when your selected field will be applied.Are you sure you want to continue?', {exact: false})).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('closeModalDialog'));
+    await userEvent.click(screen.getByTestId('closeModalDialog'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.mapping.v2.replaceRow(false)
     );
+  });
+  test('should scroll left when whell is scrolled', async () => {
+    renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
+
+    await userEvent.click(screen.getAllByPlaceholderText('Source field')[0]);
+
+    waitFor(async () => {
+      await fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
+      await fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
+      expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toBe(12);
+    });
   });
 });
