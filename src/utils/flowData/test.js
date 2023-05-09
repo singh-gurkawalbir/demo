@@ -19,7 +19,6 @@ import {
   getResourceStageUpdatedFromPatch,
   shouldUpdateResourceSampleData,
   getSampleFileMeta,
-  isFileMetaExpectedForResource,
 } from '.';
 
 const possibleExportSampleDataStagePaths = [
@@ -1137,13 +1136,7 @@ describe('getSampleFileMeta util', () => {
         },
       },
     ]);
-    expect(getSampleFileMeta()).toEqual([
-      {
-        fileMeta: {
-          fileName: 'sampleFileName',
-        },
-      },
-    ]);
+    expect(getSampleFileMeta()).toBeUndefined();
   });
   test('should return correct fileMeta for FTP file exports', () => {
     const resource = {
@@ -1188,16 +1181,7 @@ describe('getSampleFileMeta util', () => {
     expect(getSampleFileMeta(resource)).toBeUndefined();
   });
 });
-describe('isFileMetaExpectedForResource util', () => {
-  test('should return false in case of invalid arguments', () => {
-    expect(isFileMetaExpectedForResource()).toBeFalsy();
-  });
-  test('should return true in case of file adaptor', () => {
-    const resource = {adaptorType: 'FTPExport'};
 
-    expect(isFileMetaExpectedForResource(resource)).toBeTruthy();
-  });
-});
 describe('shouldUpdateResourceSampleData util', () => {
   test('should return false when patchSet is empty', () => {
     expect(shouldUpdateResourceSampleData([])).toBeFalsy();
