@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   generatePath,
@@ -6,8 +6,12 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import actions from '../../../../actions';
+import { useSelectorMemo } from '../../../../hooks';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../reducers';
+import { message } from '../../../../utils/messageStore';
 import { multiStepSaveResourceTypes } from '../../../../utils/resource';
+import RawHtml from '../../../RawHtml';
 import useDrawerEditUrl from './useDrawerEditUrl';
 
 export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
@@ -16,6 +20,7 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
   const match = useRouteMatch();
   const { operation } = match.params;
   const isNew = operation === 'add';
+  const [vanNotification] = useEnqueueSnackbar();
 
   const dispatch = useDispatch();
 
@@ -34,6 +39,9 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
     return resourceIdPatch?.value;
   }
   );
+  const {merged} = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, id) || {};
+
+  console.log('merged', merged, skipFormClose);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
 
   const editUrl = useDrawerEditUrl(resourceType, id, location.pathname);
@@ -74,6 +82,13 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
       }
       // In other cases , close the drawer
       onClose();
+      if (!skipFormClose && resourceType === 'connections' && merged.type === 'van') {
+        return vanNotification({
+          variant: 'warning',
+          message: <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />,
+          persist: true,
+        });
+      }
     } else {
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
@@ -88,10 +103,16 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
 
         return;
       }
-
       onClose();
+      if (!skipFormClose && resourceType === 'connections' && merged.type === 'van') {
+        return vanNotification({
+          variant: 'warning',
+          message: <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />,
+          persist: true,
+        });
+      }
     }
-  }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, newResourceId, onClose, operation, resourceId, resourceType, skipFormClose]);
+  }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, merged.type, newResourceId, onClose, operation, resourceId, resourceType, skipFormClose, vanNotification]);
 
   return handleSubmitComplete;
 }
