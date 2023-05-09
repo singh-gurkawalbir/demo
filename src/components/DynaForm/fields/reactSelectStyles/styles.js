@@ -83,7 +83,7 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
   emptyMessage: {
     width: '100%',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
   },
   emptyMessageSubtitle: {
     fontFamily: 'source sans pro',
