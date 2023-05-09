@@ -177,8 +177,17 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     '&+$mappingDrawerContent': {
       paddingTop: 0,
+      height: `calc(100% - ${theme.spacing(6)}px)`,
       '& .rc-tree-list': {
-        paddingBottom: theme.spacing(6),
+        height: '100%',
+      },
+      '& $virtualTree': {
+        '& .rc-tree-list': {
+          overflow: 'hidden',
+          '& .rc-tree-treenode:last-child': {
+            paddingBottom: theme.spacing(6),
+          },
+        },
       },
     },
     '& > svg': {
