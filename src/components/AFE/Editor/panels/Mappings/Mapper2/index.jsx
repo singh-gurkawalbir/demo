@@ -177,7 +177,7 @@ const useStyles = makeStyles(theme => ({
     '&+$mappingDrawerContent': {
       paddingTop: 0,
       '& .rc-tree-list': {
-        marginBottom: theme.spacing(6),
+        paddingBottom: theme.spacing(6),
       },
     },
     '& > svg': {

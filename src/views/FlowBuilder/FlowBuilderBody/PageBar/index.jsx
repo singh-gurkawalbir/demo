@@ -34,7 +34,7 @@ const calcPageBarTitleStyles = makeStyles(theme => ({
     width: `calc(100vw - ${52 + 410}px)`,
   },
   editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 454}px)`,
+    width: `calc(100vw - ${theme.drawerWidth + 500}px)`,
   },
 }));
 const CalcPageBarTitle = ({integrationId, flowId}) => {
