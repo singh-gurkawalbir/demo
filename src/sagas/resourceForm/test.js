@@ -101,6 +101,7 @@ describe('resourceForm sagas', () => {
           resource: {_connectionId: 'conn1'},
           connection: {_id: 'conn1'},
           isNew: undefined,
+          isHttpConnectorParentFormView: false,
         }
       );
     });

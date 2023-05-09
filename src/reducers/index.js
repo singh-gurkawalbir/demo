@@ -216,6 +216,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      helpContent,
       showIconView,
     } = { ...profile, ...preferences };
 
@@ -236,6 +237,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      helpContent,
       showIconView,
     };
   });
@@ -6055,7 +6057,13 @@ selectors.flowDashboardJobs = createSelector(
       if (parentJob.children?.length) {
         const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+        dashboardJobSteps.forEach(step => {
+          if (step?.canceledBy === 'system') {
+            return dashboardSteps.push({...step, canceledBy: parentJob.canceledBy});
+          }
+
+          return dashboardSteps.push(step);
+        });
       }
       // If the parent job is queued/in progress, show dummy steps of flows as waiting status
       if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
@@ -6211,9 +6219,11 @@ selectors.errorFilter = (state, params = {}) => {
 selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
   selectors.allResourceErrorDetails,
   selectors.errorFilter,
-  (errorDetails, errorFilter) => ({
+  selectors.userProfilePreferencesProps,
+  selectors.userTimezone,
+  (errorDetails, errorFilter, preferences, timezone) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, errorFilter),
+    errors: getFilteredErrors(errorDetails.errors, errorFilter, preferences, timezone),
   })
 );
 
@@ -7628,5 +7638,7 @@ selectors.isHttpConnector = (state, resourceId, resourceType) => {
 
   const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
 
-  return isNewHTTPFramework && resource?.http?.sessionFormType !== 'http';
+  const isHttpConnectorParentFormView = selectors.isHttpConnectorParentFormView(state, resourceId);
+
+  return isNewHTTPFramework && !isHttpConnectorParentFormView;
 };

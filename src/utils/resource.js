@@ -6,6 +6,7 @@ import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, HELP_CENTER_BASE_URL_WITH_SIG
 import { stringCompare } from './sort';
 import { message } from './messageStore';
 import customCloneDeep from './customCloneDeep';
+import { applicationsList } from '../constants/applications';
 
 export const UI_FIELDS = ['mockOutput', 'mockResponse'];
 export const RESOURCES_WITH_UI_FIELDS = ['exports', 'imports'];
@@ -1007,7 +1008,7 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
 
 export const getAssistantFromResource = resource => {
   if (!resource) return;
-  const {assistant} = resource;
+  let {assistant} = resource;
 
   if (assistant?.includes('constantcontact')) {
     return 'constantcontact';
@@ -1015,6 +1016,12 @@ export const getAssistantFromResource = resource => {
 
   if (assistant === 'ebay' || assistant === 'ebayfinance') {
     return 'ebay';
+  }
+  if (!assistant && resource?.http?._httpConnectorId) {
+    const applications = applicationsList().filter(app => app._httpConnectorId);
+    const app = applications.find(a => a._httpConnectorId === resource.http._httpConnectorId) || {};
+
+    assistant = app.assistant || app.application;
   }
 
   return assistant;

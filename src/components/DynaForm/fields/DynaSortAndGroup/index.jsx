@@ -18,9 +18,11 @@ export default function DynaSortAndGroup(props) {
   } = props;
   const dispatch = useDispatch();
 
-  const { data, status} = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse'),
-  );
+  const { data, status} = useSelector(state => ({
+    status: selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse').status,
+    data: selectors.getResourceParsedSampleData(state, resourceId),
+  }));
+
   const finalOptions = useMemo(() => {
     const sampleData = Array.isArray(data) ? data[0] : data;
     const options = Object.keys(sampleData || {});

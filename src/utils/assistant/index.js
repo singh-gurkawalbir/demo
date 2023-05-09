@@ -335,7 +335,7 @@ export function searchParameterFieldsMeta({
   const defaultValue = {};
   const filteredValues = value;
 
-  if (url) {
+  if (url && !isArray(url)) {
     const [, queryPart] = url.split('?');
     const queryObj = new URLSearchParams(queryPart);
     const parameterIds = parameters.map(param => param.id);
@@ -1285,15 +1285,17 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
       exportType = 'delta';
     }
   });
-  const queryString = qs.stringify(allQueryParams, {
+  if (queryParams) {
+    Object.keys(queryParams).forEach(qp => {
+      if (!allQueryParams[qp]) {
+        allQueryParams[qp] = queryParams[qp];
+      }
+    });
+  }
+  const finalQueryString = qs.stringify(allQueryParams, {
     encode: false,
     indices: false,
   }); /* indices should be false to handle IO-1776 */
-  const hardcodedQueries = qs.stringify(assistantConfig.queryParams, {
-    encode: false,
-    indices: false,
-  });
-  const finalQueryString = hardcodedQueries.includes(queryString) ? hardcodedQueries : queryString;
 
   if (finalQueryString) {
     const [pathPart, queryPart] = relativeURI.split('?');

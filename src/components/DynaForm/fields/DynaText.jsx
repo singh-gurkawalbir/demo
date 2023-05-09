@@ -5,8 +5,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { isNaN } from 'lodash';
-import { useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router-dom';
 import CopyIcon from '../../icons/CopyIcon';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
@@ -14,9 +12,6 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import HelpLink from '../../HelpLink';
-import { selectors } from '../../../reducers';
-import { useSelectorMemo } from '../../../hooks';
-import { emptyObject } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -87,9 +82,6 @@ function DynaText(props) {
     disableText = false,
     uppercase = false,
     isLoggable,
-    isApplicationPlaceholder = false,
-    isLabelUpdate = false,
-    isVanConnector = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -102,36 +94,6 @@ function DynaText(props) {
       setValueChanged(false);
     }
   }, [id, onFieldChange, options, valueChanged]);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const match = isApplicationPlaceholder || isVanConnector ? useRouteMatch() : {};
-  const { id: resourceId, resourceType } = match.params || {};
-  let dataResourceType;
-  const { merged } =
-  useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    resourceType,
-    resourceId
-  ) || {};
-
-  if (resourceType === 'connections') {
-    dataResourceType = 'connection';
-  } else {
-    dataResourceType = (merged?.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
-  }
-  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
-  const applicationPlaceholder = isApplicationPlaceholder ? `${applicationType} ${dataResourceType}` : '';
-  const updatedLabel = `Name your ${dataResourceType}`;
-  const resource = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    resourceType,
-    resourceId
-  )?.merged || emptyObject;
-
-  const licenseActionDetails = useSelector(state =>
-    selectors.platformLicenseWithMetadata(state)
-  );
-  const isVanLicenseAbsent = (isVanConnector && licenseActionDetails.van === false);
-
   const handleFieldChange = event => {
     const { value, valueAsNumber } = event.target;
     let returnVal;
@@ -199,7 +161,7 @@ function DynaText(props) {
     <FormControl variant="standard" className={classes.dynaTextFormControl}>
       <div className={classes.dynaTextLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {(merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) && isLabelUpdate ? updatedLabel : label}
+          {label}
         </FormLabel>
         <FieldHelp {...props} />
         <HelpLink helpLink={props.helpLink} />
@@ -213,8 +175,8 @@ function DynaText(props) {
         name={name}
         InputProps={InputProps}
         type={inputType}
-        placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder}
-        disabled={resource.type === 'van' ? isVanLicenseAbsent : disabled || disableText}
+        placeholder={placeholder}
+        disabled={disabled || disableText}
         multiline={multiline}
         maxRows={rowsMax}
         required={required}

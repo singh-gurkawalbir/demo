@@ -35,7 +35,7 @@ export default function ManageUsersPanel({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Users" infoText={infoText.Users}>
+      <PanelHeader title="Users" infoText={infoText.Users} contentId="manageUsers">
         {isAccountOwner && (
           <TextButton
             onClick={handleInvite}
