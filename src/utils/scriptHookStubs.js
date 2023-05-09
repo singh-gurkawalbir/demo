@@ -16,7 +16,7 @@
  * router
  */
 
-const preSavePageFunctionStub = ` 
+const preSavePageFunctionStub = `
 /*
 * preSavePageFunction stub:
 *
@@ -206,12 +206,15 @@ const contentBasedFlowRouterFunctionStub = `/*
 *                   For example: {  content-type:application/edi-x12, content-disposition: Attachment; filename=rfc1767.dat }
 *   ‘rawMessageBody’ - A String containing unencrypted edi/xml content.
 *
-* The function needs to return the '_id' of the flow that should be run.
+* The function needs to return an object containing '_flowId' and '_exportId' as properties of the flow that should be run.
 * To signal a failure throw an exception.
 */
 function contentBasedFlowRouter (options) {
-  let _id = null
-  return _id
+  let returnObj = {
+    _flowId: <_flowId>, // _flowId is mandatory for downstream processing, do not delete.
+    _exportId: <_exportId> // the '_id' of the listener that should be run.
+  }
+  return returnObj
 }`;
 const transformFunctionStub = `/*
 * transformFunction stub:
@@ -302,7 +305,7 @@ const handleRequestFunctionStub = `/*
 *
 * The function will be passed one 'options' argument that has the following fields:
 *   'method' - http request method (uppercase string).
-*   'headers' - http request headers (object).  
+*   'headers' - http request headers (object).
 *   'queryString' - http request query string (object).
 *   'body' - parsed http request body (object, or undefined if unable to parse).
 *   'rawBody' - raw http request body (string).
