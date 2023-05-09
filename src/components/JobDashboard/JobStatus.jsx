@@ -44,8 +44,11 @@ export default function JobStatus({ job }) {
     }));
   }, [history, job._flowId, match.url]);
 
-  const _integrationId = useSelector(state => selectors.getParentIntegrationId(state, match.params.integrationId));
-  const integrationsUsers = useSelector(state => selectors.availableUsersList(state, _integrationId));
+  const integrationsUsers = useSelector(state => {
+    const _integrationId = selectors.getParentIntegrationId(state, match.params.integrationId);
+
+    return selectors.availableUsersList(state, _integrationId);
+  });
 
   if (!jobStatusDetails) return '';
 
