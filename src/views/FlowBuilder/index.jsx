@@ -23,7 +23,9 @@ import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 import LoadingNotification from '../../App/LoadingNotification';
 
-function FBComponent({flowId, integrationId, childId}) {
+function FBComponent({flowId, integrationId}) {
+  const _integrationId = useSelector(state => selectors.getParentIntegrationId(state, integrationId));
+
   return (
     <>
       <FlowBuilderBody
@@ -31,11 +33,13 @@ function FBComponent({flowId, integrationId, childId}) {
         integrationId={integrationId}
       />
 
-      <BottomDrawer
-        flowId={flowId}
-        integrationId={integrationId}
-        childId={childId}
+      <LoadResources resources={`integrations/${_integrationId}/ashares`}>
+        <BottomDrawer
+          flowId={flowId}
+          integrationId={integrationId}
+          parentIntegrationId={_integrationId}
       />
+      </LoadResources>
     </>
   );
 }

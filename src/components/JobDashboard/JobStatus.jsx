@@ -43,7 +43,9 @@ export default function JobStatus({ job }) {
       params: { flowId: job._flowId },
     }));
   }, [history, job._flowId, match.url]);
-  const integrationsUsers = useSelector(state => selectors.availableUsersList(state, job._integrationId || 'none'));
+
+  const _integrationId = useSelector(state => selectors.getParentIntegrationId(state, match.params.integrationId));
+  const integrationsUsers = useSelector(state => selectors.availableUsersList(state, _integrationId));
 
   if (!jobStatusDetails) return '';
 
