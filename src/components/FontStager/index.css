@@ -123,7 +123,7 @@ a:hover{
   z-index: 1300 !important;
 }
 .ace_gutter{
-  z-index: 0;
+  z-index: 1;
 }
 @supports (-moz-appearance:none) {
   .MuiTable-root {
