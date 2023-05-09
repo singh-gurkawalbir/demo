@@ -8,9 +8,6 @@ export default {
 
     if (newValues['/rdbms/useSSL'] === false) {
       newValues['/rdbms/ssl/ca'] = undefined;
-      newValues['/rdbms/ssl/key'] = undefined;
-      newValues['/rdbms/ssl/cert'] = undefined;
-      newValues['/rdbms/ssl/passphrase'] = undefined;
       delete newValues['/rdbms/ssl'];
     }
 
