@@ -91,13 +91,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  {
-    id: 'van',
-    name: 'VAN (Value-added network)',
-    type: 'van',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
+  // {
+  //   id: 'van',
+  //   name: 'VAN (Value-added network)',
+  //   type: 'van',
+  //   keywords: 'technology,protocol',
+  //   group: 'tech',
+  // },
   // Database connectors
   {
     id: 'mongodb',
