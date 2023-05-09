@@ -212,6 +212,9 @@ const MAPPER2 = {
   CONTAINS_SUBRECORDS: 'This import contains subrecord imports, select which import you would like to edit the mapping for.',
   OBJECT_ARRAY_NOTIFICATION: 'All other child fields of this parent that have the same field<br>name will remain in place. If necessary, you can move each<br>remaining field individually.',
   REPLACE_ROW_NOTIFICATION: 'All your mappings associated with this destination field will be removed when your selected field will be applied.<br><br>Are you sure you want to continue?',
+  EMPTY_DESTINATION_FIELD: ' Your search term doesn\'t match any destination fields.',
+  FILTERED_NO_MATCH_FIELD: 'You don\'t have any fields that match the filter you applied. <br /> Clear the filter by setting it to"All fields".',
+  IMPORT_REQUIRED_FIELDS_CONFIGURE: ' This import has required fields that you must configure with the destination drop-down list.',
 };
 // #endregion
 
