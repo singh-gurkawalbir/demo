@@ -122,9 +122,6 @@ a:hover{
 .ace_editor.ace_autocomplete{
   z-index: 1300 !important;
 }
-.ace_gutter{
-  z-index: 0;
-}
 @supports (-moz-appearance:none) {
   .MuiTable-root {
     border-spacing: unset !important;
