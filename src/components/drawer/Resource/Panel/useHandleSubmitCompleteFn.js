@@ -6,6 +6,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import actions from '../../../../actions';
+import { emptyObject } from '../../../../constants';
 import { useSelectorMemo } from '../../../../hooks';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../reducers';
@@ -39,9 +40,17 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
     return resourceIdPatch?.value;
   }
   );
-  const {merged} = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, id) || {};
+  const resourceObj = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, id)?.merged || emptyObject;
 
-  console.log('merged', merged, skipFormClose);
+  const vanWarningOnClose = useCallback((skipFormClose, resourceType, resourceObj) => {
+    if (!skipFormClose && resourceType === 'connections' && resourceObj.type === 'van') {
+      vanNotification({
+        variant: 'warning',
+        message: <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />,
+        persist: true,
+      });
+    }
+  }, [vanNotification]);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
 
   const editUrl = useDrawerEditUrl(resourceType, id, location.pathname);
@@ -82,13 +91,7 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
       }
       // In other cases , close the drawer
       onClose();
-      if (!skipFormClose && resourceType === 'connections' && merged.type === 'van') {
-        return vanNotification({
-          variant: 'warning',
-          message: <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />,
-          persist: true,
-        });
-      }
+      vanWarningOnClose(skipFormClose, resourceType, resourceObj);
     } else {
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
@@ -104,15 +107,9 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
         return;
       }
       onClose();
-      if (!skipFormClose && resourceType === 'connections' && merged.type === 'van') {
-        return vanNotification({
-          variant: 'warning',
-          message: <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />,
-          persist: true,
-        });
-      }
+      vanWarningOnClose(skipFormClose, resourceType, resourceObj);
     }
-  }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, merged.type, newResourceId, onClose, operation, resourceId, resourceType, skipFormClose, vanNotification]);
+  }, [isNew, resourceType, isMultiStepSaveResource, dispatch, resourceId, id, skipFormClose, onClose, vanWarningOnClose, resourceObj, history, editUrl, match.path, newResourceId, operation]);
 
   return handleSubmitComplete;
 }
