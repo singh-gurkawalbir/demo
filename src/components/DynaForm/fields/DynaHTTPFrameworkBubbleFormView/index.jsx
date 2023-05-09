@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import actions from '../../../../actions';
 import { getHttpConnector} from '../../../../constants/applications';
 import { selectors } from '../../../../reducers';

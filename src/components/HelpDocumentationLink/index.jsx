@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Tooltip } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
 import helpContent from '../../utils/helpContent';
 import KnowledgeBaseIcon from '../icons/KnowledgeBaseIcon';

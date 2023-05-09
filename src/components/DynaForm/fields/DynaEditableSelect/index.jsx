@@ -1,5 +1,5 @@
-import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import { TextField, InputAdornment, FormControl, FormLabel, Paper, Autocomplete } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
