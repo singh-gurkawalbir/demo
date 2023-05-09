@@ -100,7 +100,7 @@ export default function IntegrationCeligoPageBar() {
     },
     {
       label: 'Connection',
-      description: 'Store credentials to apps',
+      description: 'Access data for an app',
       dataTestId: 'createConnection',
       Icon: ConnectionsIcon,
       link: buildDrawerUrl({
