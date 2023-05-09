@@ -323,8 +323,10 @@ export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource)
 
 // Gives sample file data
 export const getSampleFileMeta = resource => {
-  const isFileMetaRequiredForHTTPExport = resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths.some(path => !!path);
-  const isFileMetaRequired = isFileMetaRequiredForHTTPExport || isFileMetaExpectedForResource(resource);
+  const isFileMetaRequiredForHTTPExport = resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths?.some(path => !!path);
+  const isFileMetaRequired = isFileMetaExpectedForResource(resource);
+
+  console.log({isFileMetaRequiredForHTTPExport, isFileMetaRequired});
 
   if (!isFileMetaRequired) {
     return undefined;
