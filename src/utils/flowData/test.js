@@ -19,7 +19,6 @@ import {
   getResourceStageUpdatedFromPatch,
   shouldUpdateResourceSampleData,
   getSampleFileMeta,
-  isFileMetaExpectedForResource,
 } from '.';
 
 const possibleExportSampleDataStagePaths = [
@@ -1154,16 +1153,7 @@ describe('getSampleFileMeta util', () => {
     ]);
   });
 });
-describe('isFileMetaExpectedForResource util', () => {
-  test('should return false in case of invalid arguments', () => {
-    expect(isFileMetaExpectedForResource()).toBeFalsy();
-  });
-  test('should return true in case of file adaptor', () => {
-    const resource = {adaptorType: 'FTPExport'};
 
-    expect(isFileMetaExpectedForResource(resource)).toBeTruthy();
-  });
-});
 describe('shouldUpdateResourceSampleData util', () => {
   test('should return false when patchSet is empty', () => {
     expect(shouldUpdateResourceSampleData([])).toBeFalsy();

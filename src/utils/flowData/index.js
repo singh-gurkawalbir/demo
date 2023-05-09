@@ -319,12 +319,10 @@ export const isUIDataExpectedForResource = (resource, connection) => {
         isIntegrationApp(resource);
 };
 
-export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
-
 // Gives sample file data
 export const getSampleFileMeta = resource => {
   const isFileMetaRequiredForHTTPExport = resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths?.some(path => !!path);
-  const isFileMetaRequired = isFileMetaExpectedForResource(resource);
+  const isFileMetaRequired = isFileAdaptor(resource);
 
   if (isFileMetaRequiredForHTTPExport) {
     return [
@@ -338,28 +336,16 @@ export const getSampleFileMeta = resource => {
       ],
     ];
   }
-  if (resource?.adaptorType === 'FTPExport') {
+  if (isFileMetaRequired) {
     return [
       {
         fileMeta: {
           fileName: 'sampleFileName',
-          fileSize: 1234,
+          fileSize: resource?.adaptorType === 'FTPExport' ? 1234 : undefined,
         },
       },
     ];
   }
-
-  if (!isFileMetaRequired) {
-    return undefined;
-  }
-
-  return [
-    {
-      fileMeta: {
-        fileName: 'sampleFileName',
-      },
-    },
-  ];
 };
 
 /*
