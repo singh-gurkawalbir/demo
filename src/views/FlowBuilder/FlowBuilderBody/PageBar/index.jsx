@@ -34,7 +34,7 @@ const calcPageBarTitleStyles = makeStyles(theme => ({
     width: `calc(100vw - ${52 + 410}px)`,
   },
   editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
+    width: `calc(100vw - ${theme.drawerWidth + 454}px)`,
   },
 }));
 const CalcPageBarTitle = ({integrationId, flowId}) => {
@@ -125,7 +125,7 @@ const pageChildreUseStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
-    margin: [[-7, 0]],
+    margin: [[-7, 0, -7, 8]],
   },
   flowToggle: {
     marginRight: 12,
