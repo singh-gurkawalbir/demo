@@ -248,6 +248,7 @@ export default {
     if (!retValues['/configureAsyncHelper']) {
       retValues['/http/_asyncHelperId'] = undefined;
     }
+    retValues['/adaptorType'] = 'HTTPExport';
     if (retValues['/http/response/fileURLPaths']) {
       const filePaths = retValues['/http/response/fileURLPaths'].filter(path => !!path);
 
