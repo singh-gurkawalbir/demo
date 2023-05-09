@@ -321,17 +321,16 @@ export const isUIDataExpectedForResource = (resource, connection) => {
 
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 
-export const isFileMetaExpectedForHook = resource => {
-  if (resource?.adaptorType === 'HTTPExport' && !!resource?.http?.response?.fileURLPaths) {
-    return true;
-  }
-
-  return isFileMetaExpectedForResource(resource);
-};
-
 // Gives sample file data
 export const getSampleFileMeta = resource => {
-  if (resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths) {
+  const isFileMetaRequiredForHTTPExport = resource?.adaptorType === 'HTTPExport' && resource?.http?.response?.fileURLPaths.some(path => !!path);
+  const isFileMetaRequired = isFileMetaRequiredForHTTPExport || isFileMetaExpectedForResource(resource);
+
+  if (!isFileMetaRequired) {
+    return undefined;
+  }
+
+  if (isFileMetaRequiredForHTTPExport) {
     return [
       [
         {

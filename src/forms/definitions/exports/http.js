@@ -249,17 +249,6 @@ export default {
       retValues['/http/_asyncHelperId'] = undefined;
     }
     retValues['/adaptorType'] = 'HTTPExport';
-    if (retValues['/http/response/fileURLPaths']) {
-      const filePaths = retValues['/http/response/fileURLPaths'].filter(path => !!path);
-
-      if (!filePaths) {
-        delete retValues['/http/response/fileURLPaths'];
-      } else {
-        retValues['/http/response/fileURLPaths'] = filePaths;
-      }
-    } else {
-      retValues['/http/response/fileURLPaths'] = undefined;
-    }
 
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 

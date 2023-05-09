@@ -1137,13 +1137,7 @@ describe('getSampleFileMeta util', () => {
         },
       },
     ]);
-    expect(getSampleFileMeta()).toEqual([
-      {
-        fileMeta: {
-          fileName: 'sampleFileName',
-        },
-      },
-    ]);
+    expect(getSampleFileMeta()).toBeUndefined();
   });
   test('should return correct fileMeta for FTP file exports', () => {
     const resource = {
