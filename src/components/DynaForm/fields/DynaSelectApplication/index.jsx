@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { FormControl, InputLabel, Typography, makeStyles } from '@material-ui/core';
+import { FormControl, InputLabel, Typography } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
