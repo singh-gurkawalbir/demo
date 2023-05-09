@@ -7083,7 +7083,7 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
   // It should return false for all http file providers
-  if (resource?.http?.type === 'file') {
+  if (resource?.http?.type === 'file' || ['AS2Export', 'VANExport'].includes(resource?.adaptorType)) {
     return false;
   }
 
