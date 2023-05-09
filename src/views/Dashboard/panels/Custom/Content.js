@@ -52,10 +52,10 @@ const useStyles = makeStyles(theme => ({
 const initialLayouts = {
   lg: [
     {
-      i: '0',
+      i: '4',
       x: 0,
       y: 1,
-      w: 1,
+      w: 2,
       h: 4,
       minW: 1,
       minH: 4,
@@ -64,7 +64,7 @@ const initialLayouts = {
     },
     {
       i: '1',
-      x: 0,
+      x: 1,
       y: 2,
       w: 1,
       h: 4,
@@ -75,8 +75,8 @@ const initialLayouts = {
     },
     {
       i: '2',
-      x: 1,
-      y: 1,
+      x: 2,
+      y: 2,
       w: 1,
       h: 4,
       minW: 1,
@@ -96,7 +96,7 @@ const initialLayouts = {
       static: false,
     },
     {
-      i: '4',
+      i: '0',
       x: 2,
       y: 1,
       w: 1,
@@ -448,11 +448,11 @@ const initialLayouts = {
 };
 
 const initialGraphTypes = [
-  { id: '0', type: 'Bar', dataType: 'connections' },
-  { id: '1', type: 'Bar', dataType: 'connections' },
-  { id: '2', type: 'Bar', dataType: 'connections' },
-  { id: '3', type: 'Bar', dataType: 'imports' },
-  { id: '4', type: 'Bar', dataType: 'flows' },
+  { id: '4', type: 'Bar', dataType: 'flows', color: ['#D93535', '#05B39C'] },
+  { id: '0', type: 'Line', dataType: 'connections', color: '#FAB840'},
+  { id: '1', type: 'Line', dataType: 'connections', color: '#3F5089'},
+  { id: '2', type: 'Line', dataType: 'connections', color: '#FAB840' },
+  { id: '3', type: 'Bar', dataType: 'imports', color: ['#D93535', '#05B39C'] },
 ];
 
 export default function Content({colsize, id, data}) {
@@ -488,24 +488,6 @@ export default function Content({colsize, id, data}) {
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
   };
-  // const onColChange = () => {
-  //   let temp = [];
-  //   layouts.lg.map(function (l, i) {
-  //     let arrobj = {};
-  //     let y = Math.ceil(Math.random() * 4) + 1;
-  //     let x = Math.round(Math.random() * 5) * 2;
-  //     y: Math.floor(i / 6) * y, (l.x = x);
-  //     l.y = y;
-  //     arrobj = l;
-  //     temp.push(arrobj);
-  //   });
-  //   setLayouts({ lg: temp });
-  //   //  saveToLS("layouts", layouts, id);
-  // };
-  // const onLayoutSave = () => {
-  //   saveToLS('layouts', layouts, 'lt' + id);
-  //   saveToLS('graphTypes', graphTypes, 'gt' + id);
-  // };
   const onRemoveItem = itemId => {
     // setItems(items.filter((i) => i !== itemId));
     const temp = layouts.lg.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
@@ -553,10 +535,11 @@ export default function Content({colsize, id, data}) {
             <Widget
               id={l.i}
               onRemoveItem={onRemoveItem}
-              graphType={gt.type || 'Area'}
+              graphType={gt.type || 'Bar'}
               onChange={handleGraphChange}
               graphData={gd}
               title={gt.dataType}
+              graphPrefrence={gt}
             />
           </div>
         );
@@ -578,7 +561,7 @@ export default function Content({colsize, id, data}) {
           xxs: parseInt(col, 10),
         }}
         rowHeight={60}
-        // preventCollision={false}
+        preventCollision={false}
         autoSize
         margin={{
           lg: [20, 20],
@@ -587,10 +570,8 @@ export default function Content({colsize, id, data}) {
           xs: [20, 20],
           xxs: [20, 20],
         }}
-        // compactType= {'horizontal'}
         // width={width}
-        onLayoutChange={onLayoutChange}
-      >
+        onLayoutChange={onLayoutChange}>
         {generateDOM()}
       </ResponsiveGridLayout>
     </div>

@@ -57,8 +57,6 @@ export default function CustomPanel() {
     selectors.resourceList(state, { type: 'flows' })
   ).resources;
 
-  // console.log('CL', connectionList);
-
   const classes = useStyles();
 
   return (

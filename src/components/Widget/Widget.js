@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import MuiBox from '../BoxWidget/BoxWidget';
 import BarGraph from '../Graphs/BarGraph';
+import LineGraph from '../Graphs/LineGraph';
 
 // const useStyles = makeStyles(theme => ({
 //   root: {
@@ -173,13 +174,13 @@ export default function Widget({
   graphType,
   onChange,
   graphData,
+  graphPrefrence,
 }) {
   let finalData = graphData;
   const connectionName = 'connections';
   const flowName = 'flows';
   // const classes = useStyles();
 
-  // console.log(graphType);
   if (id === '0') {
     finalData = transformData(graphData);
   } else if (id === '1' || id === '3' || id === '4') {
@@ -188,10 +189,8 @@ export default function Widget({
     finalData = transformData2(graphData);
   } else if (id === '5') {
     return <MuiBox data={graphData} value={connectionName} />;
-    // return null;
   } else if (id === '6') {
     return <MuiBox data={graphData} value={flowName} />;
-    // return null;
   } else {
     finalData = graphData;
   }
@@ -205,19 +204,16 @@ export default function Widget({
       ],
     };
 
-    // console.log("drilldown", data1);
     setData(data1);
   };
 
-  const color = ['#D93535', '#05B39C'];
-
   const options = [
     {
-      label: 'Area',
-      value: 'Area',
+      label: 'Line',
+      value: 'Line',
       config: data => (
-        <BarGraph
-          data={data} color={color} onChange={handleBarClick}
+        <LineGraph
+          data={data} color={graphPrefrence.color}
         />
       ),
     },
@@ -227,15 +223,10 @@ export default function Widget({
       config: data => (
         <BarGraph
           data={data}
-          color={color}
+          color={graphPrefrence.color}
           onChange={handleBarClick}
            />
       ),
-    },
-    {
-      label: 'Pie',
-      value: 'Pie',
-      config: data => <BarGraph data={data} color={color} onChange={handleBarClick} />,
     },
   ];
 
@@ -256,12 +247,6 @@ export default function Widget({
       {option.label}
     </MenuItem>
   ));
-
-  // const eventNodes = document.getElementsByClassName('body1');
-
-  // Object.keys(eventNodes).forEach(key => {
-  //   curWidth = eventNodes[id]?.clientWidth;
-  // });
 
   return (
     <Card
