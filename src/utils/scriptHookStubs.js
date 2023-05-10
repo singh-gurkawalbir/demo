@@ -211,8 +211,8 @@ const contentBasedFlowRouterFunctionStub = `/*
 */
 function contentBasedFlowRouter (options) {
   let returnObj = {
-    _flowId: <_flowId>, // flow_id is required for downstream processing.
-    _exportId: <_exportId> // the '_id' of the listener that should be run.
+    _flowId: "<_flowId>", // flow_id is required for downstream processing.
+    _exportId: "<_exportId>" // the '_id' of the listener that should be run.
   }
   return returnObj
 }`;
