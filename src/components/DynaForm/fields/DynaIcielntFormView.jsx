@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextToggle } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import useFormContext from '../../Form/FormContext';
@@ -8,7 +9,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import TextToggle from '../../TextToggle';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -17,13 +17,6 @@ const useStyles = makeStyles(theme => ({
   connectorTextToggle: {
     flexGrow: 100,
     marginLeft: theme.spacing(-1),
-  },
-  textToggle: {
-    '&>.MuiButtonBase-root': {
-      minWidth: 'auto',
-      paddingLeft: theme.spacing(2.5),
-      paddingRight: theme.spacing(2.5),
-    },
   },
 }));
 const emptyObj = {};
@@ -122,9 +115,12 @@ export default function DynaIclientFormView(props) {
       <TextToggle
         value={value}
         onChange={onFieldChangeFn}
-        exclusive
         options={options}
-        className={classes.textToggle}
+        sx={{
+          minWidth: 'auto',
+          paddingLeft: 2.5,
+          paddingRight: 2.5,
+        }}
       />
     </div>
   );

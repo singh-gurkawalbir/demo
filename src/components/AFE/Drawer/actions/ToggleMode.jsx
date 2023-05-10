@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { TextToggle } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import TextToggle from '../../../TextToggle';
 
 const toggleOptions = {
   filter: [
@@ -26,14 +26,13 @@ export default function ToggleMode({ editorId, variant = 'filter' }) {
 
     return saveStatus === 'requested';
   });
-  const handleToggle = activeProcessor => dispatch(actions.editor.patchFeatures(editorId, {activeProcessor}));
+  const handleToggle = (event, activeProcessor) => dispatch(actions.editor.patchFeatures(editorId, {activeProcessor}));
 
   return (
     <TextToggle
       disabled={saveInProgress}
       value={activeProcessor}
       onChange={handleToggle}
-      exclusive
       options={toggleOptions[variant]}
     />
   );
