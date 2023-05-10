@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   deleteWrapper: {
     color: theme.palette.error.dark,
   },
+  fbEllipsisIcon: {
+    margin: theme.spacing(0, 1),
+  },
 }));
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
@@ -273,6 +276,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         aria-controls={actionsPopoverId}
         aria-haspopup="true"
         disabled={isNewId(flowId)}
+        className={classes.fbEllipsisIcon}
         size="small"
         onClick={handleMenuClick}>
         <EllipsisIcon />

@@ -112,7 +112,7 @@ const useStyles = makeStyles(theme => ({
     width: `calc(100vw - ${52 + 410}px)`,
   },
   editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
+    width: `calc(100vw - ${theme.drawerWidth + 500}px)`,
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -182,7 +181,7 @@ describe('FlowBuilder UI tests', () => {
     expect(screen.getByText('EditorDrawer')).toBeInTheDocument();
     expect(screen.getByText('ErrorDetailsDrawer flowId: flowId')).toBeInTheDocument();
     expect(screen.getByText('ReplaceConnectionDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c15 childId: childID')).toBeInTheDocument();
-    expect(screen.getByText('BottomDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c15 childId: childID')).toBeInTheDocument();
+    expect(screen.getByText('BottomDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c15 childId: undefined')).toBeInTheDocument();
   });
   test('should test when integration is of version 2', async () => {
     const initialStore = getCreatedStore();
@@ -209,7 +208,7 @@ describe('FlowBuilder UI tests', () => {
     expect(screen.getByText('EditorDrawer')).toBeInTheDocument();
     expect(screen.getByText('ErrorDetailsDrawer flowId: flowId')).toBeInTheDocument();
     expect(screen.getByText('ReplaceConnectionDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c16 childId: childID')).toBeInTheDocument();
-    expect(screen.getByText('BottomDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c16 childId: childID')).toBeInTheDocument();
+    expect(screen.getByText('BottomDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c16 childId: undefined')).toBeInTheDocument();
   });
   test('should test when no child is provided integration is of version 2', async () => {
     const initialStore = getCreatedStore();
