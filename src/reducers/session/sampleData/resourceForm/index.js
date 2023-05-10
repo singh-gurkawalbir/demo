@@ -213,6 +213,13 @@ selectors.getResourceSampleDataStages = (state, resourceId) => {
   }));
 };
 
+selectors.getResourceParsedSampleData = (state, resourceId) => {
+  const data = selectors.getResourceSampleDataStages(state, resourceId);
+  const parseData = data.find(val => val.name === 'parse')?.data || {};
+
+  return parseData?.[0] || DEFAULT_VALUE;
+};
+
 selectors.getAllParsableErrors = (state, resourceId) => {
   const data = selectors.getResourceSampleDataStages(state, resourceId);
 

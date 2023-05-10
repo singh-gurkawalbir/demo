@@ -114,7 +114,7 @@ export default function EditableText({
             { [classes.overflowText]: !allowOverflow },
             className
           )}>
-          <div onClick={handleEditClick}>{text || defaultText}</div>
+          <span onClick={handleEditClick}>{text || defaultText}</span>
         </div>
       )}
     </>

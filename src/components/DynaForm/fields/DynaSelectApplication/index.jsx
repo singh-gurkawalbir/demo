@@ -192,7 +192,7 @@ export default function SelectApplication(props) {
         <Typography variant="body2">
           {`We weren't able to find "${inputValue}"`}
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="subtitle2" className={classes.emptyMessageSubtitle}>
           Try using
           <TextButton
             onClick={() => {
@@ -206,7 +206,7 @@ export default function SelectApplication(props) {
             }}
             color="primary">HTTP
           </TextButton>
-          connector
+          connector.
         </Typography>
       </div>
     );
