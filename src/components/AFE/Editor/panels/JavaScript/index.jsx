@@ -157,7 +157,7 @@ export default function JavaScriptPanel({ editorId }) {
     <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
-          <FormControl variant="standard" className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl} error={!scriptId}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
@@ -186,7 +186,7 @@ export default function JavaScriptPanel({ editorId }) {
               {[defaultItem, ...scriptOptions]}
             </CeligoSelect>
           </FormControl>
-          <FormControl variant="standard" className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl} error={!entryFunction}>
             <FormLabel htmlFor="entryFunction">
               Function
             </FormLabel>

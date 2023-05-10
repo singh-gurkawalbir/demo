@@ -60,8 +60,7 @@ function useGetCustomSettingsPatchOnFieldChange(props) {
     if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
       const resource = fields.find(field => field.id === 'assistantMetadata.resource')?.value;
 
-      const httpConnectorMetaData = assistantData[resourceType === 'imports' ? 'import' : 'export'];
-      const endpointCustomSettings = getEndPointCustomSettings(httpConnectorMetaData, resource, value);
+      const endpointCustomSettings = getEndPointCustomSettings(assistantData, resource, value, resourceType);
 
       return getUserDefinedWithEndPointCustomSettingsPatch(endpointCustomSettings, userDefinedCustomSettingsForm);
     }

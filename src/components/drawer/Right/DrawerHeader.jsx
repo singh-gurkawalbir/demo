@@ -58,6 +58,7 @@ export default function DrawerHeader({
   handleClose,
   closeDataTest,
   showCloseButton = true,
+  contentId,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -88,6 +89,7 @@ export default function DrawerHeader({
             helpKey={helpKey}
             fieldId={helpKey}
             sx={{ml: 0.5}}
+            contentId={contentId}
           />
         )}
         {infoText && <InfoIconButton info={infoText} title={title} />}

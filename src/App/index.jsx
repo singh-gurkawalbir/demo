@@ -47,6 +47,7 @@ import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
 import Loader from '../components/Loader';
+import { FeatureFlagProvider } from '../components/FeatureFlag';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -280,71 +281,73 @@ export default function App() {
             <Fragment key={reloadCount}>
               <ConfirmDialogProvider>
                 <FormOnCancelProvider>
-                  <SnackbarProvider
-                    sx={{
-                      '& .SnackbarContent-root': {
-                        bgcolor: theme => theme.palette.background.paper,
-                        color: theme => theme.palette.text.primary,
-                        '&:before': {
-                          content: '""',
-                          width: 5,
-                          height: '100%',
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          borderRadius: '4px 0 0 4px',
+                  <FeatureFlagProvider>
+                    <SnackbarProvider
+                      sx={{
+                        '& .SnackbarContent-root': {
+                          bgcolor: theme => theme.palette.background.paper,
+                          color: theme => theme.palette.text.primary,
+                          '&:before': {
+                            content: '""',
+                            width: 5,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            borderRadius: '4px 0 0 4px',
+                          },
                         },
-                      },
-                      '& .SnackbarItem-variantInfo': {
-                        '&:before': {
-                          bgcolor: theme => theme.palette.primary.main,
+                        '& .SnackbarItem-variantInfo': {
+                          '&:before': {
+                            bgcolor: theme => theme.palette.primary.main,
+                          },
+                          '& div > svg': {
+                            color: theme => theme.palette.primary.main,
+                          },
                         },
-                        '& div > svg': {
-                          color: theme => theme.palette.primary.main,
+                        '& .SnackbarItem-variantSuccess': {
+                          '&:before': {
+                            bgcolor: theme => theme.palette.success.main,
+                          },
+                          '& div > svg': {
+                            color: theme => theme.palette.success.main,
+                          },
                         },
-                      },
-                      '& .SnackbarItem-variantSuccess': {
-                        '&:before': {
-                          bgcolor: theme => theme.palette.success.main,
+                        '& .SnackbarItem-variantWarning': {
+                          '&:before': {
+                            bgcolor: theme => theme.palette.warning.main,
+                          },
+                          '& div > svg': {
+                            color: theme => theme.palette.warning.main,
+                          },
                         },
-                        '& div > svg': {
-                          color: theme => theme.palette.success.main,
+                        '& .SnackbarItem-variantError': {
+                          '&:before': {
+                            bgcolor: theme => theme.palette.error.main,
+                          },
+                          '& div > svg': {
+                            color: theme => theme.palette.error.main,
+                          },
                         },
-                      },
-                      '& .SnackbarItem-variantWarning': {
-                        '&:before': {
-                          bgcolor: theme => theme.palette.warning.main,
+                        '& .SnackbarItem-message': {
+                          display: 'grid',
+                          gridTemplateColumns: 'auto 1fr',
+                          wordBreak: 'break-word',
+                          paddingTop: '6px',
                         },
-                        '& div > svg': {
-                          color: theme => theme.palette.warning.main,
-                        },
-                      },
-                      '& .SnackbarItem-variantError': {
-                        '&:before': {
-                          bgcolor: theme => theme.palette.error.main,
-                        },
-                        '& div > svg': {
-                          color: theme => theme.palette.error.main,
-                        },
-                      },
-                      '& .SnackbarItem-message': {
-                        display: 'grid',
-                        gridTemplateColumns: 'auto 1fr',
-                        wordBreak: 'break-word',
-                        paddingTop: '6px',
-                      },
-                    }}>
-                    <FontStager />
-                    <CssBaseline />
-                    {/* Define empty call back for getUserConfirmation to not let Prompt
+                      }}>
+                      <FontStager />
+                      <CssBaseline />
+                      {/* Define empty call back for getUserConfirmation to not let Prompt
                   * get triggered when history.block is defined in any specific component
                   * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
                   */}
-                    <BrowserRouter getUserConfirmation={() => {}}>
-                      <AppRenderer />
-                    </BrowserRouter>
-                    <ConflictAlertDialog />
-                  </SnackbarProvider>
+                      <BrowserRouter getUserConfirmation={() => {}}>
+                        <AppRenderer />
+                      </BrowserRouter>
+                      <ConflictAlertDialog />
+                    </SnackbarProvider>
+                  </FeatureFlagProvider>
                 </FormOnCancelProvider>
               </ConfirmDialogProvider>
             </Fragment>

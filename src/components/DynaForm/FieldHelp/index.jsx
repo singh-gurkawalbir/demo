@@ -13,6 +13,7 @@ export default function FieldHelp({
   escapeUnsecuredDomains,
   noApi = false,
   disablePortal,
+  contentId,
 }) {
   const { developer } = useSelector(state => selectors.userProfile(state));
 
@@ -32,6 +33,7 @@ export default function FieldHelp({
         width: theme => theme.spacing(3),
         height: theme => theme.spacing(3),
       }}
+      contentId={contentId}
     />
   );
 }

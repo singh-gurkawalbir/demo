@@ -354,6 +354,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
         : (
           <JobTable
             classes={classes.jobTable}
+            integrationId={integrationId}
             jobsInCurrentPage={jobsInCurrentPage || []} />
         )}
 

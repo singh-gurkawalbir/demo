@@ -197,7 +197,7 @@ describe('Celigo Home Pagebar UI tests', () => {
 
     expect(menuList).toHaveLength(3);
     expect(screen.getByText(/Sync data between apps/i)).toBeInTheDocument();
-    expect(screen.getByText(/Store credentials to apps/i)).toBeInTheDocument();
+    expect(screen.getByText(/Access data for an app/i)).toBeInTheDocument();
     expect(screen.getByText(/Organize flows in a folder/i)).toBeInTheDocument();
     expect(screen.getByText(/Connection/i)).toBeInTheDocument();
     expect(screen.getByText('Integration')).toBeInTheDocument();
