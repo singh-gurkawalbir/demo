@@ -86,8 +86,9 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const handleSubmit = useCallback(
     () => {
       let patchSet;
+      const routerObj = formValues?.contentBasedFlowRouter;
 
-      if (formValues?.contentBasedFlowRouter?._scriptId && formValues?.contentBasedFlowRouter?.function) {
+      if ((routerObj?._scriptId && routerObj?.function) || (!routerObj?._scriptId && !routerObj?.function)) {
         if (isVanConnector) {
           patchSet = [
             {
@@ -122,7 +123,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
         );
       }
     },
-    [isVanConnector, dispatch, connectionId, formValues?.contentBasedFlowRouter?._scriptId, formValues?.contentBasedFlowRouter?.function]
+    [formValues?.contentBasedFlowRouter, isVanConnector, dispatch, connectionId]
   );
   let value;
 
