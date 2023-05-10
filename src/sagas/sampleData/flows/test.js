@@ -195,6 +195,7 @@ describe('flow sample data sagas', () => {
         .call(requestSampleDataForExports, {
           flowId,
           resourceId: exportId,
+          hidden: true,
           sampleDataStage,
         })
         .run();
@@ -212,6 +213,7 @@ describe('flow sample data sagas', () => {
             flowId,
             resourceId: exportId,
             sampleDataStage,
+            hidden: true,
           }), throwError(error)],
         ])
         .put(actions.flowData.requestStage(flowId, exportId, sampleDataStage))
@@ -235,6 +237,7 @@ describe('flow sample data sagas', () => {
           [call(requestSampleDataForExports, {
             flowId,
             resourceId: exportId,
+            hidden: true,
             sampleDataStage,
           }), throwError(error)],
         ])

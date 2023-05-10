@@ -660,17 +660,20 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, connector) =
   if (!httpConnector) {
     return formValues;
   }
+  const retValues = { ...formValues };
+
   if (resource?.http?._httpConnectorApiId) {
     httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
+    retValues['/assistant'] = httpConnector?.legacyId;
   }
-  const retValues = { ...formValues };
   let resourceVersion;
 
   if (retValues['/http/_httpConnectorVersionId']) {
-    resourceVersion = connector.versions?.find(ver => ver._id === retValues['/http/_httpConnectorVersionId'])?.name;
+    resourceVersion = httpConnector.versions?.find(ver => ver._id === retValues['/http/_httpConnectorVersionId'])?.name;
   }
 
-  if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.[0]?.includes('/:_version')) {
+  // TODO @Lalit: Need to validate if resourceVersion is added in between of baseURI, versionRelativeURI selection
+  if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.find(uri => uri === `${retValues['/http/baseURI']}/:_version`)) {
     if (resourceVersion) {
       retValues['/http/baseURI'] += `/${resourceVersion}`;
     } else {

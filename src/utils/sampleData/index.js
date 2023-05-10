@@ -10,7 +10,7 @@ import {
   getFormattedNetsuiteMetadataData,
 } from '../metadata';
 import { getUnionObject, getTransformPaths } from '../jsonPaths';
-import { isFileMetaExpectedForResource } from '../flowData';
+import { getSampleFileMeta } from '../flowData';
 import customCloneDeep from '../customCloneDeep';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
@@ -663,15 +663,7 @@ export const wrapSampleDataWithContext = ({
         status,
         data: {
           data: data ? [data] : [],
-          files: isFileMetaExpectedForResource(resource) ? [
-            {
-              fileMeta:
-                {
-                  fileName: 'sampleFileName',
-                  fileSize: resource.adaptorType === 'FTPExport' ? 1234 : undefined,
-                },
-            },
-          ] : undefined,
+          files: getSampleFileMeta(resource),
           errors: [],
           ...resourceIds,
           ...contextFields,

@@ -100,7 +100,7 @@ export default function IntegrationCeligoPageBar() {
     },
     {
       label: 'Connection',
-      description: 'Store credentials to apps',
+      description: 'Access data for an app',
       dataTestId: 'createConnection',
       Icon: ConnectionsIcon,
       link: buildDrawerUrl({
@@ -130,7 +130,7 @@ export default function IntegrationCeligoPageBar() {
   }, [history, isConnectionCreated]);
 
   return (
-    <CeligoPageBar title="My integrations">
+    <CeligoPageBar title="My integrations" contentId="home">
       <KeywordSearch filterKey={FILTER_KEY} autoFocus placeHolder="Search integrations & flows" />
 
       <ActionGroup>

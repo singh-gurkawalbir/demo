@@ -178,7 +178,7 @@ export default function SelectApplication(props) {
   }, [isMulti, value, onFieldChange, proceedOnChange, applications, id, dispatch, resourceType, resourceId, match, flowId]);
 
   const NoOptionsMessage = props => {
-    const imagePath = getImageUrl('images/react/empty-states/connections.png');
+    const imagePath = getImageUrl('/images/react/empty-states/noOption.png');
 
     return (
       <div className={classes.emptyOptionMessage}>
@@ -192,7 +192,7 @@ export default function SelectApplication(props) {
         <Typography variant="body2">
           {`We weren't able to find "${inputValue}"`}
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="subtitle2" className={classes.emptyMessageSubtitle}>
           Try using
           <TextButton
             onClick={() => {
@@ -206,7 +206,7 @@ export default function SelectApplication(props) {
             }}
             color="primary">HTTP
           </TextButton>
-          connector
+          connector.
         </Typography>
       </div>
     );

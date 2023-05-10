@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../../constants/resource';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL, RESOURCE_TYPES_WITHOUT_CREATE_EDIT_PAGE } from '../../../../constants/resource';
 import { selectors } from '../../../../reducers';
 import {
   STANDALONE_INTEGRATION,
@@ -32,6 +32,8 @@ export default function NameCell({al, actionProps}) {
   const routePath = useSelector(state => {
     if (resourceType === 'revisions') {
       const { integrationId } = actionProps;
+
+      if (!integrationId) return;
       const viewRevisionDetailsDrawerUrl = buildDrawerUrl({
         path: drawerPaths.LCM.VIEW_REVISION_DETAILS,
         baseUrl: getRoutePath(`integrations/${integrationId}/revisions`),
@@ -53,10 +55,10 @@ export default function NameCell({al, actionProps}) {
       return al._resourceId || '';
     }
 
-    return al.deletedInfo.name || '';
+    return resourceName || al._resourceId || '';
   }
 
-  if (resourceType === 'users') {
+  if (!routePath || RESOURCE_TYPES_WITHOUT_CREATE_EDIT_PAGE.includes(resourceType)) {
     return resourceName || al._resourceId || '';
   }
 

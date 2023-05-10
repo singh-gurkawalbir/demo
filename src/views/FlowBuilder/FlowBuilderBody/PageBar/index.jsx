@@ -1,7 +1,7 @@
 import { Divider, IconButton, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import Status from '../../../../components/Buttons/Status';
@@ -34,7 +34,7 @@ const calcPageBarTitleStyles = makeStyles(theme => ({
     width: `calc(100vw - ${52 + 410}px)`,
   },
   editableTextInputShift: {
-    width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
+    width: `calc(100vw - ${theme.drawerWidth + 500}px)`,
   },
 }));
 const CalcPageBarTitle = ({integrationId, flowId}) => {

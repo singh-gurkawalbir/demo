@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title, basicInfo = false }) {
+export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title, basicInfo = false, contentId }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -63,7 +63,9 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
-        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}>
+        <HelpContent
+          title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}
+          contentId={contentId}>
           <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} basicInfo={basicInfo}>{info}</TooltipContent>
         </HelpContent>
       </ArrowPopper>

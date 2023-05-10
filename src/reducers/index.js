@@ -216,6 +216,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      helpContent,
       showIconView,
     } = { ...profile, ...preferences };
 
@@ -236,6 +237,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      helpContent,
       showIconView,
     };
   });
@@ -3506,6 +3508,12 @@ selectors.isIntegrationAppV1 = (state, integrationId) => {
   return !!integration?._connectorId && !isIntegrationAppV2;
 };
 
+selectors.getParentIntegrationId = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return integration?._parentId || integration?._id;
+};
+
 selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (!state || !integrationId) {
     return null;
@@ -6055,7 +6063,13 @@ selectors.flowDashboardJobs = createSelector(
       if (parentJob.children?.length) {
         const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+        dashboardJobSteps.forEach(step => {
+          if (step?.canceledBy === 'system') {
+            return dashboardSteps.push({...step, canceledBy: parentJob.canceledBy});
+          }
+
+          return dashboardSteps.push(step);
+        });
       }
       // If the parent job is queued/in progress, show dummy steps of flows as waiting status
       if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
@@ -6211,9 +6225,11 @@ selectors.errorFilter = (state, params = {}) => {
 selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
   selectors.allResourceErrorDetails,
   selectors.errorFilter,
-  (errorDetails, errorFilter) => ({
+  selectors.userProfilePreferencesProps,
+  selectors.userTimezone,
+  (errorDetails, errorFilter, preferences, timezone) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, errorFilter),
+    errors: getFilteredErrors(errorDetails.errors, errorFilter, preferences, timezone),
   })
 );
 
@@ -7072,8 +7088,8 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   const resource = selectors.resource(state, resourceType, resourceId);
   const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
-  // It should return false for all http file providers
-  if (resource?.http?.type === 'file') {
+  // It should return false for all http file providers and for VAN and AS2 exports
+  if (resource?.http?.type === 'file' || ['AS2Export', 'VANExport'].includes(resource?.adaptorType)) {
     return false;
   }
 
@@ -7628,5 +7644,7 @@ selectors.isHttpConnector = (state, resourceId, resourceType) => {
 
   const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
 
-  return isNewHTTPFramework && resource?.http?.sessionFormType !== 'http';
+  const isHttpConnectorParentFormView = selectors.isHttpConnectorParentFormView(state, resourceId);
+
+  return isNewHTTPFramework && !isHttpConnectorParentFormView;
 };
