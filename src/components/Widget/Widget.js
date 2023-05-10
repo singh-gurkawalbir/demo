@@ -1,17 +1,30 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Card from '@mui/material/Card';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+// import IconButton from '@mui/material/IconButton';
+// import CloseIcon from '@mui/icons-material/Close';
+import { addDays, startOfDay } from 'date-fns';
 import '../../views/Dashboard/panels/Custom/Styles/widget.css';
-// import makeStyles from '@mui/styles/makeStyles';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
+// import Select from '@mui/material/Select';
+// import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
+// import FormControl from '@mui/material/FormControl';
+// import { Typography } from '@mui/material';
+// import { Spinner } from '@celigo/fuse-ui';
+import { selectors } from '../../reducers';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import actions from '../../actions';
+import PanelHeader from '../PanelHeader';
 import MuiBox from '../BoxWidget/BoxWidget';
 import BarGraph from '../Graphs/BarGraph';
-
+import RefreshIcon from '../icons/RefreshIcon';
+import { getSelectedRange } from '../../utils/flowMetrics';
+import DateRangeSelector from '../DateRangeSelector';
+import SelectResource from '../LineGraph/SelectResource';
+import CeligoSelect from '../CeligoSelect';
+import TextButton from '../Buttons/TextButton';
+import ActionGroup from '../ActionGroup';
 // const useStyles = makeStyles(theme => ({
 //   root: {
 //     width: '100%',
@@ -166,20 +179,142 @@ const transformData2 = data => {
   };
 };
 
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
+  endDate: new Date().toISOString(),
+  preset: 'last30days',
+};
+
 export default function Widget({
   id,
-  onRemoveItem,
+  // onRemoveItem,
   title,
   graphType,
   onChange,
   graphData,
+  integrationId,
+  childId,
 }) {
+  //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
+  const dispatch = useDispatch();
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
+  const hasGrouping = !!flowGroupingsSections || isIntegrationAppV1;
+  const [flowCategory, setFlowCategory] = useState();
+  const groupings = useSelectorMemo(selectors.mkIntegrationFlowGroups, integrationId);
+  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
+  const { rangePreference, resourcePreference } = useMemo(() => {
+    const preference = preferences[integrationId] || {};
+
+    return {
+      rangePreference: preference.range ? getSelectedRange(preference.range) : defaultRange,
+      resourcePreference: preference.resource || [integrationId],
+    };
+  }, [integrationId, preferences]);
+
+  const [selectedResources, setSelectedResources] = useState(resourcePreference);
+
+  const [refresh, setRefresh] = useState();
+  const [range, setRange] = useState(rangePreference);
+
+  const flowResources = useSelectorMemo(selectors.mkIntegrationFlowsByGroup, integrationId, childId, flowCategory);
+  const filteredFlowResources = useMemo(() => {
+    const flows = flowResources.map(f => ({_id: f._id, name: f.name || `Unnamed (id: ${f._id})`}));
+
+    return [{_id: integrationId, name: 'Integration-level'}, ...flows];
+  }, [flowResources, integrationId]);
+
+  // const validResources = useMemo(() => {
+  //   if (selectedResources && selectedResources.length) {
+  //     return selectedResources.filter(sr => filteredFlowResources.find(r => r._id === sr));
+  //   }
+  //   return selectedResources;
+  // }, [filteredFlowResources, selectedResources]);
+
+  const handleRefreshClick = useCallback(() => {
+    setRefresh(new Date().getTime());
+  }, []);
+
+  const handleFlowCategoryChange = useCallback(e => {
+    setFlowCategory(e.target.value);
+  }, []);
+
+  const handleDateRangeChange = useCallback(
+    range => {
+      dispatch(actions.flowMetrics.clear(integrationId));
+      setRange(getSelectedRange(range));
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [integrationId]: {
+              range,
+              resource: selectedResources,
+            },
+          },
+        })
+      );
+    },
+    [dispatch, integrationId, preferences, selectedResources]
+  );
+
+  const handleResourcesChange = useCallback(
+    val => {
+      setSelectedResources(val);
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [integrationId]: {
+              range,
+              resource: val,
+            },
+          },
+        })
+      );
+    },
+    [dispatch, integrationId, preferences, range]
+  );
+
+  const sections = useMemo(() => groupings.map(s => <MenuItem key={s.titleId || s.sectionId} value={s.titleId || s.sectionId}>{s.title}</MenuItem>), [groupings]);
+
+  // //! THIS PART REPRESENTS THE JOB RECORD AREA
+  // const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
+
+  // const dataf =
+  // useSelector(
+  //   state => selectors.flowMetricsData(state, integrationId),
+  //   shallowEqual
+  // ) || {};
+
+  // useEffect(() => {
+  //   if (selectedResources.length) {
+  //     setSendQuery(true);
+  //   }
+  // }, [selectedResources, range, refresh]);
+
+  // useEffect(() => {
+  //   if (sendQuery) {
+  //     dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
+  //     setSendQuery(false);
+  //   }
+  // }, [dataf, dispatch, integrationId, range, sendQuery, selectedResources]);
+
+  // if (dataf.status === COMM_STATES.LOADING) {
+  //   return (
+  //     <Spinner center="horizontal" size="large" sx={{mb: 1}} />
+  //   );
+  // }
+  // if (dataf.status === COMM_STATES.ERROR) {
+  //   return <Typography>Error occured</Typography>;
+  // }
+  // console.log('Hi', dataf);
+
+  //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
   const connectionName = 'connections';
   const flowName = 'flows';
-  // const classes = useStyles();
 
-  // console.log(graphType);
   if (id === '0') {
     finalData = transformData(graphData);
   } else if (id === '1' || id === '3' || id === '4') {
@@ -188,10 +323,8 @@ export default function Widget({
     finalData = transformData2(graphData);
   } else if (id === '5') {
     return <MuiBox data={graphData} value={connectionName} />;
-    // return null;
   } else if (id === '6') {
     return <MuiBox data={graphData} value={flowName} />;
-    // return null;
   } else {
     finalData = graphData;
   }
@@ -209,15 +342,13 @@ export default function Widget({
     setData(data1);
   };
 
-  const color = ['#D93535', '#05B39C'];
-
   const options = [
     {
       label: 'Area',
       value: 'Area',
       config: data => (
         <BarGraph
-          data={data} color={color} onChange={handleBarClick}
+          data={data} onChange={handleBarClick}
         />
       ),
     },
@@ -227,7 +358,6 @@ export default function Widget({
       config: data => (
         <BarGraph
           data={data}
-          color={color}
           onChange={handleBarClick}
            />
       ),
@@ -235,7 +365,7 @@ export default function Widget({
     {
       label: 'Pie',
       value: 'Pie',
-      config: data => <BarGraph data={data} color={color} onChange={handleBarClick} />,
+      config: data => <BarGraph data={data} onChange={handleBarClick} />,
     },
   ];
 
@@ -244,7 +374,6 @@ export default function Widget({
   const [impl, setImpl] = useState(
     options.find(opt => opt.label === graphType)
   );
-
   const handleSelection = opt => {
     setSelection(opt);
     setImpl(options.find(option => option.label === opt.target.value));
@@ -256,12 +385,6 @@ export default function Widget({
       {option.label}
     </MenuItem>
   ));
-
-  // const eventNodes = document.getElementsByClassName('body1');
-
-  // Object.keys(eventNodes).forEach(key => {
-  //   curWidth = eventNodes[id]?.clientWidth;
-  // });
 
   return (
     <Card
@@ -277,9 +400,12 @@ export default function Widget({
     >
       <div className="root">
         <div className="header">
-          <h2> Widget - {title}</h2>
+          <PanelHeader
+            title={title}
+            infoText="To Be Added..."
+           />
           <div className="spacer" />
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+          {/* <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="demo-simple-select-standard-label">
               Graph Type
             </InputLabel>
@@ -292,10 +418,38 @@ export default function Widget({
             >
               {renderedOptions}
             </Select>
-          </FormControl>
-          <IconButton aria-label="delete" onClick={() => onRemoveItem(id)}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
+          </FormControl> */}
+          <ActionGroup>
+            <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
+              Refresh
+            </TextButton>
+
+            <DateRangeSelector
+              onSave={handleDateRangeChange}
+              value={{
+                startDate: new Date(rangePreference.startDate),
+                endDate: new Date(rangePreference.endDate),
+                preset: rangePreference.preset,
+              }}
+           />
+            {hasGrouping && (
+            <CeligoSelect
+              data-test="selectFlowCategory"
+              // className={classes.categorySelect}
+              onChange={handleFlowCategoryChange}
+              displayEmpty
+              value={flowCategory || ''}>
+              <MenuItem value="">Select flow group</MenuItem>
+              {sections}
+            </CeligoSelect>
+            )}
+            <SelectResource
+              integrationId={integrationId}
+              selectedResources={selectedResources}
+              flowResources={filteredFlowResources}
+              onSave={handleResourcesChange}
+        />
+          </ActionGroup>
         </div>
         <div className="body1" />
         <div
@@ -313,3 +467,4 @@ export default function Widget({
     </Card>
   );
 }
+

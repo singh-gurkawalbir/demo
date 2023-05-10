@@ -1,14 +1,21 @@
 /* eslint-disable no-use-before-define */
-import React, {useState, useEffect} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+// import React, {useState, useEffect} from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-// import { withSize } from 'react-sizeme';
+import { useRouteMatch } from 'react-router-dom';
+import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+// import Widget from '../../../../components/Widget/Widget';
+import { Spinner } from '@celigo/fuse-ui';
+import { addDays, startOfDay } from 'date-fns';
 import Widget from '../../../../components/Widget/Widget';
 import './Styles/styles.css';
 import './Styles/content.css';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
+import { COMM_STATES } from '../../../../reducers/comms/networkComms';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -455,12 +462,21 @@ const initialGraphTypes = [
   { id: '4', type: 'Bar', dataType: 'flows' },
 ];
 
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
+  endDate: new Date().toISOString(),
+  preset: 'last30days',
+};
+
 export default function Content({colsize, id, data}) {
   const [layouts, setLayouts] = useState(
     getFromLS('layouts', `lt${id}`) || initialLayouts
   );
   const classes = useStyles();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const integrationId = 'none';
+  const { childId } = match.params;
 
   const [graphTypes, setGraphTypes] = useState(
     getFromLS('graphTypes', `gt${id}`) || initialGraphTypes
@@ -488,24 +504,6 @@ export default function Content({colsize, id, data}) {
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
   };
-  // const onColChange = () => {
-  //   let temp = [];
-  //   layouts.lg.map(function (l, i) {
-  //     let arrobj = {};
-  //     let y = Math.ceil(Math.random() * 4) + 1;
-  //     let x = Math.round(Math.random() * 5) * 2;
-  //     y: Math.floor(i / 6) * y, (l.x = x);
-  //     l.y = y;
-  //     arrobj = l;
-  //     temp.push(arrobj);
-  //   });
-  //   setLayouts({ lg: temp });
-  //   //  saveToLS("layouts", layouts, id);
-  // };
-  // const onLayoutSave = () => {
-  //   saveToLS('layouts', layouts, 'lt' + id);
-  //   saveToLS('graphTypes', graphTypes, 'gt' + id);
-  // };
   const onRemoveItem = itemId => {
     // setItems(items.filter((i) => i !== itemId));
     const temp = layouts.lg.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
@@ -557,12 +555,68 @@ export default function Content({colsize, id, data}) {
               onChange={handleGraphChange}
               graphData={gd}
               title={gt.dataType}
+              integrationId={integrationId}
+              childId={childId}
             />
           </div>
         );
       });
     }
   };
+
+  //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
+  console.log('Final', integrationId);
+  const dispatch = useDispatch();
+  // const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  // const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
+  // const hasGrouping = !!flowGroupingsSections || isIntegrationAppV1;
+  // const [flowCategory, setFlowCategory] = useState();
+  // const groupings = useSelectorMemo(selectors.mkIntegrationFlowGroups, integrationId);
+  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
+  const { rangePreference, resourcePreference } = useMemo(() => {
+    const preference = preferences[integrationId] || {};
+
+    return {
+      rangePreference: preference.range ? getSelectedRange(preference.range) : defaultRange,
+      resourcePreference: preference.resource || [integrationId],
+    };
+  }, [integrationId, preferences]);
+
+  const [selectedResources] = useState(resourcePreference);
+
+  const [refresh] = useState();
+  const [range] = useState(rangePreference);
+
+  //! THIS PART REPRESENTS THE JOB RECORD AREA
+  const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
+
+  const dataf = useSelector(
+    state => selectors.flowMetricsData(state, integrationId),
+    shallowEqual
+  ) || {};
+
+  useEffect(() => {
+    if (selectedResources.length) {
+      setSendQuery(true);
+    }
+  }, [selectedResources, range, refresh]);
+
+  useEffect(() => {
+    if (sendQuery) {
+      dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
+      setSendQuery(false);
+    }
+  }, [dataf, dispatch, integrationId, range, sendQuery, selectedResources]);
+
+  if (dataf.status === COMM_STATES.LOADING) {
+    return (
+      <Spinner center="horizontal" size="large" sx={{mb: 1}} />
+    );
+  }
+  if (dataf.status === COMM_STATES.ERROR) {
+    return <Typography>Error occured</Typography>;
+  }
+  console.log('Hi', dataf);
 
   return (
     <div className={classes.responsiveContainer}>
