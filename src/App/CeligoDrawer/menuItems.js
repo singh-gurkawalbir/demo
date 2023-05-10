@@ -95,7 +95,7 @@ export default function menuItems({
           routeProps: getRoutePath('/reports'),
         },
         {
-          label: 'Playground',
+          label: 'Developer playground',
           Icon: EditorsPlaygroundIcon,
           path: '/playground',
         },
@@ -163,25 +163,25 @@ export default function menuItems({
           component: 'a',
           href: SUBMIT_TICKET_URL,
         },
-        // Celigo university should only be accessible in production
-        ...(isProduction() ? [{
-          label: 'Celigo university',
-          Icon: UniversityIcon,
-          href: getUniversityUrl,
-          component: 'a',
-          dataTest: 'celigo_university',
-        }] : []),
-        {
-          label: 'Product portal',
-          Icon: PortalIcon,
-          path: '/productPortal',
-        },
       ],
     },
+    // Celigo university should only be accessible in production
+    ...(isProduction() ? [{
+      label: 'Celigo university',
+      Icon: UniversityIcon,
+      href: getUniversityUrl,
+      component: 'a',
+      dataTest: 'celigo_university',
+    }] : []),
     {
       label: 'Marketplace',
       Icon: MarketplaceIcon,
       path: '/marketplace',
+    },
+    {
+      label: 'Product portal',
+      Icon: PortalIcon,
+      path: '/productPortal',
     },
   ];
 
