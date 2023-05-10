@@ -3,6 +3,7 @@ import { Help } from '@celigo/fuse-ui';
 import { useDispatch } from 'react-redux';
 import retry from '../../utils/retry';
 import actions from '../../actions';
+import HelpContentLinks from '../HelpContentLinks';
 
 let _helpTextMap = {};
 
@@ -14,7 +15,7 @@ retry(() => import(/* webpackChunkName: "HelpTextMap", webpackPreload: true */ '
   _helpTextMap = tm || {};
 }).catch(() => {}));
 
-export default function HelpWrapper({ fieldId, resourceType, helpKey, helpText, supportFeedback = true, title, ...rest }) {
+export default function HelpWrapper({ fieldId, resourceType, helpKey, helpText, supportFeedback = true, title, contentId, ...rest }) {
   const id = fieldId || helpKey || title;
   const dispatch = useDispatch();
   const onHelpfulClick = useCallback(() => {
@@ -27,18 +28,23 @@ export default function HelpWrapper({ fieldId, resourceType, helpKey, helpText, 
   }, [dispatch, id, resourceType]);
 
   return (
-    <Help
-      {...rest}
-      title={title}
-      text={helpText || getHelpTextMap()[helpKey]}
-      supportFeedback={supportFeedback}
-      onHelpfulClick={onHelpfulClick}
-      onFeedbackSubmit={onSupportFeedback}
-      sx={{
-        ml: 0.5,
-        width: theme => theme.spacing(3),
-        height: theme => theme.spacing(3),
-      }}
+    <>
+      <Help
+        {...rest}
+        title={title}
+        text={helpText || getHelpTextMap()[helpKey]}
+        supportFeedback={supportFeedback}
+        onHelpfulClick={onHelpfulClick}
+        onFeedbackSubmit={onSupportFeedback}
+        sx={{
+          ml: 0.5,
+          width: theme => theme.spacing(3),
+          height: theme => theme.spacing(3),
+        }}
     />
+      {contentId && (
+        <HelpContentLinks contentId={contentId} />
+      )}
+    </>
   );
 }

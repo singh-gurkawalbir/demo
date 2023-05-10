@@ -683,10 +683,13 @@ export function* reSignInWithGoogle({ email }) {
   form.id = 'reSigninWithGoogle';
   form.method = 'POST';
   form.action = '/reSigninWithGoogle';
-  form.target = '_blank';
-
   form.innerHTML = `<input name="skipRedirect" value="false"><input name="login_hint" value="${email}"><input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
+  // Open the form submission in a new window and set its opener to be the current window
+  const newWindow = window.open('', 'newWindow');
+
+  newWindow.opener = window;
+  form.target = 'newWindow';
   form.submit();
   document.body.removeChild(form);
 }
@@ -698,10 +701,13 @@ export function* reSignInWithSSO() {
   form.id = 'reSigninWithSSO';
   form.method = 'POST';
   form.action = `/reSigninWithSSO/${ssoClientId}`;
-  form.target = '_blank';
-
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
+  // Open the form submission in a new window and set its opener to be the current window
+  const newWindow = window.open('', 'newWindow');
+
+  newWindow.opener = window;
+  form.target = 'newWindow';
   form.submit();
   document.body.removeChild(form);
 }

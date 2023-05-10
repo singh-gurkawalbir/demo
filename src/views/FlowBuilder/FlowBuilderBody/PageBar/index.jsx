@@ -2,7 +2,7 @@ import { Divider, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import {EditableText, TimeAgo } from '@celigo/fuse-ui';
 import actions from '../../../../actions';

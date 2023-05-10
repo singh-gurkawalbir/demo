@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PanelHeader({ title, children, infoText, className, placement }) {
+export default function PanelHeader({ title, children, infoText, className, placement, contentId }) {
   const classes = useStyles();
 
   return (
@@ -27,7 +27,9 @@ export default function PanelHeader({ title, children, infoText, className, plac
       <Typography variant="h4" className={classes.panelHeaderTitle}>
         {title}
         {infoText && (
-          <InfoIconButton info={infoText} className={classes.infoIcon} placement={placement} title={title} />
+          <InfoIconButton
+            info={infoText} className={classes.infoIcon} placement={placement} title={title}
+            contentId={contentId} />
         )}
       </Typography>
       <div>{children}</div>

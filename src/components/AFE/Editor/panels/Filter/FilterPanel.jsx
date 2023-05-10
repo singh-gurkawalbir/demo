@@ -31,10 +31,10 @@ export default function FilterPanel({editorId}) {
 
   // Calculate hash of rule as a key. This is to force a re-render when the rule changes
   // as something in the BranchFilterPanel is not updating correctly on rule changes...
-  const key = JSON.stringify(rule);
-
+  // const key = JSON.stringify(rule);
+  // reverting to avoid regression
   return (
-    <div key={key} className={classes.container}>
+    <div className={classes.container}>
       <BranchFilterPanel
         rule={rule}
         type="ioFilter"

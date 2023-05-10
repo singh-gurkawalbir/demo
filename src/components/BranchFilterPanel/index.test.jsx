@@ -115,14 +115,14 @@ describe('Branch filter panel test cases', () => {
     initBranchFilterPanel({rule});
     expect(screen.getByText('record.sampleField')).toBeInTheDocument();
   });
-  test('should call skipEmptyRuleCleanup for ioFilter with correct action', async () => {
+  test('should not call skipEmptyRuleCleanup for ioFilter', async () => {
     initBranchFilterPanel();
     const addRuleButton = screen.getByRole('button', {name: 'Add rule'});
 
     expect(addRuleButton).toBeInTheDocument();
     await userEvent.click(addRuleButton);
 
-    expect(mockDispatch).toHaveBeenCalledWith(
+    expect(mockDispatch).not.toHaveBeenCalledWith(
       actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: true})
     );
   });
@@ -170,11 +170,6 @@ describe('Branch filter panel test cases', () => {
         error: undefined,
         disablePreview: false,
       }));
-
-      expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchRule(editorId, false, {
-        actionType: 'setSkipEmptyRuleCleanup',
-        position,
-      }));
     });
     test('for ioFilter', () => {
       initBranchFilterPanel();
@@ -186,10 +181,6 @@ describe('Branch filter panel test cases', () => {
         error: undefined,
         disablePreview: false,
       }));
-
-      expect(mockDispatch).toHaveBeenCalledWith(
-        actions.editor.patchFeatures(editorId, {skipEmptyRuleCleanup: false})
-      );
     });
   });
 });
