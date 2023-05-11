@@ -152,7 +152,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         />
       )}
 
-      <PanelHeader title="Connections" infoText={infoText.Connections}>
+      <PanelHeader title="Connections" infoText={infoText.Connections} contentId="connectionsIntegration">
         <ActionGroup>
           {permission.create && (
           <TextButton

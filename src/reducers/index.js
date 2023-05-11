@@ -216,6 +216,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      helpContent,
       showIconView,
     } = { ...profile, ...preferences };
 
@@ -236,6 +237,7 @@ selectors.userProfilePreferencesProps = createSelector(
       _ssoAccountId,
       authTypeSSO,
       colorTheme,
+      helpContent,
       showIconView,
     };
   });
@@ -6055,7 +6057,13 @@ selectors.flowDashboardJobs = createSelector(
       if (parentJob.children?.length) {
         const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+        dashboardJobSteps.forEach(step => {
+          if (step?.canceledBy === 'system') {
+            return dashboardSteps.push({...step, canceledBy: parentJob.canceledBy});
+          }
+
+          return dashboardSteps.push(step);
+        });
       }
       // If the parent job is queued/in progress, show dummy steps of flows as waiting status
       if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
@@ -6211,9 +6219,11 @@ selectors.errorFilter = (state, params = {}) => {
 selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
   selectors.allResourceErrorDetails,
   selectors.errorFilter,
-  (errorDetails, errorFilter) => ({
+  selectors.userProfilePreferencesProps,
+  selectors.userTimezone,
+  (errorDetails, errorFilter, preferences, timezone) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, errorFilter),
+    errors: getFilteredErrors(errorDetails.errors, errorFilter, preferences, timezone),
   })
 );
 
@@ -7235,7 +7245,7 @@ selectors.httpPagingValidationError = (state, formKey, pagingMethodsToValidate, 
   if (pagingMethodsToValidate && pagingMethod && Object.keys(pagingMethodsToValidate).includes(pagingMethod)) {
     const regex = pagingMethodsToValidate[pagingMethod];
 
-    const validated = pagingFieldsToValidate?.some(f => regex.test(formFields[f]?.value));
+    const validated = pagingFieldsToValidate?.some(f => new RegExp(regex).test(formFields[f]?.value));
 
     if (!validated) {
       return `The paging method selected must use {{export.http.paging.${pagingMethod}}} in either the relative URI or HTTP request body.`;
@@ -7606,4 +7616,29 @@ selectors.getShopifyStoreLink = (state, resourceId) => {
     if (integration.name.toLowerCase().includes('sap')) return SHOPIFY_APP_STORE_LINKS.SAP_BUSINESS_IA_APP; */
 
   return SHOPIFY_APP_STORE_LINKS.NETSUITE_IA_APP;
+};
+
+selectors.isHttpConnector = (state, resourceId, resourceType) => {
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged;
+
+  if (resourceType === 'connections') {
+    const isNewHTTPFramework = !!getHttpConnector(resource?.http?._httpConnectorId);
+
+    if (!isNewHTTPFramework) return false;
+  }
+  if (!['exports', 'imports'].includes(resourceType) || !resource?._connectionId) {
+    return false;
+  }
+
+  const connectionObj = selectors.resourceData(
+    state,
+    'connections',
+    resource._connectionId,
+  )?.merged || emptyObject;
+
+  const isNewHTTPFramework = !!getHttpConnector(connectionObj?.http?._httpConnectorId);
+
+  const isHttpConnectorParentFormView = selectors.isHttpConnectorParentFormView(state, resourceId);
+
+  return isNewHTTPFramework && !isHttpConnectorParentFormView;
 };

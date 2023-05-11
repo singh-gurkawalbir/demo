@@ -119,7 +119,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         border: '1px solid',
         borderColor: theme => theme.palette.secondary.lightest,
       }}>
-      <PanelHeader title="Notifications" infoText={infoText.Notifications} />
+      <PanelHeader title="Notifications" infoText={infoText.Notifications} contentId="notifications" />
 
       <LoadResources required integrationId={_integrationId} resources="notifications,flows,connections">
         <Box

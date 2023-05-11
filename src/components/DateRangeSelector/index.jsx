@@ -119,8 +119,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
 const DateRange = props => {
-  const { isCalendar, setSelectedRange, ranges } = props;
+  const { isCalendar, setSelectedRange, ranges} = props;
   const handleDateRangeSelection = useCallback(({ selection: range }) => {
     let { startDate, endDate } = range;
 

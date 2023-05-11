@@ -49,6 +49,7 @@ describe('jobStatusWithTag test cases', () => {
     expect(utils.container).toBeEmptyDOMElement();
   });
   test('should be able to view who canceled the flow', async () => {
+    const integrationId = '66ytdg7';
     const job = {
       status: 'canceled',
       type: 'flow',
@@ -58,7 +59,7 @@ describe('jobStatusWithTag test cases', () => {
     const initialStore = getCreatedStore();
 
     mutateStore(initialStore, draft => {
-      draft.data.integrationAShares[job._integrationId] = [{
+      draft.data.integrationAShares[integrationId] = [{
         _id: 'sampleId',
         sharedWithUser: {
           _id: job.canceledBy,
@@ -68,7 +69,7 @@ describe('jobStatusWithTag test cases', () => {
       }];
     });
 
-    initJobStatusWithTag({job}, initialStore);
+    initJobStatusWithTag({job, integrationId}, initialStore);
     expect(screen.getByText('Canceled')).toBeInTheDocument();
     const infoButton = screen.getByRole('button');
 

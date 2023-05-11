@@ -93,7 +93,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
     return usersList.reduce((acc, {sharedWithUser}) => {
       const { _id, name, email } = sharedWithUser;
 
-      acc[_id] = name || email;
+      acc[_id] = name || email || _id;
 
       return acc;
     }, {});
@@ -214,7 +214,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
     if (runHistory?.length) {
       usersList = runHistory.reduce((acc, job) => job.canceledBy && job.canceledBy !== 'system' ? acc.add(job.canceledBy) : acc, new Set());
 
-      usersList = [...usersList].map(_id => ({_id, name: allUsers[_id]}));
+      usersList = [...usersList].map(_id => ({_id, name: allUsers[_id] || _id}));
     }
 
     return [
@@ -306,6 +306,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
             </CeligoSelect>
             {filter?.status === 'canceled' && (
               <MultiSelectFilter
+                data-test="filter-canceled-by"
                 Icon={FilterIcon}
                 ButtonLabel={ButtonLabel}
                 disabled={!runHistory?.length || isLoadingHistory}
@@ -353,6 +354,7 @@ export default function RunHistory({ flowId, className, integrationId }) {
         : (
           <JobTable
             classes={classes.jobTable}
+            integrationId={integrationId}
             jobsInCurrentPage={jobsInCurrentPage || []} />
         )}
 

@@ -93,7 +93,7 @@ export default function SaveAndClose(props) {
         });
       } else { saveResource(closeAfterSave); }
     },
-    [confirmDialog, dispatch, integration?._id, integration?._registeredConnectionIds, onCancel, resource?._connectionId, resourceId, resourceType, saveResource, values]
+    [confirmDialog, dispatch, integration?._id, integration?._registeredConnectionIds, onCancel, resource?._connectionId, resource?._id, resourceId, resourceType, saveResource, values]
   );
 
   return (

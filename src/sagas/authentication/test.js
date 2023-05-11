@@ -587,12 +587,17 @@ describe('auth saga flow', () => {
       })
     );
     const authResponse = {
-      succes: true,
+      success: true,
       mfaRequired: true,
+      isAccountUser: true,
       _csrf,
     };
+    const validateSessionResponse = {
+      mfaSetupRequired: true,
+    };
 
-    expect(saga.next(authResponse).value).toEqual(call(setCSRFToken, _csrf));
+    expect(saga.next(authResponse).value).toEqual(call(validateSession));
+    expect(saga.next(validateSessionResponse).value).toEqual(call(setCSRFToken, _csrf));
     expect(saga.next().value).toEqual(call(getResourceCollection, actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')));
     expect(saga.next().value).toEqual(put(actions.auth.mfaRequired(authResponse)));
   });
@@ -1005,8 +1010,8 @@ describe('testcases with window dom setup', () => {
         id: 'reSigninWithGoogle',
         innerHTML: '<input name="skipRedirect" value="false"><input name="login_hint" value="someEmail"><input name="_csrf" value="someCsrf">',
         method: 'POST',
-        target: '_blank',
         submit,
+        target: 'newWindow',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();
@@ -1028,8 +1033,8 @@ describe('testcases with window dom setup', () => {
         id: 'signinWithGoogle',
         innerHTML: '<input name="_csrf" value="someCsrf">',
         method: 'POST',
-        target: '_blank',
         submit,
+        target: 'newWindow',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();
@@ -1052,7 +1057,7 @@ describe('testcases with window dom setup', () => {
         innerHTML: '<input name="_csrf" value="someCsrf">',
         method: 'POST',
         submit,
-        target: '_blank',
+        target: 'newWindow',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();
@@ -1073,7 +1078,7 @@ describe('testcases with window dom setup', () => {
         innerHTML: '<input name="_csrf" value="someCsrf"><input name="key" value="value">',
         method: 'POST',
         submit,
-        target: '_blank',
+        target: 'newWindow',
       });
       expect(submit).toHaveBeenCalled();
       expect(appendChildFn).toHaveBeenCalled();

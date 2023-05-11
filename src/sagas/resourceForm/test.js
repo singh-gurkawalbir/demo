@@ -76,6 +76,11 @@ describe('resourceForm sagas', () => {
             resourceId,
           ), {merged: {_connectionId: 'conn1'}}],
           [select(
+            selectors.formContext,
+            resourceType,
+            resourceId,
+          ), {fields: [{id: 123}, {name: 'ab'}]}],
+          [select(
             selectors.resource,
             'connections',
             'conn1'
@@ -96,6 +101,7 @@ describe('resourceForm sagas', () => {
           resource: {_connectionId: 'conn1'},
           connection: {_id: 'conn1'},
           isNew: undefined,
+          isHttpConnectorParentFormView: false,
         }
       );
     });

@@ -190,6 +190,7 @@ export default {
       type: 'selectresource',
       checkPermissions: true,
       resourceType: 'connections',
+      showEditableDropdown: true,
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
@@ -291,7 +292,7 @@ export default {
       const expression = [];
       let adaptorType = `${adaptorTypePrefix}${adaptorTypeSuffix}`;
 
-      if (fieldId === 'exportId') {
+      if (fieldId === 'exportId' || fieldId === 'checkExistingExport') {
         expression.push({ isLookup: true });
       }
 
@@ -356,7 +357,6 @@ export default {
       if (fieldId === 'checkExistingExport') {
         importLabel = 'Use existing lookup';
       }
-
       const visible = !!connectionField.value;
 
       return { filter, appType, label: importLabel, visible };

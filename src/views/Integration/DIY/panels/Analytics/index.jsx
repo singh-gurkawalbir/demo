@@ -16,7 +16,7 @@ export default function AnalyticsPanel({ integrationId, childId }) {
         borderColor: theme => theme.palette.secondary.lightest,
       }}>
       <LoadResources required integrationId={integrationId} resources="flows">
-        <PanelHeader title="Analytics" infoText={infoText.Analytics} />
+        <PanelHeader title="Analytics" infoText={infoText.Analytics} contentId="analytics" />
         <ChartsDrawer integrationId={childId || integrationId} />
       </LoadResources>
     </Box>

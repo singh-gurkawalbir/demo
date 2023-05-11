@@ -123,3 +123,12 @@ export const isNumber = str => {
   return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
          !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
 };
+
+export const regexToString = regex => {
+  if (!(regex instanceof RegExp)) {
+    return '';
+  }
+
+  return regex.toString().replace(/^\/|\/[a-z]*$/g, '');
+};
+

@@ -7,6 +7,7 @@ import { selectors } from '../../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
+  handleIsRemoveLogic,
 } from '../../../forms/formFactory/utils';
 import { commitStagedChangesWrapper, requestSuiteScriptMetadata } from '../resources';
 import connectionSagas from './connections';
@@ -49,6 +50,11 @@ export function* createFormValuesPatchSet({
     resourceType,
     resourceId,
   });
+  const formData = yield select(
+    selectors.formContext,
+    resourceType,
+    resourceId
+  );
   let finalValues = values;
   let connection;
 
@@ -72,6 +78,7 @@ export function* createFormValuesPatchSet({
     // stock preSave handler present...
 
     finalValues = preSave(values, resource);
+    finalValues = handleIsRemoveLogic(formData.fields, finalValues);
   }
 
   const patchSet = sanitizePatchSet({

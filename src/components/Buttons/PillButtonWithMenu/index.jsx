@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { ListItem, Menu, MenuItem, Typography } from '@mui/material';
+import { Menu, MenuItem, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
@@ -19,33 +19,63 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(1.5),
     display: 'flex',
     marginRight: theme.spacing(1.5),
     color: theme.palette.secondary.light,
     borderRadius: theme.spacing(0.5),
-    '& svg': {
-      fontSize: theme.spacing(2.5),
-    },
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   menuItem: {
-    padding: theme.spacing(1, 2, 2),
+    padding: theme.spacing(0.5),
+    margin: theme.spacing(0, 1, 2),
+    overflow: 'visible',
+    borderRadius: 2,
+    border: 0,
     '&:hover': {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.default,
       '&:before': {
         display: 'none',
       },
     },
+    '&:after': {
+      content: '""',
+      width: 'calc(100% + 16px)',
+      height: 1,
+      backgroundColor: theme.palette.secondary.lightest,
+      position: 'absolute',
+      bottom: theme.spacing(-1),
+      left: theme.spacing(-1),
+    },
     '&+$menuItem': {
       border: 0,
-      padding: theme.spacing(0.5, 2),
+      '&:after': {
+        display: 'none',
+      },
     },
     '&:nth-child(3)': {
-      marginTop: theme.spacing(1.5),
+      marginBottom: theme.spacing(0),
+      '& $icon': {
+        '& svg': {
+          fontSize: theme.spacing(2.5),
+        },
+      },
     },
     '&:last-child': {
-      paddingBottom: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      '& $icon': {
+        '& svg': {
+          fontSize: theme.spacing(2),
+        },
+      },
     },
+  },
+  dropdownMenuTitle: {
+    padding: theme.spacing(2, 2, 1),
+    lineHeight: 1,
+    fontSize: 11,
   },
 }));
 
@@ -93,14 +123,12 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         onClose={handleMenuClose}
         className={classes.createMenu}
         transformOrigin={{
-          vertical: 'top',
+          vertical: -36,
           horizontal: 176,
         }}
       >
         {menuTitle && (
-        <ListItem>
-          <Typography variant="caption">{menuTitle}</Typography>
-        </ListItem>
+          <Typography variant="caption" component="div" className={classes.dropdownMenuTitle}>{menuTitle}</Typography>
         )}
         {actionsMenu?.map(({ Icon, dataTestId, label, disabled, description, link }) => (
           <MenuItem

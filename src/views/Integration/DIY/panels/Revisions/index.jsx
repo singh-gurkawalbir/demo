@@ -155,7 +155,7 @@ export default function Revisions({ integrationId }) {
         overflowX: 'auto',
         paddingBottom: theme => theme.spacing(2),
       }}>
-      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions} contentId="revisions">
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton

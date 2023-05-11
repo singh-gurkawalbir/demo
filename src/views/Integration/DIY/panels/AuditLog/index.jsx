@@ -35,10 +35,10 @@ export default function AuditLogSection({ integrationId, childId }) {
         border: '1px solid',
         borderColor: theme => theme.palette.secondary.lightest,
         overflowX: 'auto',
-        minHeight: 124,
+        minHeight: '124px',
         marginBottom: theme => theme.spacing(12),
       }}>
-      <PanelHeader title="Audit log" infoText={infoText.AuditLog} />
+      <PanelHeader title="Audit log" infoText={infoText.AuditLog} contentId="auditLog" />
       <AuditLog
         resourceType="integrations"
         resourceId={childId || integrationId}

@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { Typography, AccordionSummary, AccordionDetails, Accordion } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import { isDisplayRefSupportedType } from '../../../../utils/httpConnector';
 import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
@@ -54,18 +56,40 @@ export default function DynaSettings(props) {
     formKey: parentFormKey,
   } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const match = useRouteMatch();
   const { resourceType, resourceId } = resourceContext;
   const settingsFormKey = `settingsForm-${resourceId}`;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
+
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
 
-  const hasSettingsForm = useSelector(state =>
-    selectors.hasSettingsForm(state, resourceType, resourceId, sectionId)
-  );
+  const isHttpConnectorResource = useSelector(state => selectors.isHttpConnector(state, resourceId, resourceType));
+
+  const handleResourceFormRemount = useCallback(() => {
+    // Do this change only for http connector simple view as display after effects only there
+    if (!isDisplayRefSupportedType(resourceType) || !isHttpConnectorResource) {
+      return;
+    }
+
+    dispatch(actions.resourceForm.reInitialize(parentFormKey));
+  }, [dispatch, isHttpConnectorResource, parentFormKey, resourceType]);
+
+  const hasSettingsForm = useSelector(state => {
+    if (['exports', 'imports'].includes(resourceType)) {
+      const settingsForm = selectors.resourceData(state, resourceType, resourceId)?.merged?.settingsForm;
+      // TODO : need to include in the existing selector
+      const hasFormData = !!(settingsForm && (settingsForm.form || settingsForm.init));
+
+      return hasFormData;
+    }
+
+    return selectors.hasSettingsForm(state, resourceType, resourceId, sectionId);
+  });
+
   const handleSettingFormChange = useCallback(
     (values, isValid, skipFieldTouched) => {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -104,9 +128,10 @@ export default function DynaSettings(props) {
   useEffect(() => {
     // when you a settings through the editor after it completes u perform a remount
     if (editorSaveStatus === 'success') {
+      handleResourceFormRemount();
       setRemountFormView(count => count + 1);
     }
-  }, [editorSaveStatus]);
+  }, [editorSaveStatus, handleResourceFormRemount]);
   // Only developers can see/edit raw settings!
   // thus, if there is no settings form and the user is not a dev, render nothing.
   if (!allowFormEdit && !hasSettingsForm) {

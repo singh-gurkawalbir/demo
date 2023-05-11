@@ -153,6 +153,23 @@ export default function DestinationDataType({
           },
         ],
       });
+    } else if (dataType !== MAPPING_DATA_TYPES.OBJECT && newDataType === MAPPING_DATA_TYPES.OBJECT) {
+      confirmDialog({
+        title: 'Confirm data type selection',
+        message: <RawHtml html={message.MAPPER2.OBJECT_DATA_TYPE_WARNING} />,
+        buttons: [
+          {
+            label: 'Confirm',
+            onClick: () => {
+              dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     } else {
       dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
     }

@@ -158,8 +158,6 @@ export function newlayoutElements(newelements = [], flow, isSubFlowView) {
       const position = {};
       const isNewBubble = isNewId(el.id);
 
-      console.log(isNewBubble);
-
       if (el.type === 'iconpp') {
         position.x = node.x;
         position.y = node.y - 31;

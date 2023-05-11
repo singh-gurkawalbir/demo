@@ -190,6 +190,9 @@ const MAPPER2 = {
   DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows,
     all of this parent record row's child rows will be deleted when your selected data type is applied.
     <br><br>Are you sure you want to continue?`,
+  OBJECT_DATA_TYPE_WARNING: `The selected destination field will have an "object" data type that can't be mapped to a
+    source field. The current source field will be removed unless you choose another data type.
+    <br><br>Are you sure you want to continue?`,
   MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will be ignored. Delete all 2.0 mappings to use 1.0 mappings instead.',
   BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Learn about Mapper 2.0</a></b>',
   DYNAMIC_LOOKUP_SOURCE_TOOLTIP: 'Dynamic lookups do not provide source field list',
@@ -207,6 +210,8 @@ const MAPPER2 = {
   LEARN_MORE_MAPPER2: 'Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   AUTO_POPULATE_LEARN_MORE: 'Auto-populate is not available for this connector.<br><br>Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   CONTAINS_SUBRECORDS: 'This import contains subrecord imports, select which import you would like to edit the mapping for.',
+  OBJECT_ARRAY_NOTIFICATION: 'All other child fields of this parent that have the same field<br>name will remain in place. If necessary, you can move each<br>remaining field individually.',
+  REPLACE_ROW_NOTIFICATION: 'All your mappings associated with this destination field will be removed when your selected field will be applied.<br><br>Are you sure you want to continue?',
 };
 // #endregion
 
@@ -260,7 +265,7 @@ const MFA = {
   ACCOUNT_SETTINGS_UPDATED: 'MFA account settings saved successfully.',
   ENABLED: 'MFA enabled successfully.',
   DISABLED: 'MFA disabled successfully.',
-  REAUTHENTICATE_ACCOUNT: '    Re-authenticate your account <br /> Enter your account password to confirm if you want to reset MFA.',
+  REAUTHENTICATE_ACCOUNT: 'Enter your account password to confirm if you want to reset MFA.',
   PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
   RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
   href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,

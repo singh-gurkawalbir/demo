@@ -279,6 +279,7 @@ export const getImportMetadata = (connectorMeta, connectionVersion, connectionAP
                       name: pp.label,
                       in: 'path',
                       required: true,
+                      description: pp.description,
                       config: pp.config,
                       suggestions: pp.values,
                     });
@@ -292,6 +293,7 @@ export const getImportMetadata = (connectorMeta, connectionVersion, connectionAP
               isIdentifier: true,
             });
           }
+          const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'input', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
 
           if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
             const lookup = httpEndpoint.supportedBy.lookupToIdentifyExisting;
@@ -308,7 +310,7 @@ export const getImportMetadata = (connectorMeta, connectionVersion, connectionAP
           const supportsAsyncHelper = !!httpEndpoint.supportedBy.fieldsUserMustSet?.find(f => f.path === 'http._asyncHelperId');
 
           const ep = {
-            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, queryParameters, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds, supportsAsyncHelper,
           };
 
           if (httpEndpoint.resourceFields) {
@@ -558,6 +560,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+        } else if (resource._connectorId && key === 'http._iClientId') {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true, visible: true, _httpConnectorId: (resource?._httpConnectorId || resource?.http?._httpConnectorId), preConfiguredFieldValue: preConfiguredField.values?.[0], iClientConditionsMap: tempFiledMeta.fieldMap[key]?._conditionIdValuesMap, iClientConditions: tempFiledMeta.fieldMap[key]?.conditions, _conditionIdValuesMap: [], conditions: []};
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
