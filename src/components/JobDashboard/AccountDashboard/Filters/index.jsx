@@ -185,7 +185,7 @@ export default function Filters({filterKey}) {
             <Typography variant="body2"> Completed date range:</Typography>
             <DateRangeSelector
               clearable
-              placement="right"
+              placement="bottom-start"
               clearValue={DEFAULT_RANGE}
               onSave={handleDateFilter}
               showCustomRangeValue

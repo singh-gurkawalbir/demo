@@ -1,4 +1,4 @@
-import { TextField, InputAdornment, FormControl, FormLabel, Paper, Autocomplete } from '@mui/material';
+import { TextField, InputAdornment, FormControl, FormLabel, Paper, Autocomplete, MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
@@ -65,7 +65,6 @@ const useStyles = makeStyles(theme => ({
   },
   dropdownitemsConnection: {
     width: '100%',
-    marginTop: 39,
     boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
     '& ul': {
       '& li': {
@@ -101,27 +100,27 @@ const useStyles = makeStyles(theme => ({
 
 const DropdownContext = React.createContext({});
 
-const Option = option => {
+const Option = (props, option) => {
   const data = useContext(DropdownContext);
 
-  const {handleEditClick, classes, allowEdit} = data;
+  const {handleEditClick, handleChange, classes, allowEdit} = data;
 
   return (
-    <>
-      <OptionLabel option={option} connInfo={option?.connInfo} />
+    <MenuItem key={option.value} value={option.value}>
+      <OptionLabel handleClick={handleChange} option={option} connInfo={option?.connInfo} />
       { allowEdit && (
-      <span className={classes.optionEditIcon}>
-        <ActionButton
-          tooltip="Edit connection"
-          placement="bottom"
-          data-test="editResource"
-          onClick={evt => handleEditClick(evt, option)}
-          noPadding>
-          <EditIcon />
-        </ActionButton>
-      </span>
+        <span className={classes.optionEditIcon}>
+          <ActionButton
+            tooltip="Edit connection"
+            placement="bottom"
+            data-test="editResource"
+            onClick={evt => handleEditClick(evt, option)}
+            noPadding>
+            <EditIcon />
+          </ActionButton>
+        </span>
       )}
-    </>
+    </MenuItem>
   );
 };
 
@@ -187,16 +186,6 @@ export default function DynaEditable(props) {
     onEditClick(evt, option.value);
   }, [inputRef, onEditClick]);
 
-  const dropdownProps = useMemo(() => (
-    {
-      handleEditClick,
-      allowEdit,
-      allowNew,
-      handleCreateClick,
-      classes,
-      inputRef,
-    }), [allowEdit, allowNew, classes, handleCreateClick, handleEditClick]);
-
   useEffect(() => {
     if (inputValue !== selectedValue) {
       setInputValue(selectedValue);
@@ -218,9 +207,21 @@ export default function DynaEditable(props) {
   const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
 
   const handleChange = useCallback((event, newValue) => {
+    console.log({newValue});
     setInputValue(newValue?.label);
     onFieldChange(id, newValue?.value);
   }, [id, onFieldChange]);
+
+  const dropdownProps = useMemo(() => (
+    {
+      handleEditClick,
+      allowEdit,
+      allowNew,
+      handleCreateClick,
+      classes,
+      handleChange,
+      inputRef,
+    }), [allowEdit, allowNew, classes, handleChange, handleCreateClick, handleEditClick]);
 
   return (
     <div>
@@ -237,6 +238,7 @@ export default function DynaEditable(props) {
         fullWidth>
         <DropdownContext.Provider value={dropdownProps}>
           <Autocomplete
+            open
             disablePortal
             id="connections-dropdown"
             data-test="connection"
@@ -251,7 +253,7 @@ export default function DynaEditable(props) {
             onBlur={handleBlur}
             blurOnSelect
             filterOptions={filterOptions}
-            onChange={handleChange}
+            onChange={evt => { console.log({evt}); handleChange; }}
             className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
             {...isLoggableAttr(true)}
