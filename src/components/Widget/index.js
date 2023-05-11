@@ -1,30 +1,32 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Card from '@mui/material/Card';
+import { addDays, startOfDay } from 'date-fns';
+import MenuItem from '@mui/material/MenuItem';
+import '../../views/Dashboard/panels/Custom/Styles/widget.css';
 // import IconButton from '@mui/material/IconButton';
 // import CloseIcon from '@mui/icons-material/Close';
-import { addDays, startOfDay } from 'date-fns';
-import '../../views/Dashboard/panels/Custom/Styles/widget.css';
 // import Select from '@mui/material/Select';
 // import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 // import FormControl from '@mui/material/FormControl';
-// import { Typography } from '@mui/material';
-// import { Spinner } from '@celigo/fuse-ui';
+// import RefreshIcon from '../icons/RefreshIcon';
+// import TextButton from '../Buttons/TextButton';
+import { Typography } from '@mui/material';
 import { selectors } from '../../reducers';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
 import PanelHeader from '../PanelHeader';
-import MuiBox from '../BoxWidget/BoxWidget';
+import MuiBox from '../BoxWidget';
 import BarGraph from '../Graphs/BarGraph';
-import RefreshIcon from '../icons/RefreshIcon';
+import LineGraph from '../Graphs/LineGraph';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import DateRangeSelector from '../DateRangeSelector';
 import SelectResource from '../LineGraph/SelectResource';
 import CeligoSelect from '../CeligoSelect';
-import TextButton from '../Buttons/TextButton';
 import ActionGroup from '../ActionGroup';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
+
 // const useStyles = makeStyles(theme => ({
 //   root: {
 //     width: '100%',
@@ -58,44 +60,57 @@ import ActionGroup from '../ActionGroup';
 // }));
 
 export const transformData = data => {
-  let Unknown = 0;
-  let offlineCount = 0;
-  let onlineCount = 0;
+  const resultMap = {};
 
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj in data) {
-    if (Object.prototype.hasOwnProperty.call(data, obj)) {
-      if (data[obj].offline === true) {
-        offlineCount += 1;
-      } else if (data[obj].offline === false) {
-        onlineCount += 1;
-      } else {
-        Unknown += 1;
+  if (data && Array.isArray(data)) {
+    // Check if data is defined and an array
+    data.forEach(obj => {
+      const date = obj._time;
+      const dateObj = new Date(date);
+
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1;
+      const day = dateObj.getDate();
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const { attribute } = obj;
+
+      if (!resultMap[formattedDate]) {
+        resultMap[formattedDate] = {
+          success: 0,
+          error: 0,
+        };
       }
-    }
+
+      if (attribute === 's') {
+        // eslint-disable-next-line no-plusplus
+        resultMap[formattedDate].success++;
+      } else if (attribute === 'e') {
+        // eslint-disable-next-line no-plusplus
+        resultMap[formattedDate].error++;
+      }
+    });
+  } else {
+    console.log('Data not received');
+    // Add an error message for debugging purposes
   }
+
+  const values = Object.entries(resultMap).map(([formattedDate, counts]) => ({
+    label: formattedDate,
+    success: counts.success,
+    error: counts.error,
+  }));
+
+  values.pop();
 
   return {
     ids: {
       XAxis: 'label',
       YAxis: '',
-      Plots: ['count'],
+      Plots: ['success', 'error'],
       MaximumYaxis: '',
     },
-    values: [
-      {
-        label: 'Unkown',
-        count: Unknown,
-      },
-      {
-        label: 'Offline',
-        count: offlineCount,
-      },
-      {
-        label: 'Online',
-        count: onlineCount,
-      },
-    ],
+    values,
   };
 };
 
@@ -179,6 +194,41 @@ const transformData2 = data => {
   };
 };
 
+export const transformData3 = data => {
+  let errorCount = 0;
+  let successCount = 0;
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const obj in data) {
+    if (Object.prototype.hasOwnProperty.call(data, obj)) {
+      if (data[obj].attribute === 'e') {
+        errorCount += 1;
+      } else if (data[obj].offline === 's') {
+        successCount += 1;
+      }
+    }
+  }
+
+  return {
+    ids: {
+      XAxis: 'label',
+      YAxis: '',
+      Plots: ['count'],
+      MaximumYaxis: '',
+    },
+    values: [
+      {
+        label: 'Error',
+        count: errorCount,
+      },
+      {
+        label: 'Success',
+        count: successCount,
+      },
+    ],
+  };
+};
+
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
   endDate: new Date().toISOString(),
@@ -190,10 +240,11 @@ export default function Widget({
   // onRemoveItem,
   title,
   graphType,
-  onChange,
+
   graphData,
   integrationId,
   childId,
+  graphPrefrence,
 }) {
   //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
   const dispatch = useDispatch();
@@ -231,9 +282,9 @@ export default function Widget({
   //   return selectedResources;
   // }, [filteredFlowResources, selectedResources]);
 
-  const handleRefreshClick = useCallback(() => {
-    setRefresh(new Date().getTime());
-  }, []);
+  // const handleRefreshClick = useCallback(() => {
+  //   setRefresh(new Date().getTime());
+  // }, []);
 
   const handleFlowCategoryChange = useCallback(e => {
     setFlowCategory(e.target.value);
@@ -279,45 +330,52 @@ export default function Widget({
   const sections = useMemo(() => groupings.map(s => <MenuItem key={s.titleId || s.sectionId} value={s.titleId || s.sectionId}>{s.title}</MenuItem>), [groupings]);
 
   // //! THIS PART REPRESENTS THE JOB RECORD AREA
-  // const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
+  const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
 
-  // const dataf =
-  // useSelector(
-  //   state => selectors.flowMetricsData(state, integrationId),
-  //   shallowEqual
-  // ) || {};
+  const metricData =
+  useSelector(
+    state => selectors.flowMetricsData(state, integrationId),
+    shallowEqual
+  ) || {};
 
-  // useEffect(() => {
-  //   if (selectedResources.length) {
-  //     setSendQuery(true);
-  //   }
-  // }, [selectedResources, range, refresh]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (selectedResources.length) {
+        setSendQuery(true);
+      }
+    };
 
-  // useEffect(() => {
-  //   if (sendQuery) {
-  //     dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
-  //     setSendQuery(false);
-  //   }
-  // }, [dataf, dispatch, integrationId, range, sendQuery, selectedResources]);
+    fetchData();
+  }, [selectedResources, range, refresh]);
 
-  // if (dataf.status === COMM_STATES.LOADING) {
-  //   return (
-  //     <Spinner center="horizontal" size="large" sx={{mb: 1}} />
-  //   );
-  // }
-  // if (dataf.status === COMM_STATES.ERROR) {
-  //   return <Typography>Error occured</Typography>;
-  // }
-  // console.log('Hi', dataf);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (sendQuery) {
+        dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
+        setSendQuery(false);
+      }
+    };
+
+    fetchData();
+  }, [metricData, dispatch, integrationId, range, sendQuery, selectedResources]);
+
+  if (metricData.status === COMM_STATES.ERROR) {
+    return <Typography>Error occured</Typography>;
+  }
+  // eslint-disable-next-line dot-notation
+  const flowData = metricData.data;
+
+  // console.log(transformData1(graphData));
+  // console.log(transformData(flowData));
 
   //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
   const connectionName = 'connections';
   const flowName = 'flows';
 
-  if (id === '0') {
-    finalData = transformData(graphData);
-  } else if (id === '1' || id === '3' || id === '4') {
+  if (id === '4') {
+    finalData = transformData(flowData);
+  } else if (id === '1' || id === '3' || id === '0') {
     finalData = transformData1(graphData);
   } else if (id === '2') {
     finalData = transformData2(graphData);
@@ -330,7 +388,8 @@ export default function Widget({
   }
   const [data, setData] = useState(finalData);
 
-  const handleBarClick = dataDD => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleBarClick = useCallback(dataDD => {
     const data1 = {
       ids: data.ids,
       values: [
@@ -338,17 +397,16 @@ export default function Widget({
       ],
     };
 
-    // console.log("drilldown", data1);
     setData(data1);
-  };
+  });
 
   const options = [
     {
-      label: 'Area',
-      value: 'Area',
+      label: 'Line',
+      value: 'Line',
       config: data => (
-        <BarGraph
-          data={data} onChange={handleBarClick}
+        <LineGraph
+          data={data} color={graphPrefrence.color}
         />
       ),
     },
@@ -358,33 +416,26 @@ export default function Widget({
       config: data => (
         <BarGraph
           data={data}
+          color={graphPrefrence.color}
           onChange={handleBarClick}
+          range={range}
            />
       ),
     },
-    {
-      label: 'Pie',
-      value: 'Pie',
-      config: data => <BarGraph data={data} onChange={handleBarClick} />,
-    },
   ];
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [, setSelection] = useState(null);
   const [impl, setImpl] = useState(
     options.find(opt => opt.label === graphType)
   );
-  const handleSelection = opt => {
-    setSelection(opt);
-    setImpl(options.find(option => option.label === opt.target.value));
-    onChange(opt.target.value, id);
-  };
 
-  const renderedOptions = options.map(option => (
-    <MenuItem key={option.value} value={option.label}>
-      {option.label}
-    </MenuItem>
-  ));
+  useEffect(() => {
+    <BarGraph
+      data={data}
+      color={graphPrefrence.color}
+      onChange={handleBarClick}
+      range={range}
+           />;
+  }, [impl, handleDateRangeChange, selectedResources, data, graphPrefrence.color, handleBarClick, range]);
 
   return (
     <Card
@@ -405,25 +456,7 @@ export default function Widget({
             infoText="To Be Added..."
            />
           <div className="spacer" />
-          {/* <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="demo-simple-select-standard-label">
-              Graph Type
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              value={impl.label}
-              onChange={handleSelection}
-              label="graphType"
-            >
-              {renderedOptions}
-            </Select>
-          </FormControl> */}
           <ActionGroup>
-            <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
-              Refresh
-            </TextButton>
-
             <DateRangeSelector
               onSave={handleDateRangeChange}
               value={{
@@ -435,7 +468,6 @@ export default function Widget({
             {hasGrouping && (
             <CeligoSelect
               data-test="selectFlowCategory"
-              // className={classes.categorySelect}
               onChange={handleFlowCategoryChange}
               displayEmpty
               value={flowCategory || ''}>

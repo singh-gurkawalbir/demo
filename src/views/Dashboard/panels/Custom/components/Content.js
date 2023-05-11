@@ -1,21 +1,15 @@
 /* eslint-disable no-use-before-define */
 // import React, {useState, useEffect} from 'react';
-import React, { useState, useMemo, useEffect } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useRouteMatch } from 'react-router-dom';
-import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-// import Widget from '../../../../components/Widget/Widget';
-import { Spinner } from '@celigo/fuse-ui';
-import { addDays, startOfDay } from 'date-fns';
-import Widget from '../../../../components/Widget/Widget';
-import './Styles/styles.css';
-import './Styles/content.css';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
-import { getSelectedRange } from '../../../../utils/flowMetrics';
-import { COMM_STATES } from '../../../../reducers/comms/networkComms';
+import Widget from '../../../../../components/Widget';
+import '../Styles/styles.css';
+import '../Styles/content.css';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -59,10 +53,10 @@ const useStyles = makeStyles(theme => ({
 const initialLayouts = {
   lg: [
     {
-      i: '0',
+      i: '4',
       x: 0,
       y: 1,
-      w: 1,
+      w: 2,
       h: 4,
       minW: 1,
       minH: 4,
@@ -71,7 +65,7 @@ const initialLayouts = {
     },
     {
       i: '1',
-      x: 0,
+      x: 1,
       y: 2,
       w: 1,
       h: 4,
@@ -82,8 +76,8 @@ const initialLayouts = {
     },
     {
       i: '2',
-      x: 1,
-      y: 1,
+      x: 2,
+      y: 2,
       w: 1,
       h: 4,
       minW: 1,
@@ -103,7 +97,7 @@ const initialLayouts = {
       static: false,
     },
     {
-      i: '4',
+      i: '0',
       x: 2,
       y: 1,
       w: 1,
@@ -455,25 +449,19 @@ const initialLayouts = {
 };
 
 const initialGraphTypes = [
-  { id: '0', type: 'Bar', dataType: 'connections' },
-  { id: '1', type: 'Bar', dataType: 'connections' },
-  { id: '2', type: 'Bar', dataType: 'connections' },
-  { id: '3', type: 'Bar', dataType: 'imports' },
-  { id: '4', type: 'Bar', dataType: 'flows' },
+  { id: '4', type: 'Bar', dataType: 'Records', color: ['#D93535', '#05B39C'] },
+  { id: '0', type: 'Line', dataType: 'connections', color: '#FAB840'},
+  { id: '1', type: 'Line', dataType: 'connections', color: '#3F5089'},
+  { id: '2', type: 'Line', dataType: 'connections', color: '#FAB840' },
+  { id: '3', type: 'Bar', dataType: 'imports', color: ['#D93535', '#05B39C'] },
 ];
-
-const defaultRange = {
-  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
-  endDate: new Date().toISOString(),
-  preset: 'last30days',
-};
 
 export default function Content({colsize, id, data}) {
   const [layouts, setLayouts] = useState(
     getFromLS('layouts', `lt${id}`) || initialLayouts
   );
   const classes = useStyles();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const match = useRouteMatch();
   const integrationId = 'none';
   const { childId } = match.params;
@@ -551,72 +539,19 @@ export default function Content({colsize, id, data}) {
             <Widget
               id={l.i}
               onRemoveItem={onRemoveItem}
-              graphType={gt.type || 'Area'}
+              graphType={gt.type || 'Bar'}
               onChange={handleGraphChange}
               graphData={gd}
               title={gt.dataType}
               integrationId={integrationId}
               childId={childId}
+              graphPrefrence={gt}
             />
           </div>
         );
       });
     }
   };
-
-  //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
-  console.log('Final', integrationId);
-  const dispatch = useDispatch();
-  // const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  // const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
-  // const hasGrouping = !!flowGroupingsSections || isIntegrationAppV1;
-  // const [flowCategory, setFlowCategory] = useState();
-  // const groupings = useSelectorMemo(selectors.mkIntegrationFlowGroups, integrationId);
-  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
-  const { rangePreference, resourcePreference } = useMemo(() => {
-    const preference = preferences[integrationId] || {};
-
-    return {
-      rangePreference: preference.range ? getSelectedRange(preference.range) : defaultRange,
-      resourcePreference: preference.resource || [integrationId],
-    };
-  }, [integrationId, preferences]);
-
-  const [selectedResources] = useState(resourcePreference);
-
-  const [refresh] = useState();
-  const [range] = useState(rangePreference);
-
-  //! THIS PART REPRESENTS THE JOB RECORD AREA
-  const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
-
-  const dataf = useSelector(
-    state => selectors.flowMetricsData(state, integrationId),
-    shallowEqual
-  ) || {};
-
-  useEffect(() => {
-    if (selectedResources.length) {
-      setSendQuery(true);
-    }
-  }, [selectedResources, range, refresh]);
-
-  useEffect(() => {
-    if (sendQuery) {
-      dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
-      setSendQuery(false);
-    }
-  }, [dataf, dispatch, integrationId, range, sendQuery, selectedResources]);
-
-  if (dataf.status === COMM_STATES.LOADING) {
-    return (
-      <Spinner center="horizontal" size="large" sx={{mb: 1}} />
-    );
-  }
-  if (dataf.status === COMM_STATES.ERROR) {
-    return <Typography>Error occured</Typography>;
-  }
-  console.log('Hi', dataf);
 
   return (
     <div className={classes.responsiveContainer}>
@@ -632,7 +567,7 @@ export default function Content({colsize, id, data}) {
           xxs: parseInt(col, 10),
         }}
         rowHeight={60}
-        // preventCollision={false}
+        preventCollision={false}
         autoSize
         margin={{
           lg: [20, 20],
@@ -641,10 +576,8 @@ export default function Content({colsize, id, data}) {
           xs: [20, 20],
           xxs: [20, 20],
         }}
-        // compactType= {'horizontal'}
         // width={width}
-        onLayoutChange={onLayoutChange}
-      >
+        onLayoutChange={onLayoutChange}>
         {generateDOM()}
       </ResponsiveGridLayout>
     </div>

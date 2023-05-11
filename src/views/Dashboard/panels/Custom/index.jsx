@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 // eslint-disable-next-line import/no-duplicates
 import { useSelector } from 'react-redux';
-import Content from './Content';
+import Content from './components/Content';
 import LoadResources from '../../../../components/LoadResources';
 import LoadingNotification from '../../../../App/LoadingNotification';
 
@@ -56,8 +56,6 @@ export default function CustomPanel() {
   const flowList = useSelector(state =>
     selectors.resourceList(state, { type: 'flows' })
   ).resources;
-
-  // console.log('CL', connectionList);
 
   const classes = useStyles();
 

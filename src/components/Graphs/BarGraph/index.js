@@ -8,10 +8,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import './Bar.css';
 import React from 'react';
 
-function BarGraph({ data, onChange }) {
+function BarGraph({ data, color, onChange }) {
   // const CustomTooltip = ({ active, payload, label }) => {
   //     if (active && payload && payload.length) {
   //       return (
@@ -28,8 +27,6 @@ function BarGraph({ data, onChange }) {
   //     return null;
   //   };
 
-  // eslint-disable-next-line react/no-array-index-key
-  const color = ['#D93535', '#05B39C'];
   // eslint-disable-next-line react/no-array-index-key
   const renderedBar = data.ids.Plots.map((plot, index) => <Bar key={index} dataKey={plot} stackId="a" fill={color[index]} />);
 
