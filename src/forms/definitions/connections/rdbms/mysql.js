@@ -6,6 +6,11 @@ export default {
       '/rdbms/type': 'mysql',
     };
 
+    if (newValues['/rdbms/useSSL'] === false) {
+      newValues['/rdbms/ssl/ca'] = undefined;
+      delete newValues['/rdbms/ssl'];
+    }
+
     if (newValues['/mode'] === 'cloud') {
       newValues['/_agentId'] = undefined;
     }
