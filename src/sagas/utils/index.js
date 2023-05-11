@@ -894,7 +894,7 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     const preConfiguredField = httpConnectorData?.supportedBy?.iClient?.preConfiguredFields?.find(field => key === field?.path);
 
     if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
-      // new Iclient
+      // new Iclient, it should update the defaultvalue as per the http2.0 metadta
       tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0];
       if (key === 'oauth2.callbackURL') {
         !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = `${getDomainUrl()}/connection/oauth2callback`);
