@@ -1,14 +1,15 @@
 /* eslint-disable no-use-before-define */
-import React, {useState, useEffect} from 'react';
+// import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-// import { withSize } from 'react-sizeme';
+import { useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import Widget from '../../../../components/Widget/Widget';
-import './Styles/styles.css';
-import './Styles/content.css';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
+import Widget from '../../../../../components/Widget';
+import '../Styles/styles.css';
+import '../Styles/content.css';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -448,7 +449,7 @@ const initialLayouts = {
 };
 
 const initialGraphTypes = [
-  { id: '4', type: 'Bar', dataType: 'flows', color: ['#D93535', '#05B39C'] },
+  { id: '4', type: 'Bar', dataType: 'Records', color: ['#D93535', '#05B39C'] },
   { id: '0', type: 'Line', dataType: 'connections', color: '#FAB840'},
   { id: '1', type: 'Line', dataType: 'connections', color: '#3F5089'},
   { id: '2', type: 'Line', dataType: 'connections', color: '#FAB840' },
@@ -461,6 +462,9 @@ export default function Content({colsize, id, data}) {
   );
   const classes = useStyles();
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const integrationId = 'none';
+  const { childId } = match.params;
 
   const [graphTypes, setGraphTypes] = useState(
     getFromLS('graphTypes', `gt${id}`) || initialGraphTypes
@@ -539,6 +543,8 @@ export default function Content({colsize, id, data}) {
               onChange={handleGraphChange}
               graphData={gd}
               title={gt.dataType}
+              integrationId={integrationId}
+              childId={childId}
               graphPrefrence={gt}
             />
           </div>

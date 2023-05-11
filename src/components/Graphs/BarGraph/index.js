@@ -8,7 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import './Bar.css';
 import React from 'react';
 
 function BarGraph({ data, color, onChange }) {
