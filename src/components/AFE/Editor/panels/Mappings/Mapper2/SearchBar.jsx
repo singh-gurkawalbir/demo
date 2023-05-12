@@ -93,7 +93,7 @@ export default function SearchBar() {
     <div className={classes.searchWrapper}>
       <ActionGroup>
         <SearchInput
-          value={text}
+          defaultValue={text}
           onChange={handleKeywordChange}
           className={classes.searchField}
           sx={{
