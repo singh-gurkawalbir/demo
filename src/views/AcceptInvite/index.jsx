@@ -35,7 +35,12 @@ export default function AcceptInvite(props) {
   useEffect(() => {
     if (redirectUrl) {
       dispatch(actions.auth.acceptInvite.clear());
-      history.push(redirectUrl);
+      if (redirectUrl.includes('sso')) {
+        // Reload the page instead of app routing to url
+        window.location.href = redirectUrl;
+      } else {
+        history.push(redirectUrl);
+      }
     }
   }, [dispatch, history, redirectUrl]);
 
