@@ -1,6 +1,6 @@
 import React, { useCallback} from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import TextButton from '@celigo/fuse-ui';
+import {TextButton} from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { message } from '../../../../../utils/messageStore';
 import CopyIcon from '../../../../icons/CopyIcon';

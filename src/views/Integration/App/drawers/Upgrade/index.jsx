@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
-import FilledButton from '@celigo/fuse-ui';
+import {FilledButton} from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
