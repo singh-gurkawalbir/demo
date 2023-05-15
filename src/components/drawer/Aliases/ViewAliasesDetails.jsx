@@ -3,15 +3,20 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { FilledButton } from '@celigo/fuse-ui';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  InfoIconButton,
+  FilledButton,
+} from '@celigo/fuse-ui';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import { getResourceFromAlias, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import NameCell from '../../ResourceTable/commonCells/Name';
 import RightDrawer from '../Right';
-import DrawerContent from '../Right/DrawerContent';
-import DrawerFooter from '../Right/DrawerFooter';
-import DrawerHeader from '../Right/DrawerHeader';
 import { emptyObject } from '../../../constants';
 import { drawerPaths } from '../../../utils/rightDrawer';
 import { message } from '../../../utils/messageStore';
@@ -71,15 +76,21 @@ export default function ViewAliasDetailsDrawer({ resourceId, resourceType, heigh
 
   return (
     <RightDrawer
+      isIntegrated
       height={height}
-      width="default"
       path={[drawerPaths.ALIASES.VIEW_INHERITED_DETAILS, drawerPaths.ALIASES.VIEW_DETAILS]}
     >
-      <DrawerHeader
-        title="View details"
-        infoText={message.ALIAS.VIEW_DETAILS_HELPINFO}
-      />
-      <DrawerContent>
+      <DrawerHeader>
+        <DrawerTitle>
+          View details
+          <InfoIconButton
+            title="View details"
+            info={message.ALIAS.VIEW_DETAILS_HELPINFO}
+          />
+        </DrawerTitle>
+        <DrawerCloseButton onClick={handleClose} />
+      </DrawerHeader>
+      <DrawerContent withPadding>
         <ViewAliasDetails resourceId={resourceId} resourceType={resourceType} />
       </DrawerContent>
       <DrawerFooter>

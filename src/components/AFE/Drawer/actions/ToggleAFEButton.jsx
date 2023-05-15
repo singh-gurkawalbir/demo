@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { TextToggle } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
-import TextToggle from '../../../TextToggle';
 import Help from '../../../Help';
 import { selectors } from '../../../../reducers';
 
@@ -25,7 +25,7 @@ export default function ToggleAFEButton({ editorId }) {
   const hideAFEToggle = !editorSupportsV1V2data || editorSupportsOnlyV2Data;
 
   const handleVersionToggle = useCallback(
-    newVersion => {
+    (event, newVersion) => {
       dispatch(actions.editor.toggleVersion(editorId, newVersion));
     },
     [dispatch, editorId]
@@ -39,7 +39,6 @@ export default function ToggleAFEButton({ editorId }) {
         disabled={saveInProgress}
         value={editorVersion}
         onChange={handleVersionToggle}
-        exclusive
         options={toggleEditorOptions}
       />
       <Help

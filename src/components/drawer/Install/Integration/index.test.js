@@ -44,7 +44,7 @@ describe('InstallIntegrationDrawer tests', () => {
 
   test('Should able to test the render with Preview', async () => {
     await initInstallIntegrationDrawer('/preview/_someId');
-    expect(screen.getByRole('heading', {name: 'Upload integration'})).toBeInTheDocument();
+    expect(screen.getByText('Upload integration')).toBeInTheDocument();
     expect(screen.getByText('Preview')).toBeInTheDocument();
     const buttons = screen.getAllByRole('button');
     const closeButton = buttons.find(btn => btn.getAttribute('data-test') === 'closeRightDrawer');
