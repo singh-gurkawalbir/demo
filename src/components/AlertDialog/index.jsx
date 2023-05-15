@@ -14,6 +14,7 @@ import { emptyList, HOME_PAGE_PATH} from '../../constants';
 import useConfirmDialog from '../ConfirmDialog';
 import { message } from '../../utils/messageStore';
 import * as pendo from '../../utils/analytics/pendo';
+import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   contentWrapper: {
@@ -71,7 +72,7 @@ const UserAcceptedAccountTransfer = () => (
   <ModalDialog show>
     <div>Success!</div>
     <Typography>
-      {message.USER_SIGN_IN.OWNER_ACCOUNT}
+      <RawHtml html={message.USER_SIGN_IN.OWNER_ACCOUNT} />
     </Typography>
     <FilledButton
       data-test="ok"

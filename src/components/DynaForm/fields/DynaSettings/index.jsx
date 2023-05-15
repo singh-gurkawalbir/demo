@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { Typography, AccordionSummary, AccordionDetails, Accordion } from '@mui/material';
@@ -55,11 +55,15 @@ export default function DynaSettings(props) {
     fieldsOnly = false,
     formKey: parentFormKey,
   } = props;
+
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
+
   const { resourceType, resourceId } = resourceContext;
   const settingsFormKey = `settingsForm-${resourceId}`;
+
+  const isMounted = useRef(false);
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
 
@@ -128,10 +132,23 @@ export default function DynaSettings(props) {
   useEffect(() => {
     // when you a settings through the editor after it completes u perform a remount
     if (editorSaveStatus === 'success') {
-      handleResourceFormRemount();
       setRemountFormView(count => count + 1);
     }
+  }, [editorSaveStatus]);
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+
+      return;
+    }
+
+    if (editorSaveStatus === 'success') {
+      // This block of code will run on re-render (when the dependencies change)
+      handleResourceFormRemount();
+    }
   }, [editorSaveStatus, handleResourceFormRemount]);
+
   // Only developers can see/edit raw settings!
   // thus, if there is no settings form and the user is not a dev, render nothing.
   if (!allowFormEdit && !hasSettingsForm) {
