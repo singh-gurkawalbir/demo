@@ -3,7 +3,9 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Card from '@mui/material/Card';
 import { addDays, startOfDay } from 'date-fns';
+import { Typography } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
+import DefaultDashboard from '../../views/Dashboard/panels/Custom/components/DefaultDashboard';
 import '../../views/Dashboard/panels/Custom/Styles/widget.css';
 // import IconButton from '@mui/material/IconButton';
 // import CloseIcon from '@mui/icons-material/Close';
@@ -12,7 +14,6 @@ import '../../views/Dashboard/panels/Custom/Styles/widget.css';
 // import FormControl from '@mui/material/FormControl';
 // import RefreshIcon from '../icons/RefreshIcon';
 // import TextButton from '../Buttons/TextButton';
-import { Typography } from '@mui/material';
 import { selectors } from '../../reducers';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
@@ -90,9 +91,6 @@ export const transformData = data => {
         resultMap[formattedDate].error++;
       }
     });
-  } else {
-    console.log('Data not received');
-    // Add an error message for debugging purposes
   }
 
   const values = Object.entries(resultMap).map(([formattedDate, counts]) => ({
@@ -240,7 +238,6 @@ export default function Widget({
   // onRemoveItem,
   title,
   graphType,
-
   graphData,
   integrationId,
   childId,
@@ -265,7 +262,7 @@ export default function Widget({
 
   const [selectedResources, setSelectedResources] = useState(resourcePreference);
 
-  const [refresh, setRefresh] = useState();
+  const [refresh] = useState();
   const [range, setRange] = useState(rangePreference);
 
   const flowResources = useSelectorMemo(selectors.mkIntegrationFlowsByGroup, integrationId, childId, flowCategory);
@@ -362,11 +359,8 @@ export default function Widget({
   if (metricData.status === COMM_STATES.ERROR) {
     return <Typography>Error occured</Typography>;
   }
-  // eslint-disable-next-line dot-notation
-  const flowData = metricData.data;
 
-  // console.log(transformData1(graphData));
-  // console.log(transformData(flowData));
+  const flowData = metricData.data;
 
   //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
@@ -424,18 +418,13 @@ export default function Widget({
     },
   ];
 
-  const [impl, setImpl] = useState(
+  const [impl] = useState(
     options.find(opt => opt.label === graphType)
   );
 
   useEffect(() => {
-    <BarGraph
-      data={data}
-      color={graphPrefrence.color}
-      onChange={handleBarClick}
-      range={range}
-           />;
-  }, [impl, handleDateRangeChange, selectedResources, data, graphPrefrence.color, handleBarClick, range]);
+    if (id === '4') { setData(transformData(flowData)); }
+  }, [flowData, id]);
 
   return (
     <Card
@@ -457,6 +446,9 @@ export default function Widget({
            />
           <div className="spacer" />
           <ActionGroup>
+            {/* <TextButton startIcon={<RefreshIcon />}>
+              Refresh
+            </TextButton> */}
             <DateRangeSelector
               onSave={handleDateRangeChange}
               value={{
@@ -493,10 +485,32 @@ export default function Widget({
             top: 70,
           }}
         >
-          {impl.config(data)}
+          {data.values.length === 0 ? <DefaultDashboard id={id} /> : impl.config(data)}
         </div>
       </div>
     </Card>
   );
 }
+
+// const handleRefreshClick = useCallback(() => {
+//   switch (id) {
+// case '0':
+//   setData(transformData1(graphData));
+//   break;
+// case '1':
+//   setData(transformData1(graphData));
+//   break;
+// case '2':
+//   setData(transformData2(graphData));
+//   break;
+// case '3':
+//   setData(transformData1(graphData));
+//   break;
+//     case '4':
+//       setData(transformData(flowData));
+//       break;
+//     default:
+//       return null;
+//   }
+// }, [flowData, id]);
 
