@@ -1,32 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Tabs, Tab } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Box, Spinner, Tab, TabContext, TabList, TabPanel } from '@celigo/fuse-ui';
 import CeligoTable from '../../../../../CeligoTable';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import { thisIntegrationRefsMetadata, otherIntegrationRefsMetadata } from './metadata';
-
-const useStyles = makeStyles(theme => ({
-  references: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2, 2, 0, 2),
-    textAlign: 'center',
-  },
-  tabContent: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    borderTop: 'none',
-    borderBottom: 'none',
-  },
-  grid: {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 const tabs = [
   {
@@ -42,30 +20,27 @@ const USED_BY_THIS_INTEGRATION_TAB = 0;
 const USED_BY_OTHER_INTEGRATION_TAB = 1;
 
 const UsedByThisIntegrationTab = ({resourceReferences, integrationId}) => {
-  const classes = useStyles();
   const referredByThisIntegration = useMemo(() =>
     (resourceReferences || []).filter(ref => ref.integrationId === integrationId),
   [integrationId, resourceReferences]);
 
   return (
-    <CeligoTable className={classes.grid} data={referredByThisIntegration} {...thisIntegrationRefsMetadata} />
+    <CeligoTable sx={{mt: theme => theme.spacing(2)}} data={referredByThisIntegration} {...thisIntegrationRefsMetadata} />
   );
 };
 
 const UsedByOtherIntegrationsTab = ({resourceReferences, integrationId}) => {
-  const classes = useStyles();
   const referredByOtherIntegrations = useMemo(() =>
     (resourceReferences || []).filter(ref => ref.integrationId !== integrationId),
   [integrationId, resourceReferences]);
 
   return (
-    <CeligoTable className={classes.grid} data={referredByOtherIntegrations} {...otherIntegrationRefsMetadata} />
+    <CeligoTable sx={{mt: theme => theme.spacing(2)}} data={referredByOtherIntegrations} {...otherIntegrationRefsMetadata} />
   );
 };
 
 export default function References({ resourceId, resourceType, integrationId }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [tabIndex, setTabIndex] = useState(0);
 
   const resourceReferences = useSelector(state => selectors.resourceReferencesPerIntegration(state, integrationId));
@@ -86,35 +61,47 @@ export default function References({ resourceId, resourceType, integrationId }) 
 
   if (!resourceReferences.length) {
     return (
-      <div className={classes.references}>
+      <Box
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: theme => theme.spacing(2, 2, 0, 2),
+          textAlign: 'center',
+        }}>
         This resource isn’t being used anywhere.
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className={classes.references}>
-      <Tabs
-        value={tabIndex}
-        onChange={handleTabChange}
-        indicatorColor="primary"
-        textColor="primary">
-        {tabs.map(({ label, dataTest }, i) => (
-          <Tab
-            className={classes.tabHeader}
-            key={label}
-            id={i}
-            value={i}
-            aria-controls={i}
-            label={label}
-            data-test={dataTest}
-        />
-        ))}
-      </Tabs>
-
-      { tabIndex === USED_BY_THIS_INTEGRATION_TAB && <UsedByThisIntegrationTab resourceReferences={resourceReferences} integrationId={integrationId} /> }
-      { tabIndex === USED_BY_OTHER_INTEGRATION_TAB && <UsedByOtherIntegrationsTab resourceReferences={resourceReferences} integrationId={integrationId} /> }
-
-    </div>
+    <TabContext value={tabIndex}>
+      <Box
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: theme => theme.spacing(2, 2, 0, 2),
+          textAlign: 'center',
+        }}>
+        <TabList onChange={handleTabChange}>
+          {tabs.map(({ label, dataTest }, i) => (
+            <Tab
+              key={label}
+              id={i}
+              value={i}
+              aria-controls={i}
+              label={label}
+              data-test={dataTest} />
+          ))}
+        </TabList>
+        <TabPanel value={USED_BY_THIS_INTEGRATION_TAB}>
+          <UsedByThisIntegrationTab resourceReferences={resourceReferences} integrationId={integrationId} />
+        </TabPanel>
+        <TabPanel value={USED_BY_OTHER_INTEGRATION_TAB}>
+          <UsedByOtherIntegrationsTab resourceReferences={resourceReferences} integrationId={integrationId} />
+        </TabPanel>
+      </Box>
+    </TabContext>
   );
 }

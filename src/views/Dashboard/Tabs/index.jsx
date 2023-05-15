@@ -1,30 +1,12 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
-import { Tabs, Tab } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { TabContext, TabList, TabPanel, Tab } from '@celigo/fuse-ui';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
-import TabContent from '../../../components/TabContent';
+import PageContent from '../../../components/PageContent';
 
-const useStyles = makeStyles(theme => ({
-  tabContainer: {
-    padding: theme.spacing(0, 3),
-  },
-  tabPanel: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(1, 2),
-    overflow: 'visible',
-  },
-  tab: {
-    minWidth: 'auto',
-    color: theme.palette.secondary.main,
-    fontSize: 14,
-  },
-}));
 const tabs = [
   {
     path: 'runningFlows',
@@ -39,9 +21,10 @@ const tabs = [
     Icon: CompletedIcon,
     Panel: Completed,
     dataTest: 'account-dashboard-completed-flows',
-  }];
+  },
+];
+
 export default function DashboardTabs() {
-  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -65,39 +48,37 @@ export default function DashboardTabs() {
   );
 
   return (
-    <TabContent>
-      <Tabs
-        value={currentTabIndex}
-        onChange={handleTabChange}
-        indicatorColor="primary"
-        textColor="primary"
-        variant="scrollable"
-        scrollButtons="auto"
-        aria-label="scrollable auto tabs example">
-        {tabs.map(({ label, Icon, dataTest }, i) => (
-          <Tab
-            className={classes.tab}
-            key={label}
-            id={`tab-${i}`}
-            {...{ 'aria-controls': `tabpanel-${i}` }}
-            icon={<Icon />}
-            label={label}
-            data-test={dataTest}
+    <TabContext value={currentTabIndex}>
+      <PageContent>
+        <TabList
+          variant="scrollable"
+          aria-label="scrollable auto tabs example"
+          onChange={handleTabChange}
+        >
+          {tabs.map(({ label, Icon, dataTest }, i) => (
+            <Tab
+              sx={{ minWidth: 'auto !important' }}
+              key={label}
+              id={`tab-${i}`}
+              aria-controls={`tabpanel-${i}`}
+              icon={<Icon />}
+              label={label}
+              data-test={dataTest}
           />
-        ))}
-      </Tabs>
+          ))}
+        </TabList>
 
-      {tabs.map(({ path, Panel }, i) => (
-        <div
-          key={path}
-          role="tabpanel"
-          hidden={currentTabIndex !== i}
-          className={classes.tabPanel}
-          id={`tabpanel-${i}`}
-          aria-labelledby={`tab-${i}`}>
-          <div>{currentTabIndex === i && <Panel {...match.params} />}</div>
-        </div>
-      ))}
-    </TabContent>
+        {tabs.map(({ path, Panel }, i) => (
+          <TabPanel
+            key={path}
+            value={i}
+            id={`tabpanel-${i}`}
+            aria-labelledby={`tab-${i}`}
+            >
+            <Panel {...match.params} />
+          </TabPanel>
+        ))}
+      </PageContent>
+    </TabContext>
   );
 }

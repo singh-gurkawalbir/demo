@@ -144,7 +144,7 @@ describe('ViewRevisionDetails tests', () => {
   test('Should able to test the initial render with mode changes', async () => {
     await initViewRevisionDetails(props, 'changes', '_revertRevId');
     expect(screen.getByRole('button', {name: 'Expand all'})).toBeInTheDocument();
-    expect(screen.getByRole('tabpanel', {name: 'View resources changed'})).toBeInTheDocument();
+    expect(screen.getByRole('tab', {name: 'View resources changed'})).toBeInTheDocument();
     const detailstab = screen.getByRole('tab', {name: 'View details'});
 
     expect(detailstab).toBeInTheDocument();

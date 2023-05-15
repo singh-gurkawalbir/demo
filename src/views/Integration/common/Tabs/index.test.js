@@ -116,7 +116,7 @@ describe('test suite for IntegrationTabs', () => {
 
     await userEvent.click(connectionTab);
     await initIntegrationTabs({tabs}, {initialStore, renderFun: utils.rerender});
-    await waitFor(() => expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('tab', {name: /Connections/})).toBeInTheDocument());
   });
 
   test('completed flows panel should not be accessible external to dashboard panel for users in EM2.0', async () => {
@@ -133,6 +133,6 @@ describe('test suite for IntegrationTabs', () => {
 
     await userEvent.click(connectionTab);
     await initIntegrationTabs({tabs}, {initialStore, renderFun: utils.rerender});
-    await waitFor(() => expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('tab', {name: /Connections/})).toBeInTheDocument());
   });
 });

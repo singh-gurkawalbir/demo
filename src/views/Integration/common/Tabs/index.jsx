@@ -1,26 +1,12 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import { Tabs, Tab } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, TabContext, TabList, TabPanel, Tab } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
-const useStyles = makeStyles(theme => ({
-  tabContainer: {
-    padding: theme.spacing(0, 3),
-  },
-  tabPanel: {
-    overflow: 'visible',
-  },
-  tab: {
-    minWidth: 'auto',
-    fontSize: 14,
-  },
-}));
 
-export default function IntegrationTabs({ tabs, className }) {
-  const classes = useStyles();
+export default function IntegrationTabs({ tabs, sx = [] }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { dashboardTab, childId } = match.params;
@@ -58,46 +44,50 @@ export default function IntegrationTabs({ tabs, className }) {
   );
 
   return (
-    <div className={(classes.tabContainer, className)}>
-      <Tabs
-        value={currentTabIndex}
-        onChange={handleTabChange}
-        indicatorColor="primary"
-        textColor="primary"
-        variant="scrollable"
-        scrollButtons="auto"
-        aria-label="scrollable auto tabs example">
-        {tabs.map(({ label, Icon }, i) => (
-          <Tab
-            className={classes.tab}
-            key={label}
-            data-test={label}
-            id={`tab-${i}`}
-            {...{ 'aria-controls': `tabpanel-${i}` }}
-            icon={<Icon />}
-            label={label}
-            sx={{
-              padding: '9px 12px 4px',
-              lineHeight: 1.75,
-              '&>.MuiTab-iconWrapper': {
-                marginRight: theme => theme.spacing(0.5),
-              },
-            }}
-          />
-        ))}
-      </Tabs>
+    <TabContext value={currentTabIndex}>
+      <Box
+        sx={[
+          { p: theme => theme.spacing(0, 3) },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}>
+        <TabList
+          onChange={handleTabChange}
+          variant="scrollable"
+          aria-label="scrollable auto tabs example"
+          >
+          {tabs.map(({ label, Icon }, i) => (
+            <Tab
+              key={label}
+              data-test={label}
+              id={`tab-${i}`}
+              aria-controls={`tabpanel-${i}`}
+              icon={<Icon />}
+              label={label}
+              sx={{
+                minWidth: 'auto !important',
+                padding: '9px 12px 4px',
+                lineHeight: 1.75,
+                '&>.MuiTab-iconWrapper': {
+                  marginRight: theme => theme.spacing(0.5),
+                },
+              }}
+              />
+          ))}
+        </TabList>
 
-      {tabs.map(({ path, Panel }, i) => (
-        <div
-          key={path}
-          role="tabpanel"
-          hidden={currentTabIndex !== i}
-          className={classes.tabPanel}
-          id={`tabpanel-${i}`}
-          aria-labelledby={`tab-${i}`}>
-          <div>{currentTabIndex === i && <Panel {...match.params} childId={childId} />}</div>
-        </div>
-      ))}
-    </div>
+        {tabs.map(({ path, Panel }, i) => (
+          <TabPanel
+            value={i}
+            key={path}
+            id={`tabpanel-${i}`}
+            aria-labelledby={`tab-${i}`}
+            >
+            <Box sx={{ overflow: 'visible' }}>
+              <Panel {...match.params} childId={childId} />
+            </Box>
+          </TabPanel>
+        ))}
+      </Box>
+    </TabContext>
   );
 }
