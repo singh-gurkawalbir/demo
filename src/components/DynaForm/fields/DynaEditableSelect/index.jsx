@@ -66,7 +66,11 @@ const useStyles = makeStyles(theme => ({
   dropdownitemsConnection: {
     width: '100%',
     boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
-    '& ul': {
+    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
+    '& .MuiAutocomplete-listbox': {
+      maxHeight: '217px',
+      padding: 0,
+      marginBottom: '-1px',
       '& li': {
         display: 'flex',
         justifyContent: 'space-between',
@@ -84,11 +88,6 @@ const useStyles = makeStyles(theme => ({
           },
         },
       },
-    },
-    '& > .MuiAutocomplete-listbox': {
-      maxHeight: '217px',
-      paddingBottom: 0,
-      marginBottom: '-1px',
     },
     '& > .MuiAutocomplete-noOptions': {
       display: 'none',
@@ -108,7 +107,11 @@ const Option = (props, option) => {
   const {handleEditClick, handleChange, classes, allowEdit} = data;
 
   return (
-    <MenuItem key={option.value} value={option.value}>
+    <MenuItem
+      {...props}
+      sx={{
+
+      }}>
       <OptionLabel handleClick={handleChange} option={option} connInfo={option?.connInfo} />
       { allowEdit && (
         <span className={classes.optionEditIcon}>
@@ -209,7 +212,6 @@ export default function DynaEditable(props) {
   const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
 
   const handleChange = useCallback((event, newValue) => {
-    console.log({newValue});
     setInputValue(newValue?.label);
     onFieldChange(id, newValue?.value);
   }, [id, onFieldChange]);
@@ -240,7 +242,6 @@ export default function DynaEditable(props) {
         fullWidth>
         <DropdownContext.Provider value={dropdownProps}>
           <Autocomplete
-            open
             disablePortal
             id="connections-dropdown"
             data-test="connection"
@@ -255,7 +256,7 @@ export default function DynaEditable(props) {
             onBlur={handleBlur}
             blurOnSelect
             filterOptions={filterOptions}
-            onChange={evt => { console.log({evt}); handleChange; }}
+            onChange={handleChange}
             className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
             {...isLoggableAttr(true)}
