@@ -2,26 +2,24 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import moment from 'moment';
-import { Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  Typography,
+} from '@celigo/fuse-ui';
+import Help from '../../Help';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { drawerPaths } from '../../../utils/rightDrawer';
 import useForm from '../../Form';
 import RightDrawer from '../Right';
-import DrawerHeader from '../Right/DrawerHeader';
-import DrawerContent from '../Right/DrawerContent';
-import DrawerFooter from '../Right/DrawerFooter';
 import DynaForm from '../../DynaForm';
 import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import { useFormOnCancel } from '../../FormOnCancelContext';
-
-const useStyles = makeStyles(theme => ({
-  remaining: {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 const getFieldMeta = defaultValue => ({
   fieldMap: {
@@ -49,7 +47,6 @@ const getFieldMeta = defaultValue => ({
 const formKey = 'config-conn-debug';
 
 function ConfigConnForm() {
-  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { connectionId } = useParams();
@@ -89,11 +86,10 @@ function ConfigConnForm() {
 
   return (
     <>
-      <DrawerContent>
+      <DrawerContent withPadding>
         <DynaForm formKey={formKey} />
-
         {minutes > 1 && (
-          <Typography variant="body2" className={classes.remaining}>
+          <Typography variant="body2" mt={theme => theme.spacing(2)} >
             Debug mode is enabled for the next {minutes} minutes.
           </Typography>
         )}
@@ -116,15 +112,17 @@ export default function ConfigConnectionDebugger() {
 
   return (
     <RightDrawer
+      isIntegrated
       height="tall"
       width="medium"
       path={drawerPaths.CONNECTION.DEBUGGER}>
-      <DrawerHeader
-        title="Debug connection"
-        helpKey="connection.debug"
-        disableClose={disabled}
-        handleClose={setCancelTriggered}
-      />
+      <DrawerHeader>
+        <DrawerTitle>
+          Debug connection
+          <Help helpKey="connection.debug" size="small" />
+        </DrawerTitle>
+        <DrawerCloseButton disable={disabled} onClick={setCancelTriggered} />
+      </DrawerHeader>
       <ConfigConnForm />
     </RightDrawer>
   );

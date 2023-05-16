@@ -1,10 +1,14 @@
 import React, { useCallback } from 'react';
-import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@celigo/fuse-ui';
+import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
-import DrawerHeader from '../../../Right/DrawerHeader';
-import DrawerContent from '../../../Right/DrawerContent';
-import DrawerFooter from '../../../Right/DrawerFooter';
 import { FilledButton } from '../../../../Buttons';
 import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
@@ -12,18 +16,9 @@ import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(() => ({
-  drawerHeader: {
-    '& > h4': {
-      whiteSpace: 'nowrap',
-    },
-  },
-}));
-
 function FinalRevertDrawerContent({ parentUrl, integrationId }) {
   const match = useRouteMatch();
   const history = useHistory();
-  const classes = useStyles();
   const { revisionId } = match.params;
 
   useHandleInvalidRevision({ integrationId, revisionId, parentUrl });
@@ -34,18 +29,19 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
 
   return (
     <>
-      <DrawerHeader
-        className={classes.drawerHeader}
-        helpKey="revert.finalRevertChanges"
-        title="Revert changes"
-        handleClose={onClose}>
+      <DrawerHeader sx={{ whiteSpace: 'nowrap' }}>
+        <DrawerTitle>
+          Revert changes
+          <Help title="Revert changes" helpKey="revert.finalRevertChanges" size="small" />
+        </DrawerTitle>
         <RevisionHeader
           integrationId={integrationId}
           revisionId={revisionId}
           onClose={onClose}
           mode={REVISION_DRAWER_MODES.INSTALL} />
+        <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent>
+      <DrawerContent withPadding>
         <InstallSteps
           onClose={onClose}
           integrationId={integrationId}
@@ -67,6 +63,7 @@ export default function FinalRevert({ integrationId }) {
 
   return (
     <RightDrawer
+      isIntegrated
       path={drawerPaths.LCM.FINAL_REVERT_STEP}
       height="tall"
       width="xl">

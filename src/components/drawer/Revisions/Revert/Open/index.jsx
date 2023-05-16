@@ -1,11 +1,15 @@
 import React from 'react';
-import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@celigo/fuse-ui';
+import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
-import DrawerHeader from '../../../Right/DrawerHeader';
-import DrawerContent from '../../../Right/DrawerContent';
-import DrawerFooter from '../../../Right/DrawerFooter';
 import actions from '../../../../../actions';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../DynaForm';
@@ -17,17 +21,8 @@ import RevisionHeader from '../../components/RevisionHeader';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(() => ({
-  drawerHeader: {
-    '& > h4': {
-      whiteSpace: 'nowrap',
-    },
-  },
-}));
-
 function OpenRevertDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const classes = useStyles();
   const { tempRevId, revertTo, revisionId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
@@ -58,14 +53,15 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader
-        className={classes.drawerHeader}
-        helpKey="revert.create"
-        title="Create revert"
-        handleClose={onClose}>
+      <DrawerHeader sx={{ whiteSpace: 'nowrap' }}>
+        <DrawerTitle>
+          Create revert
+          <Help title="Create revert" helpKey="revert.create" size="small" />
+        </DrawerTitle>
         <RevisionHeader />
+        <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent>
+      <DrawerContent withPadding>
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
@@ -87,6 +83,7 @@ export default function OpenRevertDrawer({ integrationId }) {
 
   return (
     <RightDrawer
+      isIntegrated
       path={drawerPaths.LCM.OPEN_REVERT}
       height="tall"
       width="xl">

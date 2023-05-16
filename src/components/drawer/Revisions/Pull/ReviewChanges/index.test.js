@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -67,7 +66,7 @@ describe('ReviewChangesDrawer tests', () => {
 
   test('Should able to test the ReviewChangesDrawer initial render', async () => {
     await initReviewChangesDrawer(props);
-    expect(screen.getByRole('heading', {name: 'Review changes'})).toBeInTheDocument();
+    expect(screen.getByText('Review changes')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Expand all'})).toBeInTheDocument();
     const close = screen.getAllByRole('button', {name: 'Close'})[0];
     const next = screen.getByRole('button', {name: 'Next'});

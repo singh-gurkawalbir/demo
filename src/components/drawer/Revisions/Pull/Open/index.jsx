@@ -1,11 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  InfoIconButton,
+} from '@celigo/fuse-ui';
 import RightDrawer from '../../../Right';
-import DrawerHeader from '../../../Right/DrawerHeader';
-import DrawerContent from '../../../Right/DrawerContent';
-import DrawerFooter from '../../../Right/DrawerFooter';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
@@ -19,17 +23,8 @@ import ErrorContent from '../../../../ErrorContent';
 import { message } from '../../../../../utils/messageStore';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
-const useStyles = makeStyles(() => ({
-  drawerHeader: {
-    '& > h4': {
-      whiteSpace: 'nowrap',
-    },
-  },
-}));
-
 function OpenPullDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -75,10 +70,15 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader title="Create pull" infoText={message.LCM.CREATE_PULL_FORM_HELPINFO} className={classes.drawerHeader} handleClose={onClose}>
+      <DrawerHeader sx={{ whiteSpace: 'nowrap' }}>
+        <DrawerTitle>
+          Create pull
+          <InfoIconButton title="Create pull" info={message.LCM.CREATE_PULL_FORM_HELPINFO} />
+        </DrawerTitle>
         <RevisionHeader />
+        <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent>
+      <DrawerContent withPadding>
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
@@ -100,6 +100,7 @@ export default function OpenPullDrawer({ integrationId }) {
 
   return (
     <RightDrawer
+      isIntegrated
       path={drawerPaths.LCM.OPEN_PULL}
       height="tall"
       width="xl">

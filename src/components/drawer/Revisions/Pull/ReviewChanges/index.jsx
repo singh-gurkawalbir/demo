@@ -1,12 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  Spinner,
+} from '@celigo/fuse-ui';
+import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
-import DrawerHeader from '../../../Right/DrawerHeader';
-import DrawerContent from '../../../Right/DrawerContent';
-import DrawerFooter from '../../../Right/DrawerFooter';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
@@ -16,20 +20,8 @@ import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(() => ({
-  drawerHeaderWrapper: {
-    '& > h4': {
-      whiteSpace: 'nowrap',
-    },
-    '& > :not(:last-child)': {
-      marginRight: 0,
-    },
-  },
-}));
-
 function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const classes = useStyles();
   const { revisionId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
@@ -68,17 +60,21 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   return (
     <>
       <DrawerHeader
-        title="Review changes"
-        className={classes.drawerHeaderWrapper}
-        helpKey="pull.reviewChanges"
-        handleClose={onClose}>
+        sx={{
+          whiteSpace: 'nowrap',
+        }}>
+        <DrawerTitle>
+          Review changes
+          <Help helpKey="pull.reviewChanges" size="small" />
+        </DrawerTitle>
         <RevisionHeader
           integrationId={integrationId}
           revisionId={revisionId}
           mode={REVISION_DRAWER_MODES.REVIEW}
         />
+        <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent>
+      <DrawerContent withPadding>
         <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
@@ -108,6 +104,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
+      isIntegrated
       path={drawerPaths.LCM.REVIEW_PULL_CHANGES}
       height="tall"
       width="xl">
