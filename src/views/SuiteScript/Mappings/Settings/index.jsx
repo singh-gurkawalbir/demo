@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import { isEqual } from 'lodash';
+import { TextButton } from '@celigo/fuse-ui';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
@@ -16,7 +17,6 @@ import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import actions from '../../../../actions';
 import ActionGroup from '../../../../components/ActionGroup';
-import { TextButton } from '../../../../components/Buttons';
 
 /**
  *

@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography} from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
-import TextButton from '../Buttons/TextButton';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 
 const useStyles = makeStyles(theme => ({
   fetchLogTextWrapper: {

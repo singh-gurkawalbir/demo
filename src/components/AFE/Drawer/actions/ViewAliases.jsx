@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import useIntegration from '../../../../hooks/useIntegration';
 import { selectors } from '../../../../reducers';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
-import TextButton from '../../../Buttons/TextButton';
 import AliasDrawerWrapper from '../../../drawer/Aliases';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 

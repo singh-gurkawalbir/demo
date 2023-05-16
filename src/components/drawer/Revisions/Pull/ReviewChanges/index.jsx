@@ -8,10 +8,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   Spinner,
+  TextButton,
+  FilledButton,
 } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
-import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import { selectors } from '../../../../../reducers';
@@ -78,15 +79,17 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
-          { isRevisionCreationInProgress ? (
+        <FilledButton
+          startIcon={isRevisionCreationInProgress ? (
             <Spinner
               size="small"
-              sx={{
-                mr: 0.5,
-                height: 16,
-              }} />
-          ) : null } Next
+              sx={{mr: 0.5, height: 16}}
+            />
+          ) : null}
+          disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff}
+          onClick={handleCreateRevision}
+        >
+          Next
         </FilledButton>
         <TextButton
           data-test="cancelReviewPulll"

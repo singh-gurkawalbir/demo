@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import AddIcon from '../icons/AddIcon';
 import RefreshIcon from '../icons/RefreshIcon';
@@ -9,7 +10,6 @@ import DrawerHeader from '../drawer/Right/DrawerHeader';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import InviteUser from './InviteUser';
 import SharedUserList from './SharedUserList';
-import { TextButton } from '../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 export default function StackShareDrawer() {

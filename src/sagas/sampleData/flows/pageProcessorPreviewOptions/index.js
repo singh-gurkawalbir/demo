@@ -11,7 +11,6 @@ import {
   isUIDataExpectedForResource,
   getBlobResourceSampleData,
   getSampleFileMeta,
-  isFileMetaExpectedForResource,
 } from '../../../../utils/flowData';
 import requestRealTimeMetadata from '../../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../../sampleDataGenerator/fileAdaptorSampleData';
@@ -111,9 +110,7 @@ export default function* getPreviewOptionsForResource({
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = getPostDataForDeltaExport(resource);
-  const files = isFileMetaExpectedForResource(resource)
-    ? getSampleFileMeta(resource)
-    : undefined;
+  const files = getSampleFileMeta(resource);
   const { type, rawData } = resource || {};
 
   // check for raw data on resource

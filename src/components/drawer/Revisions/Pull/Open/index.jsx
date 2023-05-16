@@ -8,6 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   InfoIconButton,
+  TextButton,
 } from '@celigo/fuse-ui';
 import RightDrawer from '../../../Right';
 import actions from '../../../../../actions';
@@ -15,7 +16,6 @@ import { selectors } from '../../../../../reducers';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
-import { TextButton } from '../../../../Buttons';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';

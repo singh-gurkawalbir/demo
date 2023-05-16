@@ -3,12 +3,11 @@ import { IconButton, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import Help from '../../../../../Help';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
-import TextButton from '../../../../../Buttons/TextButton';
 import CeligoDivider from '../../../../../CeligoDivider';
 import ExpandRowsIcon from '../../../../../icons/ExpandRowsIcon';
 import CollapseRowsIcon from '../../../../../icons/CollapseRowsIcon';
@@ -31,10 +30,6 @@ const useStyles = makeStyles(theme => ({
     '& > :not(:last-child)': {
       marginRight: theme.spacing(1),
     },
-  },
-  refresh: {
-    fontFamily: 'Roboto400',
-    fontSize: 14,
   },
 }));
 
@@ -117,7 +112,6 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           ) : <RefreshIcon />}
           disabled={disabled}
           onClick={handleRefreshFlowDataClick}
-          className={classes.refresh}
           size="small"
           >
           Refresh fields

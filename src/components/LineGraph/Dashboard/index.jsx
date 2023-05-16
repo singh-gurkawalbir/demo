@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useState, useMemo } from 'react';
 import { addDays, startOfDay } from 'date-fns';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { getSelectedRange } from '../../../utils/flowMetrics';
@@ -12,7 +13,6 @@ import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import SelectResource from '../SelectResource';
 import CeligoSelect from '../../CeligoSelect';
-import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({

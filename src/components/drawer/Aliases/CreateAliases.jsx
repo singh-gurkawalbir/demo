@@ -8,6 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   InfoIconButton,
+  TextButton,
 } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { useFormOnCancel } from '../../FormOnCancelContext';
@@ -15,7 +16,6 @@ import RightDrawer from '../Right';
 import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
-import TextButton from '../../Buttons/TextButton';
 import { ALIAS_FORM_KEY } from '../../../constants';
 import actions from '../../../actions';
 import InstallationGuideIcon from '../../icons/InstallationGuideIcon';

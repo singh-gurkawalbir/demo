@@ -114,6 +114,18 @@ describe('Flow step request logs region selectors test cases', () => {
             adaptorType: 'RESTExport',
           },
           {
+            _id: 'exp-129',
+            name: 'Van Listener',
+            _connectionId: 'conn-125',
+            adaptorType: 'VANExport',
+          },
+          {
+            _id: 'exp-130',
+            name: 'AS2 Listener',
+            _connectionId: 'conn-125',
+            adaptorType: 'AS2Export',
+          },
+          {
             _id: 'exp-999',
             name: 'NS realtime export',
             type: 'distributed',
@@ -191,6 +203,12 @@ describe('Flow step request logs region selectors test cases', () => {
     });
     test('should return false if resource is a rest export and isHTTP set to false in connection', () => {
       expect(selectors.hasLogsAccess(state, 'exp-128', 'exports', false, flowId)).toBe(false);
+    });
+    test('should return false when adaptorType of export is VANExport', () => {
+      expect(selectors.hasLogsAccess(state, 'exp-129', 'exports', false, flowId)).toBe(false);
+    });
+    test('should return false when adaptorType of export is AS2Export', () => {
+      expect(selectors.hasLogsAccess(state, 'exp-130', 'exports', false, flowId)).toBe(false);
     });
   });
   describe('selectors.canEnableDebug test cases', () => {

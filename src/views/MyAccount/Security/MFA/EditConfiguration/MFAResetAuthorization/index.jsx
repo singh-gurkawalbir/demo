@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import ModalDialog from '../../../../../../components/ModalDialog';
@@ -8,7 +9,6 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import useForm from '../../../../../../components/Form';
-import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
 import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../constants';
 import { message } from '../../../../../../utils/messageStore';

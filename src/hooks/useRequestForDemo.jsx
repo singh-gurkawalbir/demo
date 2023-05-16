@@ -1,10 +1,10 @@
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import actions from '../actions';
 import ModalDialog from '../components/ModalDialog';
 import { message } from '../utils/messageStore';
-import { FilledButton } from '../components/Buttons';
 import { selectors } from '../reducers';
 
 const useStyles = makeStyles(theme => ({

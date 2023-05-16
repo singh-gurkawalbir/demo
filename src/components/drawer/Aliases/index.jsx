@@ -9,11 +9,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   InfoIconButton,
+  FilledButton,
+  TextButton,
 } from '@celigo/fuse-ui';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
-import FilledButton from '../../Buttons/FilledButton';
-import TextButton from '../../Buttons/TextButton';
 import RightDrawer from '../Right';
 import AddIcon from '../../icons/AddIcon';
 import metadata from '../../ResourceTable/aliases/metadata';

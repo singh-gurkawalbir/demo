@@ -86,41 +86,44 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const handleSubmit = useCallback(
     () => {
       let patchSet;
+      const routerObj = formValues?.contentBasedFlowRouter;
 
-      if (isVanConnector) {
-        patchSet = [
-          {
-            op: 'replace',
-            path: '/van/contentBasedFlowRouter/_scriptId',
-            value: formValues?.contentBasedFlowRouter?._scriptId,
-          },
-          {
-            op: 'replace',
-            path: '/van/contentBasedFlowRouter/function',
-            value: formValues?.contentBasedFlowRouter?.function,
-          },
-        ];
-      } else {
-        patchSet = [
-          {
-            op: 'replace',
-            path: '/as2/contentBasedFlowRouter/_scriptId',
-            value: formValues?.contentBasedFlowRouter?._scriptId,
-          },
-          {
-            op: 'replace',
-            path: '/as2/contentBasedFlowRouter/function',
-            value: formValues?.contentBasedFlowRouter?.function,
-          },
-        ];
+      if ((routerObj?._scriptId && routerObj?.function) || (!routerObj?._scriptId && !routerObj?.function)) {
+        if (isVanConnector) {
+          patchSet = [
+            {
+              op: 'replace',
+              path: '/van/contentBasedFlowRouter/_scriptId',
+              value: formValues?.contentBasedFlowRouter?._scriptId,
+            },
+            {
+              op: 'replace',
+              path: '/van/contentBasedFlowRouter/function',
+              value: formValues?.contentBasedFlowRouter?.function,
+            },
+          ];
+        } else {
+          patchSet = [
+            {
+              op: 'replace',
+              path: '/as2/contentBasedFlowRouter/_scriptId',
+              value: formValues?.contentBasedFlowRouter?._scriptId,
+            },
+            {
+              op: 'replace',
+              path: '/as2/contentBasedFlowRouter/function',
+              value: formValues?.contentBasedFlowRouter?.function,
+            },
+          ];
+        }
+
+        // using PATCH call here as other fields on the connection doc are not impacted
+        dispatch(
+          actions.resource.patch('connections', connectionId, patchSet, formKey)
+        );
       }
-
-      // using PATCH call here as other fields on the connection doc are not impacted
-      dispatch(
-        actions.resource.patch('connections', connectionId, patchSet, formKey)
-      );
     },
-    [isVanConnector, dispatch, connectionId, formValues?.contentBasedFlowRouter?._scriptId, formValues?.contentBasedFlowRouter?.function]
+    [formValues?.contentBasedFlowRouter, isVanConnector, dispatch, connectionId]
   );
   let value;
 

@@ -98,9 +98,9 @@ jest.mock('../../../../components/ActionGroup', () => ({
 }));
 
 // Mocking Text Button as part of unit testing
-jest.mock('../../../../components/Buttons', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../components/Buttons'),
+  ...jest.requireActual('@celigo/fuse-ui'),
   TextButton: props => (
     <>
       <div>Mocking Text Button</div>

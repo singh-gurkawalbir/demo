@@ -6,10 +6,10 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  FilledButton,
 } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
-import { FilledButton } from '../../../../Buttons';
 import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';

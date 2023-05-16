@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Button from '@mui/material/Button';
 import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
+import { FilledButton as FuseUiFilledButton } from '@celigo/fuse-ui';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,6 +31,24 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
   },
 }));
+
+export function SubmitButton({sx, ...rest}) {
+  return (
+    <FuseUiFilledButton
+      sx={[
+        {
+          width: '100%',
+          borderRadius: '4px',
+          height: 38,
+          fontSize: '16px',
+          mt: 1,
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+      {...rest}
+    />
+  );
+}
 
 export default function FilledButton(props) {
   const classes = useStyles(props);

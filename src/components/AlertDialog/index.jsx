@@ -2,6 +2,7 @@ import { Typography, Dialog } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import SignInForm from '../../views/SignIn/SigninForm';
 import SignInSSOForm from '../../views/SignIn/SignInSSOForm';
 import { selectors } from '../../reducers';
@@ -11,9 +12,9 @@ import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../constants';
 import useConfirmDialog from '../ConfirmDialog';
-import { FilledButton } from '../Buttons';
 import { message } from '../../utils/messageStore';
 import * as pendo from '../../utils/analytics/pendo';
+import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   contentWrapper: {
@@ -71,7 +72,7 @@ const UserAcceptedAccountTransfer = () => (
   <ModalDialog show>
     <div>Success!</div>
     <Typography>
-      {message.USER_SIGN_IN.OWNER_ACCOUNT}
+      <RawHtml html={message.USER_SIGN_IN.OWNER_ACCOUNT} />
     </Typography>
     <FilledButton
       data-test="ok"

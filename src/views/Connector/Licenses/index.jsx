@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
@@ -13,7 +14,6 @@ import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';

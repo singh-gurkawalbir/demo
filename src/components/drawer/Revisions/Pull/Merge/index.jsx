@@ -6,13 +6,13 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  FilledButton,
 } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
 import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
-import FilledButton from '../../../../Buttons/FilledButton';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
 

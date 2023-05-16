@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import { TableCell, TableRow, Table, TableBody, TableHead } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton, TextButton } from '@celigo/fuse-ui';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';
@@ -11,20 +12,15 @@ import AddEditLookup from './Manage';
 import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
 import AddIcon from '../../icons/AddIcon';
-import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../constants';
 import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   listing: {
     minHeight: '30vh',
     maxHeight: '50vh',
-  },
-  actionButton: {
-    float: 'right',
-    marginBottom: theme.spacing(1),
   },
   row: {
     background: 'celigoWhite',
@@ -173,7 +169,10 @@ export default function LookupDrawer({
           <Route path={rootLookupPath}>
             <>
               <TextButton
-                className={classes.actionButton}
+                sx={{
+                  float: 'right',
+                  marginBottom: 1,
+                }}
                 onClick={handleAdd}
                 startIcon={<AddIcon />}
                 data-test="Create lookup">

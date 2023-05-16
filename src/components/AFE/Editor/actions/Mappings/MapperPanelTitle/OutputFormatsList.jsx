@@ -3,19 +3,14 @@ import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { List, ListItem, ListItemText } from '@mui/material';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
-import TextButton from '../../../../../Buttons/TextButton';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import { isCsvOrXlsxResourceForMapper2, ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../../utils/mapping';
 
 const useStyles = makeStyles(theme => ({
-  currentContainer: {
-    fontFamily: 'Roboto400',
-    fontSize: 14,
-  },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     maxWidth: 248,
@@ -127,10 +122,10 @@ export default function OutputFormatsList({disabled}) {
         onClick={handleMenu}
         disabled={disabled}
         endIcon={<ArrowDownIcon />}
-        className={classes.currentContainer}
         aria-owns={open ? 'outputFormats' : null}
         aria-haspopup="true"
-          >
+        size="small"
+      >
         {getInputOutputFormat(isGroupedSampleData, isGroupedOutput)}
       </TextButton>
 

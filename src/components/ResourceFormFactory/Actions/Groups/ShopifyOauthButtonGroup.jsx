@@ -1,6 +1,6 @@
 import React from 'react';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
-import FilledButton from '../../../Buttons/FilledButton';
 import useClearAsyncStateOnUnmount from '../../../SaveAndCloseButtonGroup/hooks/useClearAsyncStateOnUnmount';
 import useTriggerCancelFromContext from '../../../SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';

@@ -1,5 +1,6 @@
 import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -7,7 +8,6 @@ import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../components/icons/TransferUpIcon';
-import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
@@ -41,14 +41,28 @@ export const resourceButtonStyles = makeStyles(theme => ({
 }));
 
 export default function SubFlowResourceButton({ onClick, variant, disabled}) {
-  const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
   return (
     <TextButton
       data-test={block.label}
       onClick={onClick}
-      className={classes.resourceButton}
+      sx={{
+        fontSize: '12px',
+        fontFamily: 'source sans pro',
+        mr: 1,
+        mt: 0.5,
+        '& >* svg': {
+          marginBottom: '0.5px',
+          fontSize: '32px !important',
+        },
+        '&:hover': {
+          color: 'secondary.main',
+          '& > * svg': {
+            color: 'primary.main',
+          },
+        },
+      }}
       vertical
       disabled={disabled}
       startIcon={<block.Icon />} />

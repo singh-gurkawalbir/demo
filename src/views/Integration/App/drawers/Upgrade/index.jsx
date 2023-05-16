@@ -6,6 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
+import {FilledButton} from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -27,7 +28,6 @@ import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
-import FilledButton from '../../../../../components/Buttons/FilledButton';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import messageStore, {message as messageStoreMessage} from '../../../../../utils/messageStore';
 

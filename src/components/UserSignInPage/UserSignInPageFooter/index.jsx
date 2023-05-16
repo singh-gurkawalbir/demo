@@ -1,25 +1,11 @@
 import { Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import { isSignUpAllowed } from '../../../utils/resource';
 import getRoutePath from '../../../utils/routePaths';
-import { TextButton } from '../../Buttons';
-
-const useStyles = makeStyles(theme => ({
-
-  UserSignInPageFooterLink: {
-    paddingLeft: theme.spacing(0.5),
-    paddingTop: theme.spacing(0.5),
-    textDecoration: 'none',
-    fontSize: 15,
-  },
-
-}));
 
 export default function UserSignInPageFooter({linkLabel, linkText, link}) {
-  const classes = useStyles();
-
   return (
     <div>
       {isSignUpAllowed() && (
@@ -27,7 +13,12 @@ export default function UserSignInPageFooter({linkLabel, linkText, link}) {
         {linkLabel}
         <TextButton
           data-test="signupOrSigninFooter"
-          className={classes.UserSignInPageFooterLink}
+          sx={{
+            paddingLeft: 0.5,
+            paddingTop: 0.5,
+            textDecoration: 'none',
+            fontSize: '15px',
+          }}
           color="primary"
           component={Link}
           role="link"

@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { FilledButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import FilledButton from '../../../Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   linkWrapper: {

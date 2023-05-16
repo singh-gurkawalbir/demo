@@ -4,12 +4,18 @@ import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import { Link } from 'react-router-dom';
-import { ArrowPopper, Box, Tooltip, IconButton } from '@celigo/fuse-ui';
+import {
+  ArrowPopper,
+  Box,
+  Tooltip,
+  IconButton,
+  OutlinedButton,
+  TextButton,
+} from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import {OutlinedButton, TextButton } from '../../../components/Buttons/index';
 import ActionGroup from '../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
@@ -38,17 +44,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.divider,
     borderRight: 'none',
     borderLeft: 'none',
-  },
-  actionsBtn: {
-    marginLeft: 13,
-    padding: 0,
-  },
-  bottomActionsBtn: {
-    fontFamily: 'source sans pro',
-    background: theme.palette.background.paper2,
-    margin: '4px 0px',
-    borderRadius: 0,
-    height: 33,
   },
 }));
 
@@ -142,7 +137,10 @@ function ProfileMenuButton() {
               </OutlinedButton>
               <TextButton
                 data-test="signOut"
-                className={classes.actionsBtn}
+                sx={{
+                  marginLeft: '13px',
+                  padding: 0,
+                }}
                 onClick={handleUserLogout}
               >
                 Sign out
@@ -154,7 +152,12 @@ function ProfileMenuButton() {
           <TextButton
             data-test="uxFeedback"
             component="a"
-            className={classes.bottomActionsBtn}
+            sx={{
+              backgroundColor: 'background.paper2',
+              margin: '4px 0px',
+              borderRadius: 0,
+              height: 33,
+            }}
             href="mailto:product_feedback@celigo.com"
             target="_blank"
             fullWidth

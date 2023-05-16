@@ -4,6 +4,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { FormLabel } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import FieldHelp from '../../FieldHelp';
 import getForm from '../../../AFE/Editor/panels/CsvParseRules/formMeta';
@@ -14,7 +15,6 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from './FileDataChange';
-import { OutlinedButton } from '../../../Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -143,7 +143,7 @@ export default function DynaCsvParse_afe(props) {
         <OutlinedButton
           data-test={id}
           color="secondary"
-          className={classes.button}
+          sx={{maxWidth: 100}}
           onClick={handleEditorClick}>
           Launch
         </OutlinedButton>

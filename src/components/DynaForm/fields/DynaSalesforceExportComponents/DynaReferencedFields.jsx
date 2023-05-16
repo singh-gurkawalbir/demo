@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import { selectors } from '../../../../reducers';
@@ -11,7 +11,6 @@ import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import ActionButton from '../../../ActionButton';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {

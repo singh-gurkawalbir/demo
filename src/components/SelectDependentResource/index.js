@@ -2,9 +2,14 @@ import { FormLabel, FormControlLabel, Checkbox } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useCallback, useState, useMemo } from 'react';
-import { ArrowPopper, Box } from '@celigo/fuse-ui';
+import {
+  ArrowPopper,
+  Box,
+  OutlinedButton,
+  TextButton,
+  FilledButton,
+} from '@celigo/fuse-ui';
 import ActionGroup from '../ActionGroup';
-import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -41,13 +46,6 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     margin: theme.spacing(3, 1, 2),
-  },
-  dateRangePopperBtn: {
-    minHeight: 36,
-    padding: [[0, 12]],
-    color: theme.palette.secondary.main,
-    fontSize: 15,
-    lineHeight: 2,
   },
   selectResourceItem: {
     display: 'flex',
@@ -138,7 +136,13 @@ export default function SelectDependentResource({resources = emptySet, selectedR
         onClick={toggleClick}
         color="secondary"
         endIcon={<ArrowDownIcon />}
-        className={classes.dateRangePopperBtn}>
+        sx={{
+          minHeight: 36,
+          padding: [[0, 12]],
+          color: 'secondary.main',
+          fontSize: '15px',
+          lineHeight: 2,
+        }}>
         {buttonName}
       </OutlinedButton>
       <ArrowPopper

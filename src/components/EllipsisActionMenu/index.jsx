@@ -1,11 +1,10 @@
 import React, { useCallback, useState} from 'react';
 import { IconButton, MenuItem } from '@mui/material';
-import { ArrowPopper } from '@celigo/fuse-ui';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import EllipsisIconHorizontal from '../icons/EllipsisHorizontalIcon';
 import EllipsisIconVertical from '../icons/EllipsisVerticalIcon';
-import {TextButton} from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

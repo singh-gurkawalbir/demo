@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
@@ -12,15 +11,8 @@ import messageStore, { message } from '../../utils/messageStore';
 import ButtonWithTooltip from '../Buttons/ButtonWithTooltip';
 import useClearAsyncStateOnUnmount from '../SaveAndCloseButtonGroup/hooks/useClearAsyncStateOnUnmount';
 import useResourceFormSampleData from '../../hooks/useResourceFormSampleData';
-import TextButton from '../Buttons/TextButton';
 import responseMappingUtil from '../../utils/responseMapping';
 import { emptyObject } from '../../constants';
-
-const useStyles = makeStyles(() => ({
-  previewButton: {
-    padding: 0,
-  },
-}));
 
 export default function PopulateWithPreviewData({
   formKey,
@@ -29,7 +21,6 @@ export default function PopulateWithPreviewData({
   resourceType,
   updateMockDataContent,
 }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const isImport = resourceType === 'imports';
@@ -136,7 +127,6 @@ export default function PopulateWithPreviewData({
           startIcon={isPreviewRequested ? (
             <Spinner size="small" />
           ) : null}
-          className={classes.previewButton}
           data-test={helpKey}
           disabled={disablePreview}
           onClick={handleClick}

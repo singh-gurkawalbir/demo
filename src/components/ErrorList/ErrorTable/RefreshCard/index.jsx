@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import Icon from '../../../icons/RefreshIcon';
-import { TextButton } from '../../../Buttons';
 
-const useStyles = makeStyles(theme => ({
-  refresh: {
-    height: theme.spacing(4),
-  },
+const useStyles = makeStyles(() => ({
   refreshDisabled: {
     borderColor: 'inherit',
   },
@@ -46,7 +43,7 @@ export default function RefreshCard(props) {
       <TextButton
         startIcon={<Icon />}
         onClick={handleClick}
-        className={classes.refresh}>
+        sx={{height: 32}}>
         Refresh errors
       </TextButton>
     </div>

@@ -3508,6 +3508,12 @@ selectors.isIntegrationAppV1 = (state, integrationId) => {
   return !!integration?._connectorId && !isIntegrationAppV2;
 };
 
+selectors.getParentIntegrationId = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return integration?._parentId || integration?._id;
+};
+
 selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (!state || !integrationId) {
     return null;
@@ -7082,8 +7088,8 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   const resource = selectors.resource(state, resourceType, resourceId);
   const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
-  // It should return false for all http file providers
-  if (resource?.http?.type === 'file') {
+  // It should return false for all http file providers and for VAN and AS2 exports
+  if (resource?.http?.type === 'file' || ['AS2Export', 'VANExport'].includes(resource?.adaptorType)) {
     return false;
   }
 
