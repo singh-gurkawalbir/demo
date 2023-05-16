@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
@@ -16,7 +17,6 @@ import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
-import { TextButton } from '../../../Buttons';
 
 const integrationsFilterConfig = {
   type: 'integrations',

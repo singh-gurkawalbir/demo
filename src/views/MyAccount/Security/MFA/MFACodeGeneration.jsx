@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import QRCode from 'react-qr-code';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import ReAuthModal from './ReAuthModal';
 import HeaderWithHelpText from './HeaderWithHelpText';
-import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 import { selectors } from '../../../../reducers';
 import { message } from '../../../../utils/messageStore';
 
@@ -52,7 +52,7 @@ function ViewSecretCode() {
                 </div>
               </div>
             ) : (
-              <OutlinedButton className={classes.qrCode} onClick={() => setShowSecretCodeAuthModal(true)}> View account &amp; secret key </OutlinedButton>
+              <OutlinedButton sx={{mt: 1}} onClick={() => setShowSecretCodeAuthModal(true)}> View account &amp; secret key </OutlinedButton>
             )
           }
         </div>
@@ -80,7 +80,7 @@ function ViewQRCode() {
         </div>
         { showQrCode
           ? <QRCode value={qrCode} size={84} className={classes.qrCode} />
-          : (<OutlinedButton className={classes.qrCode} onClick={() => setShowQRAuthModal(true)}> View QR code </OutlinedButton>)}
+          : (<OutlinedButton sx={{mt: 1}} onClick={() => setShowQRAuthModal(true)}> View QR code </OutlinedButton>)}
       </div>
       {showQRAuthModal && (<ReAuthModal onClose={handleClose} isQRCode />)}
     </>

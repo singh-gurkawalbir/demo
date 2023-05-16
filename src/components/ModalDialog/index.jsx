@@ -7,18 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import CloseIcon from '../icons/CloseIcon';
-import { OutlinedButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
     padding: theme.spacing(1.5, 2),
     marginBottom: theme.spacing(2),
-  },
-  actionButton: {
-    float: 'right',
-    textTransform: 'inherit',
   },
   titleText: {
     maxWidth: `calc(100% - ${theme.spacing(4)})`,
@@ -96,7 +92,10 @@ export default function ModalDialog({
           )}
           {!onClose && actionHandler && (
             <OutlinedButton
-              className={classes.actionButton}
+              sx={{
+                float: 'right',
+                textTransform: 'inherit',
+              }}
               onClick={actionHandler}
               data-test={actionLabel}>
               {actionLabel}

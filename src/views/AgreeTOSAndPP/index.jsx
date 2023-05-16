@@ -4,9 +4,8 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { CeligoLogo } from '@celigo/fuse-ui';
+import { CeligoLogo, FilledButton, TextButton } from '@celigo/fuse-ui';
 import DynaCheckbox from '../../components/DynaForm/fields/checkbox/DynaCheckbox';
-import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import { HOME_PAGE_PATH } from '../../constants';
@@ -69,14 +68,6 @@ const useStyles = makeStyles(theme => ({
     '& p.MuiTypography-body1': {
       fontSize: 15,
     },
-  },
-  submit: {
-    marginRight: theme.spacing(2),
-    fontSize: 15,
-  },
-  cancel: {
-    fontSize: 15,
-    color: 'inherit',
   },
 }));
 
@@ -149,7 +140,10 @@ export default function AgreeTOSAndPP() {
             type="submit"
             disabled={!agree}
             onClick={handleSubmit}
-            className={classes.submit}
+            sx={{
+              mr: 2,
+              fontSize: '15px',
+            }}
             value="Submit"
           >
             Continue
@@ -158,7 +152,10 @@ export default function AgreeTOSAndPP() {
             data-test="signout"
             color="primary"
             onClick={handleUserLogout}
-            className={classes.cancel}
+            sx={{
+              fontSize: '15px',
+              color: 'inherit',
+            }}
           >
             Sign out
           </TextButton>

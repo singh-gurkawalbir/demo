@@ -2,6 +2,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../../actions';
@@ -15,7 +16,6 @@ import { generateNewId } from '../../../../../../utils/resource';
 import jsonUtil from '../../../../../../utils/json';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import TextButton from '../../../../../../components/Buttons/TextButton';
 import ActionGroup from '../../../../../../components/ActionGroup';
 
 export default function ConnectionDrawer({

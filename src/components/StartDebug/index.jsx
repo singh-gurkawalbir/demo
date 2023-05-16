@@ -4,13 +4,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
-import { ArrowPopper, Box } from '@celigo/fuse-ui';
+import { ArrowPopper, Box, OutlinedButton, TextButton} from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import ActionGroup from '../ActionGroup';
-import { OutlinedButton, TextButton} from '../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   root: {

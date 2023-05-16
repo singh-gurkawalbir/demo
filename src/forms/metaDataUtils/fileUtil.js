@@ -660,10 +660,12 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, connector) =
   if (!httpConnector) {
     return formValues;
   }
+  const retValues = { ...formValues };
+
   if (resource?.http?._httpConnectorApiId) {
     httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
+    retValues['/assistant'] = httpConnector?.legacyId;
   }
-  const retValues = { ...formValues };
   let resourceVersion;
 
   if (retValues['/http/_httpConnectorVersionId']) {

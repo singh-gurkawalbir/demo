@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
-import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import { Spinner, FilledButton, TextButton } from '@celigo/fuse-ui';
 import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
 import { selectors } from '../../../../../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
-import TextButton from '../../../../../../../components/Buttons/TextButton';
 import actions from '../../../../../../../actions';
 
 export default function ParentUpgradeButton(props) {
   const {
     id,
-    className,
     onClick,
     nextPlan,
     changeEditionId,
@@ -50,7 +47,7 @@ export default function ParentUpgradeButton(props) {
       tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
       >
       <FilledButton
-        className={className}
+        sx={{margin: 1}}
         onClick={onClick}
         disabled={!changeEditionId || accessLevel === 'monitor'}
         data-test="upgrade"

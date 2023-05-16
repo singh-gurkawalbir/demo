@@ -2,13 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import { useSelectorMemo } from '../../../hooks';
 import { emptyObject } from '../../../constants';
 import { RETRY_JOB_UI_STATUS } from '../../../utils/jobdashboard';
-import TextButton from '../../../components/Buttons/TextButton';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import RetryListPopper from './RetryListPopper';
 
@@ -16,10 +15,6 @@ const useStyles = makeStyles(theme => ({
   flexContainer: {
     display: 'flex',
     alignItems: 'center',
-  },
-  viewResultButton: {
-    padding: theme.spacing(0, 0.5),
-    fontSize: '0.75rem',
   },
   divider: {
     height: theme.spacing(3),
@@ -64,14 +59,18 @@ export default function RetryStatus({ flowId }) {
           <RetryListPopper resources={resourcesWithRetryCompleted} />
         ) : (
           <TextButton
-            size="small" bold color="primary" className={classes.viewResultButton}
+            size="small" bold color="primary"
+            sx={{
+              padding: '0px 4px',
+              fontSize: '0.75rem',
+            }}
             onClick={handleClick}>
             View results
           </TextButton>
         )}
       </>
     );
-  }, [isAnyRetryInProgress, classes.status, classes.viewResultButton, resourcesWithRetryCompleted, handleClick]);
+  }, [isAnyRetryInProgress, classes.status, resourcesWithRetryCompleted, handleClick]);
 
   if (!isAnyRetryInProgress && !resourcesWithRetryCompleted.length) {
     return null;

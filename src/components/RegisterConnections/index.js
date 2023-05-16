@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import { selectors } from '../../reducers';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
-import { FilledButton } from '../Buttons';
 import customCloneDeep from '../../utils/customCloneDeep';
 
 export default function RegisterConnections({ onClose, integrationId }) {

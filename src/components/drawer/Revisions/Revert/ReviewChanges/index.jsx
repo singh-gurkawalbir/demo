@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton, FilledButton } from '@celigo/fuse-ui';
 import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { REVISION_DRAWER_MODES, hasInvalidRevertResourceDiff } from '../../../../../utils/revisions';
@@ -87,8 +86,12 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         <ResourceDiffDrawerContent integrationId={integrationId} type="revert" />
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationDisabled} onClick={handleCreateRevision} >
-          Next { isRevisionCreationInProgress ? <Spinner size="small" sx={{ml: 1}} /> : null }
+        <FilledButton
+          disabled={isRevisionCreationDisabled}
+          onClick={handleCreateRevision}
+          endIcon={isRevisionCreationInProgress ? <Spinner size="small" sx={{ml: 1}} /> : null}
+        >
+          Next
         </FilledButton>
         <TextButton
           data-test="cancelReviewRevert"

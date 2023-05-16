@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { LinearProgress, Typography} from '@mui/material';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
-import { TextButton } from '../../../components/Buttons';
+import { TextButton } from '@celigo/fuse-ui';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({

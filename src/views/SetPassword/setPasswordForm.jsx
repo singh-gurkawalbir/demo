@@ -1,35 +1,22 @@
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import clsx from 'clsx';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
-import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import messageStore, {message} from '../../utils/messageStore';
 import ShowErrorMessage from '../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import DynaPassword from '../../components/DynaForm/fields/DynaPassword';
-
-const useStyles = makeStyles(theme => ({
-  submit: {
-    marginTop: 30,
-  },
-  // Todo: Below CSS will get removed when these forms get converted to Dynaforms
-  cancelBtn: {
-    fontSize: theme.spacing(2),
-  },
-}));
+import { SubmitButton } from '../../components/Buttons/FilledButton';
 
 export default function SetPassword() {
   const {token} = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
-  const classes = useStyles();
   const [showError, setShowError] = useState(false);
   const [passwordVal, setPasswordVal] = useState('');
   const handleResetPassword = useCallback(password => {
@@ -73,20 +60,19 @@ export default function SetPassword() {
       {showErrMsg && error && (
       <ShowErrorMessage error={error} />
       )}
-      <form onSubmit={handleOnSubmit} className={classes.setPasswordForm}>
+      <form onSubmit={handleOnSubmit}>
         <DynaPassword onFieldChange={onFieldChange} />
         <FieldMessage errorMessages={showError ? messageStore('USER_SIGN_IN.SIGNIN_REQUIRED', {label: 'New password'}) : null} />
 
         { isAuthenticating ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
-              submit
+              sx={{mt: '30px'}}
               value="Submit">
               Save and sign in
-            </FilledButton>
+            </SubmitButton>
           )}
         <TextButton
           to={getRoutePath('/signin')}
@@ -94,8 +80,7 @@ export default function SetPassword() {
           color="primary"
           component={Link}
           role="link"
-          className={clsx(classes.submit, classes.cancelBtn)}
-          submit
+          sx={{mt: '30px', fontSize: '16px'}}
           value="Cancel">
           Cancel
         </TextButton>

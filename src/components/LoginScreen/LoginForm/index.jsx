@@ -2,9 +2,7 @@ import React from 'react';
 import { TextField, Typography, Button } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import { CeligoLogo } from '@celigo/fuse-ui';
-import { OutlinedButton } from '../../Buttons';
-import FilledButton from '../../Buttons/FilledButton';
+import { CeligoLogo, FilledButton, OutlinedButton } from '@celigo/fuse-ui';
 
 const useStyles = makeStyles(theme => ({
   signUpForm: {

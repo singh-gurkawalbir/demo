@@ -1,10 +1,7 @@
 import { Typography } from '@mui/material';
-// import { useStyles } from '@mui/lab';
-import clsx from 'clsx';
 import React from 'react';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
-import TextButton from '../../../Buttons/TextButton';
 import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../icons/ArrowRightIcon';
 import { useHandleNextAndPreviousError } from '../hooks/useHandleNextAndPreviousError';
@@ -20,7 +17,6 @@ export default function ErrorControls({
   handlePrev,
   handleNext,
 }) {
-  const classes = {}; // useStyles();
   const {
     handleNextError,
     handlePreviousError,
@@ -40,22 +36,20 @@ export default function ErrorControls({
   });
 
   return (
-    <Typography variant="h4" className={classes.title}>
+    <Typography variant="h4" >
       <TextButton
         onClick={handlePreviousError}
-        className={classes.arrowBtn}
         disabled={disabledPrevious}
         startIcon={<ArrowLeftIcon />}
         data-test="previousError">
-        <span className={classes.label}>Previous</span>
+        <span >Previous</span>
       </TextButton>
       <TextButton
         onClick={handleNextError}
-        className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
         disabled={disableNext || loading}
         endIcon={loading ? (<Spinner size="small" />) : <ArrowRightIcon />}
         data-test="nextError">
-        <span className={classes.label}>Next</span>
+        <span >Next</span>
       </TextButton>
     </Typography>
   );

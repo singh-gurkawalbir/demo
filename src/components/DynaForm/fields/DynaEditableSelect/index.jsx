@@ -87,6 +87,8 @@ const useStyles = makeStyles(theme => ({
     },
     '& > .MuiAutocomplete-listbox': {
       maxHeight: '217px',
+      paddingBottom: 0,
+      marginBottom: '-1px',
     },
     '& > .MuiAutocomplete-noOptions': {
       display: 'none',

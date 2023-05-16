@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
@@ -13,7 +14,6 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
-import { TextButton } from '../../components/Buttons';
 import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';

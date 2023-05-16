@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import FilledButton from '../../../components/Buttons/FilledButton';
+import { FilledButton } from '@celigo/fuse-ui';
 import RightDrawer from '../../../components/drawer/Right';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';

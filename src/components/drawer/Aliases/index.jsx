@@ -2,19 +2,24 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  InfoIconButton,
+  FilledButton,
+  TextButton,
+} from '@celigo/fuse-ui';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
-import FilledButton from '../../Buttons/FilledButton';
-import TextButton from '../../Buttons/TextButton';
 import RightDrawer from '../Right';
-import DrawerFooter from '../Right/DrawerFooter';
-import DrawerHeader from '../Right/DrawerHeader';
 import AddIcon from '../../icons/AddIcon';
 import metadata from '../../ResourceTable/aliases/metadata';
 import DynaCeligoTable from '../../DynaForm/fields/DynaCeligoTable';
 import CeligoTable from '../../CeligoTable';
 import CreateAliasDrawer from './CreateAliases';
-import DrawerContent from '../Right/DrawerContent';
 import CeligoDivider from '../../CeligoDivider';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
 import actions from '../../../actions';
@@ -176,14 +181,19 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
 
   return (
     <RightDrawer
+      isIntegrated
       height={height}
-      width="default"
       path={[drawerPaths.ALIASES.MANAGE, drawerPaths.ALIASES.VIEW]} >
       <Switch>
         <Route path={manageAliasesDrawerUrl} >
-          <DrawerHeader
-            title="Manage aliases"
-            infoText={message.ALIAS.MANAGE_ALIASES_HELPINFO}>
+          <DrawerHeader>
+            <DrawerTitle>
+              Manage aliases
+              <InfoIconButton
+                info={message.ALIAS.MANAGE_ALIASES_HELPINFO}
+                title="Manage aliases"
+              />
+            </DrawerTitle>
             {hasManageAccess ? (
               <>
                 <TextButton
@@ -194,8 +204,9 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
                 <CeligoDivider position="right" />
               </>
             ) : ''}
+            <DrawerCloseButton onClick={handleClose} />
           </DrawerHeader>
-          <DrawerContent>
+          <DrawerContent withPadding>
             <ManageAliases flowId={resourceId} height={height} hasManageAccess={hasManageAccess} />
           </DrawerContent>
           <DrawerFooter>
@@ -207,10 +218,17 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
           </DrawerFooter>
         </Route>
         <Route path={viewAliasesDrawerUrl} >
-          <DrawerHeader
-            title="View aliases"
-            infoText={message.ALIAS.VIEW_ALIASES_HELPINFO} />
-          <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>
+              View aliases
+              <InfoIconButton
+                info={message.ALIAS.VIEW_ALIASES_HELPINFO}
+                title="View aliases"
+              />
+            </DrawerTitle>
+            <DrawerCloseButton onClick={handleClose} />
+          </DrawerHeader>
+          <DrawerContent withPadding>
             <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
           </DrawerContent>
           <DrawerFooter>

@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, FilledButton, OutlinedButton, TextButton} from '@celigo/fuse-ui';
 import ActionGroup from '../ActionGroup';
 import { FORM_SAVE_STATUS } from '../../constants';
-import {FilledButton, OutlinedButton, TextButton} from '../Buttons';
 
 export const CLOSE_AFTER_SAVE = true;
 export default function SaveAndCloseButtonGroup({ disabled, isDirty, status, onClose, handleSave, handleSaveAndClose}) {

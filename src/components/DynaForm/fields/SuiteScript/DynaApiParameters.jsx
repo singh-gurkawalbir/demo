@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Button, FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
@@ -14,15 +15,11 @@ import { selectors } from '../../../../reducers';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { isMetaRequiredValuesMet } from '../../../../utils/assistant';
 import actions from '../../../../actions';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
 import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
     width: '100%',
-  },
-  dynaAssistantbtn: {
-    maxWidth: 100,
   },
   dynaAssistantFormLabel: {
     marginBottom: 6,
@@ -132,7 +129,7 @@ export default function DynaApiParameters(props) {
           color="secondary"
           disabled={disabled}
           data-test={id}
-          className={classes.dynaAssistantbtn}
+          sx={{maxWidth: 100}}
           onClick={() => setShowApiParametersModal(true)}>
           Launch
         </OutlinedButton>

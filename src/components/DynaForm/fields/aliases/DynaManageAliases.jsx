@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { FormControl, FormLabel } from '@mui/material';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import FieldHelp from '../../FieldHelp';
 import AliasDrawerWrapper from '../../../drawer/Aliases';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';

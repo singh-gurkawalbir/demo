@@ -4,12 +4,12 @@ import Checkbox from '@mui/material/Checkbox';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import { TextButton } from '@celigo/fuse-ui';
 import { JOB_STATUS } from '../../../constants';
 import JobStatus from './JobStatus';
 import { getSuccess } from './util';
 import JobActionsMenu from './JobActionsMenu';
 import DateTimeDisplay from '../../DateTimeDisplay';
-import { TextButton } from '../../Buttons';
 import { JobDetailsStyles } from '../../JobDashboard/ChildJobDetail';
 
 const useStyles = makeStyles(() => ({

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { MenuItem, Checkbox, FormControlLabel, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
@@ -10,7 +11,6 @@ import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 import CeligoSelect from '../../CeligoSelect';
 import FlowSelector from './FlowSelector';
-import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {

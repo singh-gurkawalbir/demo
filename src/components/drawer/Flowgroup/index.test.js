@@ -128,7 +128,7 @@ describe('FlowgroupDrawer tests', () => {
   });
   test('Should able to test the FlowGroup drawer is there when create flowgroup without flows in integration', async () => {
     await initFlowgroupDrawer({props});
-    expect(screen.getByRole('heading', {name: /Create flow group/i})).toBeInTheDocument();
+    expect(screen.getByText(/Create flow group/i)).toBeInTheDocument();
     expect(screen.getByText(/Name/i)).toBeInTheDocument();
     expect(screen.getByText('*')).toBeInTheDocument();
     expect(screen.getByText('Flows')).toBeInTheDocument();

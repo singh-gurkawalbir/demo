@@ -1,11 +1,10 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { TextField } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import clsx from 'clsx';
+import { TextButton, FilledButton, OutlinedButton } from '@celigo/fuse-ui';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
 import ActionGroup from '../ActionGroup';
-import { TextButton, FilledButton, OutlinedButton } from '../Buttons';
 import { DISCARD_DIALOG_TITLE, DISCARD_DIALOG_MESSAGE } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -96,7 +95,11 @@ const ConfirmDialog = (
               'data-test': button.dataTest || button.label,
               key: button.label,
               error: button.error,
-              className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
+              sx: (buttons.length > 2 && button.label === 'Cancel') ? ({
+                position: 'absolute',
+                right: 0,
+                top: 0,
+              }) : {},
               onClick: handleButtonClick(button),
             };
             const {variant = 'filled'} = button;

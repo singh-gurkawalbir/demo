@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
+import { FilledButton } from '@celigo/fuse-ui';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
-import { FilledButton } from '../Buttons';
 
 export default function FormButton({
   onClick,

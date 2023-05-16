@@ -6,13 +6,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import RawHtml from '../../../../../../RawHtml';
 import { message } from '../../../../../../../utils/messageStore';
 import useConfirmDialog from '../../../../../../ConfirmDialog';
 import actions from '../../../../../../../actions';
-import { TextButton } from '../../../../../../Buttons';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -187,7 +186,23 @@ export default function DestinationDataType({
             onClick={handleMenu}
             disabled={disabled}
             endIcon={<ArrowDownFilledIcon />}
-            className={classes.dataType} >
+            sx={{
+              border: 'none',
+              fontStyle: 'italic',
+              color: 'primary.main',
+              justifyContent: 'flex-end',
+              padding: '0px 4px',
+              '& svg': {
+                marginLeft: -1,
+              },
+              '&:focus': {
+                color: 'primary.main',
+              },
+              '&.Mui-disabled': {
+                height: 38,
+                backgroundColor: 'background.paper2',
+              },
+            }} >
             {selectedDataTypeLabel}
           </TextButton>
         </div>

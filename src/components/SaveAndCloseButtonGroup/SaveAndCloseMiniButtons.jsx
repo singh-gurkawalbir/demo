@@ -1,6 +1,5 @@
 import React from 'react';
-import { Spinner } from '@celigo/fuse-ui';
-import { FilledButton, TextButton } from '../Buttons';
+import { Spinner, FilledButton, TextButton } from '@celigo/fuse-ui';
 
 export default function SaveAndCloseMiniButtons({
   isDirty,
