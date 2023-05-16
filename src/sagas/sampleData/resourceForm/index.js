@@ -68,7 +68,7 @@ export function* _handlePreviewError({ e, resourceId }) {
       actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedError)
     );
   }
-  if (e.status === 500) {
+  if (e.status === 500 || e.status === 'Cancelled') {
     return yield put(
       actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED})
     );
