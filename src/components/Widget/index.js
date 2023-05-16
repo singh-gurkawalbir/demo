@@ -5,15 +5,8 @@ import Card from '@mui/material/Card';
 import { addDays, startOfDay } from 'date-fns';
 import { Typography } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
-import DefaultDashboard from '../../views/Dashboard/panels/Custom/components/DefaultDashboard';
-import '../../views/Dashboard/panels/Custom/Styles/widget.css';
-// import IconButton from '@mui/material/IconButton';
-// import CloseIcon from '@mui/icons-material/Close';
-// import Select from '@mui/material/Select';
-// import InputLabel from '@mui/material/InputLabel';
-// import FormControl from '@mui/material/FormControl';
-// import RefreshIcon from '../icons/RefreshIcon';
-// import TextButton from '../Buttons/TextButton';
+import DefaultDashboard from '../../views/Dashboard/panels/AdminDashboard/components/DefaultDashboard';
+import '../../views/Dashboard/panels/AdminDashboard/Styles/widget.css';
 import { selectors } from '../../reducers';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
@@ -27,38 +20,6 @@ import SelectResource from '../LineGraph/SelectResource';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     width: '100%',
-//     height: '100%',
-//     display: 'flex',
-//     flexDirection: 'column',
-//     cursor: 'grab',
-//   },
-//   header: {
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: '0.5rem',
-//   },
-//   spacer: {
-//     flexGrow: 1,
-//   },
-//   body1: {
-//     padding: '0.5rem',
-//     flexGrow: 1,
-//     display: 'flex',
-//     flexDirection: 'column',
-//   },
-//   chartContainer: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     [theme.breakpoints.up('md')]: {
-//       flexDirection: 'row',
-//     },
-//   },
-// }));
 
 export const transformData = data => {
   const resultMap = {};
@@ -446,9 +407,6 @@ export default function Widget({
            />
           <div className="spacer" />
           <ActionGroup>
-            {/* <TextButton startIcon={<RefreshIcon />}>
-              Refresh
-            </TextButton> */}
             <DateRangeSelector
               onSave={handleDateRangeChange}
               value={{
@@ -491,26 +449,3 @@ export default function Widget({
     </Card>
   );
 }
-
-// const handleRefreshClick = useCallback(() => {
-//   switch (id) {
-// case '0':
-//   setData(transformData1(graphData));
-//   break;
-// case '1':
-//   setData(transformData1(graphData));
-//   break;
-// case '2':
-//   setData(transformData2(graphData));
-//   break;
-// case '3':
-//   setData(transformData1(graphData));
-//   break;
-//     case '4':
-//       setData(transformData(flowData));
-//       break;
-//     default:
-//       return null;
-//   }
-// }, [flowData, id]);
-
