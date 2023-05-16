@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { FilledButton, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
@@ -7,7 +8,6 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import {FilledButton, TextButton} from '../Buttons';
 import { UNASSIGNED_SECTION_ID } from '../../constants';
 import ActionGroup from '../ActionGroup';
 import customCloneDeep from '../../utils/customCloneDeep';

@@ -2,6 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import lookupUtil from '../../../../utils/lookup';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -13,7 +14,6 @@ import LookupDrawer from '../../../drawer/Lookup';
 import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/completers';
 import { emptyObject } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
 import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles({

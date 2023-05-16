@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionGroup from '../../ActionGroup';
@@ -10,17 +10,10 @@ import CeligoPagination from '../../CeligoPagination';
 import RefreshIcon from '../../icons/RefreshIcon';
 import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/flowStepLogs';
 import FetchProgressIndicator from '../../FetchProgressIndicator';
-import { TextButton } from '../../Buttons';
 
-const useStyles = makeStyles(theme => ({
-  refreshLogsButton: {
-    marginRight: theme.spacing(-2),
-  },
-}));
 const emptyObj = {};
 
 export default function LogsDrawerActions({ flowId, resourceId, resourceType }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const canEnableDebug = useSelector(state => selectors.canEnableDebug(state, resourceId, flowId));
   const { hasMore, logsCount, logsStatus, loadMoreStatus, fetchStatus, currQueryTime } = useSelector(state => {
@@ -137,7 +130,7 @@ export default function LogsDrawerActions({ flowId, resourceId, resourceType }) 
         <TextButton
           onClick={refreshLogs}
           data-test="refreshLogs"
-          className={classes.refreshLogsButton}
+          sx={{mr: -2}}
           disabled={!enableRefresh}
           startIcon={<RefreshIcon />}
            >

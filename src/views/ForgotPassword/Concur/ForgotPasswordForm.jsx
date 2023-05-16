@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { FilledButton} from '../../../components/Buttons';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import { SubmitButton } from '../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -57,13 +57,12 @@ export default function ForgotPassword({setShowError, email, className}) {
           onChange={handleOnChangeEmail}
           className={classes.textField}
         />
-        <FilledButton
+        <SubmitButton
           data-test="submit"
           type="submit"
-          submit
           value="Submit">
           Request password reset
-        </FilledButton>
+        </SubmitButton>
       </form>
     </LoginFormWrapper>
   );

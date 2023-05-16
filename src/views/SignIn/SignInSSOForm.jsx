@@ -5,8 +5,8 @@ import React from 'react';
 import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { FilledButton } from '../../components/Buttons';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
+import { SubmitButton } from '../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -43,13 +43,12 @@ export default function SignInSSOForm() {
         className={classes.textField}
         disabled />
       {isAuthenticating ? <Spinner /> : (
-        <FilledButton
+        <SubmitButton
           data-test="submit"
           type="submit"
-          submit
           onClick={handleSignInWithSSO} >
           Sign in with SSO
-        </FilledButton>
+        </SubmitButton>
       )}
     </LoginFormWrapper>
   );

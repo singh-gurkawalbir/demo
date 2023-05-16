@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../icons/RefreshIcon';
-import TextButton from '../../../Buttons/TextButton';
 import { message } from '../../../../utils/messageStore';
 import MultiSelectUsersFilter from './MultiSelectUsersFilter';
 import NotificationToaster from '../../../NotificationToaster';

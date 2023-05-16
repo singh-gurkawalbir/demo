@@ -63,20 +63,17 @@ jest.mock('../../TransferList', () => ({
   default: jest.fn().mockReturnValue(<div>Mocking TransferList</div>),
 }));
 // Mocking Outlined Button child component as part of unit testing
-jest.mock('../../Buttons/OutlinedButton', () => ({
+// Mocking FilledButton child component as part of unit testing
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../Buttons/OutlinedButton'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  OutlinedButton: props => (
     <div>
       <div>Mocking Outlined Button</div>
       <button type="button" onClick={props.onClick} data-test="outlined_button">{props.children}</button>
     </div>
-  )}));
-// Mocking FilledButton child component as part of unit testing
-jest.mock('../../Buttons/FilledButton', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../Buttons/FilledButton'),
-  default: props => (
+  ),
+  FilledButton: props => (
     <div>
       <div>Mocking Filled Button</div>
       <button type="button" onClick={props.onClick} data-test="Filled_button">{props.children}</button>

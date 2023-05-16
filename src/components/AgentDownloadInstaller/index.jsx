@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import { MenuItem } from '@mui/material';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import actions from '../../actions';
-import { TextButton } from '../Buttons';
-
-const useStyles = makeStyles({
-  donwloadInstallerBtn: {
-    padding: 0,
-  },
-});
 
 export default function AgentDownloadInstaller({ agentId }) {
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
 
@@ -40,7 +31,6 @@ export default function AgentDownloadInstaller({ agentId }) {
       </ArrowPopper>
       <TextButton
         endIcon={<ArrowDownIcon />}
-        className={classes.donwloadInstallerBtn}
         data-test="downloadAgentInstaller"
         onClick={handleMenuClick}>
         Download

@@ -2,6 +2,7 @@ import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { IconButton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -14,7 +15,6 @@ import ExpandAllResourceDiff from '../ExpandAllResourceDiff';
 import ConflictStatus from '../../../../ResourceDiffVisualizer/ConflictStatus';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import CancelIcon from '../../../../icons/CancelIcon';
-import { TextButton } from '../../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderActions: {
@@ -23,9 +23,6 @@ const useStyles = makeStyles(theme => ({
     '&:not(:last-child)': {
       marginRight: 0,
     },
-  },
-  container: {
-    width: theme.spacing(16),
   },
   icon: {
     marginRight: theme.spacing(0.5),
@@ -107,7 +104,7 @@ const CancelRevision = ({ integrationId, revisionId, mode, onClose }) => {
   return (
     <TextButton
       size="small"
-      className={classes.container}
+      sx={{width: 16}}
       data-test="expandAll"
       onClick={handleCancel}>
       <CancelIcon className={classes.icon} />

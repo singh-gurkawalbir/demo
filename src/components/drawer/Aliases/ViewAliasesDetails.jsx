@@ -10,11 +10,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   InfoIconButton,
+  FilledButton,
 } from '@celigo/fuse-ui';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import { getResourceFromAlias, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
-import FilledButton from '../../Buttons/FilledButton';
 import NameCell from '../../ResourceTable/commonCells/Name';
 import RightDrawer from '../Right';
 import { emptyObject } from '../../../constants';

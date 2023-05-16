@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import FieldHelp from '../../FieldHelp';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
-import { OutlinedButton } from '../../../Buttons';
 import { safeParse } from '../../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { selectors } from '../../../../reducers';
@@ -20,14 +20,11 @@ import { selectors } from '../../../../reducers';
  *  2. When editing an export, resource has a userDefinitionId using which we get rules
  *    customized and saved by user while creation
  */
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   fileDefinitionContainer: {
     flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
-  },
-  fileDefinitionBtn: {
-    marginRight: theme.spacing(0.5),
   },
 }));
 // Afe will decide loggable aspects
@@ -113,7 +110,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
             </div>
             <OutlinedButton
               color="secondary"
-              className={classes.fileDefinitionBtn}
+              sx={{mr: 0.5}}
               onClick={handleEditorClick}>
               Launch
             </OutlinedButton>

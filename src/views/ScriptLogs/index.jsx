@@ -3,7 +3,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DateRangeSelector from '../../components/DateRangeSelector';
@@ -20,7 +20,6 @@ import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } fro
 import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
 import NoResultTypography from '../../components/NoResultTypography';
-import { TextButton } from '../../components/Buttons';
 import messageStore, { message } from '../../utils/messageStore';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import ActionMenu from '../../components/CeligoTable/ActionMenu';

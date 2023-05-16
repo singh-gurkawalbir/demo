@@ -4,6 +4,7 @@ import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 import getFormMetadata from './metadata';
@@ -15,7 +16,6 @@ import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowVal
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import { emptyObject } from '../../../../constants';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { EXPORT_FILTERED_DATA_STAGE, IMPORT_POST_MAPPED_DATA_STAGE } from '../../../../utils/flowData';
 
@@ -23,9 +23,6 @@ const useStyles = makeStyles(theme => ({
   csvContainer: {
     width: '100%',
     marginBottom: theme.spacing(2),
-  },
-  csvBtn: {
-    maxWidth: 100,
   },
   csvLabel: {
     marginBottom: 6,
@@ -165,7 +162,7 @@ export default function DynaCsvGenerate_afe(props) {
         <OutlinedButton
           color="secondary"
           data-test={id}
-          className={classes.csvBtn}
+          sx={{maxWidth: 100}}
           onClick={handleEditorClick}>
           Launch
         </OutlinedButton>

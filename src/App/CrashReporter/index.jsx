@@ -3,9 +3,9 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import LogRocket from 'logrocket';
+import { FilledButton } from '@celigo/fuse-ui';
 import ModalDialog from '../../components/ModalDialog';
 import getRoutePath from '../../utils/routePaths';
-import { FilledButton } from '../../components/Buttons';
 import RawHtml from '../../components/RawHtml';
 import {message} from '../../utils/messageStore';
 

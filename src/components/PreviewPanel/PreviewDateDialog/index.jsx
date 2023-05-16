@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ModalDialog from '../../ModalDialog';
@@ -12,7 +13,6 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import adjustTimezone from '../../../utils/adjustTimezone';
 import { convertUtcToTimezone, getNDaysBeforeDate } from '../../../utils/date';
 import ActionGroup from '../../ActionGroup';
-import { TextButton } from '../../Buttons';
 import NotificationToaster from '../../NotificationToaster';
 import { isNewId } from '../../../utils/resource';
 

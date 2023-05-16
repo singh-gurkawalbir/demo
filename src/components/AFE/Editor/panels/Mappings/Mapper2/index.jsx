@@ -160,14 +160,25 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   addSearchBar: {
-    paddingTop: theme.spacing(6),
+    '& .rc-tree-list': {
+      paddingTop: theme.spacing(3),
+    },
+    '&$virtualTree': {
+      overflow: 'hidden',
+      '& .rc-tree-list': {
+        paddingTop: theme.spacing(3),
+        overflow: 'hidden',
+        '& .rc-tree-treenode:last-child': {
+          paddingBottom: theme.spacing(3),
+        },
+      },
+    },
   },
   emptyMessage: {
     padding: theme.spacing(3),
   },
   emptySearchMessage: {
-    padding: theme.spacing(4),
-    paddingTop: theme.spacing(8),
+    padding: theme.spacing(8, 4, 4, 4),
   },
   infoFilter: {
     fontStyle: 'italic',
@@ -177,8 +188,22 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     '&+$mappingDrawerContent': {
       paddingTop: 0,
+      height: `calc(100% - ${theme.spacing(6)}px)`,
       '& .rc-tree-list': {
-        paddingBottom: theme.spacing(6),
+        height: '100%',
+      },
+      '& $virtualTree': {
+        '& .rc-tree-list': {
+          overflow: 'hidden',
+          '& .rc-tree-treenode:last-child': {
+            paddingBottom: theme.spacing(6),
+          },
+        },
+      },
+      '& $addSearchBar': {
+        '& .rc-tree-list': {
+          paddingTop: 0,
+        },
       },
     },
     '& > svg': {
@@ -389,13 +414,13 @@ export default function Mapper2({editorId}) {
       {searchKey !== undefined && <SearchBar />}
       {searchKey && isEmpty(treeData) && (
       <Typography variant="body2" className={classes.emptySearchMessage}>
-        Your search term doesn&apos;t match any destination fields.
+        {message.MAPPER2.EMPTY_DESTINATION_FIELD}
       </Typography>
       )}
 
       {isFilterApplied && isEmpty(treeData) && (
         <Typography variant="body2" className={classes.emptyMessage}>
-          You don&apos;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.
+          <RawHtml html={message.MAPPER2.FILTERED_NO_MATCH_FIELD} />
         </Typography>
       )}
 
@@ -406,16 +431,16 @@ export default function Mapper2({editorId}) {
         </Typography>
       )}
 
-      {!isEmpty(requiredMappingsJsonPaths) && (
+      {searchKey === undefined && !isFilterApplied && !isEmpty(treeData) && !isEmpty(requiredMappingsJsonPaths) && (
         <Typography component="div" variant="caption" className={classes.infoFilter}>
           <InfoIcon />
-          This import has required fields that you must configure with the destination drop-down list.
+          {message.MAPPER2.IMPORT_REQUIRED_FIELDS_CONFIGURE}
         </Typography>
       )}
 
-      <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
+      <div className={clsx(classes.mappingDrawerContent)}>
         <Tree
-          className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'})}
+          className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'}, {[classes.addSearchBar]: searchKey !== undefined})}
           height={allNodes > 50 ? Math.round(window.innerHeight) - 262 : undefined}
           itemHeight={allNodes > 50 ? 20 : undefined}
           titleRender={Row}

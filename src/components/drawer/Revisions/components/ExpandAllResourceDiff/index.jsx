@@ -1,10 +1,10 @@
 import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import TextButton from '../../../../Buttons/TextButton';
 import CollapseWindowIcon from '../../../../icons/CollapseWindowIcon';
 
 const useStyles = makeStyles(theme => ({

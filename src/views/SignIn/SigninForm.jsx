@@ -5,7 +5,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Typography, InputAdornment} from '@mui/material';
 import { useLocation, Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, OutlinedButton, TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
@@ -14,10 +14,10 @@ import HideContentIcon from '../../components/icons/HideContentIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
-import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
 import useQuery from '../../hooks/useQuery';
 import { isGoogleSignInAllowed } from '../../utils/resource';
+import { SubmitButton } from '../../components/Buttons/FilledButton';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -83,15 +83,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
-  },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
   },
   ssoBtn: {
     borderRadius: 4,
@@ -299,14 +290,13 @@ export default function SignIn({dialogOpen, className}) {
 
         { isAuthenticating ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
               role="button"
-              className={classes.submit}
               value="Submit">
               Sign in
-            </FilledButton>
+            </SubmitButton>
           )}
       </form>
       { !isAuthenticating && (
@@ -327,7 +317,15 @@ export default function SignIn({dialogOpen, className}) {
             <OutlinedButton
               type="submit"
               color="secondary"
-              className={classes.googleBtn}>
+              sx={{
+                borderRadius: '4px',
+                width: '100%',
+                background: `url(${path}) 15% center no-repeat`,
+                backgroundSize: '16px',
+                height: 38,
+                fontSize: '16px',
+                backgroundColor: 'background.paper',
+              }}>
               Sign in with Google
             </OutlinedButton>
           </form>
@@ -354,7 +352,15 @@ export default function SignIn({dialogOpen, className}) {
           <OutlinedButton
             type="submit"
             color="secondary"
-            className={classes.googleBtn}>
+            sx={{
+              borderRadius: '4px',
+              width: '100%',
+              background: `url(${path}) 15% center no-repeat`,
+              backgroundSize: '16px',
+              height: 38,
+              fontSize: '16px',
+              backgroundColor: 'background.paper',
+            }}>
             Sign in with Google
           </OutlinedButton>
         </form>

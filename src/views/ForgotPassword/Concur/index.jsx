@@ -3,9 +3,9 @@ import { useSelector, useDispatch} from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../../reducers';
-import { TextButton } from '../../../components/Buttons';
 import actions from '../../../actions';
 import messageStore, { message } from '../../../utils/messageStore';
 import getImageUrl from '../../../utils/image';
@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
     '& > img': {
       width: 'auto',
     },
-  },
-  link: {
-    paddingLeft: 4,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
@@ -166,7 +163,7 @@ export default function ConcurForgotPassword(props) {
               <TextButton
                 data-test="signin"
                 color="primary"
-                className={classes.link}
+                sx={{paddingLeft: 4}}
                 onClick={handleClick}
                 component={Link}
                 to="/signin?application=concur">

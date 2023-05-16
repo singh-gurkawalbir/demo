@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Typography } from '@mui/material';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import Stepper from '../Stepper';
 import HeaderWithHelpText from '../HeaderWithHelpText';
 import useForm from '../../../../../components/Form';
@@ -11,7 +12,6 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import useFormContext from '../../../../../components/Form/FormContext';
-import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
 import { message } from '../../../../../utils/messageStore';
 
 const PRIMARY_ACCOUNT_FORM_KEY = 'mfa-primary-account-form';

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
@@ -10,7 +11,6 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
-import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {

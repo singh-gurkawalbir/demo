@@ -3,12 +3,12 @@ import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid, Divider, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { FilledButton } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import Addons from './Addons';
-import { FilledButton } from '../../../../../../../components/Buttons';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import messageStore from '../../../../../../../utils/messageStore';
 
@@ -31,9 +31,6 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     padding: '0 0 16px 16px',
-  },
-  button: {
-    margin: theme.spacing(1),
   },
   planContent: {
     margin: 0,
@@ -129,7 +126,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               <Grid item xs={3}>
                 {upgradeText && (
                 <FilledButton
-                  className={classes.button}
+                  sx={{margin: 1}}
                   disabled={upgradeRequested || upgradeSettingsRequested || isLicenseExpired}
                   onClick={handleUpgrade}>
                   {upgradeText}

@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import { FilledButton, OutlinedButton } from '@celigo/fuse-ui';
 import CeligoTable from '../../../../components/CeligoTable';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -11,8 +12,6 @@ import metadata from './metadata';
 import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import FilledButton from '../../../../components/Buttons/FilledButton';
-import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 import { message } from '../../../../utils/messageStore';
 import customCloneDeep from '../../../../utils/customCloneDeep';
 
@@ -34,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.divider,
-  },
-  initiateTransferBtn: {
-    margin: theme.spacing(2, 0, 2, 2),
   },
   error: {
     color: theme.palette.error.main,
@@ -144,7 +140,9 @@ export default function Invite(props) {
           <CeligoTable resourceType="transfers" data={customCloneDeep(response)} {...metadata} />
           <FilledButton
             data-test="invite"
-            className={classes.initiateTransferBtn}
+            sx={{
+              margin: '16px 0px 16px 16px',
+            }}
             onClick={initiateTransferClick}>
             Initiate Transfer
           </FilledButton>

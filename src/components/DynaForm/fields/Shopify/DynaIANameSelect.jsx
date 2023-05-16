@@ -2,11 +2,10 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import DynaSelect from '../DynaSelect';
 import FieldHelp from '../../FieldHelp';
 import RefreshIcon from '../../../icons/RefreshIcon';
-import TextButton from '../../../Buttons/TextButton';
-
 import messageStore from '../../../../utils/messageStore';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -23,9 +22,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: theme.spacing(1),
-  },
-  refresh: {
-    fontSize: 14,
   },
   integrationNameInfo: {
     '& > .MuiTypography-root': {
@@ -120,7 +116,7 @@ export default function DynaIANameSelect(props) {
             data-test="refreshExtracts"
             startIcon={<RefreshIcon />}
             onClick={handleRefresh}
-            className={classes.refresh}
+            sx={{fontSize: '14px'}}
             size="small"
           >
             Refresh

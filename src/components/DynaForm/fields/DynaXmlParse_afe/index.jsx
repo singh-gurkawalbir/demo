@@ -4,6 +4,7 @@ import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaForm from '../..';
@@ -15,7 +16,6 @@ import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe/FileDataChange';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { emptyObject } from '../../../../constants';
 
@@ -62,9 +62,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-  },
-  button: {
-    maxWidth: 100,
   },
   label: {
     marginBottom: 6,
@@ -209,7 +206,7 @@ export default function DynaXmlParse_afe({
         <OutlinedButton
           color="secondary"
           data-test={`parse-helper-${id}`}
-          className={classes.button}
+          sx={{maxWidth: 100}}
           onClick={handleEditorClick}>
           Launch
         </OutlinedButton>

@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@mui/material';
 import clsx from 'clsx';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
-import OutlinedButton from '../Buttons/OutlinedButton';
 import ThumbsUpIcon from '../icons/ThumbsUpIcon';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
 import ThumbsDownIcon from '../icons/ThumbsDownIcon';
@@ -79,10 +79,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  feedbackActionButton: {
-    display: 'flex',
-    alignSelf: 'flex-start',
-  },
   titleWrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -142,7 +138,10 @@ const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) =
         />
       <span data-test="helpFeedbackSubmit">
         <OutlinedButton
-          className={classes.feedbackActionButton}
+          sx={{
+            display: 'flex',
+            alignSelf: 'flex-start',
+          }}
           onClick={handleSendFeedbackText}>
           Submit
         </OutlinedButton>

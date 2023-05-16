@@ -5,19 +5,20 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Typography, InputAdornment } from '@mui/material';
 import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { getDomain, isGoogleSignInAllowed } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import { FilledButton, OutlinedButton, TextButton } from '../../../components/Buttons';
 import useQuery from '../../../hooks/useQuery';
 import ShowContentIcon from '../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../components/icons/HideContentIcon';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import { message } from '../../../utils/messageStore';
+import { SubmitButton } from '../../../components/Buttons/FilledButton';
+import { GoogleButton } from '../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -241,15 +242,14 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
         )}
         { isAuthenticating ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
               role="button"
-              className={classes.submit}
-              submit
+              sx={{ margin: '1px 0px 2px 0px'}}
               value="Submit">
               Sign in
-            </FilledButton>
+            </SubmitButton>
           )}
       </form>
 
@@ -268,12 +268,12 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
                 id="attemptedRoute"
                 name="attemptedRoute"
                 value={attemptedRoute || getRoutePath('/')} />
-              <OutlinedButton
+              <GoogleButton
                 type="submit"
                 color="secondary"
-                googleBtn>
+              >
                 Sign in with Google
-              </OutlinedButton>
+              </GoogleButton>
             </form>
           </div>
         )}

@@ -12,11 +12,11 @@ import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
-import { OutlinedButton } from '../../components/Buttons';
 import infoText from '../../components/Help/infoText';
 import { isProduction } from '../../forms/formFactory/utils';
 import { isGoogleSignInAllowed } from '../../utils/resource';
 import { useFeatureVisibility } from '../../components/FeatureFlag';
+import { GoogleButton } from '../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -52,9 +52,6 @@ const useStyles = makeStyles(theme => ({
     '& > .MuiFormLabel-root': {
       padding: theme.spacing(0, 2),
     },
-  },
-  googleBtn: {
-    width: 'unset',
   },
 }));
 
@@ -395,14 +392,13 @@ export default function ProfilePanel() {
               !preferences.auth_type_google.id) && (
               <InputLabel>
                 <span className={classes.label}>Link to:</span>
-                <OutlinedButton
+                <GoogleButton
                   data-test="linkWithGoogle"
                   color="secondary"
-                  googleBtn
-                  className={classes.googleBtn}
+                  sx={{width: 'unset'}}
                   onClick={handleLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
-                </OutlinedButton>
+                </GoogleButton>
               </InputLabel>
           )}
           {preferences &&
@@ -410,14 +406,13 @@ export default function ProfilePanel() {
             preferences.auth_type_google.id && (
               <InputLabel>
                 <span className={classes.label}>Unlink from:</span>
-                <OutlinedButton
+                <GoogleButton
                   data-test="unlinkWithGoogle"
                   color="secondary"
-                  googleBtn
-                  className={classes.googleBtn}
+                  sx={{width: 'unset'}}
                   onClick={handleUnLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
-                </OutlinedButton>
+                </GoogleButton>
               </InputLabel>
           )}
         </div>
