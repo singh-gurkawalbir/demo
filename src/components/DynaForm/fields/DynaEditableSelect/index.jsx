@@ -162,8 +162,10 @@ const ListboxComponent = props => {
     ? ITEM_SIZE * 4.5
     : ITEM_SIZE * items?.length, [items.length]);
 
-  const getItemSize = option => {
-    const { connInfo } = option;
+  const getItemSize = index => {
+    const { connInfo } = items[index];
+
+    console.log({connInfo});
 
     if (connInfo?.httpConnectorApiId && connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_2_OPTIONS;
     if (connInfo?.httpConnectorApiId || connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_1_OPTION;
