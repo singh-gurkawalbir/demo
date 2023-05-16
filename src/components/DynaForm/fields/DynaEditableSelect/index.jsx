@@ -107,11 +107,7 @@ const Option = (props, option) => {
   const {handleEditClick, handleChange, classes, allowEdit} = data;
 
   return (
-    <MenuItem
-      {...props}
-      sx={{
-
-      }}>
+    <MenuItem {...props}>
       <OptionLabel handleClick={handleChange} option={option} connInfo={option?.connInfo} />
       { allowEdit && (
         <span className={classes.optionEditIcon}>
