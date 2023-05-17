@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CustomPanel() {
+export default function AdminDashboardPanel() {
   const resourceType = 'exports';
   const filter = useSelector(state => selectors.filter(state, resourceType));
   const filterConfig = useMemo(
