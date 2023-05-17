@@ -260,6 +260,7 @@ module.exports = (env, argv) => {
         '/set-initial-password/*': getProxyOpts(true),
         '/request-reset-sent': getProxyOpts(true),
         '/mfa/verify': getProxyOpts(true),
+        '/accountInsights/*': proxyOpts,
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
         '/accept-invite-metadata': proxyOpts,

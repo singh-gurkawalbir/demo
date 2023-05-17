@@ -14,7 +14,7 @@ import actions from '../../../../../actions';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // eslint-disable-next-line no-unused-vars
-let originalItems = [];
+const originalItems = [];
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -449,7 +449,7 @@ const initialLayouts = {
 };
 
 const initialGraphTypes = [
-  { id: '4', type: 'Bar', dataType: 'Records', color: ['#D93535', '#05B39C'] },
+  { id: '4', type: 'Bar', dataType: 'Records', color: ['#05B39C', '#D93535'] },
   { id: '0', type: 'Line', dataType: 'connections', color: '#FAB840'},
   { id: '1', type: 'Line', dataType: 'connections', color: '#3F5089'},
   { id: '2', type: 'Line', dataType: 'connections', color: '#FAB840' },
@@ -457,9 +457,11 @@ const initialGraphTypes = [
 ];
 
 export default function Content({colsize, id, data}) {
-  const [layouts, setLayouts] = useState(
-    getFromLS('layouts', `lt${id}`) || initialLayouts
-  );
+  const layoutData = useSelector(selectors.layoutData);
+  const graphData = useSelector(selectors.graphData);
+
+  // setLayouts(layoutData);
+
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -469,25 +471,34 @@ export default function Content({colsize, id, data}) {
   const [graphTypes, setGraphTypes] = useState(
     getFromLS('graphTypes', `gt${id}`) || initialGraphTypes
   );
+  const [layouts, setLayouts] = useState(
+    getFromLS('layouts', `lt${id}`) || initialLayouts
+  );
+
+  // const [layouts, setLayouts] = useState(layoutData);
+  // setLayouts(layoutData);
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
-  // const customId = useSelector(selectors.customId);
 
-  if (layouts.lg.length === 0) {
-    setLayouts(initialLayouts);
-  }
+  // console.log({layoutData, graphData});
+  // if (layouts.lg.length === 0) {
+  //   setLayouts(initialLayouts);
+  // }
 
-  originalItems = layouts.lg.map(item => parseInt(item.i, 10));
+  // originalItems = layouts.lg.map(item => parseInt(item.i, 10));
 
   useEffect(() => {
     if (!isAPICallComplete) {
       dispatch(actions.dashboard.request());
     }
-  }, [dispatch, isAPICallComplete]);
+  }, [dispatch, isAPICallComplete, layouts]);
+
+  useEffect(() => {
+    // console.log(graphTypes);
+    dispatch(actions.dashboard.postPreference({layouts, graphTypes}));
+  }, [dispatch, graphTypes, layouts]);
 
   const [col] = useState(colsize);
-
-  // const [items, setItems] = useState(originalItems);
 
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
@@ -555,6 +566,7 @@ export default function Content({colsize, id, data}) {
 
   return (
     <div className={classes.responsiveContainer}>
+      {/* <h2>{customId}</h2> */}
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
