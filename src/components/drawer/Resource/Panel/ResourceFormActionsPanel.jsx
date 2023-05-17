@@ -1,5 +1,5 @@
 import React, { useMemo} from 'react';
-import {useSelector} from 'react-redux';
+import {shallowEqual, useSelector} from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import resourceConstants from '../../../../forms/constants/connection';
 import { getResourceSubType, multiStepSaveResourceTypes } from '../../../../utils/resource';
@@ -100,7 +100,7 @@ export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap
 }
 
 export default function ResourceFormActionsPanel(props) {
-  const { resourceType, resourceId, isNew} = props;
+  const { resourceType, resourceId, isNew, formKey} = props;
 
   const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged;
 
@@ -111,9 +111,15 @@ export default function ResourceFormActionsPanel(props) {
     selectors.resourceFormState(state, resourceType, resourceId)
   );
   const { actions, fieldMap} = formState?.fieldMeta || {};
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const oauthType = values?.['/http/auth/type'];
   // Any extra actions other than Save, Cancel which needs to be separated goes here
 
   const actionButtons = useMemo(() => {
+    // for http connections and new http framework connections using Oauth 2.0
+    if (oauthType === 'oauth' && resourceType === 'connections' && !isNew && connectionType === 'http') {
+      return [{id: 'oauthandcancel', mode: 'group' }];
+    }
     // if props has defined actions return it
     if (actions) return actions.map(action => ({...action, mode: 'group'}));
 
@@ -133,7 +139,7 @@ export default function ResourceFormActionsPanel(props) {
     }
 
     return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: true}];
-  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
+  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, oauthType]);
 
   if (!formState.initComplete) return null;
 
