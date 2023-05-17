@@ -80,6 +80,14 @@ selectors.isMFASetupIncomplete = state => {
   return mfaSetupRequired && mfaRequired && !mfaVerified;
 };
 
+selectors.isMFAVerificationRequired = state => {
+  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
+  const { mfaVerified, mfaRequired, mfaSetupRequired } = state.sessionInfo.data;
+
+  // when setup is not required and it is not verified, then mfa verufucation is needed
+  return !mfaSetupRequired && mfaRequired && !mfaVerified;
+};
+
 selectors.isMFAResolved = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
   const {authenticated, mfaVerified, mfaRequired } = state.sessionInfo.data;

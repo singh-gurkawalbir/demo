@@ -226,4 +226,23 @@ describe('SigninForm UI testcases', () => {
     expect(euLink).toBeInTheDocument();
     expect(euLink).toHaveAttribute('href', 'https://eu.integrator.io/connection/shopify/oauth2callback??abc=def');
   });
+  test('should redirect to mfa vrification page when verification is not complete', () => {
+    // initialStore = getCreatedStore();
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+      draft.data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
+      draft.user.profile = {email: 'userEmail', auth_type_google: {id: 'someID'}};
+      draft.session.mfa.sessionInfo = {data: {
+        authenticated: true,
+        mfaRequired: true,
+        mfaSetupRequired: false,
+        mfaVerified: false,
+      },
+      status: 'received'};
+    });
+
+    initfunction(initialStore, true);
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/mfa/verify', 'someState');
+  });
 });
