@@ -24,7 +24,6 @@ export default function ErrorNotifications() {
         enqueueSnackbar({
           message: <ErrorContent error={message} />,
           variant: 'error',
-          persist: true,
           key: commKey,
         });
       });
