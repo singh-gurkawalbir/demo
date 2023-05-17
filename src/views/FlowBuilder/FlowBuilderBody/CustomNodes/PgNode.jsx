@@ -54,7 +54,7 @@ export default function PageGeneratorNode(props) {
   );
 
   return (
-    <div className={clsx({[classes.iconLayoutRoot]: isIconView}, {[classes.root]: !isIconView})}>
+    <div className={clsx({[classes.iconLayoutRoot]: isIconView}, {[`${classes.root} nopan`]: !isIconView})}>
       <div className={clsx({[classes.iconLayoutPgContainer]: isIconView}, {[classes.pgContainer]: !isIconView})}>
         <PageGenerator
           className={classes.pageGenerator}
