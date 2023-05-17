@@ -112,12 +112,12 @@ export default function ResourceFormActionsPanel(props) {
   );
   const { actions, fieldMap} = formState?.fieldMeta || {};
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const iClientGrantType = useSelector(state => selectors.resource(state, 'iClients', values?.['/http/_iClientId'])?.oauth2?.grantType);
   const oauthType = values?.['/http/auth/type'];
   // Any extra actions other than Save, Cancel which needs to be separated goes here
 
   const actionButtons = useMemo(() => {
-    // for http connections and new http framework connections using Oauth 2.0
-    if (oauthType === 'oauth' && resourceType === 'connections' && !isNew && connectionType === 'http') {
+    if (oauthType === 'oauth' && resourceType === 'connections' && !isNew && (!iClientGrantType || iClientGrantType === 'authorizecode')) {
       return [{id: 'oauthandcancel', mode: 'group' }];
     }
     // if props has defined actions return it
@@ -139,7 +139,7 @@ export default function ResourceFormActionsPanel(props) {
     }
 
     return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: true}];
-  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, oauthType]);
+  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, oauthType, iClientGrantType]);
 
   if (!formState.initComplete) return null;
 
