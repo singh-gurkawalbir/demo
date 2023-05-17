@@ -1,9 +1,9 @@
 import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import openExternalUrl from '../../utils/window';
 import {getParsedMessage} from '../../utils/string';
 import RawHtml from '../RawHtml';
-import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles({
   jobErrorMessage: {

@@ -3,21 +3,11 @@ import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@mui/styles';
 import Select from '@mui/material/Select';
 import clsx from 'clsx';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import OutlinedButton from '../Buttons/OutlinedButton';
 import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
-  doneButton: {
-    width: '100%',
-    minHeight: 42,
-    margin: 0,
-    padding: 0,
-    borderRadius: 0,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-  },
   select: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -60,21 +50,25 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const DoneButton = ({onClose}) => {
-  const classes = useStyles();
-
-  return (
-
-    <OutlinedButton
-      id="select-close"
-      color="secondary"
-      data-test="closeSelect"
-      onClick={onClose}
-      className={classes.doneButton}>
-      Done
-    </OutlinedButton>
-  );
-};
+export const DoneButton = ({onClose}) => (
+  <OutlinedButton
+    id="select-close"
+    color="secondary"
+    data-test="closeSelect"
+    onClick={onClose}
+    sx={{
+      width: '100%',
+      minHeight: 42,
+      margin: 0,
+      padding: 0,
+      borderRadius: 0,
+      '&:hover': {
+        borderColor: 'primary.main',
+      },
+    }}>
+    Done
+  </OutlinedButton>
+);
 const MenuComponent = React.forwardRef((props, ref) => {
   const {children, closeSelect, ...others} = props;
 

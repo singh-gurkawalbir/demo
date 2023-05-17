@@ -1,9 +1,8 @@
 import { IconButton, Tooltip } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import MultipleAction from './MultipleAction';
-import TextButton from '../../Buttons/TextButton';
 
 export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, iconLabel, tooltip }) {
   const [anchorEl, setAnchorEl] = useState(null);

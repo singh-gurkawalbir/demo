@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { shallowEqual, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import TextButton from '../../Buttons/TextButton';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import getRoutePath from '../../../utils/routePaths';
 

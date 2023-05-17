@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
-import TextButton from '../../../components/Buttons/TextButton';
 import SuccessIcon from '../../../components/icons/SuccessIcon';
 import WarningIcon from '../../../components/icons/WarningIcon';
 import { isNewId } from '../../../utils/resource';
@@ -65,14 +65,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'left',
     lineHeight: 1,
   },
-  errorCountButton: {
-    padding: 0,
-    zIndex: 1,
-    minWidth: 'auto',
-    '& .MuiButton-startIcon': {
-      margin: 0,
-    },
-  },
 }));
 
 export default function SubFlowErrorStatus({ errorCount, isNew, flowId, resourceId }) {
@@ -127,7 +119,14 @@ export default function SubFlowErrorStatus({ errorCount, isNew, flowId, resource
       { errorCount ? (
         <TextButton
           color="primary"
-          className={classes.errorCountButton}
+          sx={{
+            padding: 0,
+            zIndex: 1,
+            minWidth: 'auto',
+            '& .MuiButton-startIcon': {
+              margin: 0,
+            },
+          }}
           onClick={() => handleErrorClick('open')}
           data-test="openErrors"
           startIcon={<WarningIcon data-test="warningIcon" className={classes.warning} />}>

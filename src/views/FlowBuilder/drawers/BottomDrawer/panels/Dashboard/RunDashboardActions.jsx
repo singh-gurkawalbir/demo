@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 import CancelIcon from '../../../../../../components/icons/CancelIcon';
 import DownloadIntegrationIcon from '../../../../../../components/icons/DownloadIntegrationIcon';
@@ -12,7 +13,6 @@ import { JOB_STATUS } from '../../../../../../constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
 import { DRAGGABLE_SECTION_DIV_ID } from '../..';
-import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
 import { message } from '../../../../../../utils/messageStore';
 
@@ -22,9 +22,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
     margin: theme.spacing(0, 1),
-  },
-  cancelButton: {
-    whiteSpace: 'nowrap',
   },
 }));
 const emptySet = [];
@@ -155,7 +152,7 @@ export default function RunDashboardActions({ flowId }) {
           onClick={handleCancel}
           disabled={!validDashboardActions?.includes('cancel')}
           startIcon={<CancelIcon />}
-          className={classes.cancelButton}>
+          sx={{whiteSpace: 'nowrap'}}>
           Cancel run
         </TextButton>
         <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} label="More" />

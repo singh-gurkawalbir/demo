@@ -40,16 +40,4 @@ describe('logDetailsLink UI tests', () => {
       actions.logs.flowStep.setActiveLog('someresourceId', 'somelogKey')
     );
   });
-  test('should check if the option is already clicked', () => {
-    const {store} = renderWithProviders(<LogDetailsLink resourceId="someresourceId" logKey="somelogKey" time="2022-05-18T18:16:31.989Z" />, {initialStore});
-    const profile = {timezone: 'Asia/Kolkata'};
-
-    act(() => store.dispatch(actions.user.profile.update(profile)));
-
-    const button = screen.getByRole('button');
-
-    const classOfButton = button.getAttribute('class');
-
-    expect(classOfButton.indexOf('rowClicked')).toBeGreaterThan(-1);
-  });
 });

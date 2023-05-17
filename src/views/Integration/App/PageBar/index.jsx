@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
@@ -15,7 +16,6 @@ import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
 import { USER_ACCESS_LEVELS } from '../../../../constants';
-import { TextButton } from '../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   tag: {

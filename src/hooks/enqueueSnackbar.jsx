@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import IconButton from '@mui/material/IconButton';
+import { TextButton } from '@celigo/fuse-ui';
 import CloseIcon from '../components/icons/CloseIcon';
-import { TextButton } from '../components/Buttons';
 
 export default function useEnqueueSnackbar() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();

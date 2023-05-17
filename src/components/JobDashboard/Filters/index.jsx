@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { MenuItem, Checkbox, FormControlLabel, IconButton, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
@@ -14,7 +15,6 @@ import CeligoSelect from '../../CeligoSelect';
 import FlowSelector from '../FlowSelector';
 import DateRangeSelector from '../../DateRangeSelector';
 import { getSelectedRange } from '../../../utils/flowMetrics';
-import { TextButton } from '../../Buttons';
 import CeligoDivider from '../../CeligoDivider';
 
 const useStyles = makeStyles(theme => ({

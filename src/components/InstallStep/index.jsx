@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
 import { INSTALL_STEP_TYPES } from '../../constants';
@@ -11,7 +11,6 @@ import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import InfoIconButton from '../InfoIconButton';
-import { TextButton } from '../Buttons';
 import getImageUrl from '../../utils/image';
 
 const useStyles = makeStyles(theme => ({
@@ -97,19 +96,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     minHeight: theme.spacing(4),
     borderLeft: `1px solid ${theme.palette.secondary.contrastText}`,
-  },
-  installActionBtn: {
-    padding: 0,
-    minWidth: 'unset',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  installBtn: {
-    color: `${theme.palette.primary.main} !important`,
-    fontWeight: 'bold',
-    '&:hover': {
-      background: 'none',
-    },
   },
   installInfoBtn: {
     margin: 0,
@@ -292,7 +278,15 @@ export default function InstallationStep(props) {
               data-test={stepText}
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
-              className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
+              color={(step.isCurrentStep && !step.completed) ? 'primary' : 'secondary'}
+              bold={!!((step.isCurrentStep && !step.completed))}
+              sx={{
+                padding: 0,
+                minWidth: 'unset',
+                display: 'flex',
+                alignItems: 'center',
+                ...((step.isCurrentStep && !step.completed) ? {fontWeight: 'bold' } : {}),
+              }}
               >
               {showSpinner && <Spinner size="small" />} {stepText}
             </TextButton>

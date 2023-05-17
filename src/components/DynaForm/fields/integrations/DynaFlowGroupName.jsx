@@ -2,28 +2,24 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../constants';
 import { message } from '../../../../utils/messageStore';
-import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
 import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
 import DynaText from '../DynaText';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   textFieldWithDeleteSupport: {
     display: 'flex',
     alignItems: 'center',
   },
   dynaTextField: {
     flex: 1,
-  },
-  deleteFlowBtn: {
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(2),
   },
 }));
 export default function DynaFlowGroupName(props) {
@@ -101,9 +97,8 @@ export default function DynaFlowGroupName(props) {
         <TextButton
           onClick={handleDeleteFlowGroupClick}
           startIcon={<TrashIcon />}
-          className={classes.deleteFlowBtn}
           error
-        >
+          sx={{ mt: 1, ml: 2 }}>
           Delete flow group
         </TextButton>
       </ButtonWithTooltip>

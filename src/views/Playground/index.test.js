@@ -39,7 +39,7 @@ describe('editors test cases', () => {
     });
 
     await initTransferList({});
-    await waitFor(() => expect(screen.getByRole('heading', {name: 'Playground'})).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument());
     expect(screen.getByRole('heading', {name: 'Editor examples'})).toBeInTheDocument();
     waitFor(async () => {
       const csvParser = screen.queryByText('CSV parser helper');

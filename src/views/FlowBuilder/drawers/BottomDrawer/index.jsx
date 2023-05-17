@@ -78,6 +78,7 @@ const TabTitleWithResourceName = ({resourceId, resourceType, postfix}) => {
 export default function BottomDrawer({
   flowId,
   integrationId,
+  parentIntegrationId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -414,7 +415,7 @@ export default function BottomDrawer({
                 break;
 
               case 'runHistory':
-                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={integrationId} /> : null;
+                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={parentIntegrationId} /> : null;
                 break;
 
               case 'connections':

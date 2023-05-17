@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
+import { TextButton } from '@celigo/fuse-ui';
 import ModalDialog from '../../../../ModalDialog';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import { TextButton } from '../../../../Buttons';
 import { emptyObject } from '../../../../../constants';
 import ActionGroup from '../../../../ActionGroup';
 

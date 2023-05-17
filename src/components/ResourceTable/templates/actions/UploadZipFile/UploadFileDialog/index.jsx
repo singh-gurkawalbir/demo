@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, FilledButton } from '@celigo/fuse-ui';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import { TEMPLATE_ZIP_UPLOAD_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../constants';
 import ModalDialog from '../../../../../ModalDialog';
-import FilledButton from '../../../../../Buttons/FilledButton';
 
 const useStyles = makeStyles({
   fileInput: {

@@ -1,30 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import clsx from 'clsx';
-import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, OutlinedButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
-import Loader from '../../../../../../../components/Loader'; import OutlinedButton from '../../../../../../../components/Buttons/OutlinedButton';
+import Loader from '../../../../../../../components/Loader';
 import { message } from '../../../../../../../utils/messageStore';
-
-const useStyles = makeStyles(theme => ({
-  unInstallBtn: {
-    color: theme.palette.error.main,
-    borderColor: theme.palette.error.main,
-    background: 'none',
-    '&:hover': {
-      background: 'none',
-      borderColor: theme.palette.error.main,
-      color: theme.palette.error.light,
-    },
-  },
-}));
 
 export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [isInProgress, setIsInProgressStatus] = useState(false);
   const installInprogress = useSelector(
     state => selectors.isAddOnInstallInProgress(state, resource.id)
@@ -140,7 +124,16 @@ export default function AddonInstallerButton({ resource }) {
       data-test="addOnInstall"
       size="small"
       error={resource.status === 'installed'}
-      className={clsx({[classes.unInstallBtn]: resource.status === 'installed'})}
+      sx={resource.status === 'installed' && {
+        color: 'error.main',
+        borderColor: 'error.main',
+        background: 'none',
+        '&:hover': {
+          background: 'none',
+          borderColor: 'error.main',
+          color: 'error.light',
+        },
+      }}
       onClick={() => onClick(resource)}>
       {getLabel()}
     </OutlinedButton>

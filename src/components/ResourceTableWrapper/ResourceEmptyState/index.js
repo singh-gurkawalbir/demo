@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FilledButton, TextButton } from '../../Buttons';
+import { FilledButton, TextButton } from '@celigo/fuse-ui';
 import EmptyState from '../../EmptyState';
 import resourceTypeMetaData from '../../EmptyState/metadata';
 import NoResultTypography from '../../NoResultTypography';

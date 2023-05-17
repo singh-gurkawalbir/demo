@@ -15,7 +15,7 @@ import {
   AccordionDetails,
   AccordionSummary,
 } from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -42,7 +42,6 @@ import SaveAndCloseButtonGroupAuto from '../../../../../../components/SaveAndClo
 import { getFormStatusFromCategoryMappingStatus } from '../../../../../../utils/integrationApps';
 import { useFormOnCancel } from '../../../../../../components/FormOnCancelContext';
 import { CATEGORY_MAPPING_SAVE_STATUS, CATEGORY_MAPPING_ASYNC_KEY } from '../../../../../../constants';
-import { TextButton } from '../../../../../../components/Buttons';
 import RightDrawer from '../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
@@ -147,9 +146,6 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-  },
-  expCollBtn: {
-    marginRight: -30,
   },
   categoryMappingExpPanelSummary: {
     padding: '0px 12px',
@@ -454,14 +450,14 @@ function CategoryMappingContent({ integrationId }) {
               <TextButton
                 startIcon={<ExpandWindowIcon />}
                 onClick={handleExpandAll}
-                className={classes.expCollBtn}>
+                sx={{mr: '-30px'}}>
                 Expand All
               </TextButton>
             ) : (
               <TextButton
                 startIcon={<CollapseWindowIcon />}
                 onClick={handleCollapseAll}
-                className={classes.expCollBtn}>
+                sx={{mr: '-30px'}}>
                 Collapse All
               </TextButton>
             )}

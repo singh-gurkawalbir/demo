@@ -1,7 +1,14 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { Box, TabContext, TabList, TabPanel, Tab } from '@celigo/fuse-ui';
+import {
+  TabContext,
+  TabList,
+  TabPanel,
+  Tab,
+  FilledButton,
+  Box,
+} from '@celigo/fuse-ui';
 import DrawerContent from '../../Right/DrawerContent';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerFooter from '../../Right/DrawerFooter';
@@ -13,7 +20,6 @@ import ViewDetails from './RevisionDetails';
 import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';
 import useHandleInvalidRevision from '../hooks/useHandleInvalidRevision';
 import ActionGroup from '../../../ActionGroup';
-import { FilledButton } from '../../../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const allTabs = {

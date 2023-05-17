@@ -4,10 +4,10 @@ import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton} from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { TextButton, FilledButton} from '../../components/Buttons';
+import {SubmitButton} from '../../components/Buttons/FilledButton';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
@@ -101,14 +101,13 @@ export default function ForgotPassword({setShowError, email}) {
 
         { isAuthenticating ? <Spinner sx={{mt: 1}} />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
-              submit
+              sx={{mt: 4}}
               value="Submit">
               Submit
-            </FilledButton>
+            </SubmitButton>
           )}
         <TextButton
           to={getRoutePath('/signin')}
@@ -117,8 +116,10 @@ export default function ForgotPassword({setShowError, email}) {
           component={Link}
           role="link"
           type="cancel"
-          submit
-          className={clsx(classes.submit, classes.cancelBtn)}
+          sx={{
+            mt: 4,
+            fontSize: '16px',
+          }}
         >
           Cancel
         </TextButton>

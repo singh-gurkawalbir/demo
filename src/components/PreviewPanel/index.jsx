@@ -2,13 +2,13 @@ import { Typography, FormLabel } from '@mui/material';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {Box, TextToggle } from '@celigo/fuse-ui';
+import {Box, TextButton, TextToggle } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE, IMPORT_PREVIEW_ERROR_TYPES } from '../../utils/exportPanel';
 import ActionGroup from '../ActionGroup';
-import { TextButton } from '../Buttons';
+
 import EditIcon from '../icons/EditIcon';
 import CeligoDivider from '../CeligoDivider';
 import FieldHelp from '../DynaForm/FieldHelp';

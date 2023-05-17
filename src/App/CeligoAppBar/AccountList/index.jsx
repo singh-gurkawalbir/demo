@@ -8,14 +8,13 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import { useHistory } from 'react-router-dom';
 import { IconButton } from '@mui/material';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import getRoutePath from '../../../utils/routePaths';
 import TrashIcon from '../../../components/icons/TrashIcon';
-import { TextButton } from '../../../components/Buttons';
 import { stringCompare } from '../../../utils/sort';
 import { message } from '../../../utils/messageStore';
 
@@ -192,7 +191,6 @@ function AccountList() {
         data-private
         onClick={handleMenu}
         endIcon={<ArrowDownIcon />}
-        className={classes.currentContainer}
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true">
         {selectedAccount && selectedAccount.company}

@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import React, {useCallback, useEffect} from 'react';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -11,7 +12,6 @@ import ResourceDrawer from '../../../../components/drawer/Resource';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
-import { TextButton } from '../../../../components/Buttons';
 import ActionGroup from '../../../../components/ActionGroup';
 import { message } from '../../../../utils/messageStore';
 

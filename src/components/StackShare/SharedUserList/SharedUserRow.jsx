@@ -6,11 +6,10 @@ import {
   Typography,
   IconButton,
 } from '@mui/material';
-import { Switch } from '@celigo/fuse-ui';
+import { Switch, TextButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useConfirmDialog from '../../ConfirmDialog';
 import DeleteIcon from '../../icons/TrashIcon';
-import { TextButton } from '../../Buttons';
 
 export default function SharedUserRow({ user }) {
   const dispatch = useDispatch();

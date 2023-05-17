@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   generatePath,
@@ -6,8 +6,13 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import actions from '../../../../actions';
+import { emptyObject } from '../../../../constants';
+import { useSelectorMemo } from '../../../../hooks';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../reducers';
+import { message } from '../../../../utils/messageStore';
 import { multiStepSaveResourceTypes } from '../../../../utils/resource';
+import RawHtml from '../../../RawHtml';
 import useDrawerEditUrl from './useDrawerEditUrl';
 
 export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
@@ -16,6 +21,7 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
   const match = useRouteMatch();
   const { operation } = match.params;
   const isNew = operation === 'add';
+  const [vanNotification] = useEnqueueSnackbar();
 
   const dispatch = useDispatch();
 
@@ -34,6 +40,17 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
     return resourceIdPatch?.value;
   }
   );
+  const resourceObj = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, id)?.merged || emptyObject;
+
+  const vanWarningOnClose = useCallback((skipFormClose, resourceType, resourceObj) => {
+    if (!skipFormClose && resourceType === 'connections' && resourceObj.type === 'van') {
+      vanNotification({
+        variant: 'warning',
+        message: <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />,
+        persist: true,
+      });
+    }
+  }, [vanNotification]);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
 
   const editUrl = useDrawerEditUrl(resourceType, id, location.pathname);
@@ -74,6 +91,7 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
       }
       // In other cases , close the drawer
       onClose();
+      vanWarningOnClose(skipFormClose, resourceType, resourceObj);
     } else {
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
@@ -88,10 +106,10 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
 
         return;
       }
-
       onClose();
+      vanWarningOnClose(skipFormClose, resourceType, resourceObj);
     }
-  }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, newResourceId, onClose, operation, resourceId, resourceType, skipFormClose]);
+  }, [isNew, resourceType, isMultiStepSaveResource, dispatch, resourceId, id, skipFormClose, onClose, vanWarningOnClose, resourceObj, history, editUrl, match.path, newResourceId, operation]);
 
   return handleSubmitComplete;
 }
