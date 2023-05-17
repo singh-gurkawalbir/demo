@@ -16,11 +16,13 @@ const useScript = (url = '', id = '', agreeTOSAndPPRequired, callBack) => {
 
     return () => {
       document.body.removeChild(script);
-      // the chat box should be minimized
-      window.zE('webWidget', 'close');
-      // Hiding the default launcher
-      window.zE('webWidget', 'hide');
 
+      if (window.zE) {
+        // the chat box should be minimized
+        window.zE('webWidget', 'close');
+        // Hiding the default launcher
+        window.zE('webWidget', 'hide');
+      }
       // removing zenDesk content
       // doing this will remove pendo icon
       delete window.zE;
