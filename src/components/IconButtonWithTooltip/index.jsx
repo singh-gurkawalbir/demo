@@ -32,13 +32,15 @@ export default function IconButtonWithTooltip({
       {/* Icon button also accepts disabled property. Tooltip expects its children to be in active state and listen to events.
       Hence wrapping it with div */}
 
-      <IconButton
-        className={clsx(classes.actionButtonWithTooltip, {[classes.noPadding]: noPadding}, className)}
-        {...buttonProps}
-        size={buttonSize?.size || 'medium'}
-        sx={{padding: buttonSize?.size === 'small' ? '3px' : 1.5}}>
-        {children}
-      </IconButton>
+      <span>
+        <IconButton
+          className={clsx(classes.actionButtonWithTooltip, {[classes.noPadding]: noPadding}, className)}
+          {...buttonProps}
+          size={buttonSize?.size || 'medium'}
+          sx={{padding: buttonSize?.size === 'small' ? '3px' : 1.5}}>
+          {children}
+        </IconButton>
+      </span>
 
     </Tooltip>
   );
