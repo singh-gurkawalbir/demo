@@ -4,7 +4,7 @@ import { Tabs, Tab } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
-import CustomPanel from '../panels/Custom';
+import AdminDashboardPanel from '../panels/AdminDashboard';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
@@ -43,10 +43,10 @@ const tabs = [
     dataTest: 'account-dashboard-completed-flows',
   },
   {
-    path: 'custom',
+    path: 'adminDashboard',
     label: 'Admin Dashboard',
     Icon: ConnectionsIcon,
-    Panel: CustomPanel,
+    Panel: AdminDashboardPanel,
     dataTest: 'account-dashboard-completed-flows',
   },
 ];
