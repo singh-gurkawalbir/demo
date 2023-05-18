@@ -98,7 +98,7 @@ export default {
         // passing '' because basic option not present in dropdown options
         if (r?.netsuite?.authType === 'basic') return '';
 
-        return r?.netsuite?.authType;
+        return r?.netsuite?.authType || '';
       },
       visibleWhen: [{ field: 'jdbc.serverDataSource', is: ['NetSuite2.com'] }],
     },
