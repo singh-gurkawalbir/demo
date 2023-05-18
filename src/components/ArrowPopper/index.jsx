@@ -113,6 +113,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
+// Todo: Remove this file, once the changes from master are integrated
 export default function ArrowPopper({
   children,
   classes: overrideClasses,

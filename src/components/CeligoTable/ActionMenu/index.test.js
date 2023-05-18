@@ -42,10 +42,10 @@ jest.mock('@celigo/fuse-ui', () => ({
   ),
 }));
 
-jest.mock('../../ArrowPopper', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../ArrowPopper'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  ArrowPopper: props => (
     <>
       <div
         onClick={props.onClose}
