@@ -58,7 +58,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
   const editorId = getValidRelativePath(id);
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
 
-  const netsuiteAPIVersion = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.frameworkVersion'))?.value === 'suiteapp2.0';
+  const netsuiteAPIVersion = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.frameworkVersion'));
 
   useEffect(() => {
     onFieldChange(id, []);
