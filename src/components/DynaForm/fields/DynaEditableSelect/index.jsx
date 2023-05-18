@@ -1,6 +1,7 @@
 import { TextField, InputAdornment, FormControl, FormLabel, makeStyles, Paper } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { VariableSizeList } from 'react-window';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -103,6 +104,20 @@ const useStyles = makeStyles(theme => ({
 
 const DropdownContext = React.createContext({});
 
+const OuterElementContext = React.createContext({});
+
+const OuterElementType = React.forwardRef((props, ref) => {
+  const outerProps = React.useContext(OuterElementContext);
+
+  return <div ref={ref} {...props} {...outerProps} />;
+});
+
+const Row = ({ data, index, style }) => React.cloneElement(data[index], {
+  style: {
+    ...style,
+  },
+});
+
 const Option = option => {
   const data = useContext(DropdownContext);
 
@@ -124,6 +139,54 @@ const Option = option => {
       </span>
       )}
     </>
+  );
+};
+
+const NO_OF_OPTIONS = 4.5;
+const ITEM_SIZE = 48;
+const ITEM_SIZE_WITH_1_OPTION = 60;
+const ITEM_SIZE_WITH_2_OPTIONS = 80;
+
+const ListboxComponent = props => {
+  const {children, ...rest} = props;
+  const classes = useStyles();
+  const listRef = React.useRef();
+  const data = useContext(DropdownContext);
+  const {items} = data;
+
+  const itemData = React.Children.toArray(children);
+
+  const itemCount = itemData?.length;
+
+  const maxHeightOfSelect = useMemo(() => items.length > NO_OF_OPTIONS
+    ? ITEM_SIZE * 4.5
+    : ITEM_SIZE * items?.length, [items.length]);
+
+  const getItemSize = index => {
+    const { connInfo } = items[index];
+
+    console.log({connInfo});
+
+    if (connInfo?.httpConnectorApiId && connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_2_OPTIONS;
+    if (connInfo?.httpConnectorApiId || connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_1_OPTION;
+
+    return ITEM_SIZE;
+  };
+
+  return (
+    <OuterElementContext.Provider value={rest}>
+      <VariableSizeList
+        {...isLoggableAttr()}
+        ref={listRef}
+        itemData={itemData}
+        itemCount={itemCount}
+        itemSize={getItemSize}
+        className={classes.dropdownitemsConnection}
+        outerElementType={OuterElementType}
+        height={maxHeightOfSelect}>
+        {Row}
+      </VariableSizeList>
+    </OuterElementContext.Provider>
   );
 };
 
@@ -189,6 +252,8 @@ export default function DynaEditable(props) {
     onEditClick(evt, option.value);
   }, [inputRef, onEditClick]);
 
+  const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
+
   const dropdownProps = useMemo(() => (
     {
       handleEditClick,
@@ -197,7 +262,8 @@ export default function DynaEditable(props) {
       handleCreateClick,
       classes,
       inputRef,
-    }), [allowEdit, allowNew, classes, handleCreateClick, handleEditClick]);
+      items: filterOptions(options),
+    }), [allowEdit, allowNew, classes, filterOptions, handleCreateClick, handleEditClick, options]);
 
   useEffect(() => {
     if (inputValue !== selectedValue) {
@@ -216,8 +282,6 @@ export default function DynaEditable(props) {
   const handleBlur = useCallback(() => {
     setInputValue(selectedValue);
   }, [selectedValue]);
-
-  const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
 
   const handleChange = useCallback((event, newValue) => {
     setInputValue(newValue?.label);
@@ -256,6 +320,7 @@ export default function DynaEditable(props) {
             onChange={handleChange}
             className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
+            ListboxComponent={ListboxComponent}
             {...isLoggableAttr(true)}
             renderInput={params => {
               const updatedParams = {...params, inputProps: {...params.inputProps, value: inputValue || ''}};
