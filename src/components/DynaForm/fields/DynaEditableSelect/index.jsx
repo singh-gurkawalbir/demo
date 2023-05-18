@@ -160,20 +160,20 @@ const ListboxComponent = props => {
 
   const itemCount = itemData?.length;
 
-  const maxHeightOfSelect = useMemo(() => items.length > NO_OF_OPTIONS
-    ? ITEM_SIZE * 4.5
-    : ITEM_SIZE * items?.length, [items.length]);
-
   const getItemSize = index => {
     const { connInfo } = items[index];
-
-    console.log({connInfo});
 
     if (connInfo?.httpConnectorApiId && connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_2_OPTIONS;
     if (connInfo?.httpConnectorApiId || connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_1_OPTION;
 
     return ITEM_SIZE;
   };
+
+  const listHeight = items.reduce((acc, curr, index) => acc + getItemSize(index), 0);
+
+  const maxHeightOfSelect = useMemo(() => items.length > NO_OF_OPTIONS
+    ? ITEM_SIZE * 4.5
+    : listHeight, [items.length, listHeight]);
 
   return (
     <OuterElementContext.Provider value={rest}>
