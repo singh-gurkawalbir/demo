@@ -1200,8 +1200,6 @@ if you're using a production account, you'll find your API keys under the 'API M
   <li><b>Limit</b> – Export a set number of records (max 100). You can change the maximum number of records to export each time the flow runs, default is set to 1. <b>Limit</b> is useful when developing and testing integrations to avoid syncing lots of data.</ul>`,
   'export.lastModified':
 'System generated date/time to track the last time this resource was modified.',
-  'export.apiIdentifier':
-"Every export that you create is assigned a unique handle that you can then use in your own application logic to invoke the export programmatically via the integrator.io API.  For example, your export identifier might be 'e762db96', and you could invoke this export with a simple HTTP POST to https://api.integrator.io/e762db96",
   'export.groupByFields':
   "Select the fields you'll group, so each group of records returned by the application is treated as a single record downstream in your flow. For example, export records from a source or lookup, group the records based on a column value, and import each group as a journal entry in NetSuite, where each journal entry contains all the records in the group as line items. When grouping, the page size property dictates the maximum number of groups included in a single page. If the application does not sort the exported data, grouping may not work as expected.",
   'export._integrationId':
@@ -1572,8 +1570,6 @@ if you're using a production account, you'll find your API keys under the 'API M
 ' Please provide a sample file that this transfer would need to process. We will use the sample file to auto-set various fields (where possible), and also help you map data in a subsequent step. The sample file that you provide does not need to be overly large (at max 5 records), but it should contain all the fields that you want to work with, and also be in the same format that the transfer will need to generate when running in a production capacity.',
   'import.traceKeyTemplate':
 'Define a <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> that integrator.io will use to identify a unique record for a parent-child record combination. You can use a single field such as {{{field1}}} or use a handlebar expression. When this field is set, you will override the platform default child record trace key field. The child record trace key template value will include the parent record trace key in the format ‘parent_record_trace_key - child_record_trace_key’.',
-  'import.apiIdentifier':
-"Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':
 'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these imports in the data flows that you build yourself, nor can the same Integration App reference imports across different integration tiles.',
   'import._connectorId':
@@ -2467,6 +2463,10 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   'file.csvParse':
 'The CSV parser helper can be used to visualize and experiment with how <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590834533735000&amp;usg=AFQjCNFu7ZCLXUvr9xFWTLIWM0LeXPlPwg">integrator.io</a> parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
+'This resource can be invoked via an HTTP request to this unique URL.',
+  'export.apiIdentifier':
+'This resource can be invoked via an HTTP request to this unique URL.',
+  'import.apiIdentifier':
 'This resource can be invoked via an HTTP request to this unique URL.',
   pathToMany:
 'If the records being processed are JSON objects, then use this field to specify the JSON path to the child records. This field does not need to be set for array/row based data.',
