@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextToggle } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { getHttpConnector} from '../../../../constants/applications';
 import { selectors } from '../../../../reducers';
 import {useHFSetInitializeFormData} from '../httpFramework/DynaHFAssistantOptions';
-import TextToggle from '../../../TextToggle';
 import Help from '../../../Help';
 
 const useStyles = makeStyles(theme => ({
