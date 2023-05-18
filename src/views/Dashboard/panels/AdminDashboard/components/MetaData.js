@@ -342,8 +342,8 @@ export const initialLayouts = {
 };
 
 export const initialGraphTypes = [
-  { id: '0', type: 'Line', dataType: 'connections', color: '#FAB840'},
-  { id: '1', type: 'Line', dataType: 'connections', color: '#3F5089'},
-  { id: '2', type: 'Line', dataType: 'connections', color: '#FAB840' },
-  { id: '3', type: 'Bar', dataType: 'Records', color: ['#05B39C', '#D93535'] },
+  { id: '0', type: 'Line', dataType: 'connections', color: '#FAB840', integrationId: 'demo0'},
+  { id: '1', type: 'Line', dataType: 'connections', color: '#3F5089', integrationId: 'demo1'},
+  { id: '2', type: 'Line', dataType: 'connections', color: '#FAB840', integrationId: 'demo2' },
+  { id: '3', type: 'Bar', dataType: 'Records', color: ['#05B39C', '#D93535'], integrationId: 'none' },
 ];

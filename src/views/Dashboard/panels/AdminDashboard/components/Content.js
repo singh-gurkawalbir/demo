@@ -58,7 +58,6 @@ export default function Content({colsize, id, data}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const integrationId = 'none';
   const { childId } = match.params;
 
   const [graphTypes, setGraphTypes] = useState(
@@ -136,9 +135,9 @@ export default function Content({colsize, id, data}) {
               onChange={handleGraphChange}
               graphData={gd}
               title={gt.dataType}
-              integrationId={integrationId}
               childId={childId}
               graphPrefrence={gt}
+              integrationId={gt.integrationId}
             />
           </div>
         );

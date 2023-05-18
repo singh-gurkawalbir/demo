@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Card from '@mui/material/Card';
 import { addDays, startOfDay } from 'date-fns';
@@ -30,13 +30,12 @@ const defaultRange = {
 
 export default function Widget({
   id,
-  // onRemoveItem,
   title,
   graphType,
   graphData,
-  integrationId,
   childId,
   graphPrefrence,
+  integrationId,
 }) {
   //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
   const dispatch = useDispatch();
@@ -71,30 +70,25 @@ export default function Widget({
     setFlowCategory(e.target.value);
   }, []);
 
-  const localId = useRef(id);
-
   const handleDateRangeChange = useCallback(
     range => {
-      localId.current = id;
-
-      if (localId.current === '3') {
-        dispatch(actions.flowMetrics.clear(integrationId));
-        setRange(getSelectedRange(range));
-        dispatch(
-          actions.user.preferences.update({
-            linegraphs: {
-              ...preferences,
-              [integrationId]: {
-                ...preferences[integrationId],
-                range,
-                resource: selectedResources,
-              },
+      dispatch(actions.flowMetrics.clear(integrationId));
+      setRange(getSelectedRange(range));
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [integrationId]: {
+              ...preferences[integrationId],
+              range,
+              resource: selectedResources,
             },
-          })
-        );
-      }
+          },
+        })
+      );
     },
-    [dispatch, integrationId, preferences, selectedResources, id]);
+    [dispatch, integrationId, preferences, selectedResources]
+  );
 
   const handleResourcesChange = useCallback(
     val => {
@@ -115,6 +109,7 @@ export default function Widget({
     [dispatch, integrationId, preferences, range]
   );
 
+  // console.log(range);
   const sections = useMemo(() => groupings.map(s => <MenuItem key={s.titleId || s.sectionId} value={s.titleId || s.sectionId}>{s.title}</MenuItem>), [groupings]);
 
   // //! THIS PART REPRESENTS THE JOB RECORD AREA
@@ -133,7 +128,7 @@ export default function Widget({
   }, [selectedResources, range, refresh]);
 
   useEffect(() => {
-    if (sendQuery) {
+    if (sendQuery && integrationId === 'none') {
       dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
       setSendQuery(false);
     }
@@ -142,13 +137,7 @@ export default function Widget({
   if (metricData.status === COMM_STATES.ERROR) {
     return <Typography>Error occured</Typography>;
   }
-  const [flowData, setFlowData] = useState(null);
-
-  useEffect(() => {
-    if (localId.current === '3') {
-      setFlowData(metricData.data);
-    }
-  }, [metricData.data]);
+  const flowData = metricData.data;
 
   //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
@@ -249,14 +238,14 @@ export default function Widget({
               }}
            />
             {hasGrouping && (
-            <CeligoSelect
-              data-test="selectFlowCategory"
-              onChange={handleFlowCategoryChange}
-              displayEmpty
-              value={flowCategory || ''}>
-              <MenuItem value="">Select flow group</MenuItem>
-              {sections}
-            </CeligoSelect>
+              <CeligoSelect
+                data-test="selectFlowCategory"
+                onChange={handleFlowCategoryChange}
+                displayEmpty
+                value={flowCategory || ''}>
+                <MenuItem value="">Select flow group</MenuItem>
+                {sections}
+              </CeligoSelect>
             )}
             <SelectResource
               integrationId={integrationId}
