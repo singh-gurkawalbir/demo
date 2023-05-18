@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// Todo: Remove this file, once the changes from master are integrated
 export default function PillButton({fill, className, ...rest}) {
   const classes = useStyles();
 
