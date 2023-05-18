@@ -31,12 +31,11 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
     },
     '&:last-child': {
-      marginLeft: -parseInt(theme.spacing(0.5), 10),
+      marginLeft: theme.spacing(-0.5),
     },
   },
   viewsWrapper: {
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    paddingLeft: parseInt(theme.spacing(3), 10),
   },
   activeView: {
     color: theme.palette.primary.main,
@@ -45,7 +44,7 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: '100%',
       borderBottom: `2px solid ${theme.palette.primary.main}`,
-      bottom: -parseInt(theme.spacing(0.5), 10),
+      bottom: theme.spacing(-0.5),
       left: 0,
     },
   },
