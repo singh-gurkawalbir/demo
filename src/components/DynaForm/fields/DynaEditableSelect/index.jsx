@@ -68,7 +68,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginTop: 39,
     boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
-    '& ul': {
+    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
+    '& .MuiAutocomplete-listbox': {
+      padding: 0,
       '& li': {
         display: 'flex',
         justifyContent: 'space-between',
