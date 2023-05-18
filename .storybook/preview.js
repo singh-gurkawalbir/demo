@@ -9,7 +9,6 @@ import {useSnackbarStyles} from '../src/App';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from '@material-ui/core/styles';
 import themeProvider from '../src/theme/themeProvider';
-import FontStager from '../src/components/FontStager';
 import { ConfirmDialogProvider } from '../src/components/ConfirmDialog';
 import rootReducer from '../src/reducers';
 import rootSaga from '../src/sagas';
@@ -126,7 +125,6 @@ export const decorators = [
   // for each story just like our UI does.
   (Story) => (
     <>
-      <FontStager/>
       <Story />
     </>
   ),

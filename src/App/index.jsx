@@ -15,7 +15,6 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppShell, Spinner } from '@celigo/fuse-ui';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
-import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../components/ConflictAlertDialog';
@@ -336,7 +335,6 @@ export default function App() {
                           paddingTop: '6px',
                         },
                       }}>
-                      <FontStager />
                       <CssBaseline />
                       {/* Define empty call back for getUserConfirmation to not let Prompt
                   * get triggered when history.block is defined in any specific component
