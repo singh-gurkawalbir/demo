@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Card from '@mui/material/Card';
 import { addDays, startOfDay } from 'date-fns';
@@ -20,173 +20,7 @@ import SelectResource from '../LineGraph/SelectResource';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-
-export const transformData = data => {
-  const resultMap = {};
-
-  if (data && Array.isArray(data)) {
-    // Check if data is defined and an array
-    data.forEach(obj => {
-      const date = obj._time;
-      const dateObj = new Date(date);
-
-      const year = dateObj.getFullYear();
-      const month = dateObj.getMonth() + 1;
-      const day = dateObj.getDate();
-      const formattedDate = `${year}-${month}-${day}`;
-
-      const { attribute } = obj;
-
-      if (!resultMap[formattedDate]) {
-        resultMap[formattedDate] = {
-          success: 0,
-          error: 0,
-        };
-      }
-
-      if (attribute === 's') {
-        // eslint-disable-next-line no-plusplus
-        resultMap[formattedDate].success++;
-      } else if (attribute === 'e') {
-        // eslint-disable-next-line no-plusplus
-        resultMap[formattedDate].error++;
-      }
-    });
-  }
-
-  const values = Object.entries(resultMap).map(([formattedDate, counts]) => ({
-    label: formattedDate,
-    success: counts.success,
-    error: counts.error,
-  }));
-
-  values.pop();
-
-  return {
-    ids: {
-      XAxis: 'label',
-      YAxis: '',
-      Plots: ['success', 'error'],
-      MaximumYaxis: '',
-    },
-    values,
-  };
-};
-
-const transformData1 = data => {
-  const dates = {};
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj in data) {
-    if (Object.prototype.hasOwnProperty.call(data, obj)) {
-      const created = data[obj].createdAt.slice(0, 7);
-      const modified = data[obj].lastModified.slice(0, 7);
-
-      if (created in dates) {
-        dates[created].create += 1;
-      } else {
-        dates[created] = { create: 1, modify: 0 };
-      }
-      if (modified in dates) {
-        dates[modified].modify += 1;
-      } else {
-        dates[modified] = { create: 0, modify: 1 };
-      }
-    }
-  }
-  const values = [];
-
-  Object.keys(dates).forEach(key =>
-    values.push({
-      label: key,
-      createdAt: dates[key].create,
-      modifiedAt: dates[key].modify,
-    })
-  );
-
-  return {
-    ids: {
-      XAxis: 'label',
-      YAxis: '',
-      Plots: ['createdAt', 'modifiedAt'],
-      MaximumYaxis: '',
-    },
-    values,
-  };
-};
-
-const transformData2 = data => {
-  const types = {};
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj in data) {
-    if (Object.prototype.hasOwnProperty.call(data, obj)) {
-      const typeObj = data[obj].type;
-
-      if (typeObj in types) {
-        types[typeObj] += 1;
-      } else {
-        types[typeObj] = 1;
-      }
-    }
-  }
-  const values = [];
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in types) {
-    if (Object.hasOwn(types, key)) {
-      values.push({
-        label: key,
-        count: types[key],
-      });
-    }
-  }
-
-  return {
-    ids: {
-      XAxis: 'label',
-      YAxis: '',
-      Plots: ['count'],
-      MaximumYaxis: '',
-    },
-    values,
-  };
-};
-
-export const transformData3 = data => {
-  let errorCount = 0;
-  let successCount = 0;
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj in data) {
-    if (Object.prototype.hasOwnProperty.call(data, obj)) {
-      if (data[obj].attribute === 'e') {
-        errorCount += 1;
-      } else if (data[obj].offline === 's') {
-        successCount += 1;
-      }
-    }
-  }
-
-  return {
-    ids: {
-      XAxis: 'label',
-      YAxis: '',
-      Plots: ['count'],
-      MaximumYaxis: '',
-    },
-    values: [
-      {
-        label: 'Error',
-        count: errorCount,
-      },
-      {
-        label: 'Success',
-        count: successCount,
-      },
-    ],
-  };
-};
+import { transformData, transformData1, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -196,13 +30,12 @@ const defaultRange = {
 
 export default function Widget({
   id,
-  // onRemoveItem,
   title,
   graphType,
   graphData,
-  integrationId,
   childId,
   graphPrefrence,
+  integrationId,
 }) {
   //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
   const dispatch = useDispatch();
@@ -211,7 +44,7 @@ export default function Widget({
   const hasGrouping = !!flowGroupingsSections || isIntegrationAppV1;
   const [flowCategory, setFlowCategory] = useState();
   const groupings = useSelectorMemo(selectors.mkIntegrationFlowGroups, integrationId);
-  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
+  const preferences = useSelector(state => selectors.userOwnPreferences(state)?.linegraphs) || {};
   const { rangePreference, resourcePreference } = useMemo(() => {
     const preference = preferences[integrationId] || {};
 
@@ -233,17 +66,6 @@ export default function Widget({
     return [{_id: integrationId, name: 'Integration-level'}, ...flows];
   }, [flowResources, integrationId]);
 
-  // const validResources = useMemo(() => {
-  //   if (selectedResources && selectedResources.length) {
-  //     return selectedResources.filter(sr => filteredFlowResources.find(r => r._id === sr));
-  //   }
-  //   return selectedResources;
-  // }, [filteredFlowResources, selectedResources]);
-
-  // const handleRefreshClick = useCallback(() => {
-  //   setRefresh(new Date().getTime());
-  // }, []);
-
   const handleFlowCategoryChange = useCallback(e => {
     setFlowCategory(e.target.value);
   }, []);
@@ -257,6 +79,7 @@ export default function Widget({
           linegraphs: {
             ...preferences,
             [integrationId]: {
+              ...preferences[integrationId],
               range,
               resource: selectedResources,
             },
@@ -275,6 +98,7 @@ export default function Widget({
           linegraphs: {
             ...preferences,
             [integrationId]: {
+              ...preferences[integrationId],
               range,
               resource: val,
             },
@@ -285,6 +109,7 @@ export default function Widget({
     [dispatch, integrationId, preferences, range]
   );
 
+  // console.log(range);
   const sections = useMemo(() => groupings.map(s => <MenuItem key={s.titleId || s.sectionId} value={s.titleId || s.sectionId}>{s.title}</MenuItem>), [groupings]);
 
   // //! THIS PART REPRESENTS THE JOB RECORD AREA
@@ -297,30 +122,21 @@ export default function Widget({
   ) || {};
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (selectedResources.length) {
-        setSendQuery(true);
-      }
-    };
-
-    fetchData();
+    if (selectedResources.length) {
+      setSendQuery(true);
+    }
   }, [selectedResources, range, refresh]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (sendQuery) {
-        dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
-        setSendQuery(false);
-      }
-    };
-
-    fetchData();
+    if (sendQuery && integrationId === 'none') {
+      dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
+      setSendQuery(false);
+    }
   }, [metricData, dispatch, integrationId, range, sendQuery, selectedResources]);
 
   if (metricData.status === COMM_STATES.ERROR) {
     return <Typography>Error occured</Typography>;
   }
-
   const flowData = metricData.data;
 
   //! THIS PART IS ABOUT THE GRAPHS
@@ -328,9 +144,9 @@ export default function Widget({
   const connectionName = 'connections';
   const flowName = 'flows';
 
-  if (id === '4') {
+  if (id === '3') {
     finalData = transformData(flowData);
-  } else if (id === '1' || id === '3' || id === '0') {
+  } else if (id === '1' || id === '0') {
     finalData = transformData1(graphData);
   } else if (id === '2') {
     finalData = transformData2(graphData);
@@ -355,6 +171,7 @@ export default function Widget({
     setData(data1);
   });
 
+  // console.log(range);
   const options = [
     {
       label: 'Line',
@@ -384,8 +201,10 @@ export default function Widget({
   );
 
   useEffect(() => {
-    if (id === '4') { setData(transformData(flowData)); }
-  }, [flowData, id]);
+    if (id === '3') {
+      setData(transformData(flowData));
+    }
+  }, [flowData, id, setData]);
 
   return (
     <Card
@@ -407,6 +226,9 @@ export default function Widget({
            />
           <div className="spacer" />
           <ActionGroup>
+            {/* <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
+              Refresh
+            </TextButton> */}
             <DateRangeSelector
               onSave={handleDateRangeChange}
               value={{
@@ -416,14 +238,14 @@ export default function Widget({
               }}
            />
             {hasGrouping && (
-            <CeligoSelect
-              data-test="selectFlowCategory"
-              onChange={handleFlowCategoryChange}
-              displayEmpty
-              value={flowCategory || ''}>
-              <MenuItem value="">Select flow group</MenuItem>
-              {sections}
-            </CeligoSelect>
+              <CeligoSelect
+                data-test="selectFlowCategory"
+                onChange={handleFlowCategoryChange}
+                displayEmpty
+                value={flowCategory || ''}>
+                <MenuItem value="">Select flow group</MenuItem>
+                {sections}
+              </CeligoSelect>
             )}
             <SelectResource
               integrationId={integrationId}

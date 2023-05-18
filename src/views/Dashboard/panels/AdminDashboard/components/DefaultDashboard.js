@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
-import FlowsIcon from '../../../../../components/icons/FlowsIcon';
+// import FlowsIcon from '../../../../../components/icons/FlowsIcon';
 import IntegrationAppsIcon from '../../../../../components/icons/IntegrationAppsIcon';
 import InviteUsersIcon from '../../../../../components/icons/InviteUsersIcon';
 
@@ -45,10 +45,6 @@ function DefaultDashboard(props) {
       message = 'users';
       break;
     case '3':
-      icon = <FlowsIcon className={classes.icon} />;
-      message = 'flows';
-      break;
-    case '4':
       icon = <IntegrationAppsIcon className={classes.icon} />;
       message = 'records';
       break;
