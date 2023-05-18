@@ -3,6 +3,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import { selectors } from '../../../../reducers';
 import lookupUtil from '../../../../utils/lookup';
@@ -10,7 +11,6 @@ import LookupActionItem from './LookupActionItem';
 import getValueAfterInsert from './util';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../../constants';
-import { OutlinedButton } from '../../../Buttons';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value = '', textInsertPosition) => {
@@ -79,22 +79,6 @@ const useStyles = makeStyles(theme => ({
   suggestionsItem: {
     width: '100%',
   },
-  suggestionsItemBtn: {
-    marginLeft: -15,
-    width: 'calc(100% + 30px)',
-    height: 'calc(100% + 20px)',
-    marginTop: -10,
-    borderRadius: 0,
-    padding: '0px 15px',
-    fontFamily: 'Roboto400',
-    '& >.MuiButton-label': {
-      display: 'block',
-      textAlign: 'left',
-    },
-    '&:hover': {
-      backgroundColor: 'transparent',
-    },
-  },
 }));
 const ExtractItem = props => {
   const classes = useStyles();
@@ -106,7 +90,24 @@ const ExtractItem = props => {
   return (
     <div className={classes.suggestionsItem}>
       {/* TODO:(Karthik) please have a look on this button */}
-      <OutlinedButton onClick={handleItemSelect} className={classes.suggestionsItemBtn}>
+      <OutlinedButton
+        onClick={handleItemSelect}
+        sx={{
+          marginLeft: '-15px',
+          width: 'calc(100% + 30px)',
+          height: 'calc(100% + 20px)',
+          marginTop: '-10px',
+          borderRadius: 0,
+          padding: '0px 15px',
+          '& >.MuiButton-label': {
+            display: 'block',
+            textAlign: 'left',
+          },
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
+        }}
+      >
         {label}
       </OutlinedButton>
     </div>

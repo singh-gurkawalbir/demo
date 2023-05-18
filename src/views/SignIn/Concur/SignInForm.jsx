@@ -9,16 +9,14 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import { FilledButton, OutlinedButton } from '../../../components/Buttons';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import { message } from '../../../utils/messageStore';
+import { SubmitButton } from '../../../components/Buttons/FilledButton';
+import { GoogleButton } from '../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
-  submit: {
-    margin: theme.spacing(1, 0, 2, 0),
-  },
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
@@ -27,10 +25,6 @@ const useStyles = makeStyles(theme => ({
   forgotPass: {
     textAlign: 'right',
     marginBottom: theme.spacing(3),
-  },
-  googleBtn: {
-    minWidth: '240px',
-    margin: theme.spacing(0, 0, 2, 0),
   },
   passwordTextField: {
     '& * >.MuiFilledInput-input': {
@@ -156,14 +150,13 @@ export default function SignIn({dialogOpen, className}) {
         )}
         { isAuthenticating ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
-              submit
+              sx={{ margin: '1px 0px 2px 0px'}}
               value="Submit">
               Sign in and connect
-            </FilledButton>
+            </SubmitButton>
           )}
       </form>
       { !isAuthenticating &&
@@ -179,25 +172,29 @@ export default function SignIn({dialogOpen, className}) {
             name="attemptedRoute"
             value={attemptedRoute || getRoutePath('/')} />
 
-          <OutlinedButton
+          <GoogleButton
             type="submit"
             color="secondary"
-            className={classes.googleBtn}
-            googleBtn>
+            sx={{
+              minWidth: '240px',
+              margin: '0px 0px 2px 0px',
+            }}>
             Sign in with Google
-          </OutlinedButton>
+          </GoogleButton>
         </form>
         )}
         {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
          isGoogleSignInAllowed() && (
          <form onSubmit={handleReSignInWithGoogle}>
-           <OutlinedButton
+           <GoogleButton
              type="submit"
              color="secondary"
-             className={classes.googleBtn}
-             googleBtn>
+             sx={{
+               minWidth: '240px',
+               margin: '0px 0px 2px 0px',
+             }}>
              Sign in with Google
-           </OutlinedButton>
+           </GoogleButton>
          </form>
         )}
       </div>

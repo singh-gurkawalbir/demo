@@ -1,7 +1,7 @@
 import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import MarketplaceIcon from '../../icons/MarketplaceIcon';
-import TextButton from '../../Buttons/TextButton';
 import useResults from '../hooks/useResults';
 import { useActiveTab } from '../GlobalSearchContext/createActiveTab';
 import { getTextAfterCount } from '../../../utils/string';

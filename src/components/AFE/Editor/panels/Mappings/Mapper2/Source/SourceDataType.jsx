@@ -7,10 +7,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useHistory } from 'react-router-dom';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
-import { TextButton } from '../../../../../../Buttons';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 
@@ -216,7 +215,24 @@ export default function SourceDataType({
             onClick={handleMenu}
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
-            className={classes.dataType}
+            sx={{
+              justifyContent: 'flex-end',
+              padding: 0,
+              fontStyle: 'italic',
+              '& svg': {
+                ml: -1,
+              },
+              '&:focus': {
+                color: 'primary.main',
+              },
+              '&.Mui-disabled': {
+                height: 38,
+                paddingRight: 1,
+                '& .MuiButton-endIcon': {
+                  display: 'none',
+                },
+              },
+            }}
             color="primary">
             {/* CeligoTruncate is not used here since it effects the drag and drop functionality */}
             {isFocused ? <span className={classes.dataTypeList}>{sourceDataTypeState.join(', ')}</span> : (

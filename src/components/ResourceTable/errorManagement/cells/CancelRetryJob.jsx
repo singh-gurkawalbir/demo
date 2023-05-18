@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { JOB_STATUS } from '../../../../constants';
 import { message } from '../../../../utils/messageStore';
-import TextButton from '../../../Buttons/TextButton';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../ConfirmDialog';
 import CancelIcon from '../../../icons/CancelIcon';

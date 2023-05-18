@@ -64,17 +64,6 @@ export default function PreviewBodyTabs({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            '& .MuiToggleButtonGroup-root': {
-              borderRadius: theme => theme.spacing(3),
-              '& .MuiToggleButton-root:not(:first-child)': {
-                borderLeft: `1px solid ${theme => theme.palette.secondary.lightest}`,
-                borderRadius: 0,
-              },
-              '& .MuiToggleButton-root:first-child': {
-                borderTopRightRadius: 0,
-                borderBottomRightRadius: 0,
-              },
-            },
           }}>
           <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
           <CeligoTabPanel panelId="preview"> <DefaultPanel isLoggable={false} /> </CeligoTabPanel>

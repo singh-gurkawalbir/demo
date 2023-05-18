@@ -3,9 +3,8 @@ import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, FilledButton } from '@celigo/fuse-ui';
 import getImageUrl from '../../utils/image';
-import { FilledButton } from '../../components/Buttons';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import Loader from '../../components/Loader';
@@ -45,11 +44,6 @@ const useStyles = makeStyles(theme => ({
   text: {
     margin: '0 auto 15px auto',
   },
-  close: {
-    minWidth: 240,
-    margin: theme.spacing(0, 0, 2, 0),
-  },
-
 }));
 
 function ConcurConnectError({ message }) {
@@ -64,7 +58,10 @@ function ConcurConnectError({ message }) {
       <div className="form-action" align="center">
         <FilledButton
           color="primary"
-          className={classes.close}
+          sx={{
+            minWidth: '240px',
+            margin: '0px 0px 2px 0px',
+          }}
           disabled={false}
           error={false}
           onClick={() => { window.close(); }}
@@ -99,7 +96,10 @@ function ConcurConnectSuccess({module}) {
       <div className="form-action" align="center">
         <FilledButton
           color="primary"
-          className={classes.close}
+          sx={{
+            minWidth: '240px',
+            margin: '0px 0px 2px 0px',
+          }}
           disabled={false}
           error={false}
           onClick={() => { history.push(`/marketplace/concur${module}`); }}

@@ -4,13 +4,13 @@ import moment from 'moment';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
-import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { message } from '../../../../../../../utils/messageStore';
 import customCloneDeep from '../../../../../../../utils/customCloneDeep';
 
@@ -83,15 +83,6 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: '0 0 30px 30px',
   },
-  // TODO (Azhar) : Check the type and apply the css in the respective component
-  button: {
-    margin: theme.spacing(1),
-    '&.Mui-disabled': {
-      color: theme.palette.secondary.contrastText,
-      background: theme.palette.background.paper2,
-      borderColor: theme.palette.background.paper2,
-    },
-  },
   item: {
     float: 'left',
   },
@@ -159,7 +150,14 @@ export default function AddOns({integrationId, childId}) {
         </div>
         <div>
           <FilledButton
-            className={classes.button}
+            sx={{
+              margin: 1,
+              '&.Mui-disabled': {
+                color: 'secondary.contrastText',
+                backgroundColor: 'background.paper2',
+                borderColor: 'background.paper2',
+              },
+            }}
             component={Link}
             disabled={isLicenseExpired}
             to={match.url.replace('/admin', '/addons')}>

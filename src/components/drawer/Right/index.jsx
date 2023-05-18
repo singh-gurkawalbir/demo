@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import { Drawer } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { RightDrawer as RightDrawerHoc } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { DrawerProvider } from './DrawerContext';
 
@@ -66,6 +67,7 @@ function RightDrawer(props) {
     onClose,
     variant,
     fullPath,
+    isIntegrated,
     ...muiDrawerProps
   } = props;
   const classes = useStyles();
@@ -82,6 +84,14 @@ function RightDrawer(props) {
     // else, just go back in browser history...
     history.goBack();
   }, [history, onClose]);
+
+  if (isIntegrated) {
+    return (
+      <RightDrawerHoc mainMenuOpen={drawerOpened} {...props}>
+        {children}
+      </RightDrawerHoc>
+    );
+  }
 
   return (
     <Drawer

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import ManageLookupDialog from '../../../Lookup/Manage/Dialog';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -22,10 +21,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     width: '100%',
     alignItems: 'center',
-  },
-  editButton: {
-    alignSelf: 'flex-start',
-    whiteSpace: 'nowrap',
   },
 }));
 
@@ -89,7 +84,10 @@ export default function LookupActionItem({
         )}
         <OutlinedButton
           data-test={id}
-          className={clsx({ [classes.editButton]: isEdit })}
+          sx={isEdit ? {
+            alignSelf: 'flex-start',
+            whiteSpace: 'nowrap',
+          } : {}}
           onClick={handleEditorClick}>
           {label}
         </OutlinedButton>

@@ -4,12 +4,12 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography, LinearProgress, capitalize } from '@mui/material';
 import clsx from 'clsx';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
-import FilledButton from '../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import messageStore, { message } from '../../../utils/messageStore';
 

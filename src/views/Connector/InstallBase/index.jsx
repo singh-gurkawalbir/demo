@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
@@ -11,7 +12,6 @@ import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
 import messageStore from '../../../utils/messageStore';

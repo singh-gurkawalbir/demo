@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../../reducers';
 import { PING_STATES } from '../../../../../reducers/comms/ping';
-import { OutlinedButton } from '../../../../Buttons';
 import useFormContext from '../../../../Form/FormContext';
 
 export default function NetsuiteValidateButton(props) {

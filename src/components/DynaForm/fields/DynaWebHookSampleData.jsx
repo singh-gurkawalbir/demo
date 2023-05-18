@@ -2,13 +2,13 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
 import FieldMessage from './FieldMessage';
-import { OutlinedButton } from '../../Buttons';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({

@@ -3,13 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../../components/Buttons/Status';
 import actions from '../../../actions';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
-import TextButton from '../../../components/Buttons/TextButton';
 import { isNewId } from '../../../utils/resource';
 import { getTextAfterCount } from '../../../utils/string';
 
@@ -29,12 +28,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     zIndex: 1,
-  },
-  retryCompleteButton: {
-    width: theme.spacing(8),
-    padding: 0,
-    textAlign: 'left',
-    lineHeight: 1,
   },
 }));
 
@@ -105,7 +98,16 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
       { retryStatus === 'completed' && (
         <div className={classes.retryContainer}>
           <Divider orientation="vertical" className={classes.divider} />
-          <TextButton size="small" color="primary" className={classes.retryCompleteButton} onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
+          <TextButton
+            size="small"
+            color="primary"
+            sx={{
+              width: 64,
+              padding: 0,
+              textAlign: 'left',
+              lineHeight: 1,
+            }}
+            onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
             Retry completed
           </TextButton>
         </div>

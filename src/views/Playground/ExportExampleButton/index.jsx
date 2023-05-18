@@ -2,15 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import { generateId } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import CodeEditor from '../../../components/CodeEditor2/editor';
-import {TextButton} from '../../../components/Buttons';
 
-const useStyles = makeStyles(theme => ({
-  exportButton: {
-    marginRight: theme.spacing(1),
-  },
+const useStyles = makeStyles(() => ({
   dialogContent: {
     width: 700,
     height: 600,
@@ -74,7 +71,7 @@ export default function ExportExampleButton({ editorId }) {
   return (
     <>
       <TextButton
-        className={classes.exportButton}
+        sx={{mr: 1}}
         onClick={handleOpen}>
         Export example
       </TextButton>

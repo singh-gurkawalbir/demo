@@ -3,10 +3,9 @@ import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton} from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import ErrorActionStatus from './ErrorActionStatus';
-import TextButton from '../../../../components/Buttons/TextButton';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
@@ -63,7 +62,10 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
           <TextButton
-            size="large" bold color="primary" className={classes.viewResults}
+            size="large"
+            bold
+            color="primary"
+            sx={{padding: '0px 8px'}}
             onClick={handleClick}>
             View results
           </TextButton>

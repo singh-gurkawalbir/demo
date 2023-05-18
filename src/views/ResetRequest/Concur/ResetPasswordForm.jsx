@@ -2,21 +2,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link} from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
-import { FilledButton, TextButton } from '../../../components/Buttons';
 import getRoutePath from '../../../utils/routePaths';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import DynaPassword from '../../../components/DynaForm/fields/DynaPassword';
 import { message } from '../../../utils/messageStore';
+import { SubmitButton } from '../../../components/Buttons/FilledButton';
 
-const useStyles = makeStyles(theme => ({
-  submit: {
-    color: theme.palette.warning.main,
-  },
+const useStyles = makeStyles(() => ({
   setPasswordForm: {
     position: 'relative',
   },
@@ -76,19 +73,17 @@ export default function ResetPassword() {
         <DynaPassword onFieldChange={onFieldChange} />
         { isAuthenticating ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
-              submit
+              sx={{color: 'warning.main'}}
               value="Submit">
               Save
-            </FilledButton>
+            </SubmitButton>
           )}
         <TextButton
           data-test="cancelResetPassword"
-          className={classes.submit}
-          submit
+          sx={{color: 'warning.main'}}
           to={getRoutePath('/signin')}
           component={Link}
           role="link"

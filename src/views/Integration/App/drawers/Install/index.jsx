@@ -13,6 +13,7 @@ import {
   Box,
 } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -35,7 +36,6 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import { message } from '../../../../../utils/messageStore';
 

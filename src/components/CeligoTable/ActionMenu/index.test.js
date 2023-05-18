@@ -30,10 +30,10 @@ async function initActionMenu({
   return renderWithProviders(ui);
 }
 
-jest.mock('../../Buttons/TextButton', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../Buttons/TextButton'),
-  default: props => (
+  ...jest.requireActual('@celigo/fuse-ui'),
+  TextButton: props => (
     <>
       <button type="button" onClick={props.onClick} data-testid="text_button">
         {props.children}

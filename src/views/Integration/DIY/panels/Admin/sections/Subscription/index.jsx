@@ -5,6 +5,7 @@ import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@mui/styles';
 import { Grid, Divider, Typography, Box, styled } from '@mui/material';
+import { FilledButton } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
@@ -13,7 +14,6 @@ import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
-import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
 import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
@@ -253,7 +253,6 @@ export default function SubscriptionSection({ childId, integrationId }) {
               <Grid item xs={3}>
                 <RequestUpgradeButton
                   id={integrationId}
-                  className={classes.button}
                   license={license}
                   isLicenseExpired={isLicenseExpired}
                   istwoDotZeroFrameWork={istwoDotZeroFrameWork}
@@ -302,7 +301,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
             </Box>
             <div>
               <FilledButton
-                className={classes.button}
+                sx={{mr: 1}}
                 component={Link}
                 disabled={isLicenseExpired}
                 to={match.url.replace('admin/subscription', 'addons')}>

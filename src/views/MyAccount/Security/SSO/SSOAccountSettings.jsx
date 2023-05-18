@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
-import { Box, Switch, Spinner } from '@celigo/fuse-ui';
+import { Box, Switch, Spinner, FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../../components/LoadResources';
@@ -17,7 +17,6 @@ import CollapsableContainer from '../../../../components/CollapsableContainer';
 import NotificationToaster from '../../../../components/NotificationToaster';
 import RawHtml from '../../../../components/RawHtml';
 import messageStore, { message } from '../../../../utils/messageStore';
-import FilledButton from '../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import ButtonWithTooltip from '../../../../components/Buttons/ButtonWithTooltip';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
@@ -66,11 +65,6 @@ const useStyles = makeStyles(theme => ({
   licenseUpdgradeNotification: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  },
-  ssoLicenseUpgradeBtn: {
-    minWidth: '140px',
-    minHeight: theme.spacing(4),
-    alignSelf: 'flex-start',
   },
   SSOLicenseUpgradeContainer: {
     padding: theme.spacing(0, 2, 3, 2),
@@ -127,7 +121,11 @@ const SSOLicenseUpgradeContainer = () => {
         <FilledButton
           onClick={onRequestUpgradeClick}
           disabled={ssoLicenseUpgradeRequested}
-          className={classes.ssoLicenseUpgradeBtn}
+          sx={{
+            minWidth: '140px',
+            minHeight: 4,
+            alignSelf: 'flex-start',
+          }}
         >
           {ssoLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
         </FilledButton>

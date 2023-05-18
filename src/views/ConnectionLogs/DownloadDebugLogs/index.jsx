@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
-import { TextButton } from '../../../components/Buttons';
 import DownloadIcon from '../../../components/icons/DownloadIcon';
 
 export default function DownloadDebugLogs({ connectionId, disabled}) {

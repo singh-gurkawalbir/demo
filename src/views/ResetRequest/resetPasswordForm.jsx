@@ -1,35 +1,23 @@
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link} from 'react-router-dom';
-import clsx from 'clsx';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
-import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import messageStore, {message} from '../../utils/messageStore';
 import ShowErrorMessage from '../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import DynaPassword from '../../components/DynaForm/fields/DynaPassword';
-
-const useStyles = makeStyles(theme => ({
-  submit: {
-    marginTop: 30,
-  },
-  cancelBtn: {
-    fontSize: theme.spacing(2),
-  },
-}));
+import { SubmitButton } from '../../components/Buttons/FilledButton';
 
 export default function ResetPassword() {
   const {token} = useParams();
   const dispatch = useDispatch();
   // const showError = false;
   const history = useHistory();
-  const classes = useStyles();
 
   const [showError, setShowError] = useState(false);
   const [passwordVal, setPasswordVal] = useState('');
@@ -86,14 +74,13 @@ export default function ResetPassword() {
         </div>
         { isAuthenticating ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
-              submit
+              sx={{mt: '30px'}}
               value="Submit">
               Save
-            </FilledButton>
+            </SubmitButton>
           )}
         <TextButton
           to={getRoutePath('/signin')}
@@ -101,8 +88,7 @@ export default function ResetPassword() {
           color="primary"
           component={Link}
           role="link"
-          className={clsx(classes.submit, classes.cancelBtn)}
-          submit
+          sx={{mt: '30px', fontSize: '16px'}}
         >
           Cancel
         </TextButton>

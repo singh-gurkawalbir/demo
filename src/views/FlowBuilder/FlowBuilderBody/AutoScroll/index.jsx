@@ -22,9 +22,10 @@ function AutoScroll({ rfInstance }, ref) {
     const mouseY = e.clientY;
 
     if (!rfInstance) return;
-    const { position, zoom } = rfInstance.toObject();
+    const { viewport } = rfInstance.toObject();
+    const { zoom } = viewport;
 
-    if (Number.isNaN(position[0]) || Number.isNaN(position[1])) return;
+    if (Number.isNaN(viewport?.x) || Number.isNaN(viewport?.y)) return;
     if (mouseX === 0 && mouseY === 0) return; // mouse is outside the view
     if (!Array.isArray(translateExtent) || translateExtent.length !== 2) return;
     const {x: projectedX, y: projectedY} = rfInstance.project({x: mouseX, y: mouseY});
@@ -35,23 +36,23 @@ function AutoScroll({ rfInstance }, ref) {
     if (projectedY > translateExtent[1][1]) return;
 
     if (mouseX > (leftX - SCROLL_ZONE_WIDTH) && mouseX < (leftX + SCROLL_ZONE_WIDTH)) {
-      const newX = position[0] + 25;
-      const newY = position[1];
+      const newX = viewport?.x + 25;
+      const newY = viewport?.y;
 
       rfInstance.setTransform({x: newX, y: newY, zoom});
     } else if (mouseX > rightX - SCROLL_ZONE_WIDTH && mouseX < rightX) {
-      const newX = position[0] - 25;
-      const newY = position[1];
+      const newX = viewport?.x - 25;
+      const newY = viewport?.y;
 
       rfInstance.setTransform({x: newX, y: newY, zoom});
     } else if (mouseY < topY + SCROLL_ZONE_WIDTH) {
-      const newX = position[0];
-      const newY = position[1] + 25;
+      const newX = viewport?.x;
+      const newY = viewport?.y + 25;
 
       rfInstance.setTransform({x: newX, y: newY, zoom});
     } else if (mouseY > (bottomY - SCROLL_ZONE_WIDTH)) {
-      const newX = position[0];
-      const newY = position[1] - 25;
+      const newX = viewport?.x;
+      const newY = viewport?.y - 25;
 
       rfInstance.setTransform({x: newX, y: newY, zoom});
     }

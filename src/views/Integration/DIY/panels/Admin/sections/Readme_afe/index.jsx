@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch} from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Box } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import RawHtml from '../../../../../../../components/RawHtml';
 import actions from '../../../../../../../actions';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
-import { TextButton } from '../../../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 import infoText from '../../../../../../../components/Help/infoText';
 
@@ -24,9 +24,6 @@ const useStyles = makeStyles(theme => ({
   },
   panelHeaderReadme: {
     paddingRight: 0,
-  },
-  editReadmebutton: {
-    marginRight: theme.spacing(-1),
   },
 }));
 
@@ -63,7 +60,7 @@ export default function ReadmeSection({ integrationId }) {
     <>
       <PanelHeader title="Readme" infoText={infoText.Readme} className={classes.panelHeaderReadme}>
         <TextButton
-          className={classes.editReadmebutton}
+          sx={{mr: -1}}
           data-test="form-editor-action"
           disabled={!canEditIntegration}
           onClick={handleEditorClick}>

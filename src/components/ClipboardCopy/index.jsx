@@ -2,18 +2,14 @@ import React, {useCallback} from 'react';
 import { IconButton, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { TextButton } from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
 import AccessToken from '../MaskToken';
-import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles({
   copyTokenIcon: {
     padding: 0,
-  },
-  showToken: {
-    padding: 0,
-    minWidth: 'unset',
   },
 });
 
@@ -46,7 +42,10 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
       ) : (
         <TextButton
           data-test={showTokenTestAttr || 'showToken'}
-          className={classes.showToken}
+          sx={{
+            padding: 0,
+            minWidth: 'unset',
+          }}
           onClick={onShowToken}>
           Show token
         </TextButton>

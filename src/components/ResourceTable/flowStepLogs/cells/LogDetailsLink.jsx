@@ -1,31 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
-import makeStyles from '@mui/styles/makeStyles';
-import { TimeAgo } from '@celigo/fuse-ui';
+import { TimeAgo, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import { TextButton } from '../../../Buttons';
-
-const useStyles = makeStyles(theme => ({
-  textColor: {
-    paddingLeft: 10,
-  },
-  rowClicked: {
-    '&:before': {
-      content: '""',
-      width: 6,
-      height: 'calc(100% + 20px)',
-      position: 'absolute',
-      left: -16,
-      top: -10,
-      backgroundColor: theme.palette.primary.main,
-    },
-  },
-}));
 
 export default function LogDetailsLink({ logKey, resourceId, time }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const activeLogKey = useSelector(state => selectors.activeLogKey(state, resourceId));
 
@@ -36,9 +15,22 @@ export default function LogDetailsLink({ logKey, resourceId, time }) {
   return (
     <TextButton
       color="primary"
-      className={clsx(classes.textColor, {
-        [classes.rowClicked]: activeLogKey === logKey,
-      })}
+      sx={[
+        {
+          paddingLeft: '10px',
+        },
+        activeLogKey === logKey && {
+          '&:before': {
+            content: '""',
+            width: 6,
+            height: 'calc(100% + 20px)',
+            position: 'absolute',
+            left: '-16px',
+            top: '-10px',
+            backgroundColor: 'primary.main',
+          },
+        },
+      ]}
       onClick={handleActionClick}>
       <TimeAgo date={time} />
     </TextButton>

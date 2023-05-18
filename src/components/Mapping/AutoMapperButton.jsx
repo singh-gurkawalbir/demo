@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, FilledButton } from '@celigo/fuse-ui';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import Help from '../Help';
-import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   betaLabel: {

@@ -2,12 +2,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
-import { TextButton } from '../Buttons';
 import infoText from '../Help/infoText';
 
 const useStyles = makeStyles(theme => ({

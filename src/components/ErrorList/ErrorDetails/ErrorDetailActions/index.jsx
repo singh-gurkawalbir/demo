@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
+import { TextButton, FilledButton, OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
 import { useHandleNextAndPreviousError } from '../../ErrorTable/hooks/useHandleNextAndPreviousError';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';

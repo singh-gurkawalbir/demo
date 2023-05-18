@@ -2,18 +2,14 @@ import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
 import useResourceSettingsContext from '../../hooks/useResourceSettingsContext';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
-import TextButton from '../Buttons/TextButton';
 
 const useStyles = makeStyles({
-  button: {
-    padding: 0,
-
-  },
   launchFormBuilderBtnWrapper: {
     display: 'flex',
     minWidth: 165,
@@ -60,7 +56,6 @@ export default function FormBuilderButton({resourceId, resourceType, integration
     <div className={classes.launchFormBuilderBtnWrapper}>
       <TextButton
         color="secondary"
-        className={classes.button}
         data-test="form-editor-action"
         variant="text"
         onClick={toggleEditMode}>

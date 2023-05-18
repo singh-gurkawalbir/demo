@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { TextButton } from '@celigo/fuse-ui';
 import CeligoDivider from '../../../CeligoDivider';
-import { TextButton } from '../../../Buttons';
 import InfoIcon from '../../../icons/InfoIcon';
 import {selectors} from '../../../../reducers';
 

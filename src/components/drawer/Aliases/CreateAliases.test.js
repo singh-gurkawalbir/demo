@@ -104,7 +104,7 @@ describe('CreateAliasDrawer tests', () => {
   });
   test('Should able to test the alias drawer with create alias', async () => {
     await initCreateAliasDrawer({props, isEdit: false});
-    expect(screen.getByRole('heading', {name: 'Create alias'})).toBeInTheDocument();
+    expect(screen.getByText('Create alias')).toBeInTheDocument();
     expect(screen.getByRole('link', {name: 'Aliases guide'})).toBeInTheDocument();
     expect(screen.getByText('Alias description')).toBeInTheDocument();
     expect(screen.getByText('Resource type')).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe('CreateAliasDrawer tests', () => {
   test('Should able to test the alias drawer with edit alias', async () => {
     mockState = '/edit';
     await initCreateAliasDrawer({props});
-    expect(screen.getByRole('heading', {name: 'Edit alias'})).toBeInTheDocument();
+    expect(screen.getByText('Edit alias')).toBeInTheDocument();
     expect(screen.getByRole('link', {name: 'Aliases guide'})).toBeInTheDocument();
     const buttons = screen.getAllByRole('button');
     const pageInfo = buttons.find(b => b.getAttribute('data-test') === 'openPageInfo');

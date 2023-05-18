@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   titleWrapper: {
     display: 'flex',
     alignItems: 'center',
+    maxWidth: `calc(100vw - ${theme.drawerWidth + 500}px)`,
   },
 }));
 

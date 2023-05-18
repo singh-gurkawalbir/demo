@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Snackbar, LinearProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { TextButton } from '../../Buttons';
+import { TextButton } from '@celigo/fuse-ui';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -38,7 +38,7 @@ export default function TestConnectionSnackbar({onCancel}) {
           <Typography>Testing your connection...</Typography>
           <TextButton
             bold
-            className={classes.button}
+            sx={{mt: -0.5}}
             data-test="cancelTestCall"
             onClick={onCancel}>
             Cancel

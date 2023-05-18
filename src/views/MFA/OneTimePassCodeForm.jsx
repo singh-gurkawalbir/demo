@@ -7,14 +7,14 @@ import { Box } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
-import { FilledButton, TextButton } from '../../components/Buttons';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import { NUMBER_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
+import { SubmitButton } from '../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -133,7 +133,6 @@ export default function OneTimePassCodeForm() {
             to={getRoutePath('/mfa/help')}
             data-test="needHelp"
             color="primary"
-            className={classes.forgotPass}
             component={Link}
             role="link"
           >
@@ -143,13 +142,12 @@ export default function OneTimePassCodeForm() {
 
         { isMFAAuthRequestInProgress ? <Spinner />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              submit
               value="Submit">
               Submit
-            </FilledButton>
+            </SubmitButton>
           )}
       </form>
     </LoginFormWrapper>

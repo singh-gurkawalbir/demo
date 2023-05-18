@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { FilledButton } from '@celigo/fuse-ui';
 import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import { FilledButton } from '../../../../Buttons';
 import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';

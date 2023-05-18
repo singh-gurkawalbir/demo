@@ -3,20 +3,17 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import NotificationToaster from '../../NotificationToaster';
 import { PING_STATES } from '../../../reducers/comms/ping';
-import { TextButton } from '../../Buttons';
 import { message } from '../../../utils/messageStore';
 // import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(1, 0),
-  },
-  fixConnectionBtn: {
-    color: theme.palette.primary.main,
   },
 }));
 const getStatusVariantAndMessage = ({

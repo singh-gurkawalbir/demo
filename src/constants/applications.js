@@ -91,13 +91,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  {
-    id: 'van',
-    name: 'VAN (Value-added network)',
-    type: 'van',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
+  // {
+  //   id: 'van',
+  //   name: 'VAN (Value-added network)',
+  //   type: 'van',
+  //   keywords: 'technology,protocol',
+  //   group: 'tech',
+  // },
   // Database connectors
   {
     id: 'mongodb',
@@ -383,18 +383,27 @@ export const getPublishedHttpConnectors = () => {
 
   return localStoragePublishedHttpAssistants;
 };
+const publishedConnectors = getPublishedHttpConnectors();
 
-export const getHttpConnector = httpConnectorId => {
-  let localStoragePublishedHttpAssistants;
+export const getPublishedHttpConnectorsIdsList = () => {
+  let list = [];
 
-  try {
-    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
-  } catch (e) {
-    localStoragePublishedHttpAssistants = [];
-  }
+  publishedConnectors.forEach(pc => {
+    if (pc.legacyIds) {
+      list = [...list, ...pc.legacyIds];
+    }
+    const connId = getConnectorId(pc.legacyId, pc.name);
 
-  return localStoragePublishedHttpAssistants?.find(c => c._id === httpConnectorId);
+    if (connId) {
+      list.push(connId);
+    }
+  });
+
+  return list;
 };
+const publishedConnectorsIds = getPublishedHttpConnectorsIdsList();
+
+export const getHttpConnector = httpConnectorId => publishedConnectors?.find(c => c._id === httpConnectorId);
 
 export const groupApplications = (
   resourceType,
@@ -402,8 +411,6 @@ export const groupApplications = (
 ) => {
   let assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
-
-  const publishedConnectors = getPublishedHttpConnectors();
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -424,7 +431,7 @@ export const groupApplications = (
     });
   }
   assistantConnectors = assistantConnectors.filter(app =>
-    !publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === app.id)
+    !publishedConnectorsIds.includes(app.id)
   );
     publishedConnectors?.forEach(pc => {
       assistantConnectors.push({
@@ -505,7 +512,6 @@ export const applicationsList = () => {
 
     return !assistant || !connector.assistant;
   });
-  const publishedConnectors = getPublishedHttpConnectors();
 
   assistants.forEach(asst => {
     let {name} = asst;
@@ -528,8 +534,7 @@ export const applicationsList = () => {
     });
   });
   applications = applications.filter(app =>
-    !publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === app.id)
-
+    !publishedConnectorsIds.includes(app.id)
   );
   publishedConnectors?.forEach(pc => {
     applications.push({
@@ -605,10 +610,9 @@ export const applicationsPlaceHolderText = () => {
 export const connectorsList = () => {
   const connectors = [];
   let applications = applicationsList();
-  const publishedConnectors = getPublishedHttpConnectors();
 
   applications = applications.filter(app =>
-    !publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === app.id)
+    !publishedConnectorsIds.includes(app.id)
   );
 
   applications.forEach(asst => {
