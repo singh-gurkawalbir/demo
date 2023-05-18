@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
@@ -13,17 +12,8 @@ import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import messageStore, { message } from '../../utils/messageStore';
 
-const useStyles = makeStyles(theme => ({
-  submit: {
-    marginTop: theme.spacing(4),
-  },
-  cancelBtn: {
-    fontSize: theme.spacing(2),
-  },
-}));
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [userEmail, setUserEmail] = useState(email || '');
   const [showErr, setShowErr] = useState(false);
   const [showInvalidEmailError, setShowInvalidEmailError] = useState(false);
