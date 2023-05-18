@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useCallback, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -10,6 +10,7 @@ import FieldMessage from './FieldMessage';
 import ActionButton from '../../ActionButton';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
+import { selectors } from '../../../reducers';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
@@ -56,6 +57,12 @@ export default function DynaNetSuiteQualifier_afe(props) {
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
+
+  const netsuiteAPIVersion = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.frameworkVersion'))?.value === 'suiteapp2.0';
+
+  useEffect(() => {
+    onFieldChange(id, []);
+  }, [netsuiteAPIVersion]);
 
   useEffect(() => {
     if (options.commMetaPath) {
