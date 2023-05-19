@@ -2694,6 +2694,12 @@ const dashboard = {
   // Code that has been added in dashboard}
 };
 
+const flowTrends = {
+  request: (startDateString, endDateString, filterVal) => action(actionTypes.FLOWTRENDS.REQUEST, {startDateString, endDateString, filterVal}),
+  received: response =>
+    action(actionTypes.FLOWTRENDS.RECEIVED, { response }),
+};
+
 const uiFields = {
   requestFlowLevel: flowId => action(actionTypes.UI_FIELDS.FLOW_LEVEL.REQUEST, { flowId }),
   receivedFlowLevel: (flowId, resources) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.RECEIVED, { flowId, resources }),
@@ -2755,4 +2761,5 @@ export default {
   httpConnectors,
   uiFields,
   dashboard,
+  flowTrends,
 };

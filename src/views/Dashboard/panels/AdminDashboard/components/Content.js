@@ -65,8 +65,10 @@ export default function Content({colsize, id, data}) {
   );
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
-  // const customId = useSelector(selectors.customId);
+  // const layoutData = useSelector(selectors.layoutData);
+  // const graphData = useSelector(selectors.graphData);
 
+  // console.log({graphData, layoutData});
   if (layouts.lg.length === 0) {
     setLayouts(initialLayouts);
   }

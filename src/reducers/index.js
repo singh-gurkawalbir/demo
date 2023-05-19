@@ -119,6 +119,7 @@ import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 import customCloneDeep from '../utils/customCloneDeep';
 import { convertUtcToTimezone } from '../utils/date';
 import customReducer, { selectors as fromCustomReducer } from './dashboard';
+import flowReducer, {selectors as fromFlowReducer} from './flowTrends';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -131,6 +132,7 @@ const combinedReducers = combineReducers({
   auth,
   comms,
   customReducer,
+  flowReducer,
 });
 const rootReducer = (state, action) => {
   const newState = combinedReducers(state, action);
@@ -172,6 +174,7 @@ const subSelectors = {
   auth: fromAuth,
   user: fromUser,
   customReducer: fromCustomReducer,
+  flowReducer: fromFlowReducer,
 };
 
 genSelectors(selectors, subSelectors);

@@ -44,7 +44,7 @@ export function* postPreference({ layouts, graphTypes}) {
     });
     // console.log({...data, layouts});
 
-    yield call(getPreference);
+    // yield call(getPreference);
 
     // Dispatch a success action if needed
     yield put(actions.dashboard.preferencePosted(response));
