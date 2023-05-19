@@ -255,6 +255,7 @@ export default function DynaSelectResource(props) {
     isSelectFlowResource,
     defaultValue,
     showEditableDropdown,
+    intId,
   } = props;
   let {filter} = props;
   const { options = {}, getItemInfo } = props;
@@ -326,6 +327,11 @@ export default function DynaSelectResource(props) {
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
+
+  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, intId, true));
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, intId));
+  const children = useSelectorMemo(selectors.mkIntegrationTreeChildren, intId);
+
   const resourceItems = useMemo(() => {
     let filteredResources = resources;
 
@@ -340,6 +346,18 @@ export default function DynaSelectResource(props) {
     if (resourceType === 'iClients' && (merged?.adaptorType === 'HTTPConnection' || merged?.type === 'http') && (merged?._httpConnectorId || merged?.http?._httpConnectorId)) {
       filter = {...filter, _httpConnectorId: (merged._httpConnectorId || merged.http._httpConnectorId)};
       filteredResources = filteredResources.filter(sift(filter));
+    }
+
+    if (intId) {
+      if (isIntegrationApp && ((isIntegrationAppV2 && children.length > 1))) {
+        const childIds = children.map(child => child.value);
+
+        filteredResources = filteredResources.filter(r => childIds.includes(r._integrationId));
+      } else {
+        filteredResources = filteredResources.filter(sift({_integrationId: intId}));
+      }
+    } else {
+      filteredResources = filteredResources.filter(sift({_integrationId: { $exists: false}}));
     }
 
     return filteredResources.map(conn => {

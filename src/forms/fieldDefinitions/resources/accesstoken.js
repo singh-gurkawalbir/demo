@@ -101,10 +101,7 @@ export default {
     allowEdit: false,
     allowNew: false,
     skipPingConnection: true,
-    filter: r =>
-      r._integrationId
-        ? { _integrationId: r._integrationId }
-        : { _integrationId: { $exists: false } },
+    intId: r => r._integrationId,
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -120,10 +117,7 @@ export default {
     label: 'Exports',
     multiselect: true,
     allowEdit: false,
-    filter: r =>
-      r._integrationId
-        ? { _integrationId: r._integrationId }
-        : { _integrationId: { $exists: false } },
+    intId: r => r._integrationId,
     allowNew: false,
     visibleWhen: [
       {
@@ -140,10 +134,7 @@ export default {
     label: 'Imports',
     multiselect: true,
     allowEdit: false,
-    filter: r =>
-      r._integrationId
-        ? { _integrationId: r._integrationId }
-        : { _integrationId: { $exists: false } },
+    intId: r => r._integrationId,
     allowNew: false,
     visibleWhen: [
       {
