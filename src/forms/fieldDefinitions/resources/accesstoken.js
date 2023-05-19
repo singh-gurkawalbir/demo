@@ -102,6 +102,7 @@ export default {
     allowNew: false,
     skipPingConnection: true,
     intId: r => r._integrationId,
+    isAccessToken: true,
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -118,6 +119,7 @@ export default {
     multiselect: true,
     allowEdit: false,
     intId: r => r._integrationId,
+    isAccessToken: true,
     allowNew: false,
     visibleWhen: [
       {
@@ -135,6 +137,7 @@ export default {
     multiselect: true,
     allowEdit: false,
     intId: r => r._integrationId,
+    isAccessToken: true,
     allowNew: false,
     visibleWhen: [
       {

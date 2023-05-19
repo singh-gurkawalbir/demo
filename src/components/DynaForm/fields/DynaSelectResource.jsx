@@ -256,6 +256,7 @@ export default function DynaSelectResource(props) {
     defaultValue,
     showEditableDropdown,
     intId,
+    isAccessToken,
   } = props;
   let {filter} = props;
   const { options = {}, getItemInfo } = props;
@@ -356,7 +357,7 @@ export default function DynaSelectResource(props) {
       } else {
         filteredResources = filteredResources.filter(sift({_integrationId: intId}));
       }
-    } else {
+    } else if (isAccessToken) {
       filteredResources = filteredResources.filter(sift({_integrationId: { $exists: false}}));
     }
 
