@@ -50,8 +50,7 @@ export default function AcceptInvite(props) {
     dispatch(actions.auth.acceptInvite.validate(token));
   }, [dispatch, token]);
 
-  if (isLoading) return <Loader open>Loading...<Spinner /></Loader>;
-  if (isStatusRquested) return <Loader open>Loading...<Spinner /></Loader>;
+  if (isLoading || isStatusRquested) return <Loader open>Loading...<Spinner /></Loader>;
 
   return (
     <>
