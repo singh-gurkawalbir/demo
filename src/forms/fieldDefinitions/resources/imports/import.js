@@ -58,7 +58,7 @@ export default {
   },
   apiIdentifier: {
     label: 'Invoke',
-    helpKey: 'apiIdentifier',
+    helpKey: 'import.apiIdentifier',
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },
