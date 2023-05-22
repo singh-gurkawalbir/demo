@@ -2,7 +2,7 @@ import { select, takeLatest, call, put } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { apiCallWithRetry } from '../../index';
+import { apiCallWithRetry, CANCELLED_REQ } from '../../index';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import {
@@ -68,7 +68,7 @@ export function* _handlePreviewError({ e, resourceId }) {
       actions.resourceFormSampleData.receivedPreviewError(resourceId, parsedError)
     );
   }
-  if (e.status === 500 || e.status === 'Cancelled') {
+  if (e.status === 500 || e.status === CANCELLED_REQ.status) {
     return yield put(
       actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED})
     );
