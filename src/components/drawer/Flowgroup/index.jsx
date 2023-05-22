@@ -120,7 +120,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
 
   return (
     <LoadResources required integrationId={integrationId} resources="flows">
-      <DrawerContent withPadding>
+      <DrawerContent>
         <DynaForm formKey={FLOW_GROUP_FORM_KEY} />
       </DrawerContent>
 

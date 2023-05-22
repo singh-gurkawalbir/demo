@@ -8,6 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   TextButton,
+  Divider,
 } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
@@ -53,15 +54,16 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader sx={{ whiteSpace: 'nowrap' }}>
+      <DrawerHeader>
         <DrawerTitle>
           Create revert
           <Help title="Create revert" helpKey="revert.create" size="small" />
         </DrawerTitle>
         <RevisionHeader />
+        <Divider orientation="vertical" />
         <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>

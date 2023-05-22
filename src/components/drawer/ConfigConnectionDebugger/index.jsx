@@ -86,10 +86,10 @@ function ConfigConnForm() {
 
   return (
     <>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <DynaForm formKey={formKey} />
         {minutes > 1 && (
-          <Typography variant="body2" mt={theme => theme.spacing(2)} >
+          <Typography variant="body2" mt={2} >
             Debug mode is enabled for the next {minutes} minutes.
           </Typography>
         )}

@@ -206,7 +206,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
             ) : ''}
             <DrawerCloseButton onClick={handleClose} />
           </DrawerHeader>
-          <DrawerContent withPadding>
+          <DrawerContent>
             <ManageAliases flowId={resourceId} height={height} hasManageAccess={hasManageAccess} />
           </DrawerContent>
           <DrawerFooter>
@@ -228,7 +228,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
             </DrawerTitle>
             <DrawerCloseButton onClick={handleClose} />
           </DrawerHeader>
-          <DrawerContent withPadding>
+          <DrawerContent>
             <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
           </DrawerContent>
           <DrawerFooter>

@@ -90,7 +90,7 @@ export default function ViewAliasDetailsDrawer({ resourceId, resourceType, heigh
         </DrawerTitle>
         <DrawerCloseButton onClick={handleClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <ViewAliasDetails resourceId={resourceId} resourceType={resourceType} />
       </DrawerContent>
       <DrawerFooter>

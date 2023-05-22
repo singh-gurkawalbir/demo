@@ -86,7 +86,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
 
   return (
     <>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <DynaForm formKey={ALIAS_FORM_KEY[resourceType]} />
       </DrawerContent>
 

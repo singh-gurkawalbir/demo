@@ -26,7 +26,7 @@ export default function InstallTemplateDrawer() {
         <DrawerTitle>Install template</DrawerTitle>
         <DrawerCloseButton onClick={handleClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <Preview />
       </DrawerContent>
     </RightDrawer>

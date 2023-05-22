@@ -7,6 +7,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   FilledButton,
+  Divider,
 } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
@@ -29,7 +30,7 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
 
   return (
     <>
-      <DrawerHeader sx={{ whiteSpace: 'nowrap' }}>
+      <DrawerHeader>
         <DrawerTitle>
           Revert changes
           <Help title="Revert changes" helpKey="revert.finalRevertChanges" size="small" />
@@ -39,9 +40,10 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
           revisionId={revisionId}
           onClose={onClose}
           mode={REVISION_DRAWER_MODES.INSTALL} />
+        <Divider orientation="vertical" />
         <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <InstallSteps
           onClose={onClose}
           integrationId={integrationId}

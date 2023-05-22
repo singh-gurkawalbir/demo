@@ -9,6 +9,7 @@ import {
   DrawerTitle,
   InfoIconButton,
   TextButton,
+  Divider,
 } from '@celigo/fuse-ui';
 import RightDrawer from '../../../Right';
 import actions from '../../../../../actions';
@@ -70,15 +71,16 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader sx={{ whiteSpace: 'nowrap' }}>
+      <DrawerHeader>
         <DrawerTitle>
           Create pull
           <InfoIconButton title="Create pull" info={message.LCM.CREATE_PULL_FORM_HELPINFO} />
         </DrawerTitle>
         <RevisionHeader />
+        <Divider orientation="vertical" />
         <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>

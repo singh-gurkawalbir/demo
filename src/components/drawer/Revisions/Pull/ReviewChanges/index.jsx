@@ -10,6 +10,7 @@ import {
   Spinner,
   TextButton,
   FilledButton,
+  Divider,
 } from '@celigo/fuse-ui';
 import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
@@ -60,10 +61,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader
-        sx={{
-          whiteSpace: 'nowrap',
-        }}>
+      <DrawerHeader>
         <DrawerTitle>
           Review changes
           <Help helpKey="pull.reviewChanges" size="small" />
@@ -73,9 +71,10 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
           revisionId={revisionId}
           mode={REVISION_DRAWER_MODES.REVIEW}
         />
+        <Divider orientation="vertical" />
         <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
