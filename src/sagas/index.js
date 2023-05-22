@@ -77,6 +77,7 @@ import aliasSagas from './aliases';
 import { appSagas } from './app';
 import { sendRequest } from './api';
 import customApiSagas from './dashboardSettings';
+import flowTrendsSagas from './flowTrendsSettings';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -252,6 +253,7 @@ export function* allSagas() {
     ...flowbuildersagas,
     ...uiFieldsSagas,
     ...customApiSagas,
+    ...flowTrendsSagas,
   ]);
 }
 

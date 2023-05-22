@@ -93,31 +93,18 @@ export const transformData1 = data => {
 };
 
 export const transformData2 = data => {
-  const types = {};
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj in data) {
-    if (Object.prototype.hasOwnProperty.call(data, obj)) {
-      const typeObj = data[obj].type;
-
-      if (typeObj in types) {
-        types[typeObj] += 1;
-      } else {
-        types[typeObj] = 1;
-      }
-    }
-  }
   const values = [];
 
   // eslint-disable-next-line no-restricted-syntax
-  for (const key in types) {
-    if (Object.hasOwn(types, key)) {
+  for (const key in data) {
+    if (Object.hasOwn(data, key)) {
       values.push({
         label: key,
-        count: types[key],
+        count: data[key],
       });
     }
   }
+  // console.log('FINAL', data);
 
   return {
     ids: {

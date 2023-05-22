@@ -21,6 +21,35 @@ import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { transformData, transformData1, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
+import DynaForm from '../DynaForm';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+
+const fieldMeta = {
+  fieldMap: {
+    Type: {
+      id: 'filter',
+      name: 'Filter',
+      type: 'select',
+      placeholder: 'Please Select type',
+      visibleWhenAll: [{ field: 'application', isNot: [''] }],
+      options: [
+        {
+          items: [
+            { label: 'Enable', value: 'enabled' },
+            { label: 'Disable', value: 'disabled' },
+          ],
+        },
+      ],
+      // label: 'Filter',
+      // required: true,
+      defaultValue: 'disabled',
+      noApi: true,
+    },
+  },
+  layout: {
+    fields: ['Type'],
+  },
+};
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -137,7 +166,35 @@ export default function Widget({
   if (metricData.status === COMM_STATES.ERROR) {
     return <Typography>Error occured</Typography>;
   }
-  const flowData = metricData.data;
+  const recordData = metricData.data;
+
+  //! This PART IS ABOUT FETCHING THE FLOWDATA FROM API
+  const start = new Date(range.startDate);
+  const end = new Date(range.endDate);
+  const startDateString = start.toISOString();
+  const endDateString = end.toISOString();
+
+  const formKey = 'FlowType';
+
+  const formValues = useSelector(
+    state => selectors.formValueTrimmed(state, formKey),
+    shallowEqual
+  );
+  const result = { ...formValues };
+
+  const filterVal = result.Filter;
+
+  // console.log(filterVal);
+  useFormInitWithPermissions({ formKey, fieldMeta });
+
+  const flowData = useSelector(selectors.flowTrends);
+
+  // console.log('FLOWDATA', flowData);
+  useEffect(() => {
+    if (integrationId === 'demo2') {
+      dispatch(actions.flowTrends.request(startDateString, endDateString, filterVal));
+    }
+  }, [dispatch, endDateString, startDateString, integrationId, filterVal]);
 
   //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
@@ -145,11 +202,12 @@ export default function Widget({
   const flowName = 'flows';
 
   if (id === '3') {
-    finalData = transformData(flowData);
+    finalData = transformData(recordData);
   } else if (id === '1' || id === '0') {
     finalData = transformData1(graphData);
   } else if (id === '2') {
-    finalData = transformData2(graphData);
+    finalData = transformData2(flowData);
+    // console.log(finalData);
   } else if (id === '5') {
     return <MuiBox data={graphData} value={connectionName} />;
   } else if (id === '6') {
@@ -159,6 +217,7 @@ export default function Widget({
   }
   const [data, setData] = useState(finalData);
 
+  // console.log(startDateString);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleBarClick = useCallback(dataDD => {
     const data1 = {
@@ -171,7 +230,6 @@ export default function Widget({
     setData(data1);
   });
 
-  // console.log(range);
   const options = [
     {
       label: 'Line',
@@ -201,10 +259,18 @@ export default function Widget({
   );
 
   useEffect(() => {
-    if (id === '3') {
-      setData(transformData(flowData));
+    if (id === '2') {
+      setData(transformData2(flowData));
     }
   }, [flowData, id, setData]);
+
+  useEffect(() => {
+    if (id === '3') {
+      setData(transformData(recordData));
+    }
+  }, [recordData, id, setData]);
+
+  // console.log(flowData);
 
   return (
     <Card
@@ -247,12 +313,16 @@ export default function Widget({
                 {sections}
               </CeligoSelect>
             )}
+            {id === '3' && (
             <SelectResource
               integrationId={integrationId}
               selectedResources={selectedResources}
               flowResources={filteredFlowResources}
               onSave={handleResourcesChange}
         />
+
+            )}
+            {id === '2' && <DynaForm formKey={formKey} />}
           </ActionGroup>
         </div>
         <div className="body1" />
