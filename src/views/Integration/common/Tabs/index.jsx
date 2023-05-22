@@ -45,11 +45,7 @@ export default function IntegrationTabs({ tabs, sx = [] }) {
 
   return (
     <TabContext value={currentTabIndex}>
-      <Box
-        sx={[
-          { p: theme => theme.spacing(0, 3) },
-          ...(Array.isArray(sx) ? sx : [sx]),
-        ]}>
+      <Box sx={sx}>
         <TabList
           onChange={handleTabChange}
           variant="scrollable"

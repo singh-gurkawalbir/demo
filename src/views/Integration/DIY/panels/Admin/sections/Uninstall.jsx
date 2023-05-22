@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Typography, Divider } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Typography, Divider, Box } from '@mui/material';
 import { OutlinedButton } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
@@ -13,18 +12,7 @@ import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import { message } from '../../../../../../utils/messageStore';
 
-const useStyles = makeStyles(theme => ({
-  content: {
-    marginLeft: theme.spacing(2),
-  },
-  divider: {
-    marginTop: '30px',
-    marginBottom: '30px',
-  },
-}));
-
 export default function UninstallSection({ childId, integrationId }) {
-  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
@@ -84,11 +72,11 @@ export default function UninstallSection({ childId, integrationId }) {
     <>
       <PanelHeader title="Uninstall" />
 
-      <div className={classes.content}>
+      <Box sx={{ marginLeft: theme => theme.spacing(2) }}>
         <Typography>
           {message.SUBSCRIPTION.UNINSTALL_INSTANCE}
         </Typography>
-        <Divider className={classes.divider} />
+        <Divider sx={{ marginTop: '30px', marginBottom: '30px'}} />
         <Typography>
           {message.SUBSCRIPTION.UNINSTALL_INFO}
         </Typography>
@@ -100,7 +88,7 @@ export default function UninstallSection({ childId, integrationId }) {
           onClick={handleUninstall}>
           Uninstall
         </OutlinedButton>
-      </div>
+      </Box>
     </>
   );
 }

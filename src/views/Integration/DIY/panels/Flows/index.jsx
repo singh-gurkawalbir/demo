@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -38,24 +38,6 @@ import infoText from '../infoText';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
-  divider: {
-    width: 1,
-    height: 18,
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    margin: 5,
-  },
-  flowsPanelWithStatus: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  content: {
-    width: '100%',
-  },
   flowTitle: {
     position: 'relative',
     paddingTop: theme.spacing(1),
@@ -75,20 +57,12 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  subNav: {
-    minWidth: 200,
-    maxWidth: 240,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
   listItem: {
     color: theme.palette.secondary.main,
     width: '100%',
   },
   activeListItem: {
     color: theme.palette.primary.main,
-  },
-  flowsGroupContainer: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   flowPanelTitle: {
     overflowX: 'auto',
@@ -110,22 +84,8 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1, 0),
     },
   },
-  noSearchResults: {
-    marginTop: theme.spacing(1),
-  },
   // TODO: Azhar (component needed)
-  infoFilter: {
-    fontStyle: 'italic',
-    display: 'flex',
-    margin: theme.spacing(-2, 2, 3),
-    alignItems: 'center',
-    color: theme.palette.secondary.main,
-    '& > svg': {
-      marginRight: theme.spacing(0.5),
-      fontSize: theme.spacing(2),
-      color: theme.palette.text.hint,
-    },
-  },
+
   emptyFlowsInfo: {
     top: 0,
     position: 'relative',
@@ -216,8 +176,13 @@ const FlowListingTable = ({
   }, [dispatch, flowGroupingsSections, integrationId]);
 
   return (
-    <Grid container wrap="nowrap" className={classes.flowsGroupContainer}>
-      <Grid item className={classes.subNav}>
+    <Grid container wrap="nowrap" sx={{ borderTop: theme => `1px solid ${theme.palette.secondary.lightest}`}}>
+      <Grid
+        sx={{
+          minWidth: 200,
+          maxWidth: 240,
+          borderRight: theme => `solid 1px ${theme.palette.secondary.lightest}`,
+        }}>
         <DragContainer
           integrationId={integrationId}
           classes={classes}
@@ -229,7 +194,7 @@ const FlowListingTable = ({
           hasUnassignedSection={hasUnassignedSection}
         />
       </Grid>
-      <Grid item className={classes.content}>
+      <Grid item sx={{ width: '100%' }}>
         <LoadResources required integrationId={integrationId} resources="flows">
           <CeligoTable
             data={groupedFlows}
@@ -358,17 +323,28 @@ const Title = ({flows, integrationId}) => {
   const errorCount = yetToLoadOpenErrors ? currentTileErrorCount : totalCount;
 
   return (
-    <div className={classes.flowsPanelWithStatus}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+      }}>
       Integration flows
       {errorCount ? (
         <>
-          <span className={classes.divider} />
+          <Box
+            component="span"
+            sx={{
+              width: '1px',
+              height: '18px',
+              borderLeft: theme => `1px solid ${theme.palette.secondary.lightest}`,
+              margin: '5px',
+            }} />
           <Status size="mini" variant="error" className={classes.flowPanelStatusHeader}>
             {errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`}
           </Status>
         </>
       ) : null}
-    </div>
+    </Box>
   );
 };
 
@@ -506,7 +482,12 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   return (
     <>
-      <div className={classes.root}>
+      <Box
+        sx={{
+          backgroundColor: theme => theme.palette.background.paper,
+          border: '1px solid',
+          borderColor: theme => theme.palette.secondary.lightest,
+        }}>
         {selectedComponent}
         <MappingDrawerRoute integrationId={integrationId} />
         {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
@@ -549,7 +530,21 @@ export default function FlowsPanel({ integrationId, childId }) {
           </ActionGroup>
         </PanelHeader>
         {(finalFilter.keyword && flows.length && filteredFlowGroupSections) ? (
-          <Typography component="div" variant="caption" className={classes.infoFilter}>
+          <Typography
+            component="div"
+            variant="caption"
+            sx={{
+              fontStyle: 'italic',
+              display: 'flex',
+              margin: theme => theme.spacing(-2, 2, 3),
+              alignItems: 'center',
+              color: theme => theme.palette.secondary.main,
+              '& > svg': {
+                marginRight: theme => theme.spacing(0.5),
+                fontSize: theme => theme.spacing(2),
+                color: theme => theme.palette.text.hint,
+              },
+            }}>
             <InfoIcon />
             {infoSearchFilter}
           </Typography>
@@ -564,12 +559,12 @@ export default function FlowsPanel({ integrationId, childId }) {
             flows={customCloneDeep(flows)}
         />
         </LoadResources>
-      </div>
-      <div className={classes.noSearchResults}>
+      </Box>
+      <Box sx={{ marginTop: theme => theme.spacing(1) }}>
         { hasEmptySearchResults ? (
           <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
-      </div>
+      </Box>
     </>
   );
 }

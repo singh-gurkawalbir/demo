@@ -1,8 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
-import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { Spinner, TextButton} from '@celigo/fuse-ui';
 import actions from '../../actions';
@@ -14,32 +12,8 @@ import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import messageStore, { message } from '../../utils/messageStore';
 
-const useStyles = makeStyles(theme => ({
-  submit: {
-    marginTop: theme.spacing(4),
-  },
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-  },
-  errorField: {
-    '&:hover': {
-      borderColor: theme.palette.error.dark,
-    },
-    '& > * input': {
-      '&:hover': {
-        borderColor: theme.palette.error.dark,
-      },
-      borderColor: theme.palette.error.dark,
-    },
-  },
-  cancelBtn: {
-    fontSize: theme.spacing(2),
-  },
-}));
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [userEmail, setUserEmail] = useState(email || '');
   const [showErr, setShowErr] = useState(false);
   const [showInvalidEmailError, setShowInvalidEmailError] = useState(false);
@@ -95,7 +69,21 @@ export default function ForgotPassword({setShowError, email}) {
           fullWidth
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
+          sx={{
+            width: '100%',
+            background: theme => theme.palette.background.paper,
+            ...((showErr || showInvalidEmailError) && {
+              '&:hover': {
+                borderColor: theme => theme.palette.error.dark,
+              },
+              '& > * input': {
+                '&:hover': {
+                  borderColor: theme => theme.palette.error.dark,
+                },
+                borderColor: theme => theme.palette.error.dark,
+              },
+            }),
+          }}
         />
         <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 

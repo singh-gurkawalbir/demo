@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import makeStyles from '@mui/styles/makeStyles';
-import { TextButton } from '@celigo/fuse-ui';
+import { Box } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { generateNewId, isTradingPartnerSupported } from '../../../../../utils/resource';
@@ -15,24 +14,15 @@ import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import infoText from '../infoText';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    overflowX: 'auto',
-  },
-}));
-
 export default function ConnectionsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const _integrationId = childId || integrationId;
-  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const [showRegister, setShowRegister] = useState(false);
@@ -148,7 +138,13 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   }, [_integrationId, applications, childId, dispatch, history, integration?._connectorId, isStandalone, location.pathname]);
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        overflowX: 'auto',
+      }}>
       {showRegister && (
         <RegisterConnections
           integrationId={_integrationId}
@@ -156,7 +152,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         />
       )}
 
-      <PanelHeader title="Connections" infoText={infoText.Connections} contentId="connectionsIntegration">
+      <PanelHeader title="Connections" infoText={infoText.Connections}>
         <ActionGroup>
           {permission.create && (
           <TextButton
@@ -186,6 +182,6 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       </LoadResources>
 
       <ConfigConnectionDebugger />
-    </div>
+    </Box>
   );
 }
