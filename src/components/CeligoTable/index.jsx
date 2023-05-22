@@ -2,6 +2,7 @@ import {
   Table,
 } from '@mui/material';
 import React from 'react';
+import { Box } from '@celigo/fuse-ui';
 import TableBodyContent from './TableBodyContent';
 import { TableContextWrapper } from './TableContext';
 import TableHeader from './TableHeader';
@@ -22,6 +23,7 @@ export default function CeligoTable({
   isSelectableRow,
   filterKey,
   className,
+  sx,
   size,
   actionProps = emptyObj,
   additionalConfigs,
@@ -31,7 +33,7 @@ export default function CeligoTable({
   if (!useColumns) { return null; }
 
   return (
-    <div className={className}>
+    <Box className={className} sx={sx}>
       <TableContextWrapper value={actionProps}>
         <Table size={size || 'medium'} key={key}>
           <TableHeader
@@ -59,6 +61,6 @@ export default function CeligoTable({
           />
         </Table>
       </TableContextWrapper>
-    </div>
+    </Box>
   );
 }

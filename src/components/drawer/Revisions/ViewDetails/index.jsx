@@ -1,9 +1,14 @@
 import React from 'react';
-import makeStyles from '@mui/styles/makeStyles';
-import { Tabs, Tab } from '@mui/material';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { FilledButton } from '@celigo/fuse-ui';
+import {
+  TabContext,
+  TabList,
+  TabPanel,
+  Tab,
+  FilledButton,
+  Box,
+} from '@celigo/fuse-ui';
 import DrawerContent from '../../Right/DrawerContent';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerFooter from '../../Right/DrawerFooter';
@@ -22,56 +27,9 @@ const allTabs = {
   details: { type: 'details', label: 'View details'},
 };
 
-const useStyles = makeStyles(theme => ({
-  detailsContainer: {
-    height: `calc(100% - ${theme.spacing(2)})`,
-    backgroundColor: 'white',
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    color: theme.palette.text.hint,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  tabContent: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    borderBottom: 'none',
-    overflowY: 'auto',
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-  tabHeader: {
-    '& .MuiTab-root': {
-      minWidth: 'auto',
-    },
-  },
-  resourceDiffContainer: {
-    margin: theme.spacing(2),
-  },
-}));
-
-function TabPanel({ children, value, type }) {
-  const classes = useStyles();
-  const hidden = value !== type;
-
-  if (hidden) {
-    return null;
-  }
-
-  return (
-    <div
-      role="tabpanel"
-      className={classes.tabContent}
-      id={type}
-      aria-labelledby={type}>
-      {children}
-    </div>
-  );
-}
-
 function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const history = useHistory();
-  const classes = useStyles();
   const { revisionId, mode } = match.params;
 
   useHandleInvalidRevision({ integrationId, revisionId, parentUrl });
@@ -108,37 +66,64 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
     <>
       <DrawerHeader title={drawerTitle} handleClose={onClose} />
       <DrawerContent>
-        <div className={classes.detailsContainer}>
-          <Tabs
-            value={mode}
-            onChange={handleModeChange}
-            className={classes.tabHeader}
-            textColor="primary"
-            indicatorColor="primary"
-        >
-            {
-            availableTabs.map(({ label, type }) => (
-              <Tab
-                key={type} label={label} id={type} value={type} />
-            ))
-            }
-            {
-              mode === 'changes' && (
-                <ActionGroup position="right">
-                  <ExpandAllResourceDiff integrationId={integrationId} />
-                </ActionGroup>
-              )
-            }
-          </Tabs>
-          <TabPanel value={mode} type="changes">
-            <div className={classes.resourceDiffContainer}>
-              <ViewResourceChanged integrationId={integrationId} revisionId={revisionId} />
-            </div>
-          </TabPanel>
-          <TabPanel value={mode} type="details">
-            <ViewDetails integrationId={integrationId} revisionId={revisionId} />
-          </TabPanel>
-        </div>
+        <TabContext value={mode}>
+          <Box
+            sx={theme => ({
+              height: `calc(100% - ${theme.spacing(2)})`,
+              backgroundColor: 'white',
+              border: `1px solid ${theme.palette.secondary.lightest}`,
+              color: theme.palette.text.hint,
+              display: 'flex',
+              flexDirection: 'column',
+              '& .MuiTab-root': { minWidth: 'auto' },
+            })}>
+            <TabList onChange={handleModeChange}>
+              { availableTabs.map(({ label, type }) => <Tab key={type} label={label} id={type} value={type} />)}
+              {
+                mode === 'changes' && (
+                  <ActionGroup position="right">
+                    <ExpandAllResourceDiff integrationId={integrationId} />
+                  </ActionGroup>
+                )
+              }
+            </TabList>
+            <TabPanel
+              value="changes"
+              id="changes"
+              aria-labelledby="changes">
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderBottom: 'none',
+                  overflowY: 'auto',
+                  borderTop: theme => `1px solid ${theme.palette.secondary.lightest}`,
+                  p: theme => theme.spacing(2),
+                }}
+                id="changes"
+                aria-labelledby="changes">
+                <ViewResourceChanged integrationId={integrationId} revisionId={revisionId} />
+              </Box>
+            </TabPanel>
+            <TabPanel
+              value="details"
+              >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderBottom: 'none',
+                  overflowY: 'auto',
+                  borderTop: theme => `1px solid ${theme.palette.secondary.lightest}`,
+                }}
+                id="details"
+                aria-labelledby="details"
+              >
+                <ViewDetails integrationId={integrationId} revisionId={revisionId} />
+              </Box>
+            </TabPanel>
+          </Box>
+        </TabContext>
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
