@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import actions from '../../../actions';
@@ -7,17 +6,8 @@ import { selectors } from '../../../reducers';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import { SubmitButton } from '../../../components/Buttons/FilledButton';
 
-const useStyles = makeStyles(theme => ({
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
-  },
-}));
-
 export default function ForgotPassword({setShowError, email, className}) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [userEmail, setuserEmail] = useState(email || '');
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const resetRequestErrorMsg = useSelector(state => selectors.requestResetError(state));
@@ -55,7 +45,11 @@ export default function ForgotPassword({setShowError, email, className}) {
           placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={classes.textField}
+          sx={{
+            width: '100%',
+            background: theme => theme.palette.background.paper,
+            marginBottom: '10px',
+          }}
         />
         <SubmitButton
           data-test="submit"

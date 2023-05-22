@@ -5,7 +5,7 @@ import {
   useRouteMatch,
   useHistory,
 } from 'react-router-dom';
-import { Grid, List, ListItem, Tabs, Tab, Typography } from '@mui/material';
+import { Grid, List, ListItem, Tabs, Tab, Typography, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
@@ -34,41 +34,13 @@ import NoResultTypography from '../../../../../components/NoResultTypography';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
-  action: {
-    display: 'flex',
-  },
   container: {
     display: 'flex',
-  },
-  subNav: {
-    minWidth: 200,
-    maxWidth: 240,
-    paddingTop: theme.spacing(2),
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   divider: {
     marginRight: theme.spacing(1),
     marginTop: '10px',
     marginBottom: '10px',
-  },
-  tabComponentRoot: {
-    display: 'flex',
-  },
-  panelContainer: {
-    flexGrow: 1,
-    // overflowY: 'auto',
-    paddingLeft: theme.spacing(2),
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-    padding: theme.spacing(0, 0, 3, 0),
-    overflowX: 'auto',
   },
   listItem: {
     color: theme.palette.secondary.main,
@@ -86,49 +58,18 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
-  tabsContainer: {
-    minWidth: 150,
-    background: theme.palette.background.paper,
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    marginBottom: theme.spacing(1),
-    width: '100%',
-  },
-  flowTitle: {
-    position: 'relative',
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    '&:before': {
-      content: '""',
-      width: '3px',
-      top: 0,
-      height: '100%',
-      position: 'absolute',
-      background: 'transparent',
-      left: '0px',
-    },
-    '&:hover': {
-      '&:before': {
-        background: theme.palette.primary.main,
-      },
-    },
-  },
-  actions: {
-    padding: theme.spacing(2, 0),
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  noSearchResults: {
-    marginTop: theme.spacing(1),
-  },
 }));
 export const ActionsPanel = ({actions, actionProps, ...rest}) => {
-  const classes = useStyles();
-
   if (!actions || !actions.length) { return null; }
 
   return (
-    <div className={classes.actions}>
+    <Box
+      sx={{
+        padding: theme => theme.spacing(2, 0),
+        borderTop: theme => `1px solid ${theme.palette.secondary.lightest}`,
+        display: 'flex',
+        justifyContent: 'space-between',
+      }}>
       <ActionGroup>
         {actions.map(({id}) => {
           const Action = consolidatedActions[id];
@@ -144,7 +85,7 @@ export const ActionsPanel = ({actions, actionProps, ...rest}) => {
         })}
 
       </ActionGroup>
-    </div>
+    </Box>
   );
 };
 
@@ -224,7 +165,6 @@ const AllTabForms = ({formMetas, selectedTab, ...props}) => {
 
 const IAForms = props => {
   const {fieldMeta, flowId, formState, isDrawer} = props;
-  const classes = useStyles();
 
   const {layout} = fieldMeta;
   const formMetas = useMemo(() => getMetadatasForIndividualTabs(fieldMeta), [fieldMeta]);
@@ -250,9 +190,15 @@ const IAForms = props => {
     return (
       <>
         {DrawerTitle}
-        <div className={classes.tabComponentRoot}>
+        <Box sx={{ display: 'flex' }}>
           <Tabs
-            className={classes.tabsContainer}
+            sx={{
+              minWidth: 150,
+              background: theme => theme.palette.background.paper,
+              borderBottom: theme => `1px solid ${theme.palette.secondary.lightest}`,
+              marginBottom: theme => theme.spacing(1),
+              width: '100%',
+            }}
             value={selectedTab}
             variant="scrollable"
             orientation="horizontal"
@@ -277,14 +223,18 @@ const IAForms = props => {
             ))}
 
           </Tabs>
-        </div>
+        </Box>
 
-        <div className={classes.panelContainer}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            // overflowY: 'auto',
+            paddingLeft: theme => theme.spacing(2) }}>
           <AllTabForms
             {...props} formMetas={formMetas}
             selectedTab={selectedTab}
         />
-        </div>
+        </Box>
       </>
     );
   }
@@ -423,7 +373,6 @@ function FlowList({ integrationId, childId }) {
 }
 
 const Header = ({integrationId, childId}) => {
-  const classes = useStyles();
   const filterKey = `${integrationId}-flows`;
   const match = useRouteMatch();
   const { sectionId } = match.params;
@@ -432,9 +381,11 @@ const Header = ({integrationId, childId}) => {
 
   return (
     <PanelHeader title={`${section?.title || ''} flows`} >
-      <div className={classes.action}>
-        <KeywordSearch filterKey={filterKey} />
-      </div>
+      <Box sx={{ display: 'flex' }}>
+        <KeywordSearch
+          filterKey={filterKey}
+        />
+      </Box>
     </PanelHeader>
   );
 };
@@ -469,12 +420,44 @@ export default function FlowsPanel({ childId, integrationId }) {
 
   return (
     <>
-      <div className={classes.root}>
+      <Box
+        sx={{
+          backgroundColor: theme => theme.palette.background.paper,
+          border: '1px solid',
+          borderColor: theme => theme.palette.secondary.lightest,
+        }}>
         <Grid container wrap="nowrap">
-          <Grid item className={classes.subNav}>
+          <Grid
+            item
+            sx={{
+              minWidth: 200,
+              maxWidth: 240,
+              paddingTop: theme => theme.spacing(2),
+              borderRight: theme => `solid 1px ${theme.palette.secondary.lightest}`,
+            }}>
             <List>
               {flowSections.map(({ title, titleId }) => (
-                <ListItem key={titleId} className={classes.flowTitle}>
+                <ListItem
+                  key={titleId}
+                  sx={{
+                    position: 'relative',
+                    paddingTop: theme => theme.spacing(1),
+                    paddingBottom: theme => theme.spacing(1),
+                    '&:before': {
+                      content: '""',
+                      width: '3px',
+                      top: 0,
+                      height: '100%',
+                      position: 'absolute',
+                      background: 'transparent',
+                      left: '0px',
+                    },
+                    '&:hover': {
+                      '&:before': {
+                        background: theme => theme.palette.primary.main,
+                      },
+                    },
+                  }}>
                   <NavLink
                     className={classes.listItem}
                     activeClassName={classes.activeListItem}
@@ -486,16 +469,23 @@ export default function FlowsPanel({ childId, integrationId }) {
               ))}
             </List>
           </Grid>
-          <Grid item className={classes.content}>
+          <Grid
+            item
+            sx={{
+              width: '100%',
+              height: '100%',
+              padding: theme => theme.spacing(0, 0, 3, 0),
+              overflowX: 'auto',
+            }}>
             <FlowList integrationId={integrationId} childId={childId} />
           </Grid>
         </Grid>
-      </div>
-      <div className={classes.noSearchResults}>
+      </Box>
+      <Box sx={{ marginTop: theme => theme.spacing(1) }}>
         {(flowFilter.keyword && !flowSections.length) ? (
           <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
-      </div>
+      </Box>
     </>
   );
 }
