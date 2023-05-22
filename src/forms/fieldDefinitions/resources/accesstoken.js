@@ -94,15 +94,14 @@ export default {
   },
   _connectionIds: {
     isLoggable: true,
-    type: 'selectresource',
+    type: 'selectaccesstokenresource',
     resourceType: 'connections',
     label: 'Connections',
     multiselect: true,
     allowEdit: false,
     allowNew: false,
     skipPingConnection: true,
-    intId: r => r._integrationId,
-    isAccessToken: true,
+    _integrationId: r => r._integrationId,
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -113,13 +112,12 @@ export default {
   },
   _exportIds: {
     isLoggable: true,
-    type: 'selectresource',
+    type: 'selectaccesstokenresource',
     resourceType: 'exports',
     label: 'Exports',
     multiselect: true,
     allowEdit: false,
-    intId: r => r._integrationId,
-    isAccessToken: true,
+    _integrationId: r => r._integrationId,
     allowNew: false,
     visibleWhen: [
       {
@@ -131,13 +129,12 @@ export default {
   },
   _importIds: {
     isLoggable: true,
-    type: 'selectresource',
+    type: 'selectaccesstokenresource',
     resourceType: 'imports',
     label: 'Imports',
     multiselect: true,
     allowEdit: false,
-    intId: r => r._integrationId,
-    isAccessToken: true,
+    _integrationId: r => r._integrationId,
     allowNew: false,
     visibleWhen: [
       {

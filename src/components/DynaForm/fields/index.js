@@ -5,6 +5,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectAccessTokenResource from './DynaSelectAccessTokenResource';
 import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
@@ -209,6 +210,7 @@ export default {
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
+  selectaccesstokenresource: DynaSelectAccessTokenResource,
   selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
   selectmultiapplication: DynaSelectMultiApplication,
