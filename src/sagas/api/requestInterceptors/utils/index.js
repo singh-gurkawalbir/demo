@@ -34,6 +34,7 @@ export function normalizeUrlAndOptions(path, opts) {
     options = opts;
   } else {
     if (
+      path.includes('/accountInsights') ||
       path.includes('/signup') ||
       path.includes('/netSuiteWS') ||
       path.includes('/netsuiteDA') ||

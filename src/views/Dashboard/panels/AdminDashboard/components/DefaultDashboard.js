@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import FlowsIcon from '../../../../../components/icons/FlowsIcon';
 import IntegrationAppsIcon from '../../../../../components/icons/IntegrationAppsIcon';
-import InviteUsersIcon from '../../../../../components/icons/InviteUsersIcon';
+// import InviteUsersIcon from '../../../../../components/icons/InviteUsersIcon';
 
 const useStyles = makeStyles({
   root: {
@@ -41,14 +41,10 @@ function DefaultDashboard(props) {
       message = 'connections';
       break;
     case '2':
-      icon = <InviteUsersIcon className={classes.icon} />;
-      message = 'users';
-      break;
-    case '3':
       icon = <FlowsIcon className={classes.icon} />;
       message = 'flows';
       break;
-    case '4':
+    case '3':
       icon = <IntegrationAppsIcon className={classes.icon} />;
       message = 'records';
       break;

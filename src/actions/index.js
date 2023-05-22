@@ -2686,9 +2686,18 @@ const dashboard = {
   request: () => action(actionTypes.DASHBOARD.REQUEST),
   update: newDefaultAShareId =>
     action(actionTypes.DASHBOARD.UPDATE, { newDefaultAShareId }),
-  received: defaultAShareId =>
-    action(actionTypes.DASHBOARD.RECEIVED, { defaultAShareId }),
+  received: response =>
+    action(actionTypes.DASHBOARD.RECEIVED, { response }),
+  postPreference: ({layouts, graphTypes}) => action(actionTypes.DASHBOARD.POST_PREFERENCE, {layouts, graphTypes}),
+  preferencePosted: response => action(actionTypes.DASHBOARD.PREFERENCE_POSTED, {response}),
+  preferencePostFailed: error => action(actionTypes.DASHBOARD.PREFERENCE_POST_FAILED, {error}),
   // Code that has been added in dashboard}
+};
+
+const flowTrends = {
+  request: (startDateString, endDateString, filterVal) => action(actionTypes.FLOWTRENDS.REQUEST, {startDateString, endDateString, filterVal}),
+  received: response =>
+    action(actionTypes.FLOWTRENDS.RECEIVED, { response }),
 };
 
 const uiFields = {
@@ -2752,4 +2761,5 @@ export default {
   httpConnectors,
   uiFields,
   dashboard,
+  flowTrends,
 };
