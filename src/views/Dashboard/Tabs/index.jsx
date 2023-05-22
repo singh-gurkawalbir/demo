@@ -1,30 +1,20 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
-import { Tabs, Tab } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Tabs, Tab, Box } from '@mui/material';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
 import TabContent from '../../../components/TabContent';
 
+// eslint-disable-next-line no-unused-vars
 const useStyles = makeStyles(theme => ({
   tabContainer: {
     padding: theme.spacing(0, 3),
   },
-  tabPanel: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(1, 2),
-    overflow: 'visible',
-  },
-  tab: {
-    minWidth: 'auto',
-    color: theme.palette.secondary.main,
-    fontSize: 14,
-  },
 }));
+
 const tabs = [
   {
     path: 'runningFlows',
@@ -40,8 +30,8 @@ const tabs = [
     Panel: Completed,
     dataTest: 'account-dashboard-completed-flows',
   }];
+
 export default function DashboardTabs() {
-  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -76,27 +66,38 @@ export default function DashboardTabs() {
         aria-label="scrollable auto tabs example">
         {tabs.map(({ label, Icon, dataTest }, i) => (
           <Tab
-            className={classes.tab}
             key={label}
             id={`tab-${i}`}
             {...{ 'aria-controls': `tabpanel-${i}` }}
             icon={<Icon />}
             label={label}
             data-test={dataTest}
+            sx={{
+              minWidth: 'auto',
+              color: theme => theme.palette.secondary.main,
+              fontSize: 14,
+            }}
           />
         ))}
       </Tabs>
 
       {tabs.map(({ path, Panel }, i) => (
-        <div
+        <Box
           key={path}
           role="tabpanel"
           hidden={currentTabIndex !== i}
-          className={classes.tabPanel}
           id={`tabpanel-${i}`}
-          aria-labelledby={`tab-${i}`}>
+          aria-labelledby={`tab-${i}`}
+          sx={{
+            background: theme => theme.palette.background.paper,
+            border: '1px solid',
+            borderColor: theme => theme.palette.secondary.lightest,
+            padding: theme => theme.spacing(1, 0),
+            overflow: 'visible',
+          }}
+        >
           <div>{currentTabIndex === i && <Panel {...match.params} />}</div>
-        </div>
+        </Box>
       ))}
     </TabContent>
   );

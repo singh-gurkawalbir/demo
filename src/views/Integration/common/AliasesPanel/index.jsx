@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box } from '@mui/material';
 import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import PanelHeader from '../../../../components/PanelHeader';
@@ -21,13 +22,6 @@ import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import NoResultTypography from '../../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    overflowX: 'auto',
-
-  },
   aliasesHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
@@ -88,7 +82,13 @@ export default function Aliases({ integrationId, childId }) {
   }, [isAliasActionCompleted, currentIntegrationId, enqueueSnackbar, dispatch]);
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        overflowX: 'auto',
+      }}>
       <PanelHeader title="Aliases" infoText={messageStore('ALIAS.PANEL_HELPINFO')} placement="right-end" className={classes.aliasesHeader} >
         <ActionGroup>
           {hasManageAccess && (
@@ -114,6 +114,6 @@ export default function Aliases({ integrationId, childId }) {
           )
           : <NoResultTypography>{errorMessageStore('NO_ALIASES_MESSAGE')}</NoResultTypography>}
       </LoadResources>
-    </div>
+    </Box>
   );
 }

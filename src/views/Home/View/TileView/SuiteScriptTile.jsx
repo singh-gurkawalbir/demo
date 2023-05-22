@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link, useRouteMatch } from 'react-router-dom';
-import { Typography, Tooltip } from '@mui/material';
+import { Typography, Tooltip, styled } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../../../components/HomePageCard/Header';
@@ -27,21 +27,6 @@ import { useSelectorMemo } from '../../../../hooks';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
-  tileName: {
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
-  },
-  action: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-    color: theme.palette.secondary.light,
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
-  },
   status: {
     position: 'relative',
     '& span': {
@@ -60,6 +45,15 @@ const useStyles = makeStyles(theme => ({
     '& > .MuiButton-startIcon': {
       margin: 0,
     },
+  },
+}));
+
+const StyledLink = styled(Link)(({ theme }) => ({
+  width: theme.spacing(3),
+  height: theme.spacing(3),
+  color: theme.palette.secondary.light,
+  '&:hover': {
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -129,9 +123,18 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
+            <Typography
+              variant="h3"
+              onClick={handleTileClick}
+              sx={{
+                color: theme => theme.palette.secondary.main,
+                wordBreak: 'break-word',
+                '&:hover': {
+                  color: theme => theme.palette.primary.main,
+                },
+              }}>
               <CeligoTruncate isLoggable delay={100} lines={2} placement="bottom">
-                {tile.displayName}
+                {tile.name}
               </CeligoTruncate>
             </Typography>
           </CardTitle>
@@ -157,23 +160,21 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
                 <Tooltip
                   title="You have monitor permissions"
                   placement="bottom">
-                  <Link
+                  <StyledLink
                     color="inherit"
-                    className={classes.action}
                     to={getRoutePath(urlToIntegrationSettings)}>
                     <PermissionsMonitorIcon />
-                  </Link>
+                  </StyledLink>
                 </Tooltip>
               ) : (
                 <Tooltip
                   title="You have manage permissions"
                   placement="bottom">
-                  <Link
+                  <StyledLink
                     color="inherit"
-                    className={classes.action}
                     to={getRoutePath(urlToIntegrationSettings)}>
                     <PermissionsManageIcon />
-                  </Link>
+                  </StyledLink>
                 </Tooltip>
               )}
             </Manage>

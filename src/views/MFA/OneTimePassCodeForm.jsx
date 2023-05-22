@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import clsx from 'clsx';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
+import { Box } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import makeStyles from '@mui/styles/makeStyles';
@@ -17,32 +17,9 @@ import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import { SubmitButton } from '../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
-  message: {
-    position: 'relative',
-    top: theme.spacing(-1),
-    display: 'flex',
-    alignItems: 'center',
-    lineHeight: theme.spacing(2),
-    color: theme.palette.secondary.light,
-    marginBottom: theme.spacing(1),
-  },
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
-  },
   wrapper: {
     textAlign: 'left',
     marginBottom: theme.spacing(2),
-  },
-  flexWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  flexRight: {
-    flexDirection: 'row-reverse',
   },
   errorIcon: {
     marginRight: theme.spacing(0.5),
@@ -107,15 +84,38 @@ export default function OneTimePassCodeForm() {
           inputProps={{ maxLength: 6 }}
           variant="filled"
           placeholder="One-time passcode*"
-          className={classes.textField} />
+          sx={{
+            width: '100%',
+            background: theme => theme.palette.background.paper,
+            marginBottom: '10px',
+          }} />
         {
             error && (
-              <FormHelperText error className={classes.message}>
+              <FormHelperText
+                error
+                sx={{
+                  position: 'relative',
+                  top: theme => theme.spacing(-1),
+                  display: 'flex',
+                  alignItems: 'center',
+                  lineHeight: theme => theme.spacing(2),
+                  color: theme => theme.palette.secondary.light,
+                  marginBottom: theme => theme.spacing(1),
+                }}>
                 <ErrorIcon className={classes.errorIcon} data-private /> {error}
               </FormHelperText>
             )
           }
-        <div className={clsx(classes.flexWrapper, { [classes.flexRight]: !showTrustDevice })}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: theme => theme.spacing(1),
+            marginBottom: theme => theme.spacing(2),
+            ...(!showTrustDevice && {
+              flexDirection: 'row-reverse',
+            }),
+          }}>
           {showTrustDevice && (
           <FormControlLabel
             control={(
@@ -138,7 +138,7 @@ export default function OneTimePassCodeForm() {
           >
             Need help?
           </TextButton>
-        </div>
+        </Box>
 
         { isMFAAuthRequestInProgress ? <Spinner />
           : (
