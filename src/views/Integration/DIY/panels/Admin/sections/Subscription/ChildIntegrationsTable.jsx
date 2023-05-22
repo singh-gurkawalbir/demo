@@ -11,9 +11,6 @@ import ChildUpgradeButton from './ChildUpgradeButton';
 import { getTitleFromEdition } from '../../../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
-  sectionTitle: {
-    padding: theme.spacing(0, 2, 2),
-  },
   childIntegrationList: {
     margin: theme.spacing(0, 2),
     border: `1px solid ${theme.palette.secondary.lightest}`,
@@ -107,7 +104,7 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
 
   return (
     <>
-      <Typography variant="h4" className={classes.sectionTitle}>{integration?.childDisplayName || ''}</Typography>
+      <Typography variant="h4" sx={{ padding: theme => theme.spacing(0, 2, 2) }}>{integration?.childDisplayName || ''}</Typography>
       <CeligoTable
         data={data}
         {...metadata}

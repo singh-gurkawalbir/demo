@@ -35,7 +35,7 @@ const cprops = {
   _integrationId: '62bedcdca0f5f21448171ea2',
   numError: 0,
   offlineConnections: [],
-  displayName: 'Clone - demoint',
+  name: 'Clone - demoint',
   description: 'demo integration',
   lastModified: '2022-07-05T06:02:56.701Z',
   sandbox: false,

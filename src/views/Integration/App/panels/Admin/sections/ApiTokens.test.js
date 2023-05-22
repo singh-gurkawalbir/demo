@@ -12,7 +12,7 @@ async function initApiTokenSection(props = {}) {
   const initialStore = getCreatedStore();
 
   mutateStore(initialStore, draft => {
-    draft.data.resources.accesstokens = props.accesstokens;
+    draft.data.resources.resources = props.accesstokens;
     draft.data.resources.integrations = [{_id: '60e6f83f3499084a689178cc', _connectorId: '5656f5e3bebf89c03f5dd77e'}];
   });
 

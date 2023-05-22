@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
-import { Checkbox, ListItemText, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Checkbox, ListItemText, Typography, Box } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -14,35 +12,8 @@ import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOp
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { UNASSIGNED_SECTION_NAME } from '../../../../../constants';
 
-const useStyles = makeStyles(theme => ({
-  form: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
-  },
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    paddingBottom: theme.spacing(1),
-  },
-  flowName: {
-    flex: 1,
-  },
-  optionFlowGroupName: {
-    width: 200,
-  },
-  optionFlowGroupUnassigned: {
-    fontStyle: 'italic',
-  },
-}));
-const SelectedOptionIml = ({ item, processedValue}) => {
-  const classes = useStyles();
-
-  return (
+const SelectedOptionIml = ({ item, processedValue}) =>
+  (
     <>
       {!item.disabled && (
         <Checkbox
@@ -50,23 +21,26 @@ const SelectedOptionIml = ({ item, processedValue}) => {
           color="primary"
         />
       )}
-      <ListItemText primary={item.label || item.value} className={classes.flowName} />
+      <ListItemText primary={item.label || item.value} sx={{ flex: 1 }} />
       {item.groupName && (
         <Typography
           variant="body1"
-          className={clsx(classes.optionFlowGroupName, item.groupName === UNASSIGNED_SECTION_NAME ? classes.optionFlowGroupUnassigned : '')}
+          sx={{
+            width: 200,
+            ...(item.groupName === UNASSIGNED_SECTION_NAME && {
+              fontStyle: 'italic',
+            }),
+          }}
         >
           {item.groupName}
         </Typography>
       )}
     </>
   );
-};
 
 export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
-  const classes = useStyles();
 
   const notificationsConfig = useMemo(() => ({ childId, ignoreUnusedConnections: true }), [childId]);
   const notifications = useSelectorMemo(
@@ -131,17 +105,31 @@ export default function NotificationsSection({ integrationId, childId }) {
   });
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        overflow: 'auto',
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        paddingBottom: theme => theme.spacing(1),
+      }}>
       <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
       <LoadResources required integrationId={integrationId} resources="notifications,flows,connections,exports,imports">
-        <div className={classes.form}>
+        <Box
+          sx={{
+            paddingLeft: theme => theme.spacing(2),
+            paddingRight: theme => theme.spacing(2),
+            '& > div': {
+              padding: theme => theme.spacing(3, 0),
+            },
+          }}>
           <DynaForm formKey={formKey} />
           <DynaSubmit formKey={formKey} onClick={handleSubmit}>
             Save
           </DynaSubmit>
-        </div>
+        </Box>
       </LoadResources>
-    </div>
+    </Box>
   );
 }

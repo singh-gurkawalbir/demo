@@ -34,13 +34,6 @@ import { getTextAfterCount } from '../../../../utils/string';
 import OfflineConnectionsIcon from '../../../../components/icons/OfflineConnectionsIcon';
 
 const useStyles = makeStyles(theme => ({
-  tileName: {
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
-  },
   action: {
     marginLeft: 0,
   },
@@ -188,7 +181,13 @@ function Tile({
           <CardTitle>
             <Typography
               variant="h3"
-              className={classes.tileName}
+              sx={{
+                color: theme => theme.palette.main,
+                wordBreak: 'break-word',
+                '&:hover': {
+                  color: theme => theme.palette.primary.main,
+                },
+              }}
               onClick={handleTileClick}>
               <CeligoTruncate
                 isLoggable

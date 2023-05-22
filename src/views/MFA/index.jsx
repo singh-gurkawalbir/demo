@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Spinner } from '@celigo/fuse-ui';
 import messageStore, { message } from '../../utils/messageStore';
@@ -13,18 +14,18 @@ import UserSignInPage from '../../components/UserSignInPage';
 import RawHtml from '../../components/RawHtml';
 import NotificationToaster from '../../components/NotificationToaster';
 
-const useStyles = makeStyles(theme => ({
-
+const useStyles = makeStyles({
   pageTitle: {
     maxWidth: 280,
   },
-  notificationToasterMessage: {
-    '& >* div.MuiTypography-root': {
-      fontSize: theme.spacing(2),
-      '& > svg': {
-        color: theme.palette.primary.main,
-        fontSize: '24px !important',
-      },
+});
+
+const StyledNotificationToaster = styled(NotificationToaster)(({ theme }) => ({
+  '& >* div.MuiTypography-root': {
+    fontSize: theme.spacing(2),
+    '& > svg': {
+      color: theme.palette.primary.main,
+      fontSize: '24px !important',
     },
   },
 }));
@@ -72,12 +73,11 @@ export default function MfaVerify() {
       footerLinkText="Sign up"
       footerLink="signup"
       pageSubHeading={(
-        <NotificationToaster
-          className={classes.notificationToasterMessage}
+        <StyledNotificationToaster
           noBorder
           variant="info"
           transparent>{infoMessage}
-        </NotificationToaster>
+        </StyledNotificationToaster>
 )}
       footerLinkLabel="Don't have an account?">
       <OneTimePassCodeForm />

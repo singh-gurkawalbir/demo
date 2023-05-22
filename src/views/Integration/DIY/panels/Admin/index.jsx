@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@mui/styles';
-import { List, ListItem } from '@mui/material';
+import { List, ListItem, Box } from '@mui/material';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import ReadmeSection from './sections/Readme_afe';
@@ -21,25 +21,6 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 // import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
-  container: {
-    display: 'flex',
-  },
-  subNav: {
-    minWidth: 200,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-    paddingBottom: theme.spacing(3),
-    overflowX: 'auto',
-  },
   listItem: {
     color: theme.palette.secondary.main,
   },
@@ -148,9 +129,19 @@ export default function AdminPanel({ integrationId, childId }) {
   }
 
   return (
-    <div className={classes.root}>
-      <div className={classes.container}>
-        <div className={classes.subNav}>
+    <Box
+      sx={{
+        padding: theme => theme.spacing(0),
+        backgroundColor: theme => theme.palette.background.paper,
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+      }}>
+      <Box sx={{ display: 'flex' }}>
+        <Box
+          sx={{
+            minWidth: 200,
+            borderRight: theme => `solid 1px ${theme.palette.secondary.lightest}`,
+          }}>
           <List>
             {availableSections.map(({ path, label, id }) => (
               <ListItem key={path}>
@@ -164,8 +155,14 @@ export default function AdminPanel({ integrationId, childId }) {
               </ListItem>
             ))}
           </List>
-        </div>
-        <div className={classes.content}>
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            paddingBottom: theme => theme.spacing(3),
+            overflowX: 'auto',
+          }}>
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
@@ -173,8 +170,8 @@ export default function AdminPanel({ integrationId, childId }) {
               </Route>
             ))}
           </Switch>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { Typography } from '@mui/material';
+import { Typography, Box, styled } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
 import { TextButton } from '@celigo/fuse-ui';
@@ -12,53 +12,51 @@ import getImageUrl from '../../../utils/image';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 /* Todo: (Azhar) Concur form should be in a separate component */
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  margin: theme.spacing(0, 0, 4, 0),
+  lineHeight: '38px',
+  color: '#677A89',
+  fontFamily: '"Roboto", Helvetica, sans-serif',
+  fontSize: '32px',
+  fontWeight: 'normal',
+}));
+
+const StyledWrapper = styled(Box)(({ theme }) => ({
+  margin: '0 auto',
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+  height: '100vh',
+  background: theme.palette.background.paper,
+}));
+
+const StyledSignInWrapper = styled(Box)(({ theme }) => ({
+  background: theme.palette.background.paper,
+  width: '770px',
+  height: '100vh',
+  border: '0px none',
+  textAlign: 'center',
+  position: 'relative',
+  zIndex: 1,
+  overflow: 'inherit !important',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+}));
+
+const StyledSignInWrapperContent = styled(Box)({
+  display: 'table-cell',
+  verticalAlign: 'middle',
+  padding: '10px 0',
+  '& > p': {
+    margin: '0 auto 15px auto',
+    width: '327px',
+  },
+});
+
 const useStyles = makeStyles(theme => ({
-  wrapper: {
-    margin: '0 auto',
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100vh',
-    background: theme.palette.background.paper,
-  },
-  logo: {
-    margin: '0 0 40px 0',
-    '& > img': {
-      width: 'auto',
-    },
-  },
-  signinWrapper: {
-    background: theme.palette.background.paper,
-    width: '770px',
-    height: '100vh',
-    border: '0px none',
-    textAlign: 'center',
-    position: 'relative',
-    zIndex: 1,
-    overflow: 'inherit !important',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  signinWrapperContent: {
-    display: 'table-cell',
-    verticalAlign: 'middle',
-    padding: '10px 0',
-    '& > p': {
-      margin: '0 auto 15px auto',
-      width: '327px',
-    },
-  },
-  title: {
-    margin: theme.spacing(0, 0, 4, 0),
-    lineHeight: '38px',
-    color: '#677A89',
-    fontFamily: '"Roboto", Helvetica, sans-serif',
-    fontSize: '32px',
-    fontWeight: 'normal',
-  },
   mfaTitle: {
     marginBottom: theme.spacing(3),
     fontSize: 30,
@@ -75,13 +73,6 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '100%',
     },
   },
-  mfaInfo: {
-    margin: '0 auto 15px auto',
-    width: '327px',
-  },
-  infoText: {
-    marginLeft: theme.spacing(1),
-  },
   signInForm: {
     width: '327px',
     margin: '0 auto',
@@ -92,19 +83,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: 'auto',
       position: 'relative',
     },
-  },
-  bottom: {
-    padding: '20px 0',
-    margin: '20px 0 0',
-    borderTop: '1px solid #D8E5EF',
-    '& > a': {
-      color: '#6A7B89',
-      padding: '0 15px',
-    },
-  },
-  forgotPasswordEmail: {
-    marginTop: theme.spacing(-2),
-    marginBottom: theme.spacing(3),
   },
 }));
 
@@ -124,29 +102,40 @@ export default function ConcurForgotPassword(props) {
   }
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.signinWrapper}>
-        <div className={classes.signinWrapperContent}>
-          <div className={classes.logo}>
+    <StyledWrapper>
+      <StyledSignInWrapper>
+        <StyledSignInWrapperContent>
+          <Box
+            sx={{
+              margin: '0 0 40px 0',
+              '& > img': {
+                width: 'auto',
+              },
+            }}>
             <img alt="SapConcur" src={getImageUrl('/images/celigo-sapconcur.png')} />
-          </div>
-          <Typography variant="h1" className={classes.title}>
+          </Box>
+          <StyledTitle variant="h1" className={classes.title}>
             Forgot your password?
-          </Typography>
+          </StyledTitle>
           {email && (
-          <Typography variant="h4" className={classes.forgotPasswordEmail}>
+          <Typography
+            variant="h4"
+            sx={{
+              marginTop: theme => theme.spacing(-2),
+              marginBottom: theme => theme.spacing(3),
+            }}>
             {email}
           </Typography>
           )}
           { showError && resetRequestErrorMsg && (
             <ShowErrorMessage error={resetRequestErrorMsg} />
           )}
-          <div className={classes.mfaInfo}>
-            <span className={classes.infoText}>
+          <Box sx={{ margin: '0 auto 15px auto', width: '327px' }}>
+            <Box component="span" sx={{ marginLeft: theme => theme.spacing(1) }}>
               {successView ? messageStore('USER_SIGN_IN.FORGOT_PASSWORD_USER_EXIST', {email})
                 : message.USER_SIGN_IN.RESET_PASSWORD_CONCUR}
-            </span>
-          </div>
+            </Box>
+          </Box>
           {!successView
             ? (
               <ForgotPasswordForm
@@ -166,18 +155,28 @@ export default function ConcurForgotPassword(props) {
                 sx={{paddingLeft: 4}}
                 onClick={handleClick}
                 component={Link}
-                to="/signin?application=concur">
+                to="/signin?application=concur"
+              >
                 Sign in
               </TextButton>
             </Typography>
           ) : ''}
-          <div className={classes.bottom}>
+          <Box
+            sx={{
+              padding: '20px 0',
+              margin: '20px 0 0',
+              borderTop: '1px solid #D8E5EF',
+              '& > a': {
+                color: '#6A7B89',
+                padding: '0 15px',
+              },
+            }}>
             <a href="https://www.celigo.com/privacy/" target="_blank" rel="noreferrer" >Privacy</a>
             <a href="https://www.celigo.com/terms-of-service/" target="_blank" rel="noreferrer" >Terms of Service</a>
             <a href="https://www.celigo.com/support/" target="_blank" rel="noreferrer" >Support</a>
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </StyledSignInWrapperContent>
+      </StyledSignInWrapper>
+    </StyledWrapper>
   );
 }

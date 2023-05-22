@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, List, ListItem } from '@mui/material';
+import { Grid, List, ListItem, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
@@ -18,21 +18,8 @@ import CeligoTruncate from '../../../../../components/CeligoTruncate';
 import infoText from '../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
-  form: {
-    padding: theme.spacing(0, 2, 2, 2),
-  },
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
   noSettings: {
     margin: theme.spacing(1, 2, 4, 2),
-  },
-  subNav: {
-    minWidth: 200,
-    maxWidth: 240,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   listItem: {
     color: theme.palette.secondary.main,
@@ -41,19 +28,6 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
-  },
-  content: {
-    width: '100%',
-  },
-  settingsGroupContainer: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
-  flowTitle: {
-    // TODO: Karthik use flowSectionTitle component
-    minHeight: 42,
   },
 }));
 
@@ -72,7 +46,6 @@ const emptyObj = {};
 
 function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
   const hasPreSaveHook = useSelector(state => {
@@ -184,7 +157,7 @@ function CustomSettings({ integrationId, sectionId }) {
           integrationId={integrationId} sectionId={sectionId} />
       </PanelHeader>
 
-      <div className={classes.form}>
+      <Box sx={{ padding: theme => theme.spacing(0, 2, 2, 2)}}>
         <DynaForm
           formKey={formKeyRef} />
         <DynaSubmit
@@ -195,7 +168,7 @@ function CustomSettings({ integrationId, sectionId }) {
           onClick={submitHandler()}>
           {defaultLabels.saveLabel}
         </DynaSubmit>
-      </div>
+      </Box>
     </>
   );
 }
@@ -221,20 +194,40 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
   // for integrations without any flowgroupings
   if (!hasFlowGroupings) {
     return (
-      <div className={classes.root}>
+      <Box
+        sx={{
+          backgroundColor: theme => theme.palette.background.paper,
+          border: '1px solid',
+          borderColor: theme => theme.palette.secondary.lightest,
+        }}>
         <CustomSettings
           integrationId={integrationId}
           sectionId="general" />
-      </div>
+      </Box>
     );
   }
 
   return (
-    <Grid container wrap="nowrap" className={classes.settingsGroupContainer}>
-      <Grid item className={classes.subNav}>
+    <Grid
+      container
+      wrap="nowrap"
+      sx={{
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        borderTop: theme => `1px solid ${theme.palette.secondary.lightest}`,
+        background: theme => theme.palette.background.paper,
+      }}
+      >
+      <Grid
+        item
+        sx={{
+          minWidth: 200,
+          maxWidth: 240,
+          borderRight: theme => `solid 1px ${theme.palette.secondary.lightest}`,
+        }}>
         <List>
           {allSections.map(({ title, sectionId }) => (
-            <ListItem key={sectionId} className={classes.flowTitle}>
+            <ListItem key={sectionId} sx={{ minHeight: 42}}>
               <NavLink
                 className={classes.listItem}
                 activeClassName={classes.activeListItem}
@@ -246,7 +239,7 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
           ))}
         </List>
       </Grid>
-      <Grid item className={classes.content}>
+      <Grid item sx={{ width: '100%'}}>
         <CustomSettings
           integrationId={integrationId}
           sectionId={sectionId} />

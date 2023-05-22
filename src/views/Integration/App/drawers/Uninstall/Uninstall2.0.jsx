@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { Spinner } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -16,15 +16,6 @@ import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapper: {
-    padding: theme.spacing(2, 3),
-  },
-  installIntegrationWrapperContent: {
-    maxWidth: 750,
-  },
-  message: {
-    marginBottom: theme.spacing(2),
-  },
   formHead: {
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
@@ -41,16 +32,13 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
   },
-  installIntegrationSteps: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
   noIntegrationMsg: {
     padding: theme.spacing(3),
   },
 }));
 
 export default function Uninstaller2({ integration, integrationId }) {
+  // eslint-disable-next-line no-unused-vars
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -185,13 +173,17 @@ export default function Uninstaller2({ integration, integrationId }) {
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
          />
-      <div className={classes.installIntegrationWrapper}>
-        <div className={classes.installIntegrationWrapperContent}>
-          <Typography className={classes.message}>
+      <Box sx={{ padding: theme => theme.spacing(2, 3) }}>
+        <Box sx={{ maxWidth: 750 }}>
+          <Typography sx={{ marginBottom: theme => theme.spacing(2) }}>
             {message.INTEGRATION.UNINSTALL}
           </Typography>
 
-          <div className={classes.installIntegrationSteps}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
             {(uninstallSteps || []).map((step, index) => (
               <InstallationStep
                 key={step.name}
@@ -201,9 +193,9 @@ export default function Uninstaller2({ integration, integrationId }) {
                 step={step}
               />
             ))}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
       <FormStepDrawer
         integrationId={integrationId}
         formCloseHandler={formCloseHandler}
