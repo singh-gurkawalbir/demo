@@ -8,11 +8,11 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.FLOWTRENDS.RECEIVED:
         draft.flowResponse = response;
-        draft.status = 'received';
+        draft.status = 'success';
         break;
 
       case actionTypes.FLOWTRENDS.REQUEST:
-        draft.status = 'requested';
+        draft.status = 'loading';
         break;
       default:
     }
@@ -22,6 +22,6 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.isTrendComplete = state => state?.status === 'received';
-selectors.flowTrends = state => state?.flowResponse;
+selectors.flowTrend = state => state?.status === 'loading';
+selectors.flowTrendData = state => state?.flowResponse;
 // #endregion

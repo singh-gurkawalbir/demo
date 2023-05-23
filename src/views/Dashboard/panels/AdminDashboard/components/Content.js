@@ -1,16 +1,16 @@
 /* eslint-disable no-use-before-define */
-// import React, {useState, useEffect} from 'react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import Widget from '../../../../../components/Widget';
 import '../Styles/styles.css';
 import '../Styles/content.css';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { initialGraphTypes, initialLayouts} from './MetaData';
+
+const Widget = lazy(() => import('../../../../../components/Widget'));
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -61,15 +61,12 @@ export default function Content({colsize, id, data}) {
   const { childId } = match.params;
 
   const [graphTypes, setGraphTypes] = useState(
-    getFromLS('graphTypes', `gt${id}`) || initialGraphTypes
+    getFromLS('graphTypes', `graphConfig${id}`) || initialGraphTypes
   );
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
-  // const layoutData = useSelector(selectors.layoutData);
-  // const graphData = useSelector(selectors.graphData);
 
-  // console.log({graphData, layoutData});
-  if (layouts.lg.length === 0) {
+  if (layouts.lg.lengraphConfigh === 0) {
     setLayouts(initialLayouts);
   }
 
@@ -82,30 +79,9 @@ export default function Content({colsize, id, data}) {
   }, [dispatch, isAPICallComplete]);
 
   const [col] = useState(colsize);
-
-  // const [items, setItems] = useState(originalItems);
-
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
   };
-  const onRemoveItem = itemId => {
-    // setItems(items.filter((i) => i !== itemId));
-    const temp = layouts.lg.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
-    const temp2 = layouts.md.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
-    const temp3 = layouts.sm.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
-    const temp4 = layouts.xs.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
-    const temp5 = layouts.xxs.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
-    const temp6 = {
-      lg: temp,
-      md: temp2,
-      sm: temp3,
-      xs: temp4,
-      xxs: temp5,
-    };
-
-    setLayouts(temp6);
-  };
-
   const handleGraphChange = (graphType, id) => {
     const temp = graphTypes.filter(i => i.id !== id);
 
@@ -115,32 +91,33 @@ export default function Content({colsize, id, data}) {
   const generateDOM = () => {
     if (layouts) {
       return layouts.lg.map(l => {
-        const gt = graphTypes.find(item => item.id === l.i) || 'string';
-        let gd = {};
+        const graphConfig = graphTypes.find(item => item.id === l.i) || 'string';
+        let graphData = {};
 
-        if (gt.dataType === 'connections') {
-          gd = data.connections;
-        } else if (gt.dataType === 'imports') {
-          gd = data.imports;
+        if (graphConfig.dataType === 'connections') {
+          graphData = data.connections;
+        } else if (graphConfig.dataType === 'imports') {
+          graphData = data.imports;
         } else if (l.i === '5') {
-          gd = data.connections;
+          graphData = data.connections;
         } else {
-          gd = data.flows;
+          graphData = data.flows;
         }
 
         return (
           <div className={classes.reactGridItem} key={l.i}>
+            <Suspense fallback={<div>Loading...</div>} />
             <Widget
               id={l.i}
-              onRemoveItem={onRemoveItem}
-              graphType={gt.type || 'Bar'}
+              graphType={graphConfig.type || 'Bar'}
               onChange={handleGraphChange}
-              graphData={gd}
-              title={gt.dataType}
+              graphData={graphData}
+              title={graphConfig.dataType}
               childId={childId}
-              graphPrefrence={gt}
-              integrationId={gt.integrationId}
+              graphPrefrence={graphConfig}
+              integrationId={graphConfig.integrationId}
             />
+            <Suspense />
           </div>
         );
       });
