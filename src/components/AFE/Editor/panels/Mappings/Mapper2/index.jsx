@@ -160,6 +160,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   addSearchBar: {
+    '& .rc-tree-list': {
+      paddingTop: theme.spacing(3),
+    },
     '&$virtualTree': {
       overflow: 'hidden',
       '& .rc-tree-list': {

@@ -37,7 +37,7 @@ describe('editors test cases', () => {
     mockGetRequestOnce('/api/processors', {});
 
     await initTransferList({});
-    await waitFor(() => expect(screen.getByRole('heading', {name: 'Playground'})).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument());
     expect(screen.getByRole('heading', {name: 'Editor examples'})).toBeInTheDocument();
     const csvParser = screen.queryByText('CSV parser helper');
 
