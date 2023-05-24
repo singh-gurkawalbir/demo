@@ -399,12 +399,12 @@ export default function ConnectorInstallation() {
           )
         );
         setIsResourceStaged(true);
+        setConnection({
+          newId,
+          doc: sourceConnection,
+          _connectionId,
+        });
       }
-      setConnection({
-        newId,
-        doc: sourceConnection,
-        _connectionId,
-      });
       history.push(buildDrawerUrl({
         path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
         baseUrl: match.url,

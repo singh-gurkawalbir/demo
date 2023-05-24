@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
@@ -12,7 +12,20 @@ export default function ErrorNotifications() {
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
-  const isOnline = navigator.onLine;
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    const setOnlineTrue = () => setIsOnline(true);
+    const setOnlineFalse = () => setIsOnline(false);
+
+    window.addEventListener('offline', setOnlineFalse);
+    window.addEventListener('online', setOnlineTrue);
+
+    return () => {
+      window.removeEventListener('offline', setOnlineFalse);
+      window.removeEventListener('online', setOnlineTrue);
+    };
+  }, []);
 
   useEffect(() => {
     if (!errors) return;
@@ -24,7 +37,6 @@ export default function ErrorNotifications() {
         enqueueSnackbar({
           message: <ErrorContent error={message} />,
           variant: 'error',
-          persist: true,
           key: commKey,
         });
       });
