@@ -48,6 +48,11 @@ function initStore(initComplete, insertMeta, addActions) {
         flowId: '_flowId',
         initComplete,
       },
+      'connections-1234': {
+        fieldMeta,
+        flowId: '_flowId',
+        initComplete,
+      },
       'eventreports-_eventreportId': {
         fieldMeta,
         initComplete,
@@ -81,6 +86,14 @@ function initStore(initComplete, insertMeta, addActions) {
             mediaType: 'json',
           },
         },
+        { _id: '1234',
+          type: 'http',
+          http: {
+            formType: 'http',
+            baseURI: '/mockURI',
+            mediaType: 'json',
+          },
+        },
         { _id: '_OAuthConnectionId',
           type: 'rest',
           assistant: 'acton',
@@ -92,6 +105,19 @@ function initStore(initComplete, insertMeta, addActions) {
         },
       ],
     };
+    draft.session.form['connections-1234'] = {
+      fields: {},
+      value: {
+        '/http/_iClientId': 'ic-123',
+        '/http/auth/type': 'oauth',
+      },
+    };
+    draft.data.resources.iClients = [{
+      _id: 'ic-123',
+      oauth2: {
+        grantType: 'authorizecode',
+      },
+    }];
     if (insertMeta) {
       draft.session.resourceForm['exports-_exportId'].fieldMeta = {actions: addActions ? [{id: 'testandsavegroup', mode: 'group'}] : null};
     }
@@ -135,6 +161,13 @@ describe('ResourceFormActionsPanel tests', () => {
   test('Should able to test the ResourceFormActionsPanel For Connections Not Using OAuth', async () => {
     await initResourceFormActionsPanel({isNew: false, resourceType: 'connections', resourceId: '_connectionId'});
     await waitFor(() => expect(screen.getByRole('button', {name: /Save/i})).toBeDisabled());
+  });
+
+  test('Should able to test the ResourceFormActionsPanel For Connections Using OAuth2 and iclientGrantType as authorizecode', async () => {
+    await initResourceFormActionsPanel({isNew: false, resourceType: 'connections', resourceId: '1234', formKey: 'connections-1234'});
+    await waitFor(() => expect(screen.getByRole('button', {name: /Save & authorize/i})).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole('button', {name: /Close/i})).toBeEnabled());
+    await waitFor(() => expect(screen.queryByRole('button', {name: /Test connection/i})).not.toBeInTheDocument());
   });
 
   test('Should able to test the ResourceFormActionsPanel For eventreports', async () => {

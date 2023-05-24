@@ -13,7 +13,7 @@ import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 import ResourceDrawer from '../../drawer/Resource';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
-import { isNewId, getConnectionType } from '../../../utils/resource';
+import { getConnectionType } from '../../../utils/resource';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
@@ -118,7 +118,7 @@ function ResourceSetupDrawerContent({
     // and these props are configured in the preview step
     environment = templateInstallSetup?.data?.sandbox ? 'sandbox' : 'production';
     resourceObj = {...(templateInstallSetup?.connectionMap?.[currentStep?._connectionId] || {})};
-  } else if (canSelectExistingResources && resourceType === 'connections' && isNewId(resourceId)) {
+  } else if (canSelectExistingResources && resourceType === 'connections') {
     // resource object construction incase of template : !_connectorId
   // if resourceId is new - construct obj
     resourceObj = currentStep?.sourceConnection || {};
