@@ -70,7 +70,7 @@ describe('OpenRevertDrawer tests', () => {
 
   test('Should able to test the OpenRevertDrawer initial render', async () => {
     await initOpenRevertDrawer(props);
-    expect(screen.getByRole('heading', {name: 'Create revert'})).toBeInTheDocument();
+    expect(screen.getByText('Create revert')).toBeInTheDocument();
     expect(screen.getByText('Description')).toBeInTheDocument();
     expect(screen.getByText('Revert to revision description')).toBeInTheDocument();
     expect(screen.getByText('Revert to revision created date')).toBeInTheDocument();

@@ -37,7 +37,7 @@ export default function InstallIntegrationDrawer() {
         <DrawerTitle>Upload integration</DrawerTitle>
         <DrawerCloseButton onClick={handleClose} />
       </DrawerHeader>
-      <DrawerContent withPadding>
+      <DrawerContent>
         <Switch>
           <Route
             path={buildDrawerUrl({
