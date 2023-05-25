@@ -12,7 +12,7 @@ export function* request(startDateString) {
 
   try {
     response = yield call(apiCallWithRetry, {
-      path: `/accountInsights/api/flowsTrend?from=${startDateString.startDateString}&to=${startDateString.endDateString}&type=${startDateString.filterValFlow}`,
+      path: `/accountInsights/api/usersTrend?from=${startDateString.startDateString}&to=${startDateString.endDateString}&type=${startDateString.filterValUser}`,
       opts: {
         method: 'GET',
       },
@@ -20,8 +20,10 @@ export function* request(startDateString) {
   } catch (e) {
     return;
   }
-  yield put(actions.flowTrends.received(response));
+
+  yield put(actions.userTrends.received(response));
 }
+
 export default [
-  takeLatest(actionTypes.FLOWTRENDS.REQUEST, request),
+  takeLatest(actionTypes.USERTRENDS.REQUEST, request),
 ];

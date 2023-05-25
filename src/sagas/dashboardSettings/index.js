@@ -22,7 +22,6 @@ export function* getPreference() {
   } catch (e) {
     return;
   }
-  // console.log(response);
 
   yield put(actions.dashboard.received(response));
 }
@@ -33,7 +32,7 @@ export function* postPreference({ layouts, graphTypes}) {
 
     // console.log(graphTypes);
     const response = yield call(apiCallWithRetry, {
-      path: '/accountInsights/api/dashboards/6459cc9397dc8aa42f85ec60',
+      path: '/accountInsights/api/dashboards/646c71f3a5e5b87a4a52dda1',
       opts: {
         body: {...data, layouts, graphTypes},
         method: 'PUT',
@@ -42,9 +41,6 @@ export function* postPreference({ layouts, graphTypes}) {
         // },
       },
     });
-    // console.log({...data, layouts});
-
-    // yield call(getPreference);
 
     // Dispatch a success action if needed
     yield put(actions.dashboard.preferencePosted(response));

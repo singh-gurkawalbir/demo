@@ -52,17 +52,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Content({colsize, id, data}) {
-  const [layouts, setLayouts] = useState(
-    getFromLS('layouts', `lt${id}`) || initialLayouts
+  const layoutData = useSelector(selectors.layoutData);
+  const [layouts, setLayouts] = useState(initialLayouts);
+  const [graphTypes] = useState(
+    getFromLS('graphTypes', `graphConfig${id}`) || initialGraphTypes
   );
+
+  if (layouts.lg.length === 0) {
+    setLayouts(initialLayouts);
+  }
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { childId } = match.params;
-
-  const [graphTypes, setGraphTypes] = useState(
-    getFromLS('graphTypes', `graphConfig${id}`) || initialGraphTypes
-  );
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
 
@@ -76,16 +78,15 @@ export default function Content({colsize, id, data}) {
     if (!isAPICallComplete) {
       dispatch(actions.dashboard.request());
     }
-  }, [dispatch, isAPICallComplete]);
+  }, [dispatch, isAPICallComplete, layouts]);
+
+  useEffect(() => {
+  }, [dispatch, graphTypes, layouts]);
 
   const [col] = useState(colsize);
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
-  };
-  const handleGraphChange = (graphType, id) => {
-    const temp = graphTypes.filter(i => i.id !== id);
-
-    setGraphTypes(temp.concat({ id, type: graphType }));
+    dispatch(actions.dashboard.postPreference({layouts: allLayouts, graphTypes}));
   };
 
   const generateDOM = () => {
@@ -110,7 +111,6 @@ export default function Content({colsize, id, data}) {
             <Widget
               id={l.i}
               graphType={graphConfig.type || 'Bar'}
-              onChange={handleGraphChange}
               graphData={graphData}
               title={graphConfig.dataType}
               childId={childId}
@@ -125,35 +125,62 @@ export default function Content({colsize, id, data}) {
   };
 
   return (
-    <div className={classes.responsiveContainer}>
-      <ResponsiveGridLayout
-        className="layout"
-        layouts={layouts}
-        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        cols={{
-          lg: parseInt(col, 10),
-          md: parseInt(col, 10),
-          sm: parseInt(col, 10),
-          xs: parseInt(col, 10),
-          xxs: parseInt(col, 10),
-        }}
-        rowHeight={60}
-        preventCollision={false}
-        autoSize
-        margin={{
-          lg: [20, 20],
-          md: [20, 20],
-          sm: [20, 20],
-          xs: [20, 20],
-          xxs: [20, 20],
-        }}
+    layoutData === undefined ? <div>Loading...</div>
+      : (
+        <div className={classes.responsiveContainer}>
+          <ResponsiveGridLayout
+            className="layout"
+            layouts={layouts}
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            cols={{
+              lg: parseInt(col, 10),
+              md: parseInt(col, 10),
+              sm: parseInt(col, 10),
+              xs: parseInt(col, 10),
+              xxs: parseInt(col, 10),
+            }}
+            rowHeight={60}
+            preventCollision={false}
+            autoSize
+            margin={{
+              lg: [20, 20],
+              md: [20, 20],
+              sm: [20, 20],
+              xs: [20, 20],
+              xxs: [20, 20],
+            }}
         // width={width}
-        onLayoutChange={onLayoutChange}>
-        {generateDOM()}
-      </ResponsiveGridLayout>
-    </div>
+            onLayoutChange={onLayoutChange}>
+            {generateDOM()}
+          </ResponsiveGridLayout>
+        </div>
+      )
   );
 }
+
+// const onRemoveItem = itemId => {
+//   // setItems(items.filter((i) => i !== itemId));
+//   const temp = layouts.lg.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
+//   const temp2 = layouts.md.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
+//   const temp3 = layouts.sm.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
+//   const temp4 = layouts.xs.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
+//   const temp5 = layouts.xxs.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
+//   const temp6 = {
+//     lg: temp,
+//     md: temp2,
+//     sm: temp3,
+//     xs: temp4,
+//     xxs: temp5,
+//   };
+
+//   setLayouts(temp6);
+// };
+
+// const handleGraphChange = (graphType, id) => {
+//   const temp = graphTypes.filter(i => i.id !== id);
+
+//   setGraphTypes(temp.concat({ id, type: graphType }));
+// };
 
 function getFromLS(key, id) {
   let ls = {};

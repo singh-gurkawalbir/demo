@@ -2681,7 +2681,6 @@ const accountSettings = {
   received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
 };
 
-// {Code that has been added in dashboard}
 const dashboard = {
   request: () => action(actionTypes.DASHBOARD.REQUEST),
   update: newDefaultAShareId =>
@@ -2691,13 +2690,18 @@ const dashboard = {
   postPreference: ({layouts, graphTypes}) => action(actionTypes.DASHBOARD.POST_PREFERENCE, {layouts, graphTypes}),
   preferencePosted: response => action(actionTypes.DASHBOARD.PREFERENCE_POSTED, {response}),
   preferencePostFailed: error => action(actionTypes.DASHBOARD.PREFERENCE_POST_FAILED, {error}),
-  // Code that has been added in dashboard}
 };
 
 const flowTrends = {
-  request: (startDateString, endDateString, filterVal) => action(actionTypes.FLOWTRENDS.REQUEST, {startDateString, endDateString, filterVal}),
+  request: (startDateString, endDateString, filterValFlow) => action(actionTypes.FLOWTRENDS.REQUEST, {startDateString, endDateString, filterValFlow}),
   received: response =>
     action(actionTypes.FLOWTRENDS.RECEIVED, { response }),
+};
+
+const userTrends = {
+  request: (startDateString, endDateString, filterValUser) => action(actionTypes.USERTRENDS.REQUEST, {startDateString, endDateString, filterValUser}),
+  received: response =>
+    action(actionTypes.USERTRENDS.RECEIVED, { response }),
 };
 
 const uiFields = {
@@ -2762,4 +2766,5 @@ export default {
   uiFields,
   dashboard,
   flowTrends,
+  userTrends,
 };

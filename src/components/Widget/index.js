@@ -14,44 +14,45 @@ import PanelHeader from '../PanelHeader';
 import MuiBox from '../BoxWidget';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import DateRangeSelector from '../DateRangeSelector';
-import SelectResource from '../LineGraph/SelectResource';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
+import UserResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/UserResource';
+import RecordResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/RecordResource';
+import FlowResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/FlowResource';
+import { initialGraphTypes } from '../../views/Dashboard/panels/AdminDashboard/components/MetaData';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { transformData, transformData1, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
-import DynaForm from '../DynaForm';
-import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const LineGraph = lazy(() => import('../Graphs/LineGraph'));
 const BarGraph = lazy(() => import('../Graphs/BarGraph'));
-const DefaultDashboard = lazy(() => import('../../views/Dashboard/panels/AdminDashboard/components/DefaultDashboard'));
+const DefaultDashboard = lazy(() => import('../DefaultDashboard'));
 
-const fieldMeta = {
-  fieldMap: {
-    Type: {
-      id: 'filter',
-      name: 'Filter',
-      type: 'select',
-      placeholder: 'Please Select type',
-      visibleWhenAll: [{ field: 'application', isNot: [''] }],
-      options: [
-        {
-          items: [
-            { label: 'Enable', value: 'enabled' },
-            { label: 'Disable', value: 'disabled' },
-          ],
-        },
-      ],
-      // label: 'Filter',
-      // required: true,
-      defaultValue: 'disabled',
-      noApi: true,
-    },
-  },
-  layout: {
-    fields: ['Type'],
-  },
-};
+// const fieldMeta = {
+//   fieldMap: {
+//     Type: {
+//       id: 'filter',
+//       name: 'Filter',
+//       type: 'select',
+//       placeholder: 'Please Select type',
+//       visibleWhenAll: [{ field: 'application', isNot: [''] }],
+//       options: [
+//         {
+//           items: [
+//             { label: 'Enable', value: 'enabled' },
+//             { label: 'Disable', value: 'disabled' },
+//           ],
+//         },
+//       ],
+//       // label: 'Filter',
+//       // required: true,
+//       defaultValue: 'disabled',
+//       noApi: true,
+//     },
+//   },
+//   layout: {
+//     fields: ['Type'],
+//   },
+// };
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -68,6 +69,16 @@ export default function Widget({
   graphPrefrence,
   integrationId,
 }) {
+//! ACCESSING THE VALUES OF INTEGRATION ID IN THE GRAPHTYPE
+  const userGraph = initialGraphTypes.find(obj => obj.integrationId === 'userGraph');
+  const flowGraph = initialGraphTypes.find(obj => obj.integrationId === 'flowGraph');
+  // const connectionGraph = initialGraphTypes.find(obj => obj.integrationId === 'connectionGraph');
+  const recordGraph = initialGraphTypes.find(obj => obj.integrationId === 'none');
+  const userTrend = userGraph.integrationId;
+  const flowTrend = flowGraph.integrationId;
+  // const connectionTrend = connectionGraph.integrationId;
+  const recordTrend = recordGraph.integrationId;
+
   //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
   const dispatch = useDispatch();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
@@ -141,7 +152,6 @@ export default function Widget({
     [dispatch, integrationId, preferences, range]
   );
 
-  // console.log(range);
   const sections = useMemo(() => groupings.map(s => <MenuItem key={s.titleId || s.sectionId} value={s.titleId || s.sectionId}>{s.title}</MenuItem>), [groupings]);
 
   // //! THIS PART REPRESENTS THE JOB RECORD AREA
@@ -160,7 +170,7 @@ export default function Widget({
   }, [selectedResources, range, refresh]);
 
   useEffect(() => {
-    if (sendQuery && integrationId === 'none') {
+    if (sendQuery && integrationId === recordTrend) {
       dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
       setSendQuery(false);
     }
@@ -170,7 +180,7 @@ export default function Widget({
     if (metricData.status !== COMM_STATES.LOADING) {
       setIsLoading(false);
     }
-  }, [dispatch, metricData, integrationId, range, sendQuery, selectedResources]);
+  }, [dispatch, metricData, integrationId, range, sendQuery, selectedResources, recordTrend]);
 
   if (metricData.status === COMM_STATES.ERROR) {
     return <Typography>Error occured</Typography>;
@@ -183,47 +193,57 @@ export default function Widget({
   const startDateString = start.toISOString();
   const endDateString = end.toISOString();
 
-  const formKey = 'FlowType';
-
-  const formValues = useSelector(
-    state => selectors.formValueTrimmed(state, formKey),
-    shallowEqual
-  );
-  const result = { ...formValues };
-
-  const filterVal = result.Filter;
-
-  // console.log(filterVal);
-  useFormInitWithPermissions({ formKey, fieldMeta });
-
+  const [filterValFlow, setFilterValFlow] = useState('');
+  const pullFlow = filter => {
+    setFilterValFlow(filter);
+  };
   const flowData = useSelector(selectors.flowTrendData);
   const flowDataStatus = useSelector(selectors.flowTrend);
 
-  // console.log('FLOWDATA', flowData);
   useEffect(() => {
-    if (integrationId === 'demo2') {
-      dispatch(actions.flowTrends.request(startDateString, endDateString, filterVal));
+    if (integrationId === flowTrend) {
+      dispatch(actions.flowTrends.request(startDateString, endDateString, filterValFlow));
     }
-  }, [dispatch, endDateString, startDateString, integrationId, filterVal]);
+  }, [dispatch, endDateString, startDateString, integrationId, filterValFlow, flowTrend]);
+
+  //! This PART IS ABOUT FETCHING THE USERDATA FROM API
+  const [filterValUser, setFilterValUser] = useState('');
+  const pullUser = filter => {
+    setFilterValUser(filter);
+  };
+
+  const userData = useSelector(selectors.userTrends);
+
+  useEffect(() => {
+    if (integrationId === userTrend) {
+      dispatch(actions.userTrends.request(startDateString, endDateString, filterValUser));
+    }
+  }, [dispatch, endDateString, startDateString, integrationId, filterValUser, userTrend]);
 
   //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
   const connectionName = 'connections';
   const flowName = 'flows';
 
-  if (id === '3') {
-    finalData = transformData(recordData);
-  } else if (id === '1' || id === '0') {
-    finalData = transformData1(graphData);
-  } else if (id === '2') {
-    finalData = transformData2(flowData);
-    // console.log(finalData);
-  } else if (id === '5') {
-    return <MuiBox data={graphData} value={connectionName} />;
-  } else if (id === '6') {
-    return <MuiBox data={graphData} value={flowName} />;
-  } else {
-    finalData = graphData;
+  switch (true) {
+    case integrationId === recordTrend:
+      finalData = transformData(recordData);
+      break;
+    case integrationId === userTrend:
+      finalData = transformData2(userData);
+      break;
+    case id === '1':
+      finalData = transformData1(graphData);
+      break;
+    case integrationId === flowTrend:
+      finalData = transformData2(flowData);
+      break;
+    case id === '5':
+      return <MuiBox data={graphData} value={connectionName} />;
+    case id === '6':
+      return <MuiBox data={graphData} value={flowName} />;
+    default:
+      finalData = graphData;
   }
   const [data, setData] = useState(finalData);
   const options = [
@@ -258,7 +278,13 @@ export default function Widget({
   );
 
   useEffect(() => {
-    if (id === '2') {
+    if (integrationId === userTrend) {
+      setData(transformData2(userData));
+    }
+  }, [flowData, integrationId, userData, userTrend]);
+
+  useEffect(() => {
+    if (integrationId === flowTrend) {
       setData(transformData2(flowData));
       if (flowDataStatus) {
         setIsLoading(true);
@@ -266,13 +292,13 @@ export default function Widget({
         setIsLoading(false);
       }
     }
-  }, [flowData, id, setData, flowDataStatus]);
+  }, [flowData, flowTrend, integrationId, setData, flowDataStatus]);
 
   useEffect(() => {
-    if (id === '3') {
+    if (integrationId === recordTrend) {
       setData(transformData(recordData));
     }
-  }, [recordData, id, setData]);
+  }, [recordData, id, setData, integrationId, recordTrend]);
 
   if (isloading) {
     return (
@@ -300,9 +326,6 @@ export default function Widget({
            />
           <div className="spacer" />
           <ActionGroup>
-            {/* <TextButton onClick={handleRefreshClick} startIcon={<RefreshIcon />}>
-              Refresh
-            </TextButton> */}
             <DateRangeSelector
               onSave={handleDateRangeChange}
               value={{
@@ -321,16 +344,17 @@ export default function Widget({
                 {sections}
               </CeligoSelect>
             )}
-            {id === '3' && (
-            <SelectResource
-              integrationId={integrationId}
-              selectedResources={selectedResources}
-              flowResources={filteredFlowResources}
-              onSave={handleResourcesChange}
-        />
 
+            {integrationId === userTrend && <UserResource func={pullUser} />}
+            {integrationId === flowTrend && <FlowResource func={pullFlow} />}
+            {integrationId === recordTrend && (
+              <RecordResource
+                integrationId={integrationId}
+                selectedResources={selectedResources}
+                filteredFlowResources={filteredFlowResources}
+                handleResourcesChange={handleResourcesChange}
+              />
             )}
-            {id === '2' && <DynaForm formKey={formKey} />}
           </ActionGroup>
         </div>
         <div className="body1" />
@@ -353,3 +377,30 @@ export default function Widget({
     </Card>
   );
 }
+
+// if (integrationId === recordTrend) {
+//   finalData = transformData(recordData);
+// } else if (integrationId === userTrend) {
+//   finalData = transformData2(userData);
+// } else if (id === '1') {
+//   finalData = transformData1(graphData);
+// } else if (integrationId === flowTrend) {
+//   finalData = transformData2(flowData);
+// } else if (id === '5') {
+//   return <MuiBox data={graphData} value={connectionName} />;
+// } else if (id === '6') {
+//   return <MuiBox data={graphData} value={flowName} />;
+// } else {
+//   finalData = graphData;
+// }
+
+/* <>
+{(() => {
+switch (integrationId) {
+case 'userGraph':
+return (<UserResource func={pullUser} />);
+default:
+return null;
+}
+})()}
+</> */

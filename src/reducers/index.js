@@ -120,6 +120,7 @@ import customCloneDeep from '../utils/customCloneDeep';
 import { convertUtcToTimezone } from '../utils/date';
 import customReducer, { selectors as fromCustomReducer } from './dashboard';
 import flowReducer, {selectors as fromFlowReducer} from './flowTrends';
+import userReducer, {selectors as fromUserReducer} from './userTrends';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -133,6 +134,7 @@ const combinedReducers = combineReducers({
   comms,
   customReducer,
   flowReducer,
+  userReducer,
 });
 const rootReducer = (state, action) => {
   const newState = combinedReducers(state, action);
@@ -175,6 +177,7 @@ const subSelectors = {
   user: fromUser,
   customReducer: fromCustomReducer,
   flowReducer: fromFlowReducer,
+  userReducer: fromUserReducer,
 };
 
 genSelectors(selectors, subSelectors);

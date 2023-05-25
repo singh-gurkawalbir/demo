@@ -1,6 +1,5 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
-// import { response } from 'msw';
 
 export default (state = {}, action) => {
   const { type, error, response } = action;
@@ -39,16 +38,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-// selectors.fetchingError = state => {
-//   if (!state || state.status !== 'error') {
-//     return;
-//   }
-
-//   return state.error;
-// };
-
 selectors.isAPICallComplete = state => state?.status === 'received';
-// selectors.customId = state => state?.defaultAShareId;
 
 selectors.layoutData = state => state?.dashboardResponse?.[0]?.layouts;
 selectors.graphData = state => state?.dashboardResponse?.[0]?.graphTypes;

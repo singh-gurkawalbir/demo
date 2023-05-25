@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
-import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
-import FlowsIcon from '../../../../../components/icons/FlowsIcon';
-import IntegrationAppsIcon from '../../../../../components/icons/IntegrationAppsIcon';
+import ConnectionsIcon from '../icons/ConnectionsIcon';
+import FlowsIcon from '../icons/FlowsIcon';
+import IntegrationAppsIcon from '../icons/IntegrationAppsIcon';
 // import InviteUsersIcon from '../../../../../components/icons/InviteUsersIcon';
 
 const useStyles = makeStyles({
@@ -30,7 +30,6 @@ function DefaultDashboard(props) {
   let icon;
   let message;
 
-  // Determine the icon and message based on the ID
   switch (id) {
     case '0':
       icon = <ConnectionsIcon className={classes.icon} />;
@@ -55,7 +54,7 @@ function DefaultDashboard(props) {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} data-testid={message}>
       {icon && <h1 className={classes.icon}>{icon}</h1>}
 
       <p className={classes.message}>No {message} added</p>
