@@ -47,6 +47,7 @@ import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
 import Loader from '../components/Loader';
 import { FeatureFlagProvider } from '../components/FeatureFlag';
+import FontStager from '../components/FontStager';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -335,6 +336,7 @@ export default function App() {
                           paddingTop: '6px',
                         },
                       }}>
+                      <FontStager />
                       <CssBaseline />
                       {/* Define empty call back for getUserConfirmation to not let Prompt
                   * get triggered when history.block is defined in any specific component

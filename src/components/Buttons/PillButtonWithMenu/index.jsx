@@ -123,7 +123,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         onClose={handleMenuClose}
         className={classes.createMenu}
         transformOrigin={{
-          vertical: -36,
+          vertical: 0,
           horizontal: 176,
         }}
       >
