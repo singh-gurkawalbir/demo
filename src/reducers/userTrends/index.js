@@ -6,12 +6,12 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.FLOWTRENDS.RECEIVED:
-        draft.flowResponse = response;
+      case actionTypes.USERTRENDS.RECEIVED:
+        draft.userResponse = response;
         draft.status = 'received';
         break;
 
-      case actionTypes.FLOWTRENDS.REQUEST:
+      case actionTypes.USERTRENDS.REQUEST:
         draft.status = 'requested';
         break;
       default:
@@ -22,6 +22,6 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.isFlowTrendComplete = state => state?.status === 'received';
-selectors.flowTrends = state => state?.flowResponse;
+selectors.isUserTrendComplete = state => state?.status === 'received';
+selectors.userTrends = state => state?.userResponse;
 // #endregion

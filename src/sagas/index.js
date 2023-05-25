@@ -78,6 +78,7 @@ import { appSagas } from './app';
 import { sendRequest } from './api';
 import customApiSagas from './dashboardSettings';
 import flowTrendsSagas from './flowTrendsSettings';
+import userTrendsSagas from './userTrendsSettings';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -254,6 +255,7 @@ export function* allSagas() {
     ...uiFieldsSagas,
     ...customApiSagas,
     ...flowTrendsSagas,
+    ...userTrendsSagas,
   ]);
 }
 
