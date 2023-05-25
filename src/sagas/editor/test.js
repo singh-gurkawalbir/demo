@@ -595,6 +595,43 @@ describe('editor sagas', () => {
         .put(actions.editor.previewFailed(editorId, {errorMessage: ['Message: invalid processor'], errorLine: undefined, errSourceProcessor: undefined }))
         .run();
     });
+    test('should dispatch preview failed action with details of error', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'handlebars',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+      };
+
+      const error = {
+        message: 'Failed validation',
+        code: 'code',
+        details: [{
+          message: 'Min. length is invalid',
+        }, {
+          message: 'Max. length is invalid',
+        }],
+      };
+      const expectedError = ['1: Min. length is invalid\n2: Max. length is invalid'];
+
+      expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'handlebars',
+            body: {
+              rules: { strict: false, template: '{{id}}' },
+              data: {id: '999'},
+            } }), throwError(new APIException({
+            status: 401,
+            message: JSON.stringify(error),
+          }))],
+        ])
+        .put(actions.editor.previewFailed(editorId, {errorMessage: expectedError, errorLine: undefined, errSourceProcessor: undefined }))
+        .run();
+    });
     test('should dispatch preview response action with the final result if invokeProcesor succeeds', () => {
       const editor = {
         id: editorId,
