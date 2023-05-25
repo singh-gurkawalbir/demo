@@ -1,0 +1,152 @@
+@font-face {
+  font-family: Roboto400;
+  src:
+    url('~typeface-roboto/files/roboto-latin-400.woff2') format('woff2'),
+    url('~typeface-roboto/files/roboto-latin-400.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Roboto300;
+  src:
+    url('~typeface-roboto/files/roboto-latin-300.woff2') format('woff2'),
+    url('~typeface-roboto/files/roboto-latin-300.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Roboto500;
+  src:
+    url('~typeface-roboto/files/roboto-latin-500.woff2') format('woff2'),
+    url('~typeface-roboto/files/roboto-latin-500.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'source sans pro';
+  src: url('../../static/fonts/sourcesanspro-regular-webfont.eot');
+  src: url('../../static/fonts/sourcesanspro-regular-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../../static/fonts/sourcesanspro-regular-webfont.woff2') format('woff2'),
+    url('../../static/fonts/sourcesanspro-regular-webfont.woff') format('woff'),
+    url('../../static/fonts/sourcesanspro-regular-webfont.ttf') format('truetype'),
+    url('../../static/fonts/sourcesanspro-regular-webfont.svg#SourceSansPro') format('svg');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'source sans pro semibold';
+  src: url('../../static/fonts/sourcesanspro-semibold-webfont.eot');
+  src: url('../../static/fonts/sourcesanspro-semibold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../../static/fonts/sourcesanspro-semibold-webfont.woff2') format('woff2'),
+    url('../../static/fonts/sourcesanspro-semibold-webfont.woff') format('woff'),
+    url('../../static/fonts/sourcesanspro-semibold-webfont.ttf') format('truetype'),
+    url('../../static/fonts/sourcesanspro-semibold-webfont.svg#SourceSansPro') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/*
+  The purpose of defining class stages is to
+  re-render once a stage has been met. We start
+  with the minimal default stage of sans-serif,
+  and progressively re-render.
+*/
+html,
+body {
+  font-family: Roboto400, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /*  Adding this for mobile responsive but still
+      but how it behaves if table wrapper doesn't have scroll*/
+  overflow-x: hidden;
+}
+
+/*
+  The defined stages now modify the display of
+  elements once they are loaded.
+*/
+
+/*
+  During primary stage we only load the Roboto font.
+  Once it's loaded, update the body to use it.
+*/
+.font-stage-primary html,
+.font-stage-primary body {
+  font-family: Roboto400, sans-serif;
+  color: #333D47;
+  font-size: 0.875rem;
+  /* Above color property is useful for styleguide icons to display,
+    otherwise we have to keep one prop(fill) for all the svg icons
+  */
+
+}
+
+/* Prevent the secondary fonts from being tree-shaken away */
+.font-stage-secondary .roboto300 {
+  font-family: Roboto300, sans-serif;
+}
+
+.font-stage-secondary .roboto500 {
+  font-family: Roboto500, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: #1D76C7;
+  cursor: pointer;
+}
+
+a:hover {
+  color: #00A1E1;
+}
+
+.layout>div {
+  margin-bottom: 0px !Important;
+}
+
+/* Todo Azhar (Check in AFE Editor the perfect solution instead of global) */
+.ace_invisible_eol {
+  display: none;
+}
+
+.ace_invisible_space {
+  color: transparent !important;
+}
+
+.ace-tomorrow .ace_gutter {
+  background-color: #f8faff !important;
+}
+
+.ace-tomorrow .ace_gutter-active-line,
+.ace-tomorrow .ace_marker-layer .ace_active-line {
+  background-color: #f0f8ff !important;
+}
+
+.ace-tomorrow .ace_marker-layer .ace_selection {
+  background-color: #d6e4ed !important;
+}
+
+.ace-tomorrow .ace_heading,
+.ace-tomorrow .ace_markup.ace_heading,
+.ace-tomorrow .ace_string {
+  color: #30731C !important;
+}
+
+.ace_editor.ace_autocomplete {
+  z-index: 1300 !important;
+}
+
+.ace_gutter {
+  z-index: 0;
+}
+
+@supports (-moz-appearance:none) {
+  .MuiTable-root {
+    border-spacing: unset !important;
+    border-collapse: unset !important;
+  }
+}
