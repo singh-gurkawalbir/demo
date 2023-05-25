@@ -1,16 +1,16 @@
 /* eslint-disable no-use-before-define */
-// import React, {useState, useEffect} from 'react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import Widget from '../../../../../components/Widget';
 import '../Styles/styles.css';
 import '../Styles/content.css';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { initialGraphTypes, initialLayouts} from './MetaData';
+
+const Widget = lazy(() => import('../../../../../components/Widget'));
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -51,10 +51,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Content({colsize, data}) {
+export default function Content({colsize, id, data}) {
   const layoutData = useSelector(selectors.layoutData);
   const [layouts, setLayouts] = useState(initialLayouts);
-  const [graphTypes] = useState(initialGraphTypes);
+  const [graphTypes] = useState(
+    getFromLS('graphTypes', `graphConfig${id}`) || initialGraphTypes
+  );
 
   if (layouts.lg.length === 0) {
     setLayouts(initialLayouts);
@@ -65,6 +67,10 @@ export default function Content({colsize, data}) {
   const { childId } = match.params;
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
+
+  if (layouts.lg.lengraphConfigh === 0) {
+    setLayouts(initialLayouts);
+  }
 
   originalItems = layouts.lg.map(item => parseInt(item.i, 10));
 
@@ -78,9 +84,6 @@ export default function Content({colsize, data}) {
   }, [dispatch, graphTypes, layouts]);
 
   const [col] = useState(colsize);
-
-  // const [items, setItems] = useState(originalItems);
-
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
     dispatch(actions.dashboard.postPreference({layouts: allLayouts, graphTypes}));
@@ -89,30 +92,32 @@ export default function Content({colsize, data}) {
   const generateDOM = () => {
     if (layouts) {
       return layouts.lg.map(l => {
-        const gt = graphTypes.find(item => item.id === l.i) || 'string';
-        let gd = {};
+        const graphConfig = graphTypes.find(item => item.id === l.i) || 'string';
+        let graphData = {};
 
-        if (gt.dataType === 'connections') {
-          gd = data.connections;
-        } else if (gt.dataType === 'imports') {
-          gd = data.imports;
+        if (graphConfig.dataType === 'connections') {
+          graphData = data.connections;
+        } else if (graphConfig.dataType === 'imports') {
+          graphData = data.imports;
         } else if (l.i === '5') {
-          gd = data.connections;
+          graphData = data.connections;
         } else {
-          gd = data.flows;
+          graphData = data.flows;
         }
 
         return (
           <div className={classes.reactGridItem} key={l.i}>
+            <Suspense fallback={<div>Loading...</div>} />
             <Widget
               id={l.i}
-              graphType={gt.type || 'Bar'}
-              graphData={gd}
-              title={gt.dataType}
+              graphType={graphConfig.type || 'Bar'}
+              graphData={graphData}
+              title={graphConfig.dataType}
               childId={childId}
-              graphPrefrence={gt}
-              integrationId={gt.integrationId}
+              graphPrefrence={graphConfig}
+              integrationId={graphConfig.integrationId}
             />
+            <Suspense />
           </div>
         );
       });
@@ -177,15 +182,15 @@ export default function Content({colsize, data}) {
 //   setGraphTypes(temp.concat({ id, type: graphType }));
 // };
 
-// function getFromLS(key, id) {
-//   let ls = {};
+function getFromLS(key, id) {
+  let ls = {};
 
-//   if (global.localStorage) {
-//     try {
-//       ls = JSON.parse(global.localStorage.getItem(`rgl-8${id}`)) || {};
-//     // eslint-disable-next-line no-empty
-//     } catch (e) {}
-//   }
+  if (global.localStorage) {
+    try {
+      ls = JSON.parse(global.localStorage.getItem(`rgl-8${id}`)) || {};
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
+  }
 
-//   return ls[key];
-// }
+  return ls[key];
+}

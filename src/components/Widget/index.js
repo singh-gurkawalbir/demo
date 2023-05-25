@@ -1,29 +1,58 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useCallback, useMemo, useEffect} from 'react';
+import React, { useState, useCallback, useMemo, useEffect, lazy, Suspense} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Card from '@mui/material/Card';
 import { addDays, startOfDay } from 'date-fns';
 import { Typography } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
-import DefaultDashboard from '../DefaultDashboard';
 import '../../views/Dashboard/panels/AdminDashboard/Styles/widget.css';
+import { Spinner} from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
 import PanelHeader from '../PanelHeader';
 import MuiBox from '../BoxWidget';
-import BarGraph from '../Graphs/BarGraph';
-import LineGraph from '../Graphs/LineGraph';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import DateRangeSelector from '../DateRangeSelector';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
-import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { transformData, transformData1, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
 import UserResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/UserResource';
 import RecordResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/RecordResource';
 import FlowResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/FlowResource';
 import { initialGraphTypes } from '../../views/Dashboard/panels/AdminDashboard/components/MetaData';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
+import { transformData, transformData1, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
+
+const LineGraph = lazy(() => import('../Graphs/LineGraph'));
+const BarGraph = lazy(() => import('../Graphs/BarGraph'));
+const DefaultDashboard = lazy(() => import('../DefaultDashboard'));
+
+// const fieldMeta = {
+//   fieldMap: {
+//     Type: {
+//       id: 'filter',
+//       name: 'Filter',
+//       type: 'select',
+//       placeholder: 'Please Select type',
+//       visibleWhenAll: [{ field: 'application', isNot: [''] }],
+//       options: [
+//         {
+//           items: [
+//             { label: 'Enable', value: 'enabled' },
+//             { label: 'Disable', value: 'disabled' },
+//           ],
+//         },
+//       ],
+//       // label: 'Filter',
+//       // required: true,
+//       defaultValue: 'disabled',
+//       noApi: true,
+//     },
+//   },
+//   layout: {
+//     fields: ['Type'],
+//   },
+// };
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -71,6 +100,7 @@ export default function Widget({
 
   const [refresh] = useState();
   const [range, setRange] = useState(rangePreference);
+  const [isloading, setIsLoading] = useState(false);
 
   const flowResources = useSelectorMemo(selectors.mkIntegrationFlowsByGroup, integrationId, childId, flowCategory);
   const filteredFlowResources = useMemo(() => {
@@ -144,7 +174,13 @@ export default function Widget({
       dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
       setSendQuery(false);
     }
-  }, [metricData, dispatch, integrationId, range, sendQuery, selectedResources, recordTrend]);
+    if (metricData.status === COMM_STATES.LOADING) {
+      setIsLoading(true);
+    }
+    if (metricData.status !== COMM_STATES.LOADING) {
+      setIsLoading(false);
+    }
+  }, [dispatch, metricData, integrationId, range, sendQuery, selectedResources, recordTrend]);
 
   if (metricData.status === COMM_STATES.ERROR) {
     return <Typography>Error occured</Typography>;
@@ -161,7 +197,8 @@ export default function Widget({
   const pullFlow = filter => {
     setFilterValFlow(filter);
   };
-  const flowData = useSelector(selectors.flowTrends);
+  const flowData = useSelector(selectors.flowTrendData);
+  const flowDataStatus = useSelector(selectors.flowTrend);
 
   useEffect(() => {
     if (integrationId === flowTrend) {
@@ -209,39 +246,29 @@ export default function Widget({
       finalData = graphData;
   }
   const [data, setData] = useState(finalData);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleBarClick = useCallback(dataDD => {
-    const data1 = {
-      ids: data.ids,
-      values: [
-        data.values.find(d => d[data.ids.XAxis] === dataDD.activeLabel),
-      ],
-    };
-
-    setData(data1);
-  });
-
   const options = [
     {
       label: 'Line',
       value: 'Line',
       config: data => (
-        <LineGraph
-          data={data} color={graphPrefrence.color}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <LineGraph
+            data={data} color={graphPrefrence.color}
+          />
+        </Suspense>
       ),
     },
     {
       label: 'Bar',
       value: 'Bar',
       config: data => (
-        <BarGraph
-          data={data}
-          color={graphPrefrence.color}
-          onChange={handleBarClick}
-          range={range}
+        <Suspense fallback={<div>Loading...</div>}>
+          <BarGraph
+            data={data}
+            color={graphPrefrence.color}
+            range={range}
            />
+        </Suspense>
       ),
     },
   ];
@@ -259,14 +286,25 @@ export default function Widget({
   useEffect(() => {
     if (integrationId === flowTrend) {
       setData(transformData2(flowData));
+      if (flowDataStatus) {
+        setIsLoading(true);
+      } else {
+        setIsLoading(false);
+      }
     }
-  }, [flowData, flowTrend, integrationId, setData]);
+  }, [flowData, flowTrend, integrationId, setData, flowDataStatus]);
 
   useEffect(() => {
     if (integrationId === recordTrend) {
       setData(transformData(recordData));
     }
-  }, [recordData, setData, integrationId, recordTrend]);
+  }, [recordData, id, setData, integrationId, recordTrend]);
+
+  if (isloading) {
+    return (
+      <Spinner center="horizontal" size="large" sx={{mb: 1}} />
+    );
+  }
 
   return (
     <Card
@@ -329,7 +367,11 @@ export default function Widget({
             top: 70,
           }}
         >
-          {data.values.length === 0 ? <DefaultDashboard id={id} /> : impl.config(data)}
+          {data.values.length === 0 ? (
+            <Suspense fallback={<div>Loading...</div>}>
+              <DefaultDashboard id="0" />
+            </Suspense>
+          ) : impl.config(data)}
         </div>
       </div>
     </Card>
