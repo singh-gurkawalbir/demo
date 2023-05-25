@@ -326,6 +326,7 @@ export default function DynaSelectResource(props) {
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
+
   const resourceItems = useMemo(() => {
     let filteredResources = resources;
 
