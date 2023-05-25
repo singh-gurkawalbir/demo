@@ -44,6 +44,7 @@ const restPreSave = formValues => {
     '/rest/ignoreExistingLookupName': '/http/ignoreExistingLookupName',
     '/rest/ignoreNewLookupName': '/http/ignoreNewLookupName',
     '/rest/lookupType': '/http/lookupType',
+    '/rest/headers': '/http/headers',
   };
 
   Object.keys(restToHttpFieldMap).forEach(restField => {
@@ -272,7 +273,10 @@ export default {
     const { connection } = options;
 
     // For Edit cases, if resource was originally created as REST import or if connection has isHTTP as false, save it as REST import
-    if ((resource?.adaptorType === 'RESTImport' && resource._id && !isNewId(resource._id)) || connection?.isHTTP === false) {
+    if ((resource?.adaptorType === 'RESTImport' && resource._id && !isNewId(resource._id)) ||
+        (resource?.['/adaptorType'] === 'RESTImport' && resource['/_id'] && !isNewId(resource['/_id'])) ||
+         connection?.isHTTP === false
+    ) {
       return restPreSave(formValues);
     }
     const retValues = { ...formValues };

@@ -121,6 +121,7 @@ export default function ArrowPopper({
   offsetPopper,
   restrictToParent = true,
   preventOverflow = true,
+  skipMouseEvent = false,
   ...rest
 }) {
   const [arrowEl, setArrowEl] = useState(null);
@@ -160,7 +161,7 @@ export default function ArrowPopper({
       modifiers={modifiers}
       >
       <span className={clsx(classes.arrow, overrideClasses?.arrow)} ref={setArrowEl} />
-      <ClickAwayListener onClickAway={onClose} mouseEvent="onMouseDown">
+      <ClickAwayListener onClickAway={onClose} mouseEvent={skipMouseEvent ? undefined : 'onMouseDown'}>
         <Paper className={clsx(classes.paper, overrideClasses?.paper)} elevation={1}>
           {children}
         </Paper>

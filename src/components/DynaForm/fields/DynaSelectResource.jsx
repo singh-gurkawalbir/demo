@@ -22,8 +22,8 @@ import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
-import { getHttpConnector} from '../../../constants/applications';
+import { CONNECTORS_TO_IGNORE, RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
+import { applicationsList, getHttpConnector} from '../../../constants/applications';
 import DynaSelectConnection from './DynaSelectConnection';
 
 const emptyArray = [];
@@ -326,6 +326,7 @@ export default function DynaSelectResource(props) {
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
+
   const resourceItems = useMemo(() => {
     let filteredResources = resources;
 
@@ -363,12 +364,16 @@ export default function DynaSelectResource(props) {
       return result;
     });
   }, [resources, optionRef.current, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
+  const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
+  const app = (merged?.application !== 'HTTP' && merged?.application !== 'REST API (HTTP)') ? merged?.application?.toLowerCase().replace(/\.|\s/g, '') : '';
+  // where legacyId is not present assistant field will be undefined after connection is saved and need to calculate ad per the _httpConnectorId
+  const appFromHttpConnectorId = merged?.http?._httpConnectorId || merged?._httpConnectorId ? (applications.find(a => a._httpConnectorId === merged?.http?._httpConnectorId || merged?._httpConnectorId))?.name?.toLowerCase().replace(/\.|\s/g, '') : '';
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
-      assistant: (merged?.assistant || merged?.application?.toLowerCase().replace(/\.|\s/g, '')),
+      assistant: (merged?.assistant || app || appFromHttpConnectorId),
     }),
-    [merged]
+    [app, appFromHttpConnectorId, merged]
   );
   const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;

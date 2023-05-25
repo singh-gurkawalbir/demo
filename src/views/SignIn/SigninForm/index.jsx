@@ -102,6 +102,7 @@ export default function SignIn({dialogOpen, className}) {
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
   const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
+  const isMFAAuthVerificationRequired = useSelector(selectors.isMFAVerificationRequired);
 
   const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
 
@@ -131,10 +132,10 @@ export default function SignIn({dialogOpen, className}) {
     reInitializeSession();
   };
   useEffect(() => {
-    if (isMFAAuthRequired) {
+    if (isMFAAuthRequired || isMFAAuthVerificationRequired) {
       history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired, location.state]);
+  }, [history, isMFAAuthRequired, isMFAAuthVerificationRequired, location.state]);
   const attemptedRoute = location.state?.attemptedRoute;
 
   const fieldMeta = useMemo(() => getFieldMeta({email: userEmail, isSessionExpired: dialogOpen}), [dialogOpen, userEmail]);
