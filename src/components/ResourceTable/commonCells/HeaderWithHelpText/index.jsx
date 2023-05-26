@@ -7,6 +7,7 @@ export default function HeaderWithHelpText({ title, helpKey }) {
       <Help
         title={title}
         helpKey={helpKey}
+        disablePortal={false}
         sx={{ml: 0.5}}
         />
     </span>

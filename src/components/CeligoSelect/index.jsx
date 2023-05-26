@@ -21,6 +21,16 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     justifyContent: 'flex-end',
     borderRadius: 2,
+    '&.Mui-disabled': {
+      borderColor: theme.palette.secondary.lightest,
+      backgroundColor: theme.palette.background.paper2,
+      '&:hover': {
+        borderColor: theme.palette.secondary.lightest,
+      },
+      '& .MuiSvgIcon-root': {
+        display: 'none',
+      },
+    },
     '& > .MuiInput-formControl': {
       height: 38,
       padding: '0px 15px',
@@ -28,12 +38,6 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
       '&:hover': {
         borderColor: theme.palette.primary.main,
-      },
-      '&.Mui-disabled': {
-        borderColor: theme.palette.secondary.lightest,
-        '&:hover': {
-          borderColor: theme.palette.secondary.lightest,
-        },
       },
     },
     '& >.MuiSelect-selectMenu': {
