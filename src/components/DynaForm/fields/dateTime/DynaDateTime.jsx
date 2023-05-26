@@ -201,6 +201,16 @@ export default function DateTimePicker(props) {
                 e.preventDefault();
               }}
               slots={{openPickerIcon: CalendarIcon }}
+              sx={{
+                backgroundColor: theme => theme.palette.background.paper,
+                paddingTop: theme => theme.spacing(2),
+                '& .MuiFormLabel-root': {
+                  transform: 'translate(0, 0px) scale(0.75)',
+                },
+                '& .MuiInputBase-input': {
+                  padding: theme => theme.spacing(1, 2),
+                },
+              }}
             />
           </div>
           <div className={classes.fieldWrapper}>
@@ -226,6 +236,16 @@ export default function DateTimePicker(props) {
               value={convertUtcToTimezone(timeValue || new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true})}
               onChange={setFormatTimeValue}
               slots={{openPickerIcon: AccessTimeIcon}}
+              sx={{
+                backgroundColor: theme => theme.palette.background.paper,
+                paddingTop: theme => theme.spacing(2),
+                '& .MuiFormLabel-root': {
+                  transform: 'translate(0, 0px) scale(0.75)',
+                },
+                '& .MuiInputBase-input': {
+                  padding: theme => theme.spacing(1, 2),
+                },
+              }}
             />
           </div>
         </div>

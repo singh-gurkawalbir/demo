@@ -299,7 +299,7 @@ export default function PreviewInfo(props) {
               >
               {sampleDataStatus && <div> {sampleDataStatus}</div>}
               {sampleDataOverview && (
-              <Box sx={{ml: 4}}>{sampleDataOverview} </Box>
+              <Box>{sampleDataOverview} </Box>
               )}
             </Box>
           )

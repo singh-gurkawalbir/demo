@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { TreeView, TreeItem} from '@mui/lab';
 import { uniqBy } from 'lodash';
+import { Typography } from '@mui/material';
 import actions from '../../../actions';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
@@ -14,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     '& > div > p': {
       fontWeight: 'bold',
+    },
+    '& .MuiTreeItem-content': {
+      paddingLeft: 0,
     },
   },
 }));
@@ -35,7 +39,11 @@ export default function ExampleMenu({ onEditorChange }) {
       defaultExpandIcon={<ArrowDownIcon />}
     >
       {uniqueEditors.map(e => (
-        <TreeItem className={classes.editorItem} nodeId={e.type} key={e.type} label={e.label}>
+        <TreeItem
+          className={classes.editorItem}
+          nodeId={e.type}
+          key={e.type}
+          label={<Typography variant="body1">{e.label}</Typography>}>
           {examples[e.type]?.map(e => (
             <TreeItem nodeId={e.key} key={e.key} label={e.name} onClick={() => handleClick(e)} />
           ))}
