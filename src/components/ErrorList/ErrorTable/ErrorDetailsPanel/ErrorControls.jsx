@@ -1,13 +1,16 @@
-import { Typography } from '@material-ui/core';
 import { useStyles } from '@material-ui/pickers/views/Calendar/SlideTransition';
 import clsx from 'clsx';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import TextButton from '../../../Buttons/TextButton';
 import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../icons/ArrowRightIcon';
 import Spinner from '../../../Spinner';
+import SplitViewErrorActions from './SplitViewErrorActions';
 import { useHandleNextAndPreviousError } from '../hooks/useHandleNextAndPreviousError';
+import { selectors } from '../../../../reducers';
+import ActionGroup from '../../../ActionGroup';
 
 export default function ErrorControls({
   errorsInPage,
@@ -19,8 +22,19 @@ export default function ErrorControls({
   retryId,
   handlePrev,
   handleNext,
+  isSplitView = false,
 }) {
   const classes = useStyles();
+
+  const sourceOfError = useSelector(state =>
+    selectors.resourceError(state, {
+      flowId,
+      resourceId,
+      errorId: activeErrorId,
+      isResolved,
+    })?.source
+  );
+
   const {
     handleNextError,
     handlePreviousError,
@@ -39,8 +53,11 @@ export default function ErrorControls({
     handleNext,
   });
 
+  const showErrorActions = isSplitView && retryId && sourceOfError === 'ftp_bridge';
+
   return (
-    <Typography variant="h4" className={classes.title}>
+    <ActionGroup>
+      { showErrorActions && <SplitViewErrorActions flowId={flowId} retryDataKey={retryId} resourceId={resourceId} />}
       <TextButton
         onClick={handlePreviousError}
         className={classes.arrowBtn}
@@ -57,6 +74,6 @@ export default function ErrorControls({
         data-test="nextError">
         <span className={classes.label}>Next</span>
       </TextButton>
-    </Typography>
+    </ActionGroup>
   );
 }
