@@ -22,7 +22,7 @@ export default function ErrorControls({
   retryId,
   handlePrev,
   handleNext,
-  isSplitView,
+  isSplitView = false,
 }) {
   const classes = useStyles();
 
