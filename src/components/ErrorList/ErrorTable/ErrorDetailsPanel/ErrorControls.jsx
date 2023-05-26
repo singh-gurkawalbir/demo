@@ -1,7 +1,7 @@
 import { useStyles } from '@material-ui/pickers/views/Calendar/SlideTransition';
 import clsx from 'clsx';
 import React from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import TextButton from '../../../Buttons/TextButton';
 import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
@@ -32,9 +32,8 @@ export default function ErrorControls({
       resourceId,
       errorId: activeErrorId,
       isResolved,
-    }),
-  shallowEqual
-  )?.source;
+    })?.source
+  );
 
   const {
     handleNextError,
@@ -54,9 +53,11 @@ export default function ErrorControls({
     handleNext,
   });
 
+  const showErrorActions = isSplitView && retryId && sourceOfError === 'ftp_bridge';
+
   return (
     <ActionGroup>
-      {isSplitView && retryId && sourceOfError === 'ftp_bridge' && <SplitViewErrorActions flowId={flowId} retryDataKey={retryId} resourceId={resourceId} />}
+      { showErrorActions && <SplitViewErrorActions flowId={flowId} retryDataKey={retryId} resourceId={resourceId} />}
       <TextButton
         onClick={handlePreviousError}
         className={classes.arrowBtn}

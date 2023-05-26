@@ -33,7 +33,7 @@ export default function SplitViewErrorActions({flowId, resourceId, retryDataKey}
     setAnchorEl(evt?.currentTarget);
   }, []);
 
-  const handleDownloadAction = useCallback(() => {
+  const handleDownloadRetryData = useCallback(() => {
     dispatch(actions.errorManager.retryData.download({flowId, resourceId, retryDataKey}));
   }, [dispatch, flowId, resourceId, retryDataKey]);
 
@@ -51,7 +51,7 @@ export default function SplitViewErrorActions({flowId, resourceId, retryDataKey}
         anchorEl={anchorEl}
         onClose={handleClose}
         placement="bottom-start">
-        <MenuItem onClick={handleDownloadAction}>
+        <MenuItem onClick={handleDownloadRetryData}>
           {DownloadIcon}
           Download retry data
         </MenuItem>
