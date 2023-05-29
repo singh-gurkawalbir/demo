@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { TreeView} from '@mui/lab';
+import { Typography } from '@mui/material';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
@@ -25,6 +26,9 @@ const useStyles = makeStyles(theme => ({
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+    },
+    '& .MuiTreeItem-content': {
+      paddingLeft: 0,
     },
   },
 }));
@@ -125,7 +129,8 @@ export default function ExplorerMenu({ onEditorChange }) {
           <OverflowTreeItem
             icon={<IntegrationIcon />}
             className={classes.editorItem}
-            key={id} nodeId={id} label={<CeligoTruncate lines={1}>{name}</CeligoTruncate>}
+            key={id} nodeId={id}
+            label={<Typography variant="body1"><CeligoTruncate lines={1}>{name}</CeligoTruncate></Typography>}
             onClick={() => setIntegrationId(id)}>
             <FlowBranch id={id} />
           </OverflowTreeItem>

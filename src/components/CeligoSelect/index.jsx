@@ -105,27 +105,6 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
   */
   const showCloseOption = !props.open && props.multiple;
 
-  const menuProps = {
-    // TODO: the menu options is a bit jumpy when selecting options...setting the variant to menu resolves it for now
-    //  this is an open issue in material ui ...lets keep tracking it https://github.com/mui-org/material-ui/issues/19245
-    variant: 'menu',
-    // PaperProps: {
-    //   style: {
-    //     maxHeight: maxHeightOfSelect,
-    //     overflow: 'hidden',
-    //     display: 'flex',
-    //     flexDirection: 'column',
-    //   },
-    //   closeSelect: showCloseOption && closeSelect,
-    //   component: MenuComponent,
-    // },
-    getContentAnchorEl: null,
-    anchorOrigin: {
-      vertical: 'bottom',
-      horizontal: 'left',
-    },
-  };
-
   return (
     <Select
       variant="standard"
@@ -136,7 +115,6 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
       onOpen={openSelect}
       onClose={closeSelect}
       classes={{selectMenu: classes.selectMenu}}
-      MenuProps={menuProps}
       inputProps={{
         MenuProps: {
           MenuListProps: {
