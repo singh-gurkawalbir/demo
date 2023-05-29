@@ -449,11 +449,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
 
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = customCloneDeep(finalFieldMeta);
-  let resourceVersion;
-
-  if (resource?.http?._httpConnectorVersionId) {
-    resourceVersion = connector.versions?.find(ver => ver._id === resource.http._httpConnectorVersionId)?.name;
-  }
 
   if (!isGenericHTTP) {
     Object.keys(tempFiledMeta.fieldMap).map(key => {
@@ -486,12 +481,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
       } else if (key === 'http.ping.relativeURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue || apiChange) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
-        } else if (connector.versioning?.location === 'uri' && connector?.baseURIs?.[0]?.includes('/:_version')) {
-          if (resourceVersion) {
-            tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
-          } else if (connector.versions?.[0]?.name) {
-            tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${connector.versions?.[0]?.name}`, '');
-          }
         }
         if (preConfiguredField?.values?.length > 1) {
           const options = [
@@ -516,9 +505,17 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
             })),
           },
         ];
+        let isVersionPresentInsideBaseURI = false;
+
+        httpConnector.baseURIs.forEach(uri => {
+          const versionRef = '/:_version';
+          const referenceIndex = uri.indexOf(versionRef);
+
+          isVersionPresentInsideBaseURI = isVersionPresentInsideBaseURI || uri.substring(referenceIndex + versionRef?.length)?.length > 0;
+        });
 
         if (connector.versions?.length > 1) {
-          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options: versionOptions, type: 'select', defaultValue: resetToDefaultValue ? connector.versions?.[0]?._id : resource?.http?._httpConnectorVersionId };
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options: versionOptions, type: 'select', defaultValue: resetToDefaultValue ? connector.versions?.[0]?._id : resource?.http?._httpConnectorVersionId, required: isVersionPresentInsideBaseURI };
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false, defaultValue: connector.versions?.[0]?._id};
         }
@@ -593,8 +590,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
       } else if (key === 'http.auth.token.token' || key === 'http.auth.token.refreshToken') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
       } else if (key === 'http.baseURI') {
-        if (!tempFiledMeta.fieldMap[key].defaultValue || resetToDefaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resourceVersion) {
-          tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
+        if (!tempFiledMeta.fieldMap[key].defaultValue || resetToDefaultValue) {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0] };
         }
         if (connector?.baseURIs?.length > 1) {
           const options = [
