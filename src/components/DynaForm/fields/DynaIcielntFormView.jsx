@@ -48,7 +48,6 @@ export default function DynaIclientFormView(props) {
   ], []);
 
   const onFieldChangeFn = useCallback((event, selectedApplication) => {
-    console.log(selectedApplication);
     // selecting the other option
     const {id} = props;
     const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {

@@ -1,7 +1,7 @@
 import { Divider, IconButton, MenuItem } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import ArrowPopper from '../../../ArrowPopper';
 import DownloadIcon from '../../../icons/DownloadIcon';
 import actions from '../../../../actions';
