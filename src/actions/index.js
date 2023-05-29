@@ -2704,6 +2704,12 @@ const userTrends = {
     action(actionTypes.USERTRENDS.RECEIVED, { response }),
 };
 
+const connectionTrends = {
+  request: (startDateString, endDateString, filterValConnection) => action(actionTypes.CONNECTIONTRENDS.REQUEST, {startDateString, endDateString, filterValConnection}),
+  received: response =>
+    action(actionTypes.CONNECTIONTRENDS.RECEIVED, { response }),
+};
+
 const uiFields = {
   requestFlowLevel: flowId => action(actionTypes.UI_FIELDS.FLOW_LEVEL.REQUEST, { flowId }),
   receivedFlowLevel: (flowId, resources) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.RECEIVED, { flowId, resources }),
@@ -2767,4 +2773,5 @@ export default {
   dashboard,
   flowTrends,
   userTrends,
+  connectionTrends,
 };

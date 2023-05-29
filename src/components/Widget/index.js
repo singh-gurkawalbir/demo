@@ -19,9 +19,10 @@ import ActionGroup from '../ActionGroup';
 import UserResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/UserResource';
 import RecordResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/RecordResource';
 import FlowResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/FlowResource';
+import ConnectionResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/ConnectionResource';
 import { initialGraphTypes } from '../../views/Dashboard/panels/AdminDashboard/components/MetaData';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { transformData, transformData1, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
+import { transformData, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
 
 const LineGraph = lazy(() => import('../Graphs/LineGraph'));
 const BarGraph = lazy(() => import('../Graphs/BarGraph'));
@@ -71,11 +72,11 @@ export default function Widget({
 //! ACCESSING THE VALUES OF INTEGRATION ID IN THE GRAPHTYPE
   const userGraph = initialGraphTypes.find(obj => obj.integrationId === 'userGraph');
   const flowGraph = initialGraphTypes.find(obj => obj.integrationId === 'flowGraph');
-  // const connectionGraph = initialGraphTypes.find(obj => obj.integrationId === 'connectionGraph');
+  const connectionGraph = initialGraphTypes.find(obj => obj.integrationId === 'connectionGraph');
   const recordGraph = initialGraphTypes.find(obj => obj.integrationId === 'none');
   const userTrend = userGraph.integrationId;
   const flowTrend = flowGraph.integrationId;
-  // const connectionTrend = connectionGraph.integrationId;
+  const connectionTrend = connectionGraph.integrationId;
   const recordTrend = recordGraph.integrationId;
 
   //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
@@ -219,6 +220,20 @@ export default function Widget({
     }
   }, [dispatch, endDateString, startDateString, integrationId, filterValUser, userTrend]);
 
+  //! This PART IS ABOUT FETCHING THE CONNECTIONDATA FROM API
+  const [filterValConnection, setFilterValConnection] = useState('');
+  const pullConnection = filter => {
+    setFilterValConnection(filter);
+  };
+
+  const connectionData = useSelector(selectors.connectionTrends);
+
+  useEffect(() => {
+    if (integrationId === connectionTrend) {
+      dispatch(actions.connectionTrends.request(startDateString, endDateString, filterValConnection));
+    }
+  }, [dispatch, endDateString, startDateString, integrationId, filterValConnection, connectionTrend]);
+
   //! THIS PART IS ABOUT THE GRAPHS
   let finalData = graphData;
   const connectionName = 'connections';
@@ -232,7 +247,7 @@ export default function Widget({
       finalData = transformData2(userData);
       break;
     case id === '1':
-      finalData = transformData1(graphData);
+      finalData = transformData2(connectionData);
       break;
     case integrationId === flowTrend:
       finalData = transformData2(flowData);
@@ -282,6 +297,12 @@ export default function Widget({
   }, [flowData, integrationId, userData, userTrend]);
 
   useEffect(() => {
+    if (integrationId === connectionTrend) {
+      setData(transformData2(connectionData));
+    }
+  }, [integrationId, connectionData, connectionTrend, setData]);
+
+  useEffect(() => {
     if (integrationId === flowTrend) {
       setData(transformData2(flowData));
       if (flowDataStatus) {
@@ -296,7 +317,7 @@ export default function Widget({
     if (integrationId === recordTrend) {
       setData(transformData(recordData));
     }
-  }, [recordData, id, setData, integrationId, recordTrend]);
+  }, [recordData, setData, integrationId, recordTrend]);
 
   if (isloading) {
     return (
@@ -345,6 +366,7 @@ export default function Widget({
             )}
 
             {integrationId === userTrend && <UserResource func={pullUser} />}
+            {integrationId === connectionTrend && <ConnectionResource func={pullConnection} />}
             {integrationId === flowTrend && <FlowResource func={pullFlow} />}
             {integrationId === recordTrend && (
               <RecordResource

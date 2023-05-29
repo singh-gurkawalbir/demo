@@ -121,6 +121,7 @@ import { convertUtcToTimezone } from '../utils/date';
 import customReducer, { selectors as fromCustomReducer } from './dashboard';
 import flowReducer, {selectors as fromFlowReducer} from './flowTrends';
 import userReducer, {selectors as fromUserReducer} from './userTrends';
+import connectionReducer, {selectors as fromConnectionReducer} from './connectionTrends';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -135,6 +136,7 @@ const combinedReducers = combineReducers({
   customReducer,
   flowReducer,
   userReducer,
+  connectionReducer,
 });
 const rootReducer = (state, action) => {
   const newState = combinedReducers(state, action);
@@ -178,6 +180,7 @@ const subSelectors = {
   customReducer: fromCustomReducer,
   flowReducer: fromFlowReducer,
   userReducer: fromUserReducer,
+  connectionReducer: fromConnectionReducer,
 };
 
 genSelectors(selectors, subSelectors);

@@ -1,4 +1,4 @@
-import { transformData, transformData1, transformData2 } from './Transform';
+import { transformData, transformData2 } from './Transform';
 
 describe('transformData', () => {
   test('should transform data correctly', () => {
@@ -19,28 +19,6 @@ describe('transformData', () => {
 
     expect(result.values).toEqual([
       { label: '2023-5-1', success: 1, error: 1 },
-    ]);
-  });
-});
-
-describe('transformData1', () => {
-  test('should transform data correctly', () => {
-    const data = {
-      1: { createdAt: '2023-05-01', lastModified: '2023-05-01' },
-      2: { createdAt: '2023-05-01', lastModified: '2023-05-02' },
-    };
-
-    const result = transformData1(data);
-
-    expect(result.ids).toEqual({
-      XAxis: 'label',
-      YAxis: '',
-      Plots: ['createdAt', 'modifiedAt'],
-      MaximumYaxis: '',
-    });
-
-    expect(result.values).toEqual([
-      { label: '2023-05', createdAt: 2, modifiedAt: 2 },
     ]);
   });
 });

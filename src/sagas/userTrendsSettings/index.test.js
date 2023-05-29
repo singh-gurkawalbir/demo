@@ -32,7 +32,7 @@ describe('request saga', () => {
   };
   const error = new Error('API error');
 
-  test('should dispatch flowTrends.received action on success', () => {
+  test('should dispatch userTrends.received action on success', () => {
     expectSaga(request, startDateString)
       .provide([
         [call(apiCallWithRetry, {
@@ -42,7 +42,7 @@ describe('request saga', () => {
           },
         }), response],
       ])
-      .put(actions.flowTrends.received(response))
+      .put(actions.userTrends.received(response))
       .run();
   });
 
@@ -56,7 +56,7 @@ describe('request saga', () => {
           },
         }), throwError(error)],
       ])
-      .not.put(actions.flowTrends.received())
+      .not.put(actions.userTrends.received())
       .run();
   });
 });

@@ -50,48 +50,6 @@ export const transformData = data => {
   };
 };
 
-export const transformData1 = data => {
-  const dates = {};
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj in data) {
-    if (Object.prototype.hasOwnProperty.call(data, obj)) {
-      const created = data[obj].createdAt.slice(0, 7);
-      const modified = data[obj].lastModified.slice(0, 7);
-
-      if (created in dates) {
-        dates[created].create += 1;
-      } else {
-        dates[created] = { create: 1, modify: 0 };
-      }
-      if (modified in dates) {
-        dates[modified].modify += 1;
-      } else {
-        dates[modified] = { create: 0, modify: 1 };
-      }
-    }
-  }
-  const values = [];
-
-  Object.keys(dates).forEach(key =>
-    values.push({
-      label: key,
-      createdAt: dates[key].create,
-      modifiedAt: dates[key].modify,
-    })
-  );
-
-  return {
-    ids: {
-      XAxis: 'label',
-      YAxis: '',
-      Plots: ['createdAt', 'modifiedAt'],
-      MaximumYaxis: '',
-    },
-    values,
-  };
-};
-
 export const transformData2 = data => {
   const values = [];
 
