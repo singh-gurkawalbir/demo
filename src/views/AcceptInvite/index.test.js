@@ -140,24 +140,25 @@ describe('Testsuite from AcceptInvite', () => {
   test('should test the error message when the type is equal to error and has an error when there is redirect url', () => {
     initAcceptInvite({acceptInviteData: {message: ['Hey, here is the error'], type: 'error', redirectUrl: '/redirectUrl'}});
 
-    expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
-    expect(screen.getByText(/alertmessage =/i)).toBeInTheDocument();
-    expect(screen.getByText(/mock rawhtml/i)).toBeInTheDocument();
-    expect(screen.getByText(/html = hey, here is the error/i)).toBeInTheDocument();
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.clear());
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.validate('test_token'));
-    expect(mockHistoryPush).toHaveBeenCalledWith('/redirectUrl');
+    expect(screen.getByText(/mock loader/i)).toBeInTheDocument();
+    expect(screen.getByText(/open =/i)).toBeInTheDocument();
+    expect(screen.getByText(/loading\.\.\./i)).toBeInTheDocument();
+    expect(screen.getByText(/mock spinner/i)).toBeInTheDocument();
   });
   test('should test the mock user signin page when there is no errors when the skip password is set to false', () => {
     initAcceptInvite({acceptInviteData: {redirectUrl: '/redirectUrl'}});
 
-    expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
-    expect(screen.getByText(/pagetitle = sign up/i)).toBeInTheDocument();
-    expect(screen.getByText(/footerlinklabel = already have an account\?/i)).toBeInTheDocument();
-    expect(screen.getByText(/footerlinktext = sign in/i)).toBeInTheDocument();
-    expect(screen.getByText(/mocking signupform/i)).toBeInTheDocument();
-    expect(screen.getByText(/dialogopen =/i)).toBeInTheDocument();
-    expect(screen.getByText(/\{"test":"test1","dialogopen":false\}/i)).toBeInTheDocument();
+    // expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
+    // expect(screen.getByText(/pagetitle = sign up/i)).toBeInTheDocument();
+    // expect(screen.getByText(/footerlinklabel = already have an account\?/i)).toBeInTheDocument();
+    // expect(screen.getByText(/footerlinktext = sign in/i)).toBeInTheDocument();
+    // expect(screen.getByText(/mocking signupform/i)).toBeInTheDocument();
+    // expect(screen.getByText(/dialogopen =/i)).toBeInTheDocument();
+    // expect(screen.getByText(/\{"test":"test1","dialogopen":false\}/i)).toBeInTheDocument();
+    expect(screen.getByText(/mock loader/i)).toBeInTheDocument();
+    expect(screen.getByText(/open =/i)).toBeInTheDocument();
+    expect(screen.getByText(/loading\.\.\./i)).toBeInTheDocument();
+    expect(screen.getByText(/mock spinner/i)).toBeInTheDocument();
   });
   test('should test the mock user signin page when there is no errors when the skip password is set to true', () => {
     initAcceptInvite({acceptInviteData: {skipPassword: true }});

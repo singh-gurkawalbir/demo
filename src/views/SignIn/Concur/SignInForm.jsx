@@ -63,6 +63,7 @@ export default function SignIn({dialogOpen, className}) {
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
+  const isMFAAuthVerificationRequired = useSelector(selectors.isMFAVerificationRequired);
 
   const error = useSelector(state => {
     const errorMessage = selectors.authenticationErrored(state);
@@ -110,10 +111,10 @@ export default function SignIn({dialogOpen, className}) {
   };
 
   useEffect(() => {
-    if (isMFAAuthRequired) {
+    if (isMFAAuthRequired || isMFAAuthVerificationRequired) {
       history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired, location.state]);
+  }, [history, isMFAAuthRequired, isMFAAuthVerificationRequired, location.state]);
   const attemptedRoute = location.state?.attemptedRoute;
 
   return (

@@ -39,7 +39,9 @@ export default function MfaVerify() {
   const sessionInfoResolved = useSelector(selectors.mfaSessionInfoStatus) === 'received';
   const attemptedRoute = location.state?.attemptedRoute;
   const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
+  const isMFAAuthVerificationRequired = useSelector(selectors.isMFAVerificationRequired);
   const isUserAuthenticated = useSelector(selectors.isUserAuthenticated);
+  const isMFAResolved = useSelector(selectors.isMFAResolved);
   let infoMessage;
   const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
 
@@ -57,13 +59,13 @@ export default function MfaVerify() {
     if (sessionInfoResolved) {
       if (isMFASetupIncomplete) {
         history.push(getRoutePath('/myAccount/security'));
-      } else if (!isMFAAuthRequired) {
+      } else if (!isMFAAuthRequired && !isMFAAuthVerificationRequired && !isMFAResolved) {
         history.push(getRoutePath('/signin'));
       } else if (isUserAuthenticated) {
         history.push(attemptedRoute || '/');
       }
     }
-  }, [attemptedRoute, history, isMFAAuthRequired, isMFASetupIncomplete, isUserAuthenticated, sessionInfoResolved]);
+  }, [attemptedRoute, history, isMFAAuthRequired, isMFAAuthVerificationRequired, isMFAResolved, isMFASetupIncomplete, isUserAuthenticated, sessionInfoResolved]);
 
   if (!sessionInfoResolved) return <Loader open><Spinner /></Loader>;
 

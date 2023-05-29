@@ -1,6 +1,7 @@
 import { TextField, InputAdornment, FormControl, FormLabel, Paper, Autocomplete, MenuItem } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { VariableSizeList } from 'react-window';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import AddIcon from '../../../icons/AddIcon';
 import EditIcon from '../../../icons/EditIcon';
@@ -68,9 +69,7 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
     borderRadius: theme.spacing(0, 0, 0.5, 0.5),
     '& .MuiAutocomplete-listbox': {
-      maxHeight: '217px',
       padding: 0,
-      marginBottom: '-1px',
       '& li': {
         display: 'flex',
         justifyContent: 'space-between',
@@ -101,6 +100,20 @@ const useStyles = makeStyles(theme => ({
 
 const DropdownContext = React.createContext({});
 
+const OuterElementContext = React.createContext({});
+
+const OuterElementType = React.forwardRef((props, ref) => {
+  const outerProps = React.useContext(OuterElementContext);
+
+  return <div ref={ref} {...props} {...outerProps} />;
+});
+
+const Row = ({ data, index, style }) => React.cloneElement(data[index], {
+  style: {
+    ...style,
+  },
+});
+
 const Option = (props, option) => {
   const data = useContext(DropdownContext);
 
@@ -122,6 +135,54 @@ const Option = (props, option) => {
         </span>
       )}
     </MenuItem>
+  );
+};
+
+const NO_OF_OPTIONS = 4.5;
+const ITEM_SIZE = 48;
+const ITEM_SIZE_WITH_1_OPTION = 60;
+const ITEM_SIZE_WITH_2_OPTIONS = 80;
+
+const ListboxComponent = props => {
+  const {children, ...rest} = props;
+  const classes = useStyles();
+  const listRef = React.useRef();
+  const data = useContext(DropdownContext);
+  const {items} = data;
+
+  const itemData = React.Children.toArray(children);
+
+  const itemCount = itemData?.length;
+
+  const getItemSize = index => {
+    const { connInfo } = items[index];
+
+    if (connInfo?.httpConnectorApiId && connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_2_OPTIONS;
+    if (connInfo?.httpConnectorApiId || connInfo?.httpConnectorVersionId) return ITEM_SIZE_WITH_1_OPTION;
+
+    return ITEM_SIZE;
+  };
+
+  const listHeight = items.reduce((acc, curr, index) => acc + getItemSize(index), 0);
+
+  const maxHeightOfSelect = useMemo(() => items.length > NO_OF_OPTIONS
+    ? ITEM_SIZE * 4.5
+    : listHeight, [items.length, listHeight]);
+
+  return (
+    <OuterElementContext.Provider value={rest}>
+      <VariableSizeList
+        {...isLoggableAttr()}
+        ref={listRef}
+        itemData={itemData}
+        itemCount={itemCount}
+        itemSize={getItemSize}
+        className={classes.dropdownitemsConnection}
+        outerElementType={OuterElementType}
+        height={maxHeightOfSelect}>
+        {Row}
+      </VariableSizeList>
+    </OuterElementContext.Provider>
   );
 };
 
@@ -205,12 +266,12 @@ export default function DynaEditable(props) {
     setInputValue(selectedValue);
   }, [selectedValue]);
 
-  const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
-
   const handleChange = useCallback((event, newValue) => {
     setInputValue(newValue?.label);
     onFieldChange(id, newValue?.value);
   }, [id, onFieldChange]);
+
+  const filterOptions = useCallback(options => options?.filter(option => option?.label.toLowerCase().includes(inputValue?.toLowerCase() || '')), [inputValue]);
 
   const dropdownProps = useMemo(() => (
     {
@@ -221,7 +282,8 @@ export default function DynaEditable(props) {
       classes,
       handleChange,
       inputRef,
-    }), [allowEdit, allowNew, classes, handleChange, handleCreateClick, handleEditClick]);
+      items: filterOptions(options),
+    }), [allowEdit, allowNew, classes, filterOptions, handleChange, handleCreateClick, handleEditClick, options]);
 
   return (
     <div>
@@ -255,6 +317,7 @@ export default function DynaEditable(props) {
             onChange={handleChange}
             className={classes.connectionFieldWrapper}
             PaperComponent={PaperComponentCustom}
+            ListboxComponent={ListboxComponent}
             {...isLoggableAttr(true)}
             renderInput={params => {
               const updatedParams = {...params, inputProps: {...params.inputProps, value: inputValue || ''}};

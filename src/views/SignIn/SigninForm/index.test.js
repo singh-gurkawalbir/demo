@@ -225,4 +225,22 @@ describe('SigninForm UI testcases', () => {
     initfunction(initialStore);
     expect(screen.queryByText('Sign in with Google')).not.toBeInTheDocument();
   });
+  test('should redirect to mfa vrification page when verification is not complete', () => {
+    initialStore = getCreatedStore();
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+      draft.data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
+      draft.session.mfa.sessionInfo = {data: {
+        authenticated: true,
+        mfaRequired: true,
+        mfaSetupRequired: false,
+        mfaVerified: false,
+      },
+      status: 'received'};
+    });
+
+    initfunction(initialStore, true);
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/mfa/verify', 'someState');
+  });
 });

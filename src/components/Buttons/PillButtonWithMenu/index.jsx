@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { Menu, MenuItem, Typography } from '@mui/material';
+import { MenuItem, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import PillButton from '../PillButton';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
+import ArrowPopper from '../../ArrowPopper';
 
 const useStyles = makeStyles(theme => ({
   description: {
@@ -16,6 +17,9 @@ const useStyles = makeStyles(theme => ({
       border: `1px solid ${theme.palette.secondary.lightest}`,
       width: 256,
     },
+  },
+  pillButtonArrow: {
+    display: 'none',
   },
   icon: {
     backgroundColor: theme.palette.background.default,
@@ -113,7 +117,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
      >
         {label}
       </PillButton>
-      <Menu
+      <ArrowPopper
         elevation={0}
         id={actionsPopoverId}
         open={open}
@@ -121,7 +125,11 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleMenuClose}
+        skipMouseEvent
         className={classes.createMenu}
+        classes={{
+          arrow: classes.pillButtonArrow,
+        }}
         transformOrigin={{
           vertical: 0,
           horizontal: 176,
@@ -144,7 +152,7 @@ export default function PillButtonWithMenu({label, actionsMenu, fill, menuTitle,
               disabled={disabled} />
           </MenuItem>
         ))}
-      </Menu>
+      </ArrowPopper>
     </>
   );
 }

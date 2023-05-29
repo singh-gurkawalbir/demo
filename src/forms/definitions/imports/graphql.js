@@ -72,6 +72,7 @@ export default {
     },
     'http.method': { fieldId: 'http.method' },
     'http.compositeType': { fieldId: 'http.compositeType' },
+    'http.lookups': { fieldId: 'http.lookups', visible: false },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
@@ -771,6 +772,7 @@ export default {
         label: 'How would you like the records imported?',
         fields: [
           'http.method',
+          'http.lookups',
           'graphql',
           'http.compositeType',
         ],
