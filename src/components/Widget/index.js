@@ -65,7 +65,6 @@ export default function Widget({
   title,
   graphType,
   graphData,
-  childId,
   graphPrefrence,
   integrationId,
 }) {
@@ -102,7 +101,7 @@ export default function Widget({
   const [range, setRange] = useState(rangePreference);
   const [isloading, setIsLoading] = useState(false);
 
-  const flowResources = useSelectorMemo(selectors.mkIntegrationFlowsByGroup, integrationId, childId, flowCategory);
+  const flowResources = useSelectorMemo(selectors.mkIntegrationFlowsByGroup, integrationId, flowCategory);
   const filteredFlowResources = useMemo(() => {
     const flows = flowResources.map(f => ({_id: f._id, name: f.name || `Unnamed (id: ${f._id})`}));
 
@@ -266,7 +265,6 @@ export default function Widget({
           <BarGraph
             data={data}
             color={graphPrefrence.color}
-            range={range}
            />
         </Suspense>
       ),
@@ -308,6 +306,7 @@ export default function Widget({
 
   return (
     <Card
+      data-testid="card"
       variant="outlined"
       sx={{
         // minHeight: "300px",

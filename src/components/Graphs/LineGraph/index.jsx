@@ -24,7 +24,7 @@ export default function LineGraph({ data, color }) {
         <Legend />
         <Line
           type="linear" dataKey={data.ids.Plots[0]} stroke={color || '#8884d8'} strokeWidth={6}
-          activeDot={{ r: 8 }} />
+          activeDot={{ r: 8 }} data-testid="line" />
       </LineChart>
     </ResponsiveContainer>
   );

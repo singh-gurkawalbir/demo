@@ -10,23 +10,7 @@ import {
 } from 'recharts';
 import React from 'react';
 
-function BarGraph({ data, color, onChange }) {
-  // const CustomTooltip = ({ active, payload, label }) => {
-  //     if (active && payload && payload.length) {
-  //       return (
-  //         <div className="custom-tooltip">
-  //           <p className="label">{`${label}`}</p>
-  //           <hr />
-  //           <p>{`${payload[0].value}/150`}</p>
-  //           <p>{`${payload[1].value}/150`}</p>
-  //           <p>{"A and B represent the marks obtained"}</p>
-  //         </div>
-  //       );
-  //     }
-
-  //     return null;
-  //   };
-
+function BarGraph({ data, color }) {
   // eslint-disable-next-line react/no-array-index-key
   const renderedBar = data.ids.Plots.map((plot, index) => <Bar key={index} dataKey={plot} stackId="a" fill={color[index]} />);
 
@@ -36,7 +20,7 @@ function BarGraph({ data, color, onChange }) {
         width={500}
         height={400}
         data={data.values}
-        onClick={onChange}
+        // onClick={onChange}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />

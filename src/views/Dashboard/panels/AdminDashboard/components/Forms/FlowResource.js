@@ -46,7 +46,7 @@ const FlowResource = props => {
   useFormInitWithPermissions({ formKey, fieldMeta });
 
   return (
-    <DynaForm formKey={formKey} />
+    <DynaForm data-testid="dyna-form" formKey={formKey} />
   );
 };
 

@@ -2,7 +2,6 @@
 import React, { useState, useEffect, lazy, Suspense} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import { useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import '../Styles/styles.css';
 import '../Styles/content.css';
@@ -63,8 +62,6 @@ export default function Content({colsize, id, data}) {
   }
   const classes = useStyles();
   const dispatch = useDispatch();
-  const match = useRouteMatch();
-  const { childId } = match.params;
 
   const isAPICallComplete = useSelector(selectors.isAPICallComplete);
 
@@ -109,11 +106,11 @@ export default function Content({colsize, id, data}) {
           <div className={classes.reactGridItem} key={l.i}>
             <Suspense fallback={<div>Loading...</div>} />
             <Widget
+              data-testid={l.i}
               id={l.i}
               graphType={graphConfig.type || 'Bar'}
               graphData={graphData}
               title={graphConfig.dataType}
-              childId={childId}
               graphPrefrence={graphConfig}
               integrationId={graphConfig.integrationId}
             />
@@ -158,6 +155,19 @@ export default function Content({colsize, id, data}) {
   );
 }
 
+function getFromLS(key, id) {
+  let ls = {};
+
+  if (global.localStorage) {
+    try {
+      ls = JSON.parse(global.localStorage.getItem(`rgl-8${id}`)) || {};
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
+  }
+
+  return ls[key];
+}
+
 // const onRemoveItem = itemId => {
 //   // setItems(items.filter((i) => i !== itemId));
 //   const temp = layouts.lg.filter(i => parseInt(i.i, 10) !== parseInt(itemId, 10));
@@ -181,16 +191,3 @@ export default function Content({colsize, id, data}) {
 
 //   setGraphTypes(temp.concat({ id, type: graphType }));
 // };
-
-function getFromLS(key, id) {
-  let ls = {};
-
-  if (global.localStorage) {
-    try {
-      ls = JSON.parse(global.localStorage.getItem(`rgl-8${id}`)) || {};
-    // eslint-disable-next-line no-empty
-    } catch (e) {}
-  }
-
-  return ls[key];
-}
