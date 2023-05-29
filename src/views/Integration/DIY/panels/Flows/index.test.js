@@ -313,8 +313,6 @@ describe('Flows Panel UI tests', () => {
 
     initFlowsPanel(props);
 
-    screen.debug(undefined, Infinity);
-
     expect(screen.getByText('Schedule Drawer')).toBeInTheDocument();       // mocked component//
   });
   test('should display the errorList drawer when clicked on the number of errors', async () => {
