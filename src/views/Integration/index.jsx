@@ -18,6 +18,8 @@ export default function Integration() {
   const { integrationId } = match.params;
   const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
+  // console.log(isIntegrationAppV1);
+
   return (
     <LoadResources required integrationId={integrationId} resources="published,flows,connections,exports,imports" >
       {isIntegrationAppV1

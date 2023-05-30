@@ -19,6 +19,7 @@ export default function StatusHeader() {
       <Help
         title="Status"
         helpKey="users.status"
+        disablePortal={false}
         sx={{ml: 0.5}}
         />
     </div>

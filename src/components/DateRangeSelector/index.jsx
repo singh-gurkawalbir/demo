@@ -3,19 +3,24 @@ import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
-import clsx from 'clsx';
 import { DateRangePicker, Calendar } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import { useSelector } from 'react-redux';
-import {ArrowPopper, Box} from '@celigo/fuse-ui';
+import {
+  ArrowPopper,
+  Box,
+  OutlinedButton,
+  TextButton,
+  FilledButton,
+} from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import { OutlinedButton, TextButton, FilledButton} from '../Buttons';
+
 import ActionGroup from '../ActionGroup';
 
 const defaultPresets = [
@@ -64,19 +69,6 @@ const useStyles = makeStyles(theme => ({
   actions: {
     marginTop: theme.spacing(2),
   },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
-    fontSize: 15,
-    padding: [[0, 12]],
-    lineHeight: 2,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-      color: theme.palette.secondary.dark,
-    },
-  },
   listBtn: {
     background: theme.palette.background.paper,
     marginBottom: theme.spacing(1),
@@ -107,20 +99,10 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  dateRangePopperBtnFull: {
-    width: '100%',
-    justifyContent: 'flex-start',
-    padding: [[6, 12]],
-    '& > .MuiButton-label': {
-      justifyContent: 'space-between',
-    },
-    '&:hover': {
-      color: theme.palette.secondary.main,
-    },
-  },
 }));
+
 const DateRange = props => {
-  const { isCalendar, setSelectedRange, ranges } = props;
+  const { isCalendar, setSelectedRange, ranges} = props;
   const handleDateRangeSelection = useCallback(({ selection: range }) => {
     let { startDate, endDate } = range;
 
@@ -270,7 +252,32 @@ export default function DateRangeSelector({
             color="secondary"
             disabled={!!disabled}
             onClick={toggleClick}
-            className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
+            sx={[
+              {
+                borderColor: 'secondary.lightest',
+                minHeight: 36,
+                color: 'secondary.main',
+                fontFamily: 'source sans pro',
+                fontSize: '15px',
+                padding: [[0, 12]],
+                lineHeight: 2,
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  color: 'secondary.dark',
+                },
+              },
+              (fullWidthBtn ? {
+                width: '100%',
+                justifyContent: 'flex-start',
+                padding: [[6, 12]],
+                '& > .MuiButton-label': {
+                  justifyContent: 'space-between',
+                },
+                '&:hover': {
+                  color: 'secondary.main',
+                },
+              } : {}),
+            ]}>
             {getButtonLabel({fixedPlaceholder, presets, selectedRange, selectedRangeValue, placeholder})}
             <ArrowDownIcon />
           </OutlinedButton>

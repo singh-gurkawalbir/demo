@@ -3,10 +3,10 @@ import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
-import FilledButton from '../Buttons/FilledButton';
 import useConfirmDialog from '../ConfirmDialog';
 import { useSelectorMemo } from '../../hooks';
 import { emptyObject } from '../../constants';
@@ -17,9 +17,6 @@ import RawHtml from '../RawHtml';
 const useStyles = makeStyles(theme => ({
   titleStatusPanel: {
     marginTop: theme.spacing(0.5),
-  },
-  upgradeButton: {
-    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -79,8 +76,8 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 id="request-van-upgrade-buttton"
-                className={classes.upgradeButton}>
-                {!upgradeRequested ? 'Request access' : 'Access Requested'}
+                sx={{margin: '2px 0px'}}>
+                {!upgradeRequested ? 'Request access' : 'Access requested'}
               </FilledButton>
             </ButtonWithTooltip>
           </Typography>

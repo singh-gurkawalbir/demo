@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import CodeEditor from '../../../../CodeEditor';
 import ModalDialog from '../../../../ModalDialog';
-import { OutlinedButton } from '../../../../Buttons';
 import FieldMessage from '../../FieldMessage';
 import { isJsonString } from '../../../../../utils/string';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';

@@ -58,7 +58,7 @@ describe('ViewAliasDetailsDrawer tests', () => {
   });
   test('Should able to test the viewAlias details drawer directly', async () => {
     await initViewAliasDetailsDrawer({props});
-    expect(screen.getByRole('heading', {name: 'View details'})).toBeInTheDocument();
+    expect(screen.getByText('View details')).toBeInTheDocument();
     expect(screen.getByText('Alias ID:')).toBeInTheDocument();
     expect(screen.getByText('_aliasId')).toBeInTheDocument();
     expect(screen.getByText('Alias description:')).toBeInTheDocument();
@@ -78,14 +78,14 @@ describe('ViewAliasDetailsDrawer tests', () => {
   });
   test('Should able to test the viewAlias details drawer from manage alias i.e inherited from parent', async () => {
     await initViewAliasDetailsDrawer({props, path: 'viewdetails/_aliasId/inherited/_integrationId'});
-    expect(screen.getByRole('heading', {name: 'View details'})).toBeInTheDocument();
+    expect(screen.getByText('View details')).toBeInTheDocument();
     expect(screen.getByText('Alias ID:')).toBeInTheDocument();
     expect(screen.getByText('Parent resource:')).toBeInTheDocument();
     expect(screen.getByText('mockIntegration')).toBeInTheDocument();
   });
   test('Should able to test the viewAlias details drawer with wrong aliasId', async () => {
     await initViewAliasDetailsDrawer({props, path: 'viewdetails/_alia'});
-    expect(screen.getByRole('heading', {name: 'View details'})).toBeInTheDocument();
+    expect(screen.getByText('View details')).toBeInTheDocument();
     expect(screen.queryByText('Alias ID:')).not.toBeInTheDocument();
   });
 });

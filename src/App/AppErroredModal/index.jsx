@@ -2,11 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, useHistory } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import { FilledButton } from '@celigo/fuse-ui';
 import ModalDialog from '../../components/ModalDialog';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
-import { FilledButton } from '../../components/Buttons';
 import { message } from '../../utils/messageStore';
 import RawHtml from '../../components/RawHtml';
 

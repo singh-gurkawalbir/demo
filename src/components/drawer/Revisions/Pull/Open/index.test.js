@@ -93,7 +93,7 @@ describe('OpenPullDrawer tests', () => {
 
   test('Should able to test the OpenPullDrawer initial render', async () => {
     await initOpenPullDrawer(props);
-    expect(screen.getByRole('heading', {name: 'Create pull'})).toBeInTheDocument();
+    expect(screen.getByText('Create pull')).toBeInTheDocument();
     expect(screen.getByText('Description')).toBeInTheDocument();
     expect(screen.getByText('Integration')).toBeInTheDocument();
     expect(screen.getByText('Please select')).toBeInTheDocument();

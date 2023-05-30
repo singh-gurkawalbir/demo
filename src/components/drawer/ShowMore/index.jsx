@@ -4,10 +4,10 @@ import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 import { Paper } from '@mui/material';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import RefreshIcon from '../../icons/RefreshIcon';
-import { FilledButton } from '../../Buttons/index';
 
 const useStyles = makeStyles(theme => ({
   pagingBar: {
@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
   },
   pagingBarShift: {
     left: theme.drawerWidth,
-  },
-  button: {
-    marginTop: '5px',
   },
   pagingDown: {
     position: 'relative',
@@ -71,7 +68,7 @@ export default function ShowMoreDrawer(props) {
       <FilledButton
         data-test="showMoreResults"
         onClick={handleMore}
-        className={classes.button}
+        sx={{mt: '5px'}}
         startIcon={<RefreshIcon />}>
         Load more
       </FilledButton>

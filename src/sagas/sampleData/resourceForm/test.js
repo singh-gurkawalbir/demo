@@ -80,6 +80,16 @@ describe('resourceFormSampleData sagas', () => {
         .put(actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED}))
         .run();
     });
+    test('should dispatch receivedPreviewError action when the preview is cancelled', () => {
+      const e = {
+        status: 'Cancelled',
+        message: 'Cancelled',
+      };
+
+      expectSaga(_handlePreviewError, { e, resourceId })
+        .put(actions.resourceFormSampleData.receivedPreviewError(resourceId, {errors: message.PREVIEW_FAILED}))
+        .run();
+    });
   });
   describe('_getProcessorOutput saga', () => {
     test('should return nothing if the output of processor call has violations', () => {

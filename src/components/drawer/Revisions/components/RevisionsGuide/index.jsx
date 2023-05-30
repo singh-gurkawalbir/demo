@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import Icon from '../../../../icons/InstallationGuideIcon';
-import { TextButton } from '../../../../Buttons';
 import { REVISIONS_GUIDE_URL } from '../../../../../constants';
 
 const useStyles = makeStyles({
@@ -27,7 +27,7 @@ export default function RevisionsGuide() {
       {hasWideScreen ? (
         <TextButton
           {...anchorProps}
-          className={classes.button}
+          sx={{mr: '0 !important'}}
           startIcon={<Icon />}>
           Revisions guide
         </TextButton>

@@ -5,14 +5,6 @@ import Typography from '@mui/material/Typography';
 import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles({
-  root: {
-    padding: '3px 10px',
-    maxWidth: 350,
-    maxHeight: 600,
-    overflowY: 'auto',
-    wordBreak: 'break-word',
-    lineHeight: 'inherit',
-  },
   noPadding: {
     padding: 0,
   },

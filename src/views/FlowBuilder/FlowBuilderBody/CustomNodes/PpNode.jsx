@@ -129,7 +129,7 @@ export default function PageProcessorNode({ data = {}}) {
   }, [dispatch, flowId]);
 
   return (
-    <div className={clsx({[classes.newroot]: isIconView}, {[classes.root]: !isIconView})}>
+    <div className={clsx({[classes.newroot]: isIconView}, {[`${classes.root} nopan`]: !isIconView})}>
       <DefaultHandle type="target" position={Position.Left} />
 
       <div className={clsx({[classes.newcontentContainer]: isIconView}, {[classes.contentContainer]: !isIconView})} >

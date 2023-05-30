@@ -37,7 +37,7 @@ export default function AccountSettings() {
           id: 'dontAllowTrustedDevices',
           name: 'dontAllowTrustedDevices',
           label: 'Do not allow trusted devices',
-          defaultValue: mfaAccountSettings?.dontAllowTrustedDevices,
+          defaultValue: mfaAccountSettings?.dontAllowTrustedDevices || false,
           type: 'checkbox',
           noApi: true,
           isLoggable: false,

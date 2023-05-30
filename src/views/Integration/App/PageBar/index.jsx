@@ -1,8 +1,9 @@
-import { MenuItem, Select } from '@mui/material';
+import { MenuItem, Select, Box, styled } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ChipInput from '../../../../components/ChipInput';
@@ -15,45 +16,26 @@ import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
 import { USER_ACCESS_LEVELS } from '../../../../constants';
-import { TextButton } from '../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   tag: {
     marginLeft: theme.spacing(1),
   },
-  actions: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   // TODO: (Azhar) make all pagebar dropdown same without border.
-  childSelect: {
-    fontFamily: 'Roboto500',
-    fontSize: 13,
-    transition: theme.transitions.create('background-color'),
-    paddingLeft: theme.spacing(1),
-    height: 'unset',
-    '&:hover': {
-      backgroundColor: theme.palette.background.default,
-      borderRadius: theme.spacing(0.5),
-    },
-    '& > div': {
-      paddingTop: theme.spacing(1),
-    },
-  },
-  childErrorStatus: {
-    display: 'grid',
-    minWidth: 250,
-    width: '100%',
-    gridColumnGap: '10px',
-    gridTemplateColumns: '70% 30%',
-    '& > div:first-child': {
-      wordBreak: 'break-word',
-    },
-  },
 }));
 
+const StyledMenuItem = styled(MenuItem)({
+  display: 'grid',
+  minWidth: 250,
+  width: '100%',
+  gridColumnGap: '10px',
+  gridTemplateColumns: '70% 30%',
+  '& > div:first-child': {
+    wordBreak: 'break-word',
+  },
+});
+
 const AllChildren = ({integrationId, childLabel}) => {
-  const classes = useStyles();
   const integrationErrorsPerChild = useSelector(state =>
     selectors.integrationErrorsPerChild(state, integrationId),
   shallowEqual
@@ -68,35 +50,34 @@ const AllChildren = ({integrationId, childLabel}) => {
   if (!isUserInErrMgtTwoDotZero) {
     return (
       <MenuItem value="">
-        All {childLabel}s
+        Alls {childLabel}s
       </MenuItem>
     );
   }
 
   if (totalCount === 0) {
     return (
-      <MenuItem value="" className={classes.childErrorStatus}>
+      <StyledMenuItem value="">
         <div> All {childLabel}s</div>
         <div>
           <StatusCircle size="mini" variant="success" />
         </div>
-      </MenuItem>
+      </StyledMenuItem>
     );
   }
 
   return (
-    <MenuItem value="" className={classes.childErrorStatus}>
+    <StyledMenuItem value="">
       <div> All {childLabel}s</div>
       <div>
         <StatusCircle size="mini" variant="error" />
         <span>{totalCount > 9999 ? '9999+' : totalCount}</span>
       </div>
-    </MenuItem>
+    </StyledMenuItem>
   );
 };
 // TODO Surya : ChildMenuItems to go into the ArrowPopper.
 const ChildMenuItems = ({ integration, integrationId }) => {
-  const classes = useStyles();
   const integrationErrorsPerChild = useSelector(state =>
     selectors.integrationErrorsPerChild(state, integrationId),
   shallowEqual
@@ -117,23 +98,23 @@ const ChildMenuItems = ({ integration, integrationId }) => {
 
     if (childErrorCount === 0) {
       return (
-        <MenuItem key={child.value} value={child.value} className={classes.childErrorStatus}>
+        <StyledMenuItem key={child.value} value={child.value}>
           <div> {child.label}</div>
           <div>
             <StatusCircle size="mini" variant="success" />
           </div>
-        </MenuItem>
+        </StyledMenuItem>
       );
     }
 
     return (
-      <MenuItem key={child.value} value={child.value} className={classes.childErrorStatus}>
+      <StyledMenuItem key={child.value} value={child.value}>
         <div> {child.label}</div>
         <div>
           <StatusCircle size="mini" variant="error" />
           <span>{childErrorCount > 9999 ? '9999+' : childErrorCount}</span>
         </div>
-      </MenuItem>
+      </StyledMenuItem>
     );
   });
 };
@@ -238,7 +219,7 @@ export default function PageBar() {
       </TextButton>
       )}
       {supportsMultiStore && (
-      <div className={classes.actions}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         {([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)) && (
         <TextButton
           data-test={`add${storeLabel}`}
@@ -252,15 +233,28 @@ export default function PageBar() {
           variant="standard"
           displayEmpty
           data-test={`select${storeLabel}`}
-          className={classes.childSelect}
           onChange={handleChildChange}
           renderValue={renderChildLabel}
           IconComponent={ArrowDownIcon}
-          value={childId || ''}>
+          value={childId || ''}
+          sx={{
+            fontFamily: 'Roboto500',
+            fontSize: 13,
+            transition: theme => theme.transitions.create('background-color'),
+            paddingLeft: theme => theme.spacing(1),
+            height: 'unset',
+            '&:hover': {
+              backgroundColor: theme => theme.palette.background.default,
+              borderRadius: theme => theme.spacing(0.5),
+            },
+            '& > div': {
+              paddingTop: theme => theme.spacing(1),
+            },
+          }}>
           {allChildren}
           {childItems}
         </Select>
-      </div>
+      </Box>
       )}
     </CeligoPageBar>
   );

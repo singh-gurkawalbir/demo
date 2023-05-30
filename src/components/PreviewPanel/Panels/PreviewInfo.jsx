@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import {Box} from '@celigo/fuse-ui';
+import {Box, OutlinedButton} from '@celigo/fuse-ui';
 import React, { useMemo, useCallback, useEffect, useReducer } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
@@ -10,7 +9,6 @@ import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import {OutlinedButton} from '../../Buttons';
 import { capitalizeFirstLetter } from '../../../utils/string';
 import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 import { sampleDataStage } from '../../../utils/flowData';
@@ -19,17 +17,6 @@ import actions from '../../../actions';
 import { convertUtcToTimezone, getNDaysBeforeDate} from '../../../utils/date';
 import reducer from './stateReducer';
 import { isNewId } from '../../../utils/resource';
-
-const useStyles = makeStyles(theme => ({
-  previewBtn: {
-    minHeight: theme.spacing(5),
-  },
-  error: {
-    color: 'red',
-    marginRight: theme.spacing(0.5),
-    marginTop: theme.spacing(-0.5),
-  },
-}));
 
 const typeFieldNames = ['/export/type', '/export/salesforce/exportType', '/assistantMetadata/exportType', '/restlet/type', '/type'];
 
@@ -44,7 +31,6 @@ export default function PreviewInfo(props) {
     resourceType,
     flowId,
   } = props;
-  const classes = useStyles(props);
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [previewState, dispatchLocalAction] = useReducer(reducer,
@@ -270,7 +256,9 @@ export default function PreviewInfo(props) {
         }
           <OutlinedButton
             color="secondary"
-            className={classes.previewBtn}
+            sx={{
+              minHeight: 40,
+            }}
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">
@@ -311,7 +299,7 @@ export default function PreviewInfo(props) {
               >
               {sampleDataStatus && <div> {sampleDataStatus}</div>}
               {sampleDataOverview && (
-              <Box sx={{ml: 4}}>{sampleDataOverview} </Box>
+              <Box>{sampleDataOverview} </Box>
               )}
             </Box>
           )

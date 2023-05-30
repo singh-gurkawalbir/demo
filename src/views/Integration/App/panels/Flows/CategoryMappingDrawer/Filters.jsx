@@ -10,21 +10,17 @@ import {
   RadioGroup,
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { ArrowPopper } from '@celigo/fuse-ui';
+import { ArrowPopper, TextButton } from '@celigo/fuse-ui';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(2),
     wordBreak: 'break-word',
-  },
-  filter: {
-    maxWidth: '350px',
   },
   wrapper: {
     display: 'grid',
@@ -89,7 +85,7 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
 
   return (
     <>
-      <TextButton onClick={handleMenu} className={classes.filter}>
+      <TextButton onClick={handleMenu} sx={{maxWidth: '350px'}}>
         Filters
         {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </TextButton>

@@ -1263,13 +1263,14 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@celigo/fuse-ui@0.4.9":
-  version "0.4.9"
-  resolved "https://npm.pkg.github.com/download/@celigo/fuse-ui/0.4.9/3e3c709fbfc5eb81169e608f722a4ed37daf6cf1#3e3c709fbfc5eb81169e608f722a4ed37daf6cf1"
-  integrity sha512-o/CW+7wDVucsl/59/k8N1j12SEPDOACFJ0FDxVb7NfeQtxjdi6nhhvlp/R0IgmuxcFG3MgaStJjrb/M31N18uA==
+"@celigo/fuse-ui@0.4.13":
+  version "0.4.13"
+  resolved "https://npm.pkg.github.com/download/@celigo/fuse-ui/0.4.13/1f446c7a294213ba996d9200935a50d5b10f5f66#1f446c7a294213ba996d9200935a50d5b10f5f66"
+  integrity sha512-JB1Ywdxdu6ZL3zSIGvJ8RdxWOOq8QJsMtEqp0AVft6vfiiQb7Oe9okBB0SFkQ7Mana0X7MQjVlibqbH0f6Z0jA==
   dependencies:
     "@emotion/react" "11.10.5"
     "@emotion/styled" "11.10.5"
+    "@mui/icons-material" "5.11.16"
     "@mui/lab" "5.0.0-alpha.120"
     "@mui/material" "5.11.9"
     deepmerge "4.3.0"
@@ -2201,6 +2202,13 @@
   version "5.11.13"
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-5.11.13.tgz#0419a88ae98b3eaff2a633229d23ee04c8868be1"
   integrity sha512-lx+GXBR9h/ApZsEP728tl0pyZyuajto+VnBgsoAzw1d5+CbmOo8ZWieKwVUGxZlPT1wMYNUYS5NtKzCli0xYjw==
+
+"@mui/icons-material@5.11.16":
+  version "5.11.16"
+  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.11.16.tgz#417fa773c56672e39d6ccfed9ac55591985f0d38"
+  integrity sha512-oKkx9z9Kwg40NtcIajF9uOXhxiyTZrrm9nmIJ4UjkU2IdHpd4QVLbCc/5hZN/y0C6qzi2Zlxyr9TGddQx2vx2A==
+  dependencies:
+    "@babel/runtime" "^7.21.0"
 
 "@mui/icons-material@^5.11.11":
   version "5.11.11"

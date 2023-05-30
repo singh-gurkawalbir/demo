@@ -1,8 +1,12 @@
 import React, { useCallback } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@celigo/fuse-ui';
 import RightDrawer from '../../Right';
-import DrawerHeader from '../../Right/DrawerHeader';
-import DrawerContent from '../../Right/DrawerContent';
 import Preview from './Preview';
 import { drawerPaths } from '../../../../utils/rightDrawer';
 
@@ -15,11 +19,13 @@ export default function InstallTemplateDrawer() {
 
   return (
     <RightDrawer
-      onClose={handleClose}
       path={drawerPaths.INSTALL.TEMPLATE_PREVIEW}
       height="tall"
       width="large">
-      <DrawerHeader title="Install template" />
+      <DrawerHeader>
+        <DrawerTitle>Install template</DrawerTitle>
+        <DrawerCloseButton onClick={handleClose} />
+      </DrawerHeader>
       <DrawerContent>
         <Preview />
       </DrawerContent>

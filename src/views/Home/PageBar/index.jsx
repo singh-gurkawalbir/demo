@@ -18,7 +18,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import PillButtonWithMenu from '../../../components/Buttons/PillButtonWithMenu';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
-import IntegrationFolder from '../../../components/icons/IntegrationFolder';
+import FolderIcon from '../../../components/icons/FolderIcon';
 import DownloadIntegrationIcon from '../../../components/icons/DownloadIntegrationIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -31,12 +31,11 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
     },
     '&:last-child': {
-      marginLeft: -parseInt(theme.spacing(0.5), 10),
+      marginLeft: theme.spacing(-0.5),
     },
   },
   viewsWrapper: {
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    paddingLeft: parseInt(theme.spacing(3), 10),
   },
   activeView: {
     color: theme.palette.primary.main,
@@ -45,7 +44,7 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: '100%',
       borderBottom: `2px solid ${theme.palette.primary.main}`,
-      bottom: -parseInt(theme.spacing(0.5), 10),
+      bottom: theme.spacing(-0.5),
       left: 0,
     },
   },
@@ -100,7 +99,7 @@ export default function IntegrationCeligoPageBar() {
     },
     {
       label: 'Connection',
-      description: 'Store credentials to apps',
+      description: 'Access data for an app',
       dataTestId: 'createConnection',
       Icon: ConnectionsIcon,
       link: buildDrawerUrl({
@@ -118,7 +117,7 @@ export default function IntegrationCeligoPageBar() {
         baseUrl: location.pathname,
         params: { resourceType: 'integrations', id: generateNewId() },
       }),
-      Icon: IntegrationFolder,
+      Icon: FolderIcon,
     },
   ];
 
@@ -130,7 +129,7 @@ export default function IntegrationCeligoPageBar() {
   }, [history, isConnectionCreated]);
 
   return (
-    <CeligoPageBar title="My integrations">
+    <CeligoPageBar title="My integrations" contentId="home">
       <KeywordSearch filterKey={FILTER_KEY} placeholder="Search integrations & flows" />
 
       <ActionGroup>

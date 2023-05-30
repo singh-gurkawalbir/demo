@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { TextButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
@@ -17,7 +18,6 @@ import {
 import { selectors } from '../../../reducers';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import ActionGroup from '../../ActionGroup';
-import { TextButton } from '../../Buttons';
 
 export default function FlowSchedule({ flow, onClose }) {
   const dispatch = useDispatch();

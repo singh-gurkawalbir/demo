@@ -2,10 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
+import { OutlinedButton, FilledButton, TextButton } from '@celigo/fuse-ui';
 import FieldHelp from '../FieldHelp';
 import DynaHook from './DynaHook_afe';
 import ModalDialog from '../../ModalDialog';
-import { OutlinedButton, FilledButton, TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
@@ -14,9 +14,6 @@ import { emptyObject } from '../../../constants';
 const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {
     width: '100%',
-  },
-  dynaRoutingRulesBtn: {
-    maxWidth: 100,
   },
   dynaRoutingRulesLabel: {
     marginBottom: 6,
@@ -82,7 +79,7 @@ export default function DynaRoutingRules(props) {
         <OutlinedButton
           data-test={id}
           color="primary"
-          className={classes.dynaRoutingRulesBtn}
+          sx={{maxWidth: 100}}
           onClick={handleEditorClick}
           disabled={resource.type === 'van' && isVanLicenseAbsent}
           >

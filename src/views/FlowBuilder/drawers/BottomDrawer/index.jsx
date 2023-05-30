@@ -1,10 +1,9 @@
-/* eslint-disable no-plusplus */
 import clsx from 'clsx';
-import { Drawer, IconButton, Tab, Tabs, useTheme } from '@mui/material';
+import { Drawer, IconButton, useTheme } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Spinner, TabContext, TabList, TabPanel, Tab, Box } from '@celigo/fuse-ui';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Spinner } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -45,48 +44,8 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  actionsContainer: {
-    paddingRight: theme.spacing(3),
-    justifyContent: 'center',
-    display: 'flex',
-  },
-  tabBar: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    borderTop: 0,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    cursor: 'ns-resize',
-    '& .MuiTab-iconWrapper': {
-      marginRight: theme.spacing(0.5),
-    },
-
-  },
-  tabPanel: {
-    overflow: 'auto',
-    height: '100%',
-  },
   noScroll: {
     overflowY: 'hidden',
-  },
-  customTab: {
-    maxWidth: 500,
-  },
-  customTabContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  closeBtn: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& > * svg': {
-      width: theme.spacing(2),
-      height: theme.spacing(2),
-      marginTop: -3,
-    },
   },
   rightActionContainer: {
     flexGrow: 1,
@@ -116,23 +75,10 @@ const TabTitleWithResourceName = ({resourceId, resourceType, postfix}) => {
   return <span>{resourceName} {postfix}</span>;
 };
 
-function TabPanel({ children, value, index, className }) {
-  const hidden = value !== index;
-
-  return (
-    <div
-      role="tabpanel"
-      className={className}
-      hidden={hidden}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}>
-      {!hidden && children}
-    </div>
-  );
-}
 export default function BottomDrawer({
   flowId,
   integrationId,
+  parentIntegrationId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -252,7 +198,6 @@ export default function BottomDrawer({
 
   useEffect(() => {
     if (isDragging === false) {
-      // console.log('drag end: ', tempDrawerHeight);
       window.removeEventListener('mouseup', handleDragEnd);
       window.removeEventListener('mousemove', trackMouseY);
 
@@ -267,10 +212,6 @@ export default function BottomDrawer({
   },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [isDragging]);
-
-  const tabProps = index => ({
-    'aria-controls': `tabpanel-${index}`,
-  });
 
   const drawerClasses = useMemo(() => ({ paper: clsx(classes.drawerPaper, {
     [classes.drawerPaperShift]: drawerOpened,
@@ -302,8 +243,6 @@ export default function BottomDrawer({
 
     return 'Dashboard';
   }, [isUserInErrMgtTwoDotZero, isFlowRunInProgress]);
-  let tabIndex = 0;
-  let tabContentIndex = 0;
 
   useEffect(() => {
     dispatch(actions.bottomDrawer.init(flowId));
@@ -324,163 +263,148 @@ export default function BottomDrawer({
         variant="persistent"
         BackdropProps={{ invisible: true }}
         anchor="bottom">
-        <div
-          className={classes.tabBar}
-          id={DRAGGABLE_SECTION_DIV_ID}
-          onMouseDown={handleMouseDown}>
-          <Tabs
-            value={activeTabIndex}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example">
-            {tabs?.map(({label, tabType, resourceId}) => {
-              switch (tabType) {
-                case 'dashboard':
-                  return (
-                    <Tab
-                      {...tabProps(tabIndex++)}
-                      id={tabType}
-                      key={tabType}
-                      data-test={tabType}
-                      icon={isUserInErrMgtTwoDotZero ? <RunningFlowsIcon /> : <DashboardIcon />}
-                      label={dashboardLabel} />
-                  );
-                case 'runHistory':
-                  return (
-                    <Tab
-                      id={tabType}
-                      key={tabType}
-                      data-test={tabType}
-                      {...tabProps(tabIndex++)}
-                      icon={<RunHistoryIcon />}
-                      label={label} />
-                  );
-                case 'connections':
-                  return (
-                    <Tab
-                      {...tabProps(tabIndex++)}
-                      id={tabType}
-                      key={tabType}
-                      data-test={tabType}
-                      icon={
-                        isAnyFlowConnectionOffline ? (
-                          <OfflineConnectionsIcon />
-                        ) : (
-                          <ConnectionsIcon />
-                        )
-                      }
-                      label={label}
-                    />
-                  );
-                case 'scripts':
-                  return (
-                    <Tab
-                      {...tabProps(tabIndex++)}
-                      id={tabType}
-                      key={tabType}
-                      data-test={tabType}
-                      icon={<ScriptsIcon />}
-                      label={label}
-                      />
-                  );
-                case 'auditLogs':
-                  return (
-                    <Tab
-                      {...tabProps(tabIndex++)}
-                      id={tabType}
-                      key={tabType}
-                      data-test={tabType}
-                      icon={<AuditLogIcon />}
-                      label={label}
-                      />
-                  );
-                case 'scriptLogs':
-                  return (
-                    <Tab
-                      className={classes.customTab}
-                      key={`${tabType}-${resourceId}`}
-                      id={`${tabType}-${resourceId}`}
-                      data-test={`${tabType}-${resourceId}`}
-                      {...tabProps(tabIndex++)}
-                      icon={<AuditLogIcon />}
-                      component="div"
-                      label={(
-                        <div className={classes.customTabContainer}>
-                          <TabTitleWithResourceName
-                            resourceId={resourceId}
-                            resourceType="scripts"
-                            postfix=" - Execution log"
-                    />
-                          <IconButton
-                            className={classes.closeBtn}
-                            onClick={handleScriptLogsClose(resourceId)}
-                            size="large">
-                            <CloseIcon />
-                          </IconButton>
-                        </div>
-                      )}
-                    />
-                  );
-
-                case 'connectionLogs':
-                  return (
-                    <Tab
-                      className={classes.customTab}
-                      key={`${tabType}-${resourceId}`}
-                      // id={`connection-logs-${resourceId}`}
-                      id={`${tabType}-${resourceId}`}
-                      data-test={`${tabType}-${resourceId}`}
-                      {...tabProps(tabIndex++)}
-                      icon={<DebugIcon />}
-                      component="div"
-                      label={(
-                        <div className={classes.customTabContainer}>
-                          <TabTitleWithResourceName
-                            resourceId={resourceId}
-                            resourceType="connections"
-                            postfix=" - DEBUG"
-                          />
-                          <IconButton
-                            className={classes.closeBtn}
-                            onClick={handleDebugLogsClose(resourceId)}
-                            size="large">
-                            <CloseIcon />
-                          </IconButton>
-                        </div>
-                      )}
-                    />
-                  );
-                default:
-              }
+        <TabContext value={activeTabIndex}>
+          <Box
+            id={DRAGGABLE_SECTION_DIV_ID}
+            onMouseDown={handleMouseDown}
+            sx={theme => ({
+              backgroundColor: theme.palette.background.paper,
+              border: '1px solid',
+              borderColor: theme.palette.secondary.lightest,
+              borderTop: 0,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              cursor: 'ns-resize',
+              '& .MuiTab-iconWrapper': {
+                mr: `${theme.spacing(0.5)} !important`,
+              },
             })}
+          >
+            <TabList
+              onChange={handleTabChange}
+              variant="scrollable"
+              aria-label="scrollable auto tabs example"
+            >
+              {tabs?.map(({label, tabType, resourceId}, index) => {
+                const tabProps = {};
 
-          </Tabs>
-          {
-         isUserInErrMgtTwoDotZero && activeTabIndex === 0 &&
-         <RunDashboardActions flowId={flowId} />
-        }
-          <div className={classes.actionsContainer}>
-            <IconButton
-              data-test="increaseFlowBuilderBottomDrawer"
-              size="small"
-              onMouseDown={preventEvent}
-              onClick={handleSizeUp}>
-              <ArrowUpIcon />
-            </IconButton>
-            <IconButton
-              data-test="decreaseFlowBuilderBottomDrawer"
-              size="small"
-              onMouseDown={preventEvent}
-              onClick={handleSizeDown}>
-              <ArrowDownIcon />
-            </IconButton>
-          </div>
-        </div>
-        <>
-          {tabs?.map(({ tabType, resourceId}) => {
+                switch (tabType) {
+                  case 'dashboard':
+                    tabProps.icon = isUserInErrMgtTwoDotZero ? <RunningFlowsIcon /> : <DashboardIcon />;
+                    tabProps.label = dashboardLabel;
+                    break;
+
+                  case 'runHistory':
+                    tabProps.icon = <RunHistoryIcon />;
+                    break;
+
+                  case 'connections':
+                    tabProps.icon = isAnyFlowConnectionOffline ? <OfflineConnectionsIcon /> : <ConnectionsIcon />;
+                    break;
+
+                  case 'scripts':
+                    tabProps.icon = <ScriptsIcon />;
+                    break;
+
+                  case 'auditLogs':
+                    tabProps.icon = <AuditLogIcon />;
+                    break;
+
+                  case 'scriptLogs':
+                    tabProps.icon = <AuditLogIcon />;
+                    tabProps.label = (
+                      <Box>
+                        <TabTitleWithResourceName
+                          resourceId={resourceId}
+                          resourceType="scripts"
+                          postfix=" - Execution log"
+                        />
+                        <IconButton
+                          sx={{ p: 0, ml: theme => theme.spacing(1) }}
+                          onClick={handleScriptLogsClose(resourceId)}
+                          size="large">
+                          <CloseIcon
+                            sx={theme => ({
+                              width: theme.spacing(2),
+                              height: theme.spacing(2),
+                              mt: '-3px',
+                            })} />
+                        </IconButton>
+                      </Box>
+                    );
+                    tabProps.sx = { maxWidth: 500 };
+                    break;
+
+                  case 'connectionLogs':
+                    tabProps.icon = <DebugIcon />;
+                    tabProps.label = (
+                      <Box>
+                        <TabTitleWithResourceName
+                          resourceId={resourceId}
+                          resourceType="connections"
+                          postfix=" - DEBUG"
+                      />
+                        <IconButton
+                          sx={{ p: 0, ml: theme => theme.spacing(1) }}
+                          onClick={handleDebugLogsClose(resourceId)}
+                          size="large">
+                          <CloseIcon
+                            sx={theme => ({
+                              width: theme.spacing(2),
+                              height: theme.spacing(2),
+                              mt: '-3px',
+                            })} />
+                        </IconButton>
+                      </Box>
+                    );
+                    tabProps.sx = { maxWidth: 500 };
+                    break;
+
+                  default: return;
+                }
+
+                return (
+                  <Tab
+                    key={tabType}
+                    id={tabType}
+                    data-test={tabType}
+                    aria-controls={`tabpanel-${index}`}
+                    label={label}
+                    {...tabProps}
+                   />
+                );
+              })}
+            </TabList>
+
+            { isUserInErrMgtTwoDotZero && activeTabIndex === 0 && <RunDashboardActions flowId={flowId} /> }
+
+            <Box
+              sx={{
+                paddingRight: theme => theme.spacing(3),
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <IconButton
+                data-test="increaseFlowBuilderBottomDrawer"
+                size="small"
+                onMouseDown={preventEvent}
+                onClick={handleSizeUp}>
+                <ArrowUpIcon />
+              </IconButton>
+              <IconButton
+                data-test="decreaseFlowBuilderBottomDrawer"
+                size="small"
+                onMouseDown={preventEvent}
+                onClick={handleSizeDown}>
+                <ArrowDownIcon />
+              </IconButton>
+            </Box>
+          </Box>
+
+          {tabs?.map(({ tabType, resourceId}, index) => {
             let tabPanelValue;
 
             switch (tabType) {
@@ -489,8 +413,9 @@ export default function BottomDrawer({
                   ? <RunDashboardV2 flowId={flowId} />
                   : <RunDashboardPanel flowId={flowId} />;
                 break;
+
               case 'runHistory':
-                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={integrationId} /> : null;
+                tabPanelValue = isUserInErrMgtTwoDotZero ? <RunHistory flowId={flowId} integrationId={parentIntegrationId} /> : null;
                 break;
 
               case 'connections':
@@ -511,8 +436,7 @@ export default function BottomDrawer({
                 tabPanelValue = (
                   <ConnectionLogs
                     connectionId={resourceId}
-                    flowId={flowId}
-              />
+                    flowId={flowId} />
                 );
                 break;
 
@@ -524,17 +448,18 @@ export default function BottomDrawer({
 
             return (
               <TabPanel
-                value={activeTabIndex}
                 key={tabType}
-                index={tabContentIndex++}
-                className={classes.tabPanel}>
-
-                {tabPanelValue}
-
+                id={`tabpanel-${index}`}
+                aria-labelledby={`tab-${index}`}
+                value={index}
+              >
+                <Box sx={{ overflow: 'auto', height: '100%' }}>
+                  {tabPanelValue}
+                </Box>
               </TabPanel>
             );
           })}
-        </>
+        </TabContext>
       </Drawer>
     </div>
   );

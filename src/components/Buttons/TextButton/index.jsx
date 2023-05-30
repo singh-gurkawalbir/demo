@@ -34,6 +34,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+// Todo: Remove this file, once the changes from master are integrated
 export default function TextButton(props) {
   const classes = useStyles(props);
   const {children, error, bold, vertical = false, underline, className, ...rest} = props;

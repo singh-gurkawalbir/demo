@@ -45,6 +45,7 @@ export default {
     isLoggable: true,
     type: 'replaceconnection',
     resourceType: 'connections',
+    showEditableDropdown: true,
     parentResourceType: 'imports',
     label: 'Connection',
     skipDefault: true,
@@ -57,7 +58,7 @@ export default {
   },
   apiIdentifier: {
     label: 'Invoke',
-    helpKey: 'apiIdentifier',
+    helpKey: 'import.apiIdentifier',
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },

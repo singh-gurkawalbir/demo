@@ -1,9 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, TabContext, TabList, Tab, TabPanel } from '@celigo/fuse-ui';
 import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
 import ViewErrorRequestResponse from './ViewErrorRequestResponse';
@@ -18,27 +16,6 @@ import { FILTER_KEYS } from '../../../utils/errorManagement';
 import useKeydownListener from '../ErrorTable/hooks/useKeyboardNavigation';
 import { useEditRetryConfirmDialog } from '../ErrorTable/hooks/useEditRetryConfirmDialog';
 
-const useStyles = makeStyles(theme => ({
-  detailsContainer: {
-    height: 'calc(100vh - 315px)',
-    backgroundColor: 'white',
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    color: theme.palette.text.hint,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  tabContent: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    borderTop: 'none',
-    borderBottom: 'none',
-  },
-  tabHeader: {
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-}));
-
 const ERROR_DETAILS_TABS = {
   VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
@@ -49,28 +26,25 @@ const ERROR_DETAILS_TABS = {
   NETSUITE_RESPONSE: { type: 'response', label: 'View response' },
 };
 
-function TabPanel({ children, value, type }) {
-  const classes = useStyles();
-  const hidden = value !== type;
-
-  if (hidden) {
-    return null;
-  }
-
-  return (
-    <div
-      role="tabpanel"
-      className={classes.tabContent}
-      id={type}
-      aria-labelledby={type}>
+const TabPanelWrapper = ({ children, value }) => (
+  <TabPanel value={value} sx={{height: '100%'}}>
+    <Box
+      id={value}
+      aria-labelledby={value}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        borderTop: 'none',
+        borderBottom: 'none',
+        height: '100%',
+      }}>
       {children}
-    </div>
-  );
-}
+    </Box>
+  </TabPanel>
+);
 
 export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, handleNext, errorsInPage, activeErrorId, isSplitView }) {
   const match = useRouteMatch();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
@@ -130,59 +104,67 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
   return (
     <>
       <DrawerContent>
-        <div className={classes.detailsContainer}>
-          <Tabs
-            value={mode}
-            onChange={handleModeChange}
-            className={classes.tabHeader}
-            textColor="primary"
-            indicatorColor="primary"
-            >
-            {
+        <TabContext value={mode}>
+          <Box
+            sx={{
+              height: 'calc(100vh - 315px)',
+              backgroundColor: 'white',
+              border: theme => `1px solid ${theme.palette.secondary.lightest}`,
+              color: theme => theme.palette.text.hint,
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+            <TabList
+              onChange={handleModeChange}
+              sx={{ borderBottom: theme => `1px solid ${theme.palette.secondary.lightest}` }}
+          >
+              {
                 availableTabs.map(({ label, type }) =>
                   <Tab key={type} label={label} id={type} value={type} />)
-            }
-          </Tabs>
-          <TabPanel value={mode} type="view">
-            <ViewErrorDetails
-              errorId={errorId}
-              flowId={flowId}
-              resourceId={resourceId}
-              isResolved={isResolved}
+              }
+            </TabList>
+
+            <TabPanelWrapper value="view">
+              <ViewErrorDetails
+                errorId={errorId}
+                flowId={flowId}
+                resourceId={resourceId}
+                isResolved={isResolved}
             />
-          </TabPanel>
-          <TabPanel value={mode} type="editRetry">
-            <EditRetryData
-              retryId={retryId}
-              onChange={onRetryDataChange}
-              flowId={flowId}
-              resourceId={resourceId}
+            </TabPanelWrapper>
+            <TabPanelWrapper value="editRetry">
+              <EditRetryData
+                retryId={retryId}
+                onChange={onRetryDataChange}
+                flowId={flowId}
+                resourceId={resourceId}
             />
-          </TabPanel>
-          <TabPanel value={mode} type="viewRetry">
-            <EditRetryData
-              retryId={retryId}
-              onChange={onRetryDataChange}
-              flowId={flowId}
-              resourceId={resourceId}
+            </TabPanelWrapper>
+            <TabPanelWrapper value="viewRetry">
+              <EditRetryData
+                retryId={retryId}
+                onChange={onRetryDataChange}
+                flowId={flowId}
+                resourceId={resourceId}
             />
-          </TabPanel>
-          <TabPanel value={mode} type="request">
-            <ViewErrorRequestResponse
-              reqAndResKey={reqAndResKey}
-              flowId={flowId}
-              resourceId={resourceId}
-              isRequest
+            </TabPanelWrapper>
+            <TabPanelWrapper value="request">
+              <ViewErrorRequestResponse
+                reqAndResKey={reqAndResKey}
+                flowId={flowId}
+                resourceId={resourceId}
+                isRequest
             />
-          </TabPanel>
-          <TabPanel value={mode} type="response">
-            <ViewErrorRequestResponse
-              reqAndResKey={reqAndResKey}
-              flowId={flowId}
-              resourceId={resourceId}
+            </TabPanelWrapper>
+            <TabPanelWrapper value="response">
+              <ViewErrorRequestResponse
+                reqAndResKey={reqAndResKey}
+                flowId={flowId}
+                resourceId={resourceId}
             />
-          </TabPanel>
-        </div>
+            </TabPanelWrapper>
+          </Box>
+        </TabContext>
         { !isResolved && (
         <AddToBatch
           error={errorDoc}

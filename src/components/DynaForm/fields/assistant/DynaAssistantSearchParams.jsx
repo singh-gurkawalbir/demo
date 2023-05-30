@@ -3,6 +3,7 @@ import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { isArray, isObject } from 'lodash';
 import { useDispatch } from 'react-redux';
+import { OutlinedButton, TextButton } from '@celigo/fuse-ui';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
@@ -17,16 +18,12 @@ import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
-import { OutlinedButton, TextButton } from '../../../Buttons';
 import { useSelectorMemo } from '../../../../hooks';
 import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
     width: '100%',
-  },
-  dynaAssistantbtn: {
-    maxWidth: 100,
   },
   dynaAssistantFormLabel: {
     marginBottom: 6,
@@ -201,7 +198,7 @@ export default function DynaAssistantSearchParams(props) {
           color="secondary"
           disabled={disabled}
           data-test={id}
-          className={classes.dynaAssistantbtn}
+          sx={{maxWidth: 100}}
           onClick={() => setShowSearchParamsModal(true)}>
           Launch
         </OutlinedButton>

@@ -2,17 +2,14 @@ import { FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
 import SearchCriteriaDialog from './SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
-import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles({
   dynaNSSearchCriteriaWrapper: {
     width: '100%',
-  },
-  dynaNSbtn: {
-    maxWidth: 100,
   },
   dynaFormLabel: {
     marginBottom: 0,
@@ -83,7 +80,7 @@ export default function DynaNSSearchCriteria(props) {
         <OutlinedButton
           data-test={id}
           color="secondary"
-          className={classes.dynaNSbtn}
+          sx={{maxWidth: 100}}
           onClick={handleEditorClick}>
           Launch
         </OutlinedButton>

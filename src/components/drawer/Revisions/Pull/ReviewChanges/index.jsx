@@ -1,13 +1,19 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  Spinner,
+  TextButton,
+  FilledButton,
+  Divider,
+} from '@celigo/fuse-ui';
+import Help from '../../../../Help';
 import RightDrawer from '../../../Right';
-import DrawerHeader from '../../../Right/DrawerHeader';
-import DrawerContent from '../../../Right/DrawerContent';
-import DrawerFooter from '../../../Right/DrawerFooter';
-import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import { selectors } from '../../../../../reducers';
@@ -16,20 +22,8 @@ import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(() => ({
-  drawerHeaderWrapper: {
-    '& > h4': {
-      whiteSpace: 'nowrap',
-    },
-    '& > :not(:last-child)': {
-      marginRight: 0,
-    },
-  },
-}));
-
 function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const classes = useStyles();
   const { revisionId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
@@ -67,30 +61,34 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader
-        title="Review changes"
-        className={classes.drawerHeaderWrapper}
-        helpKey="pull.reviewChanges"
-        handleClose={onClose}>
+      <DrawerHeader>
+        <DrawerTitle>
+          Review changes
+          <Help helpKey="pull.reviewChanges" size="small" />
+        </DrawerTitle>
         <RevisionHeader
           integrationId={integrationId}
           revisionId={revisionId}
           mode={REVISION_DRAWER_MODES.REVIEW}
         />
+        <Divider orientation="vertical" />
+        <DrawerCloseButton onClick={onClose} />
       </DrawerHeader>
       <DrawerContent>
         <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
-          { isRevisionCreationInProgress ? (
+        <FilledButton
+          startIcon={isRevisionCreationInProgress ? (
             <Spinner
               size="small"
-              sx={{
-                mr: 0.5,
-                height: 16,
-              }} />
-          ) : null } Next
+              sx={{mr: 0.5, height: 16}}
+            />
+          ) : null}
+          disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff}
+          onClick={handleCreateRevision}
+        >
+          Next
         </FilledButton>
         <TextButton
           data-test="cancelReviewPulll"
@@ -108,6 +106,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
+      isIntegrated
       path={drawerPaths.LCM.REVIEW_PULL_CHANGES}
       height="tall"
       width="xl">

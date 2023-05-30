@@ -20,6 +20,9 @@ const useStyles = makeStyles({
   },
   dynasoqlFormControl: {
     width: '100%',
+    '& .MuiInputBase-multiline': {
+      padding: 0,
+    },
   },
   dynasoqlLabelWrapper: {
     display: 'flex',

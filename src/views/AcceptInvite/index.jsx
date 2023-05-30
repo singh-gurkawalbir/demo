@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 
 export default function AcceptInvite(props) {
   const match = useRouteMatch();
+  const [isStatusRquested, setIsStatusRquested] = useState(false);
   const { token } = match.params;
   const classes = useStyles();
   const data = useSelector(selectors.acceptInviteData) || emptyObject;
@@ -35,7 +36,13 @@ export default function AcceptInvite(props) {
   useEffect(() => {
     if (redirectUrl) {
       dispatch(actions.auth.acceptInvite.clear());
-      history.push(redirectUrl);
+      setIsStatusRquested(true);
+      if (redirectUrl.includes('sso')) {
+        // Reload the page instead of app routing to url
+        window.location.href = redirectUrl;
+      } else {
+        history.push(redirectUrl);
+      }
     }
   }, [dispatch, history, redirectUrl]);
 
@@ -43,7 +50,7 @@ export default function AcceptInvite(props) {
     dispatch(actions.auth.acceptInvite.validate(token));
   }, [dispatch, token]);
 
-  if (isLoading) return <Loader open>Loading...<Spinner /></Loader>;
+  if (isLoading || isStatusRquested) return <Loader open>Loading...<Spinner /></Loader>;
 
   return (
     <>

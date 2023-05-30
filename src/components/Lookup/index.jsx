@@ -2,10 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { TableCell, TableRow, Table, TableBody, TableHead } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { filter } from 'lodash';
+import { TextButton } from '@celigo/fuse-ui';
 import ModalDialog from '../ModalDialog';
 import ManageLookup from './Manage';
 import LookupListRow from './LookupListRow';
-import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(() => ({
   listing: {

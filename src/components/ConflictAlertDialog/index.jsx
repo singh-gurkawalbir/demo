@@ -11,8 +11,8 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
-import { FilledButton } from '../Buttons';
 import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({

@@ -211,6 +211,7 @@ export default function ErrorDetailsPanel({
       >
         <ErrorControls
           retryId={retryId}
+          isSplitView
           flowId={flowId}
           resourceId={resourceId}
           errorsInPage={errorsInCurrPage}

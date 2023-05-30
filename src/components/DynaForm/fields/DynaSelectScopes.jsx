@@ -2,11 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { FormControl, FormLabel } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { get } from 'lodash';
+import { FilledButton, OutlinedButton} from '@celigo/fuse-ui';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
-import { FilledButton, OutlinedButton} from '../../Buttons';
 import { useIsLoggable } from '../../IsLoggableContextProvider';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import HelpLink from '../../HelpLink';
@@ -23,9 +23,6 @@ const useStyles = makeStyles({
   },
   scopesLabel: {
     marginBottom: 6,
-  },
-  scopesBtn: {
-    maxWidth: 160,
   },
   helpLinkScope: {
     float: 'right',
@@ -107,8 +104,8 @@ export default function (props) {
     }
 
     return selectedScopes.length ? selectedScopes : defaultValue;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourceId]);
+  }, [defaultValue, pathToScopeField, resource, selectedScopes]);
+
   const [showScopesModal, setShowScopesModal] = useState(false);
 
   const {flattenedScopes, subHeaderMap} = useMemo(() => {
@@ -158,7 +155,7 @@ export default function (props) {
         </div>
         <OutlinedButton
           data-test={id}
-          className={classes.scopesBtn}
+          sx={{maxWidth: 160}}
           onClick={() => setShowScopesModal(true)}>
           {label}
         </OutlinedButton>

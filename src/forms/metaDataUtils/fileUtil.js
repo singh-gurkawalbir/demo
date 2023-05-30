@@ -654,27 +654,89 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
 
   return null;
 };
+export const getModifiedBaseURI = (baseURI, httpConnector) => {
+  if (!httpConnector || !httpConnector.baseURIs) {
+    return baseURI;
+  }
+  let modifiedBaseURI = baseURI;
+
+  httpConnector.baseURIs.forEach(uri => {
+    const versionRef = '/:_version';
+    const referenceIndex = uri.indexOf(versionRef);
+
+    const rightBaseUri = uri.substring(referenceIndex + versionRef?.length);
+
+    modifiedBaseURI = modifiedBaseURI.replace(`/:_version${rightBaseUri}`, '');
+    httpConnector.versions?.forEach(v => {
+      modifiedBaseURI = modifiedBaseURI.replace(`/${v.name}${rightBaseUri}`, '');
+    });
+  });
+
+  return modifiedBaseURI;
+};
+export const getModifiedPingRelativeURI = (pingRelativeURI, httpConnector) => {
+  if (!httpConnector || !httpConnector.baseURIs) {
+    return pingRelativeURI;
+  }
+  let modifiedPingRelativeURI = pingRelativeURI;
+
+  httpConnector.baseURIs.forEach(uri => {
+    const versionRef = '/:_version';
+    const referenceIndex = uri.indexOf(versionRef);
+
+    const rightBaseUri = uri.substring(referenceIndex + versionRef?.length);
+
+    modifiedPingRelativeURI = modifiedPingRelativeURI.replace(`/:_version${rightBaseUri}`, '');
+    httpConnector.versions?.forEach(v => {
+      modifiedPingRelativeURI = modifiedPingRelativeURI.replace(`/${v.name}${rightBaseUri}`, '');
+    });
+  });
+
+  return modifiedPingRelativeURI;
+};
 export const updateHTTPFrameworkFormValues = (formValues, resource, connector) => {
   let httpConnector = connector;
 
   if (!httpConnector) {
     return formValues;
   }
-  if (resource?.http?._httpConnectorApiId) {
-    httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
-  }
   const retValues = { ...formValues };
 
-  if (httpConnector.versioning?.location === 'uri' && httpConnector?.baseURIs?.[0]?.includes('/:_version')) {
-    if (retValues['/http/unencrypted/version']) {
-      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
-    } else if (retValues['/http/unencrypted']?.version) {
-      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted'].version}`;
-    } else {
-      const versionRelativeURI = httpConnector.versions?.[0]?.name;
+  if (resource?.http?._httpConnectorApiId) {
+    httpConnector = connector.apis.find(api => api._id === resource?.http?._httpConnectorApiId);
+    retValues['/assistant'] = httpConnector?.legacyId;
+  }
+  let resourceVersion;
 
-      // Regex is used here to remove continuous multiple slashes if there are any
-      retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+  if (retValues['/http/_httpConnectorVersionId']) {
+    resourceVersion = httpConnector.versions?.find(ver => ver._id === retValues['/http/_httpConnectorVersionId'])?.name;
+  }
+
+  // TODO @Lalit: Need to validate if resourceVersion is added in between of baseURI, versionRelativeURI selection
+  if (httpConnector.versioning?.location === 'uri') {
+    retValues['/http/baseURI'] = getModifiedBaseURI(retValues['/http/baseURI'], httpConnector);
+    retValues['/http/ping/relativeURI'] = getModifiedPingRelativeURI(retValues['/http/ping/relativeURI'], httpConnector);
+    const httpConnectorBaseURI = httpConnector?.baseURIs?.find(uri => uri.includes(`${retValues['/http/baseURI']}/:_version`));
+
+    if (httpConnectorBaseURI) {
+      const versionRef = '/:_version';
+      const referenceIndex = httpConnectorBaseURI?.indexOf(versionRef);
+
+      const rightBaseUri = httpConnectorBaseURI?.substring(referenceIndex + versionRef?.length);
+
+      if (resourceVersion) {
+        retValues['/http/baseURI'] += `/${resourceVersion}${rightBaseUri}`;
+      } else {
+        const versionRelativeURI = httpConnector.versions?.[0]?.name;
+        let pingRelativeURI = `/${versionRelativeURI}${rightBaseUri}`;
+
+        if (retValues['/http/ping/relativeURI']) {
+          pingRelativeURI += `/${retValues['/http/ping/relativeURI']}`;
+        }
+
+        // Regex is used here to remove continuous multiple slashes if there are any
+        retValues['/http/ping/relativeURI'] = pingRelativeURI?.replace(/([^:]\/)\/+/g, '$1');
+      }
     }
   }
   if (httpConnector.versioning?.location === 'header') {

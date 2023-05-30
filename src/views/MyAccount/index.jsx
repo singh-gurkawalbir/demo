@@ -1,5 +1,4 @@
 import React from 'react';
-import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from 'react-redux';
 import loadable from '../../utils/loadable';
 import { selectors } from '../../reducers';
@@ -79,21 +78,7 @@ const tabs = [
   },
 ];
 
-const useStyles = makeStyles(theme => ({
-  wrapperProfile: {
-    margin: theme.spacing(3),
-  },
-  tabsAccount: {
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
-}));
-
 export default function MyAccount({ match }) {
-  const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
@@ -112,7 +97,15 @@ export default function MyAccount({ match }) {
         />
       <ResourceDrawer match={match} />
       <PageContent>
-        <Tabs tabs={myAccountTabs} match={match} className={classes.tabsAccount} />
+        <Tabs
+          tabs={myAccountTabs}
+          match={match}
+          sx={{
+            '& > [role = tabpanel]': {
+              background: 'none',
+              padding: 0,
+              border: 'none',
+            }}} />
       </PageContent>
     </>
   );

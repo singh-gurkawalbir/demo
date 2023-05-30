@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, FilledButton, TextButton } from '@celigo/fuse-ui';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
@@ -19,7 +19,6 @@ import ActionButton from '../../../../ActionButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../../ActionGroup';
-import { FilledButton, TextButton } from '../../../../Buttons/index';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
@@ -45,10 +44,6 @@ const useStyles = makeStyles(theme => ({
   label: {
     margin: 5,
     display: 'flex',
-  },
-  relatedListBtn: {
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(1),
   },
   dynaRelatedListTable: {
     background: 'black',
@@ -248,7 +243,6 @@ function RelatedListView(props) {
 }
 
 function FirstLevelModal(props) {
-  const classes = useStyles();
   const { handleClose, ...rest } = props;
   const [editListItemModelOpen, setEditListItemModelOpen] = useState(false);
   const toggleListItemModelOpen = useCallback(
@@ -276,7 +270,7 @@ function FirstLevelModal(props) {
         {!editListItemModelOpen ? (
           <>
             <TextButton
-              className={classes.relatedListBtn}
+              sx={{ mb: 2, mt: 1 }}
               data-test="addOrEditNewRelatedList"
               startIcon={<AddIcon />}
               onClick={() => {
@@ -299,7 +293,7 @@ function FirstLevelModal(props) {
           <>
             <TextButton
               startIcon={<ArrowLeftIcon />}
-              className={classes.relatedListBtn}
+              sx={{ mb: 2, mt: 1 }}
               onClick={() => {
                 toggleListItemModelOpen();
               }} >

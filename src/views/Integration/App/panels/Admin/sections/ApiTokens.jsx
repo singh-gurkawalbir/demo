@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
-import makeStyles from '@mui/styles/makeStyles';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../../reducers';
 import ResourceDrawer from '../../../../../../components/drawer/Resource';
 import PanelHeader from '../../../../../../components/PanelHeader';
@@ -11,21 +11,9 @@ import LoadResources from '../../../../../../components/LoadResources';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
-import { TextButton } from '../../../../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(theme => ({
-  resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-  noTokenMessage: {
-    margin: theme.spacing(-3, 0, 0, -3),
-    paddingLeft: theme.spacing(2),
-  },
-}));
-
 export default function ApiTokenSection({ integrationId }) {
-  const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -73,20 +61,24 @@ export default function ApiTokenSection({ integrationId }) {
         </TextButton>
       </PanelHeader>
 
-      <div className={classes.resultContainer}>
+      <Box sx={{ padding: theme => theme.spacing(3, 3, 12, 3) }}>
         <LoadResources required resources="accesstokens">
-          {list.resources && list.resources.length > 0 ? (
+          {list.resources && list.resources.length === 0 ? (
             <ResourceTable
               resourceType="accesstokens"
               resources={list.resources}
             />
           ) : (
-            <Typography className={classes.noTokenMessage}>
+            <Typography
+              sx={{
+                margin: theme => theme.spacing(-3, 0, 0, -3),
+                paddingLeft: theme => theme.spacing(2),
+              }}>
               No API tokens yet exist for this integration.
             </Typography>
           )}
         </LoadResources>
-      </div>
+      </Box>
     </>
   );
 }

@@ -74,9 +74,9 @@ jest.mock('../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto', () 
   ),
 }));
 
-jest.mock('../../../../Buttons', () => ({
+jest.mock('@celigo/fuse-ui', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../../Buttons'),
+  ...jest.requireActual('@celigo/fuse-ui'),
   FilledButton: props => <button type="button" onClick={props.onClick}>Done</button>,
   TextButton: props => <button type="button" onClick={props.onClick}>Cancel</button>,
 }));

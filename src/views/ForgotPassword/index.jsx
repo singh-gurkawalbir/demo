@@ -3,9 +3,9 @@ import { useSelector, useDispatch} from 'react-redux';
 import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../reducers';
-import { TextButton } from '../../components/Buttons';
 import actions from '../../actions';
 import ConcurForgotPassword from './Concur';
 import useQuery from '../../hooks/useQuery';
@@ -14,12 +14,6 @@ import UserSignInPage from '../../components/UserSignInPage';
 import RawHtml from '../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
-  backToSignIn: {
-    marginTop: 130,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   rawHTML: {
     '& > p': {
       display: 'flex',
@@ -72,7 +66,14 @@ function ForgotPassword(props) {
           />
         ) : ''}
       {successView ? (
-        <Typography variant="body2" className={classes.backToSignIn}>
+        <Typography
+          variant="body2"
+          sx={{
+            marginTop: '130px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
           Back to
           <TextButton
             data-test="signin"

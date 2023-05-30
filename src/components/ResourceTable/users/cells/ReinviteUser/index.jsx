@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import { TextButton } from '../../../../Buttons';
 
 export default function ReinviteUser({ user }) {
   const dispatch = useDispatch();

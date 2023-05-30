@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
-import {OutlinedButton} from '../../../../Buttons';
 import ActionGroup from '../../../../ActionGroup';
 import ButtonWithTooltip from '../../../../Buttons/ButtonWithTooltip';
 import { message } from '../../../../../utils/messageStore';

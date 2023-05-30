@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { TextToggle } from '@celigo/fuse-ui';
 import actions from '../../../../actions';
-import TextToggle from '../../../TextToggle';
 import { selectors } from '../../../../reducers';
 import Help from '../../../Help';
 
@@ -25,7 +25,7 @@ export default function ToggleMapperVersion({ editorId }) {
   const mappingVersion = useSelector(state => selectors.mappingVersion(state));
   const saveInProgress = useSelector(state => selectors.isEditorSaveInProgress(state, editorId));
 
-  const handleVersionToggle = useCallback(newVersion => {
+  const handleVersionToggle = useCallback((event, newVersion) => {
     dispatch(actions.mapping.toggleVersion(newVersion));
   }, [dispatch]);
 
@@ -37,12 +37,9 @@ export default function ToggleMapperVersion({ editorId }) {
         disabled={saveInProgress}
         value={mappingVersion}
         onChange={handleVersionToggle}
-        exclusive
         options={toggleMapperOptions}
-        className={{
-          '&>button': {
-            minWidth: theme => `${theme.spacing(11)} !important`,
-          },
+        sx={{
+          minWidth: '88px !important',
         }}
       />
       <Help

@@ -4,6 +4,7 @@ import { Divider } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
+import { TextButton } from '@celigo/fuse-ui';
 import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
@@ -11,7 +12,6 @@ import { selectors } from '../../../../../reducers';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
-import { TextButton } from '../../../../Buttons';
 import CeligoDivider from '../../../../CeligoDivider';
 import { useSelectorMemo } from '../../../../../hooks';
 
@@ -36,11 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
-  },
-  debugLogButton: {
-    padding: '0px 8px',
-    borderRadius: 0,
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
   },
   appLogoWrapper: {
     position: 'relative',
@@ -130,7 +125,11 @@ export default function TitleActions({ flowId }) {
         <TextButton
           onClick={flowStepDrawerHandler}
           startIcon={<DebugIcon />}
-          className={classes.debugLogButton}
+          sx={theme => ({
+            padding: '0px 8px',
+            borderRadius: 0,
+            borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+          })}
           data-test="flowStepLogs">
           View debug logs
         </TextButton>

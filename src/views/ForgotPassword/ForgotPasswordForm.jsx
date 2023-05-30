@@ -1,45 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
-import clsx from 'clsx';
 import { Link } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton} from '@celigo/fuse-ui';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { TextButton, FilledButton} from '../../components/Buttons';
+import {SubmitButton} from '../../components/Buttons/FilledButton';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 import messageStore, { message } from '../../utils/messageStore';
 
-const useStyles = makeStyles(theme => ({
-  submit: {
-    marginTop: theme.spacing(4),
-  },
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-  },
-  errorField: {
-    '&:hover': {
-      borderColor: theme.palette.error.dark,
-    },
-    '& > * input': {
-      '&:hover': {
-        borderColor: theme.palette.error.dark,
-      },
-      borderColor: theme.palette.error.dark,
-    },
-  },
-  cancelBtn: {
-    fontSize: theme.spacing(2),
-  },
-}));
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [userEmail, setUserEmail] = useState(email || '');
   const [showErr, setShowErr] = useState(false);
   const [showInvalidEmailError, setShowInvalidEmailError] = useState(false);
@@ -95,20 +69,33 @@ export default function ForgotPassword({setShowError, email}) {
           fullWidth
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
+          sx={{
+            width: '100%',
+            background: theme => theme.palette.background.paper,
+            ...((showErr || showInvalidEmailError) && {
+              '&:hover': {
+                borderColor: theme => theme.palette.error.dark,
+              },
+              '& > * input': {
+                '&:hover': {
+                  borderColor: theme => theme.palette.error.dark,
+                },
+                borderColor: theme => theme.palette.error.dark,
+              },
+            }),
+          }}
         />
         <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 
         { isAuthenticating ? <Spinner sx={{mt: 1}} />
           : (
-            <FilledButton
+            <SubmitButton
               data-test="submit"
               type="submit"
-              className={classes.submit}
-              submit
+              sx={{mt: 4}}
               value="Submit">
               Submit
-            </FilledButton>
+            </SubmitButton>
           )}
         <TextButton
           to={getRoutePath('/signin')}
@@ -117,8 +104,10 @@ export default function ForgotPassword({setShowError, email}) {
           component={Link}
           role="link"
           type="cancel"
-          submit
-          className={clsx(classes.submit, classes.cancelBtn)}
+          sx={{
+            mt: 4,
+            fontSize: '16px',
+          }}
         >
           Cancel
         </TextButton>

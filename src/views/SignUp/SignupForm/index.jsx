@@ -13,7 +13,7 @@ import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import getRoutePath from '../../../utils/routePaths';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
-import { OutlinedButton } from '../../../components/Buttons';
+import { GoogleButton } from '../../../components/Buttons/OutlinedButton';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
 import useQuery from '../../../hooks/useQuery';
@@ -106,12 +106,12 @@ export default function SignUp() {
         {
         isGoogleSignInAllowed() && (
           <form onSubmit={handleSignUpWithGoogle}>
-            <OutlinedButton
+            <GoogleButton
               type="submit"
               color="secondary"
-              googleBtn>
+            >
               Sign up with Google
-            </OutlinedButton>
+            </GoogleButton>
             <TextField
               data-private
               type="hidden"

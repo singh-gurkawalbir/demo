@@ -1,14 +1,14 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, Divider, Typography } from '@mui/material';
+import { Grid, Divider, Typography, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { FilledButton } from '@celigo/fuse-ui';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import Addons from './Addons';
-import { FilledButton } from '../../../../../../../components/Buttons';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import messageStore from '../../../../../../../utils/messageStore';
 
@@ -19,25 +19,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     borderRadius: [4, 4, 0, 0],
   },
-  message: {
-    padding: theme.spacing(0, 2, 2),
-    textAlign: 'left',
-  },
   heading: {
     paddingBottom: theme.spacing(1),
-  },
-  content: {
-    paddingBottom: theme.spacing(2),
-  },
-  container: {
-    padding: '0 0 16px 16px',
-  },
-  button: {
-    margin: theme.spacing(1),
-  },
-  planContent: {
-    margin: 0,
-    lineHeight: '16px',
   },
   customisedBlock: {
     display: 'flex',
@@ -105,9 +88,13 @@ export default function SubscriptionSection({ childId, integrationId }) {
     <>
       <PanelHeader title="Subscription details" />
       <div className={classes.root}>
-        <div className={classes.content}>
-          <div className={classes.planContent}>
-            <Grid container className={classes.container}>
+        <Box sx={{ paddingBottom: theme => theme.spacing(2) }}>
+          <Box
+            sx={{
+              margin: '0px',
+              lineHeight: '16px',
+            }}>
+            <Grid container sx={{ padding: '0 0 16px 16px' }}>
               <Grid item xs={2}>
                 <Typography data-test="iaPlan" >
                   {' '}
@@ -129,7 +116,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               <Grid item xs={3}>
                 {upgradeText && (
                 <FilledButton
-                  className={classes.button}
+                  sx={{margin: 1}}
                   disabled={upgradeRequested || upgradeSettingsRequested || isLicenseExpired}
                   onClick={handleUpgrade}>
                   {upgradeText}
@@ -137,10 +124,14 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 )}
               </Grid>
             </Grid>
-          </div>
+          </Box>
           <Divider />
-        </div>
-        <Typography className={classes.message}>
+        </Box>
+        <Typography
+          sx={{
+            padding: theme => theme.spacing(0, 2, 2),
+            textAlign: 'left',
+          }}>
           Your subscription gives you access to install and run one instance
           (tile) of this Integration App. Contact your Account Manager for more
           info.

@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   titleWrapper: {
     display: 'flex',
     alignItems: 'center',
+    maxWidth: `calc(100vw - ${theme.drawerWidth + 500}px)`,
   },
 }));
 
@@ -57,6 +58,7 @@ export default function CeligoPageBar(props) {
     titleTag,
     className,
     escapeUnsecuredDomains,
+    contentId,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -101,6 +103,7 @@ export default function CeligoPageBar(props) {
                 title={infoTitleName || title}
                 info={infoText}
                 escapeUnsecuredDomains={escapeUnsecuredDomains}
+                contentId={contentId}
               />
             )}
           </div>

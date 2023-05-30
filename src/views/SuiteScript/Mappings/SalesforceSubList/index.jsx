@@ -2,12 +2,11 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { FilledButton, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshableTreeComponent from './RefreshableTreeComponent';
 import ModalDialog from '../../../../components/ModalDialog';
-import FilledButton from '../../../../components/Buttons/FilledButton';
-import TextButton from '../../../../components/Buttons/TextButton';
 import ActionGroup from '../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({

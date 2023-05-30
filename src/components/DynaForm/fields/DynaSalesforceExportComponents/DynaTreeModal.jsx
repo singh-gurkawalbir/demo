@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
+import { OutlinedButton, TextButton } from '@celigo/fuse-ui';
 import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import ModalDialog from '../../../ModalDialog';
 import ActionButton from '../../../ActionButton';
-import { OutlinedButton, TextButton } from '../../../Buttons';
 import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({

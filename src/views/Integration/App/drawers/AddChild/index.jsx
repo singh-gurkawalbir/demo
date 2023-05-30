@@ -7,10 +7,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Typography, Link } from '@mui/material';
+import { Typography, Link, Box } from '@mui/material';
 import differenceBy from 'lodash/differenceBy';
 import isEmpty from 'lodash/isEmpty';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
@@ -24,19 +24,9 @@ import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapper: {
-    padding: theme.spacing(2, 3),
-  },
-  installIntegrationWrapperContent: {
-    maxWidth: 750,
-  },
-  message: {
-    marginBottom: theme.spacing(2),
-  },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     marginBottom: '29px',
@@ -51,10 +41,6 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
-  },
-  installIntegrationSteps: {
-    display: 'flex',
-    flexDirection: 'column',
   },
   noIntegrationMsg: {
     padding: theme.spacing(3),
@@ -289,14 +275,18 @@ export default function IntegrationAppAddNewChild() {
           )}
         </div>
       </CeligoPageBar>
-      <div className={classes.installIntegrationWrapper}>
-        <div className={classes.installIntegrationWrapperContent}>
+      <Box sx={{ padding: theme => theme.spacing(2, 3) }}>
+        <Box sx={{ maxWidth: 750 }}>
 
-          <Typography className={classes.message}>
+          <Typography sx={{ marginBottom: theme => theme.spacing(2) }}>
             {`Complete the below steps to add new ${integration?.settings?.storeLabel || 'child'}.`}
           </Typography>
 
-          <div className={classes.installIntegrationSteps}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
             {addNewChildSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
@@ -305,8 +295,8 @@ export default function IntegrationAppAddNewChild() {
                 step={step}
               />
             ))}
-          </div>
-        </div>
+          </Box>
+        </Box>
         <FormStepDrawer
           integrationId={integrationId}
           formCloseHandler={formCloseHandler}
@@ -316,7 +306,7 @@ export default function IntegrationAppAddNewChild() {
           onSubmitComplete={handleSubmitComplete}
           mode="child"
         />
-      </div>
+      </Box>
     </LoadResources>
   );
 }

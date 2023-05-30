@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {useRouteMatch, useHistory} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@mui/styles';
+import { Box } from '@mui/material';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import JobDashboard from '../../../../../components/JobDashboard';
@@ -11,17 +11,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import LoadResources from '../../../../../components/LoadResources';
 import { message } from '../../../../../utils/messageStore';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
-}));
-
 export default function DashboardPanel({ integrationId, childId }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
@@ -55,13 +45,19 @@ export default function DashboardPanel({ integrationId, childId }) {
   }
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        overflow: 'auto',
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+      }}>
       <LoadResources required integrationId={integrationId} resources="flows">
         {!isUserInErrMgtTwoDotZero ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} /> : ''}
         {isUserInErrMgtTwoDotZero
           ? <IntegrationDashboard integrationId={integrationId} childId={childId} />
           : <JobDashboard integrationId={integrationId} />}
       </LoadResources>
-    </div>
+    </Box>
   );
 }

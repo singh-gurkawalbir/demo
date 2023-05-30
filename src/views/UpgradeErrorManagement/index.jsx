@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Paper, Typography } from '@mui/material';
+import { FilledButton, TextButton } from '@celigo/fuse-ui';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -11,8 +12,6 @@ import useConfirmDialog from '../../components/ConfirmDialog';
 import { ERROR_MANAGEMENT_DOC_URL } from '../../constants';
 import LoadResources from '../../components/LoadResources';
 import ActionGroup from '../../components/ActionGroup';
-import TextButton from '../../components/Buttons/TextButton';
-import FilledButton from '../../components/Buttons/FilledButton';
 import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({

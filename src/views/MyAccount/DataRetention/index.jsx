@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import PanelHeader from '../../../components/PanelHeader';
 import NotificationToaster from '../../../components/NotificationToaster';
 import messageStore, {message} from '../../../utils/messageStore';
 import RawHtml from '../../../components/RawHtml';
-import TextButton from '../../../components/Buttons/TextButton';
 import ButtonWithTooltip from '../../../components/Buttons/ButtonWithTooltip';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import actions from '../../../actions';
@@ -26,10 +25,6 @@ const useStyles = makeStyles(theme => ({
   },
   upgradeLicenseNotification: {
     marginBottom: theme.spacing(2),
-  },
-  requestUpgradeButton: {
-    padding: 0,
-    marginLeft: theme.spacing(0.5),
   },
   requestUpgradeTooltip: {
     lineHeight: 1,
@@ -111,7 +106,10 @@ export default function DataRetention() {
                 data-test="dataRetentionRequestUpgrade"
                 onClick={onRequestUpgradeClick}
                 disabled={dataRetentionLicenseUpgradeRequested}
-                className={classes.requestUpgradeButton}>
+                sx={{
+                  padding: 0,
+                  ml: 0.5,
+                }}>
                 {dataRetentionLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </TextButton>
             </ButtonWithTooltip>

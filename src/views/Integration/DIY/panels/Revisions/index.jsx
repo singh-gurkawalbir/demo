@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useRouteMatch } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, TextButton } from '@celigo/fuse-ui';
 import { generateId } from '../../../../../utils/string';
-import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getRevisionFilterKey } from '../../../../../utils/revisions';
@@ -29,17 +28,8 @@ import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions
 import infoText from '../infoText';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    overflowX: 'auto',
-    paddingBottom: theme.spacing(2),
-  },
-  noRevisions: {
-    padding: theme.spacing(3),
-  },
+const useStyles = makeStyles(({
+
 }));
 
 function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
@@ -69,7 +59,6 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
 }
 
 const RevisionsList = ({ integrationId }) => {
-  const classes = useStyles();
   const filteredRevisions = useSelector(state => selectors.getCurrPageFilteredRevisions(state, integrationId));
   const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
@@ -83,14 +72,14 @@ const RevisionsList = ({ integrationId }) => {
   const NoRevisionsInfo = () => {
     if (hasNoRevisions) {
       return (
-        <Typography variant="body2" className={classes.noRevisions}>
+        <Typography variant="body2" sx={{ padding: theme => theme.spacing(3) }}>
           You don&apos;t have any revisions
         </Typography>
       );
     }
     if (!filteredRevisions.length) {
       return (
-        <Typography variant="body2" className={classes.noRevisions}>
+        <Typography variant="body2" sx={{ padding: theme => theme.spacing(3) }}>
           Your selection didn&apos;t return any matching results. Try expanding your filter criteria.
         </Typography>
       );
@@ -157,8 +146,15 @@ export default function Revisions({ integrationId }) {
   });
 
   return (
-    <div className={classes.root}>
-      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        overflowX: 'auto',
+        paddingBottom: theme => theme.spacing(2),
+      }}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions} contentId="revisions">
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton
@@ -186,6 +182,6 @@ export default function Revisions({ integrationId }) {
           hasMonitorLevelAccess={hasMonitorLevelAccess}
        />
       </LoadResources>
-    </div>
+    </Box>
   );
 }

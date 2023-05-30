@@ -4,6 +4,7 @@ import { Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { addDays, startOfDay } from 'date-fns';
 import { useRouteMatch } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -17,7 +18,6 @@ import { FILTER_KEYS_AD,
   DEFAULT_RANGE,
   ROWS_PER_PAGE_OPTIONS} from '../../../../utils/accountDashboard';
 import { addDataRetentionPeriods, getSelectedRange } from '../../../../utils/flowMetrics';
-import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -185,7 +185,7 @@ export default function Filters({filterKey}) {
             <Typography variant="body2"> Completed date range:</Typography>
             <DateRangeSelector
               clearable
-              placement="right"
+              placement="bottom-start"
               clearValue={DEFAULT_RANGE}
               onSave={handleDateFilter}
               showCustomRangeValue

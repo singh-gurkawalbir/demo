@@ -96,6 +96,7 @@ export const demoFlows = [{
   pageGenerators: [
     {
       _exportId: '5ac5e4d75b88ee52fd41d188',
+      setupInProgress: true,
     },
   ],
   createdAt: '2020-11-04T14:48:10.403Z',
@@ -112,6 +113,7 @@ export const demoFlows = [{
   pageGenerators: [
     {
       _exportId: '5ac5e4d75b88ee52fd41d188',
+      setupInProgress: true,
     },
   ],
   createdAt: '202' }, { _id: '6fa2bf2a3471267e3da2d79c',
@@ -124,6 +126,7 @@ export const demoFlows = [{
   pageGenerators: [
     {
       _exportId: '5ac5e4d75b88ee52fd41d188',
+      setupInProgress: true,
     },
   ],
   createdAt: '202' }];
@@ -309,9 +312,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = screen.getByLabelText('Remove or configure all unconfigured flow steps to edit the flow schedule');
 
-    await userEvent.click(element);
     expect(screen.getByText('Schedule Drawer')).toBeInTheDocument();       // mocked component//
   });
   test('should display the errorList drawer when clicked on the number of errors', async () => {

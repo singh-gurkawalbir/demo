@@ -62,7 +62,7 @@ export default {
   preSave: (formValues, resource, options) => {
     let newValues = { ...formValues };
     const applications = applicationsList();
-    const app = applications.find(a => a.id === resource?.application) || {};
+    const app = applications.find(a => (a.id === resource?.application || a.name?.toLowerCase().replace(/\.|\s/g, '') === resource?.application)) || {};
 
     if (newValues['/oauth2/scheme'] === 'Custom') {
       newValues['/oauth2/scheme'] = newValues['/oauth2/customAuthScheme'];

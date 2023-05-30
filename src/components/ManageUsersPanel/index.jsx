@@ -2,12 +2,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
-import { TextButton } from '../Buttons';
 import infoText from '../Help/infoText';
 
 const useStyles = makeStyles(theme => ({
@@ -35,7 +35,7 @@ export default function ManageUsersPanel({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Users" infoText={infoText.Users}>
+      <PanelHeader title="Users" infoText={infoText.Users} contentId="manageUsers">
         {isAccountOwner && (
           <TextButton
             onClick={handleInvite}

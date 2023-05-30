@@ -3,20 +3,17 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography} from '@mui/material';
+import { FilledButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import getRoutePath from '../../../../utils/routePaths';
 import { message } from '../../../../utils/messageStore';
-import FilledButton from '../../../Buttons/FilledButton';
 
 const emptyObject = {};
 
 const useStyles = makeStyles(theme => ({
-  installButton: {
-    marginTop: theme.spacing(2),
-  },
   preview: {
     marginTop: theme.spacing(2),
     overflowY: 'auto',
@@ -89,7 +86,7 @@ export default function IntegrationPreview() {
       </div>
 
       <FilledButton
-        className={classes.installButton}
+        sx={{mt: 2}}
         onClick={handleInstallIntegration}>
         Install integration
       </FilledButton>

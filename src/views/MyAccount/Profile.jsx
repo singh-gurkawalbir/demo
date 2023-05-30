@@ -12,10 +12,11 @@ import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
-import { OutlinedButton } from '../../components/Buttons';
 import infoText from '../../components/Help/infoText';
 import { isProduction } from '../../forms/formFactory/utils';
 import { isGoogleSignInAllowed } from '../../utils/resource';
+import { useFeatureVisibility } from '../../components/FeatureFlag';
+import { GoogleButton } from '../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -52,9 +53,6 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(0, 2),
     },
   },
-  googleBtn: {
-    width: 'unset',
-  },
 }));
 
 const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
@@ -65,6 +63,173 @@ const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
   { value: 'YYYY/MM/DD', label: '1900/12/31' },
   { value: 'YYYY-MM-DD', label: '1900-12-31' }];
+
+const getFieldMeta = props => {
+  const {enabledFeatures, preferences, dateFormatList, dateTimeZonesList, colorThemeList, timeFormatList, isUserAllowedOnlySSOSignIn} = props;
+
+  return {fieldMap: {
+    name: {
+      id: 'name',
+      name: 'name',
+      type: 'text',
+      label: 'Name',
+      required: true,
+      helpKey: 'myaccount.name',
+      noApi: true,
+      defaultValue: preferences && preferences.name,
+      isLoggable: false,
+    },
+    email: {
+      id: 'email',
+      name: 'email',
+      type: 'useremail',
+      label: 'Email',
+      helpKey: 'myaccount.email',
+      noApi: true,
+      readOnly: isUserAllowedOnlySSOSignIn,
+      value: preferences && preferences.email,
+      isLoggable: false,
+    },
+    password: {
+      id: 'password',
+      name: 'password',
+      label: 'Password',
+      helpKey: 'myaccount.password',
+      noApi: true,
+      type: 'userpassword',
+      visible: !isUserAllowedOnlySSOSignIn,
+      isLoggable: false,
+    },
+    company: {
+      id: 'company',
+      name: 'company',
+      type: 'text',
+      label: 'Company',
+      helpKey: 'myaccount.company',
+      noApi: true,
+      defaultValue: preferences && preferences.company,
+      isLoggable: false,
+    },
+    phone: {
+      id: 'phone',
+      name: 'phone',
+      type: 'text',
+      label: 'Phone',
+      helpKey: 'myaccount.phone',
+      noApi: true,
+      defaultValue: preferences && preferences.phone,
+      isLoggable: false,
+    },
+    role: {
+      id: 'role',
+      name: 'role',
+      type: 'text',
+      helpKey: 'myaccount.role',
+      noApi: true,
+      label: 'Role',
+      defaultValue: preferences && preferences.role,
+      isLoggable: false,
+    },
+    timezone: {
+      id: 'timezone',
+      name: 'timezone',
+      type: 'select',
+      label: 'Time zone',
+      required: true,
+      helpKey: 'myaccount.timezone',
+      noApi: true,
+      defaultValue: preferences && preferences.timezone,
+      options: dateTimeZonesList,
+      isLoggable: false,
+    },
+    dateFormat: {
+      id: 'dateFormat',
+      name: 'dateFormat',
+      type: 'select',
+      required: true,
+      helpKey: 'myaccount.dateFormat',
+      noApi: true,
+      label: 'Date format',
+      defaultValue: preferences && preferences.dateFormat,
+      options: dateFormatList,
+      isLoggable: true,
+    },
+    timeFormat: {
+      id: 'timeFormat',
+      name: 'timeFormat',
+      type: 'select',
+      helpKey: 'myaccount.timeFormat',
+      noApi: true,
+      required: true,
+      label: 'Time format',
+      defaultValue: preferences && preferences.timeFormat,
+      options: timeFormatList,
+      isLoggable: true,
+    },
+    showRelativeDateTime: {
+      id: 'showRelativeDateTime',
+      name: 'showRelativeDateTime',
+      type: 'checkbox',
+      helpKey: 'myaccount.showRelativeDateTime',
+      noApi: true,
+      label: 'Show timestamps as relative',
+      defaultValue: preferences?.showRelativeDateTime,
+      isLoggable: true,
+    },
+    developer: {
+      id: 'developer',
+      name: 'developer',
+      type: 'checkbox',
+      helpKey: 'myaccount.developer',
+      noApi: true,
+      label: 'Developer mode',
+      defaultValue: preferences && preferences.developer,
+      // is this loggable
+      isLoggable: true,
+    },
+    showIconView: {
+      id: 'showIconView',
+      name: 'showIconView',
+      type: 'checkbox',
+      helpKey: 'myaccount.showIconView',
+      noApi: true,
+      label: 'Enable flowbuilder iconic view',
+      defaultValue: preferences && preferences.showIconView,
+      isLoggable: true,
+      visible: enabledFeatures.includes('flowbuilderIconView'),
+    },
+    colorTheme: {
+      id: 'colorTheme',
+      name: 'colorTheme',
+      helpKey: 'myaccount.colorTheme',
+      type: 'select',
+      label: 'Color theme',
+      required: true,
+      options: colorThemeList,
+      defaultValue: preferences && (preferences.colorTheme || 'light'),
+      labelSubText: 'For internal testing only',
+      visible: !isProduction(),
+    },
+  },
+  layout: {
+    fields: [
+      'name',
+      'email',
+      'password',
+      'company',
+      'role',
+      'phone',
+      'timezone',
+      'dateFormat',
+      'timeFormat',
+      'showRelativeDateTime',
+      'developer',
+      'colorTheme',
+      'showIconView',
+    ],
+  },
+  };
+};
 
 export default function ProfilePanel() {
   const classes = useStyles();
@@ -143,10 +308,11 @@ export default function ProfilePanel() {
   );
 
   const dispatch = useDispatch();
+  const enabledFeatures = useFeatureVisibility();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, darkTheme: undefined };
+    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, helpContent } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, showIconView, helpContent, darkTheme: undefined };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -186,170 +352,10 @@ export default function ProfilePanel() {
     }
   );
 
-  const fieldMeta = useMemo(() => ({
-    fieldMap: {
-      name: {
-        id: 'name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        required: true,
-        helpKey: 'myaccount.name',
-        noApi: true,
-        defaultValue: preferences && preferences.name,
-        isLoggable: false,
-      },
-      email: {
-        id: 'email',
-        name: 'email',
-        type: 'useremail',
-        label: 'Email',
-        helpKey: 'myaccount.email',
-        noApi: true,
-        readOnly: isUserAllowedOnlySSOSignIn,
-        value: preferences && preferences.email,
-        isLoggable: false,
-      },
-      password: {
-        id: 'password',
-        name: 'password',
-        label: 'Password',
-        helpKey: 'myaccount.password',
-        noApi: true,
-        type: 'userpassword',
-        visible: !isUserAllowedOnlySSOSignIn,
-        isLoggable: false,
-      },
-      company: {
-        id: 'company',
-        name: 'company',
-        type: 'text',
-        label: 'Company',
-        helpKey: 'myaccount.company',
-        noApi: true,
-        defaultValue: preferences && preferences.company,
-        isLoggable: false,
-      },
-      phone: {
-        id: 'phone',
-        name: 'phone',
-        type: 'text',
-        label: 'Phone',
-        helpKey: 'myaccount.phone',
-        noApi: true,
-        defaultValue: preferences && preferences.phone,
-        isLoggable: false,
-      },
-      role: {
-        id: 'role',
-        name: 'role',
-        type: 'text',
-        helpKey: 'myaccount.role',
-        noApi: true,
-        label: 'Role',
-        defaultValue: preferences && preferences.role,
-        isLoggable: false,
-      },
-      timezone: {
-        id: 'timezone',
-        name: 'timezone',
-        type: 'select',
-        label: 'Time zone',
-        required: true,
-        helpKey: 'myaccount.timezone',
-        noApi: true,
-        defaultValue: preferences && preferences.timezone,
-        options: dateTimeZonesList,
-        isLoggable: false,
-      },
-      dateFormat: {
-        id: 'dateFormat',
-        name: 'dateFormat',
-        type: 'select',
-        required: true,
-        helpKey: 'myaccount.dateFormat',
-        noApi: true,
-        label: 'Date format',
-        defaultValue: preferences && preferences.dateFormat,
-        options: dateFormatList,
-        isLoggable: true,
-      },
-      timeFormat: {
-        id: 'timeFormat',
-        name: 'timeFormat',
-        type: 'select',
-        helpKey: 'myaccount.timeFormat',
-        noApi: true,
-        required: true,
-        label: 'Time format',
-        defaultValue: preferences && preferences.timeFormat,
-        options: timeFormatList,
-        isLoggable: true,
-      },
-      showRelativeDateTime: {
-        id: 'showRelativeDateTime',
-        name: 'showRelativeDateTime',
-        type: 'checkbox',
-        helpKey: 'myaccount.showRelativeDateTime',
-        noApi: true,
-        label: 'Show timestamps as relative',
-        defaultValue: preferences?.showRelativeDateTime,
-        isLoggable: true,
-      },
-      developer: {
-        id: 'developer',
-        name: 'developer',
-        type: 'checkbox',
-        helpKey: 'myaccount.developer',
-        noApi: true,
-        label: 'Developer mode',
-        defaultValue: preferences && preferences.developer,
-        // is this loggable
-        isLoggable: true,
-      },
-      showIconView: {
-        id: 'showIconView',
-        name: 'showIconView',
-        type: 'checkbox',
-        helpKey: 'myaccount.showIconView',
-        noApi: true,
-        label: 'Show flowbuilder icon view',
-        defaultValue: preferences && preferences.showIconView,
-        // is this loggable
-        isLoggable: true,
-        visible: (!isProduction() && process.env.ICON_VIEW_FLOWBUILDER === 'true'),
-      },
-      colorTheme: {
-        id: 'colorTheme',
-        name: 'colorTheme',
-        helpKey: 'myaccount.colorTheme',
-        type: 'select',
-        label: 'Color theme',
-        required: true,
-        options: colorThemeList,
-        defaultValue: preferences && (preferences.colorTheme || 'light'),
-        labelSubText: 'For internal testing only',
-        visible: !isProduction(),
-      },
-    },
-    layout: {
-      fields: [
-        'name',
-        'email',
-        'password',
-        'company',
-        'role',
-        'phone',
-        'timezone',
-        'dateFormat',
-        'timeFormat',
-        'showRelativeDateTime',
-        'developer',
-        'colorTheme',
-        'showIconView',
-      ],
-    },
-  }), [preferences, isUserAllowedOnlySSOSignIn, dateTimeZonesList, dateFormatList, timeFormatList, colorThemeList]);
+  const fieldMetaProps = {enabledFeatures, preferences, dateFormatList, dateTimeZonesList, colorThemeList, timeFormatList, isUserAllowedOnlySSOSignIn};
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fieldMeta = useMemo(() => getFieldMeta(fieldMetaProps), [preferences, isUserAllowedOnlySSOSignIn, dateTimeZonesList, dateFormatList, timeFormatList, colorThemeList]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -364,7 +370,7 @@ export default function ProfilePanel() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} contentId="profile" />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit
@@ -386,14 +392,13 @@ export default function ProfilePanel() {
               !preferences.auth_type_google.id) && (
               <InputLabel>
                 <span className={classes.label}>Link to:</span>
-                <OutlinedButton
+                <GoogleButton
                   data-test="linkWithGoogle"
                   color="secondary"
-                  googleBtn
-                  className={classes.googleBtn}
+                  sx={{width: 'unset'}}
                   onClick={handleLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
-                </OutlinedButton>
+                </GoogleButton>
               </InputLabel>
           )}
           {preferences &&
@@ -401,14 +406,13 @@ export default function ProfilePanel() {
             preferences.auth_type_google.id && (
               <InputLabel>
                 <span className={classes.label}>Unlink from:</span>
-                <OutlinedButton
+                <GoogleButton
                   data-test="unlinkWithGoogle"
                   color="secondary"
-                  googleBtn
-                  className={classes.googleBtn}
+                  sx={{width: 'unset'}}
                   onClick={handleUnLinkWithGoogle}>
                   <span className={classes.btnLabel}>Google</span>
-                </OutlinedButton>
+                </GoogleButton>
               </InputLabel>
           )}
         </div>

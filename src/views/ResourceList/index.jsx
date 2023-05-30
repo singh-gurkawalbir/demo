@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
+import { TextButton } from '@celigo/fuse-ui';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
@@ -22,7 +23,6 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
-import { TextButton } from '../../components/Buttons';
 import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
@@ -147,7 +147,7 @@ export default function ResourceList(props) {
 
       <CeligoPageBar
         title={resourceType === 'iClients' ? resourceType : `${resourceName}s`}
-        infoText={infoText[resourceType]}>
+        infoText={infoText[resourceType]} contentId={resourceType}>
         <ActionGroup>
           <KeywordSearch filterKey={resourceType} />
           <TextButton

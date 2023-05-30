@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import TablePagination from '@mui/material/TablePagination';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -11,7 +11,6 @@ import JobErrorMessage from './JobErrorMessage';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
-import OutlinedButton from '../../Buttons/OutlinedButton';
 import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({

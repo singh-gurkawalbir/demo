@@ -8,7 +8,7 @@ import {
   FormLabel,
 } from '@mui/material';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, OutlinedButton } from '@celigo/fuse-ui';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
 import actions from '../../../../../actions';
@@ -16,7 +16,6 @@ import { selectors } from '../../../../../reducers';
 import { hooksLabelMap, getScriptHookStub } from '../../../../../utils/hooks';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import CeligoSelect from '../../../../CeligoSelect';
-import OutlinedButton from '../../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -48,10 +47,6 @@ const useStyles = makeStyles(theme => ({
   jsPanelFormControl: {
     width: '100%',
     paddingRight: theme.spacing(0.5),
-  },
-  btnAction: {
-    marginTop: theme.spacing(3),
-    minHeight: 38,
   },
 }));
 const scriptFilterConfig = { type: 'scripts' };
@@ -157,7 +152,7 @@ export default function JavaScriptPanel({ editorId }) {
     <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
-          <FormControl variant="standard" className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl} error={!scriptId}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
@@ -186,7 +181,7 @@ export default function JavaScriptPanel({ editorId }) {
               {[defaultItem, ...scriptOptions]}
             </CeligoSelect>
           </FormControl>
-          <FormControl variant="standard" className={classes.jsPanelFormControl}>
+          <FormControl variant="standard" className={classes.jsPanelFormControl} error={!entryFunction}>
             <FormLabel htmlFor="entryFunction">
               Function
             </FormLabel>
@@ -204,7 +199,10 @@ export default function JavaScriptPanel({ editorId }) {
             color="secondary"
             onClick={handleInsertStubClick}
             disabled={disabled}
-            className={classes.btnAction}
+            sx={{
+              mt: 3,
+              minHeight: 38,
+            }}
             data-test={insertStubKey}>
             {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
           </OutlinedButton>

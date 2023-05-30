@@ -696,6 +696,12 @@ describe('isSetupInProgress', () => {
   const flow9 = {
     pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
   };
+  const flow10 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: []}]},
+      {branches: [{name: 'branch1', pageProcessors: []}]}],
+  };
 
   test('should return false when flow is empty', () => {
     expect(isSetupInProgress()).toBe(false);
@@ -711,6 +717,7 @@ describe('isSetupInProgress', () => {
     expect(isSetupInProgress(flow7)).toBe(false);
     expect(isSetupInProgress(flow8)).toBe(true);
     expect(isSetupInProgress(flow9)).toBe(true);
+    expect(isSetupInProgress(flow10)).toBe(true);
   });
 });
 

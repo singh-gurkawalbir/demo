@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import LoadResources from '../../../components/LoadResources';
 import ResourceTable from '../../../components/ResourceTable';
 import Invite from './Invite';
 import AddIcon from '../../../components/icons/AddIcon';
 import PanelHeader from '../../../components/PanelHeader';
-import { TextButton } from '../../../components/Buttons';
 import infoText from '../../../components/Help/infoText';
 import { message } from '../../../utils/messageStore';
 

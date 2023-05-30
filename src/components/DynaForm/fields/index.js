@@ -5,6 +5,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectAccessTokenResource from './DynaSelectAccessTokenResource';
 import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
@@ -176,6 +177,7 @@ import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 import DynaHashAlgorithm from './DynaHashAlgorithm';
 import DynaMultiFieldExpression from './DynaMultiFieldExpression';
 import DynaCheckboxExistingResource from './DynaCheckboxExistingResource';
+import DynaHttpConnectorName from './DynaHttpConnectorName';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -194,6 +196,7 @@ export default {
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
   text: DynaText,
+  httpConnectorName: DynaHttpConnectorName,
   textlist: DynaTextList,
   editor: DynaEditor,
   textarea: DynaText,
@@ -207,6 +210,7 @@ export default {
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
+  selectaccesstokenresource: DynaSelectAccessTokenResource,
   selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
   selectmultiapplication: DynaSelectMultiApplication,

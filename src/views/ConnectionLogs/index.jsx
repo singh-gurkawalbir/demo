@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import RunFlowButton from '../../components/RunFlowButton';
@@ -11,7 +12,6 @@ import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
 import AutoScrollEditorTerminal from '../../components/AutoScrollEditorTerminal';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { TextButton } from '../../components/Buttons';
 
 const overrides = { useWorker: false };
 

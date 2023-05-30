@@ -1,28 +1,16 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import makeStyles from '@mui/styles/makeStyles';
+import { TextButton } from '@celigo/fuse-ui';
+import { Box } from '@mui/system';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
 import useResourceSettingsContext from '../../hooks/useResourceSettingsContext';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
-import TextButton from '../Buttons/TextButton';
 
-const useStyles = makeStyles({
-  button: {
-    padding: 0,
-
-  },
-  launchFormBuilderBtnWrapper: {
-    display: 'flex',
-    minWidth: 165,
-    cursor: 'pointer',
-  },
-});
 export const getSettingsEditorId = (resourceId, sectionId) => `settings-${resourceId}-${sectionId || 'general'}`;
 export default function FormBuilderButton({resourceId, resourceType, integrationId, sectionId}) {
-  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -57,10 +45,14 @@ export default function FormBuilderButton({resourceId, resourceType, integration
   if (!allowFormEdit) return null;
 
   return (
-    <div className={classes.launchFormBuilderBtnWrapper}>
+    <Box
+      display="flex"
+      alignItems="center"
+      sx={{
+        marginRight: theme => theme.spacing(2),
+      }}>
       <TextButton
         color="secondary"
-        className={classes.button}
         data-test="form-editor-action"
         variant="text"
         onClick={toggleEditMode}>
@@ -72,6 +64,6 @@ export default function FormBuilderButton({resourceId, resourceType, integration
         label="Settings form builder"
         noApi
       />
-    </div>
+    </Box>
   );
 }

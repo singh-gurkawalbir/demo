@@ -3,21 +3,11 @@ import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@mui/styles';
 import Select from '@mui/material/Select';
 import clsx from 'clsx';
+import { OutlinedButton } from '@celigo/fuse-ui';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
-import OutlinedButton from '../Buttons/OutlinedButton';
 import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
-  doneButton: {
-    width: '100%',
-    minHeight: 42,
-    margin: 0,
-    padding: 0,
-    borderRadius: 0,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-  },
   select: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -31,6 +21,16 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     justifyContent: 'flex-end',
     borderRadius: 2,
+    '&.Mui-disabled': {
+      borderColor: theme.palette.secondary.lightest,
+      backgroundColor: theme.palette.background.paper2,
+      '&:hover': {
+        borderColor: theme.palette.secondary.lightest,
+      },
+      '& .MuiSvgIcon-root': {
+        display: 'none',
+      },
+    },
     '& > .MuiInput-formControl': {
       height: 38,
       padding: '0px 15px',
@@ -38,12 +38,6 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
       '&:hover': {
         borderColor: theme.palette.primary.main,
-      },
-      '&.Mui-disabled': {
-        borderColor: theme.palette.secondary.lightest,
-        '&:hover': {
-          borderColor: theme.palette.secondary.lightest,
-        },
       },
     },
     '& >.MuiSelect-selectMenu': {
@@ -60,21 +54,25 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const DoneButton = ({onClose}) => {
-  const classes = useStyles();
-
-  return (
-
-    <OutlinedButton
-      id="select-close"
-      color="secondary"
-      data-test="closeSelect"
-      onClick={onClose}
-      className={classes.doneButton}>
-      Done
-    </OutlinedButton>
-  );
-};
+export const DoneButton = ({onClose}) => (
+  <OutlinedButton
+    id="select-close"
+    color="secondary"
+    data-test="closeSelect"
+    onClick={onClose}
+    sx={{
+      width: '100%',
+      minHeight: 42,
+      margin: 0,
+      padding: 0,
+      borderRadius: 0,
+      '&:hover': {
+        borderColor: 'primary.main',
+      },
+    }}>
+    Done
+  </OutlinedButton>
+);
 const MenuComponent = React.forwardRef((props, ref) => {
   const {children, closeSelect, ...others} = props;
 
@@ -107,27 +105,6 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
   */
   const showCloseOption = !props.open && props.multiple;
 
-  const menuProps = {
-    // TODO: the menu options is a bit jumpy when selecting options...setting the variant to menu resolves it for now
-    //  this is an open issue in material ui ...lets keep tracking it https://github.com/mui-org/material-ui/issues/19245
-    variant: 'menu',
-    // PaperProps: {
-    //   style: {
-    //     maxHeight: maxHeightOfSelect,
-    //     overflow: 'hidden',
-    //     display: 'flex',
-    //     flexDirection: 'column',
-    //   },
-    //   closeSelect: showCloseOption && closeSelect,
-    //   component: MenuComponent,
-    // },
-    getContentAnchorEl: null,
-    anchorOrigin: {
-      vertical: 'bottom',
-      horizontal: 'left',
-    },
-  };
-
   return (
     <Select
       variant="standard"
@@ -138,7 +115,6 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, i
       onOpen={openSelect}
       onClose={closeSelect}
       classes={{selectMenu: classes.selectMenu}}
-      MenuProps={menuProps}
       inputProps={{
         MenuProps: {
           MenuListProps: {

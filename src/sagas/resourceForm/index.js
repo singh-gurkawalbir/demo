@@ -74,6 +74,8 @@ export function* createFormValuesPatchSet({
   const connectorMetaData = yield select(
     selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
 
+  const isHttpConnectorParentFormView = yield select(selectors.isHttpConnectorParentFormView, resourceId);
+
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
   if (_httpConnectorId) {
@@ -87,6 +89,7 @@ export function* createFormValuesPatchSet({
     isNew: formState.isNew,
     assistantData,
     accountOwner,
+    isHttpConnectorParentFormView,
   });
 
   if (typeof preSave === 'function') {
@@ -831,6 +834,7 @@ export function* initFormValues({
     'flows',
     flowId
   ))?.merged || emptyObject;
+  const isHttpConnectorParentFormView = yield select(selectors.isHttpConnectorParentFormView, resourceId);
 
   if (isNewId(resourceId)) {
     resource._id = resourceId;
@@ -922,6 +926,7 @@ export function* initFormValues({
       accountOwner,
       parentConnectionId,
       applicationFieldState,
+      isHttpConnectorParentFormView,
     });
 
     const form = defaultFormAssets.fieldMeta;
@@ -968,8 +973,71 @@ export function* initFormValues({
   }
 }
 
+export function* reInitializeForm({ formKey, additionalPatches = {} }) {
+  const formContext = yield select(selectors.formState, formKey) || {};
+
+  const { flowId, resourceId, resourceType } = formContext.parentContext;
+
+  if (!formKey || !resourceId || !resourceType) return;
+
+  const stagedResource = (yield select(selectors.resourceData, resourceType, resourceId))?.merged || {};
+
+  const resourceFormState = yield select(selectors.resourceFormState, resourceType, resourceId) || {};
+
+  const connection = yield select(selectors.resource, 'connections', stagedResource._connectionId) || {};
+
+  const connectorMetaData = yield select(selectors.httpConnectorMetaData, connection.http?._httpConnectorId, connection.http?._httpConnectorVersionId, connection.http?._httpConnectorApiId);
+
+  const isCurrentParentFormView = yield select(selectors.isHttpConnectorParentFormView, resourceId);
+
+  const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+    acc[`/${curr}`] = stagedResource[curr];
+
+    return acc;
+  }, {});
+
+  // use this function to get the corresponding preSave function for this current form
+  const { preSave } = getResourceFormAssets({
+    resourceType,
+    resource: stagedResource,
+    isNew: false,
+    connection,
+    assistantData: connectorMetaData,
+    // We need the form view before switched as we need preSave of previous form view. hence negation
+    isHttpConnectorParentFormView: !isCurrentParentFormView,
+  });
+  const finalValues = preSave(formContext.value, stagedRes, { connection });
+
+  const allPatches = sanitizePatchSet({
+    patchSet: defaultPatchSetConverter({ ...stagedRes, ...finalValues, ...additionalPatches }),
+    fieldMeta: resourceFormState.fieldMeta,
+    resource: {},
+  });
+
+  yield put(actions.resource.clearStaged(resourceId));
+  yield put(
+    actions.resource.patchStaged(resourceId, allPatches)
+  );
+
+  const allTouchedFields = Object.values(formContext.fields)
+    .filter(field => !!field.touched)
+    .map(field => ({ id: field.id, value: field.value }));
+
+  yield put(
+    actions.resourceForm.init(
+      resourceType,
+      resourceId,
+      false,
+      false,
+      flowId,
+      allTouchedFields
+    )
+  );
+}
+
 export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
+  takeEvery(actionTypes.RESOURCE_FORM.RE_INITIALIZE, reInitializeForm),
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE,

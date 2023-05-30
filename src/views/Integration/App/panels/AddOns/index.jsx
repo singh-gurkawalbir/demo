@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardActions, Typography } from '@mui/material';
+import { Card, CardActions, Typography, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
+import {FilledButton} from '@celigo/fuse-ui';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
 import messageStore, {message} from '../../../../../utils/messageStore';
@@ -11,52 +12,11 @@ import actions from '../../../../../actions';
 import {isHTML} from '../../../../../utils/string';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import AddonInstallerButton from '../Admin/sections/Subscription/AddonInstallerButton';
-import FilledButton from '../../../../../components/Buttons/FilledButton';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import {gridViewStyles} from '../../../../Home/View/TileView/HomeCard';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
-  card: {
-    height: '318px',
-    border: '1px solid',
-    position: 'relative',
-    borderColor: theme.palette.secondary.lightest,
-    margin: '0 auto',
-    borderRadius: '4px',
-    padding: theme.spacing(2),
-    textAlign: 'left',
-  },
-  header: {
-    marginBottom: theme.spacing(2),
-    '&:before': {
-      content: '""',
-      width: '100%',
-      height: 6,
-      background: theme.palette.primary.dark,
-      position: 'absolute',
-      top: 0,
-      left: 0,
-    },
-  },
-  description: {
-    minHeight: '160px',
-    maxHeight: '175px',
-    overflowY: 'auto',
-    paddingRight: theme.spacing(2),
-    wordBreak: 'break-word',
-  },
-  cardAction: {
-    position: 'absolute',
-    bottom: 10,
-    paddingLeft: 0,
-  },
   addOnContainer: {
     padding: theme.spacing(0, 2, 2),
   },
@@ -124,18 +84,63 @@ export default function AddOnsPanel({ integrationId, childId }) {
   };
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        overflow: 'auto',
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+      }}>
       <PanelHeader title="Add-ons" />
 
       <div className={clsx(gridViewClasses.container, classes.addOnContainer)}>
         {addOnMetadata &&
           addOnMetadata.map(data => (
-            <Card key={data.id} className={classes.card} elevation={0}>
-              <div className={classes.header}>
+            <Card
+              key={data.id}
+              elevation={0}
+              sx={{
+                height: '318px',
+                border: '1px solid',
+                position: 'relative',
+                borderColor: theme => theme.palette.secondary.lightest,
+                margin: '0 auto',
+                borderRadius: '4px',
+                padding: theme => theme.spacing(2),
+                textAlign: 'left',
+              }}>
+              <Box
+                sx={{
+                  marginBottom: theme => theme.spacing(2),
+                  '&:before': {
+                    content: '""',
+                    width: '100%',
+                    height: 6,
+                    background: theme => theme.palette.primary.dark,
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                  },
+                }}>
                 <Typography variant="h4">{data.name}</Typography>
-              </div>
-              <Typography variant="body2" className={classes.description}>{isHTML(data.description) ? <RawHtml html={data.description} /> : data.description}</Typography>
-              <CardActions className={classes.cardAction}>
+              </Box>
+              <Typography
+                variant="body2"
+                sx={{
+                  minHeight: '160px',
+                  maxHeight: '175px',
+                  overflowY: 'auto',
+                  paddingRight: theme => theme.spacing(2),
+                  wordBreak: 'break-word',
+                }}>
+                {isHTML(data.description) ? <RawHtml html={data.description} /> : data.description}
+              </Typography>
+              <CardActions
+                sx={{
+                  position: 'absolute',
+                  bottom: 10,
+                  paddingLeft: 0,
+                }}>
                 { subscribedAddOn(data)
                   ? <AddonInstallerButton size="medium" resource={subscribedAddOn(data)} />
                   : (
@@ -150,6 +155,6 @@ export default function AddOnsPanel({ integrationId, childId }) {
           ))}
       </div>
 
-    </div>
+    </Box>
   );
 }

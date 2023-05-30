@@ -8,12 +8,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { useSelector } from 'react-redux';
 import sift from 'sift';
 import { isEqual } from 'lodash';
+import { Spinner } from '@celigo/fuse-ui';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
-import Spinner from '../../Spinner';
 import LoadResources from '../../LoadResources';
 
 const emptyArray = [];

@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { capitalize, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, FilledButton, TextButton } from '@celigo/fuse-ui';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import NotificationToaster from '../../../components/NotificationToaster';
@@ -18,7 +18,6 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
-import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import infoText from '../../../components/Help/infoText';
 import messageStore, { message } from '../../../utils/messageStore';
@@ -64,13 +63,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 15,
     margin: [[12, 0]],
   },
-  subscriptionUpgradeLink: {
-    color: theme.palette.primary.main,
-    fontSize: 15,
-    lineHeight: '17px',
-    padding: 6,
-    fontWeight: 'bold',
-  },
   subscriptionNotificationToaster: {
     marginBottom: 12,
   },
@@ -85,11 +77,6 @@ const useStyles = makeStyles(theme => ({
   subscriptionBoxInnerLeft: {
     maxWidth: '100%',
     wordBreak: 'break-word',
-  },
-  subscriptionUpgradeBtn: {
-    minWidth: '140px',
-    minHeight: theme.spacing(4),
-    alignSelf: 'flex-start',
   },
   subscriptionFeaturesItems: {
     // maxWidth: '80%',
@@ -271,7 +258,13 @@ export default function Endpoint() {
             <TextButton
               data-test="upgradeSubscription"
               onClick={onRequestUpgradeClick}
-              className={classes.subscriptionUpgradeLink}
+              sx={{
+                color: 'primary.main',
+                fontSize: '15px',
+                lineHeight: '17px',
+                padding: '6px',
+                fontWeight: 'bold',
+              }}
               >
               Request upgrade today!
             </TextButton>
@@ -287,7 +280,13 @@ export default function Endpoint() {
             <TextButton
               data-test="upgradeSubscription"
               onClick={onTrialUpgradeClick}
-              className={classes.subscriptionUpgradeLink}
+              sx={{
+                color: 'primary.main',
+                fontSize: '15px',
+                lineHeight: '17px',
+                padding: '6px',
+                fontWeight: 'bold',
+              }}
               > upgrade now
             </TextButton>
             and keep them all!
@@ -296,7 +295,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} contentId="subscription" />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>
@@ -350,7 +349,11 @@ export default function Endpoint() {
               ) > -1 && (
               <FilledButton
                 onClick={onStartFreeTrialClick}
-                className={classes.subscriptionUpgradeBtn}
+                sx={{
+                  minWidth: '140px',
+                  minHeight: 4,
+                  alignSelf: 'flex-start',
+                }}
                 id="myaccout-unlimited-flows-button">
                 Start free trial
               </FilledButton>
@@ -363,7 +366,11 @@ export default function Endpoint() {
               <FilledButton
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
-                className={classes.subscriptionUpgradeBtn}
+                sx={{
+                  minWidth: '140px',
+                  minHeight: 4,
+                  alignSelf: 'flex-start',
+                }}
                 data-test={upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
                 id="myaccout-request-upgrade-buttton"
              >
@@ -376,7 +383,11 @@ export default function Endpoint() {
               <FilledButton
                 onClick={onRequestFlowsUpgradeClick}
                 disabled={upgradeRequested}
-                className={classes.subscriptionUpgradeBtn}
+                sx={{
+                  minWidth: '140px',
+                  minHeight: 4,
+                  alignSelf: 'flex-start',
+                }}
              >
                 Request more flows
               </FilledButton>

@@ -7,6 +7,7 @@ import { ArrowPopper } from '@celigo/fuse-ui';
 import HelpContent from '../HelpContent';
 import InfoIcon from '../icons/InfoIcon';
 import TooltipContent from '../TooltipContent';
+import HelpContentLinks from '../HelpContentLinks';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title, basicInfo = false }) {
+export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title, basicInfo = false, contentId }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -63,9 +64,14 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         onClick={e => { e.stopPropagation(); }}
         preventOverflow={preventOverflow}
       >
-        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}>
+        <HelpContent
+          title={title} supportFeedback={false} onClose={handleInfoClose} basicInfo={basicInfo}
+        >
           <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains} basicInfo={basicInfo}>{info}</TooltipContent>
         </HelpContent>
+        {contentId && (
+          <HelpContentLinks contentId={contentId} />
+        )}
       </ArrowPopper>
     </>
   );

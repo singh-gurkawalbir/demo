@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@mui/styles';
+import { Box } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -15,24 +16,13 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import { isTradingPartnerSupported, generateNewId } from '../../../../../utils/resource';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    overflowX: 'auto',
-  },
-}));
-
 const defaultFilter = { sort: {order: 'asc', orderBy: 'name'}};
 
 export default function ConnectionsPanel({ integrationId, childId }) {
-  const classes = useStyles();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -93,7 +83,13 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   }, [dispatch, integrationId]);
 
   return (
-    <div className={classes.root}>
+    <Box
+      sx={{
+        backgroundColor: theme => theme.palette.background.paper,
+        border: '1px solid',
+        borderColor: theme => theme.palette.secondary.lightest,
+        overflowX: 'auto',
+      }}>
       {showRegister && (
         <RegisterConnections
           integrationId={integrationId}
@@ -167,6 +163,6 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       </LoadResources>
 
       <ConfigConnectionDebugger />
-    </div>
+    </Box>
   );
 }

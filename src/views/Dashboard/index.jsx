@@ -6,17 +6,14 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 // import AddIcon from '@mui/icons-material/Add';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
-import Tabs from './Tabs';
+import DashboardTabs from './Tabs';
 import LoadResources from '../../components/LoadResources';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
 import { HOME_PAGE_PATH } from '../../constants';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-// import { TextButton } from '../../components/Buttons';
 
-// import { buildDrawerUrl} from '../../utils/rightDrawer';
-// import Drawer from './panels/Custom/CustomDrawer';
 import {
   FILTER_KEYS_AD,
   DEFAULT_RANGE,
@@ -111,40 +108,9 @@ export default function Dashboard() {
   }
 
   return (
-    <LoadResources
-      integrationId={integrationId}
-      required
-      resources={integrationId ? 'flows,tiles' : 'integrations,flows,tiles'}
-    >
-      <div>
-        {integrationId ? (
-          <PanelHeader
-            title="Dashboard"
-            infoText={infoTextDashboard}
-           />
-        ) : (
-          <CeligoPageBar title="Dashboard" infoText={infoTextDashboard}>
-            {/* <div>
-              {val === 'custom' && (
-                <TextButton
-                  component={Link}
-                  to={buildDrawerUrl({
-                    path: 'dashboard',
-                    // eslint-disable-next-line no-restricted-globals
-                    baseUrl: location.pathname,
-                  })}
-                  startIcon={<AddIcon />}
-                  onClick={handleClick}
-                >
-                  Add Widget
-                </TextButton>
-              )}
-              <Drawer integrationId={integrationId} />
-            </div> */}
-          </CeligoPageBar>
-        )}
-      </div>
-      <Tabs />
+    <LoadResources integrationId={integrationId} required resources={integrationId ? 'flows,tiles' : 'integrations,flows,tiles'}>
+      {integrationId ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} contentId="integrationDashboard" /> : <CeligoPageBar title="Dashboard" infoText={infoTextDashboard} contentId="accountDashboard" />}
+      <DashboardTabs />
       <QueuedJobsDrawer integrationId={integrationId} />
     </LoadResources>
   );

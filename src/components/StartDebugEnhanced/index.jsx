@@ -1,17 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { MenuItem, InputLabel, FormControl} from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useSelector, shallowEqual } from 'react-redux';
-import { ArrowPopper, Box } from '@celigo/fuse-ui';
+import { ArrowPopper, Box, TextButton, OutlinedButton} from '@celigo/fuse-ui';
 import { selectors } from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
 import CancelIcon from '../icons/CancelIcon';
-import {TextButton, OutlinedButton} from '../Buttons/index';
 import ActionGroup from '../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
@@ -53,14 +51,6 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '16px',
     marginTop: theme.spacing(1),
     color: theme.palette.secondary.light,
-  },
-  debugButton: {
-    marginRight: '0px !important',
-  },
-  stopDebugButton: {
-    '& > * svg': {
-      fontSize: 18,
-    },
   },
 }));
 
@@ -163,7 +153,9 @@ export default function StartDebugEnhanced({
         disabled={disabled}
         onClick={toggleClick}
         startIcon={<DebugIcon />}
-        className={classes.debugButton}
+        sx={{
+          mr: '0px !important',
+        }}
         data-test="refreshResource">
         {activeDebugUntil ? (
           <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
@@ -174,7 +166,12 @@ export default function StartDebugEnhanced({
       <TextButton
         disabled={disabled}
         startIcon={<CancelIcon />}
-        className={clsx(classes.debugButton, classes.stopDebugButton)}
+        sx={{
+          mr: '0px !important',
+          '& > * svg': {
+            fontSize: '18px',
+          },
+        }}
         onClick={handleStopDebug} >
         Stop debug
       </TextButton>

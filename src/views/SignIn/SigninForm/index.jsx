@@ -4,13 +4,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Typography } from '@mui/material';
 import { useLocation, useHistory } from 'react-router-dom';
-import { Spinner } from '@celigo/fuse-ui';
+import { Spinner, OutlinedButton } from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import SecurityIcon from '../../../components/icons/SecurityIcon';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
-import { OutlinedButton } from '../../../components/Buttons';
 import useQuery from '../../../hooks/useQuery';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
@@ -20,6 +19,7 @@ import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import getFieldMeta from './metadata';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import { message } from '../../../utils/messageStore';
+import { GoogleButton } from '../../../components/Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   errorMsg: {
@@ -28,19 +28,6 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     marginBottom: theme.spacing(2),
-  },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
   },
   or: {
     display: 'flex',
@@ -102,6 +89,7 @@ export default function SignIn({dialogOpen, className}) {
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
   const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
+  const isMFAAuthVerificationRequired = useSelector(selectors.isMFAVerificationRequired);
 
   const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
 
@@ -131,10 +119,10 @@ export default function SignIn({dialogOpen, className}) {
     reInitializeSession();
   };
   useEffect(() => {
-    if (isMFAAuthRequired) {
+    if (isMFAAuthRequired || isMFAAuthVerificationRequired) {
       history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired, location.state]);
+  }, [history, isMFAAuthRequired, isMFAAuthVerificationRequired, location.state]);
   const attemptedRoute = location.state?.attemptedRoute;
 
   const fieldMeta = useMemo(() => getFieldMeta({email: userEmail, isSessionExpired: dialogOpen}), [dialogOpen, userEmail]);
@@ -189,12 +177,12 @@ export default function SignIn({dialogOpen, className}) {
             <div className={classes.or}>
               <Typography variant="body1">or</Typography>
             </div>
-            <OutlinedButton
+            <GoogleButton
               type="submit"
               color="secondary"
-              googleBtn>
+            >
               Sign in with Google
-            </OutlinedButton>
+            </GoogleButton>
           </form>
         )}
         {dialogOpen && userHasOtherLoginOptions && (
@@ -206,7 +194,19 @@ export default function SignIn({dialogOpen, className}) {
           <form onSubmit={handleReSignInWithSSO}>
             <OutlinedButton
               type="submit"
-              className={classes.ssoBtn}
+              sx={{
+                borderRadius: '4px',
+                width: '100%',
+                backgroundSize: '2px',
+                height: 38,
+                fontSize: '16px',
+                margin: '0px 0px 2px 0px',
+                backgroundColor: 'background.paper',
+                display: 'flex',
+                justifyContent: 'space-around',
+                paddingLeft: 5,
+                paddingRight: 16,
+              }}
               startIcon={<SecurityIcon />}
               color="secondary">
               Sign in with SSO
@@ -216,12 +216,12 @@ export default function SignIn({dialogOpen, className}) {
         {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
         isGoogleSignInAllowed() && (
         <form onSubmit={handleReSignInWithGoogle}>
-          <OutlinedButton
+          <GoogleButton
             type="submit"
             color="secondary"
-            googleBtn>
+          >
             Sign in with Google
-          </OutlinedButton>
+          </GoogleButton>
         </form>
         )}
       </div>

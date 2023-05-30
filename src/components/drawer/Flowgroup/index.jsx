@@ -1,13 +1,17 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@celigo/fuse-ui';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../Right';
 import LoadResources from '../../LoadResources';
-import DrawerContent from '../Right/DrawerContent';
-import DrawerHeader from '../Right/DrawerHeader';
-import DrawerFooter from '../Right/DrawerFooter';
 import DynaForm from '../../DynaForm';
 import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
@@ -144,10 +148,12 @@ export default function FlowgroupDrawer({ integrationId }) {
       width="medium"
       path={[drawerPaths.FLOW_GROUP.ADD, drawerPaths.FLOW_GROUP.EDIT]}
     >
-      <DrawerHeader
-        title={`${isEdit ? 'Edit' : 'Create'} flow group`}
-        disableClose={disabled}
-        handleClose={setCancelTriggered} />
+      <DrawerHeader>
+        <DrawerTitle>
+          {`${isEdit ? 'Edit' : 'Create'} flow group`}
+        </DrawerTitle>
+        <DrawerCloseButton disable={disabled} onClick={setCancelTriggered} />
+      </DrawerHeader>
       <FlowgroupForm integrationId={integrationId} groupId={groupId} isEdit={isEdit} />
     </RightDrawer>
   );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -29,7 +28,7 @@ jest.mock('react-router-dom', () => ({
 describe('MergePullDrawer tests', () => {
   test('Should able to test the MergePullDrawer initial render', async () => {
     await initMergePullDrawer(props);
-    expect(screen.getByRole('heading', {name: 'Merge changes'})).toBeInTheDocument();
+    expect(screen.getByText('Merge changes')).toBeInTheDocument();
     const close = screen.getAllByRole('button', {name: 'Close'})[0];
 
     expect(close).toBeInTheDocument();

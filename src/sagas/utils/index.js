@@ -279,6 +279,7 @@ export const getImportMetadata = (connectorMeta, connectionVersion, connectionAP
                       name: pp.label,
                       in: 'path',
                       required: true,
+                      description: pp.description,
                       config: pp.config,
                       suggestions: pp.values,
                     });
@@ -448,11 +449,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
 
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = customCloneDeep(finalFieldMeta);
-  let resourceVersion = resource?.http?.unencrypted?.version;
-
-  if (!resourceVersion && resource?.http?._httpConnectorVersionId) {
-    resourceVersion = connector.versions?.find(ver => ver._id === resource.http._httpConnectorVersionId)?.name;
-  }
 
   if (!isGenericHTTP) {
     Object.keys(tempFiledMeta.fieldMap).map(key => {
@@ -485,12 +481,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
       } else if (key === 'http.ping.relativeURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue || apiChange) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
-        } else if (connector.versioning?.location === 'uri' && connector?.baseURIs?.[0]?.includes('/:_version')) {
-          if (resourceVersion) {
-            tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
-          } else if (connector.versions?.[0]?.name) {
-            tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${connector.versions?.[0]?.name}`, '');
-          }
         }
         if (preConfiguredField?.values?.length > 1) {
           const options = [
@@ -505,6 +495,29 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'select', options};
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
+        }
+      } else if (key === 'http._httpConnectorVersionId') {
+        const versionOptions = [
+          {
+            items: connector.versions?.map(version => ({
+              label: AUTHENTICATION_LABELS[version.name] || version.name,
+              value: version._id,
+            })),
+          },
+        ];
+        let isVersionPresentInsideBaseURI = false;
+
+        httpConnector.baseURIs.forEach(uri => {
+          const versionRef = '/:_version';
+          const referenceIndex = uri.indexOf(versionRef);
+
+          isVersionPresentInsideBaseURI = isVersionPresentInsideBaseURI || uri.substring(referenceIndex + versionRef?.length)?.length > 0;
+        });
+
+        if (connector.versions?.length > 1) {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options: versionOptions, type: 'select', defaultValue: resetToDefaultValue ? connector.versions?.[0]?._id : resource?.http?._httpConnectorVersionId, required: isVersionPresentInsideBaseURI };
+        } else {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false, defaultValue: connector.versions?.[0]?._id};
         }
       } else if (key === 'http.auth.oauth.scope') {
         const field = preConfiguredField || fieldUserMustSet;
@@ -559,6 +572,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+        } else if (resource._connectorId && key === 'http._iClientId') {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true, visible: true, _httpConnectorId: (resource?._httpConnectorId || resource?.http?._httpConnectorId), preConfiguredFieldValue: preConfiguredField.values?.[0], iClientConditionsMap: tempFiledMeta.fieldMap[key]?._conditionIdValuesMap, iClientConditions: tempFiledMeta.fieldMap[key]?.conditions, _conditionIdValuesMap: [], conditions: []};
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
@@ -575,8 +590,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
       } else if (key === 'http.auth.token.token' || key === 'http.auth.token.refreshToken') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
       } else if (key === 'http.baseURI') {
-        if (!tempFiledMeta.fieldMap[key].defaultValue || resetToDefaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resourceVersion) {
-          tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resourceVersion}`, '');
+        if (!tempFiledMeta.fieldMap[key].defaultValue || resetToDefaultValue) {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0] };
         }
         if (connector?.baseURIs?.length > 1) {
           const options = [
@@ -598,36 +613,15 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
   }
 
   const unEncryptedFields = [];
-  const versions = connector.versions?.map(v => v.name);
-  const versionOptions = [
-    {
-      items: versions.map(opt => ({
-        label: AUTHENTICATION_LABELS[opt] || opt,
-        value: opt,
-      })),
-    },
-  ];
 
-  if (versionOptions?.length) {
-    unEncryptedFields.push({
-      field: {
-        label: 'API version',
-        name: '/http/unencrypted/version',
-        id: 'http.unencrypted.version',
-        fieldId: 'http.unencrypted.version',
-        type: 'select',
-        visible: !(versions && versions.length <= 1),
-        options: versionOptions,
-        defaultValue: resetToDefaultValue ? versions?.[0] : resourceVersion,
-      },
-    });
-  }
   const preConfiguredUnEncryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.unencryptedFields');
 
   if (preConfiguredUnEncryptedFields?.values?.length > 0) {
     preConfiguredUnEncryptedFields.values.forEach(fld => {
       const _conditionIdValuesMap = [];
       let _conditionIds = [];
+      let visible = fld.visible ? fld.visible : true;
+      let required = !!fld.required;
 
       const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.unencrypted.${fld.id}` === field.path);
       const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.unencrypted.${fld.id}` === field.path);
@@ -646,7 +640,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
         if (fieldUserMustSet.inputType) {
           inputType = fieldUserMustSet?.inputType;
         }
+        visible = true;
       }
+      if (!fieldUserMustSet || (!resetToDefaultValue && !resource?.http?.unencrypted?.[fld.id])) {
+        required = false;
+        visible = false;
+      }
+
       unEncryptedFields.push({
         position: 1,
         field: {
@@ -661,6 +661,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           helpLink: fld.helpURL,
           _conditionIds,
           inputType,
+          visible,
+          required,
         },
       });
     });
@@ -671,6 +673,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
     preConfiguredEncryptedFields.values.forEach(fld => {
       const _conditionIdValuesMap = [];
       let _conditionIds = [];
+      let visible = fld.visible ? fld.visible : true;
+      let required = !!fld.required;
 
       const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.encrypted.${fld.id}` === field.path);
       const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.encrypted.${fld.id}` === field.path);
@@ -684,6 +688,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
       } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
         _conditionIds = fieldUserMustSet?._conditionIds;
       }
+      required = !!fieldUserMustSet;
+      visible = !!fieldUserMustSet;
 
       unEncryptedFields.push({
         position: 2,
@@ -694,11 +700,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           fieldId: `http.encrypted.${fld.id}`,
           inputType: 'password',
           type: fld.type || 'text',
-          defaultValue: !resetToDefaultValue ? resource?.http?.encrypted?.[fld.id] : '',
+          defaultValue: !resetToDefaultValue ? resource?.http?.encrypted?.[fld.id] : (fld.defaultValue || ''),
           conditions: connectionTemplate?.conditions,
           helpLink: fld.helpURL,
           _conditionIdValuesMap,
           _conditionIds,
+          required,
+          visible,
         },
       });
     });
@@ -729,10 +737,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
     Object.entries(fieldMap).forEach(([, value]) => {
       const _conditionIdValuesMap = [];
       let {inputType} = value;
+      let visible = value.visible ? value.visible : true;
+      let required = !!value.required;
 
       let _conditionIds = [];
 
       if (!isGenericHTTP) {
+        visible = false;
         const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `settings.${value.id}` === field.path);
         const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `settings.${value.id}` === field.path);
 
@@ -749,6 +760,11 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           if (fieldUserMustSet.inputType) {
             inputType = fieldUserMustSet?.inputType;
           }
+          visible = true;
+        }
+        if (!fieldUserMustSet || (!resetToDefaultValue && !resource?.settings?.[value.id])) {
+          required = false;
+          visible = false;
         }
       }
 
@@ -765,6 +781,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, httpConnect
           _conditionIdValuesMap,
           _conditionIds,
           inputType,
+          visible,
+          required,
         },
       });
     });
@@ -853,34 +871,15 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
   const applications = applicationsList().filter(app => app._httpConnectorId);
   let app;
 
-  if (resource?.application) {
+  if (httpConnectorData?.name && !resource?.application) {
+    // when more than 1 local connectors present
+    app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === httpConnectorData?.name.toLowerCase().replace(/\.|\s/g, '')) || {};
+  } else if (resource?.application) {
     app = applications.find(a => a.name.toLowerCase().replace(/\.|\s/g, '') === resource?.application) || {};
   } else if (resource?.assistant) {
     app = applications.find(a => a.id === resource?.assistant) || {};
   }
   const tempFiledMeta = customCloneDeep(fieldMeta);
-
-  const iClientPathMap = {
-    'oauth2.grantType': 'http.auth.oauth.grantType',
-    'oauth2.clientCredentialsLocation': 'http.auth.oauth.clientCredentialsLocation',
-    'oauth2.auth.uri': 'http.auth.oauth.authURI',
-    'oauth2.callbackURL': 'http.auth.oauth.callbackURL',
-    'oauth2.token.uri': 'http.auth.oauth.tokenURI',
-    'oauth2.scopeDelimiter': 'http.auth.oauth.scopeDelimiter',
-    'oauth2.token.headers': 'http.auth.oauth.accessTokenHeaders',
-    'oauth2.token.body': 'http.auth.oauth.accessTokenBody',
-    'oauth2.refresh.headers': 'http.auth.oauth.refreshHeaders',
-    'oauth2.refresh.body': 'http.auth.oauth.refreshBody',
-    'oauth2.accessTokenLocation': 'http.auth.token.location',
-    'oauth2.accessTokenHeaderName': 'http.auth.token.headerName',
-    'oauth2.scheme': 'http.auth.token.scheme',
-    'oauth2.customAuthScheme': 'http.customAuthScheme',
-    'oauth2.accessTokenParamName': 'http.auth.token.paramName',
-    'oauth2.failStatusCode': 'http.auth.failStatusCode',
-    'oauth2.failPath': 'http.auth.failPath',
-    'oauth2.failValues': 'http.auth.failValues',
-    'oauth2.validDomainNames': 'oauth2.validDomainNames',
-  };
 
   if (!isGenericHTTP) {
     if (!httpConnectorData || !httpConnectorData?.supportedBy) {
@@ -888,12 +887,12 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
     }
   }
 
-  Object.keys(iClientPathMap).forEach(key => {
-    const preConfiguredField = httpConnectorData?.supportedBy?.connection?.preConfiguredFields?.find(field => iClientPathMap[key] === field?.path);
+  Object.keys(tempFiledMeta.fieldMap).forEach(key => {
+    const preConfiguredField = httpConnectorData?.supportedBy?.iClient?.preConfiguredFields?.find(field => key === field?.path);
 
     if (isNewId(resource?._id) && preConfiguredField && !resource?.application) {
-      // new Iclient
-      !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0]);
+      // new Iclient, it should update the defaultvalue as per the http2.0 metadta
+      tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values[0];
       if (key === 'oauth2.callbackURL') {
         !tempFiledMeta?.fieldMap[key]?.defaultValue && (tempFiledMeta.fieldMap[key].defaultValue = `${getDomainUrl()}/connection/oauth2callback`);
       }
@@ -932,6 +931,11 @@ export const updateIclientMetadataWithHttpFramework = (fieldMeta, resource, flow
   } else if ((resource?.application || resource?.assistant) && resource?.application !== 'custom_oauth2') {
     tempFiledMeta.fieldMap.application.defaultValue = connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId;
   } else { tempFiledMeta.fieldMap.application && (tempFiledMeta.fieldMap.application.defaultValue = resource?._httpConnectorId ? (connectorData?.name.toLowerCase().replace(/\.|\s/g, '') || connectorData?.legacyId) : 'custom_oauth2'); }
+  if (resource?.formType === 'http') {
+    // disable application field for connection
+    tempFiledMeta.fieldMap.application.defaultDisabled = true;
+  }
+  !tempFiledMeta.fieldMap.provider.defaultValue && (tempFiledMeta.fieldMap.provider.defaultValue = 'custom_oauth2');
 
   return tempFiledMeta;
 };
@@ -1115,4 +1119,3 @@ export function* constructSuiteScriptResourceFromFormValues({
     return {};
   }
 }
-

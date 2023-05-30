@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function JobTable({
   jobsInCurrentPage,
+  integrationId,
 }) {
   const classes = JobDetailsStyles();
   const jobDetailsClasses = useStyles();
@@ -54,6 +55,7 @@ export default function JobTable({
             <JobDetail
               key={job._id}
               job={job}
+              integrationId={integrationId}
             />
           ))}
         </TableBody>

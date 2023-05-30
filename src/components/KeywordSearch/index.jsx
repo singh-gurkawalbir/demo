@@ -36,7 +36,7 @@ export default function KeywordSearch({
   return (
     <SearchInput
       autoFocus
-      value={filter?.keyword || ''}
+      defaultValue={filter?.keyword || ''}
       onChange={handleKeywordChange}
       onFocus={onFocus}
       placeholder={placeholder}

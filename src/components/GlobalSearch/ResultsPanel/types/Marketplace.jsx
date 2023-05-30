@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
+import { FilledButton } from '@celigo/fuse-ui';
 import DownArrowIcon from '../../../icons/ArrowDownIcon';
-import FilledButton from '../../../Buttons/FilledButton';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
@@ -29,9 +29,6 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(2),
     width: 1,
     margin: theme.spacing(0, 1),
-  },
-  button: {
-    whiteSpace: 'nowrap',
   },
 }));
 
@@ -75,7 +72,7 @@ function MarketPlaceRow({type, result, includeDivider}) {
         >
           <div className={classes.summary}>
             <Typography variant="body2">{result.name}</Typography>
-            <FilledButton size="small" className={classes.button} onClick={handleClick}>{buttonLabel}</FilledButton>
+            <FilledButton size="small" sx={{whiteSpace: 'nowrap'}} onClick={handleClick}>{buttonLabel}</FilledButton>
           </div>
         </AccordionSummary>
         <AccordionDetails

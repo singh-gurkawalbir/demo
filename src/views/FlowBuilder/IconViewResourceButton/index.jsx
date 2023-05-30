@@ -2,6 +2,7 @@ import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { IconButton, Tooltip } from '@mui/material';
+import { TextButton } from '@celigo/fuse-ui';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -9,7 +10,6 @@ import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../components/icons/TransferUpIcon';
-import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },

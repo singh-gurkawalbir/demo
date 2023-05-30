@@ -16,7 +16,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     '&>div': {
       paddingTop: 0,
-      minWidth: theme.spacing(3),
     },
     '&>a': {
       color: theme.palette.text.primary,

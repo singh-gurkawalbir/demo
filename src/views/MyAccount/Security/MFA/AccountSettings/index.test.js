@@ -104,7 +104,7 @@ describe('Testsuite for AccountSettings', () => {
       await userEvent.click(saveButtonNode);
       expect(mockDispatchFn).toHaveBeenCalledWith({
         type: 'MFA_ACCOUNT_SETTINGS_UPDATE',
-        accountSettings: { dontAllowTrustedDevices: undefined, trustDeviceForPeriod: '10' },
+        accountSettings: { dontAllowTrustedDevices: false, trustDeviceForPeriod: '10' },
       });
     });
   });
