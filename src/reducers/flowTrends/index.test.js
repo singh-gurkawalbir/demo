@@ -14,7 +14,7 @@ describe('reducer', () => {
     const nextState = reducer(initialState, action);
 
     expect(nextState.flowResponse).toEqual(response);
-    expect(nextState.status).toEqual('received');
+    expect(nextState.status).toEqual('success');
   });
 
   test('should handle actionTypes.FLOWTRENDS.REQUEST', () => {
@@ -25,22 +25,22 @@ describe('reducer', () => {
 
     const nextState = reducer(initialState, action);
 
-    expect(nextState.status).toBe('requested');
+    expect(nextState.status).toBe('loading');
   });
 });
 
 describe('selectors', () => {
-  test('should return true for selectors.isFlowTrendComplete when status is "received"', () => {
-    const state = { status: 'received' };
-    const isFlowTrendComplete = selectors.isFlowTrendComplete(state);
+  test('should return true for selectors.flowTrend when status is "loading"', () => {
+    const state = { status: 'loading' };
+    const flowTrend = selectors.flowTrend(state);
 
-    expect(isFlowTrendComplete).toBe(true);
+    expect(flowTrend).toBe(true);
   });
 
-  test('should return the flowResponse for selectors.flowTrends', () => {
+  test('should return the flowResponse for selectors.flowTrendData', () => {
     const flowResponse = 'mockFlowResponse';
     const state = { flowResponse };
-    const result = selectors.flowTrends(state);
+    const result = selectors.flowTrendData(state);
 
     expect(result).toEqual(flowResponse);
   });
