@@ -237,7 +237,15 @@ export function* requestPreview({ id }) {
         if (errJSON) {
           // Receiving errors in different formats from BE, for now added below check
           // Can remove this once backend bug gets fixed (Id: IO-17172)
-          const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
+          let errorMessage;
+
+          if (errJSON.details?.length) {
+            const details = errJSON.details.map((detail, index) => `${index + 1}: ${detail.message}`);
+
+            errorMessage = [`${details.join('\n')}`];
+          } else {
+            errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
+          }
           let errorLine;
 
           if (errJSON.location) {

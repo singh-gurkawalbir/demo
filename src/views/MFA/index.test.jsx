@@ -10,6 +10,15 @@ import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
 let initialStore;
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
 
 function store(auth, mfa) {
   mutateStore(initialStore, draft => {
@@ -198,5 +207,26 @@ describe('MFAVerify', () => {
     const warningMessageNode = screen.getByText(/Invalid one time passcode/i);
 
     expect(warningMessageNode).toBeInTheDocument();
+  });
+  test('should redirect to home page when MFA is resolved', async () => {
+    store({
+      initialized: true,
+      commStatus: 'success',
+      authenticated: true,
+      authTimestamp: 1661250286856,
+      defaultAccountSet: true,
+      mfaRequired: true,
+      isMFASetupIncomplete: true,
+    }, {data: {
+      authenticated: true,
+      mfaRequired: true,
+      mfaSetupRequired: false,
+      mfaVerified: true,
+    },
+    status: 'received'}
+    );
+    await initMFAVerify();
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/');
   });
 });

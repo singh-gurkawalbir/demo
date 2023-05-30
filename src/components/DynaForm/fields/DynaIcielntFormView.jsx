@@ -47,7 +47,7 @@ export default function DynaIclientFormView(props) {
     { label: 'HTTP', value: 'true' },
   ], []);
 
-  const onFieldChangeFn = useCallback(selectedApplication => {
+  const onFieldChangeFn = useCallback((event, selectedApplication) => {
     // selecting the other option
     const {id} = props;
     const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
