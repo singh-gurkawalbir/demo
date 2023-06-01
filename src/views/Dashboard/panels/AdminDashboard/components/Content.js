@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Content({colsize, id, data}) {
-  const layoutData = useSelector(selectors.layoutData);
+  // const layoutData = useSelector(selectors.layoutData);
   const [layouts, setLayouts] = useState(initialLayouts);
   const [graphTypes] = useState(
     getFromLS('graphTypes', `graphConfig${id}`) || initialGraphTypes
@@ -83,7 +83,7 @@ export default function Content({colsize, id, data}) {
   const [col] = useState(colsize);
   const onLayoutChange = (_, allLayouts) => {
     setLayouts(allLayouts);
-    dispatch(actions.dashboard.postPreference({layouts: allLayouts, graphTypes}));
+    // dispatch(actions.dashboard.postPreference({layouts: allLayouts, graphTypes}));
   };
 
   const generateDOM = () => {
@@ -122,7 +122,7 @@ export default function Content({colsize, id, data}) {
   };
 
   return (
-    layoutData === undefined ? <div>Loading...</div>
+    initialGraphTypes === undefined ? <div>Loading...</div>
       : (
         <div className={classes.responsiveContainer}>
           <ResponsiveGridLayout

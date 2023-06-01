@@ -22,7 +22,7 @@ import FlowResource from '../../views/Dashboard/panels/AdminDashboard/components
 import ConnectionResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/ConnectionResource';
 import { initialGraphTypes } from '../../views/Dashboard/panels/AdminDashboard/components/MetaData';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { transformData, transformData2} from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
+import { transformData, transformData2, combinedTransform} from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
 // const DefaultDashboard = lazy(() => import('../DefaultDashboard'));
 import DefaultDashboard from '../DefaultDashboard';
 
@@ -218,7 +218,8 @@ export default function Widget({
 
   switch (true) {
     case integrationId === recordTrend:
-      finalData = transformData(recordData);
+      // finalData = transformData(recordData);
+      finalData = combinedTransform(recordData, recordTrend);
       break;
     case integrationId === userTrend:
       finalData = transformData2(userData);
@@ -302,9 +303,9 @@ export default function Widget({
 
   useEffect(() => {
     if (integrationId === recordTrend) {
-      setData(transformData(recordData));
-      // setData(combinedTransform(recordData, recordTrend));
-      // console.log(recordTrend, recordData);
+      // setData(transformData(recordData));
+      setData(combinedTransform(recordData, recordTrend));
+      console.log(recordTrend, recordData);
     }
   }, [recordData, setData, integrationId, recordTrend]);
 
