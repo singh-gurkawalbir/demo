@@ -17,7 +17,9 @@ export function* request(startDateString) {
         method: 'GET',
       },
     });
-  } catch (e) {
+  } catch (error) {
+    yield put(actions.userTrends.failed(error));
+
     return;
   }
 

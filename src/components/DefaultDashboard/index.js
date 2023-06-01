@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles';
 import ConnectionsIcon from '../icons/ConnectionsIcon';
 import FlowsIcon from '../icons/FlowsIcon';
 import IntegrationAppsIcon from '../icons/IntegrationAppsIcon';
-// import InviteUsersIcon from '../../../../../components/icons/InviteUsersIcon';
+import GroupOfUsersIcon from '../icons/GroupOfUsersIcon';
 
 const useStyles = makeStyles({
   root: {
@@ -25,27 +25,28 @@ const useStyles = makeStyles({
 
 function DefaultDashboard(props) {
   const classes = useStyles();
-  const { id } = props;
+  const { integrationId } = props;
 
+  // console.log(integrationId);
   let icon;
   let message;
 
-  switch (id) {
-    case '0':
+  switch (integrationId) {
+    case 'none':
+      icon = <IntegrationAppsIcon className={classes.icon} />;
+      message = 'records';
+      break;
+    case 'connectionGraph':
       icon = <ConnectionsIcon className={classes.icon} />;
       message = 'connections';
       break;
-    case '1':
-      icon = <ConnectionsIcon className={classes.icon} />;
-      message = 'connections';
-      break;
-    case '2':
+    case 'flowGraph':
       icon = <FlowsIcon className={classes.icon} />;
       message = 'flows';
       break;
-    case '3':
-      icon = <IntegrationAppsIcon className={classes.icon} />;
-      message = 'records';
+    case 'userGraph':
+      icon = <GroupOfUsersIcon className={classes.icon} />;
+      message = 'users';
       break;
     default:
       icon = null;

@@ -2702,18 +2702,21 @@ const flowTrends = {
   request: (startDateString, endDateString, filterValFlow) => action(actionTypes.FLOWTRENDS.REQUEST, {startDateString, endDateString, filterValFlow}),
   received: response =>
     action(actionTypes.FLOWTRENDS.RECEIVED, { response }),
+  failed: error => action(actionTypes.FLOWTRENDS.FAILED, { error }),
 };
 
 const userTrends = {
   request: (startDateString, endDateString, filterValUser) => action(actionTypes.USERTRENDS.REQUEST, {startDateString, endDateString, filterValUser}),
   received: response =>
     action(actionTypes.USERTRENDS.RECEIVED, { response }),
+  failed: error => action(actionTypes.USERTRENDS.FAILED, { error }),
 };
 
 const connectionTrends = {
   request: (startDateString, endDateString, filterValConnection) => action(actionTypes.CONNECTIONTRENDS.REQUEST, {startDateString, endDateString, filterValConnection}),
   received: response =>
     action(actionTypes.CONNECTIONTRENDS.RECEIVED, { response }),
+  failed: error => action(actionTypes.CONNECTIONTRENDS.FAILED, { error }),
 };
 
 const uiFields = {

@@ -17,7 +17,10 @@ export function* request(startDateString) {
         method: 'GET',
       },
     });
-  } catch (e) {
+  } catch (error) {
+    yield put(actions.flowTrends.failed(error));
+    // console.log(1, error);
+
     return;
   }
   yield put(actions.flowTrends.received(response));

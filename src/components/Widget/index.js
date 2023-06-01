@@ -22,38 +22,12 @@ import FlowResource from '../../views/Dashboard/panels/AdminDashboard/components
 import ConnectionResource from '../../views/Dashboard/panels/AdminDashboard/components/Forms/ConnectionResource';
 import { initialGraphTypes } from '../../views/Dashboard/panels/AdminDashboard/components/MetaData';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { transformData, transformData2 } from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
+import { transformData, transformData2} from '../../views/Dashboard/panels/AdminDashboard/components/Transform';
+// const DefaultDashboard = lazy(() => import('../DefaultDashboard'));
+import DefaultDashboard from '../DefaultDashboard';
 
 const LineGraph = lazy(() => import('../Graphs/LineGraph'));
 const BarGraph = lazy(() => import('../Graphs/BarGraph'));
-const DefaultDashboard = lazy(() => import('../DefaultDashboard'));
-
-// const fieldMeta = {
-//   fieldMap: {
-//     Type: {
-//       id: 'filter',
-//       name: 'Filter',
-//       type: 'select',
-//       placeholder: 'Please Select type',
-//       visibleWhenAll: [{ field: 'application', isNot: [''] }],
-//       options: [
-//         {
-//           items: [
-//             { label: 'Enable', value: 'enabled' },
-//             { label: 'Disable', value: 'disabled' },
-//           ],
-//         },
-//       ],
-//       // label: 'Filter',
-//       // required: true,
-//       defaultValue: 'disabled',
-//       noApi: true,
-//     },
-//   },
-//   layout: {
-//     fields: ['Type'],
-//   },
-// };
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -79,6 +53,7 @@ export default function Widget({
   const connectionTrend = connectionGraph.integrationId;
   const recordTrend = recordGraph.integrationId;
 
+  // console.log(integrationId);
   //! THIS WHOLE PART IS ABOUT THE DATE, RANGE AND INTEGRATION LEVEL
   const dispatch = useDispatch();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
@@ -198,7 +173,7 @@ export default function Widget({
     setFilterValFlow(filter);
   };
   const flowData = useSelector(selectors.flowTrendData);
-  const flowDataStatus = useSelector(selectors.flowTrend);
+  const flowDataStatus = useSelector(selectors.flowStatus);
 
   useEffect(() => {
     if (integrationId === flowTrend) {
@@ -213,6 +188,7 @@ export default function Widget({
   };
 
   const userData = useSelector(selectors.userTrends);
+  const userDataStatus = useSelector(selectors.userStatus);
 
   useEffect(() => {
     if (integrationId === userTrend) {
@@ -227,6 +203,7 @@ export default function Widget({
   };
 
   const connectionData = useSelector(selectors.connectionTrends);
+  const connectionDataStatus = useSelector(selectors.connectionStatus);
 
   useEffect(() => {
     if (integrationId === connectionTrend) {
@@ -246,7 +223,7 @@ export default function Widget({
     case integrationId === userTrend:
       finalData = transformData2(userData);
       break;
-    case id === '1':
+    case integrationId === connectionTrend:
       finalData = transformData2(connectionData);
       break;
     case integrationId === flowTrend:
@@ -293,14 +270,24 @@ export default function Widget({
   useEffect(() => {
     if (integrationId === userTrend) {
       setData(transformData2(userData));
+      if (userDataStatus) {
+        setIsLoading(true);
+      } else {
+        setIsLoading(false);
+      }
     }
-  }, [flowData, integrationId, userData, userTrend]);
+  }, [setData, integrationId, userData, userTrend, userDataStatus]);
 
   useEffect(() => {
     if (integrationId === connectionTrend) {
       setData(transformData2(connectionData));
+      if (connectionDataStatus) {
+        setIsLoading(true);
+      } else {
+        setIsLoading(false);
+      }
     }
-  }, [integrationId, connectionData, connectionTrend, setData]);
+  }, [integrationId, connectionData, connectionTrend, setData, connectionDataStatus]);
 
   useEffect(() => {
     if (integrationId === flowTrend) {
@@ -316,6 +303,8 @@ export default function Widget({
   useEffect(() => {
     if (integrationId === recordTrend) {
       setData(transformData(recordData));
+      // setData(combinedTransform(recordData, recordTrend));
+      // console.log(recordTrend, recordData);
     }
   }, [recordData, setData, integrationId, recordTrend]);
 
@@ -390,7 +379,7 @@ export default function Widget({
         >
           {data.values.length === 0 ? (
             <Suspense fallback={<div>Loading...</div>}>
-              <DefaultDashboard id="0" />
+              <DefaultDashboard integrationId={integrationId} />
             </Suspense>
           ) : impl.config(data)}
         </div>
@@ -398,22 +387,6 @@ export default function Widget({
     </Card>
   );
 }
-
-// if (integrationId === recordTrend) {
-//   finalData = transformData(recordData);
-// } else if (integrationId === userTrend) {
-//   finalData = transformData2(userData);
-// } else if (id === '1') {
-//   finalData = transformData1(graphData);
-// } else if (integrationId === flowTrend) {
-//   finalData = transformData2(flowData);
-// } else if (id === '5') {
-//   return <MuiBox data={graphData} value={connectionName} />;
-// } else if (id === '6') {
-//   return <MuiBox data={graphData} value={flowName} />;
-// } else {
-//   finalData = graphData;
-// }
 
 /* <>
 {(() => {

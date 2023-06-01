@@ -38,7 +38,7 @@ describe('request saga', () => {
       .run();
   });
 
-  test('should not dispatch any action on failure', () => {
+  test('should dispatch connectionTrends.failed action on API call failure', () => {
     expectSaga(request, startDateString)
       .provide([
         [call(apiCallWithRetry, {
@@ -48,7 +48,38 @@ describe('request saga', () => {
           },
         }), throwError(error)],
       ])
-      .not.put(actions.connectionTrends.received())
+      .put(actions.connectionTrends.failed(error))
+      .run();
+  });
+
+  test('should return early on API call failure and not dispatch any action', () => {
+    expectSaga(request, startDateString)
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/accountInsights/api/connectionsTrend?from=${startDateString.startDateString}&to=${startDateString.endDateString}&type=${startDateString.filterValConnection}`,
+          opts: {
+            method: 'GET',
+          },
+        }), throwError(error)],
+      ])
+      .not.put(actions.connectionTrends.received(response))
+      .not.put(actions.connectionTrends.failed())
+      .run();
+  });
+
+  test('should dispatch connectionTrends.received action with an empty response', () => {
+    const emptyResponse = {};
+
+    expectSaga(request, startDateString)
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/accountInsights/api/connectionsTrend?from=${startDateString.startDateString}&to=${startDateString.endDateString}&type=${startDateString.filterValConnection}`,
+          opts: {
+            method: 'GET',
+          },
+        }), emptyResponse],
+      ])
+      .put(actions.connectionTrends.received(emptyResponse))
       .run();
   });
 });

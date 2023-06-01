@@ -9,7 +9,7 @@ describe('request saga', () => {
   const startDateString = {
     startDateString: '2023-05-10T18:30:00.000Z',
     endDateString: '2023-05-25T08:54:12.216Z',
-    filterValFlow: 'enabled',
+    filterValUser: 'enabled',
   };
 
   const response = {
@@ -46,7 +46,7 @@ describe('request saga', () => {
       .run();
   });
 
-  test('should not dispatch any action on failure', () => {
+  test('should dispatch userTrends.failed action on API call failure', () => {
     expectSaga(request, startDateString)
       .provide([
         [call(apiCallWithRetry, {
@@ -56,7 +56,38 @@ describe('request saga', () => {
           },
         }), throwError(error)],
       ])
-      .not.put(actions.userTrends.received())
+      .put(actions.userTrends.failed(error))
+      .run();
+  });
+
+  test('should return early on API call failure and not dispatch any action', () => {
+    expectSaga(request, startDateString)
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/accountInsights/api/usersTrend?from=${startDateString.startDateString}&to=${startDateString.endDateString}&type=${startDateString.filterValUser}`,
+          opts: {
+            method: 'GET',
+          },
+        }), throwError(error)],
+      ])
+      .not.put(actions.userTrends.received(response))
+      .not.put(actions.userTrends.failed())
+      .run();
+  });
+
+  test('should dispatch userTrends.received action with an empty response', () => {
+    const emptyResponse = {};
+
+    expectSaga(request, startDateString)
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/accountInsights/api/usersTrend?from=${startDateString.startDateString}&to=${startDateString.endDateString}&type=${startDateString.filterValUser}`,
+          opts: {
+            method: 'GET',
+          },
+        }), emptyResponse],
+      ])
+      .put(actions.userTrends.received(emptyResponse))
       .run();
   });
 });
